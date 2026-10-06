@@ -21,13 +21,14 @@ and must not become a second package lock.
 ## Planned / under evaluation
 
 These are candidates or product directions, not dependencies, adoption decisions, or promises.
-No official version/license evaluation has been completed for them in SEQ-KB-R0.
+No official version/license evaluation has been completed for them in the knowledge-documentation stages.
 
 | Candidate / direction | Intended evaluation boundary |
 | --- | --- |
 | C# / .NET 10 | User's development direction and proposed application platform; evaluate concrete SDK/runtime and distribution obligations when introduced |
 | Avalonia | Proposed UI framework; evaluate official package/API/platform/license evidence before adoption |
 | miniaudio or comparable backend | SEQ-R0 backend candidate; evaluate realtime/device behavior, official source/license, native binaries and packaging |
+| Future ASIO integration | Desired later device capability, not an R0 requirement or adopted SDK/backend; evaluate concrete implementation source, licensing and redistribution when its stage approaches |
 | CLAP / VST3 hosting | Later possibility; evaluate concrete SDK terms, bridges, distribution and product need when justified |
 | WAV / FLAC support | Planned/candidate media capabilities; evaluate actual codec/library choices separately |
 

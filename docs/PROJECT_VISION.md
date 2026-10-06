@@ -15,6 +15,11 @@ It serves people starting to make music and people who want to grow from short i
 tracks without abandoning an approachable tool. Simple defaults must not impose an artificially low
 musical ceiling. FOSS intent is accepted; the final license is still open.
 
+Seqvium is a universal music workstation, not genre-locked. Beats/electronic music, ambient,
+experimental and sample-based work, instrument/plugin use, guitar or microphone recording through
+an audio interface, MIDI recording, and mixing those sources belong to its long-term direction.
+Audio/MIDI input and recording are core platform responsibilities, not an electronic-music ceiling.
+
 ## Sound and music lead
 
 The first path should approach: open Seqvium, discover or add a sound, write a rhythm, bass line, or
@@ -27,7 +32,24 @@ created. UI and architecture serve that object; they must not become the central
 
 A defining direction is the loop from sound exploration to durable samples, music, resampling, and
 further reuse. [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns its semantics. A default-installed,
-removable creative generator should make both intentional and casual exploration useful.
+removable creative generator should make both intentional and casual exploration useful. A core
+node graph adds depth for sound/control transformation without forcing graph internals into the
+first musical task; [NODE_GRAPH](NODE_GRAPH.md) owns that direction.
+
+Creation and sound exploration are the workflow specialization: fast transformation, sample exploration,
+resampling, graph-based processing, and little ceremony between imagination and audible result.
+Universality must not turn into feature-count competition over every historical studio recording workflow.
+
+## Creation, musical structures, and organization
+
+Seqvium is primarily mouse-first: direct pointer editing leads creation. On-screen musical keyboard,
+MIDI/realtime note input, and eventual audio recording complement that path. The ordinary computer
+keyboard remains primarily available for shortcuts; [UX_CONTRACT](UX_CONTRACT.md) owns input semantics.
+
+Named reusable multi-instrument patterns let users choose the size of a musical idea, from a drum
+part to a full groove. User-defined instrument/channel groups provide flexible organization independently
+of pattern identity. [ARCHITECTURE](ARCHITECTURE.md) owns those relationships. Major surfaces normally
+compose as flexible internal panes in one main window, under [WORKSPACE](WORKSPACE.md).
 
 ## References and non-goals
 
@@ -40,9 +62,10 @@ Seqvium must not become a toy beat maker that quickly reaches its ceiling, an FL
 generic professional DAW that requires understanding extensive routing before making a sound.
 Avoid feature-count competition. Prefer a smaller number of coherent creative workflows.
 
-The long-term capability space includes richer editing, instruments/effects, automation, recording,
-MIDI, plugin hosting, and pitch/time processing. These are candidates, not initial release promises;
-[ROADMAP](ROADMAP.md) owns their staging.
+Core audio/MIDI/recording direction does not promise early delivery. Automation, richer instruments/effects,
+external plugin hosting, and pitch/time processing remain later capability work; [ROADMAP](ROADMAP.md)
+owns staging. Seqvium does not prioritize supporting every historical recording workflow over its
+creative focus.
 
 ## Feature-fit questions
 

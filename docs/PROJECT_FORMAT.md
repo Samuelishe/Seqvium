@@ -22,6 +22,19 @@ inventing field names, file extensions, or a container layout.
 [EXTENSIONS](EXTENSIONS.md#lifecycle-and-missing-capabilities) owns missing-capability behavior;
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md#acceptance-and-provenance) owns sample acceptance semantics.
 
+## Musical content and workspace state
+
+Serialization must respect the distinct identities of named multi-instrument patterns, their musical
+parts/events and placements, organizational instrument/channel groups, and editable signal-graph
+definitions/connections. Group membership must not become pattern storage identity or imply routing.
+Exact schemas and graph scopes remain open; [ARCHITECTURE](ARCHITECTURE.md) and [NODE_GRAPH](NODE_GRAPH.md)
+own the model and editable/prepared boundary. Saving project state must not require preserving live
+UI objects or treating a prepared realtime representation as the editable document.
+
+Main-window pane layout is primarily application/user workspace state under [WORKSPACE](WORKSPACE.md).
+Opening a project should not normally overwrite it. Project-side graph/editor layout is distinct from
+the user's overall pane arrangement; no final storage policy or optional project-workspace format is chosen.
+
 ## Media policy boundary
 
 Copying/embedding used pack audio into project-managed resources should make that project independent
@@ -34,9 +47,10 @@ does not authorize automatic deletion of unused resources.
 
 ## Unknown extension data
 
-A missing algorithm may prevent playback, but must not cause save to discard its identity, opaque
-state, or musical connections. Future tests must cover load/edit/save while an extension is absent,
-then reinstallation of compatible code. Exact opaque encoding and compatibility claims are undecided.
+A missing, incompatible, or disabled algorithm may prevent playback, but must not cause save to discard
+its identity, opaque state, musical connections, or contributed graph-node relationships. Future tests
+must cover load/edit/save while an extension is absent, then reinstallation of compatible code.
+Exact opaque encoding and compatibility claims are undecided.
 
 ## Open format choices
 

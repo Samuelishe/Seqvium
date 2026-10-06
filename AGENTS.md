@@ -31,6 +31,8 @@ All routes start with current state; add these owners as needed:
 | Product / feature / UX | [PROJECT_VISION](docs/PROJECT_VISION.md), [UX_CONTRACT](docs/UX_CONTRACT.md) |
 | Architecture | [ARCHITECTURE](docs/ARCHITECTURE.md) |
 | Audio / realtime | [AUDIO_ENGINE](docs/AUDIO_ENGINE.md), architecture |
+| Node / processing graph, ports, node execution | [NODE_GRAPH](docs/NODE_GRAPH.md) + affected audio/architecture owner |
+| Workspace panes, docking, floating, layout, activation | [WORKSPACE](docs/WORKSPACE.md), UX contract |
 | Samples / generation / resampling | [SAMPLE_WORKFLOW](docs/SAMPLE_WORKFLOW.md); audio or extensions for affected boundaries |
 | Extensions / packages | [EXTENSIONS](docs/EXTENSIONS.md) |
 | Project serialization | [PROJECT_FORMAT](docs/PROJECT_FORMAT.md); extensions for opaque state |
@@ -55,3 +57,6 @@ test platform before choosing commands. Do not create tests or CI merely for app
 Update owners when contracts change, current state when its facts change, and the work log only for
 meaningful completed work. Follow [governance](docs/DOCUMENTATION_GOVERNANCE.md) for conflicts.
 Finish with verification results and final Git status, distinguishing task changes from existing work.
+When a task creates or modifies tracked files, always include one concise suggested English commit
+message describing the actual outcome. Begin with the stage/milestone ID when applicable. If no tracked
+files changed, no message is needed. A suggested message never authorizes commit or push.

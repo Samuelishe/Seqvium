@@ -18,6 +18,12 @@ Other documents may summarize and link but must not create competing contracts. 
 - Architecture owns cross-boundary responsibilities and intended musical relationships; audio owns
   execution/control/render constraints; extensions own optional-capability lifecycle; project format
   owns serialization and unknown-data preservation.
+- [NODE_GRAPH](NODE_GRAPH.md) owns signal-graph semantics, node/port classes, and the editable/prepared
+  boundary; audio owns realtime execution constraints and architecture owns separation from timeline
+  and user organization. Cross-owner documents link these contracts rather than redefine them.
+- [WORKSPACE](WORKSPACE.md) owns internal panes, activation/front behavior, docking, and user layout
+  ownership; UX owns general input/feedback principles. Project format owns musical serialization,
+  including editable graph data, rather than application/user pane preferences.
 - Current state is a compact present-tense handoff. Roadmap defines future stages. Work log records
   completed facts. Decisions log records acceptance/supersession and rationale. Known problems records
   uncertainty. Technical debt records compromises actually present in implementation.
@@ -62,7 +68,7 @@ and ask for needed input rather than invent acceptance. External references neve
 | Changed truth | Update |
 | --- | --- |
 | Current checkpoint, focus, capability, active blocker | PROJECT_STATE; avoid live Git status and transient attempts |
-| Product, interaction, responsibility, audio, sample, extension, or persistence contract | The corresponding owner in the same change |
+| Product, interaction, responsibility, audio, graph, workspace, sample, extension, or persistence contract | The corresponding owner in the same change |
 | Durable accepted/reversed choice | DECISIONS_LOG plus affected owner; link evidence |
 | Future scope or stage order | ROADMAP |
 | New/narrowed/resolved uncertainty | KNOWN_PROBLEMS; retain evidence of resolution |

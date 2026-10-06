@@ -32,7 +32,7 @@ universal synthesizer displaying every algorithm simultaneously. Possible famili
 clicks/impacts, noise/rhythmic noise, waves/wind/atmospheres, synthetic or physical-model-inspired
 plucks, guitar/string-like sounds, and experimental textures. These are ideas, not V1 scope.
 
-The first generator should be local/procedural and cover one or two bounded families.
+The first generator should be local/procedural and cover one or two bounded families in SEQ-R7.
 [EXTENSIONS](EXTENSIONS.md#default-generator) owns its default-installed/removable status.
 
 ## Intentional and lazy exploration
@@ -68,7 +68,7 @@ multiple selected sources, and generated audio. Converting them to a sample shou
 source by default and make the resulting sample immediately reusable.
 
 An explicit replace/disable-source action may be added later, but it must be undoable. Do not assume
-that accepting a render deletes or mutates its source. Start with one bounded source in SEQ-R6,
+that accepting a render deletes or mutates its source. Start with one bounded source in SEQ-R8,
 rather than treating the full candidate list as required initial scope.
 
 Musical bounds, tails, insert/send inclusion, routing capture, normalization, sample rate, channels,

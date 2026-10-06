@@ -15,8 +15,10 @@ question. The [README](../README.md) is the public introduction.
 | [PROJECT_STATE](PROJECT_STATE.md) | Current checkpoint, focus, implemented capability, active blockers |
 | [PROJECT_VISION](PROJECT_VISION.md) | Product identity, audience, creative philosophy, non-goals |
 | [UX_CONTRACT](UX_CONTRACT.md) | Observable interaction principles and general workflow semantics |
-| [ARCHITECTURE](ARCHITECTURE.md) | Logical responsibilities, dependency boundaries, intended musical model |
+| [ARCHITECTURE](ARCHITECTURE.md) | Core/plugin/backend boundaries, timeline/organization/graph separation, musical model |
 | [AUDIO_ENGINE](AUDIO_ENGINE.md) | Realtime state, control boundary, scheduling, offline audio semantics |
+| [NODE_GRAPH](NODE_GRAPH.md) | Core graph, nodes/ports/connections, editable versus prepared execution |
+| [WORKSPACE](WORKSPACE.md) | Internal panes, activation/front behavior, docking, user layout state |
 | [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, lifecycle, missing-extension preservation |
 | [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Discovery, generation, audition, acceptance, resampling |
 | [PROJECT_FORMAT](PROJECT_FORMAT.md) | Serialization compatibility, media policy, unknown-data preservation |
