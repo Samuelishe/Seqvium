@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Core/plugin/backend boundaries, timeline/organization/graph separation, musical model direction.
+Authoritative for: Core/plugin/backend boundaries, timeline/organization/graph separation, musical/resource identities, local processing.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -130,6 +130,70 @@ The event model must support musical position, pitch where applicable, duration,
 equivalent intensity. A `bool[16]` foundation is insufficient. These requirements do not select a
 schema, time representation, class hierarchy, or storage layout. [PROJECT_FORMAT](PROJECT_FORMAT.md)
 owns persistence compatibility; [UX_CONTRACT](UX_CONTRACT.md) owns observable editing behavior.
+
+## Resources, placements, and two local processing levels
+
+A durable audio resource and a musical occurrence/placement of it must not be assumed to be one
+mutable object. Several items may reference `kick_017.wav`; local processing of one item must not
+silently rewrite the shared resource or every other use. The default creative model is non-destructive.
+An explicitly destructive/edit-source operation may be justified later, but ordinary item processing
+does not imply it. Resource/reference/edit ownership and storage schemas remain unselected;
+[PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence obligations.
+
+For ordinary project work, the accepted user-facing model has no more than two local processing levels:
+
+1. **Item-local processing:** one material instance/placement has independent processing, such as
+   EQ/Gain on a Kick item or Delay on a Click item.
+2. **Containing musical-container processing:** a container combines its contained audible items
+   and applies common processing to that result.
+
+```text
+Kick item -> local EQ/Gain --+
+Click item -> local Delay ---+-> container mix -> Compressor -> output
+Noise item -----------------+
+
+Item processing -> Container processing -> Mixer / buses -> Master -> Output
+```
+
+This bounds the ordinary creative mental model, not the engine's number of DSP stages. Global mixer,
+buses, master, and output remain available responsibilities. Master is global output processing,
+not a third nested local layer. Do not infer unlimited user-facing local nesting.
+[NODE_GRAPH](NODE_GRAPH.md) owns how processing connections express signal dependencies.
+
+"Layer" is provisional terminology, not a final public/domain name. Track, Layer, Channel, Lane,
+or Container may overlap future vocabulary. The accepted semantics are a musical timeline container
+holding independent items and processing their combined audible result. Its domain identity is not
+assumed identical to Mixer Channel, Instrument Group, or Pattern. No classes or schemas are selected.
+
+## Semi-free Arrangement
+
+Arrangement uses user-named containers for useful visual/musical organization rather than requiring
+permanent one-instrument ownership or a completely unstructured timeline. Conceptually:
+
+```text
+Drums       | Drums Main | Drums Main | Drums Fill |
+Bass        | Bass A     | Bass A     | Bass B     |
+Atmosphere  |          Long Texture               |
+```
+
+A container may have a preferred/default musical purpose or content relationship. That must not
+automatically make it the permanent owner of one instrument or Mixer Channel. Compatible material
+should be movable/reusable without arbitrary structural duplication. Compatibility, preferred-target
+behavior, ownership, nesting, and audio-clip semantics remain open.
+
+The timeline container answers where/when material is arranged; mixer channels/buses answer where
+audio flows and how it is processed/routed. Useful defaults may connect them without merging their
+identities. How arrangement-container processing relates to a mixer channel or bus remains an explicit
+architecture question; exposing shared container processing does not settle it.
+
+## Future parameter control
+
+Parameter modelling must leave room for future control rather than treating DSP parameters as
+permanently fixed primitive values. An eventual effective parameter may combine base/user value,
+timeline automation, modulation, and envelopes/LFO/control-graph sources. This requirement does not
+select an abstraction or require an automation implementation now. Replace/add/multiply semantics,
+normalized versus physical domains, precedence, smoothing, and control rate remain unresolved.
+[NODE_GRAPH](NODE_GRAPH.md) owns the preferred direction for optional parameter connectors.
 
 ## Open architecture work
 

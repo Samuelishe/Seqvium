@@ -6,8 +6,9 @@ Authoritative for: Acceptance history, decision rationale, and supersession stat
 Not authoritative for: Current implementation, detailed contracts, proposals, or future stage order.
 
 D-001 through D-008 record the SEQ-KB-R0 mandate; D-009 through D-016 record SEQ-KB-R1 on 2026-10-06.
+D-017 through D-022 record SEQ-KB-R2 on 2026-10-06.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
-contract. No supersessions exist yet; SEQ-KB-R1 refines boundaries without accepting earlier technical proposals.
+contract. No supersessions exist yet; the later KB stages refine direction without accepting technical proposals.
 New decisions need an ID, status, basis/evidence, rationale, affected owner, and explicit supersession
 link when replacing an earlier decision. Keep rejected or superseded reasoning available as history.
 
@@ -147,7 +148,68 @@ safe path exists, preserving project/plugin state instead of intentionally faili
 in-process native faults cannot be promised contained; hard crash isolation remains a design question.
 Owner: [EXTENSIONS](EXTENSIONS.md).
 
+## D-017 — Contextual Sample Lab
+
+Status: Accepted creative-workflow direction.
+Basis: SEQ-KB-R2 product mandate.
+Rationale: A dedicated Sample Lab pane supports standalone exploration and selected musical context.
+Temporary, reversible candidates should be auditionable through relevant existing downstream processing
+before explicit acceptance, avoiding export/import and routing reconstruction to judge a variation.
+Substitution, publication, restoration, and exact downstream boundaries remain open.
+Owner: [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md); pane integration in [WORKSPACE](WORKSPACE.md).
+
+## D-018 — What-you-hear sampling follows semantic selection
+
+Status: Accepted sampling direction.
+Basis: SEQ-KB-R2 sampling mandate.
+Rationale: Ordinary sample creation defaults to the audible semantic result of the selected musical
+source/context rather than surprising dry/raw material. An item's result, a container's combined
+result, and an explicit range are distinct scopes, not necessarily whole-Master capture. Advanced
+source/tap alternatives remain optional future depth; concrete DSP boundaries remain unresolved.
+Owner: [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md); execution constraints in [AUDIO_ENGINE](AUDIO_ENGINE.md).
+
+## D-019 — Two local processing levels with non-destructive placements
+
+Status: Accepted model direction.
+Basis: SEQ-KB-R2 processing and resource-identity mandate.
+Rationale: Independent item-local processing and common containing-container processing bound ordinary
+creative reasoning. Local edits do not silently rewrite shared audio resources. Mixer/buses/master
+remain separate global routing/output responsibilities, not unlimited nested local layers. "Layer"
+terminology, container identity, graph scopes, and schemas are still open.
+Owner: [ARCHITECTURE](ARCHITECTURE.md); persistence obligations in [PROJECT_FORMAT](PROJECT_FORMAT.md).
+
+## D-020 — Graph topology drives processing, coordinates organize presentation
+
+Status: Accepted graph semantic direction.
+Basis: SEQ-KB-R2 graph mandate.
+Rationale: Free two-dimensional placement supports readable personal layouts; connections express
+signal dependencies and order rather than coordinates or hidden numeric priorities. Execution
+scheduling remains unselected, and arbitrary feedback/cycles are not accepted.
+Owner: [NODE_GRAPH](NODE_GRAPH.md).
+
+## D-021 — Progressive graph visibility supports creative interaction quality
+
+Status: Accepted UX/design direction.
+Basis: SEQ-KB-R2 progressive-complexity and design-quality mandate.
+Rationale: Compact interactive processing indications keep depth discoverable while graph maps
+normally remain hidden until requested. Pleasant manipulation, hierarchy, spatial clarity, and
+restrained feedback help Seqvium feel like a creative instrument. Exact visuals, compact-chain
+representation, and node-settings UX are not selected.
+Owners: [UX_CONTRACT](UX_CONTRACT.md) for visibility, [UI_DESIGN](UI_DESIGN.md) for visual principles,
+[NODE_GRAPH](NODE_GRAPH.md) for graph interaction, [WORKSPACE](WORKSPACE.md) for target-pane focus.
+
+## D-022 — Semi-free Arrangement with separate mixer identity
+
+Status: Accepted musical-model direction.
+Basis: SEQ-KB-R2 Arrangement mandate.
+Rationale: User-named structured timeline containers organize reusable compatible material without
+permanent one-instrument ownership or arbitrary duplication. Where/when material is arranged remains
+distinct from audio routing, even when a container exposes common processing. Preferred targets,
+compatibility, nesting, container-to-mixer relationships, and final Track schema remain open.
+Owner: [ARCHITECTURE](ARCHITECTURE.md#semi-free-arrangement).
+
 Final application decomposition, engine language/backend/ABI, extension/package API, project format,
 license, visual language, plugin-hosting/isolation strategy, graph compiler/port ABI, workspace layout
-mechanism, and platform release schedule are **not accepted decisions**. Their uncertainty belongs to
-[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+mechanism, platform release schedule, final Layer/Track terminology/schema, node-settings UX,
+arbitrary feedback, automation/modulation formula, and compact-chain visuals are **not accepted decisions**.
+Their uncertainty belongs to [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).

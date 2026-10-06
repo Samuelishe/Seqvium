@@ -15,6 +15,9 @@ Other documents may summarize and link but must not create competing contracts. 
 
 - Vision owns why/for whom; UX owns general observable interaction; sample workflow owns specialized
   discovery/audition/acceptance/resampling semantics.
+- [UI_DESIGN](UI_DESIGN.md) owns evolving visual principles, hierarchy, pane chrome, density, processing
+  indicators, and restrained feedback. Route visual-system/design tasks there with UX and the affected
+  behavior owner. It does not select final visuals or redefine workflow, pane, or graph semantics.
 - Architecture owns cross-boundary responsibilities and intended musical relationships; audio owns
   execution/control/render constraints; extensions own optional-capability lifecycle; project format
   owns serialization and unknown-data preservation.
@@ -68,7 +71,7 @@ and ask for needed input rather than invent acceptance. External references neve
 | Changed truth | Update |
 | --- | --- |
 | Current checkpoint, focus, capability, active blocker | PROJECT_STATE; avoid live Git status and transient attempts |
-| Product, interaction, responsibility, audio, graph, workspace, sample, extension, or persistence contract | The corresponding owner in the same change |
+| Product, interaction, visual design, responsibility, audio, graph, workspace, sample, extension, or persistence contract | The corresponding owner in the same change |
 | Durable accepted/reversed choice | DECISIONS_LOG plus affected owner; link evidence |
 | Future scope or stage order | ROADMAP |
 | New/narrowed/resolved uncertainty | KNOWN_PROBLEMS; retain evidence of resolution |

@@ -17,7 +17,8 @@ Not authoritative for: Current state, plans, stable contracts, or active debt.
   to exclude local IDE settings/caches without deleting local files.
 - Checked all 19 Markdown documents and their relative links/anchors, metadata, ownership, status
   distinctions, and addition diffs; reviewed final Git changes and ignore behavior. No production code,
-  dependencies, executable tools, LICENSE, build, tests, commit, or push were introduced/performed.
+  dependencies, executable tools, LICENSE, builds, or tests were introduced/performed. The Codex task
+  did not perform commit/push; the accepted stage was later committed by the repository owner.
 
 ## 2026-10-06 — SEQ-KB-R1
 
@@ -31,4 +32,25 @@ Not authoritative for: Current state, plans, stable contracts, or active debt.
 - Added the permanent suggested-English-commit-message handoff rule. Checked all Markdown links/anchors,
   owner boundaries, proposal status, diffs, and repository scope; preserved the staging index and HEAD.
 - Changed Markdown documentation only. No implementation, dependencies, tests, CI, executable tooling,
-  builds, commits, or pushes were introduced/performed. SEQ-R0 remained pending and was not started.
+  or builds were introduced/performed. The Codex task did not perform commit/push; the accepted stage
+  was later committed by the repository owner. SEQ-R0 remained pending and was not started.
+
+The historical stage commits are visible in local Git history. Whether they were subsequently pushed
+is not established by local history; this log does not duplicate Git's commit chronology.
+
+## 2026-10-06 — SEQ-KB-R2
+
+- Added [UI_DESIGN](UI_DESIGN.md) as a small evolving owner for visual hierarchy, chrome, density,
+  progressive complexity, and restrained feedback; routed it through AGENTS, INDEX, and governance.
+- Defined standalone/contextual Sample Lab with temporary downstream audition, semantic what-you-hear
+  sampling, non-destructive resource/placement identity, and two local processing levels with global
+  mixer/bus/master responsibilities preserved.
+- Accepted free spatial canvas/topology-defined processing, progressive graph visibility, and
+  semi-free Arrangement separate from mixer identity; recorded D-017 through D-022. Kept container
+  terminology/schema, render boundaries, feedback, parameter control, compact-chain and inspector UX,
+  and multiple-pane mechanics open. Refined future stage scopes without renumbering implementation.
+- Clarified earlier commit/push wording against local Git history. Validated Markdown links/anchors,
+  metadata/routing, canonical ownership, accepted/proposed/open distinctions, scope, and final diff/status.
+- Changed Markdown only; preserved HEAD and the staging index. No implementation, dependencies, CI,
+  executable tooling, builds, tests, commit, or push. SEQ-R0 remains pending / not started; no actual
+  implementation debt exists.

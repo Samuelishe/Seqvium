@@ -37,6 +37,13 @@ the user's overall pane arrangement; no final storage policy or optional project
 
 ## Media policy boundary
 
+Persistence must preserve the distinction between durable audio resources and their musical
+placements/references, including local processing state. Multiple items may use one resource;
+ordinary local processing must not silently become a destructive rewrite of that shared media.
+Separate reference/edit identity must be expressible without assuming final class names, copy-on-write
+mechanics, resource deduplication, or a schema. [ARCHITECTURE](ARCHITECTURE.md) owns the model;
+[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns acceptance and source-preserving sample creation.
+
 Copying/embedding used pack audio into project-managed resources should make that project independent
 of pack removal. External references cannot imply the same guarantee. Resource ownership and missing
 media must be explicit enough for users to understand what travels with a project.

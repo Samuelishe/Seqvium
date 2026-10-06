@@ -29,6 +29,11 @@ permanently occupying the primary workspace. A simple default must allow deeper 
 cap the user's work. Useful hidden capability still needs a discoverable path through contextual
 controls, menus, shortcuts, or a deliberately opened workspace.
 
+Relevant musical items/containers should visibly indicate processing with a compact, clearly
+interactive control. Graph complexity normally stays hidden; opening that indicator reveals the
+relevant Node Graph workspace pane. No final icon, count, badge, color, label, or typography is chosen.
+[UI_DESIGN](UI_DESIGN.md) owns presentation principles, and [NODE_GRAPH](NODE_GRAPH.md) owns graph semantics.
+
 ## Immediate feedback and minimum ceremony
 
 Enabling a step, moving a note, adjusting a filter, or auditioning a candidate should reveal the
@@ -58,8 +63,17 @@ Repeated placements normally share a pattern; an explicit independent-variation 
 make the change in sharing understandable. Arrangement tracks and mixer channels have different
 purposes and must not force a misleading one-to-one conceptual model.
 
-Sample-specific solo/in-pattern audition, acceptance, candidate history, and source-preserving
-resampling are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Missing capabilities should be
+Audio resources and musical placements also have distinct identities. Ordinary processing of one
+item should be non-destructive and should not silently change every use of shared audio. Users
+normally reason about item-local and containing-container processing, while global mixer/bus/master
+responsibilities remain separate. [ARCHITECTURE](ARCHITECTURE.md) owns that bounded local model and
+the semi-free Arrangement direction; no final "Layer" term or Track schema is accepted.
+
+Sample Lab supports standalone and contextual exploration. Contextual audition is temporary and
+reversible until explicit acceptance and should preserve relevant existing downstream processing.
+Ordinary sample creation defaults to the audible semantic result of the selected source/context,
+without requiring a routing questionnaire. Specialized audition, acceptance, candidate history,
+and resampling semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Missing capabilities should be
 represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work retained.
 
 ## In-window workspace and graph depth
@@ -72,9 +86,11 @@ working state on restoration. [WORKSPACE](WORKSPACE.md) owns the detailed pane c
 Docking/magnetism is a per-pane user choice, predictable and easy to escape; automatic layout must not
 fight free placement. Opening a project should normally retain the user's workspace preference.
 
-The core graph should expose a compact node surface with deeper settings on demand. Ordinary creation
-must not require learning graph internals; advanced branches/merges remain discoverable. [NODE_GRAPH](NODE_GRAPH.md)
-owns graph semantics, ports, and the editing/execution boundary. No final node visuals are selected.
+When requested, the graph opens as a free-form spatial canvas with compact nodes and deeper settings
+on demand. Coordinates do not define processing order; connections express dependencies. Ordinary
+creation must not require learning graph internals; advanced branches/merges remain discoverable.
+[NODE_GRAPH](NODE_GRAPH.md) owns graph semantics, ports, and the editing/execution boundary.
+Compact-chain editing and node-settings presentation remain proposals/open UX questions.
 
 ## Interaction quality
 
@@ -82,6 +98,9 @@ Prioritize strong visual hierarchy, restrained intentional identity, readable ty
 selection/loading/error states, excellent drag-and-drop, useful context menus, sensible shortcuts,
 and good note-editing interaction. Scaling and DPI correctness and responsive input belong in
 verification when UI exists. Avoid an engineer-only interface.
+
+Pleasant direct manipulation, spatial clarity, and restrained feedback should make experimentation
+inviting. [UI_DESIGN](UI_DESIGN.md) owns gradual visual guidance and consistency between panes.
 
 The final visual language, bindings, window layout, onboarding, and detailed Piano Roll gestures
 remain open. This contract does not prescribe a final visual system.

@@ -29,6 +29,7 @@ All routes start with current state; add these owners as needed:
 | Task | Read |
 | --- | --- |
 | Product / feature / UX | [PROJECT_VISION](docs/PROJECT_VISION.md), [UX_CONTRACT](docs/UX_CONTRACT.md) |
+| Visual system / interaction design quality | [UI_DESIGN](docs/UI_DESIGN.md), UX contract; workspace or graph owner for affected behavior |
 | Architecture | [ARCHITECTURE](docs/ARCHITECTURE.md) |
 | Audio / realtime | [AUDIO_ENGINE](docs/AUDIO_ENGINE.md), architecture |
 | Node / processing graph, ports, node execution | [NODE_GRAPH](docs/NODE_GRAPH.md) + affected audio/architecture owner |

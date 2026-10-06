@@ -21,7 +21,16 @@ Incorporate accepted mouse-first/universal product direction, named patterns and
 core graph, internal workspace panes, and core/plugin/backend boundaries into canonical owners.
 Documentation only; this stage does not start SEQ-R0 or introduce executable implementation.
 
+## SEQ-KB-R2 — Creative Workflow Model
+
+Incorporate contextual Sample Lab, what-you-hear sampling, non-destructive resource/placement
+identity, two local processing levels, progressive graph visibility, free canvas/topology semantics,
+semi-free Arrangement, and an evolving UI design owner. Completed documentation stage; see
+[WORK_LOG](WORK_LOG.md#2026-10-06--seq-kb-r2). No implementation stage is started or renumbered.
+
 ## SEQ-R0 — Audio Architecture Probe
+
+SEQ-R0 remains pending / not started after the documentation stages.
 
 Validate the riskiest architecture before application construction. Scope a minimal experimental host,
 device initialization, realtime callback, audio clock, basic transport, scheduled sample/tone events,
@@ -40,6 +49,8 @@ execution boundary. No graph editor, full plugin host, ASIO, or recording worksp
 Establish project/document ownership, musical-time primitives, instrument identity, events/parts,
 named multi-instrument patterns, clips, independent organizational groups, justified stable IDs,
 undo/redo, and a bounded versioned serialization foundation.
+Respect shared audio resources versus musical placements and the two local processing levels without
+freezing the final container term/schema or merging Arrangement with mixer identity.
 Avoid UI-heavy implementation. Preserve the intended model in [ARCHITECTURE](ARCHITECTURE.md) and
 compatibility direction in [PROJECT_FORMAT](PROJECT_FORMAT.md).
 
@@ -63,6 +74,8 @@ Establish core node/connection concepts, semantic port validation, a bounded edi
 execution boundary, and minimal graph interaction/structural nodes over the shell. Basic source/output,
 gain and mix/routing may arrive here because execution needs them. Do not implement every candidate
 processor or all graph scopes; [NODE_GRAPH](NODE_GRAPH.md) owns the constraints.
+Respect item-local/containing-container processing direction, progressive graph visibility, free
+spatial placement, and topology-defined dependencies without presuming a final "Layer" model.
 
 ## SEQ-R5 — Pattern Workspace
 
@@ -80,13 +93,16 @@ needed by actual modules. The core graph/workspace/device infrastructure stays h
 ## SEQ-R7 — Sample Lab / Generator V1
 
 Ship one default-installed but removable generator package with one or two bounded families. Provide
-random and nearby/similar variants, justified parameter locks, candidate history, solo and in-pattern
-audition, and acceptance as durable audio. Follow [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
+random and nearby/similar variants, justified parameter locks, candidate history, and a dedicated
+workspace pane with standalone and contextual entry. Provide temporary contextual audition through
+relevant existing downstream processing alongside solo audition, then explicit acceptance as durable
+audio. Resolve bounded substitution/publication/restoration behavior. Follow [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
 
 ## SEQ-R8 — Resampling
 
-Render a pattern or another bounded selected source to a reusable sample. Preserve the source by
-default, define render/tail behavior, and enable immediate reuse. Any optional replace-with-sample
+Render a pattern or another bounded selected source to a reusable sample. Default to the selected
+source/context's audible semantic result (what-you-hear), then define its concrete render boundary
+and tail behavior with evidence. Preserve the source and enable immediate reuse. Any optional replace-with-sample
 operation must be undoable. Full arrangement/multiple-source rendering need not arrive together.
 
 ## SEQ-R9 — Piano Roll
@@ -97,7 +113,10 @@ the Step Sequencer.
 ## SEQ-R10 — Arrangement
 
 Add Playlist/Arrangement with clips in musical time, normal shared pattern references, and explicit
-independent variations. Determine a bounded audio-clip scope rather than assuming a full DAW timeline.
+independent variations. Follow the semi-free direction: user-named structured containers, useful
+default content relationships, and compatible material reuse without permanent one-instrument
+ownership or mixer-channel identity. Resolve bounded compatibility/container-processing relationships
+and audio-clip scope rather than assuming a final Track schema or full DAW timeline.
 
 ## SEQ-R11 — Mixer / Core Processing
 
@@ -124,6 +143,9 @@ richer synthesizers/effects, CLAP/VST3 hosting, additional specialized nodes, pi
 processing and time stretching, deeper routing/sends, FLAC and other justified formats, and additional
 platforms. Latency awareness and realtime safety constrain applicable earlier work; advanced
 compensation is not presumed implemented. Later order and release schedules remain open.
+Automation/modulation work must resolve the open effective-parameter model: base value and control
+sources, composition, domains/units, precedence, smoothing, and rates. Earlier parameter modelling
+must leave room for that control without selecting its formula now.
 ASIO is desired future device capability, subject to concrete implementation and licensing/distribution
 evaluation. Core recording/device responsibilities may be established before polished recording UX;
 this placement does not turn them into removable plugins or impose an electronic-only product boundary.

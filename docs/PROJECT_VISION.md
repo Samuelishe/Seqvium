@@ -30,11 +30,22 @@ Seqvium should particularly reward experimentation, imagination, discovery, fast
 one's own sounds, and transforming musical material. The primary object is the sound and music being
 created. UI and architecture serve that object; they must not become the central creative task.
 
+Pleasure, ease, tactile manipulation, flexibility, and visual quality are part of the product. Seqvium
+should feel like a creative instrument: low ceremony, clear hierarchy, good spatial behavior, and
+expressive but restrained visuals that invite experimentation. Advanced depth appears when requested.
+Coherent interaction quality, not decorative animation everywhere, is the design target;
+[UI_DESIGN](UI_DESIGN.md) owns the evolving visual/interaction guide.
+
 A defining direction is the loop from sound exploration to durable samples, music, resampling, and
 further reuse. [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns its semantics. A default-installed,
 removable creative generator should make both intentional and casual exploration useful. A core
 node graph adds depth for sound/control transformation without forcing graph internals into the
 first musical task; [NODE_GRAPH](NODE_GRAPH.md) owns that direction.
+
+Sample Lab supports standalone discovery and exploration against selected musical context, with
+temporary audition through the relevant existing processing before explicit acceptance. Ordinary
+sampling should capture the audible semantic result of the chosen source/context. These creative
+principles and their unresolved technical boundaries belong to [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
 
 Creation and sound exploration are the workflow specialization: fast transformation, sample exploration,
 resampling, graph-based processing, and little ceremony between imagination and audible result.
@@ -50,6 +61,11 @@ Named reusable multi-instrument patterns let users choose the size of a musical 
 part to a full groove. User-defined instrument/channel groups provide flexible organization independently
 of pattern identity. [ARCHITECTURE](ARCHITECTURE.md) owns those relationships. Major surfaces normally
 compose as flexible internal panes in one main window, under [WORKSPACE](WORKSPACE.md).
+
+The accepted creative direction combines non-destructive item-local processing and shared processing
+of a containing musical container with a semi-free, user-named Arrangement. Global routing remains
+available beyond those two local levels. [ARCHITECTURE](ARCHITECTURE.md) owns the relationships;
+container terminology and its exact domain identity remain open.
 
 ## References and non-goals
 
@@ -75,4 +91,4 @@ creative focus.
 - Does it help someone finish music without adding unrelated ceremony?
 
 High quality interaction is a product requirement, not a luxury postponed because the project is FOSS.
-[UX_CONTRACT](UX_CONTRACT.md) owns the observable principles.
+[UX_CONTRACT](UX_CONTRACT.md) owns the observable principles; [UI_DESIGN](UI_DESIGN.md) guides visual quality.

@@ -40,6 +40,24 @@ Approaching an edge alone must not aggressively capture a pane or fight free pla
 may be explored later. Dock-group identity, allowed relationships, gestures, and nesting remain open;
 do not assume an unlimited IDE-style docking hierarchy.
 
+## Sample Lab and processing-graph targets
+
+Sample Lab is a dedicated standalone workspace pane, movable/resizable under the general pane
+contract, retaining useful exploration state. It can work without a target or against selected
+musical context; [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns those entry modes and audition/acceptance.
+Contextual work does not require a new top-level OS window. No special Sample Lab docking policy
+is selected.
+
+The active musical target/context is project/application interaction state, distinct from pane geometry
+and layout. Collapsing/restoring a useful working surface should preserve its context under the general
+retention contract; target lifetime, selection-following, and cross-project behavior remain open.
+
+Opening an item's/container's processing indicator should open/focus its relevant Node Graph pane.
+If a graph pane already displays that target, normal behavior should favor focusing/updating that
+existing surface over uncontrolled duplicate windows. Whether multiple independent graph panes may
+show different targets remains open; neither a hard single-instance rule nor unlimited instances
+are accepted. [NODE_GRAPH](NODE_GRAPH.md) owns target graph semantics, not pane geometry.
+
 ## Layout ownership and restoration
 
 Workspace layout is primarily application/user workspace state, not musical project content. Opening

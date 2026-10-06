@@ -19,8 +19,11 @@ that separation and the musical model.
 
 ## Progressive graph interaction
 
-Nodes should offer a compact working surface and expanded settings when useful. Ordinary sound
-creation must work before the user understands graph internals. A basic conceptual path can be:
+Graph complexity normally remains hidden until requested. Relevant musical items/containers visibly
+indicate processing through a compact interactive control; opening it reveals the relevant Node Graph
+workspace pane. Exact visuals are not selected. Nodes within the opened canvas should offer a compact
+working surface and deeper settings on demand. Ordinary sound creation must work before the user
+understands graph internals. A basic conceptual path can be:
 
 ```text
 Sample / Instrument -> EQ -> Compressor -> Output
@@ -36,7 +39,40 @@ Sample
 
 These examples demonstrate creative flow, not mandatory default chains, adopted algorithms, or an
 execution API. [UX_CONTRACT](UX_CONTRACT.md) owns mouse-first input and progressive disclosure;
-[WORKSPACE](WORKSPACE.md) owns the internal graph pane's placement and activation.
+[WORKSPACE](WORKSPACE.md) owns pane placement, activation, and target focus;
+[UI_DESIGN](UI_DESIGN.md) owns progressive visual complexity and canvas presentation principles.
+
+## Free spatial canvas and topology-defined processing
+
+The visual canvas permits free two-dimensional node placement for readability and personal preference.
+Screen coordinates are presentation state: left/right/above/below placement does not determine which
+processor executes first. Connections/topology express signal dependencies and processing order.
+For an acyclic path `Input -> EQ -> Compressor -> Delay -> Output`, that connected path defines order;
+branches such as parallel Distortion/Delay feeding Mix express their dependency relationship.
+
+Ordinary processing must not rely on hidden numeric effect priorities. The realtime engine may derive
+an execution schedule from a validated graph, but no scheduling/validation algorithm is selected.
+Arbitrary cycles are not accepted. Feedback remains an audit/research question: explicit feedback
+semantics, delay/state, or specialized nodes are possible future approaches, not accepted solutions
+or permission for zero-delay cycles.
+
+## Local processing scopes and alternate views
+
+[ARCHITECTURE](ARCHITECTURE.md#resources-placements-and-two-local-processing-levels) owns the accepted
+item-local and containing-container processing direction, with mixer/bus/master responsibilities
+beyond it. These workflows motivate local graph scopes without selecting scope identities, all
+possible graphs, nesting, or the final container term. Exact scope ownership remains open.
+
+A **promising UX proposal**, not a hard contract, is a compact chain representation of a simple
+linear graph, allowing ordinary effect reordering without opening the canvas. If adopted, it must
+represent the same canonical graph, not a separate simple-chain DSP system alongside advanced-graph
+DSP. Branching/custom topologies may show a custom-graph indication instead of pretending to be linear.
+Exact visuals, editing rules, and chain/canvas transitions remain open.
+
+Node-settings UX is also open: side inspector, independent workspace pane, overlay, inline controls,
+or a combination are not selected. A promising direction is selecting a node to expose deeper settings
+without uncontrolled windows, with useful settings/inspectors optionally detachable into workspace
+panes. This is a bounded question rather than an accepted interaction.
 
 ## Conceptual connection kinds
 
@@ -54,6 +90,16 @@ everywhere. Host context is not an additional universal wire format.
 
 Exact types, conversion rules, channel negotiation, event/control rates, and execution representation
 are open. Conceptual classes do not select a binary layout, native ABI, or final public plugin API.
+
+The preferred design direction is not to expose every configurable parameter as a permanently visible
+connector. An EQ can show audio input/output while Frequency, Gain, and Q are available through settings.
+Future modulation may make a parameter explicitly exposable/connectable when requested. This preserves
+readability; exposure mechanics, control ports, and their persistence remain open.
+
+Future parameter control must not be blocked by permanently fixed primitive parameter modelling;
+[ARCHITECTURE](ARCHITECTURE.md#future-parameter-control) owns that extensibility requirement. Base value,
+automation, modulation, envelopes/LFO/control sources may contribute to an effective value, but
+composition, units, precedence, smoothing, and rates are not selected here.
 
 ## Editable graph and audio execution
 
@@ -82,6 +128,7 @@ or effects as node types. They consume host services and cannot own or replace t
 
 ## Open design questions
 
-Graph scopes (instrument/channel/bus/master/clip), cycle/feedback handling, validation/preparation
-strategy, port/channel rules, latency propagation/compensation, and live-edit publication remain open
-in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). Do not invent all scopes or freeze a compiler to fill these gaps.
+Graph-scope ownership, cycle/feedback handling, validation/preparation, port/channel rules,
+latency propagation/compensation, and live-edit publication remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+Compact-chain representation, node settings, optional parameter/control exposure, and multiple graph
+pane behavior also need later design. Do not invent all scopes or freeze a compiler to fill these gaps.
