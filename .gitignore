@@ -1,0 +1,17 @@
+# Build output and local package cache
+bin/
+obj/
+/packages/
+
+# Local IDE settings, caches, and user state
+.idea/
+.vs/
+riderModule.iml
+/_ReSharper.Caches/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Keep solutions, project manifests, docs, and deliberately added assets visible to Git.
+# Do not broadly ignore audio/content files: official material needs provenance review.
