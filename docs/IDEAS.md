@@ -1,6 +1,6 @@
 # Ideas
 
-Role: Low-pressure incubator for speculative product, UX, and architecture ideas.
+Role: Low-pressure incubator for speculative product, UX, architecture, and repository-tooling ideas.
 Read when: Retaining or exploring alternatives that are neither accepted nor scheduled nor required risks.
 Authoritative for: Speculative idea records and their promotion/rejection traceability.
 Not authoritative for: Accepted product contracts, roadmap commitments, required unresolved risks, implementation tasks, or debt.
@@ -40,3 +40,31 @@ layout ownership and resolve persistence with WORKSPACE / PROJECT_FORMAT before 
 Required layout persistence/restoration questions remain Q-022 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 The existing container/resource, compact-chain, inspector, automation/modulation, feedback, parameter-port,
 and multiple-graph-pane questions also stay there; they are design obligations, not speculative features.
+
+## I-002 — Named test routes
+
+Status: Idea; future tooling only.
+Origin / owner: Mature MeasPilot route-registry pattern; [TEST_EXECUTION](TEST_EXECUTION.md).
+Value: A single registry could avoid duplicated long filters in documentation/CI. Conceptual names:
+`Portable`, `Audio-Offline`, `NodeGraph`, `Serialization`, `CI-Fast`, and `CI-Full`.
+Promotion condition: Measured suite growth makes ad-hoc filters costly to maintain; define fast/full
+acceptance scope without hiding omitted checks. No route registry, filters, or infrastructure exists now.
+
+## I-003 — Separate semantic repository analysis
+
+Status: Idea.
+Origin / owner: [PROJECT_STATS](PROJECT_STATS.md#evolution-boundary).
+Value: If semantic architecture/dependency analysis is needed, a separate concern such as
+`Seqvium.Tools.RepositoryAnalysis` could own it. ProjectStats might read its results while remaining
+structural diagnostics rather than a Roslyn/ABI/plugin authority.
+Promotion condition: A concrete semantic-analysis need warrants independent scope and dependencies.
+No analyzer or project is selected or scheduled.
+
+## I-004 — Optional ProjectStats trend comparison
+
+Status: Idea.
+Origin / owner: [PROJECT_STATS](PROJECT_STATS.md#reports-output-and-evidence-metadata).
+Value: Compare deliberately saved reports if historical structural changes later help review.
+Promotion condition: Actual use demonstrates value and defines bounded storage/privacy semantics.
+No historical metrics database, committed snapshot stream, or trend infrastructure is introduced;
+changing statistics do not belong in PROJECT_STATE or ordinary history.

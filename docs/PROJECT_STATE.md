@@ -1,15 +1,35 @@
 # Project state
 
-Role: Compact handoff of current repository truth.
+Role: Compact handoff of current repository truth for a contributor/agent without conversational memory.
 Read when: Starting every nontrivial task.
-Authoritative for: Current checkpoint, focus, implemented capability, active blockers.
-Not authoritative for: Contracts, decisions, plans, history, or live Git status.
+Authoritative for: Current checkpoint, implemented capability, focus, validation baseline, active blockers/evidence gaps.
+Not authoritative for: Contracts, decisions, plans, history, source topology, or live Git status.
 
-- Checkpoint: SEQ-KB-R3 complete (2026-10-06); development/portability policy and passive configuration validated.
-- Implemented capability: documentation/policy foundation with `.editorconfig` / `.gitattributes` and
-  [engineering owners](INDEX.md). No application/audio implementation, dependencies, test projects,
-  executable tooling, or CI; the pre-existing `Seqvium.sln` contains no projects.
-- Current focus: preserve the accepted design and engineering baseline.
-  [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-probe) remains pending / not started.
-- Active blockers: none recorded for the policy foundation. Audio architecture remains unvalidated;
-  see [open risks](KNOWN_PROBLEMS.md). The FOSS license is unselected.
+## Current checkpoint
+
+SEQ-KB-R4 complete (2026-10-06): Apache-2.0 selected, public README refreshed, and pre-code
+engineering/test/current-state policy and future ProjectStats contract finalized.
+
+## Implemented capability
+
+Documentation/legal/policy foundation, root [LICENSE](../LICENSE), and passive `.editorconfig` /
+`.gitattributes`. No application/audio/experiment implementation, dependencies, test projects,
+executable tooling, or CI exists; the pre-existing `Seqvium.sln` contains no projects.
+
+## Current focus
+
+Preserve the accepted product and repository foundation. Executable work requires explicit owner
+authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-probe) remains **pending / not started**;
+[ProjectStats](PROJECT_STATS.md) is a future contract, not a runnable tool.
+
+## Validation baseline
+
+R4 documentation/license integrity and scope checks passed; see the bounded
+[work-log entry](WORK_LOG.md#2026-10-06--seq-kb-r4). No build/test/runtime/platform acceptance is claimed.
+
+## Active blockers / evidence gaps
+
+No blocker recorded for the completed repository foundation. Audio architecture is unvalidated;
+source/toolchain/test choices, future dependency compatibility, and tooling sequencing remain open in
+[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). Compact handoff policy belongs to
+[documentation governance](DOCUMENTATION_GOVERNANCE.md#compact-current-state-contract).

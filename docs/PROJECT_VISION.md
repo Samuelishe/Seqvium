@@ -13,7 +13,8 @@ Seqvium is intended to be a free and open-source desktop music workstation. Its 
 
 It serves people starting to make music and people who want to grow from short ideas into finished
 tracks without abandoning an approachable tool. Simple defaults must not impose an artificially low
-musical ceiling. FOSS intent is accepted; the final license is still open.
+musical ceiling. Seqvium-authored work uses Apache-2.0; [THIRD_PARTY](THIRD_PARTY.md) owns the
+licensing/provenance boundary and the root [LICENSE](../LICENSE) contains the authoritative text.
 
 Seqvium is a universal music workstation, not genre-locked. Beats/electronic music, ambient,
 experimental and sample-based work, instrument/plugin use, guitar or microphone recording through

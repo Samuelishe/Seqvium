@@ -43,6 +43,10 @@ This includes analyzer packages, formatters, CMake/Ninja, native package manager
 and code generation. An experimentally used developer tool does not automatically become a repository
 requirement. Selection must follow task scope and actual project needs.
 
+[PROJECT_STATS](PROJECT_STATS.md) defines the accepted future BCL-only/cross-platform diagnostics
+direction. No CLI/project exists or is authorized by that contract alone; introduction waits for explicit
+code authorization. It is independent repository tooling, not part of the SEQ-R0 audio probe.
+
 ## Machine enforcement and text consistency
 
 If a rule can be enforced cheaply and deterministically by compiler/editor/build/CI, prefer enforcement

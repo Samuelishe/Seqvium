@@ -31,10 +31,13 @@ Other documents may summarize and link but must not create competing contracts. 
   lifetime/refactoring rules, and warning policy; subsystem owners retain architecture and behavior.
   [DEVELOPMENT](DEVELOPMENT.md) owns environment, SDK/tool version authority, entry points, and tool
   introduction. Actual package versions remain manifest-owned.
-- [TEST_EXECUTION](TEST_EXECUTION.md) owns verification, test quality, future commands, and evidence
+- [TEST_EXECUTION](TEST_EXECUTION.md) owns test topology/quality, verification, future commands, and evidence
   tiers; [PORTABILITY](PORTABILITY.md) owns platform targets, portable boundaries, and claim limits;
   [CI_CD](CI_CD.md) owns hosted automation evolution and trigger policy. None implies installed tools,
   executable commands, workflows, or validated platform parity.
+- [PROJECT_STATS](PROJECT_STATS.md) owns the future structural diagnostics contract, including metrics,
+  reports, advisory diagnostics, privacy/exclusions, and evolution limits. Development owns actual tool
+  introduction/setup; test execution owns suite topology/evidence. This contract does not authorize code.
 - Current state is a compact present-tense handoff; work log records completed facts. The planning
   registers below represent distinct states rather than interchangeable task lists.
 
@@ -43,10 +46,31 @@ experiment report owns its observations, not final production contracts. AGENTS 
 startup/routing and stays short; it must not accumulate product detail or history.
 
 [THIRD_PARTY](THIRD_PARTY.md) is the canonical provenance ledger and candidate evaluation boundary,
-including musical content, other assets, repository services/actions, and historical replacements.
+including the Apache-2.0 project licensing boundary, musical content, other assets, repository
+services/actions, and historical replacements. Root [LICENSE](../LICENSE) owns authoritative license text;
+the ledger never substitutes for legally required bundled notices or relicenses third-party material.
 Exact installed versions belong to build/package/native manifests or workflows once present; the
 ledger links them instead of maintaining a second lock. Asset-local creation/derivation evidence may
-be linked from the ledger. README states licensing status and routes here; it does not select a license.
+be linked from the ledger. README summarizes the selected license and routes here.
+
+## Compact current-state contract
+
+[PROJECT_STATE](PROJECT_STATE.md) answers: "If a contributor/agent appears with no conversational
+memory, where is the project right now?" Keep it a present-tense handoff, not a history log. Its normal
+shape is **Current checkpoint**, **Implemented capability**, **Current focus**, **Validation baseline**,
+and **Active blockers / evidence gaps**. At the no-code stage, validation may be minimal or omitted
+when it would be empty/artificial.
+
+Approximately **50–80 lines** should normally suffice; this is a soft readability signal, not a minimum,
+hard limit, or CI gate. A smaller foundation state is preferable to padding. Once implementation exists,
+validation summarizes latest meaningful local Release build/test, hosted platform, and bounded runtime/audio
+evidence with detail links. Do not accumulate every historical test run or claim evidence absent from reports.
+[TEST_EXECUTION](TEST_EXECUTION.md#evidence-tiers) owns optional evidence labels and their limits.
+
+If current state grows substantially, move history to WORK_LOG, accepted choices to DECISIONS_LOG,
+detailed validation to an experiment/validation report, plans to ROADMAP, unresolved questions to
+KNOWN_PROBLEMS, source topology to future FILE_INDEX, and live Git state to Git. Do not create a line-count
+checker or new evidence infrastructure merely to enforce this discipline.
 
 ## Planning-state separation
 
@@ -91,13 +115,14 @@ and ask for needed input rather than invent acceptance. External references neve
 
 | Changed truth | Update |
 | --- | --- |
-| Current checkpoint, focus, capability, active blocker | PROJECT_STATE; avoid live Git status and transient attempts |
+| Current checkpoint, capability, focus, meaningful validation baseline, blocker/evidence gap | PROJECT_STATE; avoid chronology, live Git status, and transient attempts |
 | Product, interaction, visual design, responsibility, audio, graph, workspace, sample, extension, or persistence contract | The corresponding owner in the same change |
 | Durable accepted/reversed choice | DECISIONS_LOG plus affected owner; link evidence |
 | Future scope or stage order | ROADMAP |
 | New/narrowed/resolved concrete uncertainty | KNOWN_PROBLEMS; retain evidence of resolution |
 | Speculative idea retained/explored/promoted/rejected | IDEAS; link the resulting owner/decision/plan/risk on promotion |
 | Coding, development/tooling, verification, portability, or CI policy | The corresponding engineering owner; passive/build/CI configuration when actually justified |
+| ProjectStats metrics/output/privacy/diagnostic/evolution contract | PROJECT_STATS; test execution/development only for their owned boundaries |
 | Existing compromise introduced/resolved | TECH_DEBT, with actual evidence |
 | Meaningful stage completed | One bounded factual WORK_LOG entry |
 | Dependency, service/action, or asset evaluated/introduced/upgraded/replaced/removed; obligations changed | THIRD_PARTY; retain historical provenance and manifest version authority |
@@ -118,10 +143,13 @@ The document ownership model stays stable while retrieval mechanisms evolve:
    portability, CI, and ideas owners now exist before source, with passive `.editorconfig` and
    `.gitattributes`. This does not start implementation. `docs/FILE_INDEX.md` remains deferred until
    meaningful source topology exists. Add small baseline tooling or one local workflow skill only
-   for an observed need; skills are not mandatory infrastructure.
+   for an observed need; skills are not mandatory infrastructure. SEQ-KB-R4 adds an accepted future
+   [ProjectStats contract](PROJECT_STATS.md), independent from retrieval evolution; executable tooling
+   still waits for explicit authorization.
 3. **Stage 2 — measurable context-selection problems:** consider a generated repository map and
    bounded context planner inspired by MeasPilot. Generated outputs remain disposable retrieval
-   artifacts, not canonical truth. Do not create manifests, budgets, or ProjectStats tools now.
+   artifacts, not canonical truth. Do not create retrieval manifests or budgets now; structural
+   ProjectStats introduction follows its separate owner and is not a prerequisite for retrieval tooling.
 4. **Stage 3 — exact routing/search demonstrably insufficient:** consider a local semantic index,
    hybrid RAG, and possibly MCP exposure. Retrieval must retain source provenance and never silently
    replace Markdown, source, tests, or Git history as authority.

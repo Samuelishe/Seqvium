@@ -5,7 +5,8 @@ Read when: Planning experiments or checking whether an uncertain choice has evid
 Authoritative for: Open uncertainty, impact, and intended resolution paths.
 Not authoritative for: Accepted resolutions, existing implementation debt, progress, or stage order.
 
-These are questions about future work, not bugs in a nonexistent application. All entries are open.
+These are questions about future work, not bugs in a nonexistent application. Open tables contain
+unresolved scope; partial/resolved outcomes are retained below with links for traceability.
 Owners keep the detailed constraints; this register identifies what is not yet established.
 Speculative possibilities without required resolution belong to [IDEAS](IDEAS.md); agreed staged
 intent belongs to [ROADMAP](ROADMAP.md). No entry below is implementation debt.
@@ -35,7 +36,7 @@ Unresolved findings must retain their evidence limits rather than become accepte
 | Q-011 | Contextual Sample Lab target/substitution, realtime publication, downstream audition boundaries, stop/cancel/restoration, similarity, locks, and history | SEQ-R7 bounded design/evidence for standalone and contextual modes, preserving existing processing and temporary reversible audition until explicit acceptance | [Sample workflow](SAMPLE_WORKFLOW.md), [audio](AUDIO_ENGINE.md) |
 | Q-012 | Concrete what-you-hear render taps, mixer/send/master inclusion, bounds/tails, latency, channels/rate, normalization, and cancellation | SEQ-R8 map one semantic selection to an explicit render boundary; item, container, and range scopes must not silently collapse to dry or whole-Master capture | [Sample workflow](SAMPLE_WORKFLOW.md), [audio](AUDIO_ENGINE.md) |
 | Q-013 | Missing realtime extension playback and compatible reattachment | Define explicit UI/fallback and verify preserved data on removal/save/reinstall | [Extensions](EXTENSIONS.md), [project format](PROJECT_FORMAT.md) |
-| Q-014 | Final FOSS license and dependency/codec/native redistribution obligations | Select license explicitly and evaluate actual proposed additions before distribution | [Third party](THIRD_PARTY.md) |
+| Q-014 | Future dependency/asset/codec/native compatibility and redistribution obligations; project-license selection resolved | Apache-2.0 selected by D-029; evaluate concrete additions and their distributed-product obligations before distribution | [Third party](THIRD_PARTY.md) |
 | Q-015 | Final visual language and detailed editing interaction | Deliberate gradual UI design stages; product-led interaction and DPI/input validation when UI exists | [UI design](UI_DESIGN.md), [UX](UX_CONTRACT.md) |
 | Q-016 | CLAP/VST3 hosting and Linux/macOS release schedule | Evidence-led later scope; no support or delivery commitment now | [Extensions](EXTENSIONS.md), [architecture](ARCHITECTURE.md) |
 
@@ -84,10 +85,23 @@ or permission to start SEQ-R0. The policy baseline does not select their answers
 | Q-036 | Exact .NET SDK pin/roll-forward and validated language policy | Decide with the first managed project; add `global.json` if justified for reproducibility | [Development](DEVELOPMENT.md) |
 | Q-037 | Final UI framework adoption | Evaluate proposed Avalonia against actual product/platform/API/license needs before application implementation | [Architecture](ARCHITECTURE.md), [development](DEVELOPMENT.md), [provenance](THIRD_PARTY.md) |
 | Q-038 | Native compiler/build system and compiler warning policy, if R0 selects native | Choose with evidence across Windows/Linux/macOS; define native warning/suppression rules for the selected language/toolchain | [Development](DEVELOPMENT.md), [portability](PORTABILITY.md), [audio](AUDIO_ENGINE.md) |
-| Q-039 | Test framework, test platform, and exact package versions | Choose with first test projects, using manifest-owned versions; then document real commands | [Test execution](TEST_EXECUTION.md), [development](DEVELOPMENT.md) |
+| Q-039 | Initial test framework, test platform, and exact package versions | Choose with the first managed test project, using manifest-owned versions; then document real commands | [Test execution](TEST_EXECUTION.md), [development](DEVELOPMENT.md) |
 | Q-040 | Concrete CI path filters and required-check policy | Resolve together once workflows/checker exist so docs-only changes do not leave required checks pending | [CI/CD](CI_CD.md) |
 | Q-041 | Supported release architecture/RID matrix and runtime prerequisites | Decide for actual distribution with build/interop/packaging and declared runtime/device evidence; no dates/parity implied | [Portability](PORTABILITY.md) |
 | Q-042 | Formatter/analyzer policy beyond current targeted diagnostics | Evaluate repeated source mistakes and real style once source exists; introduce repository-scoped tools only for concrete benefit | [Coding guidelines](CODING_GUIDELINES.md), [development](DEVELOPMENT.md) |
+| Q-043 | Which actual native/UI/plugin-host execution or dependency constraints warrant additional test projects? | Begin with one main managed suite; split only on demonstrated TFM/platform/runtime/host/lifecycle differences, not subsystem folders | [Test execution](TEST_EXECUTION.md) |
+| Q-044 | Exact ProjectStats ownership-path classification after source topology exists | Define production/test/tooling/experiment categories and corpus/path rules against real topology; verify with synthetic repositories | [ProjectStats](PROJECT_STATS.md) |
+| Q-045 | Useful ProjectStats diagnostics and thresholds after real repository sizes exist | Evaluate structural review signals on real sizes; keep stable codes/advisory semantics without arbitrary gates | [ProjectStats](PROJECT_STATS.md) |
+| Q-046 | Is a dedicated pre-R0 repository-tooling implementation stage useful after code authorization? | Owner explicitly chooses sequencing/scope; ProjectStats may precede the probe but is not silently inserted into R0 or the roadmap | [Development](DEVELOPMENT.md), [ProjectStats](PROJECT_STATS.md), [roadmap](ROADMAP.md) |
+
+## Retained resolution trace
+
+**Q-014 — Project-license selection resolved; third-party scope remains open.** The original question
+was "Final FOSS license and dependency/codec/native redistribution obligations". SEQ-KB-R4 selected
+Apache License 2.0 for Seqvium-authored work through
+[D-029](DECISIONS_LOG.md#d-029--seqvium-uses-apache-license-20) and root [LICENSE](../LICENSE).
+The project license is no longer an open choice. The narrowed Q-014 table entry retains only future
+dependency/content compatibility and redistribution evaluation under [THIRD_PARTY](THIRD_PARTY.md).
 
 When evidence resolves an entry, record the result and link its report/decision; do not erase the
 reasoning. A compromise actually introduced into implementation belongs in [TECH_DEBT](TECH_DEBT.md).

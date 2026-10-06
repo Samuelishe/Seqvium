@@ -40,6 +40,7 @@ All routes start with current state; add these owners as needed:
 | C# implementation / refactoring | [CODING_GUIDELINES](docs/CODING_GUIDELINES.md), architecture + affected owner |
 | Development environment / local tooling / SDK | [DEVELOPMENT](docs/DEVELOPMENT.md) |
 | Tests / verification | [TEST_EXECUTION](docs/TEST_EXECUTION.md) + affected owner and actual test setup |
+| ProjectStats / structural repository diagnostics | [PROJECT_STATS](docs/PROJECT_STATS.md), development and test execution for introduction/verification |
 | Portability / platform-specific work | [PORTABILITY](docs/PORTABILITY.md) + affected architecture owner |
 | CI / hosted automation / release validation | [CI_CD](docs/CI_CD.md); test execution / portability as needed |
 | Planning | [ROADMAP](docs/ROADMAP.md) |
@@ -47,7 +48,7 @@ All routes start with current state; add these owners as needed:
 | Existing implementation compromises | [TECH_DEBT](docs/TECH_DEBT.md) |
 | Concrete unresolved risks / evidence gaps | [KNOWN_PROBLEMS](docs/KNOWN_PROBLEMS.md), [DECISIONS_LOG](docs/DECISIONS_LOG.md) |
 | Documentation / ownership | [DOCUMENTATION_GOVERNANCE](docs/DOCUMENTATION_GOVERNANCE.md) |
-| Third-party dependencies / resources | [THIRD_PARTY](docs/THIRD_PARTY.md) + affected owner |
+| Project licensing / third-party dependencies or resources | [THIRD_PARTY](docs/THIRD_PARTY.md), root [LICENSE](LICENSE) for license text + affected owner |
 | Experiments | [Experiment guide](docs/experiments/README.md) + affected technical owner |
 
 ## Change and verification

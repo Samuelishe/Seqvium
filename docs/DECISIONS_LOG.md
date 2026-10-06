@@ -7,6 +7,7 @@ Not authoritative for: Current implementation, detailed contracts, proposals, or
 
 D-001 through D-008 record the SEQ-KB-R0 mandate; D-009 through D-016 record SEQ-KB-R1 on 2026-10-06.
 D-017 through D-022 record SEQ-KB-R2; D-023 through D-028 record SEQ-KB-R3 on 2026-10-06.
+D-029 through D-032 record SEQ-KB-R4 on 2026-10-06.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
 contract. No supersessions exist yet; the later KB stages refine direction without accepting technical proposals.
 New decisions need an ID, status, basis/evidence, rationale, affected owner, and explicit supersession
@@ -263,8 +264,53 @@ or resolution; promotion leaves traceability. Design uncertainty is not debt.
 Owner: [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md#planning-state-separation);
 speculative records in [IDEAS](IDEAS.md).
 
+## D-029 — Seqvium uses Apache License 2.0
+
+Status: Accepted.
+Basis: Explicit SEQ-KB-R4 licensing mandate;
+[official Apache text](https://www.apache.org/licenses/LICENSE-2.0.txt) and
+[OSI approval](https://opensource.org/license/apache-2.0).
+Rationale: Seqvium's own work is permissively open source and may be used commercially, modified,
+redistributed, and developed into derivative works broadly under the license terms. Apache-2.0 adds
+an explicit contributor patent grant without requiring derivative Seqvium code to remain open.
+Third-party license boundaries and distribution obligations remain intact.
+Owners: [THIRD_PARTY](THIRD_PARTY.md#project-license-and-material-boundaries) for the licensing/provenance
+boundary; root [LICENSE](../LICENSE) for authoritative license text.
+Resolution: Project-license selection in Q-014 is resolved; future component compatibility remains open.
+This completes D-001's earlier FOSS intent without superseding its product direction.
+
+## D-030 — Future ProjectStats repository diagnostics
+
+Status: Accepted future tooling direction; no executable project exists.
+Basis: SEQ-KB-R4 repository-tooling mandate, informed by the Fovium structural-diagnostics pattern.
+Rationale: A cross-platform, initially BCL-only structural CLI can provide useful repository diagnostics
+without production/UI/audio dependencies or quality authority. Deterministic ordering, sanitized metadata,
+safe exclusions, advisory diagnostics, and synthetic-repository tests bound its responsibility.
+Owner: [PROJECT_STATS](PROJECT_STATS.md); introduction/setup in [DEVELOPMENT](DEVELOPMENT.md),
+test placement/evidence in [TEST_EXECUTION](TEST_EXECUTION.md).
+Boundary: Requires later explicit code authorization; not part of SEQ-R0 and not started by SEQ-KB-R4.
+
+## D-031 — Compact current-state handoff with bounded evidence
+
+Status: Accepted repository policy, refining D-007.
+Basis: SEQ-KB-R4 handoff mandate and mature Fovium/MeasPilot current-state growth experience.
+Rationale: Checkpoint, capability, focus, latest meaningful validation, and active gaps answer where the
+project is now. A soft 50–80-line discipline and links to proper history/decision/evidence owners preserve
+readability without a machine gate or chronological test-run accumulation.
+Owner: [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md#compact-current-state-contract);
+current facts in [PROJECT_STATE](PROJECT_STATE.md), evidence labels in [TEST_EXECUTION](TEST_EXECUTION.md).
+
+## D-032 — One main managed test project first
+
+Status: Accepted future test architecture policy; framework/platform unselected.
+Basis: SEQ-KB-R4 test-topology and deterministic-evidence mandate.
+Rationale: Domain/feature folders in one main suite avoid a project per subsystem. Separate projects
+need different execution/dependency contracts. Deterministic concurrency, generated fixtures, offline
+audio/scheduling, compatibility coverage, and separate manual/device evidence support meaningful checks.
+Owner: [TEST_EXECUTION](TEST_EXECUTION.md); ProjectStats-specific cases in [PROJECT_STATS](PROJECT_STATS.md).
+
 Final application decomposition, engine language/backend/ABI, extension/package API, project format,
-license, visual language, plugin-hosting/isolation strategy, graph compiler/port ABI, workspace layout
+visual language, plugin-hosting/isolation strategy, graph compiler/port ABI, workspace layout
 mechanism, platform release schedule, final Layer/Track terminology/schema, node-settings UX,
 arbitrary feedback, automation/modulation formula, and compact-chain visuals are **not accepted decisions**.
 SDK pin/roll-forward, final UI adoption, native toolchain/warning policy, release RIDs, CI actions/filters,

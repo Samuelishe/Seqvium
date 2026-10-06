@@ -2,11 +2,47 @@
 
 Role: Provenance ledger and evaluation boundary for external components and material.
 Read when: Evaluating, introducing, upgrading, replacing, or removing a dependency, service, action, or asset.
-Authoritative for: Introduced material, candidate status, provenance, obligations, and future entry fields.
-Not authoritative for: Final technical choices, subsystem design, installed-version locks, or project licensing selection.
+Authoritative for: Project licensing/provenance boundary, introduced material, candidate status, obligations, and future entry fields.
+Not authoritative for: Authoritative license text, final technical choices, subsystem design, or installed-version locks.
 
-Seqvium's project license has not been selected yet. Third-party components retain their own licenses
-and terms. Do not create a final LICENSE or infer license compatibility from FOSS intent.
+## Project license and material boundaries
+
+Seqvium-authored work is licensed under **Apache License, Version 2.0** (`Apache-2.0`) unless a
+file/component explicitly states another license. This covers Seqvium-authored code, documentation,
+and assets. The root [LICENSE](../LICENSE) is the primary authoritative project license artifact,
+downloaded unchanged from the [official Apache text](https://www.apache.org/licenses/LICENSE-2.0.txt).
+Acceptance is recorded in [D-029](DECISIONS_LOG.md#d-029--seqvium-uses-apache-license-20).
+
+Apache-2.0 permits commercial use, modification, redistribution, and derivative works under its terms,
+includes an explicit contributor patent grant, and does not require derivative Seqvium code to remain
+open source. It is a mature [OSI-approved license](https://opensource.org/license/apache-2.0) for
+collaborative permissive FOSS; no extra use or redistribution restrictions are added.
+
+**Seqvium's Apache-2.0 license does not relicense third-party material.**
+
+| Material | Licensing boundary |
+| --- | --- |
+| Seqvium-authored code/docs/assets | Apache-2.0 unless explicitly identified otherwise |
+| Third-party dependencies | Their own licenses/terms, including relevant transitive and distribution obligations |
+| Third-party assets/content | Their own licenses/terms and redistribution rights, independently of application code |
+| Generated/derived material | Source/input obligations may remain; generation, transformation, or resampling does not clear them |
+
+Evaluate each future dependency/asset for compatibility with the **distributed product** before
+distribution. OSI approval alone does not imply all licenses can be combined with Apache-2.0.
+Copyleft, SDK terms, codec/patent constraints, and redistribution requirements need concrete evaluation.
+
+### Notices and future source identification
+
+No current attribution content requires a root `NOTICE`; do not create one for ceremony. Apache-2.0
+NOTICE handling becomes relevant when Seqvium has its own notices or redistributed components require
+attribution treatment. Evaluate license/notice obligations before distribution when dependencies/assets
+are introduced. This ledger owns provenance/evaluation and **does not substitute for legally required
+bundled licenses or notices**.
+
+When actual source files are created, prefer concise `SPDX-License-Identifier: Apache-2.0` where
+file-level identification is useful. Do not add large per-file boilerplate by default unless later
+tooling/legal policy establishes a concrete need. Do not add SPDX headers to all Markdown; root LICENSE
+remains the primary license artifact.
 
 ## Introduced
 
@@ -76,8 +112,8 @@ redistributed runtime components; do not add CI just to populate this register.
 Each introduced component/package, action, or service must record:
 
 - Exact component/package/action identity and author/organization.
-- License/terms, notices and redistribution/source obligations; compatibility with Seqvium's selected
-  license when known. Until selection, record that compatibility remains unresolved.
+- License/terms, notices and redistribution/source obligations; concrete compatibility evaluation
+  with Seqvium's Apache-2.0 work and the intended distributed product.
 - Purpose and owning subsystem, official source, and introduced stage/decision when relevant.
 - Form: managed, native, runtime, service, action, or asset; supported platforms where relevant.
 - Version authority: the actual `.csproj`, central package/package manifest, native-version manifest,
@@ -110,7 +146,8 @@ Reviewed on 2026-10-06 through read-only GitHub access, on each repository's def
   [DECISIONS-LOG](https://github.com/Samuelishe/Fovium/blob/master/docs/DECISIONS-LOG.md),
   [KNOWN-PROBLEMS](https://github.com/Samuelishe/Fovium/blob/master/docs/KNOWN-PROBLEMS.md).
   Applied the owner metadata pattern, subject-focused contracts, selective reading, and canonical
-  provenance/evaluation ledger with manifest-owned versions and unselected project licensing. Did
+  provenance/evaluation ledger with manifest-owned versions. Project licensing was unselected at
+  SEQ-KB-R0; [D-029](DECISIONS_LOG.md#d-029--seqvium-uses-apache-license-20) later selected Apache-2.0. Did
   not import photograph-specific UX rules or production architecture.
 - **[MeasPilot](https://github.com/Samuelishe/MeasPilot)** (access-restricted reference):
   [AGENTS](https://github.com/Samuelishe/MeasPilot/blob/master/AGENTS.md),

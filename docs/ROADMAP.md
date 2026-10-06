@@ -35,6 +35,17 @@ passive `.editorconfig` / `.gitattributes`. This is a documentation/configuratio
 no application/experiment projects, packages, executable tooling, tests, builds, or workflows.
 No implementation stage is started or renumbered; completion belongs to PROJECT_STATE / WORK_LOG.
 
+## SEQ-KB-R4 — Repository Foundation Finalization
+
+Finalize Apache-2.0 licensing, README/public identity, test architecture policy, compact current-state /
+evidence policy, and the future [ProjectStats contract](PROJECT_STATS.md). Documentation/legal/passive
+repository work only; no executable application, experiment, tests, tooling, or CI is started.
+Completion belongs to PROJECT_STATE / WORK_LOG; implementation stages are not renumbered.
+
+ProjectStats is an early repository-tooling foundation for later explicit code authorization, separate
+from the audio probe. It may precede the probe; whether a dedicated pre-R0 tooling stage is useful
+remains Q-046 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md), not an inserted implementation commitment.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 SEQ-R0 remains pending / not started after the documentation stages.

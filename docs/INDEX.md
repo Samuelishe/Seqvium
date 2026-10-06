@@ -12,7 +12,7 @@ question. The [README](../README.md) is the public introduction.
 | Owner | Subject / read when |
 | --- | --- |
 | [AGENTS](../AGENTS.md) | Operational startup, safety, task routing, and verification |
-| [PROJECT_STATE](PROJECT_STATE.md) | Current checkpoint, focus, implemented capability, active blockers |
+| [PROJECT_STATE](PROJECT_STATE.md) | Current checkpoint, implemented capability, focus, validation baseline, blockers/evidence gaps |
 | [PROJECT_VISION](PROJECT_VISION.md) | Product identity, audience, creative philosophy, non-goals |
 | [UX_CONTRACT](UX_CONTRACT.md) | Observable interaction principles and general workflow semantics |
 | [UI_DESIGN](UI_DESIGN.md) | Evolving visual/interaction guide: hierarchy, chrome, density, indicators, restrained feedback |
@@ -25,7 +25,8 @@ question. The [README](../README.md) is the public introduction.
 | [PROJECT_FORMAT](PROJECT_FORMAT.md) | Serialization compatibility, media policy, unknown-data preservation |
 | [CODING_GUIDELINES](CODING_GUIDELINES.md) | C# implementation/refactoring, English source language, async/lifetime, warning baseline |
 | [DEVELOPMENT](DEVELOPMENT.md) | Developer environment, local tools, SDK/version authority, eventual entry points, text consistency |
-| [TEST_EXECUTION](TEST_EXECUTION.md) | Proportional verification, test quality, future commands, Release gates, evidence tiers |
+| [TEST_EXECUTION](TEST_EXECUTION.md) | Test topology/quality, proportional verification, future commands, Release gates, evidence tiers |
+| [PROJECT_STATS](PROJECT_STATS.md) | Future structural diagnostics contract: metrics/reports, advisory signals, privacy/exclusions, evolution boundary; no tool exists |
 | [PORTABILITY](PORTABILITY.md) | Windows/Linux/macOS target, portable boundaries, conditional native distribution, claim limits |
 | [CI_CD](CI_CD.md) | Simple initial managed matrix, docs validation, later feedback/acceptance split, workflow principles |
 | [ROADMAP](ROADMAP.md) | Ordered future stages and their scope |
@@ -35,7 +36,8 @@ question. The [README](../README.md) is the public introduction.
 | [TECH_DEBT](TECH_DEBT.md) | Compromises actually present in implemented work |
 | [WORK_LOG](WORK_LOG.md) | Concise facts about meaningful completed work |
 | [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md) | Ownership rules, conflicts, updates, selective reading, RAG evolution |
-| [THIRD_PARTY](THIRD_PARTY.md) | Actual/candidate dependencies and external-resource provenance |
+| [THIRD_PARTY](THIRD_PARTY.md) | Apache-2.0 project licensing boundary, actual/candidate dependencies and external-resource provenance |
+| [LICENSE](../LICENSE) | Complete authoritative Apache License 2.0 text for Seqvium-authored work |
 | [Experiment guide](experiments/README.md) | Evidence-report conventions and experiment discovery |
 
 Engineering policy exists before source; it does not imply installed tools or executable test commands.

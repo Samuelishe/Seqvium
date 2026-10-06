@@ -71,3 +71,18 @@ is not established by local history; this log does not duplicate Git's commit ch
 - No application/experiment/test/native projects, dependencies, workflows, executable tooling, builds,
   or tests introduced/run. TECH_DEBT remains empty; SEQ-R0 remains pending / not started. Codex did not
   commit/push and does not do so without explicit authorization.
+
+## 2026-10-06 — SEQ-KB-R4
+
+- Selected Apache-2.0 for Seqvium-authored work and added complete unchanged official root LICENSE;
+  retained third-party obligations, future NOTICE/SPDX policy, and Q-014 resolution trace under D-029.
+- Refreshed the public README; refined compact current-state/evidence policy and one-main-suite-first
+  test architecture, deterministic synchronization/fixtures, and separate offline/manual/device evidence.
+- Added [PROJECT_STATS](PROJECT_STATS.md) as the future BCL-only/cross-platform structural diagnostics
+  contract with advisory outputs, privacy/exclusions, synthetic-repository tests, and explicit code-authorization
+  boundary. Routed the owner; kept named test routes, semantic analysis, and trends speculative.
+- Verified canonical LICENSE byte equality, Markdown relative links/anchors, ownership/status/planning
+  separation, compact state, LF/scope, `git diff --check`, and final Git status/staging preservation.
+- No executable application/experiment/tooling code, test/native projects, packages, build scripts, or
+  CI introduced; no build/tests, commit, or push performed. TECH_DEBT remains empty; SEQ-R0 remains
+  pending / not started.
