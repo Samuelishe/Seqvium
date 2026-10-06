@@ -65,9 +65,9 @@ a project should not normally rewrite the user's preferred pane arrangement. Pan
 from project-side node/connection data or graph-editor layout described in [NODE_GRAPH](NODE_GRAPH.md).
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns document serialization, not user workspace preferences.
 
-Named/saved workspaces or optional project-specific layouts may be considered if real usage shows
-value; they are not initial requirements. Exact persistence of positions, sizes, minimized state, and
-dock relationships remains open.
+The speculative named/saved workspace and optional project-specific layout possibilities are retained
+as [I-001](IDEAS.md#i-001--optional-saved-workspace-arrangements); they are not initial requirements.
+Exact persistence of positions, sizes, minimized state, and dock relationships remains open.
 
 Restored geometry must eventually be clamped/adapted safely to changed main-window size, DPI, or
 display environment so panes remain reachable. Main-window composition must stay responsive and

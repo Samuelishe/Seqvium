@@ -28,9 +28,20 @@ identity, two local processing levels, progressive graph visibility, free canvas
 semi-free Arrangement, and an evolving UI design owner. Completed documentation stage; see
 [WORK_LOG](WORK_LOG.md#2026-10-06--seq-kb-r2). No implementation stage is started or renumbered.
 
+## SEQ-KB-R3 — Development & Portability Policy
+
+Establish canonical coding, development, verification, portability, CI, and ideas owners with minimal
+passive `.editorconfig` / `.gitattributes`. This is a documentation/configuration stage before source:
+no application/experiment projects, packages, executable tooling, tests, builds, or workflows.
+No implementation stage is started or renumbered; completion belongs to PROJECT_STATE / WORK_LOG.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 SEQ-R0 remains pending / not started after the documentation stages.
+
+Before future probe work, follow [CODING_GUIDELINES](CODING_GUIDELINES.md), [DEVELOPMENT](DEVELOPMENT.md),
+[PORTABILITY](PORTABILITY.md), and [TEST_EXECUTION](TEST_EXECUTION.md). Policy preparation does not
+authorize starting the probe.
 
 Validate the riskiest architecture before application construction. Scope a minimal experimental host,
 device initialization, realtime callback, audio clock, basic transport, scheduled sample/tone events,

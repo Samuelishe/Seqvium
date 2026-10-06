@@ -23,15 +23,22 @@ question. The [README](../README.md) is the public introduction.
 | [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, lifecycle, missing-extension preservation |
 | [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Standalone/contextual Sample Lab, audition, acceptance, what-you-hear resampling |
 | [PROJECT_FORMAT](PROJECT_FORMAT.md) | Serialization compatibility, media policy, unknown-data preservation |
+| [CODING_GUIDELINES](CODING_GUIDELINES.md) | C# implementation/refactoring, English source language, async/lifetime, warning baseline |
+| [DEVELOPMENT](DEVELOPMENT.md) | Developer environment, local tools, SDK/version authority, eventual entry points, text consistency |
+| [TEST_EXECUTION](TEST_EXECUTION.md) | Proportional verification, test quality, future commands, Release gates, evidence tiers |
+| [PORTABILITY](PORTABILITY.md) | Windows/Linux/macOS target, portable boundaries, conditional native distribution, claim limits |
+| [CI_CD](CI_CD.md) | Simple initial managed matrix, docs validation, later feedback/acceptance split, workflow principles |
 | [ROADMAP](ROADMAP.md) | Ordered future stages and their scope |
 | [DECISIONS_LOG](DECISIONS_LOG.md) | Accepted durable decisions, rationale, explicit supersession |
-| [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) | Unresolved questions, risks, validation gaps |
+| [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) | Concrete unresolved questions, risks, validation gaps requiring resolution |
+| [IDEAS](IDEAS.md) | Speculative incubator with no acceptance, schedule, or required resolution |
 | [TECH_DEBT](TECH_DEBT.md) | Compromises actually present in implemented work |
 | [WORK_LOG](WORK_LOG.md) | Concise facts about meaningful completed work |
 | [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md) | Ownership rules, conflicts, updates, selective reading, RAG evolution |
 | [THIRD_PARTY](THIRD_PARTY.md) | Actual/candidate dependencies and external-resource provenance |
 | [Experiment guide](experiments/README.md) | Evidence-report conventions and experiment discovery |
 
-Coding guidelines, test execution instructions, and a source file index do not exist yet.
-[Knowledge evolution](DOCUMENTATION_GOVERNANCE.md#knowledge-evolution) defines when to consider them;
-their absence must not be interpreted as a failing tool or missing implementation.
+Engineering policy exists before source; it does not imply installed tools or executable test commands.
+`docs/FILE_INDEX.md` remains deferred until meaningful source topology exists under
+[knowledge evolution](DOCUMENTATION_GOVERNANCE.md#knowledge-evolution). No AgentContext/planner/RAG
+infrastructure is present or required.

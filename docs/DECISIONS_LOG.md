@@ -6,7 +6,7 @@ Authoritative for: Acceptance history, decision rationale, and supersession stat
 Not authoritative for: Current implementation, detailed contracts, proposals, or future stage order.
 
 D-001 through D-008 record the SEQ-KB-R0 mandate; D-009 through D-016 record SEQ-KB-R1 on 2026-10-06.
-D-017 through D-022 record SEQ-KB-R2 on 2026-10-06.
+D-017 through D-022 record SEQ-KB-R2; D-023 through D-028 record SEQ-KB-R3 on 2026-10-06.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
 contract. No supersessions exist yet; the later KB stages refine direction without accepting technical proposals.
 New decisions need an ID, status, basis/evidence, rationale, affected owner, and explicit supersession
@@ -208,8 +208,65 @@ distinct from audio routing, even when a container exposes common processing. Pr
 compatibility, nesting, container-to-mixer relationships, and final Track schema remain open.
 Owner: [ARCHITECTURE](ARCHITECTURE.md#semi-free-arrangement).
 
+## D-023 — Zero-warning managed baseline
+
+Status: Accepted engineering policy; shared compiler enforcement deferred until projects exist.
+Basis: SEQ-KB-R3 mandate; [engineering reference study](THIRD_PARTY.md#seq-kb-r3-engineering-reference-study).
+Rationale: Nullable production/test code starts from zero warnings and errors. Future inherited MSBuild
+policy treats warnings as errors; only narrow reasoned suppressions are permitted, not broad `NoWarn`.
+Owner: [CODING_GUIDELINES](CODING_GUIDELINES.md#zero-warning-baseline-and-enforcement).
+
+## D-024 — Repository-owned development conventions
+
+Status: Accepted engineering policy.
+Basis: SEQ-KB-R3 mandate, refining D-007; reference study linked above.
+Rationale: English implementation/documentation, explicit async/resource/thread ownership, pragmatic UI
+boundaries, and mechanical/behavioral refactoring rules must be retrievable without chat memory.
+Canonical owners and proportionate machine configuration preserve these obligations without tooling ceremony.
+Owners: [CODING_GUIDELINES](CODING_GUIDELINES.md), [DEVELOPMENT](DEVELOPMENT.md).
+
+## D-025 — Windows/Linux/macOS product target with bounded evidence
+
+Status: Accepted portability direction; no runtime parity or release-date claim.
+Basis: SEQ-KB-R3 portability mandate, strengthening the earlier Windows-first/later-adapter direction.
+Rationale: Windows is primary early development/runtime; Linux/macOS are first-class architectural
+targets from the start. Portable contracts and localized OS adapters prevent avoidable coupling.
+Hosted build/test evidence does not establish real desktop or audio-device acceptance.
+Owners: [PORTABILITY](PORTABILITY.md), evidence tiers in [TEST_EXECUTION](TEST_EXECUTION.md).
+
+## D-026 — Simple initial CI, growth driven by measured cost
+
+Status: Accepted future CI policy; no workflows introduced.
+Basis: SEQ-KB-R3 mandate and Fovium/MeasPilot reference study linked above.
+Rationale: Start with Windows/Ubuntu/macOS managed restore/Release-build/tests once code exists.
+Separate docs validation when a checker exists; account for required-check semantics. Adopt fast/full
+feedback and distribution gates only when actual cost warrants them, keeping physical acceptance separate.
+Owner: [CI_CD](CI_CD.md); verification in [TEST_EXECUTION](TEST_EXECUTION.md).
+
+## D-027 — Machine-enforced repository consistency where proportionate
+
+Status: Accepted repository policy; passive text/diagnostic configuration introduced.
+Basis: SEQ-KB-R3 mandate and MeasPilot's targeted diagnostic guards.
+Rationale: LF-normalized text with explicit batch-script exceptions and editor correctness guards reduce
+recurring drift/refactoring mistakes. Prefer cheap deterministic enforcement over agent memory; defer
+shared MSBuild, SDK pins, analyzers, and CI until actual projects/problems justify them.
+Owners: [DEVELOPMENT](DEVELOPMENT.md#machine-enforcement-and-text-consistency), diagnostic rationale
+in [CODING_GUIDELINES](CODING_GUIDELINES.md); [.editorconfig](../.editorconfig), [.gitattributes](../.gitattributes).
+
+## D-028 — Separate planning states and retain speculative ideas
+
+Status: Accepted knowledge policy.
+Basis: SEQ-KB-R3 planning-state mandate, refining D-007.
+Rationale: Agreed staged intent, accepted decisions, required unresolved risks, speculative possibilities,
+and actual implementation debt need distinct registers. Ideas may remain indefinitely without scheduling
+or resolution; promotion leaves traceability. Design uncertainty is not debt.
+Owner: [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md#planning-state-separation);
+speculative records in [IDEAS](IDEAS.md).
+
 Final application decomposition, engine language/backend/ABI, extension/package API, project format,
 license, visual language, plugin-hosting/isolation strategy, graph compiler/port ABI, workspace layout
 mechanism, platform release schedule, final Layer/Track terminology/schema, node-settings UX,
 arbitrary feedback, automation/modulation formula, and compact-chain visuals are **not accepted decisions**.
-Their uncertainty belongs to [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+SDK pin/roll-forward, final UI adoption, native toolchain/warning policy, release RIDs, CI actions/filters,
+analyzer packages, and test framework/platform are also unselected. Concrete required questions belong
+to [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); speculative possibilities belong to [IDEAS](IDEAS.md).

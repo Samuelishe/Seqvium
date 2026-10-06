@@ -44,8 +44,9 @@ Application state may control audio through a prepared bounded boundary; the eng
 on UI-thread progress. [AUDIO_ENGINE](AUDIO_ENGINE.md) owns the realtime contract. Production runtime
 must not depend on experiment hosts or repository retrieval tools.
 
-Windows may be the first implementation target. Avoid deliberately preventing later Linux/macOS
-adapters; this is not a commitment to release dates or validated platform support.
+[PORTABILITY](PORTABILITY.md) owns the Windows/Linux/macOS product target and portable engineering
+rules. Windows is primary early development; Linux/macOS are architectural targets from the start,
+without release-date or validated runtime-parity claims.
 
 ## Internal modules, backends, and plugins
 
@@ -74,8 +75,9 @@ to either without becoming its storage identity or defining routing by itself.
 
 ## Proposed application and audio shape
 
-The primary development environment is Windows 11, Rider, C#, .NET 10, Avalonia, and Codex.
 C# / .NET 10 / Avalonia is the application-layer candidate, not an installed stack here.
+[DEVELOPMENT](DEVELOPMENT.md) owns the developer environment, SDK/tool version authority, and setup;
+[CODING_GUIDELINES](CODING_GUIDELINES.md) owns future implementation conventions.
 
 The accepted logical boundary direction is conceptual, not an implementation selection:
 

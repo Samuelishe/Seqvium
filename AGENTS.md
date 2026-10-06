@@ -37,11 +37,15 @@ All routes start with current state; add these owners as needed:
 | Samples / generation / resampling | [SAMPLE_WORKFLOW](docs/SAMPLE_WORKFLOW.md); audio or extensions for affected boundaries |
 | Extensions / packages | [EXTENSIONS](docs/EXTENSIONS.md) |
 | Project serialization | [PROJECT_FORMAT](docs/PROJECT_FORMAT.md); extensions for opaque state |
-| C# implementation | Architecture + affected owner; use `docs/CODING_GUIDELINES.md` once it exists |
-| Tests | Affected contract + actual test setup; use `docs/TEST_EXECUTION.md` once it exists |
+| C# implementation / refactoring | [CODING_GUIDELINES](docs/CODING_GUIDELINES.md), architecture + affected owner |
+| Development environment / local tooling / SDK | [DEVELOPMENT](docs/DEVELOPMENT.md) |
+| Tests / verification | [TEST_EXECUTION](docs/TEST_EXECUTION.md) + affected owner and actual test setup |
+| Portability / platform-specific work | [PORTABILITY](docs/PORTABILITY.md) + affected architecture owner |
+| CI / hosted automation / release validation | [CI_CD](docs/CI_CD.md); test execution / portability as needed |
 | Planning | [ROADMAP](docs/ROADMAP.md) |
+| Speculative ideas / alternatives | [IDEAS](docs/IDEAS.md) |
 | Existing implementation compromises | [TECH_DEBT](docs/TECH_DEBT.md) |
-| Unresolved risks / decision evidence | [KNOWN_PROBLEMS](docs/KNOWN_PROBLEMS.md), [DECISIONS_LOG](docs/DECISIONS_LOG.md) |
+| Concrete unresolved risks / evidence gaps | [KNOWN_PROBLEMS](docs/KNOWN_PROBLEMS.md), [DECISIONS_LOG](docs/DECISIONS_LOG.md) |
 | Documentation / ownership | [DOCUMENTATION_GOVERNANCE](docs/DOCUMENTATION_GOVERNANCE.md) |
 | Third-party dependencies / resources | [THIRD_PARTY](docs/THIRD_PARTY.md) + affected owner |
 | Experiments | [Experiment guide](docs/experiments/README.md) + affected technical owner |

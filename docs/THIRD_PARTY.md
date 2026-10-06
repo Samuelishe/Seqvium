@@ -125,6 +125,41 @@ Reviewed on 2026-10-06 through read-only GitHub access, on each repository's def
   preservation of historical evidence. Did not copy private implementation/history or adopt its skill,
   AgentContext, budgets/manifests, map/planner, archive tooling, or ProjectStats system.
 
+### SEQ-KB-R3 engineering reference study
+
+Reviewed through read-only GitHub on 2026-10-06 at the then-current default `master` heads below.
+These immutable snapshots record research, not introduced product/tool/CI dependencies or version locks.
+
+- **Fovium — `83f1524272e76e02234a9dd2d6adb03d30ff3a47`:**
+  [CODING-GUIDELINES](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/docs/CODING-GUIDELINES.md),
+  [TEST-EXECUTION](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/docs/TEST-EXECUTION.md),
+  [Directory.Build.props](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/Directory.Build.props),
+  [main project](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/Fovium/Fovium.csproj),
+  [test project](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/Fovium.Tests/Fovium.Tests.csproj),
+  [managed CI](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/.github/workflows/ci.yml),
+  [native-lcms2](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/.github/workflows/native-lcms2.yml),
+  [native-libheif](https://github.com/Samuelishe/Fovium/blob/83f1524272e76e02234a9dd2d6adb03d30ff3a47/.github/workflows/native-libheif.yml).
+  Nullable/warnings-as-errors are set in its main/test projects; the inspected shared props owns version
+  metadata. Applied proportional verification, the simple three-OS managed matrix, bounded hosted/manual
+  evidence, and native build/materialize/smoke/production-interop pattern; no image/library scripts copied.
+- **MeasPilot — `ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1`** (access-restricted):
+  [.editorconfig](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/.editorconfig),
+  [CODING_RULES](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/docs/CODING_RULES.md),
+  [TEST_EXECUTION](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/docs/TEST_EXECUTION.md),
+  [PORTABILITY](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/docs/PORTABILITY.md),
+  [CI_CD](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/docs/CI_CD.md),
+  [ci-docs](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/.github/workflows/ci-docs.yml),
+  [ci-portable](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/.github/workflows/ci-portable.yml),
+  [ci-windows-fast](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/.github/workflows/ci-windows-fast.yml),
+  [ci-windows](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/.github/workflows/ci-windows.yml),
+  [ci-linux](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/.github/workflows/ci-linux.yml),
+  [ci-windows-distribution](https://github.com/Samuelishe/MeasPilot/blob/ad9cf7f41805f35b29eddcd3ac8f5547d1d235f1/.github/workflows/ci-windows-distribution.yml).
+  Applied targeted nullable/XML/async-test guards, explicit lifetime, mechanical/behavioral separation,
+  portable core/platform boundaries, and separate docs/distribution evidence. Fast/full separation is
+  a future option for measured cost, not infrastructure imported into Seqvium. No SCPI/hardware rules,
+  named-route tooling, private implementation, or language/localization policy imported.
+
 These are conceptual references, not dependencies or external sources of Seqvium truth. Branch links
 may change; no continued access to MeasPilot is required to work on Seqvium. No code or documentation
-text was imported from these repositories.
+text was imported from these repositories, apart from the explicit minimal diagnostic configuration
+requested for SEQ-KB-R3.

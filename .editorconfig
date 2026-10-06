@@ -1,0 +1,19 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# Recurring correctness/refactoring guards; rationale belongs to CODING_GUIDELINES.
+dotnet_diagnostic.CS8602.severity = error
+dotnet_diagnostic.CS1572.severity = error
+dotnet_diagnostic.CS1573.severity = error
+dotnet_diagnostic.CS1587.severity = error
+# Active only when xUnit analyzers are present; no test framework is selected yet.
+dotnet_diagnostic.xUnit1031.severity = error

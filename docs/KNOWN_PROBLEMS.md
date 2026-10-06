@@ -7,6 +7,8 @@ Not authoritative for: Accepted resolutions, existing implementation debt, progr
 
 These are questions about future work, not bugs in a nonexistent application. All entries are open.
 Owners keep the detailed constraints; this register identifies what is not yet established.
+Speculative possibilities without required resolution belong to [IDEAS](IDEAS.md); agreed staged
+intent belongs to [ROADMAP](ROADMAP.md). No entry below is implementation debt.
 
 ## SEQ-R0 validation priorities
 
@@ -71,6 +73,21 @@ These questions remain open and do not authorize implementation in this document
 | Q-033 | Effective parameter composition for automation/modulation | Preserve future base value, automation, modulation, envelopes/LFO/control sources; investigate replace/add/multiply, domains/units, precedence, smoothing, and rates without accepting a formula | [Architecture](ARCHITECTURE.md), [node graph](NODE_GRAPH.md), [audio](AUDIO_ENGINE.md) |
 | Q-034 | Explicit parameter exposure and control-port mechanics | Evaluate opt-in connectors and settings defaults for graph readability; define types, connection behavior, and persistence later | [Node graph](NODE_GRAPH.md), [project format](PROJECT_FORMAT.md) |
 | Q-035 | Multiple graph panes, target retention/following, and cross-project context behavior | Prefer focus/update of an existing target surface; evaluate actual workflows before single/multiple-instance policy or context lifetime choices | [Workspace](WORKSPACE.md) |
+
+## Engineering choices when implementation needs them
+
+These choices require resolution with actual projects/tooling or release scope, not immediate work
+or permission to start SEQ-R0. The policy baseline does not select their answers.
+
+| ID | Question / risk | Intended resolution path | Owner |
+| --- | --- | --- | --- |
+| Q-036 | Exact .NET SDK pin/roll-forward and validated language policy | Decide with the first managed project; add `global.json` if justified for reproducibility | [Development](DEVELOPMENT.md) |
+| Q-037 | Final UI framework adoption | Evaluate proposed Avalonia against actual product/platform/API/license needs before application implementation | [Architecture](ARCHITECTURE.md), [development](DEVELOPMENT.md), [provenance](THIRD_PARTY.md) |
+| Q-038 | Native compiler/build system and compiler warning policy, if R0 selects native | Choose with evidence across Windows/Linux/macOS; define native warning/suppression rules for the selected language/toolchain | [Development](DEVELOPMENT.md), [portability](PORTABILITY.md), [audio](AUDIO_ENGINE.md) |
+| Q-039 | Test framework, test platform, and exact package versions | Choose with first test projects, using manifest-owned versions; then document real commands | [Test execution](TEST_EXECUTION.md), [development](DEVELOPMENT.md) |
+| Q-040 | Concrete CI path filters and required-check policy | Resolve together once workflows/checker exist so docs-only changes do not leave required checks pending | [CI/CD](CI_CD.md) |
+| Q-041 | Supported release architecture/RID matrix and runtime prerequisites | Decide for actual distribution with build/interop/packaging and declared runtime/device evidence; no dates/parity implied | [Portability](PORTABILITY.md) |
+| Q-042 | Formatter/analyzer policy beyond current targeted diagnostics | Evaluate repeated source mistakes and real style once source exists; introduce repository-scoped tools only for concrete benefit | [Coding guidelines](CODING_GUIDELINES.md), [development](DEVELOPMENT.md) |
 
 When evidence resolves an entry, record the result and link its report/decision; do not erase the
 reasoning. A compromise actually introduced into implementation belongs in [TECH_DEBT](TECH_DEBT.md).

@@ -27,9 +27,16 @@ Other documents may summarize and link but must not create competing contracts. 
 - [WORKSPACE](WORKSPACE.md) owns internal panes, activation/front behavior, docking, and user layout
   ownership; UX owns general input/feedback principles. Project format owns musical serialization,
   including editable graph data, rather than application/user pane preferences.
-- Current state is a compact present-tense handoff. Roadmap defines future stages. Work log records
-  completed facts. Decisions log records acceptance/supersession and rationale. Known problems records
-  uncertainty. Technical debt records compromises actually present in implementation.
+- [CODING_GUIDELINES](CODING_GUIDELINES.md) owns implementation conventions/invariants, language,
+  lifetime/refactoring rules, and warning policy; subsystem owners retain architecture and behavior.
+  [DEVELOPMENT](DEVELOPMENT.md) owns environment, SDK/tool version authority, entry points, and tool
+  introduction. Actual package versions remain manifest-owned.
+- [TEST_EXECUTION](TEST_EXECUTION.md) owns verification, test quality, future commands, and evidence
+  tiers; [PORTABILITY](PORTABILITY.md) owns platform targets, portable boundaries, and claim limits;
+  [CI_CD](CI_CD.md) owns hosted automation evolution and trigger policy. None implies installed tools,
+  executable commands, workflows, or validated platform parity.
+- Current state is a compact present-tense handoff; work log records completed facts. The planning
+  registers below represent distinct states rather than interchangeable task lists.
 
 The decisions log links current contract owners rather than becoming a second specification. An
 experiment report owns its observations, not final production contracts. AGENTS owns operational
@@ -40,6 +47,20 @@ including musical content, other assets, repository services/actions, and histor
 Exact installed versions belong to build/package/native manifests or workflows once present; the
 ledger links them instead of maintaining a second lock. Asset-local creation/derivation evidence may
 be linked from the ledger. README states licensing status and routes here; it does not select a license.
+
+## Planning-state separation
+
+| Register | Meaning / update boundary |
+| --- | --- |
+| [ROADMAP](ROADMAP.md) | Agreed staged direction: we currently intend to pursue/evaluate an item in that stage |
+| [DECISIONS_LOG](DECISIONS_LOG.md) | Accepted durable decisions, rationale, and explicit supersessions; current contracts stay in owners |
+| [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) | Concrete unresolved risks/questions requiring design, evidence, experimentation, or a decision before/while related work proceeds |
+| [IDEAS](IDEAS.md) | Speculative alternatives/inspirations/features; neither accepted nor scheduled nor required to resolve; may remain indefinitely |
+| [TECH_DEBT](TECH_DEBT.md) | Compromises actually present in implementation; design uncertainty is not debt |
+
+Do not mechanically move open owner questions into IDEAS. Promote an idea only through the relevant
+owner and decision/roadmap/risk record, leaving a traceable reference. When moving material, preserve
+its origin rather than silently deleting history. Avoid duplicate ownership and fake roadmap noise.
 
 ## Selective reading
 
@@ -74,7 +95,9 @@ and ask for needed input rather than invent acceptance. External references neve
 | Product, interaction, visual design, responsibility, audio, graph, workspace, sample, extension, or persistence contract | The corresponding owner in the same change |
 | Durable accepted/reversed choice | DECISIONS_LOG plus affected owner; link evidence |
 | Future scope or stage order | ROADMAP |
-| New/narrowed/resolved uncertainty | KNOWN_PROBLEMS; retain evidence of resolution |
+| New/narrowed/resolved concrete uncertainty | KNOWN_PROBLEMS; retain evidence of resolution |
+| Speculative idea retained/explored/promoted/rejected | IDEAS; link the resulting owner/decision/plan/risk on promotion |
+| Coding, development/tooling, verification, portability, or CI policy | The corresponding engineering owner; passive/build/CI configuration when actually justified |
 | Existing compromise introduced/resolved | TECH_DEBT, with actual evidence |
 | Meaningful stage completed | One bounded factual WORK_LOG entry |
 | Dependency, service/action, or asset evaluated/introduced/upgraded/replaced/removed; obligations changed | THIRD_PARTY; retain historical provenance and manifest version authority |
@@ -89,11 +112,13 @@ archive in a separately justified change. Do not create an archive system before
 
 The document ownership model stays stable while retrieval mechanisms evolve:
 
-1. **Stage 0 — now:** AGENTS, compact current state, index/routing, canonical owner docs, affected
-   files, and ordinary repository search. No generated context infrastructure.
-2. **Stage 1 — meaningful source topology:** consider `docs/FILE_INDEX.md`, `docs/TEST_EXECUTION.md`,
-   `docs/CODING_GUIDELINES.md`, and small repository baseline tooling. Add one small local workflow
-   skill only if repeated agent behavior justifies it; skills are not mandatory infrastructure.
+1. **Stage 0 — established:** AGENTS, compact current state, index/routing, canonical owner docs,
+   affected files, and ordinary repository search. No generated context infrastructure.
+2. **Stage 1 — policy portion established by SEQ-KB-R3:** coding, development, verification,
+   portability, CI, and ideas owners now exist before source, with passive `.editorconfig` and
+   `.gitattributes`. This does not start implementation. `docs/FILE_INDEX.md` remains deferred until
+   meaningful source topology exists. Add small baseline tooling or one local workflow skill only
+   for an observed need; skills are not mandatory infrastructure.
 3. **Stage 2 — measurable context-selection problems:** consider a generated repository map and
    bounded context planner inspired by MeasPilot. Generated outputs remain disposable retrieval
    artifacts, not canonical truth. Do not create manifests, budgets, or ProjectStats tools now.
@@ -103,14 +128,21 @@ The document ownership model stays stable while retrieval mechanisms evolve:
 
 Promote retrieval infrastructure only in response to an observed problem. Report a broken retrieval
 tool and fall back to direct owners/search; a planner or index must not narrow the authorized task or
-silently redefine the product. Fovium/MeasPilot reference provenance is recorded in [THIRD_PARTY](THIRD_PARTY.md).
+silently redefine the product. No AgentContext/planner/RAG infrastructure is introduced by SEQ-KB-R3.
+Fovium/MeasPilot reference provenance is recorded in [THIRD_PARTY](THIRD_PARTY.md).
+
+Prefer cheap deterministic compiler/editor/build/CI enforcement over agent memory when justified.
+[DEVELOPMENT](DEVELOPMENT.md#machine-enforcement-and-text-consistency) maps newline/diagnostic policy
+to existing passive configuration and nullable/warnings/SDK/formatting/portability rules to future
+enforcement points. Do not introduce tools simply because enforcement is possible.
 
 ## Documentation integrity
 
 Before completion, inspect repository-relative Markdown targets and anchors, metadata/ownership,
 status terminology, and all new/changed content. Confirm that future work is not advertised as
 implemented, proposals are not accepted by implication, current state stays compact, roadmap contains
-forward scope, work log contains facts, debt contains actual compromises, and AGENTS remains a router.
+forward scope, work log contains facts, IDEAS stays speculative, known problems require resolution,
+debt contains actual compromises, and AGENTS remains a router.
 Inspect final Git diff/status, including untracked additions that ordinary `git diff` does not show.
 Documentation-only work requires no build/tests unless executable tooling or configuration changes
 actually justify them. No persistent checker is required for this foundation.
