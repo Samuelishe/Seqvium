@@ -41,6 +41,20 @@ Main-window pane layout is primarily application/user workspace state under [WOR
 Opening a project should not normally overwrite it. Project-side graph/editor layout is distinct from
 the user's overall pane arrangement; no final storage policy or optional project-workspace format is chosen.
 
+## Project state and user preferences
+
+Plugin instance state that affects the sound or meaning of a project belongs with the project, not
+only in user configuration. Preserve it with plugin identity/relationships even when the plugin is
+unavailable or incompatible. Application preferences, selected language/theme, workspace layout,
+device/user preferences, and plugin-global preferences belong in user configuration under
+[SETTINGS](SETTINGS.md#user-configuration-and-project-state); exact paths/formats remain open.
+Configuration reset must not delete projects or project-managed audio/media.
+
+Migration/preservation of structure and data does not promise exact historical sonic identity.
+[AUDIO_ENGINE](AUDIO_ENGINE.md#sound-compatibility-boundary) and
+[EXTENSIONS](EXTENSIONS.md#plugin-sound-responsibility) own platform/plugin sound responsibility;
+there is no hidden permanent old-engine emulation requirement in this format contract.
+
 ## Media policy boundary
 
 Persistence must preserve the distinction between durable audio resources and their musical
@@ -49,6 +63,14 @@ ordinary local processing must not silently become a destructive rewrite of that
 Separate reference/edit identity must be expressible without assuming final class names, copy-on-write
 mechanics, resource deduplication, or a schema. [ARCHITECTURE](ARCHITECTURE.md) owns the model;
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns acceptance and source-preserving sample creation.
+
+Preserve non-destructive trim ranges, split-piece references/placements, and distinct loop/repeat and
+stretch intentions without rewriting the original durable audio resource through ordinary timeline
+editing. Preserve project/global tempo and audio tempo-following versus fixed/source-time relationships,
+with independent local stretch, under [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) and
+[UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing). This does not select time/stretch encoding.
+An explicit operation creating/committing a new cropped/consolidated/rendered resource is separate
+from normal trim/split; edit-structure changes do not inherently modify source media destructively.
 
 A normally saved Seqvium project should be self-contained with respect to audio material actually used
 by the project. When external/imported audio becomes used material, the default is to place/copy/manage

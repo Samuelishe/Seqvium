@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Core/plugin/backend boundaries, timeline/organization/graph separation, musical/resource identities, local processing.
+Authoritative for: Core/plugin/backend boundaries, timeline/organization/graph separation, musical/resource identities, local processing, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -34,6 +34,8 @@ ownership, not a requirement to implement every capability in the first stages:
 | Undo / redo | Owns coherent document edits; optional surfaces cannot replace edit integrity |
 | Serialization | Preserves versioned document and extension data under the format contract |
 | Extension hosting / lifecycle | Hosts attached capabilities; fundamental platform ownership stays in the base |
+| User configuration / diagnostics | Host owns application preferences and bounded production diagnostics; [SETTINGS](SETTINGS.md) owns policy |
+| Localization / semantic UI resources | Host owns shared localization and theme/style contracts for first-party UI and Seqvium-native contributions |
 
 Basic musical editing, routing, level control, and common processing must be usable without optional
 downloads. Specialized generators/nodes/instruments/effects/content may extend the platform;
@@ -55,6 +57,12 @@ without release-date or validated runtime-parity claims.
   Replacing it is not automatically a user plugin API.
 - **User extension/plugin:** an optional guest contributes capabilities through Seqvium host contracts;
   it does not replace project integrity, transport, graph engine, or audio-device ownership.
+
+**Seqvium Platform defines the current host rules and contracts. Plugins are guests of that platform.**
+[EXTENSIONS](EXTENSIONS.md#host-context-and-compatibility) owns required-contract declarations,
+compatibility before activation, and retention of installed incompatible plugins. Preserving project
+data does not promise exact historical sound; [AUDIO_ENGINE](AUDIO_ENGINE.md#sound-compatibility-boundary)
+owns the platform boundary and extensions own plugin-algorithm responsibility.
 
 Ordinary instrument/effect/generator plugins consume device-independent host services, not miniaudio,
 WASAPI, ASIO, ALSA, PipeWire, or CoreAudio directly. Backend replacement must not require rewriting
@@ -133,6 +141,22 @@ The event model must support musical position, pitch where applicable, duration,
 equivalent intensity. A `bool[16]` foundation is insufficient. These requirements do not select a
 schema, time representation, class hierarchy, or storage layout. [PROJECT_FORMAT](PROJECT_FORMAT.md)
 owns persistence compatibility; [UX_CONTRACT](UX_CONTRACT.md) owns observable editing behavior.
+
+## Project tempo and audio time
+
+The project/global tempo governs musical time. Notes, Patterns, their musical placements, later
+automation, and other musical-time entities remain positioned in musical time as BPM changes.
+Audio material additionally needs an explicit relationship to that tempo. At minimum, the model
+must express concepts equivalent to:
+
+- **Follow project tempo:** audio stays aligned to a musical duration/beat structure as BPM changes.
+- **Fixed/source time:** audio retains its physical playback duration unless explicitly stretched.
+
+A clip also supports local stretch independently of changing global tempo. Global tempo changes
+and local clip stretch are distinct operations. Public labels, defaults, time/stretch representation,
+and algorithms remain open. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns distinct trim,
+loop/repeat, and stretch intentions and ordinary non-destructive timeline edits;
+[PROJECT_FORMAT](PROJECT_FORMAT.md) owns preserving those relationships, not a selected schema.
 
 ## Separate sharing identities
 
@@ -248,6 +272,20 @@ timeline automation, modulation, and envelopes/LFO/control-graph sources. This r
 select an abstraction or require an automation implementation now. Replace/add/multiply semantics,
 normalized versus physical domains, precedence, smoothing, and control rate remain unresolved.
 [NODE_GRAPH](NODE_GRAPH.md) owns the preferred direction for optional parameter connectors.
+
+## Host localization and UI resources
+
+Localization is a platform concern. Seqvium UI is intended to support Russian and English initially,
+with additional languages later. Translated user-visible display text must not serve as stable internal
+identity. First-party Seqvium UI/extensions consume host localization resources/contracts rather than
+hard-code one language into reusable UI. Resource format, contribution workflow, and fallback rules
+remain open; canonical repository/source language remains English under [CODING_GUIDELINES](CODING_GUIDELINES.md).
+
+The host also owns centralized semantic theme/style resources for first-party UI and Seqvium-native
+plugin surfaces. [UI_DESIGN](UI_DESIGN.md#themes-and-semantic-resources) owns Dark/Light baseline
+direction and resource roles. Theme packaging as extensions, plugins, or data packages is undecided;
+independently rendered third-party native editors need not adopt host themes. These service boundaries
+do not select an SDK/API, UI framework, localization files, or theme packages.
 
 ## Open architecture work
 

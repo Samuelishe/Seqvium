@@ -55,6 +55,17 @@ Documentation only: no source, projects, dependencies, prototypes, executable to
 passive configuration changes. Completion belongs to PROJECT_STATE / WORK_LOG. SEQ-R0 remains pending /
 not started; implementation stages keep their existing IDs and external hosting stays later work.
 
+## SEQ-KB-R6 — Runtime, Editing & UI Platform Semantics
+
+Record accepted platform-authoritative compatibility and sound-responsibility boundaries; project
+tempo/independent local stretch and non-destructive trim/split/loop semantics; source tails versus
+hard cuts; last-valid graph execution with visible concise feedback; quiet bounded diagnostics and
+user/project preference separation; host localization/theme resources; bounded realtime overload;
+and future Live / Low-Latency direction. Keep exact mechanisms and packaging open in their owners.
+Documentation only: no source, projects, tests, dependencies, scripts, CI, executable tooling, plugin
+hosts, theme packages, localization files, or passive configuration changes. Completion belongs to
+PROJECT_STATE / WORK_LOG. SEQ-R0 remains **pending / not started**; implementation stages retain IDs.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 SEQ-R0 remains pending / not started after the documentation stages.
@@ -67,6 +78,9 @@ Validate the riskiest architecture before application construction. Scope a mini
 device initialization, realtime callback, audio clock, basic transport, scheduled sample/tone events,
 loop boundaries, bounded command/control path, instrumentation, and stress behavior. Compare a
 device-independent offline equivalent where useful.
+Overload evidence must respect [AUDIO_ENGINE](AUDIO_ENGINE.md#bounded-overload-and-semantic-recovery):
+missed deadlines cannot create unbounded obsolete audio backlog, and disposable updates and musical
+events need different handling. Exact queue/scheduler/recovery mechanisms remain probe questions.
 
 Evaluate managed/native feasibility, ownership/lifetime, callback behavior under managed pressure,
 and native binary distribution implications. Record setup, measurements, limitations, and a reasoned
@@ -107,6 +121,8 @@ gain and mix/routing may arrive here because execution needs them. Do not implem
 processor or all graph scopes; [NODE_GRAPH](NODE_GRAPH.md) owns the constraints.
 Respect item-local/containing-container processing direction, progressive graph visibility, free
 spatial placement, and topology-defined dependencies without presuming a final "Layer" model.
+Keep the last valid prepared graph executing during candidate validation; make invalid/unpublished
+editor state visible. Publication/compiler strategy remains open; the UX rule does not select it.
 
 ## SEQ-R5 — Pattern Workspace
 
@@ -120,6 +136,8 @@ sample-generator capability contract, and lifecycle/error/missing-state handling
 optional modules honest extensions. No store or marketplace. [EXTENSIONS](EXTENSIONS.md) owns the boundary.
 Include deliberate compatibility outcomes, diagnostics, and state preservation at the bounded level
 needed by actual modules. The core graph/workspace/device infrastructure stays host-owned.
+Resolve compatibility before activation under current platform contracts; installed incompatible
+plugins may remain unavailable, with preserved identity/state, and must not be automatically deleted.
 
 ## SEQ-R7 — Sample Lab / Generator V1
 
@@ -150,6 +168,9 @@ independent variations. Follow the semi-free direction: user-named structured co
 default content relationships, and compatible material reuse without permanent one-instrument
 ownership or mixer-channel identity. Resolve bounded compatibility/container-processing relationships
 and audio-clip scope rather than assuming a final Track schema or full DAW timeline.
+Respect project-tempo relationships and independent local stretch; ordinary audio trim/split/rearrange
+preserves source resources and keeps trim, loop/repeat, and stretch distinct. Exact representation,
+algorithms, gestures, and the implemented scope need bounded design rather than a complete stretch engine here.
 
 ## SEQ-R11 — Mixer / Core Processing
 
@@ -176,6 +197,9 @@ richer synthesizers/effects, CLAP/VST3 hosting, additional specialized nodes, pi
 processing and time stretching, deeper routing/sends, FLAC and other justified formats, and additional
 platforms. Latency awareness and realtime safety constrain applicable earlier work; advanced
 compensation is not presumed implemented. Later order and release schedules remain open.
+Future Live / Low-Latency mode for performance/monitoring must visibly distinguish temporary live
+handling from the full graph without rewriting project state or altering intended final/offline render.
+Latency reporting, thresholds, compensation, and bypass strategy remain open under [AUDIO_ENGINE](AUDIO_ENGINE.md).
 External hosting must define ordinary compatibility/lifecycle semantics under [EXTENSIONS](EXTENSIONS.md).
 Stronger process isolation may be evaluated later if evidence justifies it; it is not required baseline
 hosting architecture or an early milestone added by SEQ-KB-R5.

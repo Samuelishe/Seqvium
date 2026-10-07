@@ -118,7 +118,24 @@ suitable for the engine. Compilation is one possible approach, not an accepted a
 must not traverse arbitrary UI objects or mutable graph-editor state. [AUDIO_ENGINE](AUDIO_ENGINE.md)
 owns callback constraints, scheduling, execution-state lifetime, and device-independent host context.
 
-Graph preparation, publication, resource retirement, and edits during playback need evidence. The
+Live editing uses last-valid execution: the currently valid prepared graph keeps running while a newly
+edited candidate is prepared and validated. An invalid/incomplete candidate is not published and must
+not automatically destroy currently playing valid audio. Once valid and prepared, it may replace the
+previous execution state through the eventual safe publication mechanism.
+
+```text
+last valid prepared graph -> continues audio
+editable candidate graph  -> prepare / validate
+                            -> valid: publish safely
+                            -> invalid: do not publish
+```
+
+If the visual graph differs from current execution because the candidate is invalid or not yet
+published, the UI must clearly communicate that difference. Continuing old audio must not imply that
+the edited graph is already sounding. [UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures)
+owns concise recoverable feedback; [UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns visual treatment.
+
+Graph preparation, publication, resource retirement, and state transition during playback need evidence. The
 same scheduling/node semantics should serve realtime and device-independent offline rendering as
 much as practical. Saved editable state and compatibility belong to [PROJECT_FORMAT](PROJECT_FORMAT.md).
 
@@ -137,5 +154,7 @@ or effects as node types. They consume host services and cannot own or replace t
 
 Graph-scope ownership, cycle/feedback handling, validation/preparation, port/channel rules,
 latency propagation/compensation, and live-edit publication remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+Live / Low-Latency operating behavior must preserve the intended project graph and full offline render
+path under [AUDIO_ENGINE](AUDIO_ENGINE.md#live--low-latency-direction); its mechanics are not selected.
 Compact-chain representation, node settings, optional parameter/control exposure, and multiple graph
 pane behavior also need later design. Do not invent all scopes or freeze a compiler to fill these gaps.

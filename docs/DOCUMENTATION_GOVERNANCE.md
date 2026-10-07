@@ -27,6 +27,11 @@ Other documents may summarize and link but must not create competing contracts. 
 - [WORKSPACE](WORKSPACE.md) owns internal panes, activation/front behavior, docking, and user layout
   ownership; UX owns general input/feedback principles. Project format owns musical serialization,
   including editable graph data, rather than application/user pane preferences.
+- [SETTINGS](SETTINGS.md) owns application/user configuration boundaries, preference-reset limits,
+  and quiet bounded production diagnostics. Project format owns sound/meaning-affecting plugin instance
+  persistence; workspace owns layout behavior; development owns developer diagnostic activation.
+  Architecture owns host localization/service boundaries and UI design owns semantic theme resources;
+  settings does not select their APIs, packaging, or exact paths/formats.
 - [CODING_GUIDELINES](CODING_GUIDELINES.md) owns implementation conventions/invariants, language,
   lifetime/refactoring rules, and warning policy; subsystem owners retain architecture and behavior.
   [DEVELOPMENT](DEVELOPMENT.md) owns environment, SDK/tool version authority, entry points, and tool
@@ -116,7 +121,7 @@ and ask for needed input rather than invent acceptance. External references neve
 | Changed truth | Update |
 | --- | --- |
 | Current checkpoint, capability, focus, meaningful validation baseline, blocker/evidence gap | PROJECT_STATE; avoid chronology, live Git status, and transient attempts |
-| Product, interaction, visual design, responsibility, audio, graph, workspace, sample, extension, or persistence contract | The corresponding owner in the same change |
+| Product, interaction, visual design, responsibility, audio, graph, workspace, settings/diagnostics, sample, extension, or persistence contract | The corresponding owner in the same change |
 | Durable accepted/reversed choice | DECISIONS_LOG plus affected owner; link evidence |
 | Future scope or stage order | ROADMAP |
 | New/narrowed/resolved concrete uncertainty | KNOWN_PROBLEMS; retain evidence of resolution |

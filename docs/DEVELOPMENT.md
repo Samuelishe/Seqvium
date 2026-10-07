@@ -47,6 +47,15 @@ requirement. Selection must follow task scope and actual project needs.
 direction. No CLI/project exists or is authorized by that contract alone; introduction waits for explicit
 code authorization. It is independent repository tooling, not part of the SEQ-R0 audio probe.
 
+## Developer diagnostics
+
+Detailed developer Debug/Trace logging, if introduced, is activated only through developer-oriented
+configuration, command-line/environment/config mechanisms rather than ordinary graphical settings.
+No activation syntax, logging dependency, or executable configuration is selected here.
+[SETTINGS](SETTINGS.md#production-diagnostics) owns quiet production logging, bounded file size,
+rotation/count and retention, and the simple public enable/disable preference where useful.
+Developer diagnostics do not change realtime execution constraints under [AUDIO_ENGINE](AUDIO_ENGINE.md).
+
 ## Machine enforcement and text consistency
 
 If a rule can be enforced cheaply and deterministically by compiler/editor/build/CI, prefer enforcement

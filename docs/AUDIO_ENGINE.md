@@ -20,12 +20,37 @@ Application control should use bounded commands and/or prepared immutable/snapsh
 Resource publication and retirement need explicit lifetime ownership. The exact queues, snapshots,
 capacity, overflow behavior, and shutdown protocol remain undecided.
 
+### Bounded overload and semantic recovery
+
+Seqvium must not convert missed realtime deadlines into an ever-growing execution backlog or endlessly
+increasing latency. Realtime queues/work must have bounded capacity/behavior. Recovery returns to
+current realtime progress rather than accumulating seconds of obsolete audio work to catch up later.
+A dropout/glitch is preferable to unbounded latency, memory growth, or progressively falling behind.
+This is a realtime semantic constraint, not a choice of UDP or any other transport.
+
+Different data needs different overload handling:
+
+- Rapidly superseded control/UI values may coalesce or use latest-wins behavior where semantics permit.
+- Obsolete graph-preparation generations may be abandoned when a newer requested generation supersedes them.
+- Musical events require ordered/semantic handling; they must not be naively dropped like disposable UI updates.
+- Critical musical/control state, including stop/release/panic semantics, needs explicit eventual recovery behavior.
+
+Exact scheduler/overflow policies, ring buffers, queue sizes, lock-free structures, and recovery algorithms
+remain open. SEQ-R0 must later provide bounded evidence; this direction neither selects mechanisms nor
+requires the probe to solve the full musical scheduler.
+
 ## Graph execution boundary
 
 [NODE_GRAPH](NODE_GRAPH.md) owns editable graph definitions and semantic connections. The application
 may edit rich project/visual objects; the host must validate/prepare a bounded execution representation
 before realtime use. The callback must not traverse UI nodes or mutable graph-editor state. No graph
 compiler, traversal strategy, publication mechanism, or final execution layout is selected.
+
+The last valid prepared graph keeps executing while an edited candidate is prepared/validated. Invalid
+or incomplete editor state must not automatically destroy valid playing audio. Only a valid prepared
+candidate may replace execution through the eventual safe publication mechanism.
+[NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution) owns this graph rule and the required
+visible distinction between editable and executing state; publication/resource retirement remains open.
 
 Shared instrument/sound definitions do not force shared execution state. Overlapping placements with
 different required local/downstream processing must remain separable until that difference is honored;
@@ -38,7 +63,35 @@ without requiring a particular instance count or free duplication.
 
 Scheduling, node processing, and foundational mixing/routing belong to engine execution even before
 the user-facing Mixer milestone. Feedback/cycles, node latency, channel negotiation, and changes during
-playback remain validation questions in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+playback remain implementation/validation questions in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+
+## Source boundaries and effect tails
+
+Ending or trimming source input does not necessarily destroy already-running effect state. Ordinary
+source-end behavior may allow delay/reverb or similar processing tails to continue after new input stops:
+
+```text
+source audio ----|
+                 |~~~~ effect tail ~~~~
+```
+
+Source/input boundary, continuing processing tail, and explicit hard cut are distinct intentions.
+The user must also be able to request an explicit hard boundary where resulting sound after that point
+is intentionally silenced or otherwise terminated. This does not select node-state reset semantics,
+export-tail rules, loop/seek behavior, or controls; Q-012 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains
+those questions. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns understandable editing intentions.
+
+## Sound compatibility boundary
+
+Structural/data compatibility and exact historical sonic identity are separate promises. Seqvium
+does not promise indefinite bit-identical sonic emulation of every historical platform/audio-engine
+version. Avoid gratuitous changes to accepted semantics and preserve/migrate project data, while
+allowing intentional platform fixes/evolution. There is no permanent old-engine compatibility-mode
+requirement. Exact handling of any future genuinely breaking audio change remains a deliberate open
+policy for that change, not permission to discard project data.
+
+Third-party/optional plugin algorithms own their version-specific sound under
+[EXTENSIONS](EXTENSIONS.md#plugin-sound-responsibility); the host does not promise to emulate them.
 
 ## Host processing context and backend independence
 
@@ -72,6 +125,22 @@ ASIO is desired for appropriate Windows professional/low-latency hardware in the
 required by SEQ-R0 and no ASIO SDK/library/backend is adopted. Core processing contracts should leave
 room for another device adapter without leaking its API into plugins. Evaluate concrete ASIO licensing
 and distribution only when an implementation approaches; [THIRD_PARTY](THIRD_PARTY.md) owns provenance.
+
+## Live / Low-Latency direction
+
+A future Live / Low-Latency behavior is accepted product/platform direction for realtime performance
+and monitoring. Processors may introduce meaningful algorithmic latency; Seqvium should eventually
+identify latency-heavy processing on a live path and provide an explicit low-latency operating mode.
+In that mode such processing may be temporarily bypassed or otherwise handled under future engine policy.
+
+This operating behavior must not silently rewrite the project/graph. Users can see that the live path
+differs from full processing; returning to normal mode restores the intended full graph. Offline/final
+rendering uses the intended full processing path, not temporary live bypass state.
+[UX_CONTRACT](UX_CONTRACT.md#live-processing-feedback) owns the visible distinction.
+
+Latency thresholds, processor reporting contract, compensation strategy, and bypass algorithm remain
+open in Q-021 of [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). This is future direction, not an additional
+SEQ-R0 implementation requirement.
 
 ## Proposed native direction
 

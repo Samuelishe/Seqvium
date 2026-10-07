@@ -20,6 +20,7 @@ question. The [README](../README.md) is the public introduction.
 | [AUDIO_ENGINE](AUDIO_ENGINE.md) | Realtime state, control boundary, scheduling, offline audio semantics |
 | [NODE_GRAPH](NODE_GRAPH.md) | Core graph, free canvas/topology, progressive graph interaction, ports, editable/prepared boundary |
 | [WORKSPACE](WORKSPACE.md) | Internal panes, activation/front behavior, docking, user layout state |
+| [SETTINGS](SETTINGS.md) | User/project configuration separation, bounded preference reset, quiet bounded production diagnostics |
 | [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, lifecycle, missing-extension preservation |
 | [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Standalone/contextual Sample Lab, audition, acceptance, what-you-hear resampling |
 | [PROJECT_FORMAT](PROJECT_FORMAT.md) | Serialization compatibility, media policy, unknown-data preservation |

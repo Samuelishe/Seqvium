@@ -34,6 +34,7 @@ All routes start with current state; add these owners as needed:
 | Audio / realtime | [AUDIO_ENGINE](docs/AUDIO_ENGINE.md), architecture |
 | Node / processing graph, ports, node execution | [NODE_GRAPH](docs/NODE_GRAPH.md) + affected audio/architecture owner |
 | Workspace panes, docking, floating, layout, activation | [WORKSPACE](docs/WORKSPACE.md), UX contract |
+| User/application preferences, reset, production logging | [SETTINGS](docs/SETTINGS.md); project format for plugin instance state, development for developer diagnostics |
 | Samples / generation / resampling | [SAMPLE_WORKFLOW](docs/SAMPLE_WORKFLOW.md); audio or extensions for affected boundaries |
 | Extensions / packages | [EXTENSIONS](docs/EXTENSIONS.md) |
 | Project serialization | [PROJECT_FORMAT](docs/PROJECT_FORMAT.md); extensions for opaque state |

@@ -9,6 +9,7 @@ D-001 through D-008 record the SEQ-KB-R0 mandate; D-009 through D-016 record SEQ
 D-017 through D-022 record SEQ-KB-R2; D-023 through D-028 record SEQ-KB-R3 on 2026-10-06.
 D-029 through D-032 record SEQ-KB-R4 on 2026-10-06.
 D-033 through D-038 record SEQ-KB-R5 on 2026-10-07.
+D-039 through D-044 record SEQ-KB-R6 on 2026-10-07.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
 contract. No supersessions exist yet; the later KB stages refine direction without accepting technical proposals.
 New decisions need an ID, status, basis/evidence, rationale, affected owner, and explicit supersession
@@ -391,10 +392,95 @@ Owners: [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary) for persistenc
 [ARCHITECTURE](ARCHITECTURE.md) for resource identity, [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) for acceptance,
 [EXTENSIONS](EXTENSIONS.md) for source removal. Q-009 retains container/schema and media-management mechanics.
 
+## D-039 — Platform-authoritative plugin compatibility
+
+Status: Accepted platform/compatibility constraint, refining D-014 through D-016 and D-037.
+Basis: Explicit SEQ-KB-R6 architecture clarification; no implementation/runtime evidence claimed.
+Rationale: Plugins declare/satisfy required current host contracts and new development targets the
+available platform/SDK contract. Deliberate compatibility before activation prevents known unsupported
+execution; installed incompatibility does not authorize automatic deletion. Preserved data/identity and
+exact historical sonic identity are separate promises: plugins own algorithm-version sound and the
+platform need not emulate every historical engine indefinitely. Breaking audio changes require deliberate policy.
+Owners: [EXTENSIONS](EXTENSIONS.md#host-context-and-compatibility) for plugin lifecycle/sound,
+[ARCHITECTURE](ARCHITECTURE.md) for authority, [AUDIO_ENGINE](AUDIO_ENGINE.md#sound-compatibility-boundary)
+for platform sound, [PROJECT_FORMAT](PROJECT_FORMAT.md) for data preservation.
+Open mechanics: Q-024/Q-050 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); no final manifest/API/version resolver.
+
+## D-040 — Tempo-aware audio and non-destructive timeline editing
+
+Status: Accepted musical/editing direction, refining D-019 and D-038.
+Basis: Explicit SEQ-KB-R6 tempo, timeline-edit, and tail-boundary mandate.
+Rationale: Project tempo governs musical entities; audio supports tempo-following and fixed/source time
+with independent local stretch. Trim, loop/repeat, and stretch express distinct intentions. Ordinary
+trim/split/rearrange preserves durable source audio. A source end may leave an effect tail running;
+an explicit hard cut is a separate request, without selecting reset/render/loop behavior.
+Owners: [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) for model,
+[UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) for edits,
+[PROJECT_FORMAT](PROJECT_FORMAT.md) for preservation,
+[AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) for tails.
+Open mechanics: Q-012/Q-028/Q-051; no final labels/defaults, gestures, time/stretch representation, or algorithm.
+
+## D-041 — Last-valid execution with visible recoverable feedback
+
+Status: Accepted runtime/UX constraint, refining D-012 and D-021.
+Basis: Explicit SEQ-KB-R6 live graph-editing mandate.
+Rationale: Invalid/incomplete candidates must not destroy valid playing audio. A valid prepared
+candidate can replace execution safely; the UI must clearly show when visual edits differ from current
+execution. Concise graphical/recoverable feedback supports editing without cascading modal errors.
+Owners: [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution) for graph rule,
+[AUDIO_ENGINE](AUDIO_ENGINE.md) for runtime,
+[UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures) for interaction,
+[UI_DESIGN](UI_DESIGN.md#feedback-and-motion) for visuals.
+Open mechanics: Q-018/Q-015; no compiler/publication strategy or final visuals selected.
+
+## D-042 — Bounded diagnostics and user/project settings separation
+
+Status: Accepted application configuration/diagnostic policy.
+Basis: Explicit SEQ-KB-R6 logging, storage, and reset mandate.
+Rationale: Quiet meaningful production warnings/errors and bounded storage avoid permanent verbose
+streams and unbounded logs. Ordinary GUI needs at most an enable/disable preference; detailed developer
+logging is activated outside it. Per-user preferences and project-affecting plugin instance state have
+different ownership, and configuration reset must not delete projects or managed media.
+Owners: [SETTINGS](SETTINGS.md) for policy/reset,
+[PROJECT_FORMAT](PROJECT_FORMAT.md#project-state-and-user-preferences) for instance persistence,
+[WORKSPACE](WORKSPACE.md) for layout, [DEVELOPMENT](DEVELOPMENT.md#developer-diagnostics) for developer activation,
+[UX_CONTRACT](UX_CONTRACT.md) for settings interaction.
+Open mechanics: Q-052/Q-053; no exact log limits, paths, formats, or reset controls selected.
+
+## D-043 — Host-owned localization and semantic theme resources
+
+Status: Accepted platform/UI direction.
+Basis: Explicit SEQ-KB-R6 localization and theme-resource mandate.
+Rationale: Russian/English initially and additional languages later use host localization contracts
+without translated display text becoming stable identity. Dark/Light themes and centralized semantic
+style resources let first-party/native surfaces evolve coherently; independently rendered external
+native editors need not adopt them. Example resource names do not establish API identifiers.
+Owners: [ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources) for localization/services,
+[UI_DESIGN](UI_DESIGN.md#themes-and-semantic-resources) for themes/roles,
+[EXTENSIONS](EXTENSIONS.md) for contribution boundaries.
+Open mechanics: Q-054/Q-055; localization formats/fallback/workflow and theme packaging remain open.
+
+## D-044 — Bounded realtime overload and future Live / Low-Latency mode
+
+Status: Accepted realtime constraint and future product/platform direction, refining D-006.
+Basis: Explicit SEQ-KB-R6 overload and live-processing mandate; no timing/latency evidence claimed.
+Rationale: Deadline misses must recover toward current realtime progress rather than create unlimited
+backlog/latency. Superseded controls/preparation and musical events need different overload semantics;
+critical stop/release/panic recovery must be explicit later. Future latency-heavy live-path handling is
+visible, temporary, and separate from project edits and the intended full final/offline render.
+Owners: [AUDIO_ENGINE](AUDIO_ENGINE.md#bounded-overload-and-semantic-recovery) for overload and
+[Live direction](AUDIO_ENGINE.md#live--low-latency-direction), [NODE_GRAPH](NODE_GRAPH.md) for graph preservation,
+[UX_CONTRACT](UX_CONTRACT.md#live-processing-feedback) for visible behavior.
+Open mechanics: Q-004/Q-005/Q-007/Q-021; no universal late-event drop policy, scheduler, thresholds,
+reporting contract, compensation/bypass algorithm, or new SEQ-R0 scope selected.
+
 Final application decomposition, engine language/backend/ABI, extension/package API, project format,
 visual language, plugin-hosting/isolation strategy, graph compiler/port ABI, workspace layout
 mechanism, platform release schedule, final Layer/Track terminology/schema, node-settings UX,
 arbitrary feedback, automation/modulation formula, and compact-chain visuals are **not accepted decisions**.
 SDK pin/roll-forward, final UI adoption, native toolchain/warning policy, release RIDs, CI actions/filters,
-analyzer packages, and test framework/platform are also unselected. Concrete required questions belong
+analyzer packages, and test framework/platform are also unselected, alongside settings paths/formats,
+log limits, localization format/fallback, theme packaging,
+time/stretch representation/algorithms, tail/reset rules, realtime overload/recovery, low-latency policy,
+and change-specific historical sonic compatibility. Concrete required questions belong
 to [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); speculative possibilities belong to [IDEAS](IDEAS.md).

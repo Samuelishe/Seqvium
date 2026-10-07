@@ -76,6 +76,10 @@ The speculative named/saved workspace and optional project-specific layout possi
 as [I-001](IDEAS.md#i-001--optional-saved-workspace-arrangements); they are not initial requirements.
 Exact persistence of positions, sizes, minimized state, and dock relationships remains open.
 
+Workspace preferences/layout belong in the platform-appropriate user configuration area under
+[SETTINGS](SETTINGS.md#user-configuration-and-project-state). Application/plugin preference reset
+must not delete projects or project-managed media; exact configuration paths/formats remain open.
+
 Restored geometry must eventually be clamped/adapted safely to changed main-window size, DPI, or
 display environment so panes remain reachable. Main-window composition must stay responsive and
 respect [UX_CONTRACT](UX_CONTRACT.md). Final visuals, layout algorithms, storage, and pane-specific

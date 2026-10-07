@@ -39,21 +39,37 @@ capability; this does not make the host graph or audio resources removable with 
 
 ## Host context and compatibility
 
+Seqvium Platform defines the current host rules and contracts; plugins are guests. Each plugin version
+must declare and satisfy the host contracts/capabilities it requires. New plugin development should
+target the current Seqvium platform/SDK contract available at development time, rather than evolve
+independently of host semantics. This does not select final manifest fields, API, or version-range mechanics.
+
 Plugins consume the host processing environment, including sample rate, frame/block count, channels,
 tempo, transport/musical position, and supported capabilities where relevant. General realtime
 processing must adapt to supported rates/configurations rather than assume `44.1 kHz`; exact supported
 ranges remain open. [AUDIO_ENGINE](AUDIO_ENGINE.md) owns this device-independent contract. Ordinary
 processing plugins must not bind directly to miniaudio, WASAPI, ASIO, ALSA, PipeWire, or CoreAudio.
 
-Compatibility must be resolved deliberately using API/contract version, required and optional host
-capabilities, processing format/range support, and compatible state/schema range where relevant.
+Compatibility must be resolved deliberately before activation using API/contract version, required and
+optional host capabilities, processing format/range support, and compatible state/schema range where relevant.
 Possible outcomes are normal loading, unavailable optional capability, an explicitly supported
 compatibility path, or disable/reject with a clear diagnostic. An older plugin's lack of a newer
 optional capability must not itself fail the application or whole project.
 
-If no safe compatibility path exists, disable the plugin rather than deliberately take down the host.
-Preserve its state and relationships under the missing-extension rules below. The final resolver,
-manifest/schema, and compatibility paths are not selected.
+A known incompatible plugin must not be activated. Installation may be rejected if incompatibility
+is known beforehand. An already installed plugin may remain present but unavailable/incompatible;
+losing support must not automatically uninstall or delete it. The user decides whether to remove it.
+Preserve project/plugin identity, state, and relationships where applicable under the missing-extension
+rules below. The final resolver, manifest/schema, and compatibility paths are not selected.
+
+## Plugin sound responsibility
+
+A third-party/optional plugin owns the sound produced by its algorithm/version. Seqvium does not
+promise to emulate older versions of arbitrary plugin algorithms. Preserving identity/state or
+structural compatibility does not guarantee exact historical sonic identity. The platform likewise
+does not promise indefinite historical engine emulation under
+[AUDIO_ENGINE](AUDIO_ENGINE.md#sound-compatibility-boundary); specific future breaking changes need
+deliberate policy when they occur.
 
 ## Failure containment limits
 
@@ -86,6 +102,11 @@ This defines ordinary cooperation, not handling every possible plugin defect; ex
 If future hosting uses separate processes, normal lifecycle must include detecting host/plugin process
 termination, disconnect/cleanup, and avoiding indefinite waits on a dead peer. This conditional contract
 does not select out-of-process hosting.
+
+First-party UI/extensions consume host localization contracts and Seqvium-native plugin surfaces
+consume centralized semantic UI resources under [ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources)
+and [UI_DESIGN](UI_DESIGN.md#themes-and-semantic-resources). Independently rendered external native
+editors are not required to adopt Seqvium themes.
 
 Third-party editors need not visually match Seqvium. If a native/plugin editor cannot safely or
 practically participate in internal overlapping panes, it may use a normal top-level OS window.
@@ -136,6 +157,11 @@ merely because state is preserved; these are distinct concerns. Reinstallation/r
 needs evidence. [PROJECT_FORMAT](PROJECT_FORMAT.md) owns on-disk preservation and compatibility.
 
 ## Not selected yet
+
+Plugin-global preferences are user configuration; sound/meaning-affecting plugin instance state belongs
+with the project. [SETTINGS](SETTINGS.md) owns this separation and preference-reset boundaries;
+[PROJECT_FORMAT](PROJECT_FORMAT.md) owns instance-state preservation. Executable installation/discovery
+locations are separate from preferences and remain open.
 
 Identity namespace, version compatibility, manifest and package format, executable trust/isolation,
 loading mechanism, API/ABI, update policy, and realtime contracts are open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).

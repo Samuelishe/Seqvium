@@ -94,6 +94,60 @@ not silently reapply that exact baked chain. Specialized audition, acceptance, c
 and resampling semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Missing capabilities should be
 represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work retained.
 
+### Audio timeline editing
+
+Ordinary audio timeline editing must support trimming start/end, splitting, and moving/rearranging the
+resulting pieces while preserving the original durable audio resource by default. A split primarily
+changes edit structure; it must not inherently modify source audio destructively. A separate explicit
+crop/consolidate/render operation may later create/commit a genuinely new shorter resource.
+
+Keep these edit intentions distinct rather than overload one gesture ambiguously:
+
+| Intention | Meaning |
+| --- | --- |
+| Trim | Change audible/visible source range without changing playback speed |
+| Loop/repeat | Extend material by repeating it |
+| Stretch | Change playback duration/time mapping |
+
+An ordinary trim must not accidentally change playback speed. Project/global tempo changes and local
+clip stretch are also distinct; [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) owns the
+tempo-following versus fixed/source-time model. Final labels, defaults, gestures, modifiers, and tools
+remain UI design work; no time-stretch algorithm is selected.
+
+A source/input end, a continuing effect tail, and an explicitly requested hard cut are different
+intentions. The user must be able to request the hard boundary as well as ordinary source edits;
+[AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) owns processing semantics and open
+reset/export/loop/seek rules. Ending source input must not implicitly mean every running effect is destroyed.
+
+## Graph state and recoverable failures
+
+The last valid prepared graph continues during candidate preparation/validation under
+[NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution). When editable and executing graphs
+differ because the candidate is invalid or not yet published, that state must be obvious to the user.
+Prefer concise graphical feedback: status/iconography, affected node/connection highlighting,
+restrained color, and short contextual/transient notification where useful.
+
+User-facing failures should generally be concise and recoverable. Cascading modal `MessageBox`
+dialogs must not be the normal error experience. Modal decisions remain available when genuinely
+required, such as choices that cannot safely be inferred or destructive actions without a better
+interaction. [UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns exact visual treatment.
+
+## Live processing feedback
+
+Future Live / Low-Latency mode must visibly communicate when the live processing path differs from
+full intended processing. Switching it must not silently rewrite the project/graph; returning to normal
+mode restores full processing. Final/offline render uses the intended full path rather than inheriting
+temporary live bypass state. [AUDIO_ENGINE](AUDIO_ENGINE.md#live--low-latency-direction) owns direction
+and unresolved latency/reporting/compensation/bypass policy, not a selected UI control.
+
+## Application preferences and reset
+
+The future Settings experience supports bounded application/plugin-global preference resets under
+[SETTINGS](SETTINGS.md#reset-boundary). Configuration reset must not delete user projects or
+project-managed audio/media. Exact button layout and confirmation flow remain open.
+Production diagnostics ordinarily need at most a simple enable/disable preference where useful;
+developer logging levels belong outside ordinary GUI settings under [SETTINGS](SETTINGS.md#production-diagnostics).
+
 ## In-window workspace and graph depth
 
 Major surfaces normally use internal workspace panes in one main window. Interaction activates a pane
