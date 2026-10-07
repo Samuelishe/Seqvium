@@ -56,6 +56,13 @@ Possible outcomes are normal loading, unavailable optional capability, an explic
 compatibility path, or disable/reject with a clear diagnostic. An older plugin's lack of a newer
 optional capability must not itself fail the application or whole project.
 
+A plugin is not incompatible merely because it was built for an older Seqvium version. The current
+platform must be able to satisfy its declared required contracts/capabilities and state requirements;
+age or version ordering alone is not a rejection criterion. Prefer lightweight metadata/manifest/
+capability checks where possible, without expensive mandatory runtime self-tests of every plugin at
+every application/project startup. Real activation/materialization failure may also disable/reject a
+plugin with diagnostics. Final negotiation mechanics remain open.
+
 A known incompatible plugin must not be activated. Installation may be rejected if incompatibility
 is known beforehand. An already installed plugin may remain present but unavailable/incompatible;
 losing support must not automatically uninstall or delete it. The user decides whether to remove it.
@@ -155,6 +162,11 @@ resource lifetime; exact live-removal and restart behavior remains open.
 Saving must not silently discard unknown extension state. Missing code cannot reproduce its algorithm
 merely because state is preserved; these are distinct concerns. Reinstallation/rebinding compatibility
 needs evidence. [PROJECT_FORMAT](PROJECT_FORMAT.md) owns on-disk preservation and compatibility.
+
+Whole-project opening with a missing/incompatible required realtime plugin remains explicitly open:
+refuse to open versus open degraded with a missing/offline instance. Neither preservation nor the
+required missing-capability indication selects one model. Q-013 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md)
+must resolve this product choice before affected hosting/project-open behavior is implemented.
 
 ## Not selected yet
 

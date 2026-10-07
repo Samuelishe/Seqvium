@@ -77,9 +77,35 @@ source audio ----|
 
 Source/input boundary, continuing processing tail, and explicit hard cut are distinct intentions.
 The user must also be able to request an explicit hard boundary where resulting sound after that point
-is intentionally silenced or otherwise terminated. This does not select node-state reset semantics,
-export-tail rules, loop/seek behavior, or controls; Q-012 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains
-those questions. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns understandable editing intentions.
+is intentionally silenced or otherwise terminated. Exact hard-cut/node-state reset mechanics and
+controls remain open. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns understandable editing intentions.
+
+### Loop, seek, and playback Stop
+
+Ordinary looping may let an existing effect tail continue across the musical loop boundary while the
+source starts its next iteration. The loop mechanism must not recursively feed previously rendered
+tails back as new source or create unbounded duplicate processing state each iteration. Intentional
+growth from an effect's own feedback/routing is a separate DSP matter; feedback safety and reset rules
+remain open.
+
+Seeking, scrubbing, or jumping to another timeline location must not leave transient playback/tail
+state misleadingly sounding from the previous location. Users should hear destination context.
+State reconstruction/warm-up for stateful DSP remains open; no seek algorithm is selected.
+
+Normal playback Stop uses a fast bounded settling/fade/de-click direction where appropriate to avoid
+an ugly instantaneous digital cut. It must not continue ordinary musical tails for seconds after Stop.
+Exact duration/shape and processor transition mechanics remain open. This transport settling behavior
+does not reinterpret an explicit hard cut in the project.
+
+### Recording stop boundary
+
+Record Stop is distinct from playback Stop. Recorded material ends at the intended recording boundary,
+subject later to defined device/latency alignment. Playback tail/de-click behavior must not silently
+extend the recorded resource. Recording is not playback Stop plus whatever tail policy runs;
+capture timing/latency remains open under the recording direction below.
+
+Q-057 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks stateful transport/reset/warm-up mechanisms;
+Q-027 separately tracks capture alignment. These accepted intentions do not select processor algorithms.
 
 ## Sound compatibility boundary
 
@@ -170,6 +196,16 @@ Determinism must be scoped to declared algorithms, seeds, inputs, and numerical 
 promise bit-identical output across arbitrary platforms or plugins without evidence. The probe may
 compare a bounded realtime schedule against an offline equivalent; it need not implement full export.
 
-[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics. Tail handling,
-render bounds, effect latency, cancellation, and exact equivalence remain open. No audio engine or
+Export/render must reproduce the project's intended audible semantics without adding an aesthetic
+interpretation. Preserve an explicit hard cut; preserve a permitted processing tail according to the
+selected render scope. Do not restore a deliberately cut tail, remove intended audible tail behavior,
+add effects, or otherwise "improve" the project. Temporary playback Stop settling is not an instruction
+to append audio to exports or recordings.
+
+**Manual export-range semantics remain open:** when a valid tail extends outside a selected bounded
+range, decide whether that range defaults to a hard render boundary or an explicit include-tails-like
+option is appropriate (Q-056 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md)). This stage chooses neither.
+Exact effect latency, cancellation, reset/warm-up, and realtime/offline equivalence also need evidence
+in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics; no engine or
 renderer exists at this milestone.

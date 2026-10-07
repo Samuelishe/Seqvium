@@ -15,11 +15,11 @@ question. The [README](../README.md) is the public introduction.
 | [PROJECT_STATE](PROJECT_STATE.md) | Current checkpoint, implemented capability, focus, validation baseline, blockers/evidence gaps |
 | [PROJECT_VISION](PROJECT_VISION.md) | Product identity, audience, creative philosophy, non-goals |
 | [UX_CONTRACT](UX_CONTRACT.md) | Observable interaction principles and general workflow semantics |
-| [UI_DESIGN](UI_DESIGN.md) | Evolving visual/interaction guide: hierarchy, chrome, density, indicators, restrained feedback |
+| [UI_DESIGN](UI_DESIGN.md) | Evolving visual/interaction guide: hierarchy, usable responsive layout, chrome, density, indicators, restrained feedback |
 | [ARCHITECTURE](ARCHITECTURE.md) | Core/plugin/backend boundaries, musical/resource identities, two local processing levels, semi-free timeline |
 | [AUDIO_ENGINE](AUDIO_ENGINE.md) | Realtime state, control boundary, scheduling, offline audio semantics |
 | [NODE_GRAPH](NODE_GRAPH.md) | Core graph, free canvas/topology, progressive graph interaction, ports, editable/prepared boundary |
-| [WORKSPACE](WORKSPACE.md) | Internal panes, activation/front behavior, docking, user layout state |
+| [WORKSPACE](WORKSPACE.md) | Main-window chrome/foreground behavior, internal panes, activation/front behavior, docking, user layout state |
 | [SETTINGS](SETTINGS.md) | User/project configuration separation, bounded preference reset, quiet bounded production diagnostics |
 | [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, lifecycle, missing-extension preservation |
 | [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Standalone/contextual Sample Lab, audition, acceptance, what-you-hear resampling |

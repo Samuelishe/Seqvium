@@ -29,8 +29,7 @@ It must not acquire authority to refactor code automatically.
 
 ## Bounded V1 structural metrics
 
-Possible initial metrics, adapted from the Fovium structural-tooling pattern; exact path rules wait
-for actual source topology (Q-044):
+Possible initial metrics; exact path rules wait for actual source topology (Q-044):
 
 - Scanned/text file counts and files by extension; solution/project inventory without MSBuild evaluation.
 - C# files/lines/characters; native C/C++/header equivalents only if native source exists.

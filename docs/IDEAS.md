@@ -44,7 +44,7 @@ and multiple-graph-pane questions also stay there; they are design obligations, 
 ## I-002 — Named test routes
 
 Status: Idea; future tooling only.
-Origin / owner: Mature MeasPilot route-registry pattern; [TEST_EXECUTION](TEST_EXECUTION.md).
+Origin / owner: [TEST_EXECUTION](TEST_EXECUTION.md).
 Value: A single registry could avoid duplicated long filters in documentation/CI. Conceptual names:
 `Portable`, `Audio-Offline`, `NodeGraph`, `Serialization`, `CI-Fast`, and `CI-Full`.
 Promotion condition: Measured suite growth makes ad-hoc filters costly to maintain; define fast/full

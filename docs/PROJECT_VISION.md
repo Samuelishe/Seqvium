@@ -73,8 +73,7 @@ container terminology and its exact domain identity remain open.
 
 FL Studio is the nearest workflow reference, but Seqvium must develop its own creative character.
 Ableton Live, Bitwig, Reaper, LMMS, Ardour, Zrythm, Bespoke Synth, and grooveboxes may supply specific
-ideas. None is a specification. Fovium supplies the analogy of allowing the primary creative object
-to dominate; its photograph-specific zero-UI rules are not Seqvium requirements.
+ideas. None is a specification.
 
 Seqvium must not become a toy beat maker that quickly reaches its ceiling, an FL Studio clone, or a
 generic professional DAW that requires understanding extensive routing before making a sound.

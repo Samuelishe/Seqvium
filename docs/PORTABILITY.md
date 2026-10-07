@@ -48,6 +48,6 @@ native build -> package/materialize -> smoke -> managed host build -> production
 ```
 
 A developer-installed library or a managed compile alone cannot prove the distributed runtime works.
-This adopts an evidence pattern, not Fovium's library scripts. C++, CMake, MSVC, Clang, GCC, miniaudio,
-and any concrete RID matrix remain unselected. [THIRD_PARTY](THIRD_PARTY.md) owns actual provenance;
+C++, CMake, MSVC, Clang, GCC, miniaudio, and any concrete RID matrix remain unselected.
+[THIRD_PARTY](THIRD_PARTY.md) owns actual provenance;
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks choices when they become necessary.

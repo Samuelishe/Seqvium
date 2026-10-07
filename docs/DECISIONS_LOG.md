@@ -10,6 +10,7 @@ D-017 through D-022 record SEQ-KB-R2; D-023 through D-028 record SEQ-KB-R3 on 20
 D-029 through D-032 record SEQ-KB-R4 on 2026-10-06.
 D-033 through D-038 record SEQ-KB-R5 on 2026-10-07.
 D-039 through D-044 record SEQ-KB-R6 on 2026-10-07.
+D-045 through D-049 record SEQ-KB-R7 on 2026-10-07.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
 contract. No supersessions exist yet; the later KB stages refine direction without accepting technical proposals.
 New decisions need an ID, status, basis/evidence, rationale, affected owner, and explicit supersession
@@ -219,7 +220,7 @@ Owner: [ARCHITECTURE](ARCHITECTURE.md#semi-free-arrangement).
 ## D-023 — Zero-warning managed baseline
 
 Status: Accepted engineering policy; shared compiler enforcement deferred until projects exist.
-Basis: SEQ-KB-R3 mandate; [engineering reference study](THIRD_PARTY.md#seq-kb-r3-engineering-reference-study).
+Basis: SEQ-KB-R3 mandate.
 Rationale: Nullable production/test code starts from zero warnings and errors. Future inherited MSBuild
 policy treats warnings as errors; only narrow reasoned suppressions are permitted, not broad `NoWarn`.
 Owner: [CODING_GUIDELINES](CODING_GUIDELINES.md#zero-warning-baseline-and-enforcement).
@@ -227,7 +228,7 @@ Owner: [CODING_GUIDELINES](CODING_GUIDELINES.md#zero-warning-baseline-and-enforc
 ## D-024 — Repository-owned development conventions
 
 Status: Accepted engineering policy.
-Basis: SEQ-KB-R3 mandate, refining D-007; reference study linked above.
+Basis: SEQ-KB-R3 mandate, refining D-007.
 Rationale: English implementation/documentation, explicit async/resource/thread ownership, pragmatic UI
 boundaries, and mechanical/behavioral refactoring rules must be retrievable without chat memory.
 Canonical owners and proportionate machine configuration preserve these obligations without tooling ceremony.
@@ -245,7 +246,7 @@ Owners: [PORTABILITY](PORTABILITY.md), evidence tiers in [TEST_EXECUTION](TEST_E
 ## D-026 — Simple initial CI, growth driven by measured cost
 
 Status: Accepted future CI policy; no workflows introduced.
-Basis: SEQ-KB-R3 mandate and Fovium/MeasPilot reference study linked above.
+Basis: SEQ-KB-R3 mandate.
 Rationale: Start with Windows/Ubuntu/macOS managed restore/Release-build/tests once code exists.
 Separate docs validation when a checker exists; account for required-check semantics. Adopt fast/full
 feedback and distribution gates only when actual cost warrants them, keeping physical acceptance separate.
@@ -254,7 +255,7 @@ Owner: [CI_CD](CI_CD.md); verification in [TEST_EXECUTION](TEST_EXECUTION.md).
 ## D-027 — Machine-enforced repository consistency where proportionate
 
 Status: Accepted repository policy; passive text/diagnostic configuration introduced.
-Basis: SEQ-KB-R3 mandate and MeasPilot's targeted diagnostic guards.
+Basis: SEQ-KB-R3 mandate.
 Rationale: LF-normalized text with explicit batch-script exceptions and editor correctness guards reduce
 recurring drift/refactoring mistakes. Prefer cheap deterministic enforcement over agent memory; defer
 shared MSBuild, SDK pins, analyzers, and CI until actual projects/problems justify them.
@@ -289,7 +290,7 @@ This completes D-001's earlier FOSS intent without superseding its product direc
 ## D-030 — Future ProjectStats repository diagnostics
 
 Status: Accepted future tooling direction; no executable project exists.
-Basis: SEQ-KB-R4 repository-tooling mandate, informed by the Fovium structural-diagnostics pattern.
+Basis: SEQ-KB-R4 repository-tooling mandate.
 Rationale: A cross-platform, initially BCL-only structural CLI can provide useful repository diagnostics
 without production/UI/audio dependencies or quality authority. Deterministic ordering, sanitized metadata,
 safe exclusions, advisory diagnostics, and synthetic-repository tests bound its responsibility.
@@ -300,7 +301,7 @@ Boundary: Requires later explicit code authorization; not part of SEQ-R0 and not
 ## D-031 — Compact current-state handoff with bounded evidence
 
 Status: Accepted repository policy, refining D-007.
-Basis: SEQ-KB-R4 handoff mandate and mature Fovium/MeasPilot current-state growth experience.
+Basis: SEQ-KB-R4 handoff mandate.
 Rationale: Checkpoint, capability, focus, latest meaningful validation, and active gaps answer where the
 project is now. A soft 50–80-line discipline and links to proper history/decision/evidence owners preserve
 readability without a machine gate or chronological test-run accumulation.
@@ -390,7 +391,8 @@ the normal project path without copying unused whole libraries. Original pack/ge
 not lose accepted managed audio. External references remain an explicit distinguishable alternative.
 Owners: [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary) for persistence/defaults,
 [ARCHITECTURE](ARCHITECTURE.md) for resource identity, [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) for acceptance,
-[EXTENSIONS](EXTENSIONS.md) for source removal. Q-009 retains container/schema and media-management mechanics.
+[EXTENSIONS](EXTENSIONS.md) for source removal. Q-009 retains container/schema choices; Q-059 separately
+tracks media-management/integrity mechanics after the R7 question split.
 
 ## D-039 — Platform-authoritative plugin compatibility
 
@@ -406,6 +408,9 @@ Owners: [EXTENSIONS](EXTENSIONS.md#host-context-and-compatibility) for plugin li
 for platform sound, [PROJECT_FORMAT](PROJECT_FORMAT.md) for data preservation.
 Open mechanics: Q-024/Q-050 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); no final manifest/API/version resolver.
 
+Refinement: [D-046](#d-046--compatibility-depends-on-satisfied-contracts-not-plugin-age) clarifies
+contract-based compatibility without age-based rejection or mandatory expensive startup self-tests.
+
 ## D-040 — Tempo-aware audio and non-destructive timeline editing
 
 Status: Accepted musical/editing direction, refining D-019 and D-038.
@@ -419,6 +424,9 @@ Owners: [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) for model,
 [PROJECT_FORMAT](PROJECT_FORMAT.md) for preservation,
 [AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) for tails.
 Open mechanics: Q-012/Q-028/Q-051; no final labels/defaults, gestures, time/stretch representation, or algorithm.
+
+Refinement: [D-047](#d-047--distinct-transportcapture-boundaries-and-faithful-render) accepts distinct
+loop/seek/Stop/record/render intentions; Q-056/Q-057 retain range policy and stateful DSP mechanisms.
 
 ## D-041 — Last-valid execution with visible recoverable feedback
 
@@ -447,6 +455,9 @@ Owners: [SETTINGS](SETTINGS.md) for policy/reset,
 [UX_CONTRACT](UX_CONTRACT.md) for settings interaction.
 Open mechanics: Q-052/Q-053; no exact log limits, paths, formats, or reset controls selected.
 
+Refinement: [D-045](#d-045--project-owned-reproducible-settings-and-identifying-metadata) extends the
+project-owned boundary beyond plugin instance state and clarifies copied creation defaults.
+
 ## D-043 — Host-owned localization and semantic theme resources
 
 Status: Accepted platform/UI direction.
@@ -474,6 +485,64 @@ Owners: [AUDIO_ENGINE](AUDIO_ENGINE.md#bounded-overload-and-semantic-recovery) f
 Open mechanics: Q-004/Q-005/Q-007/Q-021; no universal late-event drop policy, scheduler, thresholds,
 reporting contract, compensation/bypass algorithm, or new SEQ-R0 scope selected.
 
+## D-045 — Project-owned reproducible settings and identifying metadata
+
+Status: Accepted configuration/persistence direction, refining D-042.
+Basis: Explicit SEQ-KB-R7 project semantics mandate.
+Rationale: Sound, timing, musical meaning, and reproducible behavior must not silently change when
+application defaults change. New-project/new-instance defaults are copied at creation; plugin-global
+presentation/default preferences remain distinct from saved instance state. Saved projects carry format,
+saving-application version, and relevant compatibility metadata for useful open/migration diagnostics.
+Owners: [SETTINGS](SETTINGS.md#user-configuration-and-project-state) for classification/defaults,
+[PROJECT_FORMAT](PROJECT_FORMAT.md) for persistence/metadata, [ARCHITECTURE](ARCHITECTURE.md) for boundaries.
+Open mechanics: exact defaults, schema/field names, paths/formats, migration and recovery remain open.
+
+## D-046 — Compatibility depends on satisfied contracts, not plugin age
+
+Status: Accepted clarification of D-039; platform authority is preserved.
+Basis: Explicit SEQ-KB-R7 compatibility mandate.
+Rationale: Older build age alone cannot prove incompatibility. Required contracts/capabilities/state
+requirements determine compatibility, preferably through lightweight declared checks. Expensive tests
+of every plugin at every startup are not required; actual activation/materialization failure may reject
+or disable with diagnostics. Known incompatibility never activates or automatically deletes installed code.
+Owner: [EXTENSIONS](EXTENSIONS.md#host-context-and-compatibility).
+Open mechanics: Q-024; final manifest/API/negotiation remains open, as does whole-project missing-plugin policy.
+
+## D-047 — Distinct transport/capture boundaries and faithful render
+
+Status: Accepted audio/product direction, refining D-040.
+Basis: Explicit SEQ-KB-R7 loop, seek, stop, recording, and export mandate.
+Rationale: Loop tails may continue without loop-driven recursive source reuse or unbounded duplicate
+state. Seek must present destination context. Playback Stop settles quickly and boundedly rather than
+continuing seconds of tails; Record Stop preserves the intended capture boundary. Export preserves
+project cuts/tails within its selected scope without aesthetic reinterpretation.
+Owner: [AUDIO_ENGINE](AUDIO_ENGINE.md) for execution; [UX_CONTRACT](UX_CONTRACT.md) for edit intentions
+and [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) for selection/acceptance scopes.
+Open mechanics: DSP reset/warm-up, stop fade shape/duration, recording latency and manual export-range
+tail policy; no algorithm or include-tails default selected.
+
+## D-048 — Unobtrusive main chrome and usable responsive layout
+
+Status: Accepted first-party workspace/UI direction, refining D-013 and D-021.
+Basis: Explicit SEQ-KB-R7 main-window and responsive UI mandate.
+Rationale: Seqvium-owned main-window controls replace a prominent ordinary system title bar; default
+TopMost and unnecessary foreground/focus grabs are excluded. Reflow/overflow and flexible regions
+preserve readable usable controls instead of continuously shrinking them. Independently rendered
+third-party editor visuals are outside this direction.
+Owners: [WORKSPACE](WORKSPACE.md#main-window-chrome-and-foreground-behavior) for window behavior,
+[UI_DESIGN](UI_DESIGN.md#responsive-layout-and-usable-minimums) for layout, [UX_CONTRACT](UX_CONTRACT.md) for interaction.
+Open mechanics: platform/framework behavior, accessibility validation, dimensions and breakpoints.
+
+## D-049 — Research context is distinct from public material provenance
+
+Status: Accepted repository policy, refining D-007.
+Basis: Explicit SEQ-KB-R7 public-repository privacy mandate.
+Rationale: External-repository inspection must not automatically publish irrelevant private identities
+or implementation details. Current public prose is cleaned while Git history remains untouched;
+actual third-party distribution provenance and materially useful official references remain required.
+Owner: [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md#external-repository-research-and-public-documentation);
+operational route in [AGENTS](../AGENTS.md), actual/candidate material in [THIRD_PARTY](THIRD_PARTY.md).
+
 Final application decomposition, engine language/backend/ABI, extension/package API, project format,
 visual language, plugin-hosting/isolation strategy, graph compiler/port ABI, workspace layout
 mechanism, platform release schedule, final Layer/Track terminology/schema, node-settings UX,
@@ -481,6 +550,7 @@ arbitrary feedback, automation/modulation formula, and compact-chain visuals are
 SDK pin/roll-forward, final UI adoption, native toolchain/warning policy, release RIDs, CI actions/filters,
 analyzer packages, and test framework/platform are also unselected, alongside settings paths/formats,
 log limits, localization format/fallback, theme packaging,
-time/stretch representation/algorithms, tail/reset rules, realtime overload/recovery, low-latency policy,
+time/stretch representation/algorithms, tail/reset mechanisms and manual export-range policy,
+realtime overload/recovery, low-latency policy,
 and change-specific historical sonic compatibility. Concrete required questions belong
 to [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); speculative possibilities belong to [IDEAS](IDEAS.md).

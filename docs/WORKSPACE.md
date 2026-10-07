@@ -2,7 +2,7 @@
 
 Role: Main-window workspace-pane behavior and layout-state contract.
 Read when: Designing pane placement, activation, floating, docking, collapse, or layout restoration.
-Authoritative for: Internal pane composition, user-controlled docking, activation/front behavior, layout ownership.
+Authoritative for: Main-window chrome/foreground behavior, internal panes, user-controlled docking, activation/front behavior, layout ownership.
 Not authoritative for: Pane-specific editing, final visuals/gestures, framework Z-order API, or project schema.
 
 ## One main application window
@@ -22,6 +22,17 @@ workspace direction. Seqvium owns the plugin/editor relationship and normal life
 The main workspace/pane infrastructure is core platform responsibility. A plugin may contribute a
 surface through host contracts without controlling the host workspace. [ARCHITECTURE](ARCHITECTURE.md)
 owns platform boundaries; each musical owner defines its pane's work. No UI exists yet.
+
+## Main-window chrome and foreground behavior
+
+The main Seqvium window should not have an ordinary prominent system title bar. Minimize, maximize,
+and close controls live in Seqvium's own window chrome/body. The window must not be TopMost by default
+or aggressively steal focus from other applications; avoid unnecessary foreground activation/focus
+grabs. Internal pane activation below is distinct from activating the application over another app.
+
+This first-party direction does not prescribe independently rendered external plugin editor visuals.
+Exact Avalonia/platform mechanics remain open. Accessibility, OS window behavior, and platform/DPI
+interaction require later validation; custom chrome is not evidence of cross-platform correctness.
 
 ## Flexible composition and activation
 

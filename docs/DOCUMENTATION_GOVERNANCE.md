@@ -24,11 +24,11 @@ Other documents may summarize and link but must not create competing contracts. 
 - [NODE_GRAPH](NODE_GRAPH.md) owns signal-graph semantics, node/port classes, and the editable/prepared
   boundary; audio owns realtime execution constraints and architecture owns separation from timeline
   and user organization. Cross-owner documents link these contracts rather than redefine them.
-- [WORKSPACE](WORKSPACE.md) owns internal panes, activation/front behavior, docking, and user layout
+- [WORKSPACE](WORKSPACE.md) owns main-window chrome/foreground behavior, internal panes, docking, and user layout
   ownership; UX owns general input/feedback principles. Project format owns musical serialization,
   including editable graph data, rather than application/user pane preferences.
 - [SETTINGS](SETTINGS.md) owns application/user configuration boundaries, preference-reset limits,
-  and quiet bounded production diagnostics. Project format owns sound/meaning-affecting plugin instance
+  and quiet bounded production diagnostics. Project format owns project-affecting settings and plugin instance
   persistence; workspace owns layout behavior; development owns developer diagnostic activation.
   Architecture owns host localization/service boundaries and UI design owns semantic theme resources;
   settings does not select their APIs, packaging, or exact paths/formats.
@@ -101,6 +101,20 @@ archives are not routine startup context.
 Canonical documentation is English, with simple precise terminology. Durable knowledge must remain
 usable by a fresh agent or contributor without the bootstrap prompt or conversation history.
 
+## External repository research and public documentation
+
+Information learned while inspecting other repositories is working/research context and must not
+automatically be copied into Seqvium's public canonical documentation. Unless explicitly requested
+or genuinely required as public third-party provenance/evidence, do not record private repository
+names or URLs, commit SHAs, internal paths, workflow names, repository topology, confidential/private
+implementation details, or research provenance irrelevant to Seqvium's public contract. Keep useful
+Seqvium engineering conclusions without identifying their unrelated research sources.
+
+Official public documentation for a dependency or standard may be cited when materially useful.
+Actual third-party code, assets, and services introduced into Seqvium still require normal provenance
+in [THIRD_PARTY](THIRD_PARTY.md). Research context is distinct from distributed-material provenance;
+this rule does not remove license/notice obligations or rewrite Git history.
+
 ## Status and conflict resolution
 
 Distinguish **accepted constraint/direction**, **proposal**, **open question**, and **implemented fact**.
@@ -152,8 +166,8 @@ The document ownership model stays stable while retrieval mechanisms evolve:
    [ProjectStats contract](PROJECT_STATS.md), independent from retrieval evolution; executable tooling
    still waits for explicit authorization.
 3. **Stage 2 — measurable context-selection problems:** consider a generated repository map and
-   bounded context planner inspired by MeasPilot. Generated outputs remain disposable retrieval
-   artifacts, not canonical truth. Do not create retrieval manifests or budgets now; structural
+   bounded context planner. Generated outputs remain disposable retrieval artifacts, not canonical
+   truth. Do not create retrieval manifests or budgets now; structural
    ProjectStats introduction follows its separate owner and is not a prerequisite for retrieval tooling.
 4. **Stage 3 — exact routing/search demonstrably insufficient:** consider a local semantic index,
    hybrid RAG, and possibly MCP exposure. Retrieval must retain source provenance and never silently
@@ -162,7 +176,6 @@ The document ownership model stays stable while retrieval mechanisms evolve:
 Promote retrieval infrastructure only in response to an observed problem. Report a broken retrieval
 tool and fall back to direct owners/search; a planner or index must not narrow the authorized task or
 silently redefine the product. No AgentContext/planner/RAG infrastructure is introduced by SEQ-KB-R3.
-Fovium/MeasPilot reference provenance is recorded in [THIRD_PARTY](THIRD_PARTY.md).
 
 Prefer cheap deterministic compiler/editor/build/CI enforcement over agent memory when justified.
 [DEVELOPMENT](DEVELOPMENT.md#machine-enforcement-and-text-consistency) maps newline/diagnostic policy

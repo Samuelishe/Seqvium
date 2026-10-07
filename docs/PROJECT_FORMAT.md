@@ -10,7 +10,11 @@ inventing field names, file extensions, or a container layout.
 
 ## Required direction
 
-- Identify schema/version and provide migration-aware loading as the model evolves.
+- Carry project/schema format version, the Seqvium version that saved the project, and relevant
+  compatibility metadata for deciding supported loading/migration. Provide migration-aware loading
+  as the model evolves; exact schema and metadata field names remain open.
+- When opening/migration is unsupported or fails, give a concise useful reason rather than an
+  unexplained failure. Plugin availability and whole-project open policy remain a separate open choice.
 - Use stable entity/resource IDs where references and edit identity justify them.
 - Define reasonable forward/backward handling: distinguish supported loading, safe preservation, and
   inability to reproduce behavior. Do not silently rewrite unsupported data as if fully understood.
@@ -43,11 +47,12 @@ the user's overall pane arrangement; no final storage policy or optional project
 
 ## Project state and user preferences
 
-Plugin instance state that affects the sound or meaning of a project belongs with the project, not
-only in user configuration. Preserve it with plugin identity/relationships even when the plugin is
-unavailable or incompatible. Application preferences, selected language/theme, workspace layout,
-device/user preferences, and plugin-global preferences belong in user configuration under
-[SETTINGS](SETTINGS.md#user-configuration-and-project-state); exact paths/formats remain open.
+Persist project-owned values that affect sound, timing, musical meaning, or reproducible behavior,
+including tempo/time signature, routing/processing, time/stretch behavior, applicable project audio
+settings, and plugin/instrument instance state. Preserve instance state with identity/relationships
+even when code is unavailable or incompatible. New-project/new-instance defaults are copied at creation,
+not live-linked to preferences. [SETTINGS](SETTINGS.md#user-configuration-and-project-state) owns this
+classification and the plugin-global presentation/default boundary; exact paths/formats remain open.
 Configuration reset must not delete projects or project-managed audio/media.
 
 Migration/preservation of structure and data does not promise exact historical sonic identity.
@@ -66,7 +71,7 @@ mechanics, resource deduplication, or a schema. [ARCHITECTURE](ARCHITECTURE.md) 
 
 Preserve non-destructive trim ranges, split-piece references/placements, and distinct loop/repeat and
 stretch intentions without rewriting the original durable audio resource through ordinary timeline
-editing. Preserve project/global tempo and audio tempo-following versus fixed/source-time relationships,
+editing. Preserve project-wide tempo and audio tempo-following versus fixed/source-time relationships,
 with independent local stretch, under [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) and
 [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing). This does not select time/stretch encoding.
 An explicit operation creating/committing a new cropped/consolidated/rendered resource is separate
@@ -97,8 +102,10 @@ Preserving user material does not authorize automatic deletion of unused resourc
 ## Unknown extension data
 
 A missing, incompatible, or disabled algorithm may prevent playback, but must not cause save to discard
-its identity, opaque state, musical connections, or contributed graph-node relationships. Future tests
-must cover load/edit/save while an extension is absent, then reinstallation of compatible code.
+its identity, opaque state, musical connections, or contributed graph-node relationships. Future
+preservation checks must cover round-trip absent-extension data and compatible reattachment. Available
+user load/edit/save paths depend on the unresolved whole-project opening policy Q-013 in
+[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); these checks do not implicitly require degraded project opening.
 Exact opaque encoding and compatibility claims are undecided.
 
 ## Open format choices
@@ -106,4 +113,8 @@ Exact opaque encoding and compatibility claims are undecided.
 SEQ-R1 should establish only a bounded versioned foundation. Container versus directory, encoding,
 ID/time representation, migration mechanism, unsupported-version behavior, crash-safe save/recovery,
 resource integrity, and extension-state evolution remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+Q-058 separates explicit Save from unresolved autosave/crash recovery, including corruption safety,
+bounded retention, recorded media and crash-restart user choice. Q-059 tracks managed-media integrity
+and save/collect/relocate workflows. No recovery scheme is accepted by mentioning these obligations.
+Q-060 retains save/reopen/render policy when edited and last-valid executing graphs differ.
 WAV export is an audio deliverable, not a substitute for project serialization.

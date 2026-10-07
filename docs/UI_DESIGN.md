@@ -2,7 +2,7 @@
 
 Role: Evolving visual and interaction design guide.
 Read when: Designing visual hierarchy, pane chrome, controls, indicators, or graph presentation.
-Authoritative for: Durable visual principles, interaction density, consistency, progressive visual complexity, semantic theme/style resources.
+Authoritative for: Durable visual principles, usable responsive layout, interaction density, consistency, progressive visual complexity, semantic theme/style resources.
 Not authoritative for: Workflow semantics, pane lifecycle, graph execution, or a final design system.
 
 ## Design intent and scope
@@ -25,6 +25,19 @@ Dark/Light baseline direction is accepted below; exact visuals remain unselected
   creative tasks may need different density without looking like unrelated applications.
 - Avoid engineer-tool aesthetics: walls of permanent connectors, diagnostics, and configuration
   fields must not define the ordinary musical workspace.
+
+## Responsive layout and usable minimums
+
+First-party Seqvium UI uses responsive/reflowing layout, not uniform graphical scaling of the
+application. Prefer reflow, collapsing secondary content, scrolling/overflow, resizing flexible
+regions, and preserving minimum usable sizes as available space changes.
+
+Do not continuously shrink fonts, icons, mixer strips, knobs, click/touch targets, or other primary
+controls below readable/usable minimums to fit more content. A mixer strip may need a minimum useful
+width and horizontal scrolling rather than becoming an unreadable sliver. Exact dimensions and
+breakpoints remain future visual-design work. Correct platform DPI scaling is still required and is
+distinct from shrinking the UI to fit a window. Independently rendered third-party editors are outside
+this visual contract; [WORKSPACE](WORKSPACE.md) owns main-window and pane behavior.
 
 ## Processing and node-canvas presentation
 

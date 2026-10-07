@@ -8,10 +8,10 @@ Not authoritative for: Current state, plans, stable contracts, or active debt.
 ## 2026-10-06 — SEQ-KB-R0
 
 - Established English canonical owner documents, a compact agent entry point, public README,
-  selective context routes, and knowledge-evolution rules after studying the named Fovium/MeasPilot references.
+  selective context routes, and knowledge-evolution rules.
 - Recorded product, UX, sample, extension, audio, and persistence requirements; separated accepted
   direction from technical proposals, open questions, and future stages.
-- Adopted Fovium's provenance/evaluation ledger model, including musical-content provenance,
+- Established a provenance/evaluation ledger, including musical-content provenance,
   manifest-owned versions, historical retention, and an explicit unselected project license.
 - Preserved the pre-existing empty solution and staging index. Expanded the working `.gitignore`
   to exclude local IDE settings/caches without deleting local files.
@@ -62,9 +62,8 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Introduced minimal `.editorconfig` correctness guards and LF-oriented `.gitattributes`. Existing
   tracked text was already LF in Git; normalized only documents edited in this stage, preserving
   unrelated working copies and the staging index.
-- Studied current Fovium/MeasPilot engineering policies, projects, and named workflows through read-only
-  GitHub; [pinned reference provenance](THIRD_PARTY.md#seq-kb-r3-engineering-reference-study) records scope
-  and limits. Retained optional saved layouts as I-001; required design questions stayed in KNOWN_PROBLEMS.
+- Consolidated engineering policy without introducing executable tooling. Retained optional saved
+  layouts as I-001; required design questions stayed in KNOWN_PROBLEMS.
 - Checked all Markdown relative links/anchors, owner metadata/routing, planning-state separation,
   policy versus adoption/evidence limits, passive configuration structure/attributes, LF stability,
   forbidden-artifact scope, `git diff --check`, and final Git status/staging preservation.
@@ -115,3 +114,28 @@ is not established by local history; this log does not duplicate Git's commit ch
   Initial tree was clean; HEAD/staging index preserved. No source, projects, tests, dependencies, scripts,
   CI, executable tooling, plugin hosts, theme packages, localization files, or passive configuration
   changes introduced; no build/tests, commit, or push performed. SEQ-R0 remains pending / not started.
+
+## 2026-10-07 — SEQ-KB-R7
+
+- Integrated accepted project-owned sound/timing/meaning settings, copied creation defaults, plugin-global
+  versus instance state, identifying/version metadata, and useful open/migration diagnostic direction.
+- Refined compatibility by satisfied required contracts rather than plugin age; retained lightweight
+  checks, real activation failure handling, state preservation and installed-code retention.
+- Separated loop/seek/playback Stop/Record Stop semantics; required faithful cuts/tails in render while
+  leaving manual export-range policy and DSP mechanisms open. Recorded custom main chrome/no focus
+  stealing and responsive reflow with usable minimums, without selecting framework mechanics or sizes.
+- Removed identifying external-repository research material from current public Markdown and the
+  third-party ledger; recorded the permanent research/public-provenance boundary. Git history untouched.
+  Added grouped D-045 through D-049 without superseding R6 constraints.
+- After integration, read and audited all canonical owners/registers, public/root documentation, the
+  experiment guide and passive configuration. [Ranked findings](KNOWN_PROBLEMS.md#seq-kb-r7-global-audit-findings)
+  cover missing-plugin open policy, recovery/media integrity, graph save/render divergence, independent
+  execution, roadmap dependencies, latency, device failures, undo, library/input and host-service gaps.
+  Refined/split questions with traceability; added Q-056 through Q-071, leaving product/technical choices
+  unresolved. Reported editor/Git batch-newline discrepancy Q-070 without changing configuration.
+- Verified all 30 Markdown files' relative links/anchors and owner metadata/routing, unique IDs,
+  zero case-insensitive removed-research-name matches, privacy/scope, LF/whitespace, `git diff --check`,
+  and final Git status. Initial worktree/index/untracked baseline was clean; branch/HEAD/index preserved.
+  Markdown changes only; no source, projects, dependencies, tests, CI, executable tooling, plugin hosts,
+  theme packages or prototypes; no build/tests, commit or push. TECH_DEBT has no implementation entries.
+  SEQ-R0 remains **pending / not started**; implementation stages were not renumbered.

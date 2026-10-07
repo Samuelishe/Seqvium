@@ -138,6 +138,8 @@ owns concise recoverable feedback; [UI_DESIGN](UI_DESIGN.md#feedback-and-motion)
 Graph preparation, publication, resource retirement, and state transition during playback need evidence. The
 same scheduling/node semantics should serve realtime and device-independent offline rendering as
 much as practical. Saved editable state and compatibility belong to [PROJECT_FORMAT](PROJECT_FORMAT.md).
+Q-060 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains the separate save/reopen/render policy when
+editable and executing graphs differ; last-valid playback alone does not choose a durable/render revision.
 
 ## Core nodes and plugin contributions
 

@@ -7,8 +7,9 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R6 complete (2026-10-07): runtime, audio-editing, plugin compatibility/sound, settings/diagnostics,
-and host UI resource semantics clarified in documentation. No implementation stage started.
+SEQ-KB-R7 complete (2026-10-07): accepted project/default/instance ownership, compatibility metadata,
+contract-based plugin compatibility, transport/render and main-window/responsive UI semantics integrated;
+then the entire updated canonical knowledge base audited. No implementation stage started.
 
 ## Implemented capability
 
@@ -24,12 +25,16 @@ authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-probe) remains **p
 
 ## Validation baseline
 
-R6 contract consistency, documentation links/anchors, ownership/scope, and Git integrity checks passed;
-see the bounded [work-log entry](WORK_LOG.md#2026-10-07--seq-kb-r6). No build/test/runtime/platform acceptance is claimed.
+R7 privacy searches, Markdown links/anchors, unique decision/question IDs, owner/routing, scope,
+LF/whitespace and Git preservation checks passed; see the bounded
+[work-log entry](WORK_LOG.md#2026-10-07--seq-kb-r7). The audit records a passive batch-newline policy
+discrepancy (Q-070); no build/test/runtime/platform acceptance is claimed.
 
 ## Active blockers / evidence gaps
 
-No blocker recorded for the completed repository foundation. Audio architecture is unvalidated;
-source/toolchain/test choices, future dependency compatibility, and tooling sequencing remain open in
-[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). Compact handoff policy belongs to
+The completed knowledge stage does not close implementation risks. High-impact open choices include
+missing-plugin project opening (Q-013), independent overlapping execution (Q-047), recovery/media
+integrity (Q-058/Q-059), divergent graph save/render (Q-060), and milestone dependency closure (Q-061).
+Audio architecture, toolchain/test choices and later workflow mechanisms remain unvalidated in the
+[global audit register](KNOWN_PROBLEMS.md#seq-kb-r7-global-audit-findings). Compact handoff policy belongs to
 [documentation governance](DOCUMENTATION_GOVERNANCE.md#compact-current-state-contract).

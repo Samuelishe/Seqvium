@@ -109,15 +109,16 @@ Keep these edit intentions distinct rather than overload one gesture ambiguously
 | Loop/repeat | Extend material by repeating it |
 | Stretch | Change playback duration/time mapping |
 
-An ordinary trim must not accidentally change playback speed. Project/global tempo changes and local
+An ordinary trim must not accidentally change playback speed. Project-wide tempo changes and local
 clip stretch are also distinct; [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) owns the
 tempo-following versus fixed/source-time model. Final labels, defaults, gestures, modifiers, and tools
 remain UI design work; no time-stretch algorithm is selected.
 
 A source/input end, a continuing effect tail, and an explicitly requested hard cut are different
 intentions. The user must be able to request the hard boundary as well as ordinary source edits;
-[AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) owns processing semantics and open
-reset/export/loop/seek rules. Ending source input must not implicitly mean every running effect is destroyed.
+[AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) owns processing semantics, including
+loop/seek/playback Stop/Record Stop and faithful export rules. Ending source input must not implicitly
+mean every running effect is destroyed. The manual export-range tail policy remains explicitly open.
 
 ## Graph state and recoverable failures
 
@@ -175,6 +176,12 @@ Prioritize strong visual hierarchy, restrained intentional identity, readable ty
 selection/loading/error states, excellent drag-and-drop, useful context menus, sensible shortcuts,
 and good note-editing interaction. Scaling and DPI correctness and responsive input belong in
 verification when UI exists. Avoid an engineer-only interface.
+
+First-party UI uses responsive/reflowing layout rather than uniformly scaling the application into
+unreadability; [UI_DESIGN](UI_DESIGN.md#responsive-layout-and-usable-minimums) owns usable minimums.
+The main window uses custom unobtrusive chrome without default TopMost or aggressive foreground/focus
+activation under [WORKSPACE](WORKSPACE.md#main-window-chrome-and-foreground-behavior). These host
+principles do not prescribe independently rendered third-party editor visuals.
 
 Pleasant direct manipulation, spatial clarity, and restrained feedback should make experimentation
 inviting. [UI_DESIGN](UI_DESIGN.md) owns gradual visual guidance and consistency between panes.

@@ -9,6 +9,10 @@ This is a direction, not a promise to implement all capabilities in v0.1. Later 
 with evidence and product need. Current status belongs to [PROJECT_STATE](PROJECT_STATE.md), completed
 facts to [WORK_LOG](WORK_LOG.md), and technical choices to their owners and [DECISIONS_LOG](DECISIONS_LOG.md).
 
+The [R7 global audit](KNOWN_PROBLEMS.md#seq-kb-r7-global-audit-findings) records unresolved scope and
+dependency questions, including First Track Release closure (Q-061). It does not reorder stages or
+make later recording, automation, external hosting, or ProjectStats prerequisites by implication.
+
 ## SEQ-KB-R0 — Repository Knowledge Foundation
 
 Define product direction, canonical owners, task routing, and documentation governance. Documentation
@@ -66,6 +70,16 @@ Documentation only: no source, projects, tests, dependencies, scripts, CI, execu
 hosts, theme packages, localization files, or passive configuration changes. Completion belongs to
 PROJECT_STATE / WORK_LOG. SEQ-R0 remains **pending / not started**; implementation stages retain IDs.
 
+## SEQ-KB-R7 — Project Semantics & Knowledge Coherence
+
+Integrate accepted project/default/instance ownership, project metadata, contract-based plugin
+compatibility, distinct transport/record/render semantics, custom main-window chrome, and usable
+responsive layout. Then audit the entire updated canonical knowledge base for contradictions,
+duplication, open-question quality, workflow/technical gaps, roadmap dependencies, and passive policy.
+Documentation/knowledge stage only. No implementation/tooling/test/CI artifacts or prototypes;
+no implementation stages renumbered. Completion belongs to PROJECT_STATE / WORK_LOG.
+SEQ-R0 remains **pending / not started**.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 SEQ-R0 remains pending / not started after the documentation stages.
@@ -94,6 +108,8 @@ execution boundary. No graph editor, full plugin host, ASIO, or recording worksp
 Establish project/document ownership, musical-time primitives, instrument identity, events/parts,
 named multi-instrument patterns, clips, independent organizational groups, justified stable IDs,
 undo/redo, and a bounded versioned serialization foundation.
+Include independent project-owned settings copied from creation defaults, plus identifying/version
+metadata and useful compatibility diagnostics under [SETTINGS](SETTINGS.md) and [PROJECT_FORMAT](PROJECT_FORMAT.md).
 Respect shared audio resources versus musical placements and the two local processing levels without
 freezing the final container term/schema or merging Arrangement with mixer identity.
 Avoid UI-heavy implementation. Preserve the intended model in [ARCHITECTURE](ARCHITECTURE.md) and
@@ -112,6 +128,8 @@ Establish one main window and internal workspace-pane infrastructure: activation
 movement/resizing, internal floating, bounded collapse/restore, user-controlled docking where justified,
 and safe application/user layout persistence. Start with limited surfaces; no full visual system or
 aggressive IDE docking framework. Follow [WORKSPACE](WORKSPACE.md) and [UX_CONTRACT](UX_CONTRACT.md).
+Respect custom unobtrusive main chrome, non-intrusive foreground behavior, and responsive layout with
+usable minimums; platform/accessibility mechanics and concrete sizes still require bounded design.
 
 ## SEQ-R4 — Node Graph Foundation
 
@@ -138,6 +156,9 @@ Include deliberate compatibility outcomes, diagnostics, and state preservation a
 needed by actual modules. The core graph/workspace/device infrastructure stays host-owned.
 Resolve compatibility before activation under current platform contracts; installed incompatible
 plugins may remain unavailable, with preserved identity/state, and must not be automatically deleted.
+Compatibility checks answer satisfied required contracts/capabilities/state, not build age alone;
+prefer lightweight declared checks and handle real activation failure without mandatory expensive
+self-tests of every plugin at every startup. Final manifest/API negotiation remains open.
 
 ## SEQ-R7 — Sample Lab / Generator V1
 
@@ -184,6 +205,9 @@ should follow demonstrated need. A usable base must not require optional process
 Reach a version in which a user can reasonably finish a small track: strengthened save/load,
 arrangement, basic mixing/effects, WAV export, packaging, and recovery/error handling suitable for
 real projects. This is a usability/integrity goal, not a feature-count target or assigned version number.
+Export follows intended project cuts/tails under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
+Manual export-range tail behavior (Q-056), recovery workflow (Q-058), and minimum milestone closure
+(Q-061) remain unresolved; mentioning recovery does not accept an autosave scheme.
 
 ## SEQ-R13 — Extension Ecosystem
 
@@ -195,8 +219,9 @@ the lifecycle and compatibility requirements.
 Expand MIDI and audio recording/monitoring into complete user workflows, then consider automation,
 richer synthesizers/effects, CLAP/VST3 hosting, additional specialized nodes, pitch/time
 processing and time stretching, deeper routing/sends, FLAC and other justified formats, and additional
-platforms. Latency awareness and realtime safety constrain applicable earlier work; advanced
-compensation is not presumed implemented. Later order and release schedules remain open.
+platform release coverage. Portable architecture and early hosted checks are already required direction,
+not deferred platform ownership. Latency awareness and realtime safety constrain applicable earlier
+work; advanced compensation is not presumed implemented. Later order and release schedules remain open.
 Future Live / Low-Latency mode for performance/monitoring must visibly distinguish temporary live
 handling from the full graph without rewriting project state or altering intended final/offline render.
 Latency reporting, thresholds, compensation, and bypass strategy remain open under [AUDIO_ENGINE](AUDIO_ENGINE.md).

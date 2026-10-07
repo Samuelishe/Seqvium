@@ -144,7 +144,7 @@ owns persistence compatibility; [UX_CONTRACT](UX_CONTRACT.md) owns observable ed
 
 ## Project tempo and audio time
 
-The project/global tempo governs musical time. Notes, Patterns, their musical placements, later
+The project-wide tempo governs musical time. Notes, Patterns, their musical placements, later
 automation, and other musical-time entities remain positioned in musical time as BPM changes.
 Audio material additionally needs an explicit relationship to that tempo. At minimum, the model
 must express concepts equivalent to:
@@ -157,6 +157,12 @@ and local clip stretch are distinct operations. Public labels, defaults, time/st
 and algorithms remain open. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns distinct trim,
 loop/repeat, and stretch intentions and ordinary non-destructive timeline edits;
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns preserving those relationships, not a selected schema.
+
+Project-affecting configuration is independently project-owned, including tempo/time signature and
+applicable sound/timing/processing settings. New-project defaults are copied at creation, never
+live-linked to user preferences under [SETTINGS](SETTINGS.md#user-configuration-and-project-state).
+[PROJECT_FORMAT](PROJECT_FORMAT.md#required-direction) owns identifying/version compatibility metadata
+and useful open/migration diagnostics without selecting a schema.
 
 ## Separate sharing identities
 
@@ -204,12 +210,9 @@ An explicitly destructive/edit-source operation may be justified later, but ordi
 does not imply it. Resource/reference/edit ownership and storage schemas remain unselected;
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence obligations.
 
-Normally saved projects must be self-contained with respect to used audio: imported samples,
-accepted Sample Lab audio, recordings, used pack material, and other required audio become managed
-project media by default. Manage only required material, not an unused whole library. Audio identity
-and durability must not depend on the original external source remaining installed/available.
-Explicit external-reference workflows remain possible; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns the
-default/exception contract and still leaves container, schema, and storage mechanisms undecided.
+Used audio is normally durable project-managed media, with explicit external-reference alternatives
+under [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary). That owner defines covered material
+and preservation obligations; this architecture boundary does not select storage mechanisms.
 
 For ordinary project work, the accepted user-facing model has no more than two local processing levels:
 
