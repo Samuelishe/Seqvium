@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Core/plugin/backend boundaries, timeline/organization/graph separation, musical/resource identities, local processing, host UI services.
+Authoritative for: Core/plugin/backend boundaries, timeline/organization/graph separation, musical/resource identities, local processing, canonical/derived state, async document integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -106,10 +106,30 @@ possibly C++ using miniaudio, remains a hypothesis. C++, miniaudio, WASAPI, and 
 implementations through this diagram. ASIO is a desired future capability, not an R0 requirement.
 ABI, control publication, backend strategy, and C# decomposition remain open; no final classes exist.
 
-The editable project/visual graph may hold rich definitions, names, parameters, layout, and connections.
-The host must prepare a bounded execution representation; validation/compilation strategy is open.
+The editable project graph is the single canonical project truth, including definitions, names,
+parameters, layout and connections. Execution is a derived prepared revision/snapshot identified by
+the canonical revision it represents; it is never independently edited or persisted as another project
+model. The host prepares a bounded realtime-suitable representation; validation/compilation strategy is open.
 The callback must not traverse mutable graph-editor or arbitrary UI state. [NODE_GRAPH](NODE_GRAPH.md)
 owns that boundary's graph semantics; [AUDIO_ENGINE](AUDIO_ENGINE.md) owns execution constraints.
+
+## Document integrity and asynchronous publication
+
+Completion of asynchronous work does not itself authorize committing its result into the project.
+Before publication/commit, validate sufficient identity/context: the project and target still exist,
+the target/context remains compatible, the operation is relevant and not cancelled, and expected
+ownership/revision preconditions still hold where needed. A result for deleted Kick #42 must not attach
+itself to a newly selected object. Depending on the workflow, stale results may remain unattached,
+be discarded, or be offered for explicit reuse; no universal policy is selected. Exact undo transaction,
+commit grouping and pending-work invalidation remain Q-063 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+[PROJECT_FORMAT](PROJECT_FORMAT.md#save-and-reopen) owns canonical Save/reopen;
+[AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction) owns frozen canonical render preparation.
+
+Before a global destructive operation, check known active dependencies and avoid invalidating live
+or project state underneath them. This direction can apply to plugin/content-pack removal, managed
+resource deletion, device changes while recording and destructive migration. Each subsystem owns its
+exact block/defer/choice behavior; this is not a whole-filesystem dependency crawler.
+[EXTENSIONS](EXTENSIONS.md#instance-removal-and-package-uninstall) owns package safety.
 
 ## Intended musical model
 
@@ -281,8 +301,13 @@ normalized versus physical domains, precedence, smoothing, and control rate rema
 Localization is a platform concern. Seqvium UI is intended to support Russian and English initially,
 with additional languages later. Translated user-visible display text must not serve as stable internal
 identity. First-party Seqvium UI/extensions consume host localization resources/contracts rather than
-hard-code one language into reusable UI. Resource format, contribution workflow, and fallback rules
-remain open; canonical repository/source language remains English under [CODING_GUIDELINES](CODING_GUIDELINES.md).
+hard-code one language into reusable UI. Missing localization must prefer a usable common fallback
+rather than disable a working capability. English is the baseline fallback for Seqvium-authored /
+Seqvium-native first-party contributions; additional languages may be provided. If host Spanish is
+unavailable in a plugin supporting Russian and English, that plugin uses English without changing
+the host language. Independent third-party native editors are outside host-rendered localization
+control where applicable. Resource format, contribution mechanism and exact fallback schema remain
+open (Q-054); canonical repository/source language remains English under [CODING_GUIDELINES](CODING_GUIDELINES.md).
 
 The host also owns centralized semantic theme/style resources for first-party UI and Seqvium-native
 plugin surfaces. [UI_DESIGN](UI_DESIGN.md#themes-and-semantic-resources) owns Dark/Light baseline
@@ -293,6 +318,6 @@ do not select an SDK/API, UI framework, localization files, or theme packages.
 ## Open architecture work
 
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks feasibility, ownership/lifetime, control overload, scheduling,
-and other validation gaps. Promote a supported choice through [DECISIONS_LOG](DECISIONS_LOG.md) and
-the affected owner, with the experiment's limits intact. Do not treat a successful probe as proof of
-an entire future workstation architecture.
+and other validation gaps. Promote a supported choice in its current owner and preserve rationale in
+the cold decision archive, with the experiment's limits intact. Do not treat a successful probe as
+proof of an entire future workstation architecture.

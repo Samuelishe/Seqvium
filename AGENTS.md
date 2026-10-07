@@ -17,6 +17,11 @@ For every nontrivial task:
 6. Update durable documents in the same change only when their owned truth changes.
 
 Do not depend on earlier chat history or load the whole knowledge base by default.
+Active docs contain current truth/policy/plans/open questions/state; history belongs in `docs/archive/`.
+Exclude `docs/archive/**` from normal startup, selected owner reading, ordinary task context, generated
+current-context maps and future default RAG/index corpora. Current docs (excluding archive) and history
+are separate retrieval classes. Read archive only for explicit history/provenance/why/supersession,
+resolved-question reconstruction or previous implementation/validation tasks; historical retrieval opts in.
 Do not delete or overwrite user work to make the repository cleaner. Report material pre-existing changes.
 Do not commit, push, pull, fetch, merge, rebase, reset, clean, restore, or checkout user files without
 explicit user authorization. A suggested commit message is not authorization. Do not alter the staging
@@ -51,7 +56,8 @@ All routes start with current state; add these owners as needed:
 | Planning | [ROADMAP](docs/ROADMAP.md) |
 | Speculative ideas / alternatives | [IDEAS](docs/IDEAS.md) |
 | Existing implementation compromises | [TECH_DEBT](docs/TECH_DEBT.md) |
-| Concrete unresolved risks / evidence gaps | [KNOWN_PROBLEMS](docs/KNOWN_PROBLEMS.md), [DECISIONS_LOG](docs/DECISIONS_LOG.md) |
+| Concrete unresolved risks / evidence gaps | [KNOWN_PROBLEMS](docs/KNOWN_PROBLEMS.md); current contracts stay in their active owners |
+| Historical decision / resolved question / completed work | [Cold archive](docs/archive/INDEX.md), only when explicitly needed; never default current context |
 | Documentation / ownership | [DOCUMENTATION_GOVERNANCE](docs/DOCUMENTATION_GOVERNANCE.md) |
 | Project licensing / third-party dependencies or resources | [THIRD_PARTY](docs/THIRD_PARTY.md), root [LICENSE](LICENSE) for license text + affected owner |
 | Experiments | [Experiment guide](docs/experiments/README.md) + affected technical owner |
@@ -65,8 +71,10 @@ future roadmap stages. Experiments provide evidence; they are not production arc
 Documentation changes require relative-link, ownership, decision-status, scope, and diff checks.
 Code changes later require focused builds/tests and relevant runtime evidence; inspect the actual
 test platform before choosing commands. Do not create tests or CI merely for appearance.
-Update owners when contracts change, current state when its facts change, and the work log only for
-meaningful completed work. Follow [governance](docs/DOCUMENTATION_GOVERNANCE.md) for conflicts.
+Update owners when contracts change and current state when its facts change. Move resolved questions
+and completed roadmap stages out of active registers; append decision rationale and meaningful
+completed work directly to the archive. Preserve current truth in active owners, not only in history.
+Follow [governance](docs/DOCUMENTATION_GOVERNANCE.md) for conflicts.
 Finish with verification results and final Git status, distinguishing task changes from existing work.
 When a task creates or modifies tracked files, always include one concise suggested English commit
 message describing the actual outcome. Begin with the stage/milestone ID when applicable. If no tracked

@@ -2,7 +2,7 @@
 
 Role: Serialization compatibility and resource-preservation contract.
 Read when: Designing save/load, migration, managed media, or extension-state persistence.
-Authoritative for: Compatibility direction, versioned persistence, media and unknown-data preservation.
+Authoritative for: Compatibility direction, canonical Save/reopen, opening/migration, versioned persistence, media and unknown-data preservation.
 Not authoritative for: A final container/schema, runtime domain classes, extension API, or recovery implementation.
 
 No project format is implemented or selected. This document constrains future choices without
@@ -14,7 +14,8 @@ inventing field names, file extensions, or a container layout.
   compatibility metadata for deciding supported loading/migration. Provide migration-aware loading
   as the model evolves; exact schema and metadata field names remain open.
 - When opening/migration is unsupported or fails, give a concise useful reason rather than an
-  unexplained failure. Plugin availability and whole-project open policy remain a separate open choice.
+  unexplained failure. Distinguish document-level refusal from recoverable processing unavailability
+  under the opening contract below.
 - Use stable entity/resource IDs where references and edit identity justify them.
 - Define reasonable forward/backward handling: distinguish supported loading, safe preservation, and
   inability to reproduce behavior. Do not silently rewrite unsupported data as if fully understood.
@@ -25,6 +26,46 @@ inventing field names, file extensions, or a container layout.
 [ARCHITECTURE](ARCHITECTURE.md#intended-musical-model) owns intended musical relationships;
 [EXTENSIONS](EXTENSIONS.md#lifecycle-and-missing-capabilities) owns missing-capability behavior;
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md#acceptance-and-provenance) owns sample acceptance semantics.
+
+## Opening and migration
+
+Inability to reproduce all project audio does not normally mean inability to open its document. Missing,
+disabled or incompatible ordinary plugins and recoverable activation/materialization failures normally
+produce degraded opening, provided the document can still be safely understood. Preserve plugin/node
+identity/state, graph relationships, musical references and compatible opaque/unknown data. The project
+is editable to the degree its document model is available; affected operations use dependency-scoped
+blockers under [EXTENSIONS](EXTENSIONS.md#degraded-project-opening-and-operation-blockers).
+
+Hard whole-project refusal is reserved for document-level conditions: critically unsupported project/
+schema format, migration unable to safely resolve required structure, severe corruption, or fundamental
+architectural incompatibility preventing safe interpretation. Missing processing alone is not a format
+failure. Give concise human-readable diagnostics; no final error codes/UI are chosen.
+
+Distinguish lossless/internal migration from behavior-affecting compatibility transformations. Before
+applying forced fallback/default substitution, lost parameters or nontrivial routing conversion,
+present a concise summary of affected behavior and require Continue/Cancel-like choice. Explain when
+saving upgrades the format and may prevent reopening in older Seqvium versions. Do not silently pretend
+nothing changed. Purely lossless/internal migration need not necessarily interrupt the user; exact
+classification, migration mechanism and UI/text remain open (Q-009). Destructive migration also follows
+known-dependency safety under [ARCHITECTURE](ARCHITECTURE.md#document-integrity-and-asynchronous-publication).
+
+## Save and reopen
+
+Save persists canonical user/project state, including temporarily invalid/incomplete editable graph
+work. It neither requires current executability nor substitutes the last-valid playing revision for the
+user's edits. The prepared execution snapshot is derived runtime state and is not the authoritative
+saved model under [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution).
+
+Reopen restores the canonical saved editable graph, shows its blockers and does not pretend invalid
+work is executable. Affected execution-dependent operations remain blocked until repaired. Do not
+persist native pointers, active buffers or live runtime objects, or a second permanent last-valid
+project graph solely because it played in the previous session. Explicit future creative version/
+history/checkpoint features would require separate design.
+
+Export/render freezes, validates and prepares canonical state under
+[AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction); it never silently uses stale playback.
+Autosave/crash recovery, crash-safe persistence and media transactions remain Q-058/Q-059; this Save
+rule does not choose those mechanisms or the serialization schema.
 
 ## Musical content and workspace state
 
@@ -103,9 +144,9 @@ Preserving user material does not authorize automatic deletion of unused resourc
 
 A missing, incompatible, or disabled algorithm may prevent playback, but must not cause save to discard
 its identity, opaque state, musical connections, or contributed graph-node relationships. Future
-preservation checks must cover round-trip absent-extension data and compatible reattachment. Available
-user load/edit/save paths depend on the unresolved whole-project opening policy Q-013 in
-[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); these checks do not implicitly require degraded project opening.
+preservation checks must cover round-trip absent-extension data and compatible reattachment. User
+load/edit/save paths normally remain available under the degraded [opening contract](#opening-and-migration)
+when the document is safely understandable; unavailable processing blocks its dependent operations.
 Exact opaque encoding and compatibility claims are undecided.
 
 ## Open format choices
@@ -116,5 +157,6 @@ resource integrity, and extension-state evolution remain open in [KNOWN_PROBLEMS
 Q-058 separates explicit Save from unresolved autosave/crash recovery, including corruption safety,
 bounded retention, recorded media and crash-restart user choice. Q-059 tracks managed-media integrity
 and save/collect/relocate workflows. No recovery scheme is accepted by mentioning these obligations.
-Q-060 retains save/reopen/render policy when edited and last-valid executing graphs differ.
+Exact derived preparation/publication mechanisms remain Q-018; canonical Save/reopen/render policy
+is accepted above and in the audio owner.
 WAV export is an audio deliverable, not a substitute for project serialization.

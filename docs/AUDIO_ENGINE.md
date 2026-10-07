@@ -2,7 +2,7 @@
 
 Role: Audio execution and realtime boundary contract.
 Read when: Designing the audio probe, scheduling, nodes, device I/O, recording, or rendering boundaries.
-Authoritative for: Realtime constraints, processing context, backend/device boundary, recording and offline direction.
+Authoritative for: Realtime constraints, processing context, backend/device boundary, recording, canonical offline render and finite preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
 ## Accepted realtime constraints
@@ -46,9 +46,12 @@ may edit rich project/visual objects; the host must validate/prepare a bounded e
 before realtime use. The callback must not traverse UI nodes or mutable graph-editor state. No graph
 compiler, traversal strategy, publication mechanism, or final execution layout is selected.
 
-The last valid prepared graph keeps executing while an edited candidate is prepared/validated. Invalid
-or incomplete editor state must not automatically destroy valid playing audio. Only a valid prepared
-candidate may replace execution through the eventual safe publication mechanism.
+Execution snapshots derive from the single canonical editable project graph and identify its revision.
+Last-valid execution may continue in the current session while canonical edits are invalid or preparing;
+invalid revisions never publish. The latest valid prepared revision automatically replaces older
+execution atomically with safe retirement; no manual Apply is required. Obsolete preparation may be
+cancelled/coalesced safely, separately from undo history. Save/reopen preserves canonical edits under
+[PROJECT_FORMAT](PROJECT_FORMAT.md#save-and-reopen), not a persistent last-valid runtime graph.
 [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution) owns this graph rule and the required
 visible distinction between editable and executing state; publication/resource retirement remains open.
 
@@ -144,8 +147,17 @@ plus audio/MIDI recording, guitar or microphone capture through an audio interfa
 latency-aware workflows. MIDI input/recording must converge on the musical model in
 [ARCHITECTURE](ARCHITECTURE.md); captured audio integrates with host-owned timeline/resources.
 
-Device abstractions and capture ownership may precede polished recording UX. Input monitoring,
-clock alignment, capture placement, latency compensation, and device-change behavior remain open.
+Ordinary users select logical audio input/output devices/endpoints, not backend libraries. Input and
+output are separate selections where platform/device architecture supports it. An analog/condenser
+microphone through an interface is represented by the interface input endpoint/channel (for example
+`Steinberg UR12 — Input 1`); it is not necessarily a separate OS device. A USB microphone may be its
+own input device. [SETTINGS](SETTINGS.md#audio-device-selection) owns ordinary selection UX.
+
+Backend/API/driver integration is an internal platform responsibility. Exact backend selection,
+ASIO/device APIs, clock domains, rate/channel/buffer negotiation and device-loss/recovery remain
+technical evidence/design questions (Q-026/Q-027/Q-062/Q-069), including project intent versus runtime
+facts. Device abstractions and capture ownership may precede polished recording UX; endpoint UX does
+not solve monitoring, clock alignment, capture placement, latency compensation or safe device changes.
 
 ASIO is desired for appropriate Windows professional/low-latency hardware in the future. It is not
 required by SEQ-R0 and no ASIO SDK/library/backend is adopted. Core processing contracts should leave
@@ -185,7 +197,33 @@ instrument/effect contract is selected. SEQ-R0 need not build the graph editor, 
 or recording workspace to test a prepared execution/control boundary. [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md)
 owns the open questions; [PROJECT_STATE](PROJECT_STATE.md) owns probe status.
 
+## Bounded asynchronous preparation
+
+User-visible preparation, including export/render preparation, must have bounded failure behavior:
+cancellation, visible progress/state, detection of dead/stalled external work where technically possible,
+and finite failure handling while keeping the UI responsive. Export must not wait forever for a stalled
+worker/plugin. No arbitrary universal timeout is selected; watchdogs/timeouts require implementation
+evidence (Q-018 and affected lifecycle questions).
+
+Failure leaves canonical project state unchanged and reports the responsible preparation/dependency;
+it must not corrupt the existing realtime snapshot. Before publishing asynchronous work, revalidate
+project/target/context and ownership/revision preconditions under
+[ARCHITECTURE](ARCHITECTURE.md#document-integrity-and-asynchronous-publication). Only a valid,
+relevant prepared revision may reach the engine; exact mechanisms remain open.
+
 ## Offline rendering direction
+
+Export/render operates from a frozen canonical project revision:
+
+```text
+freeze canonical revision -> validate -> prepare offline execution -> render
+```
+
+If required canonical state is invalid or its dependency closure has unresolved blockers, block export
+and identify the affected objects/dependencies. Do not silently omit required music/processing or report
+success from an older realtime snapshot. Healthy unrelated paths are usable where their semantics permit;
+render scope/taps remain owned by the relevant workflow. No export-last-playable-version workflow is
+accepted. Runtime snapshots are not creative versions/checkpoints.
 
 Realtime playback and offline render should share musical scheduling, node processing, and DSP
 semantics as much as practical. Offline rendering is a sibling execution target independent of the

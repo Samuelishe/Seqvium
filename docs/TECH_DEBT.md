@@ -11,3 +11,6 @@ An empty solution and undecided technologies are not invented debt entries.
 Future entries should identify the existing compromise, affected files/evidence, impact, and a
 bounded resolution or exit condition. Open uncertainties belong to [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md);
 new capabilities belong to [ROADMAP](ROADMAP.md).
+
+Keep only currently existing unresolved implementation debt here. Remove resolved entries and retain
+useful resolution/evidence history in the cold archive under documentation governance.

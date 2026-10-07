@@ -110,36 +110,45 @@ composition, units, precedence, smoothing, and rates are not selected here.
 
 ## Editable graph and audio execution
 
-The application/project side may own rich definitions, node identities/names, parameters, connections,
-and editor layout. That editable graph must not be assumed to be the realtime execution object graph.
-
-Before audio execution, the host should validate and prepare the graph into a bounded representation
-suitable for the engine. Compilation is one possible approach, not an accepted algorithm. The callback
-must not traverse arbitrary UI objects or mutable graph-editor state. [AUDIO_ENGINE](AUDIO_ENGINE.md)
-owns callback constraints, scheduling, execution-state lifetime, and device-independent host context.
-
-Live editing uses last-valid execution: the currently valid prepared graph keeps running while a newly
-edited candidate is prepared and validated. An invalid/incomplete candidate is not published and must
-not automatically destroy currently playing valid audio. Once valid and prepared, it may replace the
-previous execution state through the eventual safe publication mechanism.
+The editable project graph is the single canonical project truth: definitions, node identities/names,
+parameters, connections and editor layout. Realtime execution is a derived prepared revision/snapshot,
+not a second independently editable or persistent project model.
 
 ```text
-last valid prepared graph -> continues audio
-editable candidate graph  -> prepare / validate
-                            -> valid: publish safely
-                            -> invalid: do not publish
+Canonical Project Graph (revision N)
+    -> validate / prepare
+    -> Prepared Execution Snapshot (represents N)
+    -> Audio Engine
 ```
 
-If the visual graph differs from current execution because the candidate is invalid or not yet
-published, the UI must clearly communicate that difference. Continuing old audio must not imply that
-the edited graph is already sounding. [UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures)
-owns concise recoverable feedback; [UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns visual treatment.
+The snapshot is bounded/realtime-suitable and identifies its canonical revision. Compilation is one
+possible approach, not a selected algorithm. The callback must not traverse arbitrary UI objects or
+mutable graph-editor state. [AUDIO_ENGINE](AUDIO_ENGINE.md) owns execution/lifetime constraints.
 
-Graph preparation, publication, resource retirement, and state transition during playback need evidence. The
-same scheduling/node semantics should serve realtime and device-independent offline rendering as
-much as practical. Saved editable state and compatibility belong to [PROJECT_FORMAT](PROJECT_FORMAT.md).
-Q-060 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains the separate save/reopen/render policy when
-editable and executing graphs differ; last-valid playback alone does not choose a durable/render revision.
+Normal editing automatically converges to the latest valid canonical revision; no manual `Apply graph`
+workflow is required. While revision 184 plays, editing creates 185; after validation/preparation,
+atomically publish 185 and safely retire 184. If 186–188 arrive meanwhile, obsolete preparation may be
+cancelled/coalesced where safe; execution need not publish every intermediate edit. Document undo/history
+and realtime publication history are separate concerns. Tokens, queues, state transfer and publication
+mechanics remain open under the bounded-backlog audio contract.
+
+If canonical revision 185 is invalid/incomplete or still unprepared, it remains the user's canonical
+edit and is not published. Last-valid prepared revision 184 may continue during the current session.
+The UI clearly marks current execution as behind editable state, conceptually `canonical 185 invalid /
+playing 184 / not applied`. This is a temporary runtime relationship, not two permanent project graphs.
+[UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures) owns concise feedback;
+[UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns visual treatment.
+
+Save persists canonical work even when invalid; reopen restores those edits and shows blockers rather
+than restoring a second last-valid project. Affected execution-dependent operations remain blocked
+until canonical blockers are repaired, while current-session last-valid playback may continue as above.
+[PROJECT_FORMAT](PROJECT_FORMAT.md#save-and-reopen) owns this persistence rule. Render freezes and
+validates/prepares the canonical revision under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction),
+never silently choosing the older playing snapshot. Healthy paths remain available only where semantics
+permit under [EXTENSIONS](EXTENSIONS.md#degraded-project-opening-and-operation-blockers).
+
+Preparation/publication, safe retirement and state transitions need evidence (Q-018). The same
+scheduling/node semantics should serve realtime and device-independent offline render where practical.
 
 ## Core nodes and plugin contributions
 

@@ -46,13 +46,14 @@ Other documents may summarize and link but must not create competing contracts. 
 - Current state is a compact present-tense handoff; work log records completed facts. The planning
   registers below represent distinct states rather than interchangeable task lists.
 
-The decisions log links current contract owners rather than becoming a second specification. An
-experiment report owns its observations, not final production contracts. AGENTS owns operational
+The cold decision archive retains acceptance/rationale/supersession history; current owners state
+accepted behavior directly without requiring historical D-records. An experiment report owns its observations, not final production contracts. AGENTS owns operational
 startup/routing and stays short; it must not accumulate product detail or history.
 
 [THIRD_PARTY](THIRD_PARTY.md) is the canonical provenance ledger and candidate evaluation boundary,
 including the Apache-2.0 project licensing boundary, musical content, other assets, repository
-services/actions, and historical replacements. Root [LICENSE](../LICENSE) owns authoritative license text;
+services/actions, current candidates and current obligations. Removed/replaced history may be archived
+only when current license/provenance obligations remain fully preserved. Root [LICENSE](../LICENSE) owns authoritative license text;
 the ledger never substitutes for legally required bundled notices or relicenses third-party material.
 Exact installed versions belong to build/package/native manifests or workflows once present; the
 ledger links them instead of maintaining a second lock. Asset-local creation/derivation evidence may
@@ -72,31 +73,74 @@ validation summarizes latest meaningful local Release build/test, hosted platfor
 evidence with detail links. Do not accumulate every historical test run or claim evidence absent from reports.
 [TEST_EXECUTION](TEST_EXECUTION.md#evidence-tiers) owns optional evidence labels and their limits.
 
-If current state grows substantially, move history to WORK_LOG, accepted choices to DECISIONS_LOG,
-detailed validation to an experiment/validation report, plans to ROADMAP, unresolved questions to
-KNOWN_PROBLEMS, source topology to future FILE_INDEX, and live Git state to Git. Do not create a line-count
-checker or new evidence infrastructure merely to enforce this discipline.
+If current state grows substantially, move history to the cold archive, accepted current rules to
+canonical owners, current evidence details to their reports, plans to ROADMAP, open questions to
+KNOWN_PROBLEMS, source topology to future FILE_INDEX and live Git state to Git. Preserve past
+validation narratives in archive when they no longer describe current evidence. Normal startup must
+not link to completed work chronology. Do not create a line-count checker or evidence infrastructure
+merely to enforce this discipline.
 
 ## Planning-state separation
 
 | Register | Meaning / update boundary |
 | --- | --- |
-| [ROADMAP](ROADMAP.md) | Agreed staged direction: we currently intend to pursue/evaluate an item in that stage |
-| [DECISIONS_LOG](DECISIONS_LOG.md) | Accepted durable decisions, rationale, and explicit supersessions; current contracts stay in owners |
+| [ROADMAP](ROADMAP.md) | Current stage if any, pending/future stages, and current sequence/scope constraints only |
 | [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) | Concrete unresolved risks/questions requiring design, evidence, experimentation, or a decision before/while related work proceeds |
-| [IDEAS](IDEAS.md) | Speculative alternatives/inspirations/features; neither accepted nor scheduled nor required to resolve; may remain indefinitely |
+| [IDEAS](IDEAS.md) | Still-active speculative/exploring alternatives; neither accepted nor rejected/completed nor required to resolve |
 | [TECH_DEBT](TECH_DEBT.md) | Compromises actually present in implementation; design uncertainty is not debt |
 
 Do not mechanically move open owner questions into IDEAS. Promote an idea only through the relevant
 owner and decision/roadmap/risk record, leaving a traceable reference. When moving material, preserve
-its origin rather than silently deleting history. Avoid duplicate ownership and fake roadmap noise.
+its origin in archive rather than silently deleting history. Avoid duplicate ownership and fake roadmap noise.
+
+## Rolling current knowledge and cold history
+
+**Active `docs/` contains current truth, current policy, current plans, current unresolved questions,
+and current implementation state. Historical material belongs in `docs/archive/`.** Maintain documents
+by state rather than accumulate chronology indefinitely. A current rule stays active even if accepted
+long ago; when/why it was chosen belongs in history. Do not over-archive current contracts.
+
+History includes completed stages/work, resolved questions, superseded decisions and obsolete wording,
+rejected alternatives, previous checkpoints, old audits/validation narratives, resolved debt and
+removed/replaced components no longer relevant to current obligations. Rationale needed to understand
+current constraints may stay concise in its owner; obsolete debate does not stay as a second contract.
+
+The cold archive is non-canonical for current product behavior and loses any conflict with active owners.
+It serves reconstruction/traceability only. Its initial flat files are INDEX, DECISIONS,
+RESOLVED_QUESTIONS, ROADMAP, WORK_LOG and AUDITS; split by year/stage only when actual size/use justifies it.
+There is no active work-log or decision-ledger copy. Future completed work goes directly to archive
+WORK_LOG; current work/handoff belongs in current state or the appropriate current owner.
+
+Archive retrieval is allowed only for explicit historical change, superseded-decision rationale,
+resolved-question reconstruction, provenance, or previous implementation/validation evidence tasks.
+Exclude `docs/archive/**` from normal startup, selective owner reading, ordinary task context,
+generated current-context maps and future default RAG/index corpora. A future planner/index must treat
+`docs/**` excluding `docs/archive/**` and `docs/archive/**` as **separate retrieval classes**. Default
+current-knowledge retrieval excludes history; historical retrieval explicitly opts in. Do not duplicate
+archive contents into active docs to force normal context visibility. No executable RAG infrastructure
+is selected or introduced. [Archive index](archive/INDEX.md) is the single historical lookup route.
+
+Before removing an active historical document, move any unique still-current information to its
+canonical owner first. Preserve meaningful IDs, dates/stages, rationale/supersessions and reconstruction
+context, repair relative links and remove duplicate authoritative copies. Active owners must state/link
+the actual current rule, without forcing readers to load archived D-records. Stable archival D-IDs stay
+useful; resolved questions retain Q-ID, question, status, accepted resolution, owner and related open
+mechanisms. Partial answers move to archive as useful history while the active question narrows to the
+unresolved mechanism; never falsely close it.
+
+IDEAS retains only still-speculative/exploring records; promoted/rejected/completed outcomes leave the
+active incubator and may be retained in AUDITS until a dedicated split is justified. TECH_DEBT contains
+only existing unresolved implementation compromises; resolved history moves to archive. It is empty
+while implementation is absent. THIRD_PARTY retains current introduced material, materially evaluated
+candidates and current provenance/license obligations. Archiving old removals/replacements never
+removes legally required current provenance/notices; licensing correctness takes priority over age.
 
 ## Selective reading
 
 Follow `AGENTS -> PROJECT_STATE -> INDEX/routing -> selected owners -> affected files`.
 Use ordinary `rg` search to find paths, symbols, and relevant sections. Expand context only for a
-concrete unresolved boundary or evidence need. Roadmap, work log, decision history, and eventual
-archives are not routine startup context.
+concrete unresolved boundary or evidence need. Roadmap is selective planning context, not routine
+startup; decision/work history and the cold archive are never default current context.
 
 Canonical documentation is English, with simple precise terminology. Durable knowledge must remain
 usable by a fresh agent or contributor without the bootstrap prompt or conversation history.
@@ -126,69 +170,66 @@ claims conflict. Repair stale summaries or the evidenced stale owner without sil
 accepted requirement. Runtime behavior that violates an accepted contract is a discrepancy, not
 automatic supersession. Record uncertainty if evidence is incomplete.
 
-When a durable decision changes, explicitly supersede it in the log with rationale and update its
-current owner in the same change. If a material choice remains unresolved, preserve the distinction
-and ask for needed input rather than invent acceptance. External references never override Seqvium owners.
+When a durable decision changes, update its current owner in the same change and preserve the
+previous/new decision relationship and rationale in the archive. If a material choice remains
+unresolved, preserve the distinction and ask for needed input rather than invent acceptance. External references never override Seqvium owners.
 
 ## Update triggers
 
-| Changed truth | Update |
+| Changed truth/state | Update in the same change |
 | --- | --- |
-| Current checkpoint, capability, focus, meaningful validation baseline, blocker/evidence gap | PROJECT_STATE; avoid chronology, live Git status, and transient attempts |
-| Product, interaction, visual design, responsibility, audio, graph, workspace, settings/diagnostics, sample, extension, or persistence contract | The corresponding owner in the same change |
-| Durable accepted/reversed choice | DECISIONS_LOG plus affected owner; link evidence |
-| Future scope or stage order | ROADMAP |
-| New/narrowed/resolved concrete uncertainty | KNOWN_PROBLEMS; retain evidence of resolution |
-| Speculative idea retained/explored/promoted/rejected | IDEAS; link the resulting owner/decision/plan/risk on promotion |
-| Coding, development/tooling, verification, portability, or CI policy | The corresponding engineering owner; passive/build/CI configuration when actually justified |
-| ProjectStats metrics/output/privacy/diagnostic/evolution contract | PROJECT_STATS; test execution/development only for their owned boundaries |
-| Existing compromise introduced/resolved | TECH_DEBT, with actual evidence |
-| Meaningful stage completed | One bounded factual WORK_LOG entry |
-| Dependency, service/action, or asset evaluated/introduced/upgraded/replaced/removed; obligations changed | THIRD_PARTY; retain historical provenance and manifest version authority |
+| Current checkpoint, capability, focus, validation baseline or active gap | PROJECT_STATE; no chronology, live Git status or transient attempt log |
+| Product/architecture/subsystem or engineering contract | Corresponding current owner; associated configuration only when actually justified |
+| New accepted product/architecture decision | Current owner, remove/narrow affected open question, append rationale/decision record to archive DECISIONS |
+| Decision superseded | Current owner gets new truth; archive retains old/new relationship, rationale and IDs; no stale competing active contract |
+| Concrete uncertainty new/narrowed | KNOWN_PROBLEMS contains only the remaining open mechanism |
+| Question resolved | Remove from KNOWN_PROBLEMS, append ID/question/resolution/current owners and related open mechanisms to archive RESOLVED_QUESTIONS |
+| Current/future scope or stage order | Active ROADMAP; no accidental authorization or reordering |
+| Roadmap stage completed | Remove when no longer useful to current planning; append/preserve stage in archive ROADMAP |
+| Meaningful work completed | Update current state if its truth changed; one bounded factual record directly in archive WORK_LOG |
+| Idea explored | Active IDEAS while still speculative/exploring |
+| Idea promoted/rejected/completed | Update resulting current owner/plan/question if applicable, remove inactive idea, preserve useful outcome in archive |
+| Existing implementation compromise introduced | TECH_DEBT with actual evidence, impact and exit condition |
+| Debt resolved | Remove from TECH_DEBT; preserve useful evidence/history in archive |
+| Component/service/asset evaluated/introduced/upgraded or current obligation changed | THIRD_PARTY retains current obligations and manifest version authority |
+| Component removed/replaced | Current THIRD_PARTY reflects remaining obligations; archive history when legally safe |
 | Owner added/moved or route changed | INDEX; AGENTS if operational routing changes |
-| Evidence-producing experiment completed | Its bounded report under `docs/experiments/`; update affected owners only for supported conclusions |
+| Experiment completed | Bounded report; update current owners for supported findings, archive decision/work/resolved-question history as appropriate |
+| Audit/checkpoint becomes historical | Preserve ranking/narrative/checkpoint in archive AUDITS; retain still-open findings as ordinary current questions |
 
-Do not update every file after every task. Avoid new progress/handoff documents that duplicate current
-state. Preserve useful history; if real obsolete chronology later impedes reading, consider an indexed
-archive in a separately justified change. Do not create an archive system before there is history to move.
+Do not update every file after every task or add duplicate handoff documents. History preservation is
+permanent rolling policy, not a reason to keep chronology in active owners. Archive does not become a
+second canonical specification.
 
 ## Knowledge evolution
 
-The document ownership model stays stable while retrieval mechanisms evolve:
+The ownership model stays stable while retrieval mechanisms evolve:
 
-1. **Stage 0 — established:** AGENTS, compact current state, index/routing, canonical owner docs,
-   affected files, and ordinary repository search. No generated context infrastructure.
-2. **Stage 1 — policy portion established by SEQ-KB-R3:** coding, development, verification,
-   portability, CI, and ideas owners now exist before source, with passive `.editorconfig` and
-   `.gitattributes`. This does not start implementation. `docs/FILE_INDEX.md` remains deferred until
-   meaningful source topology exists. Add small baseline tooling or one local workflow skill only
-   for an observed need; skills are not mandatory infrastructure. SEQ-KB-R4 adds an accepted future
-   [ProjectStats contract](PROJECT_STATS.md), independent from retrieval evolution; executable tooling
-   still waits for explicit authorization.
-3. **Stage 2 — measurable context-selection problems:** consider a generated repository map and
-   bounded context planner. Generated outputs remain disposable retrieval artifacts, not canonical
-   truth. Do not create retrieval manifests or budgets now; structural
-   ProjectStats introduction follows its separate owner and is not a prerequisite for retrieval tooling.
-4. **Stage 3 — exact routing/search demonstrably insufficient:** consider a local semantic index,
-   hybrid RAG, and possibly MCP exposure. Retrieval must retain source provenance and never silently
-   replace Markdown, source, tests, or Git history as authority.
+1. **Established current baseline:** AGENTS, compact current state, INDEX, selected canonical owners,
+   affected files and ordinary search. Engineering owners and passive text policies exist before source;
+   no generated context infrastructure. FILE_INDEX remains deferred until meaningful topology exists.
+   ProjectStats has a separate future diagnostics contract; executable tooling requires authorization.
+2. **Observed context-selection cost:** consider a disposable generated repository map/bounded planner,
+   with archive excluded from generated current-context maps. Do not introduce manifests/budgets now.
+3. **Exact routing/search demonstrably insufficient:** consider local semantic index, hybrid RAG and
+   possibly MCP, retaining provenance. Current corpus excludes archive; historical corpus is explicit opt-in.
+   Retrieval never silently replaces Markdown, source, tests or Git as authority.
 
-Promote retrieval infrastructure only in response to an observed problem. Report a broken retrieval
-tool and fall back to direct owners/search; a planner or index must not narrow the authorized task or
-silently redefine the product. No AgentContext/planner/RAG infrastructure is introduced by SEQ-KB-R3.
-
-Prefer cheap deterministic compiler/editor/build/CI enforcement over agent memory when justified.
-[DEVELOPMENT](DEVELOPMENT.md#machine-enforcement-and-text-consistency) maps newline/diagnostic policy
-to existing passive configuration and nullable/warnings/SDK/formatting/portability rules to future
-enforcement points. Do not introduce tools simply because enforcement is possible.
+Promote infrastructure only for an observed problem. A broken retrieval tool falls back to direct
+owners/search and cannot narrow authorized scope or redefine the product. No planner/RAG/tooling is
+introduced by this policy. Prefer cheap deterministic compiler/editor/build/CI enforcement when
+justified; [DEVELOPMENT](DEVELOPMENT.md#machine-enforcement-and-text-consistency) owns concrete
+passive and future enforcement points.
 
 ## Documentation integrity
 
 Before completion, inspect repository-relative Markdown targets and anchors, metadata/ownership,
 status terminology, and all new/changed content. Confirm that future work is not advertised as
 implemented, proposals are not accepted by implication, current state stays compact, roadmap contains
-forward scope, work log contains facts, IDEAS stays speculative, known problems require resolution,
-debt contains actual compromises, and AGENTS remains a router.
+only current/forward scope, archive work log contains completed facts, IDEAS stays speculative-active,
+known problems contain only unresolved issues, debt contains only existing unresolved compromises,
+and AGENTS remains a router. Check archive non-authority/exclusion, ID traceability, migration links,
+and that no required current truth exists only in archive.
 Inspect final Git diff/status, including untracked additions that ordinary `git diff` does not show.
 Documentation-only work requires no build/tests unless executable tooling or configuration changes
 actually justify them. No persistent checker is required for this foundation.

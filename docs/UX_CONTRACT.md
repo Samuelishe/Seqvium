@@ -120,13 +120,50 @@ intentions. The user must be able to request the hard boundary as well as ordina
 loop/seek/playback Stop/Record Stop and faithful export rules. Ending source input must not implicitly
 mean every running effect is destroyed. The manual export-range tail policy remains explicitly open.
 
+## Project availability and dependency blockers
+
+A safely understandable project normally opens degraded when an ordinary required plugin is missing,
+disabled, incompatible or has a recoverable activation/materialization failure. Retain its work and
+allow available document editing; hard project-open refusal belongs to critical document/schema/
+corruption conditions under [PROJECT_FORMAT](PROJECT_FORMAT.md#opening-and-migration).
+
+Block operations whose dependency closure requires the broken capability, while unrelated editing
+and healthy paths remain usable where semantics permit. Never silently omit required musical or
+processing dependencies and report success. Explain the missing requirement concisely at the actual
+affected object/node/instance with restore/remove/replace direction; exact wording/UI is unselected.
+
+Persistent blockers must be represented as current UI state: affected-element marker, icon/badge,
+restrained state color with non-color cues and concise inline/context explanation. Optional global
+blocker count/navigation may help reach affected objects. Disappearing notifications alone are
+insufficient; logs remain diagnostic support. Keep the musical workspace clear rather than turning it
+into a diagnostics dashboard. [UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns visual treatment.
+
+Behavior-affecting migration presents a concise summary and user choice before applying forced
+fallback/default substitution or other nontrivial transformation, including older-version save
+compatibility consequences under the format owner. Global destructive operations check known active
+dependencies; package uninstall is blocked/deferred under [EXTENSIONS](EXTENSIONS.md#instance-removal-and-package-uninstall).
+
+Normal audio preferences select logical input/output devices/endpoints under
+[SETTINGS](SETTINGS.md#audio-device-selection), with backend/driver integration internal to the platform.
+
 ## Graph state and recoverable failures
 
-The last valid prepared graph continues during candidate preparation/validation under
+The editable graph is canonical; last-valid derived execution may continue in the current session
+during candidate preparation/validation under
 [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution). When editable and executing graphs
 differ because the candidate is invalid or not yet published, that state must be obvious to the user.
 Prefer concise graphical feedback: status/iconography, affected node/connection highlighting,
-restrained color, and short contextual/transient notification where useful.
+restrained color and concise contextual explanation. Transient notification may supplement persistent
+state, not replace it. Valid newer revisions converge automatically without manual Apply.
+
+Save retains canonical work even when invalid; reopening restores it with blockers and affected
+execution unavailable until fixed. Export freezes/validates/prepares canonical state and blocks required
+invalid/missing dependencies, never silently exporting older playing state. User-visible preparation
+requires cancellation, visible state/progress and finite failure handling while UI stays responsive,
+without a universal timeout under [AUDIO_ENGINE](AUDIO_ENGINE.md#bounded-asynchronous-preparation).
+Async completion revalidates its project/target/context before commit under
+[ARCHITECTURE](ARCHITECTURE.md#document-integrity-and-asynchronous-publication); it cannot attach a
+result for a deleted object to current selection. Exact undo/commit boundaries remain open.
 
 User-facing failures should generally be concise and recoverable. Cascading modal `MessageBox`
 dialogs must not be the normal error experience. Modal decisions remain available when genuinely

@@ -2,7 +2,7 @@
 
 Role: Low-pressure incubator for speculative product, UX, architecture, and repository-tooling ideas.
 Read when: Retaining or exploring alternatives that are neither accepted nor scheduled nor required risks.
-Authoritative for: Speculative idea records and their promotion/rejection traceability.
+Authoritative for: Still-active speculative/exploring ideas and their promotion conditions.
 Not authoritative for: Accepted product contracts, roadmap commitments, required unresolved risks, implementation tasks, or debt.
 
 ```text
@@ -14,7 +14,7 @@ IDEAS
 ```
 
 An idea may remain here indefinitely without demanding resolution. [ROADMAP](ROADMAP.md) contains
-agreed staged intent; [DECISIONS_LOG](DECISIONS_LOG.md) records durable acceptance and supersession;
+agreed staged intent; accepted current behavior belongs in its canonical owner;
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) contains concrete questions needing design/evidence/decision;
 [TECH_DEBT](TECH_DEBT.md) contains compromises actually present in implementation. Design uncertainty
 is not debt. [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md) owns this planning separation.
@@ -22,10 +22,11 @@ is not debt. [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md) owns this p
 ## Lightweight entries and promotion
 
 Use stable IDs such as `I-001` when references are useful. A useful entry needs a title, status (normally
-`Idea`, `Exploring`, `Promoted`, or `Rejected`), value, relevant owner/question, and promotion condition
-where known; do not require ten fields for every thought. Promotion updates the appropriate owner,
-decision/roadmap/risk record and leaves a link here. Rejection may retain a short reason. This is not a
-second roadmap, and exploring does not authorize implementation.
+`Idea` or `Exploring`), value, relevant owner/question, and promotion condition
+where known; do not require ten fields for every thought. Promotion updates the appropriate current
+owner/roadmap/question and archives useful decision/outcome history. Promoted, rejected or completed
+ideas leave this active incubator; retain useful outcomes in archive AUDITS until actual volume
+justifies a split. This is not a second roadmap, and exploring does not authorize implementation.
 
 ## I-001 — Optional saved workspace arrangements
 
@@ -72,7 +73,7 @@ changing statistics do not belong in PROJECT_STATE or ordinary history.
 ## I-005 — Out-of-process external plugin crash isolation
 
 Status: Idea; optional future engineering, not a baseline hosting requirement.
-Origin / owner: SEQ-KB-R5 clarification; [EXTENSIONS](EXTENSIONS.md#failure-containment-limits),
+Origin / owner: [EXTENSIONS](EXTENSIONS.md#failure-containment-limits),
 conditional evaluation Q-025 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 Value: Reduce host crashes from third-party native faults where a stronger process boundary helps.
 Promotion condition: Real external plugin hosting demonstrates enough practical containment benefit

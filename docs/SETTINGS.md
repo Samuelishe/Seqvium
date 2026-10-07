@@ -2,7 +2,7 @@
 
 Role: Application/user configuration, bounded reset, and production diagnostic policy.
 Read when: Designing preferences, configuration storage/reset, or product logging controls/storage.
-Authoritative for: User/project configuration separation, preference-reset limits, quiet bounded production diagnostics.
+Authoritative for: User/project configuration separation, logical device-selection UX, preference-reset limits, quiet bounded production diagnostics.
 Not authoritative for: Project serialization, workspace behavior, exact paths/formats, localization/theme APIs, or logging implementation.
 
 These are accepted future requirements. No settings UI, configuration files, or logging implementation exists.
@@ -41,6 +41,25 @@ new instances where genuinely global. Instance state affecting saved music is pr
 plugin defaults apply to newly created instances and must not silently rewrite existing project
 instances. Exact default inventories and storage formats remain open.
 
+## Audio device selection
+
+Normal Settings exposes meaningful logical endpoints: `Audio Output: Steinberg UR12`, and separately
+`Audio Input: Steinberg UR12 — Input 1` or `Audio Input: USB Microphone`. Input/output selection is
+logically separate where platform/device architecture supports it. An analog/condenser microphone
+through an interface is represented through that interface's input endpoint/channel; a USB microphone
+may appear as its own OS input device.
+
+Ordinary users choose devices, not backend libraries or engine implementations. Backend/API/driver
+integration is internal platform responsibility under
+[AUDIO_ENGINE](AUDIO_ENGINE.md#device-inputoutput-and-recording-direction). Do not add ordinary
+`Choose backend: libfoo / libbar / WASAPI implementation X` merely because adapters exist. A future
+advanced troubleshooting override requires a separately justified exceptional feature.
+
+Exact backend/API/ASIO constraints, clock domains, rate/channel/buffer adaptation and recovery remain
+open (Q-062/Q-069 and related audio questions). Selecting an endpoint does not settle project audio
+intent versus negotiated runtime facts; device changes while recording follow subsystem lifetime and
+known-active-dependency safety.
+
 ## Reset boundary
 
 The future Settings experience must permit bounded operations conceptually equivalent to resetting:
@@ -54,6 +73,10 @@ plugin instance state remains project state, separate from these preference rese
 button layout, scope controls, and confirmation flow remain open under [UX_CONTRACT](UX_CONTRACT.md).
 
 ## Production diagnostics
+
+Persistent capability/execution blockers are primarily visible current UI state under
+[UX_CONTRACT](UX_CONTRACT.md#project-availability-and-dependency-blockers); logs are diagnostic support,
+not the primary user communication.
 
 Normal user-facing production logging is deliberately quiet: meaningful operational problems,
 primarily major warnings, errors, and critical failures. Permanent INFO/DEBUG/TRACE streams must not

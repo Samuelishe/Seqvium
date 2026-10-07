@@ -1,88 +1,24 @@
 # Roadmap
 
-Role: Ordered development direction.
+Role: Ordered current and future development direction.
 Read when: Scoping the next stage or evaluating a future capability.
-Authoritative for: Stage goals, sequence, and scope boundaries.
-Not authoritative for: Completion status, factual history, accepted technical decisions, or existing debt.
+Authoritative for: Current/future stage goals, sequence, and scope boundaries.
+Not authoritative for: Completion history, accepted technical contracts, or existing debt.
 
 This is a direction, not a promise to implement all capabilities in v0.1. Later ordering may change
-with evidence and product need. Current status belongs to [PROJECT_STATE](PROJECT_STATE.md), completed
-facts to [WORK_LOG](WORK_LOG.md), and technical choices to their owners and [DECISIONS_LOG](DECISIONS_LOG.md).
+with evidence and product need. Current checkpoint belongs to [PROJECT_STATE](PROJECT_STATE.md);
+contracts belong to their canonical owners. Completed stages are removed from current planning and
+retained in the cold archive under [rolling governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history).
 
-The [R7 global audit](KNOWN_PROBLEMS.md#seq-kb-r7-global-audit-findings) records unresolved scope and
-dependency questions, including First Track Release closure (Q-061). It does not reorder stages or
-make later recording, automation, external hosting, or ProjectStats prerequisites by implication.
-
-## SEQ-KB-R0 — Repository Knowledge Foundation
-
-Define product direction, canonical owners, task routing, and documentation governance. Documentation
-only: no production application, dependencies, engine, tooling framework, or tests for nonexistent code.
-Retained historical stage identity; completion is recorded in [WORK_LOG](WORK_LOG.md#2026-10-06--seq-kb-r0).
-
-## SEQ-KB-R1 — Product Architecture Expansion
-
-Incorporate accepted mouse-first/universal product direction, named patterns and independent groups,
-core graph, internal workspace panes, and core/plugin/backend boundaries into canonical owners.
-Documentation only; this stage does not start SEQ-R0 or introduce executable implementation.
-
-## SEQ-KB-R2 — Creative Workflow Model
-
-Incorporate contextual Sample Lab, what-you-hear sampling, non-destructive resource/placement
-identity, two local processing levels, progressive graph visibility, free canvas/topology semantics,
-semi-free Arrangement, and an evolving UI design owner. Completed documentation stage; see
-[WORK_LOG](WORK_LOG.md#2026-10-06--seq-kb-r2). No implementation stage is started or renumbered.
-
-## SEQ-KB-R3 — Development & Portability Policy
-
-Establish canonical coding, development, verification, portability, CI, and ideas owners with minimal
-passive `.editorconfig` / `.gitattributes`. This is a documentation/configuration stage before source:
-no application/experiment projects, packages, executable tooling, tests, builds, or workflows.
-No implementation stage is started or renumbered; completion belongs to PROJECT_STATE / WORK_LOG.
-
-## SEQ-KB-R4 — Repository Foundation Finalization
-
-Finalize Apache-2.0 licensing, README/public identity, test architecture policy, compact current-state /
-evidence policy, and the future [ProjectStats contract](PROJECT_STATS.md). Documentation/legal/passive
-repository work only; no executable application, experiment, tests, tooling, or CI is started.
-Completion belongs to PROJECT_STATE / WORK_LOG; implementation stages are not renumbered.
-
-ProjectStats is an early repository-tooling foundation for later explicit code authorization, separate
-from the audio probe. It may precede the probe; whether a dedicated pre-R0 tooling stage is useful
-remains Q-046 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md), not an inserted implementation commitment.
-
-## SEQ-KB-R5 — Musical Ownership & Extension Boundary Clarification
-
-Record accepted processing granularity, separately shared musical/sound/placement/processing identities,
-independent overlapping execution, processing-context move consequences, object-render versus audible
-capture semantics, realistic third-party plugin boundaries, and self-contained used project media.
-Documentation only: no source, projects, dependencies, prototypes, executable tooling, tests, CI, or
-passive configuration changes. Completion belongs to PROJECT_STATE / WORK_LOG. SEQ-R0 remains pending /
-not started; implementation stages keep their existing IDs and external hosting stays later work.
-
-## SEQ-KB-R6 — Runtime, Editing & UI Platform Semantics
-
-Record accepted platform-authoritative compatibility and sound-responsibility boundaries; project
-tempo/independent local stretch and non-destructive trim/split/loop semantics; source tails versus
-hard cuts; last-valid graph execution with visible concise feedback; quiet bounded diagnostics and
-user/project preference separation; host localization/theme resources; bounded realtime overload;
-and future Live / Low-Latency direction. Keep exact mechanisms and packaging open in their owners.
-Documentation only: no source, projects, tests, dependencies, scripts, CI, executable tooling, plugin
-hosts, theme packages, localization files, or passive configuration changes. Completion belongs to
-PROJECT_STATE / WORK_LOG. SEQ-R0 remains **pending / not started**; implementation stages retain IDs.
-
-## SEQ-KB-R7 — Project Semantics & Knowledge Coherence
-
-Integrate accepted project/default/instance ownership, project metadata, contract-based plugin
-compatibility, distinct transport/record/render semantics, custom main-window chrome, and usable
-responsive layout. Then audit the entire updated canonical knowledge base for contradictions,
-duplication, open-question quality, workflow/technical gaps, roadmap dependencies, and passive policy.
-Documentation/knowledge stage only. No implementation/tooling/test/CI artifacts or prototypes;
-no implementation stages renumbered. Completion belongs to PROJECT_STATE / WORK_LOG.
-SEQ-R0 remains **pending / not started**.
+SEQ-R0 is the next executable stage and remains **pending / not started**. No implementation is
+authorized by this roadmap. ProjectStats may precede the probe after explicit code authorization;
+whether a dedicated tooling stage is useful remains Q-046, not an inserted commitment.
+[Open questions](KNOWN_PROBLEMS.md), including First Track Release dependency closure Q-061, do not
+reorder stages or make recording, automation, external hosting or ProjectStats implicit prerequisites.
 
 ## SEQ-R0 — Audio Architecture Probe
 
-SEQ-R0 remains pending / not started after the documentation stages.
+Status: **pending / not started**.
 
 Before future probe work, follow [CODING_GUIDELINES](CODING_GUIDELINES.md), [DEVELOPMENT](DEVELOPMENT.md),
 [PORTABILITY](PORTABILITY.md), and [TEST_EXECUTION](TEST_EXECUTION.md). Policy preparation does not
@@ -112,7 +48,10 @@ Include independent project-owned settings copied from creation defaults, plus i
 metadata and useful compatibility diagnostics under [SETTINGS](SETTINGS.md) and [PROJECT_FORMAT](PROJECT_FORMAT.md).
 Respect shared audio resources versus musical placements and the two local processing levels without
 freezing the final container term/schema or merging Arrangement with mixer identity.
-Avoid UI-heavy implementation. Preserve the intended model in [ARCHITECTURE](ARCHITECTURE.md) and
+Canonical state is the single saved truth, including incomplete/invalid work; preserve degraded
+document access, critical-format refusal and behavior-changing migration choice. Exact schema and
+transaction mechanics remain open. Avoid UI-heavy implementation. Preserve the intended model in
+[ARCHITECTURE](ARCHITECTURE.md) and
 compatibility direction in [PROJECT_FORMAT](PROJECT_FORMAT.md).
 
 ## SEQ-R2 — Audio Resource / Device Foundation
@@ -121,6 +60,8 @@ Establish audio resources, WAV import, preview, managed project media, a simple 
 playback, and resource lifetime. Do not expand immediately to every codec or sampler feature.
 Establish a bounded backend-independent audio input/output/device foundation informed by R0. Plan
 MIDI input and capture ownership without requiring polished recording UX or all device backends now.
+Normal device UX selects separate logical input/output endpoints where supported, with backend/API
+integration internal; rate/channel/clock and recovery mechanics still need evidence.
 
 ## SEQ-R3 — Workspace Shell Foundation
 
@@ -139,8 +80,10 @@ gain and mix/routing may arrive here because execution needs them. Do not implem
 processor or all graph scopes; [NODE_GRAPH](NODE_GRAPH.md) owns the constraints.
 Respect item-local/containing-container processing direction, progressive graph visibility, free
 spatial placement, and topology-defined dependencies without presuming a final "Layer" model.
-Keep the last valid prepared graph executing during candidate validation; make invalid/unpublished
-editor state visible. Publication/compiler strategy remains open; the UX rule does not select it.
+Derive revisioned execution from the single canonical graph; converge automatically to the latest valid
+revision with safe atomic publication/retirement and coalescing of obsolete preparation. Last-valid
+execution may continue in-session while invalid edits remain canonical and savable; show the divergence.
+Publication/compiler/cancellation/failure strategy remains open; no manual Apply workflow is required.
 
 ## SEQ-R5 — Pattern Workspace
 
@@ -158,7 +101,9 @@ Resolve compatibility before activation under current platform contracts; instal
 plugins may remain unavailable, with preserved identity/state, and must not be automatically deleted.
 Compatibility checks answer satisfied required contracts/capabilities/state, not build age alone;
 prefer lightweight declared checks and handle real activation failure without mandatory expensive
-self-tests of every plugin at every startup. Final manifest/API negotiation remains open.
+self-tests of every plugin at every startup. Support graded compatibility/localization fallback and
+dependency-scoped blockers with normally degraded document access. Block/defer package uninstall under
+known active use; exact package lifecycle and manifest/API negotiation remain open.
 
 ## SEQ-R7 — Sample Lab / Generator V1
 
@@ -175,7 +120,9 @@ processing boundary. Keep object sampling distinct from broader audible-selectio
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md#resampling); resolve the implemented scope's concrete boundary
 and tails with evidence. Preserve the source and enable immediate reuse. Any optional replace-with-sample
 operation must be undoable and avoid silently reapplying exact baked processing. Full audible-context,
-arrangement, and multiple-source capture need not arrive together.
+arrangement, and multiple-source capture need not arrive together. Render the frozen canonical scope,
+block required invalid/unavailable dependencies, handle preparation finitely and revalidate the target
+before asynchronous acceptance; exact taps/transactions remain open.
 
 ## SEQ-R9 — Piano Roll
 
@@ -205,7 +152,10 @@ should follow demonstrated need. A usable base must not require optional process
 Reach a version in which a user can reasonably finish a small track: strengthened save/load,
 arrangement, basic mixing/effects, WAV export, packaging, and recovery/error handling suitable for
 real projects. This is a usability/integrity goal, not a feature-count target or assigned version number.
-Export follows intended project cuts/tails under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
+Save/reopen preserves canonical work even when invalid. Export validates/prepares a frozen canonical
+revision, blocks required dependencies and never silently renders stale playback; preparation requires
+responsive cancellation/state and finite failure handling. Export follows intended project cuts/tails
+under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
 Manual export-range tail behavior (Q-056), recovery workflow (Q-058), and minimum milestone closure
 (Q-061) remain unresolved; mentioning recovery does not accept an autosave scheme.
 
@@ -227,7 +177,7 @@ handling from the full graph without rewriting project state or altering intende
 Latency reporting, thresholds, compensation, and bypass strategy remain open under [AUDIO_ENGINE](AUDIO_ENGINE.md).
 External hosting must define ordinary compatibility/lifecycle semantics under [EXTENSIONS](EXTENSIONS.md).
 Stronger process isolation may be evaluated later if evidence justifies it; it is not required baseline
-hosting architecture or an early milestone added by SEQ-KB-R5.
+hosting architecture or an early milestone.
 Automation/modulation work must resolve the open effective-parameter model: base value and control
 sources, composition, domains/units, precedence, smoothing, and rates. Earlier parameter modelling
 must leave room for that control without selecting its formula now.

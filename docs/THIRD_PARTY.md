@@ -11,7 +11,6 @@ Seqvium-authored work is licensed under **Apache License, Version 2.0** (`Apache
 file/component explicitly states another license. This covers Seqvium-authored code, documentation,
 and assets. The root [LICENSE](../LICENSE) is the primary authoritative project license artifact,
 downloaded unchanged from the [official Apache text](https://www.apache.org/licenses/LICENSE-2.0.txt).
-Acceptance is recorded in [D-029](DECISIONS_LOG.md#d-029--seqvium-uses-apache-license-20).
 
 Apache-2.0 permits commercial use, modification, redistribution, and derivative works under its terms,
 includes an explicit contributor patent grant, and does not require derivative Seqvium code to remain
@@ -128,7 +127,9 @@ as research. It must not compete with build manifests. Native entries additional
 binary/source provenance, runtime/platform distribution implications, and material transitive obligations.
 Evaluate codec/patent concerns where applicable. Asset entries use the additional fields above.
 
-Record removal or replacement with status, stage, and a successor/evidence link where relevant; retain
-historical provenance rather than silently deleting an entry. Update this owner when changed terms,
-upgrades, replacements, or redistribution scope change obligations. Candidate popularity is not
+Record removal/replacement with status, stage and successor/evidence where relevant. This active
+ledger retains current introduced material, materially evaluated candidates and current obligations;
+history may move to the cold archive when no longer relevant to those obligations. Never remove
+legally required current provenance or notices merely because material is old. Update this owner when
+changed terms, upgrades, replacements or redistribution scope change obligations. Candidate popularity is not
 sufficient adoption evidence.

@@ -50,9 +50,12 @@ preview must not be the only way to judge a candidate that sounds substantially 
 acceptance in the real project. Audition remains temporary and reversible until explicit acceptance;
 it must not silently rewrite accepted musical material or a shared audio resource.
 
-Substitution mechanics, active-target identity, stop/cancel/restore behavior, realtime publication,
-downstream boundaries, and handling unavailable context remain open. They require later bounded
-design and evidence, not a presumed implementation here.
+Substitution mechanics, stop/cancel/restore, realtime publication, downstream boundaries and exact
+target lifetime remain open. Async completion must revalidate project/target identity, compatible
+context, relevance/cancellation and ownership/revision preconditions before publication or acceptance
+under [ARCHITECTURE](ARCHITECTURE.md#document-integrity-and-asynchronous-publication). Generation for
+a deleted target must not attach to current selection; unattached candidate, discard or explicit reuse
+policy depends on the workflow. Q-011/Q-063 retain exact mechanics and undo/commit grouping.
 
 ## Specialized generation in a shared exploration surface
 
@@ -101,6 +104,18 @@ change B and C. Non-destructive placement processing is the default. Explicit de
 operations may be considered later but are not implied by normal processing or contextual acceptance.
 The exact acceptance edit for a target and shared-use behavior still need design.
 [ARCHITECTURE](ARCHITECTURE.md) owns identity boundaries; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence.
+
+## Asynchronous preparation and dependency availability
+
+Generation/preparation/render work needed by user-visible operations requires cancellation, visible
+state/progress and finite failure handling under [AUDIO_ENGINE](AUDIO_ENGINE.md#bounded-asynchronous-preparation).
+Do not wait forever on stalled workers/plugins; failure leaves canonical state and existing realtime
+execution intact. No universal timeout is selected.
+
+Render/resampling freezes and validates/prepares the relevant canonical project revision under
+[AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction). Required invalid state or unavailable
+dependencies block the affected operation with object-level diagnostics; never silently sample older
+playing state or omit required processing and report success. Exact taps/scopes remain open below.
 
 ## Resampling
 

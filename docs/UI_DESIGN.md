@@ -55,9 +55,11 @@ settings/inspector placement, and optional parameter exposure are not final visu
 
 Invalid or unpublished graph edits must clearly differ from the graph currently executing under
 [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution). Use concise status/iconography,
-affected node/connection highlighting, restrained color coding, and short contextual/transient
-notifications where useful. Keep feedback visible without interrupting normal editing with cascading
-modal dialogs; [UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures) owns exceptions
+affected node/connection highlighting, restrained color with non-color cues, and concise inline/context
+explanations. Persistent missing-capability and execution blockers remain visible at affected elements;
+optional global count/navigation may help reach them. Disappearing notifications are supplementary,
+logs are diagnostic support, and the workspace must not become a diagnostics dashboard. Keep feedback
+visible without interrupting normal editing with cascading modal dialogs; [UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures) owns exceptions
 where a modal decision is genuinely required. Exact visuals remain open.
 
 Use immediate visual/audio feedback to make manipulation understandable and invite experimentation.

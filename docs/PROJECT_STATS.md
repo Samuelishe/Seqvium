@@ -8,8 +8,8 @@ Not authoritative for: Current executable capability, source topology, semantic 
 ## Accepted direction and introduction boundary
 
 Seqvium should introduce a repository diagnostics CLI, conceptually `Seqvium.Tools.ProjectStats`,
-when executable repository tooling is explicitly authorized. [D-030](DECISIONS_LOG.md#d-030--future-projectstats-repository-diagnostics)
-accepts this direction, not an existing project or permission to create one during SEQ-KB-R4.
+when executable repository tooling is explicitly authorized. This is accepted future direction,
+not an existing project or permission to create one during a documentation stage.
 
 It is an early repository-tooling foundation, separate from SEQ-R0's audio probe. It may precede the
 probe after code authorization. Whether a dedicated pre-R0 tooling stage is useful remains Q-046 in

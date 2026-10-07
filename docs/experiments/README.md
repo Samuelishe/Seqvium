@@ -35,5 +35,8 @@ location. Do not add an artifact framework before a probe requires it. Offline r
 real device/callback evidence must remain distinguishable.
 
 When a result justifies a durable decision, update the affected technical owner and
-[DECISIONS_LOG](../DECISIONS_LOG.md). Narrow/close questions in [KNOWN_PROBLEMS](../KNOWN_PROBLEMS.md)
-with evidence links; completed experiment facts belong in [WORK_LOG](../WORK_LOG.md).
+append rationale/history to [archived decisions](../archive/DECISIONS.md). Narrow current questions
+in [KNOWN_PROBLEMS](../KNOWN_PROBLEMS.md); remove resolved questions and preserve their answers/evidence
+in [resolved history](../archive/RESOLVED_QUESTIONS.md). Completed experiment facts go directly to
+[archived work](../archive/WORK_LOG.md). These write destinations do not make archive routine context;
+reports retain current useful evidence, while obsolete reports/validation narratives move to cold history.

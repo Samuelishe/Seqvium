@@ -1,9 +1,12 @@
-# Work log
+# Completed work history
 
-Role: Concise factual chronology of meaningful completed work.
-Read when: A specific stage's provenance or completion facts matter.
-Authoritative for: Completed repository-stage history and its evidence links.
-Not authoritative for: Current state, plans, stable contracts, or active debt.
+Role: Historical completed work chronology.
+Read when: Explicit history, provenance, rationale, supersession, or reconstruction is needed.
+Authoritative for: Historical records and traceability only.
+Not authoritative for: Current behavior, policy, plans, implementation state, or open questions.
+
+This is a cold, non-canonical archive excluded from normal current context. Active owner documents
+win any conflict; historical wording records its stage, not a competing current specification.
 
 ## 2026-10-06 — SEQ-KB-R0
 
@@ -22,7 +25,7 @@ Not authoritative for: Current state, plans, stable contracts, or active debt.
 
 ## 2026-10-06 — SEQ-KB-R1
 
-- Added [NODE_GRAPH](NODE_GRAPH.md) and [WORKSPACE](WORKSPACE.md) as canonical owners and routed them
+- Added [NODE_GRAPH](../NODE_GRAPH.md) and [WORKSPACE](../WORKSPACE.md) as canonical owners and routed them
   through AGENTS, INDEX, and documentation governance.
 - Incorporated mouse-first universal creation, named multi-instrument patterns, independent user
   groups, core graph/workspace responsibilities, backend-independent plugins, and compatibility/failure
@@ -40,7 +43,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 
 ## 2026-10-06 — SEQ-KB-R2
 
-- Added [UI_DESIGN](UI_DESIGN.md) as a small evolving owner for visual hierarchy, chrome, density,
+- Added [UI_DESIGN](../UI_DESIGN.md) as a small evolving owner for visual hierarchy, chrome, density,
   progressive complexity, and restrained feedback; routed it through AGENTS, INDEX, and governance.
 - Defined standalone/contextual Sample Lab with temporary downstream audition, semantic what-you-hear
   sampling, non-destructive resource/placement identity, and two local processing levels with global
@@ -77,7 +80,7 @@ is not established by local history; this log does not duplicate Git's commit ch
   retained third-party obligations, future NOTICE/SPDX policy, and Q-014 resolution trace under D-029.
 - Refreshed the public README; refined compact current-state/evidence policy and one-main-suite-first
   test architecture, deterministic synchronization/fixtures, and separate offline/manual/device evidence.
-- Added [PROJECT_STATS](PROJECT_STATS.md) as the future BCL-only/cross-platform structural diagnostics
+- Added [PROJECT_STATS](../PROJECT_STATS.md) as the future BCL-only/cross-platform structural diagnostics
   contract with advisory outputs, privacy/exclusions, synthetic-repository tests, and explicit code-authorization
   boundary. Routed the owner; kept named test routes, semantic analysis, and trends speculative.
 - Verified canonical LICENSE byte equality, Markdown relative links/anchors, ownership/status/planning
@@ -106,7 +109,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Recorded grouped D-039 through D-044 for platform-authoritative plugin compatibility/retention and
   sound responsibility, tempo-aware non-destructive edits/tails, last-valid visible graph execution,
   quiet bounded diagnostics/settings, host localization/theme resources, and bounded overload/live mode.
-- Added [SETTINGS](SETTINGS.md) as the user-configuration/reset/production-diagnostics owner and routed
+- Added [SETTINGS](../SETTINGS.md) as the user-configuration/reset/production-diagnostics owner and routed
   it through AGENTS, INDEX, and governance. Refined existing questions and added Q-050 through Q-055
   for distinct open mechanisms without selecting algorithms, ABI, paths, log limits, or resource packaging.
 - Verified accepted/open/implemented distinctions, relative Markdown links/anchors, owner routing,
@@ -128,7 +131,7 @@ is not established by local history; this log does not duplicate Git's commit ch
   third-party ledger; recorded the permanent research/public-provenance boundary. Git history untouched.
   Added grouped D-045 through D-049 without superseding R6 constraints.
 - After integration, read and audited all canonical owners/registers, public/root documentation, the
-  experiment guide and passive configuration. [Ranked findings](KNOWN_PROBLEMS.md#seq-kb-r7-global-audit-findings)
+  experiment guide and passive configuration. [Ranked findings](AUDITS.md#seq-kb-r7-global-audit-findings)
   cover missing-plugin open policy, recovery/media integrity, graph save/render divergence, independent
   execution, roadmap dependencies, latency, device failures, undo, library/input and host-service gaps.
   Refined/split questions with traceability; added Q-056 through Q-071, leaving product/technical choices
@@ -139,3 +142,27 @@ is not established by local history; this log does not duplicate Git's commit ch
   Markdown changes only; no source, projects, dependencies, tests, CI, executable tooling, plugin hosts,
   theme packages or prototypes; no build/tests, commit or push. TECH_DEBT has no implementation entries.
   SEQ-R0 remains **pending / not started**; implementation stages were not renumbered.
+
+## 2026-10-07 — SEQ-KB-R8
+
+- Integrated degraded document opening and critical format/refusal boundary, operation-scoped dependency
+  blockers and persistent object-level UI feedback; resolved [Q-013](RESOLVED_QUESTIONS.md#q-013--missingincompatible-required-plugin-during-project-open).
+- Established one canonical editable graph, derived revisioned realtime execution, automatic latest-valid
+  convergence, savable invalid work, canonical reopen and frozen canonical export without stale fallback;
+  resolved [Q-060](RESOLVED_QUESTIONS.md#q-060--canonical-graph-versus-last-valid-execution-in-savereopenrender).
+- Refined graded plugin compatibility/diagnostic metadata and English localization fallback, migration
+  awareness/choice, logical input/output device UX and known-active-dependency package/removal safety.
+  Accepted finite preparation failure/cancellation and target-validated asynchronous publication/commit.
+- Established permanent rolling current knowledge and cold history governance. Migrated complete active
+  decision/work ledgers, completed KB roadmap, resolved-question traces, R7 audit/ranking/context and
+  previous checkpoint; preserved IDs, stage/date context and relative links. Created six flat archive
+  files; removed active ledger copies and historical-ID dependency from normal current owners/routing.
+- Recorded D-050 through D-056 in [decision history](DECISIONS.md); narrowed Q-010/Q-024/Q-054/Q-062/
+  Q-069/Q-063 and Q-018/Q-011/Q-012/Q-067 without false closure or new question IDs. Still-open R7
+  findings remain ordinary active questions; no implementation debt exists.
+- Verified all 34 repository Markdown files' relative links/anchors, metadata, ID/traceability integrity,
+  current/archive separation, retrieval exclusion, future implementation IDs/order, LF/whitespace and
+  Markdown-only scope, plus `git diff --check`. Branch/HEAD/staging index preserved; initial baseline clean.
+- No application/audio/native/runtime code, test projects, dependencies, CI, executable tooling,
+  prototypes, plugin hosts, retrieval infrastructure or passive configuration changes. No empty-solution
+  build, tests, commit or push. SEQ-R0 remains **pending / not started**.

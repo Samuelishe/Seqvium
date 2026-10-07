@@ -2,7 +2,7 @@
 
 Role: Optional-capability and extension lifecycle contract.
 Read when: Designing extension boundaries, packages, removal, or missing-capability behavior.
-Authoritative for: Categories, base-versus-optional policy, lifecycle principles, missing-extension preservation.
+Authoritative for: Categories, base-versus-optional policy, compatibility/fallback, lifecycle/removal safety, degraded availability and dependency blockers.
 Not authoritative for: A final public API, package format, project container, DSP implementation, or store.
 
 ## Base and optional capabilities
@@ -52,8 +52,10 @@ processing plugins must not bind directly to miniaudio, WASAPI, ASIO, ALSA, Pipe
 
 Compatibility must be resolved deliberately before activation using API/contract version, required and
 optional host capabilities, processing format/range support, and compatible state/schema range where relevant.
-Possible outcomes are normal loading, unavailable optional capability, an explicitly supported
-compatibility path, or disable/reject with a clear diagnostic. An older plugin's lack of a newer
+Conceptual graded outcomes include compatible, compatible with fallback/limited capability,
+compatibility warning, incompatible and missing; these are semantic examples, not final public labels.
+Fallback must be explicitly supported and diagnostics must identify meaningful limitations. `Deprecated`
+means actual deprecation/retirement intent, not merely old but working. An older plugin's lack of a newer
 optional capability must not itself fail the application or whole project.
 
 A plugin is not incompatible merely because it was built for an older Seqvium version. The current
@@ -61,13 +63,30 @@ platform must be able to satisfy its declared required contracts/capabilities an
 age or version ordering alone is not a rejection criterion. Prefer lightweight metadata/manifest/
 capability checks where possible, without expensive mandatory runtime self-tests of every plugin at
 every application/project startup. Real activation/materialization failure may also disable/reject a
-plugin with diagnostics. Final negotiation mechanics remain open.
+plugin with diagnostics. Required activation/materialization must be bounded, not an indefinite wait.
+Final negotiation mechanics remain open.
 
 A known incompatible plugin must not be activated. Installation may be rejected if incompatibility
 is known beforehand. An already installed plugin may remain present but unavailable/incompatible;
 losing support must not automatically uninstall or delete it. The user decides whether to remove it.
 Preserve project/plugin identity, state, and relationships where applicable under the missing-extension
 rules below. The final resolver, manifest/schema, and compatibility paths are not selected.
+
+## Plugin metadata and localization direction
+
+Leave room for stable plugin identity, package/version, plugin state/schema version, required host
+contract/capability ranges, optional capabilities, supported localization/languages, fallback/default
+language, and optional last-tested/last-updated Seqvium platform information. Platform-age metadata
+helps diagnosis; `older than host -> reject` is not the rule. No manifest format, exact fields or API/ABI
+is selected; Q-024 retains negotiation representation and state compatibility schema.
+
+Missing localization must use a usable common fallback rather than disable working processing.
+Seqvium-authored / Seqvium-native first-party contributions use English as the baseline fallback;
+Russian/English are initial platform directions with room for other languages. A plugin supporting
+RU/EN uses English when host Spanish is unavailable without changing host language. Independent
+third-party native editors remain outside host-rendered localization control where applicable.
+[ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources) owns the platform principle;
+Q-054 retains resource format, contribution mechanism and fallback schema/details.
 
 ## Plugin sound responsibility
 
@@ -143,9 +162,9 @@ acceptance semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
 
 ## Lifecycle and missing capabilities
 
-Discovery, activation, errors, deactivation, and removal will need explicit ownership. Installation or
-removal must not unnecessarily destroy music. Removal during active processing must respect audio
-resource lifetime; exact live-removal and restart behavior remains open.
+Discovery, activation, errors, deactivation, and removal need explicit ownership. Installation or
+removal must not unnecessarily destroy music; instance edits and global package removal follow
+different safety contracts below. Exact package manager mechanics remain open in Q-010.
 
 - **Accepted generated sample:** rendered audio remains usable after generator removal. Recipe editing
   or regeneration may be unavailable until a compatible generator returns.
@@ -154,7 +173,8 @@ resource lifetime; exact live-removal and restart behavior remains open.
   [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary), not the normal durability path.
 - **Realtime instrument/effect:** when the algorithm is needed to reproduce sound, preserve stable
   extension identity, serialized state, musical relationships, and sufficient opaque/unknown data.
-  The eventual UI must explicitly represent the missing extension; exact playback fallback is open.
+  The UI explicitly represents the unavailable extension; affected execution is blocked where its
+  dependency is required, rather than silently omitted with reported success.
 - **Contributed node type:** preserve node identity/state and graph relationships if its plugin is
   missing, disabled, or rejected. Missing processing and safe execution behavior need explicit handling;
   deleting unknown nodes/connections on save is not a compatibility strategy.
@@ -163,10 +183,40 @@ Saving must not silently discard unknown extension state. Missing code cannot re
 merely because state is preserved; these are distinct concerns. Reinstallation/rebinding compatibility
 needs evidence. [PROJECT_FORMAT](PROJECT_FORMAT.md) owns on-disk preservation and compatibility.
 
-Whole-project opening with a missing/incompatible required realtime plugin remains explicitly open:
-refuse to open versus open degraded with a missing/offline instance. Neither preservation nor the
-required missing-capability indication selects one model. Q-013 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md)
-must resolve this product choice before affected hosting/project-open behavior is implemented.
+## Degraded project opening and operation blockers
+
+Inability to reproduce all audio does not normally prevent document access. A missing, disabled or
+incompatible ordinary plugin, or recoverable activation/materialization failure, normally opens a
+project degraded when its document remains safely understandable. Preserve plugin/node identity,
+serialized/opaque compatible state, relationships and musical references. Edit the available document
+model; missing processing is not itself a document-format failure.
+[PROJECT_FORMAT](PROJECT_FORMAT.md#opening-and-migration) owns critical schema/corruption/unsafe-migration
+refusal and behavior-changing migration choice.
+
+Block the operation requiring the broken dependency wherever possible, rather than the whole user/
+project: document access and unrelated editing remain available; healthy paths may execute where
+semantics permit; affected execution is unavailable; export/render is blocked when its frozen canonical
+scope's dependency closure requires the broken capability. Never silently omit required musical/
+processing dependencies and report success, or substitute stale realtime state for canonical render.
+
+Diagnostics point at the actual affected object/node/instance and identify the required capability,
+with restoration/removal/replacement direction. Conceptually a Pattern requiring missing `HardBass
+Superbeater 7.0` explains that dependency; wording is unselected. Persistent blockers are current UI
+state under [UX_CONTRACT](UX_CONTRACT.md#project-availability-and-dependency-blockers), supported by
+logs rather than hidden in them. Reinstallation/reattachment still needs schema/lifecycle evidence.
+
+## Instance removal and package uninstall
+
+Removing an instance from a project is an ordinary document edit that should eventually be undoable
+under normal project editing rules. Uninstalling/removing its package is a global capability operation.
+
+Do not physically uninstall or unload a package with known active runtime use: active instances,
+processing, open plugin editors, or currently open project dependencies requiring the loaded package.
+Block or defer uninstall and explain the known dependency. Never unload beneath active realtime
+execution. Check current application/project/library context, not every project file on the user's
+filesystem. Exact deferred completion, restart/update/install failure, storage/location and broader
+package lifecycle remain Q-010. This follows the general
+[known-dependency destructive-operation rule](ARCHITECTURE.md#document-integrity-and-asynchronous-publication).
 
 ## Not selected yet
 
