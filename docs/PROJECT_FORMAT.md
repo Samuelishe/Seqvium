@@ -2,7 +2,7 @@
 
 Role: Serialization compatibility and resource-preservation contract.
 Read when: Designing save/load, migration, managed media, or extension-state persistence.
-Authoritative for: Compatibility direction, canonical Save/reopen, opening/migration, versioned persistence, media and unknown-data preservation.
+Authoritative for: Compatibility direction, canonical Save/reopen, recovery-state and media integrity, opening/migration, versioned persistence and unknown-data preservation.
 Not authoritative for: A final container/schema, runtime domain classes, extension API, or recovery implementation.
 
 No project format is implemented or selected. This document constrains future choices without
@@ -19,7 +19,8 @@ inventing field names, file extensions, or a container layout.
 - Use stable entity/resource IDs where references and edit identity justify them.
 - Define reasonable forward/backward handling: distinguish supported loading, safe preservation, and
   inability to reproduce behavior. Do not silently rewrite unsupported data as if fully understood.
-- Make normally used audio project-managed/self-contained by default; external references are explicit alternatives.
+- Ordinary import/drag-and-drop accepts audio into project-managed durable storage; normal use must
+  not depend on the original arbitrary external path remaining available.
 - Preserve extension identity, serialized state, and musical relationships, including currently unknown data.
 - Preserve accepted generated audio; recipe metadata must not cause implicit regeneration on load.
 
@@ -29,17 +30,24 @@ inventing field names, file extensions, or a container layout.
 
 ## Opening and migration
 
-Inability to reproduce all project audio does not normally mean inability to open its document. Missing,
-disabled or incompatible ordinary plugins and recoverable activation/materialization failures normally
-produce degraded opening, provided the document can still be safely understood. Preserve plugin/node
+If Seqvium can safely understand the document structure, local capability/resource failures normally
+degrade affected parts rather than prevent access to the whole project. This includes missing, disabled
+or incompatible ordinary plugins, recoverable activation/materialization failures, unavailable ordinary
+execution capabilities, and individual managed media that is missing, corrupt, fails integrity validation
+or cannot be decoded. Preserve affected resource/item references and plugin/node
 identity/state, graph relationships, musical references and compatible opaque/unknown data. The project
 is editable to the degree its document model is available; affected operations use dependency-scoped
-blockers under [EXTENSIONS](EXTENSIONS.md#degraded-project-opening-and-operation-blockers).
+blockers. [EXTENSIONS](EXTENSIONS.md#degraded-project-opening-and-operation-blockers) owns plugin-specific
+handling. Broken media remains visibly represented; where meaningful, allow inspection, replacement,
+relink/repair or removal of the dependency while unaffected portions remain usable. Never silently
+substitute unrelated media. Persistent project-visible feedback follows
+[UX_CONTRACT](UX_CONTRACT.md#project-availability-and-dependency-blockers).
 
 Hard whole-project refusal is reserved for document-level conditions: critically unsupported project/
 schema format, migration unable to safely resolve required structure, severe corruption, or fundamental
 architectural incompatibility preventing safe interpretation. Missing processing alone is not a format
-failure. Give concise human-readable diagnostics; no final error codes/UI are chosen.
+failure, and neither is a local media failure in an otherwise safely understandable document. Give
+concise human-readable diagnostics; no final error codes/UI are chosen.
 
 Distinguish lossless/internal migration from behavior-affecting compatibility transformations. Before
 applying forced fallback/default substitution, lost parameters or nontrivial routing conversion,
@@ -64,8 +72,38 @@ history/checkpoint features would require separate design.
 
 Export/render freezes, validates and prepares canonical state under
 [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction); it never silently uses stale playback.
-Autosave/crash recovery, crash-safe persistence and media transactions remain Q-058/Q-059; this Save
-rule does not choose those mechanisms or the serialization schema.
+Explicit Save represents the user-confirmed saved state. A newer crash-recoverable working state is
+separate under the recovery contract below; it does not silently redefine that saved version.
+Crash-safe persistence and media transaction mechanisms remain Q-058/Q-059, not a selected schema.
+
+## Recovery state
+
+Crash recovery maintains a rolling current recoverable project snapshot/state alongside the explicit
+saved project, rather than an indefinitely growing journal of every user action. Its representation
+may grow with the project itself; retained size/history must not grow proportionally to edit count or
+hours worked merely because actions accumulate. A later bounded transient log may be an internal
+mechanism, not the durable product model or an ever-growing user-action history.
+
+After abnormal termination, Seqvium should offer recovery of newer working state instead of silently
+overwriting the last explicit Save. Recovery existence or recovery acceptance must not automatically
+replace the normal project file. Exact recovery-choice UI and interaction with subsequent explicit
+Save remain open. Unnamed/never-saved projects also need recovery protection; a final project path
+must not be a prerequisite. Exact temporary-storage location is unselected.
+
+Recovery refresh may follow meaningful document transactions, a periodic schedule, debounced changes
+or a hybrid. No exact cadence is accepted. High-frequency interaction such as parameter dragging must
+not cause pathological disk writes; dirty marking followed by a bounded debounce/important transition
+is a possible later policy, not a chosen algorithm.
+
+Recovery storage must remain bounded, but cleanup must not casually delete the only known recent copy
+of unsaved work merely to satisfy an arbitrary size/count threshold. Retention count/age/size, layout,
+corruption detection, crash-safe replacement and cleanup algorithms remain open. Temporary/staging/
+previous copies may support safe replacement without becoming accumulated action history.
+
+Document recovery does not reconstruct missing audio magically. Future recording/generation and
+accepted imports must manage durable media independently enough for recovery to reconnect to already
+produced material where possible. Exact recording transactions and media reconciliation remain
+Q-058/Q-059 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 
 ## Musical content and workspace state
 
@@ -118,27 +156,53 @@ with independent local stretch, under [ARCHITECTURE](ARCHITECTURE.md#project-tem
 An explicit operation creating/committing a new cropped/consolidated/rendered resource is separate
 from normal trim/split; edit-structure changes do not inherently modify source media destructively.
 
-A normally saved Seqvium project should be self-contained with respect to audio material actually used
-by the project. When external/imported audio becomes used material, the default is to place/copy/manage
-the required audio in project-managed storage rather than retain fragile absolute links into arbitrary
-sample folders. This covers imported samples, accepted Sample Lab audio, recordings, used content-pack
-material, and other audio required to reproduce the project. Using one library file must not copy unused
-portions of the entire library.
+Ordinary media import/drag-and-drop creates a project-managed durable resource at successful acceptance,
+including in an unnamed/unsaved working project. Normal continued use must not depend on the original
+external file: moving/deleting `D:\Samples\kick.wav` after successful import must not break that resource.
+This covers ordinary WAV/MP3 imports, FLAC if later supported, accepted Sample Lab output, recordings,
+used content-pack material and other accepted audio. These examples do not select supported codecs;
+format support remains roadmap/implementation work. Using one library file must not copy unused
+portions of the entire library. A normally saved project is self-contained with respect to used audio.
 
 Once used pack/sample material is managed project media, removing the original pack must not lose that
 audio. Accepted generated audio likewise remains durable if its generator disappears. Durability takes
 precedence over continued availability of the original source; missing executable instruments/effects
 remain subject to [EXTENSIONS](EXTENSIONS.md), not a promise that saved media replaces every algorithm.
 
-Explicit external-reference workflows may later serve very large shared libraries, deliberate shared
-media management, or advanced use. They must be distinguishable from the normal durable path. Users
+An advanced deliberate external-reference workflow, if retained or introduced, needs separate
+justification and must be explicit and clearly distinguishable from ordinary import. It may later
+serve very large shared libraries or deliberate shared media management. Users
 must understand whether audio travels with the project, remains externally referenced, or is missing;
-missing external media must be represented clearly. Final UI and reference mechanics remain open.
+missing/corrupt media must be represented clearly under the degraded opening contract. Final UI and
+reference mechanics remain open; ordinary import is not an external-reference workflow.
+
+The managed representation may differ from the source format. A canonical durable representation,
+optional source/origin metadata and disposable decoded/cache forms remain possible. No PCM-only rule,
+sample format/bit depth, compression, original-file retention, dual source/canonical storage, content
+addressing or codec library is selected. Runtime cache must never be the only durable copy of accepted media.
 
 This default does not select a single archive/file, directory/bundle, manifest plus media directory,
 or another versioned container. Exact embedding/copying policy, deduplication, garbage collection of
 unused media, collect/relocate workflow, checksums/content addressing, and storage layout remain open.
 Preserving user material does not authorize automatic deletion of unused resources.
+
+## Media and persistence integrity
+
+From the project user's perspective, media acceptance is transactional: project state must not claim
+a newly imported/created resource is durably available until it is successfully placed in project-managed
+durable storage. Disk full, interrupted copy, write error, crash or failed conversion must not corrupt
+the previously valid saved state. This also applies to accepting generated/rendered or recorded material;
+document recovery and media durability are separate integrity concerns.
+
+Save, Save As, collect and relocate must fail safely, preserving a previously coherent project if a new
+operation cannot complete. Prepare/stage/validate enough new durable state before treating the operation
+as committed; do not delete old references/state first and then attempt copying. Exact filesystem/database/
+container transactions, atomic rename, temporary directories, checksums, manifests and journaling remain open.
+
+Do not eagerly delete an apparently unused managed resource merely because the visible arrangement no
+longer references it. Undo, recovery, pending asynchronous work or another uncommitted state may still
+need it. Resource cleanup/garbage collection must be explicit and lifecycle-aware; exact retention and
+cleanup policy remains open in Q-059.
 
 ## Unknown extension data
 
@@ -154,9 +218,10 @@ Exact opaque encoding and compatibility claims are undecided.
 SEQ-R1 should establish only a bounded versioned foundation. Container versus directory, encoding,
 ID/time representation, migration mechanism, unsupported-version behavior, crash-safe save/recovery,
 resource integrity, and extension-state evolution remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
-Q-058 separates explicit Save from unresolved autosave/crash recovery, including corruption safety,
-bounded retention, recorded media and crash-restart user choice. Q-059 tracks managed-media integrity
-and save/collect/relocate workflows. No recovery scheme is accepted by mentioning these obligations.
+Q-058 retains exact rolling-snapshot replacement, cadence, retention, corruption detection, recovery
+choice/Save interaction and recorded-media reconciliation. Q-059 retains managed-storage layout,
+transaction/failure mechanics, integrity checks, Save As/collect/relocate and lifecycle-aware cleanup.
+The recovery/media product contracts above are accepted; their implementation mechanisms remain open.
 Exact derived preparation/publication mechanisms remain Q-018; canonical Save/reopen/render policy
 is accepted above and in the audio owner.
 WAV export is an audio deliverable, not a substitute for project serialization.

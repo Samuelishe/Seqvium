@@ -88,10 +88,27 @@ Acceptance makes the rendered audio durable project material. The audio is the r
 available when its generator is removed. Where useful, additionally preserve generator identity,
 version, parameters, random seed, and recipe metadata. A seed/recipe is not a substitute for audio.
 
-Accepted Sample Lab audio becomes project-managed media under the normal self-contained project path,
-alongside used imported/pack audio and recordings. Durability does not depend on the original generator,
-pack, or external folder remaining available. Explicit external-reference workflows are an alternative,
-not the ordinary default; [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary) owns storage policy.
+Ordinary import/drag-and-drop and accepted Sample Lab output create project-managed durable media,
+alongside recordings, used pack audio and other accepted material, including in an unnamed project.
+Successful acceptance internalizes/manages the resource: moving/deleting the original arbitrary external
+file must not break normal project use. Durability does not depend on the generator, pack or external
+folder remaining available. Any advanced deliberate external-reference workflow needs explicit separate
+justification and clear distinction from ordinary import;
+[PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary) owns storage policy.
+
+Project state may claim durable availability only after successful placement in managed durable storage.
+Failed copy/conversion/write or interrupted acceptance must preserve the previously valid saved state.
+The managed representation may differ from the source; no transcoding/storage format, source-retention
+rule or codec library is chosen, and disposable cache is never the only durable copy. Document recovery
+does not recreate produced audio; recording/generation must leave room for reconciliation with separately
+managed durable material. Retained Undo/recovery/pending work can still need apparently unused media;
+no eager deletion follows visible-reference removal. [PROJECT_FORMAT](PROJECT_FORMAT.md#media-and-persistence-integrity)
+owns transaction/cleanup contracts and their open mechanisms.
+
+Missing/corrupt individual media normally degrades its affected portions when the document is safely
+understandable. Preserve visible broken-resource/item state and allow inspection, repair/relink,
+replacement or removal where meaningful, with unaffected work available. Never silently substitute
+unrelated audio; [UX_CONTRACT](UX_CONTRACT.md#project-availability-and-dependency-blockers) owns persistent feedback.
 
 Opening an old project must not silently regenerate accepted audio using a newer algorithm and change
 the composition. Regeneration with available code is a separate explicit creative action.

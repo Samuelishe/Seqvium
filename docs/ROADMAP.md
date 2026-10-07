@@ -16,6 +16,25 @@ whether a dedicated tooling stage is useful remains Q-046, not an inserted commi
 [Open questions](KNOWN_PROBLEMS.md), including First Track Release dependency closure Q-061, do not
 reorder stages or make recording, automation, external hosting or ProjectStats implicit prerequisites.
 
+## Sequencing philosophy
+
+Prioritize durable, extensible foundations over the fastest visible MVP/demo. Substantial document/domain,
+serialization, resource, transport, audio/backend, realtime, plugin and edit/async integrity work may
+legitimately precede impressive UI. Project creation and the document lifecycle are foundational ownership,
+not optional late polish. Settings/diagnostics and host localization/theme rails enter where dependencies
+need them under [ARCHITECTURE](ARCHITECTURE.md#foundational-ownership-and-project-lifecycle).
+This is dependency correctness, not a requirement to finish every backend subsystem before any UI or
+mandate extra architectural layers/projects.
+
+A later meaningful end-to-end project/track remains a valuable acceptance milestone. Piano Roll playing
+a pattern alone is insufficient as the final usable-product criterion, and useful closure does not require
+approximating a complete FL Studio. Do not weaken/reorder foundations to reach an MVP at any cost.
+After sufficient foundation decisions/evidence, a dedicated researched roadmap exercise must identify
+dependencies, define safe implementation order and a concrete complete-project/MVP scenario, map each
+required capability to an owning stage, and have Codex/architecture audit gaps and circular dependencies.
+Q-061 retains that future exercise. Current numbering/order is not automatically changed, and the full
+roadmap/milestone closure is not finalized here.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 Status: **pending / not started**.
@@ -44,6 +63,7 @@ execution boundary. No graph editor, full plugin host, ASIO, or recording worksp
 Establish project/document ownership, musical-time primitives, instrument identity, events/parts,
 named multi-instrument patterns, clips, independent organizational groups, justified stable IDs,
 undo/redo, and a bounded versioned serialization foundation.
+Include first-class new-project/document lifecycle ownership without prescribing its UI or container.
 Include independent project-owned settings copied from creation defaults, plus identifying/version
 metadata and useful compatibility diagnostics under [SETTINGS](SETTINGS.md) and [PROJECT_FORMAT](PROJECT_FORMAT.md).
 Respect shared audio resources versus musical placements and the two local processing levels without
@@ -156,8 +176,11 @@ Save/reopen preserves canonical work even when invalid. Export validates/prepare
 revision, blocks required dependencies and never silently renders stale playback; preparation requires
 responsive cancellation/state and finite failure handling. Export follows intended project cuts/tails
 under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
-Manual export-range tail behavior (Q-056), recovery workflow (Q-058), and minimum milestone closure
-(Q-061) remain unresolved; mentioning recovery does not accept an autosave scheme.
+Selected export ranges are hard by default; explicit tail inclusion may extend naturally allowed tails
+without undoing project cuts. Finite tail mechanics (Q-057), exact rolling-recovery workflow (Q-058),
+managed-media integrity mechanics (Q-059) and concrete milestone closure (Q-061) remain open.
+This is a provisional later acceptance target for the dedicated roadmap research/audit, not permission
+to accelerate visible features by weakening foundations or a finalized MVP capability list.
 
 ## SEQ-R13 — Extension Ecosystem
 

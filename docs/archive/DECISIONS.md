@@ -660,3 +660,90 @@ preserving legally required current provenance. Flat archive can split later wit
 Current owners: [Governance](../DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history),
 [AGENTS](../../AGENTS.md), [INDEX](../INDEX.md); historical lookup in [archive INDEX](INDEX.md).
 No executable retrieval/tooling/framework is introduced. SEQ-R0 remains pending / not started.
+
+## D-057 — Rolling recovery snapshot separate from explicit Save
+
+Status: Accepted by SEQ-KB-R9, 2026-10-07; partially resolves Q-058, refines D-053.
+Basis: Explicit recovery/current-state and unsaved-work integrity mandate; no runtime evidence claimed.
+Rationale: Recover the latest working document instead of retaining an indefinitely growing action
+history. Explicit Save remains the user-confirmed saved version; newer recovery is offered after abnormal
+termination without automatically replacing the normal file. Unnamed/never-saved projects need protection
+without a final path. Bound recovery storage without casually deleting the sole known recent unsaved
+copy for arbitrary thresholds. Refresh cadence is implementation policy; rapid interaction must not
+cause pathological writes. Bounded transient logs/staging/previous copies may support later mechanics
+without redefining the durable model. Document recovery does not magically reconstruct media; independently
+managed produced material should be reconnectable where possible. Recovery is user work, not resettable
+preferences or disposable logs.
+Current owners: [Project format](../PROJECT_FORMAT.md#recovery-state),
+[UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work), [settings](../SETTINGS.md#reset-boundary).
+Remaining mechanisms: Q-058 snapshot replacement, corruption detection, cadence/debounce, layout/location,
+retention/cleanup, recovery-choice UI, explicit-Save interaction and recorded-media reconciliation;
+Q-059 media integrity. No cadence, retention numbers, journal scheme or recording transaction selected.
+
+## D-058 — Project-managed ordinary imported media and degraded resource access
+
+Status: Accepted by SEQ-KB-R9, 2026-10-07; partially resolves Q-059, extends D-038/D-050/D-054/D-055.
+Basis: Explicit ordinary-import durability, failure-safe persistence and degraded-document mandate.
+Rationale: Ordinary import/drag-and-drop accepts a project-managed durable resource, including in an
+unnamed document, independent of arbitrary original source paths. This covers accepted imported,
+recorded, generated/Sample Lab and used pack material without selecting codecs/storage/transcoding.
+Managed representation may differ from the source; runtime cache is never the sole durable copy.
+Project state cannot claim successful durable availability before storage succeeds. Failed media
+acceptance or Save/Save As/collect/relocate preserves previous coherent saved/project state; prepare/
+stage/validate before successful commit instead of deleting old references first. Undo/recovery/pending
+or uncommitted states may still own seemingly unused media, so cleanup is explicit and lifecycle-aware.
+Safely understandable documents normally open degraded for local capability/resource failures, including
+missing/corrupt/undecodable individual managed media. Preserve visible affected state and repair/relink/
+replace/remove paths where meaningful, allow unaffected work and retain operation-scoped blockers.
+Never silently substitute unrelated media. Whole-project refusal remains for unsafe document interpretation.
+Advanced external references need explicit separate justification and distinction from ordinary import.
+Current owners: [Project format](../PROJECT_FORMAT.md#media-policy-boundary),
+[integrity](../PROJECT_FORMAT.md#media-and-persistence-integrity),
+[opening](../PROJECT_FORMAT.md#opening-and-migration), [sample workflow](../SAMPLE_WORKFLOW.md#acceptance-and-provenance),
+[UX](../UX_CONTRACT.md#project-availability-and-dependency-blockers), [architecture](../ARCHITECTURE.md).
+Remaining mechanisms: Q-059 storage/container, staging/commit, Save As/relocate, checksums/integrity,
+cleanup/GC, interrupted/disk-full operations and any advanced references. No source-retention rule,
+canonical format, bit depth, compression, content addressing, codec library or transaction algorithm selected.
+
+## D-059 — Foundation-first architecture and logical responsibility separation
+
+Status: Accepted by SEQ-KB-R9, 2026-10-07; partially resolves Q-061, refines D-002/D-015.
+Basis: Explicit strategy, dependency direction and project-lifecycle mandate.
+Rationale: Durable/extensible architectural foundations take priority over fastest visible MVP behavior.
+Substantial foundation effort before impressive UI is acceptable; boundaries expensive to replace later
+deserve deliberate ownership. Domain musical/project/resource invariants remain independent of UI and
+low-level technologies. Application coordinates use cases; infrastructure supplies adapters/persistence/
+devices/plugins; presentation invokes operations and presents state. Logical separation does not mandate
+Clean Architecture boilerplate, an assembly per layer or speculative interfaces. UI is not project truth;
+backend adapters implement host/domain/application requirements. First-class new-project/document lifecycle
+is foundational ownership for music, settings, managed media, plugin state and processing relationships.
+Serialization, settings/diagnostics, resource/extension, transport/audio/realtime, async/edit and appropriately
+staged localization/theme rails precede dependent work without requiring all backend subsystems complete
+before any UI. A meaningful complete project/track is a later acceptance milestone, neither Piano Roll
+playback alone nor approximating all of FL Studio. A dedicated researched/audited roadmap exercise will
+define dependencies, safe stages, capability ownership and concrete milestone closure later; R9 neither
+reorders stages nor starts implementation.
+Current owners: [Architecture](../ARCHITECTURE.md#domain-application-infrastructure-and-presentation),
+[lifecycle](../ARCHITECTURE.md#foundational-ownership-and-project-lifecycle),
+[roadmap](../ROADMAP.md#sequencing-philosophy).
+Remaining mechanisms: Q-061 full roadmap and concrete acceptance/dependency closure after sufficient
+foundation decisions/evidence. Exact project decomposition remains open; no new assemblies/layers selected.
+
+## D-060 — Explicit clip boundaries and hard-by-default export ranges
+
+Status: Accepted by SEQ-KB-R9, 2026-10-07; resolves Q-056, partially resolves Q-057, refines D-040/D-047.
+Basis: Explicit clip-boundary, processing-scope and manual-range export mandate.
+Rationale: Natural source end may permit stateful local tails. Deliberately shortened/trimmed item/clip
+right boundary ends its own audible/object-local result including local DSP tails; do not extend it to
+the mathematical processor end. A tiny de-click may avoid discontinuity without substantially extending
+the tail. Shared containing-container/bus/Mixer/Master state after mixing is not erased by ordinary trim;
+absolute downstream silence would need separately designed routing/state semantics. Two local levels remain.
+Manual export selection is a hard range by default. A future explicit include-tails-like option may extend
+capture for naturally allowed tails, never resurrect intentional clip/processing/project cuts. Export
+remains finite for slow/non-decaying effects rather than waiting for mathematical zero.
+Current owners: [Audio](../AUDIO_ENGINE.md#source-boundaries-and-effect-tails),
+[render](../AUDIO_ENGINE.md#offline-rendering-direction), [UX](../UX_CONTRACT.md#audio-timeline-editing),
+[architecture](../ARCHITECTURE.md#resources-placements-and-two-local-processing-levels).
+Remaining mechanisms: Q-057 seek warm-up/state reconstruction, reset, loop ownership, de-click, tail
+reporting/threshold/maximum extension/non-decaying completion and realtime/offline parity; exact export
+label/UI remains unselected. Q-012 retains capture-specific taps/scope, not reopened ordinary export defaults.

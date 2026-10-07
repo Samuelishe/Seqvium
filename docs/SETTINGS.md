@@ -72,6 +72,12 @@ Configuration reset must not delete user projects or project-managed audio/media
 plugin instance state remains project state, separate from these preference resets. Exact command names,
 button layout, scope controls, and confirmation flow remain open under [UX_CONTRACT](UX_CONTRACT.md).
 
+Recoverable working documents, including unnamed/unsaved projects, are user work rather than disposable
+preferences or diagnostic logs. Preference reset must not discard their recovery state. Recovery is
+separate from explicit Save; cadence/retention controls and storage paths remain unselected under
+[PROJECT_FORMAT](PROJECT_FORMAT.md#recovery-state). Bounded production-log cleanup does not define
+recovery retention or authorize deleting the only known recent unsaved recovery copy.
+
 ## Production diagnostics
 
 Persistent capability/execution blockers are primarily visible current UI state under

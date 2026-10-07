@@ -92,3 +92,33 @@ not additional full question definitions; the active register retains each origi
 
 No additional question ID is required by this migration: remaining finite-failure and target-publication
 mechanisms fit the narrowed Q-018/Q-011/Q-012/Q-063, and migration/removal mechanics fit Q-009/Q-010.
+
+## Q-056 — Manual export range and permitted effect tails
+
+Status: Fully resolved by SEQ-KB-R9, 2026-10-07.
+Original question: Does a selected export range default to a hard render boundary, or extend for valid tails?
+Resolution: An explicitly selected export range is hard by default. Future UX may offer an explicit
+include-tails-like option extending capture for naturally continuing permitted tails. It never overrides
+an explicit clip hard boundary, hard-cut processing boundary or other intentional project silence.
+Export stays finite; neither the option nor processor feedback implies rendering to mathematical zero.
+Current owners: [Audio render](../AUDIO_ENGINE.md#offline-rendering-direction),
+[UX](../UX_CONTRACT.md#audio-timeline-editing).
+Decision: [D-060](DECISIONS.md#d-060--explicit-clip-boundaries-and-hard-by-default-export-ranges).
+Related open mechanisms: Q-057 bounded completion/tail reporting/thresholds/maximum extension and state
+transitions; exact export label/UI remains open in the current owners. Q-012 retains resampling/capture
+taps and scope. These mechanisms do not keep the manual export product choice unresolved.
+
+## R9 resolved portions — remaining mechanics and roadmap closure stay open
+
+Status: Partial resolutions accepted by SEQ-KB-R9, 2026-10-07. The active register retains the same Q-IDs
+only for remaining uncertainty; no new question IDs or complete roadmap redesign were required.
+
+| Question | Accepted portion | Current owners | Remaining open scope |
+| --- | --- | --- | --- |
+| Q-057 | Natural source end may tail; deliberate item/clip right boundary hard-cuts its own local audible result, including its tail, before shared downstream processing. Tiny de-click may avoid clicks without substantial tail extension. Manual export range is hard by default; explicit inclusion allows only naturally permitted tails, never intentional cuts | [Audio boundaries](../AUDIO_ENGINE.md#source-boundaries-and-effect-tails), [render](../AUDIO_ENGINE.md#offline-rendering-direction), [architecture](../ARCHITECTURE.md#resources-placements-and-two-local-processing-levels), [UX](../UX_CONTRACT.md#audio-timeline-editing); [D-060](DECISIONS.md#d-060--explicit-clip-boundaries-and-hard-by-default-export-ranges) | Seek warm-up/state reconstruction, loop-tail ownership, processor reset, de-click, non-decaying tails, finite completion and realtime/offline parity |
+| Q-058 | Recovery is rolling current snapshot/state, separate from explicit Save, supports unnamed/unsaved work without a final path and is bounded without casually deleting sole recent unsaved recovery for arbitrary thresholds. Exact cadence is not selected; rapid interaction must not cause pathological writes. Document recovery does not reconstruct media | [Project format](../PROJECT_FORMAT.md#recovery-state), [UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work), [settings](../SETTINGS.md#reset-boundary); [D-057](DECISIONS.md#d-057--rolling-recovery-snapshot-separate-from-explicit-save) | Crash-safe replacement, corruption detection, cadence/debounce, retention/cleanup/layout/location, recovery choice, explicit-Save interaction and recorded-media reconciliation |
+| Q-059 | Ordinary import is project-managed durable media independent of original external paths; storage succeeds before durable availability is claimed. Acceptance and Save/Save As/collect/relocate fail safely. Individual missing/corrupt media normally degrades safely understandable projects with persistent visible state and repair/relink/replace/remove where meaningful. No eager deletion while Undo/recovery/pending/uncommitted work may need resources | [Project format media](../PROJECT_FORMAT.md#media-policy-boundary), [integrity](../PROJECT_FORMAT.md#media-and-persistence-integrity), [opening](../PROJECT_FORMAT.md#opening-and-migration), [sample workflow](../SAMPLE_WORKFLOW.md#acceptance-and-provenance), [UX](../UX_CONTRACT.md#project-availability-and-dependency-blockers); [D-058](DECISIONS.md#d-058--project-managed-ordinary-imported-media-and-degraded-resource-access) | Container/storage, staging/atomic commit, Save As/collect/relocate, checksums/integrity, repair workflows, cleanup/GC, disk-full/interrupted operations and separately justified advanced external references |
+| Q-061 | Foundation-first strategy rejects MVP-at-any-cost and fastest-demo ordering; durable architecture rails and new-project/document lifecycle are foundational. Logical domain/application/infrastructure/presentation separation does not mandate layer projects. Meaningful end-to-end track is a later acceptance milestone requiring dedicated research/audit, not a finalized R9 scenario | [Roadmap](../ROADMAP.md#sequencing-philosophy), [architecture](../ARCHITECTURE.md#domain-application-infrastructure-and-presentation); [D-059](DECISIONS.md#d-059--foundation-first-architecture-and-logical-responsibility-separation) | After sufficient foundation decisions/evidence, concrete fuller implementation roadmap, safe stage dependencies, complete-project/MVP acceptance scenario, capability-to-stage mapping and Codex/architecture gap/cycle audit |
+
+Q-012 wording was aligned to retain capture-specific taps/output/range scope and Q-057 mechanisms,
+without reopening the resolved manual-export default. Q-065 Browser/personal-library scope was untouched.

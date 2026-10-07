@@ -166,3 +166,37 @@ is not established by local history; this log does not duplicate Git's commit ch
 - No application/audio/native/runtime code, test projects, dependencies, CI, executable tooling,
   prototypes, plugin hosts, retrieval infrastructure or passive configuration changes. No empty-solution
   build, tests, commit or push. SEQ-R0 remains **pending / not started**.
+
+## 2026-10-07 — SEQ-KB-R9
+
+- Integrated rolling current recovery distinct from explicit Save, unnamed-document protection,
+  bounded storage preserving sole recent unsaved work, unselected refresh cadence and independently
+  durable media reconciliation. Clarified recovery protection across preference reset/log cleanup.
+- Strengthened ordinary import/drag-and-drop into project-managed durable acceptance independent of
+  original arbitrary paths; no storage/transcoding/codec chosen. Required durable placement before
+  availability claims, failure-safe acceptance/Save/Save As/collect/relocate and lifecycle-aware cleanup.
+- Generalized degraded opening to local capability/resource failures including missing/corrupt media,
+  retaining visible affected state, repair/relink/replace/remove paths and unaffected work; preserved
+  fundamental unsafe-document refusal and operation-scoped blockers without silent media substitution.
+- Established foundation-first sequencing, logical domain/application/infrastructure/presentation
+  separation and fundamental new-project/document lifecycle without speculative layers/projects.
+  Left complete-project/MVP scenario and full roadmap reconstruction to a dedicated future audit;
+  implementation stage IDs/order were preserved.
+- Refined natural source tails versus explicit item-local hard right boundaries before shared downstream
+  processing, optional tiny de-click, hard-by-default selected export ranges and explicit inclusion of
+  only naturally permitted tails. Finite tail/state mechanics remain open; no algorithms selected.
+- Added D-057 through D-060 in [decision history](DECISIONS.md), fully resolved
+  [Q-056](RESOLVED_QUESTIONS.md#q-056--manual-export-range-and-permitted-effect-tails), narrowed
+  Q-057/Q-058/Q-059/Q-061 and archived accepted portions. Aligned Q-012 capture-specific scope;
+  Q-065 Browser/personal-library question remained unchanged. Updated current owner routing without
+  recreating active history ledgers; completed R9 stage is in [archive ROADMAP](ROADMAP.md#seq-kb-r9--recovery-media-durability--foundation-strategy).
+- Verified all 34 repository Markdown files' relative links/anchors, 71 unique canonical Q definitions
+  (68 open and Q-013/Q-056/Q-060 fully archived), D-001 through D-060 uniqueness/reference traceability,
+  owner/routing, accepted/open/current/archive separation, LF and Markdown-only scope. Q-065 and all
+  implementation stage headings/order match HEAD; archive remains excluded from default context/RAG.
+  `git diff --check` passed. Initial tree/index/untracked baseline was clean on `master` at
+  `c953da727f4912c351e3a023d448f83138f54d68`; branch/HEAD/staging index preserved.
+- Refreshed compact current state. No application/audio/native implementation, recovery/media files,
+  projects, tests, dependencies, CI, executable tooling, prototypes, codecs, plugin hosts, UI or passive
+  configuration introduced. No empty-solution build, tests, commit or push. SEQ-R0 remains
+  **pending / not started**.

@@ -2,7 +2,7 @@
 
 Role: Audio execution and realtime boundary contract.
 Read when: Designing the audio probe, scheduling, nodes, device I/O, recording, or rendering boundaries.
-Authoritative for: Realtime constraints, processing context, backend/device boundary, recording, canonical offline render and finite preparation failure.
+Authoritative for: Realtime constraints, processing context, backend/device boundary, recording, item-local hard boundaries, manual export ranges, finite tails, canonical offline render and finite preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
 ## Accepted realtime constraints
@@ -70,18 +70,34 @@ playback remain implementation/validation questions in [KNOWN_PROBLEMS](KNOWN_PR
 
 ## Source boundaries and effect tails
 
-Ending or trimming source input does not necessarily destroy already-running effect state. Ordinary
-source-end behavior may allow delay/reverb or similar processing tails to continue after new input stops:
+A natural source end may allow stateful item-local delay/reverb or similar processing tails to continue
+after source input stops:
 
 ```text
 source audio ----|
                  |~~~~ effect tail ~~~~
 ```
 
-Source/input boundary, continuing processing tail, and explicit hard cut are distinct intentions.
-The user must also be able to request an explicit hard boundary where resulting sound after that point
-is intentionally silenced or otherwise terminated. Exact hard-cut/node-state reset mechanics and
-controls remain open. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns understandable editing intentions.
+A deliberately shortened/trimmed clip/item right boundary expresses that this item's audible result
+ends here. It is a hard audible boundary for the item's own/object-local result, including its local
+processing tail; do not extend the clip to the mathematical end of local reverb/delay.
+
+```text
+item-local source + processing ------|
+                                    silence
+```
+
+A hard boundary may use a tiny de-click/ramp to avoid an avoidable discontinuity. This must not
+substantially extend audible reverb/delay beyond the user's boundary. Exact ramp length/algorithm,
+processor reset and state ownership remain open in Q-057.
+
+The boundary applies before later shared containing-container, bus, Mixer and Master processing. It
+does not automatically erase arbitrary downstream effects of the item's earlier signal after irreversible
+mixing; those scopes retain their own signal/capture/render semantics. Absolutely silencing all downstream
+consequences would need separate routing/state semantics, not an assumption about ordinary trim.
+Preserve the two local processing levels under
+[ARCHITECTURE](ARCHITECTURE.md#resources-placements-and-two-local-processing-levels).
+[UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns understandable editing intentions.
 
 ### Loop, seek, and playback Stop
 
@@ -240,10 +256,16 @@ selected render scope. Do not restore a deliberately cut tail, remove intended a
 add effects, or otherwise "improve" the project. Temporary playback Stop settling is not an instruction
 to append audio to exports or recordings.
 
-**Manual export-range semantics remain open:** when a valid tail extends outside a selected bounded
-range, decide whether that range defaults to a hard render boundary or an explicit include-tails-like
-option is appropriate (Q-056 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md)). This stage chooses neither.
-Exact effect latency, cancellation, reset/warm-up, and realtime/offline equivalence also need evidence
-in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+An explicitly selected export range is a hard render boundary by default: selecting Bars 1–64 produces
+that requested range without silently extending the file for processor tails. Future export UX may offer
+an explicit option conceptually like `Include effect tails`, allowing render beyond the range for naturally
+continuing permitted tails. It must never resurrect an explicit clip hard boundary, hard-cut processing
+boundary or other intentional project silence. This option extends the capture range, not editing decisions.
+
+Export must remain finite. Tail inclusion is not rendering to mathematical zero forever: extremely slow
+decay, near-unity feedback, oscillation or non-decaying processors need bounded completion. Exact option
+label/UI, silence threshold, maximum extension, processor-tail reporting and non-decaying-tail handling
+are unselected. Q-057 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains finite completion, reset/warm-up,
+loop state ownership, de-click and realtime/offline parity mechanisms; latency/cancellation also need evidence.
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics; no engine or
 renderer exists at this milestone.

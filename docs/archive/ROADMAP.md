@@ -87,3 +87,15 @@ canonical project versus derived execution, Save/export and asynchronous publica
 permanent rolling current knowledge plus a cold archive, migrated decision/work/roadmap/audit history,
 and resolved Q-013/Q-060 while narrowing mechanism questions. Documentation only; SEQ-R0 remains
 pending / not started. See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r8).
+
+## SEQ-KB-R9 — Recovery, Media Durability & Foundation Strategy
+
+Completed 2026-10-07. Integrated rolling recovery distinct from explicit Save, durable ordinary imported/
+accepted media, failure-safe project/media operations, lifecycle-aware cleanup and degraded missing/corrupt
+resource access. Established foundation-first sequencing and logical domain/application/infrastructure/
+presentation separation with first-class project creation/lifecycle. Refined explicit item-local hard
+boundaries and hard-by-default manual export ranges with optional naturally permitted finite tails.
+Resolved Q-056; narrowed Q-057/Q-058/Q-059/Q-061 and archived their accepted portions with D-057 through
+D-060. Full roadmap reconstruction and Browser/library scope remain future work. Documentation only;
+no implementation stage was started or renumbered. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r9).

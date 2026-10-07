@@ -19,14 +19,14 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [PROJECT_VISION](PROJECT_VISION.md) | Product identity, audience, creative philosophy, non-goals |
 | [UX_CONTRACT](UX_CONTRACT.md) | Observable interaction principles and general workflow semantics |
 | [UI_DESIGN](UI_DESIGN.md) | Evolving visual/interaction guide: hierarchy, usable responsive layout, chrome, density, indicators, restrained feedback |
-| [ARCHITECTURE](ARCHITECTURE.md) | Core/plugin/backend boundaries, canonical/derived state, async integrity, musical/resource identities and processing scopes |
-| [AUDIO_ENGINE](AUDIO_ENGINE.md) | Realtime state/publication, scheduling, devices, frozen canonical render and finite preparation failure |
+| [ARCHITECTURE](ARCHITECTURE.md) | Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, canonical/derived state, async integrity, musical/resource identities and processing scopes |
+| [AUDIO_ENGINE](AUDIO_ENGINE.md) | Realtime state/publication, scheduling, devices, item-local hard boundaries, hard export ranges, finite tails and canonical render/preparation |
 | [NODE_GRAPH](NODE_GRAPH.md) | Core graph, free canvas/topology, progressive graph interaction, ports, canonical graph and derived execution revisions |
 | [WORKSPACE](WORKSPACE.md) | Main-window chrome/foreground behavior, internal panes, activation/front behavior, docking, user layout state |
 | [SETTINGS](SETTINGS.md) | User/project separation, logical input/output devices, bounded reset and production diagnostics |
 | [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, graded compatibility/fallback, package lifecycle/removal safety, degraded access and dependency blockers |
 | [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Standalone/contextual Sample Lab, audition, acceptance, what-you-hear resampling |
-| [PROJECT_FORMAT](PROJECT_FORMAT.md) | Canonical Save/reopen, critical document refusal, migration choice, media and unknown-data preservation |
+| [PROJECT_FORMAT](PROJECT_FORMAT.md) | Canonical Save/reopen, rolling recovery, failure-safe managed-media durability, degraded resource access, migration and unknown-data preservation |
 | [CODING_GUIDELINES](CODING_GUIDELINES.md) | C# implementation/refactoring, English source language, async/lifetime, warning baseline |
 | [DEVELOPMENT](DEVELOPMENT.md) | Developer environment, local tools, SDK/version authority, eventual entry points, text consistency |
 | [TEST_EXECUTION](TEST_EXECUTION.md) | Test topology/quality, proportional verification, future commands, Release gates, evidence tiers |

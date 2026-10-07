@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Core/plugin/backend boundaries, timeline/organization/graph separation, musical/resource identities, local processing, canonical/derived state, async document integrity, host UI services.
+Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, local processing, canonical/derived state, async document integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -13,6 +13,47 @@ design; implementation shape, schemas, and native choices still need bounded des
 Use simple architecture for the current product with extension points justified by known requirements.
 An abstraction needs a concrete ownership or testability reason. Avoid enterprise layering,
 speculative interfaces, and a disposable model that must be replaced for Piano Roll or Arrangement.
+
+Seqvium prioritizes a durable, extensible architecture foundation over the fastest visible DAW demo.
+Substantial foundation work before impressive UI or a musically complete prototype is acceptable.
+Establish boundaries whose later replacement would be broadly expensive, without speculative enterprise
+architecture. Dependency correctness guides sequencing; not every subsystem must be complete before UI.
+
+## Domain, application, infrastructure and presentation
+
+Keep these concerns logically distinct, without mandating Clean Architecture boilerplate or a
+project/assembly per layer:
+
+| Concern | Responsibility |
+| --- | --- |
+| Domain | Musical, resource and project concepts/invariants |
+| Application / use cases | Operations coordinating document edits and workflows |
+| Infrastructure / adapters | Persistence, filesystem, audio devices/backends and plugin loading |
+| Presentation | Workspace interaction and UI, including Avalonia if selected |
+
+Dependency direction keeps core musical/domain semantics independent from concrete presentation and
+low-level infrastructure. Application operations coordinate domain work; adapters implement host/domain/
+application requirements, and presentation invokes operations and presents state. This describes logical
+responsibilities, not a final source tree or project count. Keep concrete decomposition as simple as justified.
+
+Pattern/domain objects must not depend on Avalonia controls; project semantics must not depend on
+WASAPI/miniaudio or another backend; tempo/musical time must not depend on a UI window. Persisted plugin
+state must not depend on a button/control instance. UI is not canonical project truth, and audio/backend
+adapters implement requirements rather than define musical semantics.
+
+## Foundational ownership and project lifecycle
+
+Creating a new project and the first-class project/document lifecycle are fundamental, not optional late
+features. The project owns musical state, project settings, managed media, plugin instances/state,
+processing relationships and later arrangement/automation/recording data. New/Open/Save UI and container
+format remain open under [PROJECT_FORMAT](PROJECT_FORMAT.md).
+
+Early architecture deliberately establishes the rails later work depends on: document and musical-domain
+ownership, versioned serialization, settings/configuration separation, diagnostics/logging, extension
+hosting, resource ownership, transport/musical clock, audio/backend/device abstraction, realtime execution,
+asynchronous operation integrity and undo/edit transactions. Host localization/theme services enter at
+the appropriate stage. This does not require all subsystems, extra layers or interfaces before any UI;
+[ROADMAP](ROADMAP.md) owns sequencing and the later complete-project acceptance exercise.
 
 ## Core platform responsibilities
 
@@ -131,6 +172,13 @@ resource deletion, device changes while recording and destructive migration. Eac
 exact block/defer/choice behavior; this is not a whole-filesystem dependency crawler.
 [EXTENSIONS](EXTENSIONS.md#instance-removal-and-package-uninstall) owns package safety.
 
+Media acceptance may publish durable availability only after successful project-managed storage;
+Save/Save As/collect/relocate must preserve prior coherent state on failure. Recovery is a rolling current
+working snapshot distinct from explicit Save, including unnamed documents, and does not recreate media.
+Retained Undo/recovery/pending states may still own apparently unused resources, so deletion cannot follow
+visible-reference removal alone. [PROJECT_FORMAT](PROJECT_FORMAT.md#media-and-persistence-integrity) owns
+these integrity contracts and [recovery state](PROJECT_FORMAT.md#recovery-state), without selecting storage mechanics.
+
 ## Intended musical model
 
 The accepted product direction for SEQ-R1 is:
@@ -230,7 +278,8 @@ An explicitly destructive/edit-source operation may be justified later, but ordi
 does not imply it. Resource/reference/edit ownership and storage schemas remain unselected;
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence obligations.
 
-Used audio is normally durable project-managed media, with explicit external-reference alternatives
+Ordinary import/drag-and-drop creates durable project-managed media independent of its original arbitrary
+external path; any deliberate external-reference workflow needs explicit separate justification
 under [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary). That owner defines covered material
 and preservation obligations; this architecture boundary does not select storage mechanisms.
 
@@ -253,6 +302,12 @@ This bounds the ordinary creative mental model, not the engine's number of DSP s
 buses, master, and output remain available responsibilities. Master is global output processing,
 not a third nested local layer. Do not infer unlimited user-facing local nesting.
 [NODE_GRAPH](NODE_GRAPH.md) owns how processing connections express signal dependencies.
+
+A natural source end may allow item-local effect tails. An explicit user clip/item right boundary ends
+that item's own audible result, including its local tail, before containing-container/bus/Mixer/Master
+processing. It does not erase arbitrary shared downstream state after irreversible mixing or introduce
+a third local processing level. [AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) owns
+the processing-scope and hard-boundary contract; exact state/de-click mechanics remain open.
 
 "Layer" is provisional terminology, not a final public/domain name. Track, Layer, Channel, Lane,
 or Container may overlap future vocabulary. The accepted semantics are a musical timeline container

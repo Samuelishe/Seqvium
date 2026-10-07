@@ -114,27 +114,53 @@ clip stretch are also distinct; [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and
 tempo-following versus fixed/source-time model. Final labels, defaults, gestures, modifiers, and tools
 remain UI design work; no time-stretch algorithm is selected.
 
-A source/input end, a continuing effect tail, and an explicitly requested hard cut are different
-intentions. The user must be able to request the hard boundary as well as ordinary source edits;
-[AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) owns processing semantics, including
-loop/seek/playback Stop/Record Stop and faithful export rules. Ending source input must not implicitly
-mean every running effect is destroyed. The manual export-range tail policy remains explicitly open.
+A natural source end may allow a local effect tail. Deliberately shortening/trimming the clip/item's
+right boundary means its own audible result ends there, including item-local processing tails. A tiny
+de-click may avoid a click without substantially extending that tail. This does not erase arbitrary
+shared downstream container/bus/Mixer/Master state;
+[AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) owns those scope distinctions and
+loop/seek/playback Stop/Record Stop mechanics.
+
+An explicitly selected export range is hard by default. A future explicit `Include effect tails`-like
+option may extend it for naturally permitted tails, never restore project audio deliberately cut by
+editing. Exact label/UI and finite tail-completion policy remain open under
+[AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
+
+## Project lifecycle and durable work
+
+New project creation is a first-class document operation. Valuable unnamed/never-saved work must be
+eligible for crash recovery without an existing final project path. Explicit Save is the user-confirmed
+saved state; recovery maintains a separate rolling current working snapshot. After abnormal termination,
+offer recovery rather than silently overwrite the last explicit saved version. Recovery existence or
+acceptance alone must not replace the normal project file. Exact New/Open/Save and recovery-choice UI
+remains open; [PROJECT_FORMAT](PROJECT_FORMAT.md#recovery-state) owns recovery and integrity contracts.
+
+Ordinary media import/drag-and-drop accepts a durable project-managed resource. After successful
+acceptance, moving/deleting the original arbitrary source file must not break normal project use.
+Failed acceptance or Save/Save As/collect/relocate must preserve prior coherent project state under
+[PROJECT_FORMAT](PROJECT_FORMAT.md#media-and-persistence-integrity). A deliberate advanced external
+reference, if offered, needs separate justification and clear distinction from ordinary import.
 
 ## Project availability and dependency blockers
 
-A safely understandable project normally opens degraded when an ordinary required plugin is missing,
-disabled, incompatible or has a recoverable activation/materialization failure. Retain its work and
-allow available document editing; hard project-open refusal belongs to critical document/schema/
-corruption conditions under [PROJECT_FORMAT](PROJECT_FORMAT.md#opening-and-migration).
+A safely understandable project normally opens degraded for local capability/resource failures:
+missing/disabled/incompatible or recoverably failed ordinary plugins, missing/corrupt managed media,
+failed media integrity validation/decoding and unavailable ordinary execution capabilities. Retain its
+work and allow available document editing; hard project-open refusal belongs to critical document/schema/
+corruption conditions preventing safe interpretation under [PROJECT_FORMAT](PROJECT_FORMAT.md#opening-and-migration).
 
 Block operations whose dependency closure requires the broken capability, while unrelated editing
 and healthy paths remain usable where semantics permit. Never silently omit required musical or
 processing dependencies and report success. Explain the missing requirement concisely at the actual
-affected object/node/instance with restore/remove/replace direction; exact wording/UI is unselected.
+affected object/node/instance/resource with restore/remove/replace direction. Broken media must remain
+represented, with inspection, replacement/relink/repair or removal where meaningful; never silently
+substitute unrelated audio. Exact wording/UI is unselected.
 
 Persistent blockers must be represented as current UI state: affected-element marker, icon/badge,
 restrained state color with non-color cues and concise inline/context explanation. Optional global
-blocker count/navigation may help reach affected objects. Disappearing notifications alone are
+blocker count/navigation may help reach affected objects. A missing/corrupt media clip/item/resource
+needs this persistent indication, potentially a placeholder and human-readable explanation, rather than
+only a transient toast or log event. Disappearing notifications alone are
 insufficient; logs remain diagnostic support. Keep the musical workspace clear rather than turning it
 into a diagnostics dashboard. [UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns visual treatment.
 
