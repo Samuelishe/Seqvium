@@ -111,7 +111,8 @@ The accepted product direction for SEQ-R1 is:
 - A **musical part** contains notes/events for one instrument; no class or storage schema is selected.
 - A **Pattern** is a user-named reusable musical unit that may contain parts/events for multiple instruments.
 - A **pattern clip** places/references a pattern in the Playlist/Arrangement's musical time.
-- Repeated pattern clips normally reference shared data; an explicit operation creates an independent variation.
+- Repeated pattern clips normally reference shared Pattern musical content; an explicit operation
+  creates an independent musical-content variation without implicitly detaching sound definitions.
 - Mixer channels describe audio processing/routing, separately from arrangement tracks.
 - Step Sequencer and Piano Roll edit compatible underlying musical event data.
 - Pointer editing, on-screen musical keyboard, realtime note input, and MIDI recording converge on
@@ -133,6 +134,43 @@ equivalent intensity. A `bool[16]` foundation is insufficient. These requirement
 schema, time representation, class hierarchy, or storage layout. [PROJECT_FORMAT](PROJECT_FORMAT.md)
 owns persistence compatibility; [UX_CONTRACT](UX_CONTRACT.md) owns observable editing behavior.
 
+## Separate sharing identities
+
+Pattern musical content, instrument/sound definition, placement state, and processing state are
+distinct identities whose sharing or independence must be expressible separately. There is no single
+universal linked/unlinked state. Editing shared Pattern content changes every placement using it;
+changing placement-local position, processing, or future fades does not change all those placements.
+
+An explicit action conceptually called `Make Pattern Variation` copies/detaches musical content.
+It must not implicitly detach every associated sound, resource, or processing relationship. A separate
+intention, conceptually `Make Sound Independent`, may copy/detach an instrument/sound definition.
+These are conceptual names, not selected commands, UI, or internal copy mechanics. A hidden
+unlink-everything operation must not be the only model. [UX_CONTRACT](UX_CONTRACT.md) owns making
+meaningful sharing understandable; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns relationship preservation.
+
+## Processing granularity and shared definitions
+
+An atomic note, trigger, or step does not automatically own an arbitrary full DSP graph. Events may
+eventually carry lightweight expressive properties such as pitch, intensity/velocity, duration, note
+expression, or equivalent bounded controls. An unrestricted local processing graph belongs to a
+standalone musical item/clip/fragment/placement-like scope, not every event in a Pattern.
+
+For one hit needing substantially independent processing, provide a low-ceremony path conceptually
+like `select event -> process separately / make independent fragment -> standalone item -> local graph`.
+Users should not need to understand internal decomposition to make that hit sound different. Exact
+command, event-to-item transformation, domain names, and graph ownership remain open.
+
+Shared instrument settings/definition must not automatically imply shared execution state or
+irreversible mixed audio. Placements A and B may use the same Bass Synth definition while A is clean
+and B uses distortion. Even when they overlap, execution must preserve enough separation to honor
+their different local/downstream processing before irreversible mixing.
+
+Voice groups, execution instances, prepared routes, or other bounded representations are possible
+later mechanisms; none is selected. There is no required instance count or promise of unlimited/free
+duplication. Separation may cost CPU/memory. [AUDIO_ENGINE](AUDIO_ENGINE.md) owns execution constraints;
+Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) requires later resource/performance evidence, including
+third-party instruments that may need explicit instance duplication or another bounded strategy.
+
 ## Resources, placements, and two local processing levels
 
 A durable audio resource and a musical occurrence/placement of it must not be assumed to be one
@@ -141,6 +179,13 @@ silently rewrite the shared resource or every other use. The default creative mo
 An explicitly destructive/edit-source operation may be justified later, but ordinary item processing
 does not imply it. Resource/reference/edit ownership and storage schemas remain unselected;
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence obligations.
+
+Normally saved projects must be self-contained with respect to used audio: imported samples,
+accepted Sample Lab audio, recordings, used pack material, and other required audio become managed
+project media by default. Manage only required material, not an unused whole library. Audio identity
+and durability must not depend on the original external source remaining installed/available.
+Explicit external-reference workflows remain possible; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns the
+default/exception contract and still leaves container, schema, and storage mechanisms undecided.
 
 For ordinary project work, the accepted user-facing model has no more than two local processing levels:
 
@@ -187,6 +232,13 @@ The timeline container answers where/when material is arranged; mixer channels/b
 audio flows and how it is processed/routed. Useful defaults may connect them without merging their
 identities. How arrangement-container processing relates to a mixer channel or bus remains an explicit
 architecture question; exposing shared container processing does not settle it.
+
+Moving material into a context that owns processing or other meaningful behavior subjects it to that
+context. Moving a Kick from a Drums container with Compressor into a Lo-Fi container with Distortion
+and Delay changes its sound as expected. Pure organizational grouping must not silently change sound.
+Organizational groups, musical/timeline containment with processing semantics, and mixer routing stay
+distinct; the UI must make meaningful processing contexts distinguishable. This does not select final
+Track/Layer/Container terminology or settle the container-to-mixer relationship.
 
 ## Future parameter control
 

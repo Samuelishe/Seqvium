@@ -63,6 +63,13 @@ item-local and containing-container processing direction, with mixer/bus/master 
 beyond it. These workflows motivate local graph scopes without selecting scope identities, all
 possible graphs, nesting, or the final container term. Exact scope ownership remains open.
 
+An arbitrary full local graph belongs to a standalone item/clip/fragment/placement-like scope,
+not automatically to each atomic note, trigger, or step. Bounded event expression remains possible.
+A low-ceremony event-to-independent-item path should expose deeper processing when needed;
+[ARCHITECTURE](ARCHITECTURE.md#processing-granularity-and-shared-definitions) owns that granularity
+and the still-open transformation. Graph availability does not require users to understand object
+decomposition merely to change one hit.
+
 A **promising UX proposal**, not a hard contract, is a compact chain representation of a simple
 linear graph, allowing ordinary effect reordering without opening the canvas. If adopted, it must
 represent the same canonical graph, not a separate simple-chain DSP system alongside advanced-graph

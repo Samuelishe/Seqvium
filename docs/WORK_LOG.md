@@ -86,3 +86,18 @@ is not established by local history; this log does not duplicate Git's commit ch
 - No executable application/experiment/tooling code, test/native projects, packages, build scripts, or
   CI introduced; no build/tests, commit, or push performed. TECH_DEBT remains empty; SEQ-R0 remains
   pending / not started.
+
+## 2026-10-07 — SEQ-KB-R5
+
+- Clarified full local graphs at standalone item/fragment granularity, separate musical/sound/placement/
+  processing sharing, independent overlapping execution, and processing-context move consequences.
+- Separated object-local rendering from broader audible-selection capture; required undoable explicit
+  rendered replacement to avoid silent double application of baked processing, preserving sources by default.
+- Corrected external-plugin responsibility/failure/security boundaries, defined minimal future lifecycle
+  obligations, permitted external editor windows, and retained stronger crash isolation as optional I-005.
+- Accepted self-contained used project audio by default with explicit external-reference alternatives;
+  recorded D-033 through D-038, refined existing questions, and added Q-047 through Q-049 for open mechanisms.
+- Verified relative Markdown links/anchors, owner/status consistency, contracts, Markdown-only scope,
+  LF/diff whitespace, and final Git status/staging preservation. No implementation, projects, dependencies,
+  tests, CI, executable tooling, prototypes, or passive configuration changes introduced; no build/tests,
+  commit, or push performed. SEQ-R0 remains pending / not started.

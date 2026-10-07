@@ -46,6 +46,15 @@ ProjectStats is an early repository-tooling foundation for later explicit code a
 from the audio probe. It may precede the probe; whether a dedicated pre-R0 tooling stage is useful
 remains Q-046 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md), not an inserted implementation commitment.
 
+## SEQ-KB-R5 — Musical Ownership & Extension Boundary Clarification
+
+Record accepted processing granularity, separately shared musical/sound/placement/processing identities,
+independent overlapping execution, processing-context move consequences, object-render versus audible
+capture semantics, realistic third-party plugin boundaries, and self-contained used project media.
+Documentation only: no source, projects, dependencies, prototypes, executable tooling, tests, CI, or
+passive configuration changes. Completion belongs to PROJECT_STATE / WORK_LOG. SEQ-R0 remains pending /
+not started; implementation stages keep their existing IDs and external hosting stays later work.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 SEQ-R0 remains pending / not started after the documentation stages.
@@ -122,10 +131,12 @@ audio. Resolve bounded substitution/publication/restoration behavior. Follow [SA
 
 ## SEQ-R8 — Resampling
 
-Render a pattern or another bounded selected source to a reusable sample. Default to the selected
-source/context's audible semantic result (what-you-hear), then define its concrete render boundary
-and tail behavior with evidence. Preserve the source and enable immediate reuse. Any optional replace-with-sample
-operation must be undoable. Full arrangement/multiple-source rendering need not arrive together.
+Render a pattern or another bounded selected object to a reusable sample through its own semantic/local
+processing boundary. Keep object sampling distinct from broader audible-selection capture under
+[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md#resampling); resolve the implemented scope's concrete boundary
+and tails with evidence. Preserve the source and enable immediate reuse. Any optional replace-with-sample
+operation must be undoable and avoid silently reapplying exact baked processing. Full audible-context,
+arrangement, and multiple-source capture need not arrive together.
 
 ## SEQ-R9 — Piano Roll
 
@@ -165,6 +176,9 @@ richer synthesizers/effects, CLAP/VST3 hosting, additional specialized nodes, pi
 processing and time stretching, deeper routing/sends, FLAC and other justified formats, and additional
 platforms. Latency awareness and realtime safety constrain applicable earlier work; advanced
 compensation is not presumed implemented. Later order and release schedules remain open.
+External hosting must define ordinary compatibility/lifecycle semantics under [EXTENSIONS](EXTENSIONS.md).
+Stronger process isolation may be evaluated later if evidence justifies it; it is not required baseline
+hosting architecture or an early milestone added by SEQ-KB-R5.
 Automation/modulation work must resolve the open effective-parameter model: base value and control
 sources, composition, domains/units, precedence, smoothing, and rates. Earlier parameter modelling
 must leave room for that control without selecting its formula now.

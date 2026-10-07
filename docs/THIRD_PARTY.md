@@ -20,6 +20,12 @@ collaborative permissive FOSS; no extra use or redistribution restrictions are a
 
 **Seqvium's Apache-2.0 license does not relicense third-party material.**
 
+Third-party executable plugins are independently authored software. Compatibility with Seqvium does
+not make them Seqvium-authored or warrantied by the Seqvium project. [EXTENSIONS](EXTENSIONS.md) owns
+the technical host/plugin responsibility boundary. Seqvium is provided on the `AS IS` basis, without
+warranties, and with the limitation of liability as specified by Apache-2.0, subject to applicable law.
+Root [LICENSE](../LICENSE) is authoritative; this summary adds no separate EULA or legal restrictions.
+
 | Material | Licensing boundary |
 | --- | --- |
 | Seqvium-authored code/docs/assets | Apache-2.0 unless explicitly identified otherwise |

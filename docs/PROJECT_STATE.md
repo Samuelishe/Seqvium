@@ -7,8 +7,8 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R4 complete (2026-10-06): Apache-2.0 selected, public README refreshed, and pre-code
-engineering/test/current-state policy and future ProjectStats contract finalized.
+SEQ-KB-R5 complete (2026-10-07): musical ownership/execution, sampling/capture, external-plugin
+boundaries, and the self-contained project-media default clarified in documentation.
 
 ## Implemented capability
 
@@ -24,8 +24,8 @@ authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-probe) remains **p
 
 ## Validation baseline
 
-R4 documentation/license integrity and scope checks passed; see the bounded
-[work-log entry](WORK_LOG.md#2026-10-06--seq-kb-r4). No build/test/runtime/platform acceptance is claimed.
+R5 contract consistency, documentation links/anchors, scope, and Git integrity checks passed; see the
+bounded [work-log entry](WORK_LOG.md#2026-10-07--seq-kb-r5). No build/test/runtime/platform acceptance is claimed.
 
 ## Active blockers / evidence gaps
 

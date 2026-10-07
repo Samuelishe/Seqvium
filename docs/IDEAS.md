@@ -68,3 +68,14 @@ Value: Compare deliberately saved reports if historical structural changes later
 Promotion condition: Actual use demonstrates value and defines bounded storage/privacy semantics.
 No historical metrics database, committed snapshot stream, or trend infrastructure is introduced;
 changing statistics do not belong in PROJECT_STATE or ordinary history.
+
+## I-005 — Out-of-process external plugin crash isolation
+
+Status: Idea; optional future engineering, not a baseline hosting requirement.
+Origin / owner: SEQ-KB-R5 clarification; [EXTENSIONS](EXTENSIONS.md#failure-containment-limits),
+conditional evaluation Q-025 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+Value: Reduce host crashes from third-party native faults where a stronger process boundary helps.
+Promotion condition: Real external plugin hosting demonstrates enough practical containment benefit
+to justify IPC, lifecycle, resource, performance, and editor-integration complexity. No process-per-plugin,
+vendor grouping, IPC design, or roadmap commitment is selected. Process separation alone does not
+provide a security sandbox; malicious-code containment would need a separately justified explicit model.

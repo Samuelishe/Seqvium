@@ -27,6 +27,15 @@ may edit rich project/visual objects; the host must validate/prepare a bounded e
 before realtime use. The callback must not traverse UI nodes or mutable graph-editor state. No graph
 compiler, traversal strategy, publication mechanism, or final execution layout is selected.
 
+Shared instrument/sound definitions do not force shared execution state. Overlapping placements with
+different required local/downstream processing must remain separable until that difference is honored;
+audio mixed irreversibly beforehand cannot supply independent results afterward. The model requirement
+belongs to [ARCHITECTURE](ARCHITECTURE.md#processing-granularity-and-shared-definitions).
+Voice groups, instances, prepared routes, or another bounded strategy remain unselected. Separation
+can cost CPU/memory; a third-party instrument may require explicit instance duplication or another
+bounded strategy. Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks execution/performance evidence,
+without requiring a particular instance count or free duplication.
+
 Scheduling, node processing, and foundational mixing/routing belong to engine execution even before
 the user-facing Mixer milestone. Feedback/cycles, node latency, channel negotiation, and changes during
 playback remain validation questions in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).

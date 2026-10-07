@@ -14,7 +14,7 @@ inventing field names, file extensions, or a container layout.
 - Use stable entity/resource IDs where references and edit identity justify them.
 - Define reasonable forward/backward handling: distinguish supported loading, safe preservation, and
   inability to reproduce behavior. Do not silently rewrite unsupported data as if fully understood.
-- Define relative/managed media paths and an explicit embedded/copied/external resource policy.
+- Make normally used audio project-managed/self-contained by default; external references are explicit alternatives.
 - Preserve extension identity, serialized state, and musical relationships, including currently unknown data.
 - Preserve accepted generated audio; recipe metadata must not cause implicit regeneration on load.
 
@@ -31,6 +31,12 @@ Exact schemas and graph scopes remain open; [ARCHITECTURE](ARCHITECTURE.md) and 
 own the model and editable/prepared boundary. Saving project state must not require preserving live
 UI objects or treating a prepared realtime representation as the editable document.
 
+Persistence must separately preserve sharing/independence of Pattern musical content, instrument/sound
+definition, placement state, and processing state. Musical-content variation does not implicitly detach
+every sound/resource/processing relationship. This does not select a schema, copy mechanism, class
+hierarchy, or serialized execution instances; [ARCHITECTURE](ARCHITECTURE.md#separate-sharing-identities)
+owns the identities.
+
 Main-window pane layout is primarily application/user workspace state under [WORKSPACE](WORKSPACE.md).
 Opening a project should not normally overwrite it. Project-side graph/editor layout is distinct from
 the user's overall pane arrangement; no final storage policy or optional project-workspace format is chosen.
@@ -44,13 +50,27 @@ Separate reference/edit identity must be expressible without assuming final clas
 mechanics, resource deduplication, or a schema. [ARCHITECTURE](ARCHITECTURE.md) owns the model;
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns acceptance and source-preserving sample creation.
 
-Copying/embedding used pack audio into project-managed resources should make that project independent
-of pack removal. External references cannot imply the same guarantee. Resource ownership and missing
-media must be explicit enough for users to understand what travels with a project.
+A normally saved Seqvium project should be self-contained with respect to audio material actually used
+by the project. When external/imported audio becomes used material, the default is to place/copy/manage
+the required audio in project-managed storage rather than retain fragile absolute links into arbitrary
+sample folders. This covers imported samples, accepted Sample Lab audio, recordings, used content-pack
+material, and other audio required to reproduce the project. Using one library file must not copy unused
+portions of the entire library.
 
-The default policy, deduplication, collection/relocation, unused-media cleanup, and whether projects
-embed all accepted audio or manage it alongside the document remain open. Preserving user material
-does not authorize automatic deletion of unused resources.
+Once used pack/sample material is managed project media, removing the original pack must not lose that
+audio. Accepted generated audio likewise remains durable if its generator disappears. Durability takes
+precedence over continued availability of the original source; missing executable instruments/effects
+remain subject to [EXTENSIONS](EXTENSIONS.md), not a promise that saved media replaces every algorithm.
+
+Explicit external-reference workflows may later serve very large shared libraries, deliberate shared
+media management, or advanced use. They must be distinguishable from the normal durable path. Users
+must understand whether audio travels with the project, remains externally referenced, or is missing;
+missing external media must be represented clearly. Final UI and reference mechanics remain open.
+
+This default does not select a single archive/file, directory/bundle, manifest plus media directory,
+or another versioned container. Exact embedding/copying policy, deduplication, garbage collection of
+unused media, collect/relocate workflow, checksums/content addressing, and storage layout remain open.
+Preserving user material does not authorize automatic deletion of unused resources.
 
 ## Unknown extension data
 

@@ -8,6 +8,7 @@ Not authoritative for: Current implementation, detailed contracts, proposals, or
 D-001 through D-008 record the SEQ-KB-R0 mandate; D-009 through D-016 record SEQ-KB-R1 on 2026-10-06.
 D-017 through D-022 record SEQ-KB-R2; D-023 through D-028 record SEQ-KB-R3 on 2026-10-06.
 D-029 through D-032 record SEQ-KB-R4 on 2026-10-06.
+D-033 through D-038 record SEQ-KB-R5 on 2026-10-07.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
 contract. No supersessions exist yet; the later KB stages refine direction without accepting technical proposals.
 New decisions need an ID, status, basis/evidence, rationale, affected owner, and explicit supersession
@@ -147,6 +148,8 @@ Basis: SEQ-KB-R1 compatibility and failure-containment requirements.
 Rationale: Resolve versions/capabilities/formats/state deliberately; disable with diagnostics when no
 safe path exists, preserving project/plugin state instead of intentionally failing the host. Arbitrary
 in-process native faults cannot be promised contained; hard crash isolation remains a design question.
+Refinement: [D-037](#d-037--realistic-external-plugin-boundary) makes stronger isolation explicitly
+optional future engineering and records the minimal interoperability/security boundary.
 Owner: [EXTENSIONS](EXTENSIONS.md).
 
 ## D-017 — Contextual Sample Lab
@@ -168,6 +171,9 @@ source/context rather than surprising dry/raw material. An item's result, a cont
 result, and an explicit range are distinct scopes, not necessarily whole-Master capture. Advanced
 source/tap alternatives remain optional future depth; concrete DSP boundaries remain unresolved.
 Owner: [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md); execution constraints in [AUDIO_ENGINE](AUDIO_ENGINE.md).
+
+Refinement: [D-036](#d-036--object-render-and-audible-capture-are-distinct) separates object-local
+sampling from broader audible-selection capture without selecting final taps or command names.
 
 ## D-019 — Two local processing levels with non-destructive placements
 
@@ -308,6 +314,82 @@ Rationale: Domain/feature folders in one main suite avoid a project per subsyste
 need different execution/dependency contracts. Deterministic concurrency, generated fixtures, offline
 audio/scheduling, compatibility coverage, and separate manual/device evidence support meaningful checks.
 Owner: [TEST_EXECUTION](TEST_EXECUTION.md); ProjectStats-specific cases in [PROJECT_STATS](PROJECT_STATS.md).
+
+## D-033 — Processing granularity and independent placements
+
+Status: Accepted architecture requirement, refining D-019.
+Basis: Explicit SEQ-KB-R5 architecture-question review; no runtime evidence claimed.
+Rationale: Full local DSP graphs belong to standalone item/clip/fragment-like scopes, not every atomic
+note/trigger/step. Bounded event expression and a low-ceremony path to a separately processed item
+preserve creative flexibility. Shared instrument definitions do not force shared execution state or
+irreversible mixed audio; overlapping placements must retain required downstream independence.
+Resource/performance strategy remains open, with no selected voice/instance mechanism or free duplication.
+Owners: [ARCHITECTURE](ARCHITECTURE.md#processing-granularity-and-shared-definitions) for the model,
+[AUDIO_ENGINE](AUDIO_ENGINE.md) for execution, [NODE_GRAPH](NODE_GRAPH.md) for graph scopes.
+Open mechanics: Q-019, Q-047, Q-048 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+
+## D-034 — Separate musical sharing identities
+
+Status: Accepted model requirement, refining D-010 and D-019.
+Basis: Explicit SEQ-KB-R5 sharing mandate.
+Rationale: Pattern musical content, instrument/sound definition, placement state, and processing state
+may be shared or independent separately. Shared Pattern edits affect its placements; placement-local
+edits do not modify every use. Musical-content variation and sound-definition independence are separate
+intentions, without implicit detachment of every relationship or a universal unlink-everything model.
+Owners: [ARCHITECTURE](ARCHITECTURE.md#separate-sharing-identities) for identities,
+[UX_CONTRACT](UX_CONTRACT.md) for understandable sharing, [PROJECT_FORMAT](PROJECT_FORMAT.md) for persistence.
+Open mechanics: Q-029; conceptual action names do not select final UI or copy/storage mechanics.
+
+## D-035 — Processing context follows containment
+
+Status: Accepted model/UX requirement, refining D-011 and D-022.
+Basis: Explicit SEQ-KB-R5 move-semantics mandate.
+Rationale: Material moved into a context owning processing or other meaningful behavior is subject to
+that context and may sound different. Pure organizational grouping must not silently change sound.
+Organization, musical/timeline containment, and mixer routing remain distinct and meaningful processing
+contexts must be distinguishable in the UI.
+Owners: [ARCHITECTURE](ARCHITECTURE.md#semi-free-arrangement) for relationships,
+[UX_CONTRACT](UX_CONTRACT.md) for observable behavior. Q-028/Q-030 retain terminology and routing mechanics.
+
+## D-036 — Object render and audible capture are distinct
+
+Status: Accepted workflow requirement, refining D-018.
+Basis: Explicit SEQ-KB-R5 sampling and rendered-replacement mandate.
+Rationale: Object sampling includes the selected object's own semantic/local processing boundary;
+audible-selection capture serves a broader selected musical/time context. Unrelated downstream
+container/bus/Master processing is not automatically baked into an object sample. Explicit rendered
+replacement must be undoable and avoid silently reapplying exact baked processing; sources survive
+by default. Names, capture boundaries/tails, and replacement mechanics remain unresolved.
+Owner: [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md#resampling); execution in [AUDIO_ENGINE](AUDIO_ENGINE.md).
+Open mechanics: Q-012/Q-049 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+
+## D-037 — Realistic external plugin boundary
+
+Status: Accepted extension constraint, refining D-016 and the scope of D-013.
+Basis: Explicit SEQ-KB-R5 third-party responsibility/lifecycle mandate.
+Rationale: Normal compatibility/lifecycle and declared/recoverable failures require deliberate host
+handling and state preservation. Arbitrary native/in-process third-party faults may crash or corrupt
+the host; hard isolation is not a baseline promise. Stronger process/sandbox isolation is optional
+future engineering, and process separation alone is not security sandboxing or malicious-code containment.
+Third-party editors may use top-level OS windows when internal panes are unsuitable; first-party
+workspace direction remains intact. Seqvium owns its host contract; plugin authors own plugin-specific
+behavior/UI. Compatibility does not make independent plugins Seqvium-authored or warrantied.
+Owners: [EXTENSIONS](EXTENSIONS.md) for hosting/security limits, [WORKSPACE](WORKSPACE.md) for editor windows,
+[THIRD_PARTY](THIRD_PARTY.md) for provenance/license boundary; root [LICENSE](../LICENSE) for legal terms.
+Open work: ordinary lifecycle API/ABI in later hosting; Q-025 is conditional optional-isolation evaluation,
+not a required initial boundary or an accepted process architecture.
+
+## D-038 — Self-contained project media by default
+
+Status: Accepted project durability requirement, strengthening D-005 and D-019.
+Basis: Explicit SEQ-KB-R5 project-media mandate.
+Rationale: Normally used audio becomes project-managed/durable rather than fragile links into arbitrary
+folders. Imported samples, accepted Sample Lab audio, recordings, and used pack material travel with
+the normal project path without copying unused whole libraries. Original pack/generator removal must
+not lose accepted managed audio. External references remain an explicit distinguishable alternative.
+Owners: [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary) for persistence/defaults,
+[ARCHITECTURE](ARCHITECTURE.md) for resource identity, [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) for acceptance,
+[EXTENSIONS](EXTENSIONS.md) for source removal. Q-009 retains container/schema and media-management mechanics.
 
 Final application decomposition, engine language/backend/ABI, extension/package API, project format,
 visual language, plugin-hosting/isolation strategy, graph compiler/port ABI, workspace layout

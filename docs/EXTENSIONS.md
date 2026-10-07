@@ -57,15 +57,54 @@ manifest/schema, and compatibility paths are not selected.
 
 ## Failure containment limits
 
-The host should contain recoverable failures and disable incompatible/failing plugins where its
-hosting model technically permits. Compatibility/error boundaries can handle declared incompatibility
-and ordinary recoverable failures; they cannot guarantee arbitrary in-process native code will never
-crash Seqvium. Native code may corrupt process memory or cause unrecoverable faults.
+Seqvium hosts compatible third-party plugins according to defined host contracts. Third-party code
+may contain defects: arbitrary native/in-process faults may crash the application, corrupt host memory,
+or cause unrecoverable failures. Seqvium does not guarantee containment of those faults. This technical
+limit does not excuse careless host implementation: Seqvium owns correctness of its host contract;
+plugin developers own correctness of plugin-specific behavior and UI.
 
-Hard crash isolation would require a stronger boundary, such as out-of-process hosting/sandboxing.
-That remains a future design/risk question, not an adopted architecture. Declared incompatibility is
-never permission to intentionally fail the entire host. [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks
-this distinction; no plugin host is implemented yet.
+The host must deliberately handle ordinary declared/recoverable cases: missing or incompatible plugins,
+unsupported capabilities, normal initialization and load/unload errors, recoverable processing failures
+where the contract permits, and plugins removed/unavailable on reopen. Disable/reject with diagnostics
+where appropriate and preserve project/plugin state under the compatibility contract. A known
+compatibility failure must not intentionally crash the application.
+
+Stronger out-of-process hosting, crash containment, sandboxing, or per-plugin/vendor processes may be
+evaluated later if practical value justifies their complexity. They are not initial extension-architecture
+requirements or necessary to satisfy this baseline. No process/IPC architecture is selected; optional
+containment is retained in [IDEAS](IDEAS.md#i-005--out-of-process-external-plugin-crash-isolation) and
+future evaluation in Q-025 of [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). No plugin host exists yet.
+
+## External plugin lifecycle and editors
+
+Later executable/external hosting needs an explicit minimal interoperability contract covering, as
+applicable, compatibility/version negotiation; initialization; activation/deactivation; processing
+start/stop; editor open/close; parameter/state exchange; save/load state; shutdown/disposal; host/project
+closing; plugin absence/incompatibility; and declared supported audio/configuration capabilities.
+This defines ordinary cooperation, not handling every possible plugin defect; exact API/ABI remains open.
+
+If future hosting uses separate processes, normal lifecycle must include detecting host/plugin process
+termination, disconnect/cleanup, and avoiding indefinite waits on a dead peer. This conditional contract
+does not select out-of-process hosting.
+
+Third-party editors need not visually match Seqvium. If a native/plugin editor cannot safely or
+practically participate in internal overlapping panes, it may use a normal top-level OS window.
+Seqvium retains the host-owned plugin relationship and editor lifecycle; plugin design quality belongs
+to the plugin developer. Do not require excessive heuristic validation of arbitrary plugin UI decisions.
+[WORKSPACE](WORKSPACE.md#one-main-application-window) owns the accepted workspace exception; normal
+major Seqvium-authored surfaces continue to follow the internal Workspace Pane model where appropriate.
+
+## Security boundary
+
+Process separation, if adopted, is not automatically a security sandbox. Seqvium does not currently
+promise containment of malicious plugin code. An untrusted executable plugin may have whatever OS
+permissions its process receives unless a future explicit sandbox model restricts them. Crash isolation
+does not imply filesystem, privacy, or security isolation. Trust/signing/sandbox policy remains future
+design; no security sandbox is promised or selected.
+
+Third-party plugins are independently authored software; compatibility does not make them
+Seqvium-authored or warrantied by the Seqvium project. [THIRD_PARTY](THIRD_PARTY.md) owns the
+provenance/license boundary; root [LICENSE](../LICENSE) remains authoritative for Seqvium's legal terms.
 
 ## Default generator
 
@@ -82,8 +121,9 @@ resource lifetime; exact live-removal and restart behavior remains open.
 
 - **Accepted generated sample:** rendered audio remains usable after generator removal. Recipe editing
   or regeneration may be unavailable until a compatible generator returns.
-- **Used content-pack sample:** if copied/embedded into managed project resources, pack removal must
-  not break the project. Externally referenced media needs an explicit policy rather than an implied guarantee.
+- **Used content-pack sample:** normally becomes managed project media by default; later pack removal
+  must not lose already managed used audio. Explicit external references are an alternative governed by
+  [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary), not the normal durability path.
 - **Realtime instrument/effect:** when the algorithm is needed to reproduce sound, preserve stable
   extension identity, serialized state, musical relationships, and sufficient opaque/unknown data.
   The eventual UI must explicitly represent the missing extension; exact playback fallback is open.

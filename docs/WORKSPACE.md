@@ -12,6 +12,13 @@ Examples include Channel Rack / Pattern workspace, Piano Roll, Arrangement, Mixe
 Sample Lab, Browser, and future recording/editor surfaces. They are not independent operating-system
 top-level windows in the normal workspace model. Floating here means floating inside the main workspace.
 
+This direction applies to normal major Seqvium-authored surfaces. Arbitrary third-party/native plugin
+editors need not be internal Workspace Panes or visually match Seqvium. When internal overlapping-pane
+integration is unsafe, impractical, or unsuitable for the required integration model, a plugin editor
+may use a normal top-level OS window. This is an accepted exception, not a change to the first-party
+workspace direction. Seqvium owns the plugin/editor relationship and normal lifecycle under
+[EXTENSIONS](EXTENSIONS.md#external-plugin-lifecycle-and-editors); the plugin developer owns its UI.
+
 The main workspace/pane infrastructure is core platform responsibility. A plugin may contribute a
 surface through host contracts without controlling the host workspace. [ARCHITECTURE](ARCHITECTURE.md)
 owns platform boundaries; each musical owner defines its pane's work. No UI exists yet.

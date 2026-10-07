@@ -59,9 +59,16 @@ Patterns are user-named reusable units that may contain parts for multiple instr
 granularity, such as separate bass/lead patterns or a combined groove. Organizational instrument/channel
 groups are separate from pattern membership and identity; names/grouping must not force musical structure.
 
-Repeated placements normally share a pattern; an explicit independent-variation operation should
-make the change in sharing understandable. Arrangement tracks and mixer channels have different
-purposes and must not force a misleading one-to-one conceptual model.
+Repeated placements normally share Pattern musical content; editing it changes all those placements.
+Musical-content independence and sound-definition independence are separate intentions. Conceptual
+`Make Pattern Variation` detaches/copies musical content without implicitly detaching every sound,
+resource, or processing relationship; conceptual `Make Sound Independent` addresses the sound definition.
+Placement-local position, processing, or future fades do not modify every use of the Pattern/resource.
+There must not be one ambiguous linked/unlinked state or only a hidden unlink-everything operation.
+Make meaningful sharing understandable, for example by indicating multiple uses of a Pattern or sound
+definition. Exact commands, indicators, and UI remain open. [ARCHITECTURE](ARCHITECTURE.md) owns identities.
+Arrangement tracks and mixer channels have different purposes and must not force a misleading
+one-to-one conceptual model.
 
 Audio resources and musical placements also have distinct identities. Ordinary processing of one
 item should be non-destructive and should not silently change every use of shared audio. Users
@@ -69,10 +76,21 @@ normally reason about item-local and containing-container processing, while glob
 responsibilities remain separate. [ARCHITECTURE](ARCHITECTURE.md) owns that bounded local model and
 the semi-free Arrangement direction; no final "Layer" term or Track schema is accepted.
 
+Atomic events do not automatically expose full local DSP graphs. A low-ceremony action should let a
+user select one event and make an independently processed standalone fragment/item when needed,
+without learning internal decomposition. Exact command and transformation remain open.
+
+Moving material into a processing context subjects it to that context's meaningful behavior: a Kick
+moved from a Compressor container into a Distortion/Delay container changes sound. Pure organizational
+grouping must not silently change sound. The UI must distinguish processing contexts from organizational
+groups while keeping musical containment and mixer routing distinct; final terminology remains open.
+
 Sample Lab supports standalone and contextual exploration. Contextual audition is temporary and
 reversible until explicit acceptance and should preserve relevant existing downstream processing.
-Ordinary sample creation defaults to the audible semantic result of the selected source/context,
-without requiring a routing questionnaire. Specialized audition, acceptance, candidate history,
+Object sample creation includes the object's own semantic/local processing boundary; audible-selection
+capture serves a broader selected musical/time context. The operations are distinct and their names
+are conceptual. Replacing an object with audio containing baked processing must be undoable and must
+not silently reapply that exact baked chain. Specialized audition, acceptance, candidate history,
 and resampling semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Missing capabilities should be
 represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work retained.
 
@@ -82,6 +100,11 @@ Major surfaces normally use internal workspace panes in one main window. Interac
 and brings it ahead of overlapping panes, including when only part is visible. Moving/resizing, internal
 floating, separation from docked groups, and collapse to an unobtrusive shelf/strip should preserve
 working state on restoration. [WORKSPACE](WORKSPACE.md) owns the detailed pane contract and layout state.
+
+This direction governs normal major Seqvium-authored surfaces. Third-party/native plugin editors may
+use top-level OS windows when internal embedding is unsafe or impractical; their visual design need
+not match Seqvium. [WORKSPACE](WORKSPACE.md) owns this exception and [EXTENSIONS](EXTENSIONS.md) owns
+the host/editor lifecycle boundary.
 
 Docking/magnetism is a per-pane user choice, predictable and easy to escape; automatic layout must not
 fight free placement. Opening a project should normally retain the user's workspace preference.

@@ -2,7 +2,7 @@
 
 Role: Seqvium's sound exploration and material-transformation contract.
 Read when: Designing discovery, generation, audition, sample acceptance, or resampling.
-Authoritative for: Sample Lab context, candidate audition/acceptance, durable audio, what-you-hear resampling.
+Authoritative for: Sample Lab context, candidate audition/acceptance, durable audio, object sampling and audible capture.
 Not authoritative for: Generator algorithms, DSP/render details, package API, or final resource file format.
 
 ## The creative loop
@@ -85,6 +85,11 @@ Acceptance makes the rendered audio durable project material. The audio is the r
 available when its generator is removed. Where useful, additionally preserve generator identity,
 version, parameters, random seed, and recipe metadata. A seed/recipe is not a substitute for audio.
 
+Accepted Sample Lab audio becomes project-managed media under the normal self-contained project path,
+alongside used imported/pack audio and recordings. Durability does not depend on the original generator,
+pack, or external folder remaining available. Explicit external-reference workflows are an alternative,
+not the ordinary default; [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary) owns storage policy.
+
 Opening an old project must not silently regenerate accepted audio using a newer algorithm and change
 the composition. Regeneration with available code is a separate explicit creative action.
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns storage and compatibility, and [EXTENSIONS](EXTENSIONS.md)
@@ -99,34 +104,55 @@ The exact acceptance edit for a target and shared-use behavior still need design
 
 ## Resampling
 
-The accepted human-facing default is **what-you-hear sampling**: creating a sample from musical
-material should correspond to what the user meaningfully hears from the selected source/context.
-Processing should not unexpectedly fall off because returning dry/raw audio is easier internally.
-Advanced alternatives may later offer audible/current result, before-local-processing, raw/source,
-or other meaningful tap concepts. These are not final UI labels; ordinary use must not require a
-professional routing questionnaire.
+Two accepted operations have different meanings. `Create Sample from Object` and `Capture Audible
+Selection` are conceptual names, not final labels, commands, or render taps. Ordinary use must not
+require a routing questionnaire; advanced raw/source or before-processing alternatives remain open.
 
-What-you-hear follows the selected semantic source, not necessarily the whole Master output:
+### Create Sample from Object
 
-| Selected source/context | Conceptual audible result |
-| --- | --- |
-| One musical item / sample-clip placement | Source through that item's local processing into a new durable sample |
-| A containing musical container | Contained audible items through container processing into a new durable sample |
-| Explicit Arrangement/time range or broader scope | Audible sources included by that selected scope |
+Create durable audio from the selected object's own semantic/local processing boundary:
 
-These examples describe meaningful boundaries, not selected DSP taps. Human-semantic selection
-comes first; mapping it to an execution tap comes later. Exact mixer/send/master inclusion, routing,
-tails, latency, and render equivalence remain unresolved. Contextual audition may include relevant
-downstream mix processing while item sampling ends at the item's semantic boundary; the two operations
-need not capture the same signal scope.
+```text
+Kick source -> Kick local EQ -> Kick local Gain -> new durable sample
+```
+
+This answers "Turn this object, including its own processing, into reusable audio." It does not
+automatically bake unrelated containing-container, bus, or Master processing merely because those
+are heard downstream. For a selected container, its own boundary includes its contained audible items
+and container processing; that does not automatically extend to unrelated downstream context.
+
+### Capture Audible Selection
+
+Capture the broader audible result of a selected musical/time context:
+
+```text
+selected sources -> containing processing -> relevant downstream audible context -> captured result
+```
+
+This answers "Record the sound I am hearing from this selected context/range." Exact downstream
+boundaries, buses/sends/Master inclusion, range/tails, and execution taps require later bounded examples.
+The operation is not automatically whole-Master capture. Contextual audition may include broader
+downstream processing than an object render; hearing that context does not silently expand the object
+sampling boundary.
+
+### Source preservation and rendered replacement
 
 Future candidate sources include an instrument playing a note, a pattern, an arrangement range,
 multiple selected sources, and generated audio. Converting them to a sample should preserve the
 source by default and make the resulting sample immediately reusable.
 
-An explicit replace/disable-source action may be added later, but it must be undoable. Do not assume
-that accepting a render deletes or mutates its source. Start with one bounded source in SEQ-R8,
-rather than treating the full candidate list as required initial scope.
+An explicit replace/disable-source action may be added later, but it must be undoable. A replacement
+must not silently reapply the exact processing already baked into its audio:
+
+```text
+source -> EQ -> Gain -> rendered sample
+```
+
+must not naively become `rendered EQ/Gain audio -> old EQ -> old Gain`. The edit-state transition
+remains open: bypass/removal of the baked local chain, retaining it in history, or another explicit
+reversible transformation may be evaluated later. None is selected. Accepting a render does not delete
+or mutate its source by default. Start with one bounded source in SEQ-R8 rather than treating the full
+candidate list or both complete operations as required initial scope.
 
 Musical bounds, tails, insert/send inclusion, routing capture, normalization, sample rate, channels,
 latency compensation, and cancellation are open. [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction)

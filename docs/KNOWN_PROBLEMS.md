@@ -31,10 +31,10 @@ Unresolved findings must retain their evidence limits rather than become accepte
 | ID | Question / risk | Intended resolution path | Owner |
 | --- | --- | --- | --- |
 | Q-008 | Exact musical-part/event schema and time/ID representation | Bounded SEQ-R1 model supporting named multi-instrument/shared patterns, compatible entry methods, undo, and later editors | [Architecture](ARCHITECTURE.md) |
-| Q-009 | Project container, migrations, unsupported-version handling, media defaults, and recovery | SEQ-R1/R2 format/resource design; round-trip unknown extension state and independent managed audio | [Project format](PROJECT_FORMAT.md) |
-| Q-010 | Extension identity, manifest/package format, loading/trust, updates, and live removal | Minimal SEQ-R6 content/generator requirements first; compatibility schema is Q-024 and hard isolation is Q-025 | [Extensions](EXTENSIONS.md) |
+| Q-009 | Project container/schema, migrations, unsupported-version handling, recovery, and mechanics of managed media/external references | Self-contained used audio is the accepted default (D-038); SEQ-R1/R2 must resolve storage layout, embedding/copying, deduplication, collect/relocate, unused-media cleanup, and integrity without reopening that default; round-trip unknown state and durable audio | [Project format](PROJECT_FORMAT.md) |
+| Q-010 | Extension identity, manifest/package format, loading/trust, updates, and live removal | Minimal SEQ-R6 content/generator requirements first; compatibility schema is Q-024; optional stronger future isolation is Q-025, not baseline correctness | [Extensions](EXTENSIONS.md) |
 | Q-011 | Contextual Sample Lab target/substitution, realtime publication, downstream audition boundaries, stop/cancel/restoration, similarity, locks, and history | SEQ-R7 bounded design/evidence for standalone and contextual modes, preserving existing processing and temporary reversible audition until explicit acceptance | [Sample workflow](SAMPLE_WORKFLOW.md), [audio](AUDIO_ENGINE.md) |
-| Q-012 | Concrete what-you-hear render taps, mixer/send/master inclusion, bounds/tails, latency, channels/rate, normalization, and cancellation | SEQ-R8 map one semantic selection to an explicit render boundary; item, container, and range scopes must not silently collapse to dry or whole-Master capture | [Sample workflow](SAMPLE_WORKFLOW.md), [audio](AUDIO_ENGINE.md) |
+| Q-012 | Concrete object-render and audible-selection capture taps, downstream mixer/send/Master inclusion for capture, bounds/tails, latency, channels/rate, normalization, and cancellation | D-036 separates object-local semantic rendering from broader audible context; bounded SEQ-R8 examples must map the chosen operation/scope to execution without silently baking unrelated downstream processing into object samples or assuming whole-Master capture | [Sample workflow](SAMPLE_WORKFLOW.md), [audio](AUDIO_ENGINE.md) |
 | Q-013 | Missing realtime extension playback and compatible reattachment | Define explicit UI/fallback and verify preserved data on removal/save/reinstall | [Extensions](EXTENSIONS.md), [project format](PROJECT_FORMAT.md) |
 | Q-014 | Future dependency/asset/codec/native compatibility and redistribution obligations; project-license selection resolved | Apache-2.0 selected by D-029; evaluate concrete additions and their distributed-product obligations before distribution | [Third party](THIRD_PARTY.md) |
 | Q-015 | Final visual language and detailed editing interaction | Deliberate gradual UI design stages; product-led interaction and DPI/input validation when UI exists | [UI design](UI_DESIGN.md), [UX](UX_CONTRACT.md) |
@@ -49,26 +49,26 @@ a full workstation probe. Later stages should answer only the questions needed f
 | --- | --- | --- | --- |
 | Q-017 | Exact node port types, conversions, event/control rates, and channel negotiation | Define a bounded semantic type model before accepting graph connections; no untyped universal pipe or final ABI by assumption | [Node graph](NODE_GRAPH.md) |
 | Q-018 | Graph validation/preparation, execution representation, and live-edit publication | Test a bounded graph and safe publication/resource retirement under audio constraints; compilation is a candidate approach | [Node graph](NODE_GRAPH.md), [audio](AUDIO_ENGINE.md) |
-| Q-019 | Exact ownership/identity of local item and containing-container graphs versus instrument/channel/bus/master scopes | Refine accepted two-level local direction from workflows; resolve multiple/local graph scope relationships without instantiating every scope, assuming nesting, or replacing Arrangement | [Node graph](NODE_GRAPH.md), [architecture](ARCHITECTURE.md) |
+| Q-019 | Exact identity/ownership of standalone item and containing-container graphs versus instrument/channel/bus/Master scopes | D-033 rules out arbitrary graph-per-event defaults; resolve scope relationships within the two local levels without assuming nesting or replacing Arrangement; event conversion is Q-048 and overlapping execution is Q-047 | [Node graph](NODE_GRAPH.md), [architecture](ARCHITECTURE.md) |
 | Q-020 | Cycles and feedback in graphs | Audit explicit feedback semantics, delay/state, or specialized nodes as candidates; validation/scheduling remain open and arbitrary zero-delay cycles are not accepted | [Node graph](NODE_GRAPH.md), [audio](AUDIO_ENGINE.md) |
 | Q-021 | Latency propagation/compensation across graph nodes | Measure processing paths and define scheduling/render consequences; avoid assuming every node is zero-latency | [Audio](AUDIO_ENGINE.md), [node graph](NODE_GRAPH.md) |
 | Q-022 | Docking groups, per-pane preferences, and layout persistence/restoration | Bounded SEQ-R3 user-layout design with predictable escape and safe size/DPI adaptation; no final grouping/storage mechanism | [Workspace](WORKSPACE.md) |
 | Q-023 | Instrument/channel organizational-group hierarchy | Use naming/collapse and cross-pattern examples to choose bounded hierarchy rules; group identity stays separate from patterns/routing | [Architecture](ARCHITECTURE.md) |
 | Q-024 | Plugin capability/version/format/state compatibility schema | Establish deliberate normal/limited/compatible-path/disabled outcomes with diagnostics and preserved state in SEQ-R6 and later contracts | [Extensions](EXTENSIONS.md) |
-| Q-025 | Recoverable plugin failure versus hard native crash isolation | Assess in-process limits and stronger hosting boundaries when executable plugins justify them; no universal crash-containment promise | [Extensions](EXTENSIONS.md) |
+| Q-025 | Whether stronger plugin crash/security isolation is worth its complexity for future external hosting | Conditional evidence-led evaluation only if real hosting justifies it; weigh containment value against lifecycle/IPC cost (I-005); D-037 requires normal compatibility/lifecycle handling without hard isolation and distinguishes crash separation from a security sandbox | [Extensions](EXTENSIONS.md), [idea](IDEAS.md#i-005--out-of-process-external-plugin-crash-isolation) |
 | Q-026 | Future ASIO and additional device-backend strategy | Preserve backend-independent engine/plugin contracts; evaluate concrete SDK/library terms and distribution later, not as an R0 requirement | [Audio](AUDIO_ENGINE.md), [third party](THIRD_PARTY.md) |
 | Q-027 | Monitoring and audio/MIDI recording timing/latency | Define device/input clock alignment, capture placement, monitoring, and compensation for actual supported devices/workflows | [Audio](AUDIO_ENGINE.md) |
 
 ## Creative workflow model questions
 
-SEQ-KB-R2 accepts human-facing direction, not final domain identities or interaction mechanisms.
+SEQ-KB-R2 and SEQ-KB-R5 accept human-facing direction, not final domain identities or interaction mechanisms.
 These questions remain open and do not authorize implementation in this documentation stage.
 
 | ID | Question / risk | Intended resolution path | Owner |
 | --- | --- | --- | --- |
-| Q-028 | Final Layer/Track/Channel/Lane/container term and domain identity; compatibility, preferred target, ownership, nesting, and audio-clip semantics | Design a bounded semi-free timeline model; keep Pattern, Instrument Group, and Mixer Channel distinct rather than choose classes from vocabulary | [Architecture](ARCHITECTURE.md) |
-| Q-029 | Shared audio resource versus placement/reference/edit ownership, including contextual acceptance affecting existing uses | Define non-destructive local edits and explicit acceptance scope with shared-use examples; destructive source edits require separate semantics, not silent mutation | [Architecture](ARCHITECTURE.md), [project format](PROJECT_FORMAT.md), [sample workflow](SAMPLE_WORKFLOW.md) |
-| Q-030 | Arrangement-container processing relationship to mixer channels and buses | Trace local/container/global signal boundaries and useful defaults without merging timeline and routing identities | [Architecture](ARCHITECTURE.md), [node graph](NODE_GRAPH.md) |
+| Q-028 | Final Layer/Track/Channel/Lane/container term and domain identity; compatibility, preferred target, ownership, nesting, and audio-clip semantics | Design a bounded semi-free model with processing contexts distinguishable from organizational groups; D-035 fixes move consequences, not names/classes; Pattern, Instrument Group, and Mixer Channel stay distinct | [Architecture](ARCHITECTURE.md) |
+| Q-029 | Concrete reference/edit ownership and sharing indicators for Pattern content, sound definitions, placement/processing state, and audio resources; contextual acceptance scope | D-034 separates sharing identities and musical-content versus sound-definition independence; design non-destructive edits and explicit detachment/acceptance scope with shared-use examples, without a universal unlink-everything operation | [Architecture](ARCHITECTURE.md), [project format](PROJECT_FORMAT.md), [sample workflow](SAMPLE_WORKFLOW.md), [UX](UX_CONTRACT.md) |
+| Q-030 | Arrangement-container processing relationship to mixer channels/buses and concrete signal consequences of moves | Trace local/container/global boundaries and useful defaults under D-035: processing-context moves affect the result, organization alone does not; preserve separate timeline, organization, and routing identities | [Architecture](ARCHITECTURE.md), [node graph](NODE_GRAPH.md) |
 | Q-031 | Compact-chain representation and transitions to/from a full graph | Evaluate simple effect reordering and custom topologies; if adopted, both views use the same canonical graph and processing system | [Node graph](NODE_GRAPH.md), [UI design](UI_DESIGN.md) |
 | Q-032 | Node settings: inspector, workspace pane, overlay, inline controls, or combinations | Evaluate deeper settings on selection and optional useful detachment without uncontrolled windows; no final placement chosen | [Node graph](NODE_GRAPH.md), [workspace](WORKSPACE.md) |
 | Q-033 | Effective parameter composition for automation/modulation | Preserve future base value, automation, modulation, envelopes/LFO/control sources; investigate replace/add/multiply, domains/units, precedence, smoothing, and rates without accepting a formula | [Architecture](ARCHITECTURE.md), [node graph](NODE_GRAPH.md), [audio](AUDIO_ENGINE.md) |
@@ -94,6 +94,17 @@ or permission to start SEQ-R0. The policy baseline does not select their answers
 | Q-045 | Useful ProjectStats diagnostics and thresholds after real repository sizes exist | Evaluate structural review signals on real sizes; keep stable codes/advisory semantics without arbitrary gates | [ProjectStats](PROJECT_STATS.md) |
 | Q-046 | Is a dedicated pre-R0 repository-tooling implementation stage useful after code authorization? | Owner explicitly chooses sequencing/scope; ProjectStats may precede the probe but is not silently inserted into R0 or the roadmap | [Development](DEVELOPMENT.md), [ProjectStats](PROJECT_STATS.md), [roadmap](ROADMAP.md) |
 
+## Musical ownership execution and edit questions
+
+The accepted R5 contracts require later bounded evidence for these mechanisms. They do not select
+instances/classes, expand SEQ-R0, or authorize implementation now.
+
+| ID | Question / risk | Intended resolution path | Owner |
+| --- | --- | --- | --- |
+| Q-047 | How can shared instrument definitions preserve independent overlapping execution/local processing at bounded CPU/memory cost? | Compare voice groups, execution instances, prepared routes, or other bounded strategies later; include third-party instruments needing explicit duplication; no selected instance count or free/unlimited separation | [Audio](AUDIO_ENGINE.md), [architecture](ARCHITECTURE.md), [extensions](EXTENSIONS.md) |
+| Q-048 | Exact conversion of an atomic event into an independently processed standalone fragment/item | Design a low-ceremony reversible edit preserving intended music and relationships; do not select command names or domain classes from the conceptual action | [Architecture](ARCHITECTURE.md), [UX](UX_CONTRACT.md) |
+| Q-049 | Exact edit-state transition when replacing an object with rendered audio containing baked processing | Verify explicit undoable replacement avoids silently reapplying the exact baked chain; evaluate bypass/removal/history or another reversible transformation without selecting mechanics or deleting sources by default | [Sample workflow](SAMPLE_WORKFLOW.md), [UX](UX_CONTRACT.md) |
+
 ## Retained resolution trace
 
 **Q-014 — Project-license selection resolved; third-party scope remains open.** The original question
@@ -102,6 +113,13 @@ Apache License 2.0 for Seqvium-authored work through
 [D-029](DECISIONS_LOG.md#d-029--seqvium-uses-apache-license-20) and root [LICENSE](../LICENSE).
 The project license is no longer an open choice. The narrowed Q-014 table entry retains only future
 dependency/content compatibility and redistribution evaluation under [THIRD_PARTY](THIRD_PARTY.md).
+
+**SEQ-KB-R5 partial resolutions.** D-033 through D-038 in [DECISIONS_LOG](DECISIONS_LOG.md) narrow
+Q-009, Q-012, Q-019, Q-025, and Q-028 through Q-030. The media default is accepted, sampling/capture
+operations are distinct, graph-per-event defaults are excluded, sharing identities are separated,
+processing-context moves have consequences, and hard plugin isolation is optional future evaluation.
+The table entries retain their unresolved mechanics; Q-047 through Q-049 capture specific execution
+and edit gaps rather than reopening those accepted principles.
 
 When evidence resolves an entry, record the result and link its report/decision; do not erase the
 reasoning. A compromise actually introduced into implementation belongs in [TECH_DEBT](TECH_DEBT.md).

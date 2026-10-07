@@ -45,8 +45,9 @@ first musical task; [NODE_GRAPH](NODE_GRAPH.md) owns that direction.
 
 Sample Lab supports standalone discovery and exploration against selected musical context, with
 temporary audition through the relevant existing processing before explicit acceptance. Ordinary
-sampling should capture the audible semantic result of the chosen source/context. These creative
-principles and their unresolved technical boundaries belong to [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
+object sampling should include that object's own processing; broader audible-context capture is a
+distinct intention. These creative principles and their unresolved technical boundaries belong to
+[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
 
 Creation and sound exploration are the workflow specialization: fast transformation, sample exploration,
 resampling, graph-based processing, and little ceremony between imagination and audible result.
