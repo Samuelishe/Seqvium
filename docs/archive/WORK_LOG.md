@@ -200,3 +200,26 @@ is not established by local history; this log does not duplicate Git's commit ch
   projects, tests, dependencies, CI, executable tooling, prototypes, codecs, plugin hosts, UI or passive
   configuration introduced. No empty-solution build, tests, commit or push. SEQ-R0 remains
   **pending / not started**.
+
+## 2026-10-07 — SEQ-KB-R10
+
+- Audited current owners against signal cases A–F. Separated reusable Pattern musical content from
+  audio contributions, sound-definition reuse from overlapping execution, and item/container scope
+  from implicit mixing. Established explicit local submix and channel/bus/Master convergence boundaries
+  without destructive source edits, graph-per-note or a third local processing level.
+- Defined Arrangement and Mixer as separate identities able to expose one processing/routing context
+  once; scope follows ownership/inputs. Traced processing-context moves through changed aggregate/path
+  and contrasted sound-neutral organizational moves. Preserved global routing and future control room.
+- Clarified Pattern/placement/container object-render boundaries and final render-output aggregation,
+  without baking unrelated downstream Mixer/Master processing or selecting audible-capture taps.
+- Recorded [D-061 through D-063](DECISIONS.md#d-061--musical-ownership-and-explicit-signal-convergence),
+  archived [Q-019/Q-030 accepted portions](RESOLVED_QUESTIONS.md#r10-resolved-portions--signal-semantics-accepted-concrete-bindings-remain-open),
+  narrowed their remaining concrete mechanisms and retained Q-047 execution evidence as open.
+  Updated current owners/routing/state and [completed stage](ROADMAP.md#seq-kb-r10--signal-ownership--routing-semantics).
+- Verified repository-relative Markdown links/anchors, canonical Q definitions and D references,
+  owner/routing consistency, current/open versus resolved/archive separation, implementation-stage
+  headings/order, no implementation claims, LF/whitespace and Markdown-only scope; `git diff --check`
+  passed. Clean initial baseline: `master`, HEAD `8d9a75745d5e14408b1adf9624b897584ab20706`;
+  branch/HEAD/index preserved, no initial user changes or untracked files.
+- No code, projects, dependencies, tests, CI, experiments, prototypes, UI, audio backend or executable
+  tooling introduced. No solution build/tests, staging, commit or push. SEQ-R0 remains **pending / not started**.

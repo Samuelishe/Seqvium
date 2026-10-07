@@ -58,7 +58,14 @@ visible distinction between editable and executing state; publication/resource r
 Shared instrument/sound definitions do not force shared execution state. Overlapping placements with
 different required local/downstream processing must remain separable until that difference is honored;
 audio mixed irreversibly beforehand cannot supply independent results afterward. The model requirement
-belongs to [ARCHITECTURE](ARCHITECTURE.md#processing-granularity-and-shared-definitions).
+belongs to [ARCHITECTURE](ARCHITECTURE.md#signal-ownership-and-processing-contexts), with the overlapping
+Bass example in [shared definitions](ARCHITECTURE.md#processing-granularity-and-shared-definitions).
+Prepared execution must honor the contribution paths and intentional convergence boundaries in
+[NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing); sharing a definition or presenting
+one context in Arrangement and Mixer cannot authorize an earlier sum or duplicate DSP. Item-local
+hard boundaries apply to the selected occurrence's own result before shared downstream state,
+including its intentional whole-placement submix when used. Output separation from sound production
+onward, state lifetime and external-host feasibility still require Q-047/Q-057 evidence.
 Voice groups, instances, prepared routes, or another bounded strategy remain unselected. Separation
 can cost CPU/memory; a third-party instrument may require explicit instance duplication or another
 bounded strategy. Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks execution/performance evidence,

@@ -15,6 +15,7 @@ D-033 through D-038 record SEQ-KB-R5 on 2026-10-07.
 D-039 through D-044 record SEQ-KB-R6 on 2026-10-07.
 D-045 through D-049 record SEQ-KB-R7 on 2026-10-07.
 D-050 through D-056 record SEQ-KB-R8 on 2026-10-07.
+D-057 through D-060 record SEQ-KB-R9; D-061 through D-063 record SEQ-KB-R10 on 2026-10-07.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
 contract. At the R7 checkpoint no explicit supersessions were recorded; those KB stages refined direction
 without accepting technical proposals. R8 records rolling-policy replacement/refinements below.
@@ -747,3 +748,60 @@ Current owners: [Audio](../AUDIO_ENGINE.md#source-boundaries-and-effect-tails),
 Remaining mechanisms: Q-057 seek warm-up/state reconstruction, reset, loop ownership, de-click, tail
 reporting/threshold/maximum extension/non-decaying completion and realtime/offline parity; exact export
 label/UI remains unselected. Q-012 retains capture-specific taps/scope, not reopened ordinary export defaults.
+
+## D-061 — Musical ownership and explicit signal convergence
+
+Status: Accepted by SEQ-KB-R10, 2026-10-07; partially resolves Q-019 and refines
+[D-019](#d-019--two-local-processing-levels-with-non-destructive-placements),
+[D-033](#d-033--processing-granularity-and-independent-placements) and
+[D-034](#d-034--separate-musical-sharing-identities).
+Basis: Documentation owner audit and multi-instrument, overlapping shared-definition and whole-placement
+signal cases A–C; conceptual evidence only, no execution/performance evidence.
+Rationale: Musical-content identity cannot decide audio aggregation. A Pattern can organize several
+instruments while their outputs need different routes; one sound definition can serve overlapping uses
+with different processing. Contributions therefore express required independence without selecting voices
+or instances. Intentional whole-placement/container processing consumes an explicit local submix, whose
+output cannot recover independent inputs. Signal irreversibility does not destroy editable source content.
+This refines earlier container wording: containment alone does not mix, common aggregate processing does.
+Current owners: [Architecture](../ARCHITECTURE.md#signal-ownership-and-processing-contexts),
+[node graph](../NODE_GRAPH.md#contributions-and-irreversible-mixing),
+[audio](../AUDIO_ENGINE.md#graph-execution-boundary),
+[UX](../UX_CONTRACT.md#processing-context-and-mix-feedback).
+Remaining mechanisms: Q-019 concrete graph references/edit lifetime, Q-029 sharing edits, Q-047 bounded
+overlapping execution/external hosting, Q-048 event conversion and Q-066 cross-scope connections.
+No graph-per-event, third local level, instance count, compiler, voice algorithm or class model selected.
+
+## D-062 — Separate Arrangement identity and shared Mixer context presentation
+
+Status: Accepted by SEQ-KB-R10, 2026-10-07; partially resolves Q-030 and refines
+[D-035](#d-035--processing-context-follows-containment).
+Basis: Owner audit and Arrangement-to-Mixer/context-move signal cases D–E.
+Rationale: Timeline placement, organization and audio context have distinct responsibilities. Arrangement
+and Mixer can expose the same context, so two surfaces do not justify two effects systems or duplicate DSP.
+Scope follows actual ownership/inputs, not the pane showing controls; wider shared processing remains
+outside a container's own boundary. A processing-context move changes aggregate membership and the path,
+potentially affecting other members as well; organizational regrouping retains the path. Separate explicit
+global channel/bus/Master stages remain possible without unlimited nested local scopes or a universal Track.
+Current owners: [Architecture](../ARCHITECTURE.md#arrangement-context-and-mixer-presentation),
+[moves](../ARCHITECTURE.md#moving-material-between-contexts),
+[node graph](../NODE_GRAPH.md#local-processing-scopes-and-alternate-views),
+[UX](../UX_CONTRACT.md#processing-context-and-mix-feedback).
+Remaining mechanisms: Q-030 route assignment/defaults/control bindings, Q-028 compatibility/terminology,
+Q-019 graph references, Q-063 edit/undo and Q-057 DSP transitions. No one-to-one mapping or types selected.
+
+## D-063 — Object render convergence follows semantic ownership
+
+Status: Accepted by SEQ-KB-R10, 2026-10-07; refines
+[D-036](#d-036--object-render-and-audible-capture-are-distinct) and
+[D-060](#d-060--explicit-clip-boundaries-and-hard-by-default-export-ranges), narrows Q-019's render ambiguity.
+Basis: Case F checked against accepted object-render/audible-capture and non-destructive source contracts.
+Rationale: A Pattern render may combine contributions into a reusable audio artifact without creating
+a Pattern playback bus. A placed object includes its own local result; a container includes its own
+aggregate processing. Mixer presentation of that local context does not omit or duplicate it, and hearing
+unrelated downstream processing does not bake it automatically. Broader audible selection remains a
+distinct scope needing later examples/taps. Sources survive rendering; mixed artifacts lose constituent
+signal separability, and hard-boundary/tail intentions remain governed by the audio owner.
+Current owner: [Sample workflow](../SAMPLE_WORKFLOW.md#create-sample-from-object);
+execution constraints in [audio](../AUDIO_ENGINE.md#offline-rendering-direction).
+Remaining mechanisms: Q-012 taps/output/capture scope, Q-021 alignment, Q-047 independent execution,
+Q-049 rendered replacement and Q-057 finite tails. No resampling implementation or tap selected.

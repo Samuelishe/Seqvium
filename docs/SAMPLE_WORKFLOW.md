@@ -132,7 +132,8 @@ execution intact. No universal timeout is selected.
 Render/resampling freezes and validates/prepares the relevant canonical project revision under
 [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction). Required invalid state or unavailable
 dependencies block the affected operation with object-level diagnostics; never silently sample older
-playing state or omit required processing and report success. Exact taps/scopes remain open below.
+playing state or omit required processing and report success. Semantic object boundaries are below;
+concrete execution taps and broader capture scope remain open.
 
 ## Resampling
 
@@ -149,9 +150,41 @@ Kick source -> Kick local EQ -> Kick local Gain -> new durable sample
 ```
 
 This answers "Turn this object, including its own processing, into reusable audio." It does not
-automatically bake unrelated containing-container, bus, or Master processing merely because those
+automatically bake unrelated containing-container, Mixer channel/bus, or Master processing merely because those
 are heard downstream. For a selected container, its own boundary includes its contained audible items
 and container processing; that does not automatically extend to unrelated downstream context.
+
+The selection's semantic owner determines the stop point, independently of where its controls appear:
+
+| Selected object | Included result / stop point |
+| --- | --- |
+| Pattern musical content without a placement context | Its instrument/sound-definition uses executing its events; no arbitrary Arrangement placement or downstream Mixer context is inherited |
+| Pattern placement or another standalone item | That occurrence's contributions and own item-local paths, including its intentional whole-placement submix/processing if present; before containing-context/global processing |
+| Musical container with common processing | Its contained item results through its own explicit container submix/processing; before broader downstream channel/bus/Master processing |
+
+For `Drums Main`, a reusable sample may require combining Kick and Snare into the rendered audio:
+
+```text
+Kick selected-object contribution  --+
+Snare selected-object contribution -+-> object render output mix -> new durable sample
+```
+
+Honor the selected object's independent paths before this final render-output convergence. It creates
+a combined audio artifact, not an implicit playback bus or a change to the source Pattern's routing.
+The resulting mixed sample no longer exposes its constituent instruments independently; the source
+remains preserved. If the selected placement already has a whole-placement submix/Compressor, render
+its processed result instead of recovering independent instruments from it.
+
+A container Compressor exposed in Mixer is still included when sampling that container, because it
+is that container's own context, and is applied once. The same Compressor is excluded when sampling
+an individual contained item. An unrelated global bus or Master is excluded in both cases. Shared
+route processing of an aggregate containing contributions beyond the object cannot silently count
+as exclusively object-owned. Cross-scope sidechain/control dependencies remain Q-066, not an automatic
+extension of the object's audio aggregation boundary.
+[ARCHITECTURE](ARCHITECTURE.md#arrangement-context-and-mixer-presentation) owns that relationship;
+[NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing) owns signal convergence. Exact taps,
+dependency closure, musical range/tails, rate/channel negotiation and replacement edits remain open
+under Q-012/Q-021/Q-047/Q-049/Q-057; no renderer or capture mechanism is selected.
 
 ### Capture Audible Selection
 

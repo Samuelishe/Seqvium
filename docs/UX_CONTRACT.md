@@ -80,11 +80,6 @@ Atomic events do not automatically expose full local DSP graphs. A low-ceremony 
 user select one event and make an independently processed standalone fragment/item when needed,
 without learning internal decomposition. Exact command and transformation remain open.
 
-Moving material into a processing context subjects it to that context's meaningful behavior: a Kick
-moved from a Compressor container into a Distortion/Delay container changes sound. Pure organizational
-grouping must not silently change sound. The UI must distinguish processing contexts from organizational
-groups while keeping musical containment and mixer routing distinct; final terminology remains open.
-
 Sample Lab supports standalone and contextual exploration. Contextual audition is temporary and
 reversible until explicit acceptance and should preserve relevant existing downstream processing.
 Object sample creation includes the object's own semantic/local processing boundary; audible-selection
@@ -93,6 +88,32 @@ are conceptual. Replacing an object with audio containing baked processing must 
 not silently reapply that exact baked chain. Specialized audition, acceptance, candidate history,
 and resampling semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Missing capabilities should be
 represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work retained.
+
+### Processing context and mix feedback
+
+Pattern membership must not misleadingly imply one mixed instrument output. A multi-instrument
+placement can retain different instrument paths; shared sound definitions can serve overlapping
+placements with different processing. The signal model belongs to
+[ARCHITECTURE](ARCHITECTURE.md#signal-ownership-and-processing-contexts), and
+[NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing) owns convergence semantics.
+
+Users must be able to distinguish processing of an independent contribution from intentional
+processing of a whole placement/container submix. The latter's result cannot offer independent
+instrument routes recovered from the aggregate. Do not hide this loss behind a control that appears
+to preserve separate routing. Clear contextual scope/result feedback must make it understandable
+without requiring the user to open a graph or answer a routing questionnaire. Exact controls remain open.
+
+Arrangement and Mixer may show controls for the same processing context. Their target and shared
+edits must be understandable; opening the other view must not look like adding a second effects chain.
+An additional independent channel/bus stage, when explicitly routed, is a distinct target. Displaying
+local processing in Mixer does not turn it into unrelated global processing or expand an object render.
+
+Moving Kick from a Compressor context into Distortion/Delay changes processing membership and may
+also change its assigned route; expose those meaningful consequences. Pure organizational regrouping
+at unchanged musical time retains processing/routing and must not alter sound. Musical containment,
+organization and audio context must be distinguishable with progressive disclosure; final names,
+indicators, gestures and route-assignment workflow remain open. The architecture owner traces the
+[move](ARCHITECTURE.md#moving-material-between-contexts), including possible effects on other submix members.
 
 ### Audio timeline editing
 

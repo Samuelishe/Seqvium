@@ -2,7 +2,7 @@
 
 Role: Core signal-graph product and responsibility contract.
 Read when: Designing graph editing, nodes, ports, connections, or prepared node execution.
-Authoritative for: Graph semantics, conceptual port classes, core/contributed nodes, editable/prepared boundary.
+Authoritative for: Graph semantics and irreversible mixing boundaries, conceptual port classes, core/contributed nodes, editable/prepared boundary.
 Not authoritative for: Arrangement, group identity, final port ABI/compiler, DSP algorithms, or pane infrastructure.
 
 ## Accepted direction and scope
@@ -59,9 +59,16 @@ or permission for zero-delay cycles.
 ## Local processing scopes and alternate views
 
 [ARCHITECTURE](ARCHITECTURE.md#resources-placements-and-two-local-processing-levels) owns the accepted
-item-local and containing-container processing direction, with mixer/bus/master responsibilities
-beyond it. These workflows motivate local graph scopes without selecting scope identities, all
-possible graphs, nesting, or the final container term. Exact scope ownership remains open.
+item-local and containing-container processing levels, and
+[signal ownership](ARCHITECTURE.md#signal-ownership-and-processing-contexts) defines their semantic
+responsibilities versus sound definitions and global routes. A scope can preserve multiple paths;
+it does not imply one mixed output. Concrete scope references/edit ownership remain Q-019, not the
+semantic separation. No final types, arbitrary nesting or container terminology are selected.
+
+Arrangement, Mixer and graph surfaces may expose the same canonical context under
+[ARCHITECTURE](ARCHITECTURE.md#arrangement-context-and-mixer-presentation). Connections determine
+where processing occurs; surfacing a context twice does not insert duplicate processors. Its actual
+ownership/input boundary determines local versus global scope, independently of the surface.
 
 An arbitrary full local graph belongs to a standalone item/clip/fragment/placement-like scope,
 not automatically to each atomic note, trigger, or step. Bounded event expression remains possible.
@@ -80,6 +87,53 @@ Node-settings UX is also open: side inspector, independent workspace pane, overl
 or a combination are not selected. A promising direction is selecting a node to expose deeper settings
 without uncontrolled windows, with useful settings/inspectors optionally detachable into workspace
 panes. This is a bounded question rather than an accepted interaction.
+
+## Contributions and irreversible mixing
+
+Preserve distinct audible contributions until every required independent processing/routing path
+before their intended convergence has been honored. Musical membership, shared source definition,
+visual grouping and graph scope alone are not permission to sum signals. Deliberate local submixes,
+routed channel/bus mixes and final Master aggregation are permitted convergence boundaries.
+An operation intentionally changing independent outputs into an aggregate must expose that change
+under [UX_CONTRACT](UX_CONTRACT.md#processing-context-and-mix-feedback).
+
+Once contributions are summed into a common mono/stereo/multichannel aggregate without retaining
+separate source outputs, that result no longer promises independently addressable original sources.
+Splitting/copying it afterward duplicates the aggregate;
+it does not recover Kick/Snare or Placement A/B. Original content remains editable and can be executed
+again; irreversibility here concerns that signal path, not destructive editing of project data.
+Distinct routes retained explicitly before a mix still carry their own signals; they cannot be
+inferred from the mixed output. Mono/stereo/channel layout does not substitute for source identity.
+Downstream gain, effects and routing on that output address the aggregate; constituent-specific
+controls need their independent upstream paths or source edits followed by re-execution.
+
+For `Drums Main` containing Kick and Snare events placed in Arrangement:
+
+```text
+Kick events  -> Kick definition use  -> Kick contribution  -> required Kick processing/route --+
+Snare events -> Snare definition use -> Snare contribution -> required Snare processing/route -+-> intended common bus -> Master -> Output
+```
+
+Pattern identity creates no implicit bus. Kick and Snare remain separable wherever different local
+processing, channel controls or downstream routes require it. If Kick needs compression and Snare
+needs delay, those paths precede their common mix. If their destinations differ, they stay separate
+to those destinations and may converge at a later common bus/Master. Compatible contributions may
+mix at an intended common destination once no promised independent output remains beyond it;
+this does not mandate a separate processing graph for each event.
+
+If the user instead intentionally processes this **whole Pattern placement**, its item-local boundary is:
+
+```text
+Kick contribution  --+
+Snare contribution -+-> explicit placement submix -> whole-placement Compressor -> placement result
+```
+
+Any independent processing intended before this submix must occur before it. Downstream of that
+aggregate, there is one placement result, not independently routable Kick and Snare recovered from it.
+Different downstream instrument routes therefore require retained pre-mix paths or a changed routing
+intention; whole-placement processing must not pretend to preserve those routes through the aggregate.
+The same rule applies to shared containing-container processing at the second local level. Exact
+branch/route UI and cross-scope sidechain/control mechanics remain open (Q-030/Q-066).
 
 ## Conceptual connection kinds
 
@@ -163,7 +217,7 @@ or effects as node types. They consume host services and cannot own or replace t
 
 ## Open design questions
 
-Graph-scope ownership, cycle/feedback handling, validation/preparation, port/channel rules,
+Concrete graph-scope references/edit ownership, cycle/feedback handling, validation/preparation, port/channel rules,
 latency propagation/compensation, and live-edit publication remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 Live / Low-Latency operating behavior must preserve the intended project graph and full offline render
 path under [AUDIO_ENGINE](AUDIO_ENGINE.md#live--low-latency-direction); its mechanics are not selected.

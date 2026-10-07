@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, local processing, canonical/derived state, async document integrity, host UI services.
+Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, async document integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -185,7 +185,8 @@ The accepted product direction for SEQ-R1 is:
 
 - An **instrument** produces sound.
 - A **musical part** contains notes/events for one instrument; no class or storage schema is selected.
-- A **Pattern** is a user-named reusable musical unit that may contain parts/events for multiple instruments.
+- A **Pattern** owns reusable named musical content: parts/events and their references to instrument/sound
+  definitions. It may use multiple instruments; it does not own those definitions exclusively or imply an audio bus.
 - A **pattern clip** places/references a pattern in the Playlist/Arrangement's musical time.
 - Repeated pattern clips normally reference shared Pattern musical content; an explicit operation
   creates an independent musical-content variation without implicitly detaching sound definitions.
@@ -259,15 +260,61 @@ Users should not need to understand internal decomposition to make that hit soun
 command, event-to-item transformation, domain names, and graph ownership remain open.
 
 Shared instrument settings/definition must not automatically imply shared execution state or
-irreversible mixed audio. Placements A and B may use the same Bass Synth definition while A is clean
-and B uses distortion. Even when they overlap, execution must preserve enough separation to honor
-their different local/downstream processing before irreversible mixing.
+irreversible mixed audio. For overlapping uses of a shared Bass Synth definition:
+
+```text
+shared Bass Synth definition
+    -> Placement A contribution -> clean local/context path -> clean Mixer route
+    -> Placement B contribution -> distortion/delay local/context path -> different Mixer route
+```
+
+The arrows express uses of a definition, not splitting an already mixed plugin output. A and B must
+remain independently processable from sound production through their different required paths, even
+while overlapping. Mixing their source output first and then splitting copies cannot produce the
+independent clean and distorted performances. Any later common mix follows the graph boundary in
+[NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing).
 
 Voice groups, execution instances, prepared routes, or other bounded representations are possible
 later mechanisms; none is selected. There is no required instance count or promise of unlimited/free
 duplication. Separation may cost CPU/memory. [AUDIO_ENGINE](AUDIO_ENGINE.md) owns execution constraints;
 Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) requires later resource/performance evidence, including
 third-party instruments that may need explicit instance duplication or another bounded strategy.
+
+## Signal ownership and processing contexts
+
+An **independently processable audible contribution** is the audible result of a musical occurrence
+from a source/part/output whose required processing or route must be distinguishable from another's.
+It can cover multiple notes/events with the same required context; it is not automatically a voice,
+note graph, plugin instance, buffer or persisted object. A multi-instrument Pattern placement may
+produce Kick and Snare contributions; overlapping placements of one instrument may also require
+distinct contributions. Instrument identity alone therefore cannot determine all signal ownership.
+
+A **processing context** describes which contributions are subject to processing and how their
+results continue to other routes. Its canonical project relationships determine scope; engine state
+is derived. Graph scope does not itself require one mixed audio output. Scope identities below are
+semantic responsibilities, not concrete types or a requirement to instantiate a graph for every item.
+
+| Scope / identity | Responsibility |
+| --- | --- |
+| Pattern | Reusable musical content and sound-definition references; no automatic submix |
+| Instrument / sound definition | Sound-producing behavior/settings reused by musical occurrences; intrinsic synthesis/sampler processing does not create another nested placement-local level or authorize mixing all uses |
+| Item / placement-local context | Independent processing of one placed musical occurrence, including distinguishable contribution paths or an intentional whole-placement submix |
+| Containing musical-container context | Common processing of an explicit aggregate of contained item results; timeline containment alone does not require aggregation |
+| Instrument/channel organizational group | Naming, membership and organization; no implied audio processing or bus |
+| Mixer channel / bus context | Audio routing, deliberate aggregation and processing/control of routed results, separately from timeline identity |
+| Master / Output | Global final aggregation/processing and output boundary |
+
+The two ordinary local levels remain item-local and containing-container. Source-definition behavior
+and global channel/bus/Master processing do not add further nested local levels. A Pattern's musical
+parts are not automatically extra DSP scopes. A need for arbitrary processing of one atomic event
+still uses the independent-item direction above, not an implicit graph per note.
+
+Whole-placement processing means intentionally treating that placement's audible contributions
+as one local submix before common processing. Whole-container processing similarly aggregates its
+contained results at the containing level. Neither introduces a third local level. Independent paths
+remain available until an intentional mix; the graph owner defines exactly what that mix loses in
+[NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing). Source/content/resource identities
+remain editable and non-destructive even though a mixed stream cannot recover its independent inputs.
 
 ## Resources, placements, and two local processing levels
 
@@ -287,19 +334,22 @@ For ordinary project work, the accepted user-facing model has no more than two l
 
 1. **Item-local processing:** one material instance/placement has independent processing, such as
    EQ/Gain on a Kick item or Delay on a Click item.
-2. **Containing musical-container processing:** a container combines its contained audible items
-   and applies common processing to that result.
+2. **Containing musical-container processing:** an explicit shared processing context combines its
+   contained audible item results and applies common processing to that submix. Mere musical
+   containment or organization does not automatically enable this mix.
 
 ```text
 Kick item -> local EQ/Gain --+
 Click item -> local Delay ---+-> container mix -> Compressor -> output
 Noise item -----------------+
 
-Item processing -> Container processing -> Mixer / buses -> Master -> Output
+Item result(s) -> explicit container submix/processing, if used -> global routes/buses -> Master -> Output
 ```
 
-This bounds the ordinary creative mental model, not the engine's number of DSP stages. Global mixer,
-buses, master, and output remain available responsibilities. Master is global output processing,
+Without a containing submix, separate item/contribution outputs continue to their assigned routes.
+The diagram's shared Compressor intentionally consumes the aggregate; independent item processing
+happens before it. This bounds the ordinary creative mental model, not the engine's number of DSP stages.
+Global mixer, buses, master, and output remain available responsibilities. Master is global output processing,
 not a third nested local layer. Do not infer unlimited user-facing local nesting.
 [NODE_GRAPH](NODE_GRAPH.md) owns how processing connections express signal dependencies.
 
@@ -311,8 +361,9 @@ the processing-scope and hard-boundary contract; exact state/de-click mechanics 
 
 "Layer" is provisional terminology, not a final public/domain name. Track, Layer, Channel, Lane,
 or Container may overlap future vocabulary. The accepted semantics are a musical timeline container
-holding independent items and processing their combined audible result. Its domain identity is not
-assumed identical to Mixer Channel, Instrument Group, or Pattern. No classes or schemas are selected.
+holding independent items, with an explicit context for processing their combined audible result when
+requested. Its domain identity is not assumed identical to Mixer Channel, Instrument Group, or Pattern.
+No classes or schemas are selected.
 
 ## Semi-free Arrangement
 
@@ -330,17 +381,59 @@ automatically make it the permanent owner of one instrument or Mixer Channel. Co
 should be movable/reusable without arbitrary structural duplication. Compatibility, preferred-target
 behavior, ownership, nesting, and audio-clip semantics remain open.
 
-The timeline container answers where/when material is arranged; mixer channels/buses answer where
-audio flows and how it is processed/routed. Useful defaults may connect them without merging their
-identities. How arrangement-container processing relates to a mixer channel or bus remains an explicit
-architecture question; exposing shared container processing does not settle it.
+### Arrangement context and Mixer presentation
 
-Moving material into a context that owns processing or other meaningful behavior subjects it to that
-context. Moving a Kick from a Drums container with Compressor into a Lo-Fi container with Distortion
-and Delay changes its sound as expected. Pure organizational grouping must not silently change sound.
-Organizational groups, musical/timeline containment with processing semantics, and mixer routing stay
-distinct; the UI must make meaningful processing contexts distinguishable. This does not select final
-Track/Layer/Container terminology or settle the container-to-mixer relationship.
+The timeline container answers where/when material is arranged; processing context answers which
+signals receive which processing; channels/buses answer where results flow and combine. Mixer is
+the presentation/control surface for audio contexts/routes, not an automatic extra DSP layer.
+Arrangement and Mixer identities remain separate, without a required one-to-one correspondence.
+Useful defaults can bind them; one universal Track combining music, organization, DSP and routing
+is not the accepted model.
+
+Arrangement and Mixer may expose/reference the **same underlying processing/routing context**.
+For example, the Arrangement container's shared Compressor may also be controlled from a Mixer
+channel showing that context. It runs once at the same semantic boundary; viewing it in Mixer does
+not apply a second Compressor. Its local scope does not become global merely because Mixer exposes it.
+Conversely, shared processing of an audio aggregate containing contributions from outside that
+container belongs to the broader route; it cannot silently be advertised as exclusively that
+container's own processing. External sidechain/control dependencies remain separately open in Q-066.
+
+```text
+item contributions -> item-local paths -> container submix -> Compressor context C
+    -> global bus -> Master -> Output
+
+Arrangement control of C <-> same context C <-> Mixer control of C
+```
+
+The last line describes presentation, not another audio connection. A separate downstream Mixer
+channel/processor can exist when the project explicitly routes through that distinct context; it
+is not required just because two UI surfaces exist. Global bus/Master processing remains outside
+the two local levels. Graph topology defines order and aggregation, not the pane where a control
+was edited. Exact route assignment/defaults, control bindings and context reference/edit mechanics
+remain Q-030/Q-019; compatibility/terminology remain Q-028. No object model is selected.
+
+### Moving material between contexts
+
+At unchanged musical time, moving Kick from a Compressor processing container to a Distortion/Delay
+processing container changes its processing membership and hence its signal path:
+
+```text
+before: Kick -> unchanged item-local result -> old container submix -> Compressor -> downstream route
+after:  Kick -> unchanged item-local result -> new container submix -> Distortion -> Delay -> downstream route
+```
+
+Kick leaves the old aggregate and joins the new one. The different processors/input aggregates cause
+the sound change; other members may also sound different because a shared processor now receives a
+different mix. A downstream route change, if part of the context assignment, is a further audible
+consequence that must be understandable. The move does not inherently rewrite shared Pattern content,
+the Kick sound definition or source media. Existing downstream effect state is not retroactively erased;
+[AUDIO_ENGINE](AUDIO_ENGINE.md#source-boundaries-and-effect-tails) owns that distinction and Q-057 its mechanics.
+
+Moving the same Kick between purely organizational groups at unchanged time retains its processing
+membership and routing, so it does not change sound. Musical containment, organization and routing
+are separate relationships: an operation changing processing membership is a context move, not a
+sound-neutral regrouping. [UX_CONTRACT](UX_CONTRACT.md#processing-context-and-mix-feedback) owns making
+that consequence visible without requiring graph expertise. Exact move/edit/undo mechanics remain open.
 
 ## Future parameter control
 

@@ -99,3 +99,13 @@ Resolved Q-056; narrowed Q-057/Q-058/Q-059/Q-061 and archived their accepted por
 D-060. Full roadmap reconstruction and Browser/library scope remain future work. Documentation only;
 no implementation stage was started or renumbered. SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r9).
+
+## SEQ-KB-R10 — Signal Ownership & Routing Semantics
+
+Completed 2026-10-07. Audited cases A–F and established musical ownership versus independently
+processable contributions, explicit local/global signal convergence, two local processing scopes,
+separate Arrangement/Mixer identity with shared-context presentation, and processing-context move
+consequences. Clarified object-render composition and its stop before unrelated downstream processing.
+Partially resolved Q-019/Q-030; Q-047 execution strategy remains open. D-061 through D-063 preserve
+rationale. Documentation/architecture only, with no implementation stage started or renumbered.
+SEQ-R0 remains **pending / not started**. See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r10).

@@ -122,3 +122,16 @@ only for remaining uncertainty; no new question IDs or complete roadmap redesign
 
 Q-012 wording was aligned to retain capture-specific taps/output/range scope and Q-057 mechanisms,
 without reopening the resolved manual-export default. Q-065 Browser/personal-library scope was untouched.
+
+## R10 resolved portions — signal semantics accepted, concrete bindings remain open
+
+Status: Partial resolutions accepted by SEQ-KB-R10, 2026-10-07. Q-019 and Q-030 retain their canonical
+IDs in the active register solely for concrete mechanisms; neither is reported as fully closed.
+
+| Question / original scope | Accepted portion and rationale reference | Current owners | Remaining open scope |
+| --- | --- | --- | --- |
+| Q-019 — Exact identity/ownership of item/container graphs versus instrument/channel/bus/Master scopes | Musical ownership does not imply a bus; contributions preserve required independence; whole-placement/container processing is explicit convergence within two local levels; Pattern object rendering does not alter playback routing. [D-061](DECISIONS.md#d-061--musical-ownership-and-explicit-signal-convergence), [D-063](DECISIONS.md#d-063--object-render-convergence-follows-semantic-ownership) | [Architecture](../ARCHITECTURE.md#signal-ownership-and-processing-contexts), [node graph](../NODE_GRAPH.md#contributions-and-irreversible-mixing), [sample workflow](../SAMPLE_WORKFLOW.md#create-sample-from-object) | Concrete scope representation, graph attachment/reference sharing and edit/lifetime ownership; related Q-029/Q-018, execution Q-047, conversion Q-048 and render taps Q-012 |
+| Q-030 — Arrangement-container processing relationship to mixer channels/buses and concrete signal consequences of moves | Separate timeline and Mixer identities can expose one context without duplicate DSP; context ownership determines local/global boundary; processing moves change path/aggregate membership, organization alone does not. [D-062](DECISIONS.md#d-062--separate-arrangement-identity-and-shared-mixer-context-presentation) | [Architecture](../ARCHITECTURE.md#arrangement-context-and-mixer-presentation), [moves](../ARCHITECTURE.md#moving-material-between-contexts), [UX](../UX_CONTRACT.md#processing-context-and-mix-feedback) | Concrete route/context assignment, defaults and shared control bindings; related compatibility Q-028, graph references Q-019, undo/commit Q-063 and state transitions Q-057 |
+
+Q-047 remains open. R10 clarifies its required separable signals through the cases; it supplies no
+CPU/memory, voice, instance, external-host or state-lifetime evidence and closes no execution mechanism.
