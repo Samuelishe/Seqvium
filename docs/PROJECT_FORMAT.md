@@ -120,6 +120,14 @@ every sound/resource/processing relationship. This does not select a schema, cop
 hierarchy, or serialized execution instances; [ARCHITECTURE](ARCHITECTURE.md#separate-sharing-identities)
 owns the identities.
 
+Preserve shared sound-definition settings/content references and canonical relationships needed to
+express intended performance interaction and contribution routing under
+[ARCHITECTURE](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains). Derived execution-domain
+grouping, live voices/envelopes/tails, physical instance counts and pools are not a second canonical
+saved model. Persisted plugin/instrument state below means durable sound-defining configuration/opaque
+data, not a mandate to serialize every runtime execution instance or its transient performance state.
+Exact relationship/schema encoding and extension state synchronization remain open.
+
 Main-window pane layout is primarily application/user workspace state under [WORKSPACE](WORKSPACE.md).
 Opening a project should not normally overwrite it. Project-side graph/editor layout is distinct from
 the user's overall pane arrangement; no final storage policy or optional project-workspace format is chosen.

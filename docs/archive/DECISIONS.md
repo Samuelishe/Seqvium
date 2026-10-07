@@ -805,3 +805,40 @@ Current owner: [Sample workflow](../SAMPLE_WORKFLOW.md#create-sample-from-object
 execution constraints in [audio](../AUDIO_ENGINE.md#offline-rendering-direction).
 Remaining mechanisms: Q-012 taps/output/capture scope, Q-021 alignment, Q-047 independent execution,
 Q-049 rendered replacement and Q-057 finite tails. No resampling implementation or tap selected.
+
+## D-064 — Shared sound definitions and semantic execution domains
+
+Status: Accepted by SEQ-KB-R11, 2026-10-07; partially resolves Q-047 and refines
+[D-033](#d-033--processing-granularity-and-independent-placements),
+[D-034](#d-034--separate-musical-sharing-identities) and
+[D-061](#d-061--musical-ownership-and-explicit-signal-convergence).
+Basis: Documentation/architecture audit of overlapping execution cases A–H; semantic reasoning only,
+with no runtime, plugin, CPU/RAM or performance evidence.
+Rationale: Reusable sound intent does not decide live voice/state sharing. An execution domain names
+the intended performance-state interaction boundary without selecting a persisted class or physical
+instance. Several compatible placements/events may share one domain; one domain can expose several
+contributions where source capabilities preserve both interaction and output independence. Conversely,
+independently performed overlapping uses require separate state even while their definition stays shared.
+Same destination is insufficient if local histories, controls or occurrence boundaries differ.
+Mono/legato/retrigger and voice stealing make domain splitting/combining audibly significant; independent
+instances are not a transparent substitute for an interacting performance. Naturally separable sources
+may share immutable definition/content and avoid whole-instance duplication. Aggregate-only sources
+may need multiple instances; impossible interaction/output combinations must block or require an explicit
+informed change, never split an existing mix or silently collapse routes.
+Shared-definition edits affect all referencing uses' durable sound intent without merging voice/envelope/
+tail state. Occurrence retirement cannot reset another use simply because a definition is shared.
+CPU/RAM pressure permits bounded preparation/execution and dependency-scoped explicit failure, not
+hidden sonic corruption. Canonical intent survives; visibly identified last-valid playback retains its
+existing limited in-session role and is never canonical render. No numerical limits or overload UX chosen.
+Current owners: [Architecture](../ARCHITECTURE.md#shared-sound-definitions-and-execution-domains),
+[audio lifetime/resources](../AUDIO_ENGINE.md#execution-state-lifetime-and-resource-integrity),
+[extensions](../EXTENSIONS.md#independent-execution-capability),
+[project persistence](../PROJECT_FORMAT.md#musical-content-and-workspace-state),
+[UX](../UX_CONTRACT.md#processing-context-and-mix-feedback).
+Remaining Q-047: Concrete grouping/voice allocation, source capabilities and plugin instancing,
+state synchronization/realtime publication, lifetime mechanisms, pooling/resource limits and measured
+CPU/RAM/pressure behavior. Related Q-018/Q-019/Q-024/Q-029/Q-057/Q-063/Q-066 remain open in their own
+mechanism scopes. R0 can supply only baseline evidence within its existing sample/tone/control/lifetime
+scope; later overlapping-source/opaque-host evidence needs separate authorization, not an inserted stage.
+Neither global-instance-per-definition nor instance-per-placement/note, engine language/ABI, scheduler,
+compiler, allocator, pool or plugin API is selected. SEQ-R0 remains pending / not started.

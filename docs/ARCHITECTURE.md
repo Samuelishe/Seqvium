@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, async document integrity, host UI services.
+Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, async document integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -274,11 +274,90 @@ while overlapping. Mixing their source output first and then splitting copies ca
 independent clean and distorted performances. Any later common mix follows the graph boundary in
 [NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing).
 
-Voice groups, execution instances, prepared routes, or other bounded representations are possible
-later mechanisms; none is selected. There is no required instance count or promise of unlimited/free
-duplication. Separation may cost CPU/memory. [AUDIO_ENGINE](AUDIO_ENGINE.md) owns execution constraints;
-Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) requires later resource/performance evidence, including
-third-party instruments that may need explicit instance duplication or another bounded strategy.
+The [execution-domain contract](#shared-sound-definitions-and-execution-domains) below defines the
+required performance-state separation. Voice groups, instances, prepared routes and other bounded
+representations remain possible mechanisms, with no selected instance count or free duplication.
+[AUDIO_ENGINE](AUDIO_ENGINE.md#execution-state-lifetime-and-resource-integrity) owns lifetime/resource
+constraints; Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains mechanism/performance evidence.
+
+## Shared sound definitions and execution domains
+
+The following semantic distinctions are accepted future contracts, not implemented objects:
+
+| Concept | Ownership / meaning |
+| --- | --- |
+| Shared instrument/sound definition | Durable reusable sound intent: source/algorithm identity, base parameters, preset/configuration, content/resource references and sound-defining opaque extension data where applicable |
+| Runtime performance state | Active voices, note ownership, mono/legato/retrigger history, voice-stealing interaction, envelopes, sample cursors and evolving source DSP state derived during execution |
+| Execution domain | The semantic boundary within which musical events intentionally interact through runtime performance state; it may serve several occurrences and produce one or several distinguishable contributions |
+| Independently processable contribution | A required distinguishable audible result under [signal ownership](#signal-ownership-and-processing-contexts); neither a domain nor a voice/placement/instance by definition |
+| Processing/routing context | Canonical relationships specifying processing membership, paths and intentional convergence; derived processor state follows those scopes rather than definition identity |
+
+A definition can feed several independent execution domains without becoming several independent
+sound definitions. Domains are derived from musical/performance intent and processing relationships;
+the term does not select a persisted class, engine object, graph, plugin instance or allocation unit.
+An execution domain is not another user-facing local processing level. Immutable content/resources
+may remain shared while performance and local processor state are independent.
+
+### Conditions for sharing execution
+
+Sharing runtime performance state is permissible only when the intended note/voice interaction,
+effective sound controls, required contribution paths and occurrence release/hard-boundary ownership
+can all be preserved. The same definition, identical effect settings, a common eventual Master, or
+two placements alone establish neither shared performance nor independence. The complete required
+paths matter: two separate local Delays with identical settings still have distinct histories/tails.
+
+Within an intended shared performance, mono note priority, legato/retrigger and limited-polyphony
+voice stealing apply across its member events according to the instrument's behavior. Independently
+performed occurrences must not steal/retrigger/release each other's voices or share evolving source
+state merely because they reference one definition. This performance relationship must be expressible
+in canonical musical/context intent; the domain grouping and its runtime realization are derived.
+Exact reference representation, defaults and editing controls remain Q-019/Q-029.
+
+Route divergence requires independently addressable contributions from sound production onward.
+For independently performed A/B, their performance state also requires independent domains. A source
+may preserve an intentionally interacting performance across separately routed contributions only
+if it can actually expose the required distinguishable outputs without violating that interaction.
+Separate voice/event outputs alone do not prove this for arbitrary shared source DSP. An aggregate-only
+source cannot satisfy divergent routes in one execution; it may require separate domains/instances.
+Changing a shared mono/legato performance into independent performances changes sound and must not be
+presented as an equivalent optimization. If the requested interaction and output independence cannot
+both be realized, follow the explicit capability-blocking direction in
+[EXTENSIONS](EXTENSIONS.md#independent-execution-capability).
+
+### Overlapping performance cases
+
+| Case | Accepted semantic result |
+| --- | --- |
+| A — same polyphonic definition, same context | Multiple overlapping placements/events may share a domain when all conditions above hold and their aggregate occurs at an intended convergence. Placement count alone does not require duplication; the same destination alone does not permit it |
+| B — clean A versus Distortion/Delay B | Preserve A/B outputs before local processing. Independently performed A/B have independent performance domains using the same definition; never split an already mixed source output to obtain them |
+| C — mono, legato/retrigger or voice stealing | An intended shared performance lets A/B notes interact; an independent performance gives each domain its own interaction history/voice competition. Splitting or combining those domains can change pitch selection, attack and stolen notes even with the same preset; that sonic consequence is part of the musical contract |
+| D — separable sampler/source voices | Where source capabilities preserve the required semantics, separately routable voices/events can implement contributions efficiently, sharing immutable sample/definition data. Several independent semantic domains may be realized inside one capable source implementation; one domain can serve several placements/events |
+
+For a last-note-priority mono Bass with legato enabled, A holds C2 when B starts E2. An intended shared
+performance selects E2 with that instrument's legato behavior; independent domains can keep C2 and E2
+sounding separately. Releasing B may return the shared performance to C2 under its note-priority rules;
+releasing independent B cannot retarget A. The preset alone therefore cannot define the resulting sound.
+
+Use separation as coarse as these semantics permit. Neither one global execution instance per
+definition nor one instance per placement/note is the default architecture. Physical instance count,
+voice allocation, grouping/pooling and source capability mapping require later evidence, not a class
+model inferred from this table. Pattern remains musical content, not a bus, and the two ordinary
+local processing levels and separate Arrangement/Mixer identities remain unchanged.
+
+### Shared definition edits
+
+For shared Bass `Cutoff = 40% -> 55%`, the canonical edit changes that one definition's durable base
+value. All uses still referencing it are expected to observe the updated sound intent, including uses
+in separate domains, subject to their applicable expressive/automation controls. It does not merge,
+copy between domains or reset their active voices, envelopes, cursors or tails merely because the
+definition is shared. A parameter can affect an ongoing voice according to source/control semantics;
+this is distinct from replacing that voice's evolving state with another domain's state.
+
+An explicitly independent sound definition owns its own durable settings and no longer follows edits
+to the original definition; it may still reference the same immutable content. Runtime independence
+alone does not detach a sound definition. Exact realtime publication/synchronization and any necessary
+source-specific transitions remain Q-047/Q-018/Q-057; reference/edit/undo mechanics remain Q-029/Q-063.
+[PROJECT_FORMAT](PROJECT_FORMAT.md#musical-content-and-workspace-state) owns durable preservation.
 
 ## Signal ownership and processing contexts
 

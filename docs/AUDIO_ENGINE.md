@@ -2,7 +2,7 @@
 
 Role: Audio execution and realtime boundary contract.
 Read when: Designing the audio probe, scheduling, nodes, device I/O, recording, or rendering boundaries.
-Authoritative for: Realtime constraints, processing context, backend/device boundary, recording, item-local hard boundaries, manual export ranges, finite tails, canonical offline render and finite preparation failure.
+Authoritative for: Realtime constraints, execution-state lifetime/resource integrity, processing context, backend/device boundary, recording, item-local hard boundaries, manual export ranges, finite tails, canonical offline render and finite preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
 ## Accepted realtime constraints
@@ -55,25 +55,67 @@ cancelled/coalesced safely, separately from undo history. Save/reopen preserves 
 [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution) owns this graph rule and the required
 visible distinction between editable and executing state; publication/resource retirement remains open.
 
-Shared instrument/sound definitions do not force shared execution state. Overlapping placements with
-different required local/downstream processing must remain separable until that difference is honored;
-audio mixed irreversibly beforehand cannot supply independent results afterward. The model requirement
-belongs to [ARCHITECTURE](ARCHITECTURE.md#signal-ownership-and-processing-contexts), with the overlapping
-Bass example in [shared definitions](ARCHITECTURE.md#processing-granularity-and-shared-definitions).
+The [semantic execution domains](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains) in
+ARCHITECTURE distinguish shared durable sound intent from performance-state interaction and required
+contribution independence, including overlapping Bass uses and mono/legato/voice stealing.
 Prepared execution must honor the contribution paths and intentional convergence boundaries in
 [NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing); sharing a definition or presenting
 one context in Arrangement and Mixer cannot authorize an earlier sum or duplicate DSP. Item-local
 hard boundaries apply to the selected occurrence's own result before shared downstream state,
-including its intentional whole-placement submix when used. Output separation from sound production
-onward, state lifetime and external-host feasibility still require Q-047/Q-057 evidence.
-Voice groups, instances, prepared routes, or another bounded strategy remain unselected. Separation
-can cost CPU/memory; a third-party instrument may require explicit instance duplication or another
-bounded strategy. Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks execution/performance evidence,
-without requiring a particular instance count or free duplication.
+including its intentional whole-placement submix when used. Concrete output separation, state lifetime
+and external-host feasibility still require Q-047/Q-057 evidence; no instance count is selected.
 
 Scheduling, node processing, and foundational mixing/routing belong to engine execution even before
 the user-facing Mixer milestone. Feedback/cycles, node latency, channel negotiation, and changes during
 playback remain implementation/validation questions in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+
+## Execution-state lifetime and resource integrity
+
+Ending/releasing Placement A must target its owned events/contributions and local processor state.
+It must not reset Placement B's domain, voices or local Delay merely because both use the same sound
+definition. In a shared performance domain, A's event release may have the intended mono/legato/voice
+consequences, but it is not a global reset of all members. Retire the domain only when no continuing
+member or permitted state/tail requires it; definition lifetime is a separate shared-resource concern.
+If an occurrence's required independent hard cut or state retirement cannot be honored inside a
+shared source, that grouping is invalid and needs semantic separation or an explicit blocker.
+
+A's independent source state or local Delay may outlive its natural input end where tails are permitted.
+Its explicit hard right boundary still ends its own local result under
+[source boundaries](#source-boundaries-and-effect-tails). Neither action clears B nor arbitrary shared
+downstream state after intentional mixing. Exact tail completion, reset, de-click, seek reconstruction
+and retirement mechanics remain Q-057; publication/state transfer and safe resource lifetime remain
+Q-018. No tail algorithm or unlimited retention is implied.
+
+Correct required audio has priority over hidden resource shortcuts. Never silently merge independent
+performance domains/contributions, collapse required routes, replace requested sound with stale/wrong
+audio or omit required processing to save CPU/RAM. Bounded execution/preparation/resource use and useful
+diagnostics are legitimate requirements; there is no unlimited-duplication guarantee or numerical limit.
+
+If the requested configuration cannot be realized within available resources/capabilities, fail its
+preparation or make affected execution explicitly unavailable/degraded, preserving canonical intent.
+Keep document access and healthy paths where semantics permit; block render whose canonical dependency
+closure requires the unavailable execution. A supported semantics-preserving fallback is possible;
+a behavior-changing alternative requires an explicit informed choice, never a hidden rewrite.
+The existing visibly identified last-valid in-session revision may continue under
+[NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution); it must not be reported as the requested
+new configuration or used as canonical render. [UX](UX_CONTRACT.md#project-availability-and-dependency-blockers)
+owns observable blocker feedback; final overload UX, thresholds and resource policy remain open.
+
+### Remaining execution evidence
+
+Q-047 requires bounded comparisons of compatible sharing versus independent domains, voice interaction,
+separable source outputs, opaque-source instancing, shared-definition parameter synchronization and
+CPU/RAM scaling, including pressure/failure and lifetime cases. Concrete grouping, allocation, pooling,
+instance counts, limits and realtime publication remain open. Q-019/Q-029 own canonical references/edit
+relationships; Q-063 owns undo/async commit, and Q-066 retains permitted cross-context control/sidechain
+dependencies that may affect compatibility. These questions are coordinated, not resolved here.
+
+Within its existing authorized scope, a future [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-probe) can
+provide baseline sample/tone event ownership, prepared-state lifetime, bounded control/overload and
+realtime/offline comparison evidence if explicitly scoped. It cannot establish arbitrary mono/legato
+or plugin behavior, final domain grouping, host capability negotiation, plugin instance synchronization
+or product-wide CPU/RAM bounds. A later separately authorized bounded overlapping-source/opaque-host
+evaluation is needed for those claims; no experiment or implementation stage is inserted or started.
 
 ## Source boundaries and effect tails
 

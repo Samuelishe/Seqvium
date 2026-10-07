@@ -223,3 +223,35 @@ is not established by local history; this log does not duplicate Git's commit ch
   branch/HEAD/index preserved, no initial user changes or untracked files.
 - No code, projects, dependencies, tests, CI, experiments, prototypes, UI, audio backend or executable
   tooling introduced. No solution build/tests, staging, commit or push. SEQ-R0 remains **pending / not started**.
+
+## 2026-10-07 — SEQ-KB-R11
+
+- Audited execution cases A–H against current owners. Accepted durable shared sound definitions versus
+  runtime performance state and semantic execution domains. Compatible placements/events can share a
+  domain; source-supported separable contributions and independent domains need not imply one physical
+  instance per placement. Retained independent outputs from sound production through divergent paths.
+- Made mono/legato/retrigger/voice-stealing interaction an audible musical contract, with a concrete
+  C2/E2 mono Bass example. Rejected transparent substitution of independent instances for a requested
+  interacting performance. Opaque aggregate-only instruments need genuine source separation or multiple
+  executions; impossible interaction/output combinations require explicit blocking or an informed change.
+- Clarified shared Bass Cutoff edit propagation without merging live voices/envelopes/tails, independently
+  owned definitions, occurrence-safe retirement and resource/capability failure preserving canonical
+  intent. Linked source/performance semantics, graph convergence, persistence and observable blockers
+  through their canonical owners without choosing classes, schema, ABI, allocator, pool or numeric limits.
+- Recorded [D-064](DECISIONS.md#d-064--shared-sound-definitions-and-semantic-execution-domains), archived
+  [Q-047's accepted semantic portion](RESOLVED_QUESTIONS.md#r11-resolved-portion--q-047-semantic-contract-mechanisms-remain-open)
+  and narrowed the active question to concrete grouping/voices/source capabilities/plugin instancing,
+  synchronization/publication/lifetime, pooling/resource limits and measured CPU/RAM/pressure evidence.
+  Q-018/Q-019/Q-024/Q-029/Q-057/Q-063/Q-066 remain open; no runtime resolution is claimed.
+- Distinguished future R0 sample/tone/control/lifetime baseline evidence from later separately authorized
+  overlapping-source/opaque-host evidence. Active ROADMAP is byte-identical to HEAD; no stage inserted,
+  renumbered, reordered or started. Updated compact current state, owner routing and
+  [completed-stage history](ROADMAP.md#seq-kb-r11--independent-execution-domains--shared-sound-state).
+- Verified all 34 repository Markdown files' relative links/anchors, 71 unique canonical questions
+  (68 open, 3 fully archived), D-001 through D-064 uniqueness/reference integrity, owner/routing,
+  current/open versus historical/partial separation, documentation-only scope and LF/UTF-8/whitespace.
+  `git diff --check` passed. Initial baseline: clean `master` at
+  `36e6644cbf7b5eca5feeb89afc2b36dde23d8154`; branch/HEAD/index/untracked baseline preserved.
+- No production code, experiments, projects, dependencies, tests, CI, backends, plugin hosts, prototypes
+  or executable tooling created. No solution builds/tests, staging, commit or push. SEQ-R0 remains
+  **pending / not started**.

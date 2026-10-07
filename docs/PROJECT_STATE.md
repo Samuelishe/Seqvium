@@ -7,14 +7,16 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R10 complete (2026-10-07). Pattern musical ownership, independently processable contributions,
-two local scopes and separate Arrangement/Mixer identities with shared-context presentation are accepted
-future contracts in [ARCHITECTURE](ARCHITECTURE.md). Explicit irreversible mixing boundaries belong to
-[NODE_GRAPH](NODE_GRAPH.md); object-render versus broader audible-capture boundaries belong to
-[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Q-019/Q-030 retain only concrete scope/reference/assignment
-mechanisms; independent overlapping execution Q-047 still needs evidence. Canonical editable state
-with derived revisioned execution, recovery/media integrity, foundation-first strategy, hard local/export
-boundaries and rolling current/cold-history policy remain established. No implementation stage has started.
+SEQ-KB-R11 complete (2026-10-07). Shared durable sound definitions versus runtime performance state
+and semantic execution domains are accepted future contracts in
+[ARCHITECTURE](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains). Compatible occurrences
+may share execution; independent performance and required contribution routes must remain correct,
+including mono/legato/voice stealing. [AUDIO_ENGINE](AUDIO_ENGINE.md#execution-state-lifetime-and-resource-integrity)
+owns occurrence-safe lifetime and explicit resource failure; [EXTENSIONS](EXTENSIONS.md#independent-execution-capability)
+owns opaque-source capability handling. Q-047 remains open for mechanisms and measured cost/limits.
+Pattern/content versus signal ownership, two local scopes, separate Arrangement/Mixer identities,
+canonical editable/derived execution, recovery/media integrity, hard boundaries and rolling current/
+cold-history policy remain established. No implementation stage has started.
 
 ## Implemented capability
 
@@ -33,14 +35,15 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R10 signal cases A–F, repository-wide relative Markdown links/anchors, question/decision ID integrity,
+R11 execution cases A–H, repository-wide relative Markdown links/anchors, question/decision ID integrity,
 owner/routing, current/archive separation, accepted/open scope, LF/whitespace and Git preservation checks
 passed. Documentation-only validation; no solution build, tests, runtime/audio or platform acceptance is claimed.
 
 ## Active blockers / evidence gaps
 
 Concrete graph-scope references/edit ownership (Q-019) and Arrangement route/control assignment (Q-030)
-remain open. High-impact evidence work includes independent overlapping execution (Q-047), exact recovery/media integrity
+remain open. High-impact evidence work includes domain grouping, voice allocation, source/plugin instancing,
+definition synchronization and measured CPU/RAM/resource behavior (Q-047), exact recovery/media integrity
 mechanisms (Q-058/Q-059), future concrete roadmap/complete-project milestone closure (Q-061), stateful DSP/
 finite-tail mechanics (Q-057), graph publication/lifetime/failure handling
 (Q-018), device timing/recovery (Q-062/Q-069) and exact async undo/commit boundaries (Q-063).

@@ -135,3 +135,31 @@ IDs in the active register solely for concrete mechanisms; neither is reported a
 
 Q-047 remains open. R10 clarifies its required separable signals through the cases; it supplies no
 CPU/memory, voice, instance, external-host or state-lifetime evidence and closes no execution mechanism.
+
+## R11 resolved portion — Q-047 semantic contract, mechanisms remain open
+
+Status: Partial resolution accepted by SEQ-KB-R11, 2026-10-07. Q-047 retains its canonical definition
+in the active register; no full runtime/performance resolution is claimed.
+Original question: How can shared instrument definitions preserve independent overlapping execution/
+local processing at bounded CPU/memory cost?
+Accepted portion: Durable shared sound intent and runtime performance state are distinct. Semantic
+execution domains bound intended voice/state interaction, may serve multiple compatible occurrences
+and may expose multiple contributions where supported. Independent performance and divergent required
+paths must be preserved from sound production; mono/legato/voice-stealing consequences are explicit.
+Separable sources may realize this without per-placement instances; opaque aggregate-only sources may
+need multiple instances or another real separation capability. Shared-definition edits do not merge live
+state; occurrence retirement cannot reset another use through definition identity. Impossible capability/
+resource configurations fail/degrade explicitly, preserving canonical intent rather than silently mixing,
+substituting stale/wrong audio or omitting required processing.
+Rationale: [D-064](DECISIONS.md#d-064--shared-sound-definitions-and-semantic-execution-domains).
+Current owners: [Architecture](../ARCHITECTURE.md#shared-sound-definitions-and-execution-domains),
+[audio](../AUDIO_ENGINE.md#execution-state-lifetime-and-resource-integrity),
+[extensions](../EXTENSIONS.md#independent-execution-capability),
+[format](../PROJECT_FORMAT.md#musical-content-and-workspace-state),
+[UX](../UX_CONTRACT.md#project-availability-and-dependency-blockers).
+Remaining Q-047: Concrete grouping, voice allocation, source separation/opaque-host instancing,
+definition synchronization/realtime publication, state/lifetime mechanisms, pooling and resource limits,
+measured CPU/RAM scaling and pressure/failure evidence. Exact graph publication/references Q-018/Q-019,
+capability negotiation Q-024, reference/edit Q-029, DSP tails/transitions Q-057, async/undo Q-063 and
+cross-context routing Q-066 remain coordinated open questions. R0 scope/order is unchanged and cannot
+establish arbitrary plugin behavior or resource bounds; later bounded evidence is separately authorized.

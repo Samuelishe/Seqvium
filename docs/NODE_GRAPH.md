@@ -90,6 +90,11 @@ panes. This is a bounded question rather than an accepted interaction.
 
 ## Contributions and irreversible mixing
 
+The [execution-domain contract](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains) determines
+when source performance state may interact across occurrences. A domain can supply several retained
+contributions; it is not inherently a mix node, graph scope or plugin instance. Derived graph execution
+must preserve both that performance intent and the signal independence defined here.
+
 Preserve distinct audible contributions until every required independent processing/routing path
 before their intended convergence has been honored. Musical membership, shared source definition,
 visual grouping and graph scope alone are not permission to sum signals. Deliberate local submixes,

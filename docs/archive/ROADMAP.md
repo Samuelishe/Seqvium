@@ -109,3 +109,15 @@ consequences. Clarified object-render composition and its stop before unrelated 
 Partially resolved Q-019/Q-030; Q-047 execution strategy remains open. D-061 through D-063 preserve
 rationale. Documentation/architecture only, with no implementation stage started or renumbered.
 SEQ-R0 remains **pending / not started**. See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r10).
+
+## SEQ-KB-R11 — Independent Execution Domains & Shared Sound State
+
+Completed 2026-10-07. Audited execution cases A–H and accepted durable shared sound intent versus
+runtime performance state, semantic domains compatible with multiple occurrences/separable contributions,
+audible mono/legato/voice-stealing consequences, shared-definition edit propagation, occurrence-safe
+retirement and explicit resource/capability failure. Partially resolved Q-047 through
+[D-064](DECISIONS.md#d-064--shared-sound-definitions-and-semantic-execution-domains); concrete mechanisms,
+plugin feasibility and measured CPU/RAM remain open. Recorded later bounded evidence needs without
+expanding R0 into external hosting or changing implementation stage IDs/order. Documentation/architecture
+only; no executable work started. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r11).

@@ -91,6 +91,12 @@ represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work 
 
 ### Processing context and mix feedback
 
+Shared versus independent performance can change audible mono/legato/retrigger and voice-stealing
+behavior, even with one shared preset. Expose that meaningful consequence when an operation changes
+performance interaction to provide independent processing; do not present it as a sound-neutral
+implementation optimization. [ARCHITECTURE](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains)
+owns the rule; final labels, defaults and controls remain open.
+
 Pattern membership must not misleadingly imply one mixed instrument output. A multi-instrument
 placement can retain different instrument paths; shared sound definitions can serve overlapping
 placements with different processing. The signal model belongs to
@@ -184,6 +190,13 @@ needs this persistent indication, potentially a placeholder and human-readable e
 only a transient toast or log event. Disappearing notifications alone are
 insufficient; logs remain diagnostic support. Keep the musical workspace clear rather than turning it
 into a diagnostics dashboard. [UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns visual treatment.
+
+This feedback also applies when available source capabilities or resources cannot realize the requested
+independent execution. Identify affected uses and the unmet requirement, preserve editable intent and
+explain supported recovery/fallback direction. Do not claim a silently merged, stale or substituted
+result is correct. [AUDIO_ENGINE](AUDIO_ENGINE.md#execution-state-lifetime-and-resource-integrity) and
+[EXTENSIONS](EXTENSIONS.md#independent-execution-capability) own execution/fallback constraints; final
+overload and plugin-host UX remain open.
 
 Behavior-affecting migration presents a concise summary and user choice before applying forced
 fallback/default substitution or other nontrivial transformation, including older-version save

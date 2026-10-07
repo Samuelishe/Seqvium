@@ -72,6 +72,29 @@ losing support must not automatically uninstall or delete it. The user decides w
 Preserve project/plugin identity, state, and relationships where applicable under the missing-extension
 rules below. The final resolver, manifest/schema, and compatibility paths are not selected.
 
+## Independent execution capability
+
+Future instrument hosting must honor the [execution-domain contract](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains).
+A source exposing only one aggregate output per execution instance cannot provide independently
+processable overlapping A/B through that output. Divergent required routes may need multiple execution
+instances initialized from the same durable sound definition, or another genuine separation capability
+supplied by the source. Copying/splitting the aggregate is insufficient. Separable outputs must also
+preserve the requested performance interaction; multiple mono/legato instances do not automatically
+reproduce one interacting performance. Shared preset/state intent is not shared live voice state.
+
+Do not mandate one plugin instance per placement. Determine whether the available source can realize
+the requested performance-state and output independence, including shared-definition edits and safe
+occurrence retirement. Exact declarations, capability negotiation and state exchange remain Q-024/Q-047;
+no plugin API, instance pool, host implementation or source-support claim is selected.
+
+If capability, activation or resource limits prevent correct realization, retain the document and
+identify the affected uses and unmet execution requirement under
+[degraded operation](#degraded-project-opening-and-operation-blockers). Block affected playback/render
+as required by dependency scope; healthy paths remain available only where semantics permit. A supported
+fallback may preserve semantics; changing performance interaction, routes or source needs an explicit
+informed choice. Never silently collapse routes, discard preserved sound state or report incorrect audio
+as successful execution. Final hosting/fallback UX remains future design.
+
 ## Plugin metadata and localization direction
 
 Leave room for stable plugin identity, package/version, plugin state/schema version, required host
