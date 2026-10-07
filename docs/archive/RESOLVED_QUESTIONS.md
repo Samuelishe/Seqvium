@@ -163,3 +163,32 @@ measured CPU/RAM scaling and pressure/failure evidence. Exact graph publication/
 capability negotiation Q-024, reference/edit Q-029, DSP tails/transitions Q-057, async/undo Q-063 and
 cross-context routing Q-066 remain coordinated open questions. R0 scope/order is unchanged and cannot
 establish arbitrary plugin behavior or resource bounds; later bounded evidence is separately authorized.
+
+## R12 resolved portions — Q-063 semantics accepted, concrete integrity mechanisms remain open
+
+Status: Partial resolution accepted by SEQ-KB-R12, 2026-10-07. Q-063 keeps its canonical active
+definition; no full implementation/evidence resolution is claimed.
+Original question: Precise undo transactions, async commit grouping, document history and pending-work
+invalidation.
+Accepted portion: Coherent canonical user intentions define Undo transactions; explicit preview and
+async preparation/resource creation do not enter history by completion alone. Sufficient commit gates
+validate original document/lifecycle, target/ownership, context/dependencies and operation relevance/
+authorization. History, deletion/identity restoration and close never implicitly resurrect invalidated
+work. Save/recovery and resource retention keep their distinct boundaries; derived graph publication
+has no second Undo stack. Cases A–L were covered through current owners, including one-transaction
+rendered replacement and failure before versus after an intentional canonical edit.
+Rationale: [D-065](DECISIONS.md#d-065--logical-undo-transactions-and-async-commit-integrity).
+Current owners: [Architecture](../ARCHITECTURE.md#document-integrity-and-asynchronous-publication),
+[UX](../UX_CONTRACT.md#undo-grouping-and-interaction-preview),
+[sample workflow](../SAMPLE_WORKFLOW.md#contextual-generation-result-validity),
+[format](../PROJECT_FORMAT.md#save-and-reopen), [graph](../NODE_GRAPH.md#editable-graph-and-audio-execution).
+Remaining Q-063: Transaction/command-stack shape and commit coordination; identity/lifecycle and
+revision/dependency representation, cancellation/invalidation; concrete gesture/shared/plugin adapters,
+operation-specific suspension/rebase/retention/reuse; Undo/Redo/delete/close races and preparation/storage/
+commit failure evidence; history persistence across Save/reopen/restart, limits and storage.
+Related narrowed portions: Q-011 contextual generation validity and no automatic acceptance are fixed,
+but substitution/audition restoration/publication mechanisms remain open. Q-029 shared-content Undo is
+fixed, but reference/detachment, acceptance scope and sharing UI remain open. Q-049 coherent replacement/
+restoration grouping is fixed, but exact baked-chain transformation remains open. Q-018 canonical Undo
+versus execution is coordinated without closing publication/state-transfer/retirement mechanisms.
+Q-019/Q-030/Q-047/Q-057/Q-058/Q-059/Q-066 retain their concrete scopes. No question was fully closed.

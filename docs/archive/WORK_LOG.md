@@ -255,3 +255,30 @@ is not established by local history; this log does not duplicate Git's commit ch
 - No production code, experiments, projects, dependencies, tests, CI, backends, plugin hosts, prototypes
   or executable tooling created. No solution builds/tests, staging, commit or push. SEQ-R0 remains
   **pending / not started**.
+
+## 2026-10-07 — SEQ-KB-R12
+
+- Audited edit/async cases A–L. Accepted one continuous gesture/one final Undo edit and distinct discrete
+  actions with bounded intent-based grouping (A/B); shared Pattern content restored once (C); captured
+  contextual generation identity and separate selection/edit/delete/Undo/switch/close validity (D).
+- Established sufficient dependency validation for R10/R14, operation-specific revalidation/rebase/reuse
+  and recomputation (E); no resurrection after Undo/Redo, conservative identity-restoration eligibility
+  and no canonical mutation after close (F/G/H). Distinguished inactive open from closed documents.
+- Separated render computation, durable media placement and canonical acceptance, with explicit resource
+  ownership on non-commit (I); one coherent rendered-replacement transaction/restoration without double
+  baked processing or eager media deletion (J); canonical graph Undo with new revision preparation and
+  no runtime history (K); failure before commit versus a prior intentional edit/secondary failure (L).
+- Updated canonical architecture, UX, sample, format and graph owners plus routing/current state;
+  recorded [D-065](DECISIONS.md#d-065--logical-undo-transactions-and-async-commit-integrity),
+  [partial Q-063 resolution](RESOLVED_QUESTIONS.md#r12-resolved-portions--q-063-semantics-accepted-concrete-integrity-mechanisms-remain-open)
+  and [completed-stage history](ROADMAP.md#seq-kb-r12--undo-transactions--async-commit-integrity).
+  Q-011/Q-029/Q-049 narrowed only by accepted semantics; no question fully closed. Q-063 still requires
+  concrete history/commit/dependency/cancellation/reuse mechanisms, limits/persistence and race evidence.
+- Verified repository-relative Markdown links/anchors, canonical Q and D IDs/references, owner/routing,
+  active/open versus resolved/archive separation, documentation-only scope, no implementation claims,
+  UTF-8/LF/whitespace and `git diff --check`. Active ROADMAP remains byte-identical to the initial baseline;
+  no implementation stage inserted, renumbered, reordered or started.
+- Initial baseline: clean `master`, HEAD `e706e7620bd1b323f046eb2e5c1ca0bfe83888de`. Branch/HEAD/index
+  and empty untracked baseline preserved; task edits remain unstaged. No production code, experiments,
+  projects, dependencies, tests, CI, prototypes, UI/backends/hosts or executable tooling introduced.
+  No empty-solution build, tests, staging, commit or push. SEQ-R0 remains **pending / not started**.

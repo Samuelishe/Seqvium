@@ -89,6 +89,42 @@ not silently reapply that exact baked chain. Specialized audition, acceptance, c
 and resampling semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Missing capabilities should be
 represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work retained.
 
+### Undo grouping and interaction preview
+
+Undo steps follow understandable user intentions under
+[ARCHITECTURE](ARCHITECTURE.md#logical-undo-transactions-and-history-scope). One continuous clip drag
+is one editing interaction, even if hundreds of pointer updates occur over two seconds. During the
+gesture, show the proposed position/relationship as an explicitly transient, model-bound preview of
+the canonical target. The gesture itself leaves canonical state unchanged until final commit;
+other independent accepted edits may still proceed. Preview is not an invisible alternative project
+truth and must not leak into Save/recovery as an accepted move. Temporary audible feedback, if provided,
+also remains preview under the graph/audio boundary.
+
+Committing a changed final result validates the target and relevant preconditions and records one
+coherent Undo transaction from the accepted starting state to the final placement/relationship. A
+no-change result creates no Undo step. Cancellation/Escape discards the proposal and restores feedback
+to current canonical state without a history entry; it must not roll back unrelated accepted edits.
+If the target/context changed incompatibly during the interaction, cancel or require an explicit
+reconciled intention rather than overwrite newer work. Event throttling and UI framework mechanics
+remain open.
+
+Five separate nudge commands normally produce five distinct edits; five unrelated parameter changes
+remain distinct. Bounded coalescing can be justified only by an explicit, understandable same-intent
+session, such as one continuous held-nudge interaction or one committed text/value editing session
+on the same target/scope. A different target, unrelated command or completed interaction ends that
+group. Do not merge unrelated actions merely because they happen close in time or merge later async
+completion with intervening edits. Exact supported sessions/bounds remain workflow decisions; elapsed
+milliseconds alone never define user intent. A multi-object command may deliberately form one Undo
+transaction. Explicit async acceptance also creates one coherent edit regardless of preparation time.
+
+Undo of shared Pattern content restores the one shared content, affecting all references consistently;
+it does not imply independent placement copies. Variation, placement-local processing and independent
+sound-definition edits have distinct targets under
+[ARCHITECTURE](ARCHITECTURE.md#separate-sharing-identities); Q-029 retains exact sharing/detachment UI.
+Document Undo concerns canonical project work. Workspace/user preferences, transient audition and
+derived execution follow the [history scope](ARCHITECTURE.md#logical-undo-transactions-and-history-scope).
+No keyboard shortcut, history size, storage implementation or persistence policy is selected here.
+
 ### Processing context and mix feedback
 
 Shared versus independent performance can change audible mono/legato/retrigger and voice-stealing
@@ -223,7 +259,10 @@ requires cancellation, visible state/progress and finite failure handling while 
 without a universal timeout under [AUDIO_ENGINE](AUDIO_ENGINE.md#bounded-asynchronous-preparation).
 Async completion revalidates its project/target/context before commit under
 [ARCHITECTURE](ARCHITECTURE.md#document-integrity-and-asynchronous-publication); it cannot attach a
-result for a deleted object to current selection. Exact undo/commit boundaries remain open.
+result for a deleted object to current selection. Accepted canonical edits enter document Undo even
+while execution is preparing or using the visibly identified last-valid revision. Pending, stale,
+failed or cancelled work must not appear as a successful edit; explicit reuse, where available, is a
+separate choice. Concrete history/commit mechanisms remain Q-063.
 
 User-facing failures should generally be concise and recoverable. Cascading modal `MessageBox`
 dialogs must not be the normal error experience. Modal decisions remain available when genuinely

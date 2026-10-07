@@ -191,6 +191,15 @@ cancelled/coalesced where safe; execution need not publish every intermediate ed
 and realtime publication history are separate concerns. Tokens, queues, state transfer and publication
 mechanics remain open under the bounded-backlog audio contract.
 
+An accepted canonical graph edit enters document Undo immediately according to its
+[logical transaction](ARCHITECTURE.md#logical-undo-transactions-and-history-scope), even while derived
+execution is preparing or using last-valid state. Undo restores canonical graph relationships/content
+as a new current canonical revision; normal validation/preparation/publication applies again. It neither
+rewinds the live DSP state nor selects whichever old graph happens to be playing. There is no second
+runtime Undo stack. Obsolete prepared work must not publish merely because Undo/Redo returns to similar
+content; it must still be relevant to the current canonical execution request under Q-018. Publication
+coalescing does not merge independent canonical edits or erase their Undo boundaries.
+
 If canonical revision 185 is invalid/incomplete or still unprepared, it remains the user's canonical
 edit and is not published. Last-valid prepared revision 184 may continue during the current session.
 The UI clearly marks current execution as behind editable state, conceptually `canonical 185 invalid /

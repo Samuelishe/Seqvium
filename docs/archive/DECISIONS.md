@@ -842,3 +842,44 @@ mechanism scopes. R0 can supply only baseline evidence within its existing sampl
 scope; later overlapping-source/opaque-host evidence needs separate authorization, not an inserted stage.
 Neither global-instance-per-definition nor instance-per-placement/note, engine language/ABI, scheduler,
 compiler, allocator, pool or plugin API is selected. SEQ-R0 remains pending / not started.
+
+## D-065 — Logical undo transactions and async commit integrity
+
+Status: Accepted by SEQ-KB-R12, 2026-10-07; partially resolves Q-063 and refines the async integrity
+direction in [D-055](#d-055--finite-preparation-failure-and-target-validated-async-commit).
+Basis: Documentation/architecture audit of edit/async cases A–L; semantic reasoning only, no runtime
+or concurrency/storage evidence.
+Rationale: One user intention can change several canonical relationships, while a long computation,
+durable file creation and derived execution publication occur at separate boundaries. Property setters,
+pointer events and completion callbacks cannot define predictable document Undo. Continuous gestures
+use explicit transient proposals and one accepted final edit; independent actions stay distinct unless
+a bounded same-intent session explains their grouping. Shared Pattern Undo restores one shared content,
+not invented placement copies. User workspace/global configuration and transient execution stay outside
+musical document history; project-owned plugin/sound edits remain canonical.
+An async request carries original document/lifecycle, targets/ownership, relevant dependencies/context
+and operation relevance/authorization. The mutation gate must establish these together; identity alone,
+current selection or wall-clock completion is insufficient. Known sufficient dependency sets avoid
+unnecessary whole-document revision equality; operation-specific rebasing/reuse cannot hide newer edits.
+Undo of enabling state withdraws implicit resurrection authority. Delete blocks target commit; restoring
+logical identity permits revalidation only for a still-authorized retained request with matching relevant
+dependencies. Cancellation/invalidation is not revived by Undo/Redo. Close ends mutation permission and
+late completion cannot reopen the document; independently useful artifacts require justified ownership.
+Sample Lab completion yields a candidate pending explicit acceptance. Object render/storage precedes
+the accepted canonical resource/reference edit, with safe ownership on non-commit. If rendered replacement
+is offered, source/replacement/processing changes form one user-level transaction; Undo restores source
+use without eagerly deleting retained media. Graph Undo changes canonical state as a new revision,
+with separate normal preparation/publication and no runtime Undo stack. Failure before canonical commit
+adds no Undo entry; intentional prior canonical edits survive secondary failure. Save/recovery boundaries
+stay intact, with pending/preview material excluded from accepted document state.
+Current owners: [Architecture](../ARCHITECTURE.md#document-integrity-and-asynchronous-publication),
+[UX](../UX_CONTRACT.md#undo-grouping-and-interaction-preview),
+[sample workflow](../SAMPLE_WORKFLOW.md#contextual-generation-result-validity),
+[project format](../PROJECT_FORMAT.md#save-and-reopen),
+[node graph](../NODE_GRAPH.md#editable-graph-and-audio-execution).
+Remaining Q-063: Concrete command/transaction/stack representation, commit coordination, identity/
+lifecycle and revision/dependency stamps, cancellation/invalidation, workflow-specific retention/
+suspension/rebase/reuse, edit adapters and race/failure evidence; history persistence/limits and storage
+remain open. Q-011/Q-029/Q-049 lose only the accepted validity/grouping portion, not substitution UI,
+reference/acceptance scope or baked-chain transformation mechanisms. Q-018/Q-019/Q-030/Q-047/Q-057/
+Q-058/Q-059/Q-066 remain open in their owned scopes. No C# classes, stack, schema, threading API,
+GC/storage algorithm or general ACID guarantee selected. SEQ-R0 remains pending / not started.

@@ -19,7 +19,7 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [PROJECT_VISION](PROJECT_VISION.md) | Product identity, audience, creative philosophy, non-goals |
 | [UX_CONTRACT](UX_CONTRACT.md) | Observable interaction principles and general workflow semantics |
 | [UI_DESIGN](UI_DESIGN.md) | Evolving visual/interaction guide: hierarchy, usable responsive layout, chrome, density, indicators, restrained feedback |
-| [ARCHITECTURE](ARCHITECTURE.md) | Foundation-first logical boundaries, project lifecycle, canonical/derived state, async integrity, musical/resource identities, shared definitions/semantic execution domains, signal ownership/scopes and Arrangement/Mixer relationships |
+| [ARCHITECTURE](ARCHITECTURE.md) | Foundation-first logical boundaries, project lifecycle, canonical/derived state, logical Undo transactions/history scope and async commit gates, musical/resource identities, shared definitions/semantic execution domains, signal ownership/scopes and Arrangement/Mixer relationships |
 | [AUDIO_ENGINE](AUDIO_ENGINE.md) | Realtime state/publication, execution-state lifetime/resource integrity, scheduling, devices, item-local hard boundaries, hard export ranges, finite tails and canonical render/preparation |
 | [NODE_GRAPH](NODE_GRAPH.md) | Core graph, contribution convergence/irreversible mixing, free canvas/topology, progressive interaction, ports, canonical graph and derived execution revisions |
 | [WORKSPACE](WORKSPACE.md) | Main-window chrome/foreground behavior, internal panes, activation/front behavior, docking, user layout state |

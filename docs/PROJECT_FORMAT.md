@@ -76,6 +76,14 @@ Explicit Save represents the user-confirmed saved state. A newer crash-recoverab
 separate under the recovery contract below; it does not silently redefine that saved version.
 Crash-safe persistence and media transaction mechanisms remain Q-058/Q-059, not a selected schema.
 
+Only accepted canonical state belongs to Save. Pending async results and transient gesture/audition
+previews are not silently serialized as completed project edits. A late completion after Save cannot
+rewrite that explicitly saved version: a subsequently accepted result is a new canonical edit and
+requires another Save to become the explicitly saved state. Recovery may protect that newer working
+state under the existing separate contract. [ARCHITECTURE](ARCHITECTURE.md#logical-undo-transactions-and-history-scope)
+owns document history; whether Undo/Redo history survives Save, reopen or restart, and its limits/storage,
+remain Q-063. Neither Save nor rolling recovery implicitly selects a persistent command/action history.
+
 ## Recovery state
 
 Crash recovery maintains a rolling current recoverable project snapshot/state alongside the explicit
@@ -104,6 +112,11 @@ Document recovery does not reconstruct missing audio magically. Future recording
 accepted imports must manage durable media independently enough for recovery to reconnect to already
 produced material where possible. Exact recording transactions and media reconciliation remain
 Q-058/Q-059 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+
+Recovery protects canonical working state, not acceptance of pending results or transient previews.
+Separately owned pending/generated media may still require safe preservation/reconciliation; its retention
+does not make it a saved or accepted project edit. History, recovery and pending-work resource ownership
+follow [media integrity](#media-and-persistence-integrity), with exact mechanisms still open.
 
 ## Musical content and workspace state
 

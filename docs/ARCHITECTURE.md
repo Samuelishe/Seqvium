@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, async document integrity, host UI services.
+Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, logical undo transactions and async commit integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -156,15 +156,155 @@ owns that boundary's graph semantics; [AUDIO_ENGINE](AUDIO_ENGINE.md) owns execu
 
 ## Document integrity and asynchronous publication
 
-Completion of asynchronous work does not itself authorize committing its result into the project.
-Before publication/commit, validate sufficient identity/context: the project and target still exist,
-the target/context remains compatible, the operation is relevant and not cancelled, and expected
-ownership/revision preconditions still hold where needed. A result for deleted Kick #42 must not attach
-itself to a newly selected object. Depending on the workflow, stale results may remain unattached,
-be discarded, or be offered for explicit reuse; no universal policy is selected. Exact undo transaction,
-commit grouping and pending-work invalidation remain Q-063 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+The following is an accepted semantic contract for future implementation. Completion of asynchronous
+work does not itself authorize a canonical project edit. A result for Kick #42 must never attach to
+whichever object is selected later. Current selection, focus, name, visual position and completion order
+are not commit authority. [Async commit gate](#async-commit-gate) and
+[history and pending-work relevance](#history-and-pending-work-relevance) below own the common rules;
+[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md#contextual-generation-result-validity) specializes candidate handling.
 [PROJECT_FORMAT](PROJECT_FORMAT.md#save-and-reopen) owns canonical Save/reopen;
 [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction) owns frozen canonical render preparation.
+
+### Edit, preparation and resource boundaries
+
+| Concept | Semantic responsibility |
+| --- | --- |
+| User intent / logical edit | The requested musical/document outcome and its target/scope; requesting long work does not itself mutate the document |
+| Canonical document mutation | A change to the single editable project truth, validated against the state in which it is accepted |
+| Undo transaction | One coherent accepted document intention, potentially changing several canonical relationships together |
+| Transient interaction preview | Explicit temporary feedback/audition with a cancel/restore path; not accepted document state or history |
+| Async computation/preparation | Produces a candidate/prepared result from identified inputs; completion alone is not an edit |
+| Async result commit | Revalidates the operation and accepts its canonical effect through the normal transaction boundary |
+| Derived realtime publication | Makes a valid prepared canonical revision executable under the graph/audio contract; not a second editable history |
+| Durable resource creation | Establishes storage/ownership of produced material; a file's existence alone neither inserts it into the project nor authorizes an edit |
+
+```text
+user requests operation -> capture intent and sufficient preconditions
+    -> async computation/preparation -> result available
+    -> required durable resource placement succeeds
+    -> revalidate project/target/context/operation at commit
+    -> commit one coherent canonical undo transaction
+    -> derived execution catches up separately
+```
+
+Durable placement is required only when the workflow creates/accepts managed material. It is not a
+document edit by itself, and later non-commit needs explicit resource ownership/cleanup. External
+export may create a useful artifact without any project mutation or project Undo entry; its delivery
+authority/lifetime follows its own requested workflow. No database/ACID guarantee is implied.
+
+### Logical undo transactions and history scope
+
+Undo/Redo operates on coherent canonical document intentions, not individual property setters,
+pointer events, task completions or currently executing audio. An accepted transaction presents its
+related canonical changes together from the user's perspective, with one Undo restoring the preceding
+relationship/state and Redo reapplying the accepted edit. Examples include moving a clip and its required
+placement relationship, accepting generated audio and its project resource/reference, making a Pattern
+variation, and explicitly replacing an object with rendered audio. No internal command count, class,
+stack, event-sourcing framework or threading primitive is selected.
+
+Canonical musical, graph, project-owned plugin/sound configuration and applicable project editor-state
+edits belong to document history. Application/user workspace layout, global preferences and external
+package installation normally do not; any associated project-owned canonical edit has its own document
+transaction. Live voices/tails, prepared execution and transient auditions/previews are outside document
+Undo. [UX](UX_CONTRACT.md#undo-grouping-and-interaction-preview) owns gesture/action grouping;
+[PROJECT_FORMAT](PROJECT_FORMAT.md#save-and-reopen) owns persistence boundaries. Undo history limits and
+persistence across Save/reopen/restart are open, independently of rolling recovery.
+
+A note edit in a Pattern referenced by three placements changes the one shared Pattern content. Undo
+restores that content once and all remaining references observe it; it must not revert three invented
+placement copies. Making a Pattern variation instead creates independent musical content and changes
+the intended reference relationship in one transaction, without implicitly detaching sound definitions.
+Placement-local processing edits target that placement's state. Making/editing an independent sound
+definition targets its definition and intended references, not Pattern content or live execution state.
+[Separate sharing identities](#separate-sharing-identities) owns those boundaries; Q-029 retains concrete
+reference/detachment, acceptance-scope and sharing-feedback design.
+
+### Async commit gate
+
+Pending work conceptually carries original document identity and lifecycle, operation intent and
+authorization, target identities/scope, expected ownership relationships, relevant context, sufficient
+source/settings/dependency preconditions, and relevance/cancellation state. Its relationship to the
+history state that made it meaningful must be known where needed. These are semantic requirements,
+not selected token fields, UUIDs, revision stamps, schemas or cancellation APIs.
+
+Before canonical commit, establish all applicable conditions together at the mutation boundary:
+
+- The original document is open and still able to accept the intended mutation.
+- Required targets exist with the captured logical identities and expected ownership relationships.
+- The operation remains authorized and relevant, and has not been cancelled or invalidated.
+- Relevant context and required source/settings/dependency preconditions still hold.
+- Required durable material is successfully available under the intended ownership.
+
+A prior successful check followed by a conflicting change is insufficient; the accepted mutation must
+still satisfy the gate. Long preparation need not lock the whole document. The exact coordination
+mechanism remains open. Automatic commit is allowed only for an already authorized workflow whose
+full gate still holds. Sample Lab candidate generation authorizes exploration, not acceptance.
+Explicit acceptance is a new commit decision and must validate its actual destination/preconditions;
+it does not waive document lifetime, ownership or storage safety.
+
+Object identity alone cannot validate work begun at R10 when relevant inputs/settings are R14. A stale
+result must not silently overwrite newer intent. Conversely, unrelated document edits need not invalidate
+an operation with a known smaller sufficient dependency set. Validate that set and all relevant target/
+context/lifecycle relationships; neither exact whole-document revision equality nor a match of one
+object alone is universally required. Unknown dependencies require conservative validation/recomputation,
+not an assumption that identity is enough.
+
+A particular operation may support revalidation or rebasing if it can establish a correct outcome
+against current dependencies without losing intervening edits or changing the authorized intention.
+Rebasing is not a universal capability. If changed inputs are essential to the requested current result,
+recompute; a frozen old render may remain useful only as clearly identified old material. Where meaningful,
+explicit acceptance/reuse may apply a stale candidate to a newly validated destination as a separate
+user action, without pretending it satisfies the original operation. Otherwise discard/lifecycle-clean
+or retain it unattached under the workflow's ownership. No universal stale-result retention policy is set.
+
+### History and pending-work relevance
+
+Undo/Redo changes canonical state; a history position is evidence of context, not sufficient commit
+authority. Work whose enabling edit/intention was undone loses authority to silently restore that edit
+or its consequences. Cancel/invalidate it or retain only safely owned unattached material where useful.
+An unrelated Undo need not invalidate work whose sufficient preconditions and relevance still hold.
+Redo can recreate a similar state, but does not automatically renew cancelled/invalidated authorization
+or validate an old pending result. Re-evaluate actual dependencies, relationships and operation relevance;
+explicit reuse or a new request is required where original authority was lost.
+
+Deleting a required target makes targeted commit impossible. The workflow may cancel/invalidate its
+request or explicitly keep it suspended as pending work/candidate material. Undoing deletion may restore
+the same logical identity, unlike creating another object with the same name/position. That restoration
+can permit revalidation only if relevant source/settings/context/ownership also match and the original
+request remains authorized under that workflow. Identity restoration never revives an already cancelled
+or invalidated operation; useful artifacts may instead be explicitly accepted anew. Restoring identity
+does not guarantee restoration of every dependency. No identity/schema or suspension mechanism is chosen.
+
+Switching active projects is distinct from closing one: an inactive open document may still accept its
+authorized operation if its gate holds, but a result never moves to the newly active document. Workflows
+requiring active audition/context may suspend or invalidate that part. Closing a document ends canonical
+commit permission; late completion must not reopen/resurrect it, even if a project with the same path
+is later opened. Reopening requires fresh lifecycle validation/authority. Cancellation may be requested
+without instant termination; safe result/resource retirement remains required. Separately useful exports
+or explicitly retained candidates may finish/survive only with an owner and justified delivery/reuse
+workflow independent of mutation of the closed document. Application close must not wait indefinitely
+for arbitrary work; shutdown/cancellation/retention mechanisms remain open.
+
+### Failure, cancellation and non-commit
+
+User cancellation before commit withdraws the pending operation; a late result cannot undo cancellation.
+Stale inputs, invalid target/ownership, and project close fail different gate conditions and can require
+different reuse/cleanup paths. Preparation failure creates no edit; storage failure prevents claiming
+durable acceptance; canonical commit failure must leave no partial accepted transaction or successful
+history entry. Each path needs an explicit resource owner and safe non-commit behavior, not one universal
+exception handler/status enum. Cancellation after an accepted edit does not implicitly undo it; reverting
+the edit uses normal document Undo or a new explicit edit.
+
+Prefer preparation and necessary durable placement before canonical commit where practical, so failed
+preparation cannot leave half of a replacement/acceptance applied. If a workflow intentionally commits
+a meaningful canonical edit first and secondary work later fails, that earlier edit remains a real Undo
+transaction, with the secondary failure reported separately; failure itself adds no Undo step. A derived
+execution failure likewise does not silently roll back accepted canonical intent. General filesystem/
+document/database atomicity is not claimed. Q-063 retains concrete transaction/history, dependency
+validation, invalidation/cancellation and operation-specific reuse mechanisms/evidence in
+[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); Q-058/Q-059 retain recovery/media mechanics.
+
+### Known dependencies and resource integrity
 
 Before a global destructive operation, check known active dependencies and avoid invalidating live
 or project state underneath them. This direction can apply to plugin/content-pack removal, managed
@@ -356,7 +496,8 @@ this is distinct from replacing that voice's evolving state with another domain'
 An explicitly independent sound definition owns its own durable settings and no longer follows edits
 to the original definition; it may still reference the same immutable content. Runtime independence
 alone does not detach a sound definition. Exact realtime publication/synchronization and any necessary
-source-specific transitions remain Q-047/Q-018/Q-057; reference/edit/undo mechanics remain Q-029/Q-063.
+source-specific transitions remain Q-047/Q-018/Q-057; concrete reference/edit/history mechanics remain
+Q-029/Q-063 under [logical undo transactions](#logical-undo-transactions-and-history-scope).
 [PROJECT_FORMAT](PROJECT_FORMAT.md#musical-content-and-workspace-state) owns durable preservation.
 
 ## Signal ownership and processing contexts
@@ -512,7 +653,9 @@ Moving the same Kick between purely organizational groups at unchanged time reta
 membership and routing, so it does not change sound. Musical containment, organization and routing
 are separate relationships: an operation changing processing membership is a context move, not a
 sound-neutral regrouping. [UX_CONTRACT](UX_CONTRACT.md#processing-context-and-mix-feedback) owns making
-that consequence visible without requiring graph expertise. Exact move/edit/undo mechanics remain open.
+that consequence visible without requiring graph expertise. A move's accepted placement/context changes
+form one [logical undo transaction](#logical-undo-transactions-and-history-scope); exact assignment,
+edit representation and execution-transition mechanics remain Q-030/Q-019/Q-063/Q-057.
 
 ## Future parameter control
 

@@ -50,12 +50,38 @@ preview must not be the only way to judge a candidate that sounds substantially 
 acceptance in the real project. Audition remains temporary and reversible until explicit acceptance;
 it must not silently rewrite accepted musical material or a shared audio resource.
 
-Substitution mechanics, stop/cancel/restore, realtime publication, downstream boundaries and exact
-target lifetime remain open. Async completion must revalidate project/target identity, compatible
-context, relevance/cancellation and ownership/revision preconditions before publication or acceptance
-under [ARCHITECTURE](ARCHITECTURE.md#document-integrity-and-asynchronous-publication). Generation for
-a deleted target must not attach to current selection; unattached candidate, discard or explicit reuse
-policy depends on the workflow. Q-011/Q-063 retain exact mechanics and undo/commit grouping.
+Substitution mechanics, stop/cancel/restore, realtime publication and downstream boundaries remain
+open (Q-011). Pending generation and acceptance follow the
+[async commit gate](ARCHITECTURE.md#async-commit-gate); the cases below specialize validity/reuse.
+Q-063 retains concrete history, precondition and cancellation mechanisms, not an open choice about
+whether completion alone can mutate the target.
+
+### Contextual generation result validity
+
+Starting contextual generation for Kick #42 captures its original document/lifecycle, logical target
+and expected relationship/scope, relevant source/settings and processing context/dependencies, plus
+operation intent, relevance and cancellation status. Target may mean a sound definition or a placement
+according to the explicitly identified workflow; Q-029 retains exact acceptance scope. Current selection
+is never a replacement for that captured destination. Generation produces candidate material, not an
+automatic canonical edit; even a valid contextual result needs explicit acceptance. Temporary contextual
+audition must also validate its required target/context and use the reversible preview/publication path.
+
+Each following change is assessed independently against that launch state:
+
+| Change before completion | Candidate/acceptance disposition |
+| --- | --- |
+| Select Snare | Selection alone does not invalidate Kick's inputs or redirect its candidate to Snare. Candidate may remain available for Kick; active contextual audition may need suspension/revalidation. Acceptance still targets the identified Kick scope |
+| Edit Kick | If relevant source/settings/context changed, the result is stale for the original request and cannot silently overwrite the edit. An unrelated change need not invalidate known sufficient preconditions. Offer clearly identified old material for fresh explicit acceptance/reuse where meaningful, or recompute for a current contextual result |
+| Delete Kick | Targeted acceptance/audition is unavailable. Cancel/invalidate the request, or keep safely owned unattached/suspended candidate work where the workflow explicitly supports it; never bind to a similarly named/positioned or selected object |
+| Undo deletion | Restoring the same logical identity may permit revalidation only if relevant dependencies/relationships/context match and the request was retained rather than cancelled/invalidated. Otherwise useful material can only be accepted through a fresh explicit action. If Kick was also edited since launch, Undo of deletion alone does not remove that staleness |
+| Switch project | An open original project retains its identity; the candidate never targets the newly active project. Retained exploration may continue, but active audition/context and eventual explicit acceptance need their own valid destination/gate |
+| Close original project | No canonical acceptance or target audition may occur after close. Cancel/invalidate project-bound work; independently owned reusable material may survive only under an explicitly justified candidate/export workflow, otherwise discard/lifecycle-clean safely |
+
+Undo of the state that made generation relevant must not let late completion resurrect it. Redo alone
+does not renew invalidated/cancelled work; restored preconditions and relevance must be established under
+[history rules](ARCHITECTURE.md#history-and-pending-work-relevance). Operation-specific candidate retention,
+discard/reuse, dependency validation and suspension controls remain open; no personal library/catalog
+or universal stale-result policy is introduced. Explicit reuse selects and validates a destination anew.
 
 ## Specialized generation in a shared exploration surface
 
@@ -122,18 +148,47 @@ operations may be considered later but are not implied by normal processing or c
 The exact acceptance edit for a target and shared-use behavior still need design.
 [ARCHITECTURE](ARCHITECTURE.md) owns identity boundaries; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence.
 
+Successful acceptance groups the intended project resource/reference and target/use changes into one
+[logical undo transaction](ARCHITECTURE.md#logical-undo-transactions-and-history-scope), after durable
+placement and commit revalidation. Undo removes/reverts accepted active use; it does not mean deleting
+the durable audio or every other placement using it. History/recovery/pending owners may retain it.
+
 ## Asynchronous preparation and dependency availability
 
 Generation/preparation/render work needed by user-visible operations requires cancellation, visible
 state/progress and finite failure handling under [AUDIO_ENGINE](AUDIO_ENGINE.md#bounded-asynchronous-preparation).
-Do not wait forever on stalled workers/plugins; failure leaves canonical state and existing realtime
-execution intact. No universal timeout is selected.
+Do not wait forever on stalled workers/plugins. In a prepare-before-commit workflow, failure produces
+no canonical edit or Undo entry and leaves existing realtime execution intact. An intentional earlier
+canonical edit remains undoable if secondary preparation later fails under
+[failure semantics](ARCHITECTURE.md#failure-cancellation-and-non-commit). No universal timeout is selected.
 
 Render/resampling freezes and validates/prepares the relevant canonical project revision under
 [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction). Required invalid state or unavailable
 dependencies block the affected operation with object-level diagnostics; never silently sample older
 playing state or omit required processing and report success. Semantic object boundaries are below;
 concrete execution taps and broader capture scope remain open.
+
+Creating a sample separates these boundaries:
+
+```text
+identify/freeze required canonical scope and dependencies
+    -> prepare/render asynchronously -> durable managed media placement succeeds
+    -> revalidate original project/target/operation and sufficient preconditions
+    -> commit intended sample/reference/use as one document Undo transaction
+```
+
+Render computation and file creation are preparation/resource events, not Undo entries. The commit
+validates both the frozen result's identity/provenance and its intended current use; completion cannot
+select a new destination. If relevant R10 inputs are now R14, recompute when the request requires the
+current object's result. A clearly identified frozen result may instead be explicitly reused where
+meaningful; safe rebasing requires operation-specific evidence under the architecture gate.
+
+If durable audio exists but commit is stale, cancelled, invalid or fails, do not attach it incorrectly
+or leave half the intended edit accepted. It becomes an explicitly owned unattached candidate/orphan/
+reusable artifact, or is lifecycle-cleaned according to the workflow; durable storage success alone
+does not claim project acceptance. Q-059 retains storage/cleanup implementation. Undo of a successful
+commit reverts active project relationships while lifecycle-aware retention protects media needed by
+history/recovery/pending work; it does not reverse a computation or immediately delete its file.
 
 ## Resampling
 
@@ -206,8 +261,13 @@ Future candidate sources include an instrument playing a note, a pattern, an arr
 multiple selected sources, and generated audio. Converting them to a sample should preserve the
 source by default and make the resulting sample immediately reusable.
 
-An explicit replace/disable-source action may be added later, but it must be undoable. A replacement
-must not silently reapply the exact processing already baked into its audio:
+An explicit replace/disable-source action may be added later. If offered, its accepted source disable/
+removal/replacement, sample reference and necessary processing relationship changes must form one
+coherent user-level Undo transaction after async rendering, durable placement and commit validation.
+Preparation adds no separate Undo steps. Undo restores the prior source relationships/state and removes
+the accepted replacement from active use; retained history/media ownership protects both source and
+replacement resources rather than eagerly deleting them. A replacement must not silently reapply the
+exact processing already baked into its audio:
 
 ```text
 source -> EQ -> Gain -> rendered sample

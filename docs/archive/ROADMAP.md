@@ -121,3 +121,14 @@ plugin feasibility and measured CPU/RAM remain open. Recorded later bounded evid
 expanding R0 into external hosting or changing implementation stage IDs/order. Documentation/architecture
 only; no executable work started. SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r11).
+
+## SEQ-KB-R12 — Undo Transactions & Async Commit Integrity
+
+Completed 2026-10-07. Audited edit/async cases A–L and accepted logical canonical Undo transactions,
+gesture/action grouping, explicit preview/history scope, sufficient async commit gates, pending-work
+relevance under Undo/Redo/delete/close, render/resource boundaries and failure-safe non-commit. Partially
+resolved Q-063 through [D-065](DECISIONS.md#d-065--logical-undo-transactions-and-async-commit-integrity);
+concrete history, validation/cancellation/reuse mechanisms and evidence remain open. Narrowed only
+accepted portions of Q-011/Q-029/Q-049; no question fully closed. Documentation/architecture only;
+active implementation roadmap numbering/order and R0 scope unchanged. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r12).
