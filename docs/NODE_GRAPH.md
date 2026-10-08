@@ -63,8 +63,11 @@ or permission for zero-delay cycles.
 item-local and containing-container processing levels, and
 [signal ownership](ARCHITECTURE.md#signal-ownership-and-processing-contexts) defines their semantic
 responsibilities versus sound definitions and global routes. A scope can preserve multiple paths;
-it does not imply one mixed output. Concrete scope references/edit ownership remain Q-019, not the
-semantic separation. No final types, arbitrary nesting or container terminology are selected.
+it does not imply one mixed output. R1's [canonical foundation](ARCHITECTURE.md#r1-canonical-foundation)
+implements identified item/containing contexts, per-placement/per-part route intent and atomic edits;
+it validates the two levels and explicit aggregate versus divergent-route contradiction. No graph
+nodes, attachment/topology compiler, ports, DSP or final public container terminology are implemented.
+Those remaining mechanisms stay Q-019 and later graph stages.
 
 Arrangement, Mixer and graph surfaces may expose the same canonical context under
 [ARCHITECTURE](ARCHITECTURE.md#arrangement-context-and-mixer-presentation). Connections determine

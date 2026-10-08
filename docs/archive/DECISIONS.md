@@ -1215,3 +1215,33 @@ Current owners: [Portability](../PORTABILITY.md#evidence-led-release-policy),
 [UX](../UX_CONTRACT.md#project-availability-and-dependency-blockers),
 [roadmap](../ROADMAP.md#platform-release-acceptance-ownership).
 No runtime evidence, selected backend/toolchain/RID, release date, executable work or expanded R0 scope.
+
+## D-074 — R1 canonical musical/document foundation
+
+Accepted and implemented in SEQ-R1, 2026-10-08. Choose one .NET 10 canonical library and one managed
+test project, with logical domain/application/persistence boundaries rather than an assembly or
+interface per noun. Immutable entity records and typed UUID references make sharing explicit and
+permit validation before a whole canonical state/revision is published. Fresh part/note identities
+for musical variations distinguish content independence from durable sound/resource independence.
+Explicit item/containing context, contribution/performance and route intent retain future processing
+boundaries without instantiating a graph, Mixer or DSP.
+
+Choose Int64 musical ticks at 960,000 per quarter and six-decimal BPM in [1, 1000]. The grid covers
+ordinary binary/triplet/quintuplet edits, with long-project range and exact integer rational conversion.
+Absolute endpoint rounding (nearest, ties later) avoids accumulated frame-duration drift. Arbitrary
+rational tuplets, tempo maps and fixed-time audio mappings remain future bounded work.
+
+Choose validated immutable candidate transactions with session snapshot Undo/Redo, a configurable
+256-entry default, separate saved revision and fresh lifecycle/transition authority. Whole-state
+validation favors coherence and reviewability at foundation scale; large-project performance/retention
+and dependency-specific async acceptance remain evidence work rather than a generic framework.
+Choose bounded JSON 1.0, compatible minor/unknown-property retention, opaque JSON extension state,
+critical-version/structure refusal and a sibling-temporary Save adapter. This establishes actual
+Save/reopen while leaving physical media packaging, migrations, recovery and crash guarantees open.
+
+R0's native/publication/frame representations and observed 48 kHz / 10 ms endpoint are experimental.
+Defer a permanent backend/ABI/DSP decision and additional workload/period/device/recovery/distribution
+evidence to a separately reviewed pre-R2 boundary. Q-001–Q-007 are not closed by domain tests.
+Current owners: [Architecture](../ARCHITECTURE.md#r1-canonical-foundation),
+[Project format](../PROJECT_FORMAT.md#r1-canonical-json-format), [Development](../DEVELOPMENT.md),
+[Test execution](../TEST_EXECUTION.md). Open remainder: Q-009/Q-019/Q-029/Q-063 and affected audio/media owners.

@@ -747,3 +747,35 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Initial clean `master`, HEAD `edad4704309543bab17f83d7af2b7023895c8ac5`. All task changes remain
   unstaged; history/index/solution and empty pre-existing user-work baseline preserved. Generated
   builds/notices/logs stay ignored. No staging, commit or push.
+
+## 2026-10-08 — SEQ-R1
+
+Implemented the separately authorized canonical musical/document foundation from clean `master`,
+HEAD `aa8d7dc552aa59c0ff75f91536cfc82f29aafd09`, planning baseline SEQ-KB-R21. R0 remains partially
+evidenced / narrow; no experimental source was promoted into production.
+
+- Added one portable `Seqvium.Core` library and one `Seqvium.Tests` project to the existing solution,
+  production SDK pin, inherited nullable/warnings-as-errors and locked package restore.
+- Implemented immutable canonical musical identities/relationships, unnamed lifecycle, shared and
+  independent edits, distinct local processing/route intent, coherent validated transactions and
+  bounded session Undo/Redo with separate saved state and retained descriptor snapshots.
+- Implemented precise musical time, exact constant-tempo frame conversions, deterministic same-position
+  ordering, JSON 1.0 persistence, compatible unknown/opaque retention and degraded/version/structure
+  handling. Sibling-temporary Save tests cover oversized encoding, directory-target failure and a
+  Windows locked destination without losing the prior Save or publishing partial state.
+- `dotnet restore Seqvium.sln --locked-mode`, `dotnet build Seqvium.sln -c Release --no-restore`,
+  `dotnet test --solution Seqvium.sln -c Release --no-build --no-restore`: zero build warnings/errors;
+  89 passed, zero failed/skipped on Windows x64, SDK 10.0.401 / runtime 10.0.12. Synthetic data and
+  owned temporary directories only; no arbitrary sleeps, downloaded music or hosted evidence.
+- Updated current owners/status, archived the completed stage and bounded decisions/resolutions.
+  Q-008/Q-039 resolved; Q-009/Q-019/Q-029/Q-063 narrowed; all audio-specific Q-001–Q-007 remain open.
+  Backend/ABI/DSP strategy and additional workload/period/device/recovery/distribution evidence need
+  a separately reviewed boundary before R2 production audio. No R2, CI, UI, media import, DSP,
+  graph compiler, plugin hosting, recovery or ProjectStats implementation.
+- All source/document changes remain unstaged. No commit, push, history/index mutation or global
+  tool installation. R1 is locally accepted-ready, without production playback/recovery/R12 claims.
+
+Regression sensitivity was demonstrated for lost unknown settings/part-relationship fields and
+invented no-op history: both new assertions failed before the fix and pass after preserving the
+original object-boundary data and comparing canonical collection content. Composed net-zero edits
+also retain revision/generation and Redo authority.

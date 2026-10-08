@@ -34,20 +34,23 @@ These are planned capabilities and design directions:
 
 ## Current status
 
-**There is currently no runnable Seqvium workstation. Implementation has not started.**
-The repository contains product, architecture, and development policy plus passive repository configuration.
-SEQ-R0 Audio Architecture Probe remains **pending / not started**.
+**There is currently no runnable Seqvium workstation.** SEQ-R1 provides a .NET 10 canonical musical
+model, document edits/Undo/Redo and versioned JSON Save/reopen, with a managed test suite.
+SEQ-R0 has bounded experimental audio evidence and remains **partially evidenced**; it selects no
+permanent backend. Production audio, GUI and later workflows remain future work.
 The [roadmap](docs/ROADMAP.md) describes intended stages, not available features or release promises.
 
 ## Platforms
 
 Windows, Linux, and macOS are the intended targets. Windows is the primary early development environment;
-no application runtime or audio-device acceptance has been established on any platform yet.
+R1 currently has local Windows build/test evidence. R0 device observations are experimental;
+no production desktop/audio or supported-distribution acceptance is claimed.
 
 ## Development
 
 Start with the [documentation index](docs/INDEX.md). Repository agents should read [AGENTS.md](AGENTS.md).
-There are no application build, installation, or run commands yet; the existing solution is empty.
+See [development](docs/DEVELOPMENT.md) and [test execution](docs/TEST_EXECUTION.md) for reproducible
+CLI commands. `Seqvium.sln` contains `Seqvium.Core` and `Seqvium.Tests`; there is no UI executable yet.
 
 ## License
 

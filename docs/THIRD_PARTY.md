@@ -51,14 +51,27 @@ remains the primary license artifact.
 
 ## Introduced
 
-SEQ-R0 uses installed tools/runtime and Windows system APIs. No NuGet audio/test packages, downloaded
-audio library, vendored source or third-party asset is introduced. Compiled probe outputs/notices are
-local ignored build artifacts. The empty production `Seqvium.sln` remains scaffolding; this is no
-application architecture or supported distribution decision.
+R1 adopts the installed .NET 10 SDK/runtime for its framework-dependent canonical library and managed
+tests. Production code has no external NuGet dependency. The test project uses the components below;
+its [manifest](../tests/Seqvium.Tests/Seqvium.Tests.csproj) and
+[lock file](../tests/Seqvium.Tests/packages.lock.json) own versions and the complete dependency graph.
+No third-party source/assets are vendored. Local binaries are ignored and no product distribution is
+created. Package licenses were checked in the restored package metadata, with official sources linked
+below; redistribution of test binaries must preserve the applicable licenses/notices.
 
 | Component / author | Form, purpose and source | License/distribution evaluation | Version authority |
 | --- | --- | --- | --- |
-| .NET / .NET Foundation and contributors | Installed SDK and framework-dependent C# host runtime; [official source/license](https://github.com/dotnet/runtime/blob/main/LICENSE.TXT) | Runtime source is MIT; no runtime is bundled here. Future self-contained distribution must retain applicable runtime/transitive notices and review its actual contents | Experiment-local [global.json](../experiments/seq-r0/global.json); actual runtime in [report](experiments/SEQ-R0_REPORT.md) |
+| xUnit.net v3 and analyzers / .NET Foundation and contributors | Test-only managed framework, assertions, runners and compiler analyzers; [official source/license](https://github.com/xunit/xunit/blob/main/LICENSE), [MTP integration](https://xunit.net/docs/getting-started/v3/microsoft-testing-platform) | Apache-2.0 in the selected packages, compatible with Seqvium's license. Preserve license and any applicable notices if redistributing; no test package is a production-library dependency | Test manifest selects `xunit.v3.mtp-v1`; lock fixes xUnit components and analyzers |
+| Microsoft.Testing.Platform, MSBuild, TrxReport.Abstractions and Telemetry / Microsoft | Test-only managed execution integration; [official source/license](https://github.com/microsoft/testfx/blob/main/LICENSE) | MIT; retain copyright/license on redistribution. Telemetry is a framework default, not a Seqvium application service; developers can opt out with `TESTINGPLATFORM_TELEMETRY_OPTOUT=1` | Transitive test lock entries |
+| Microsoft.ApplicationInsights, Microsoft.Bcl.AsyncInterfaces and Microsoft.Win32.Registry / Microsoft | Test-only transitive telemetry/BCL compatibility packages; [Application Insights source](https://github.com/microsoft/ApplicationInsights-dotnet), [runtime source/license](https://github.com/dotnet/runtime/blob/main/LICENSE.TXT) | Installed package metadata declares MIT for all three. Preserve applicable copyright/license on redistribution; no application telemetry or Windows-only domain dependency is introduced | Transitive test lock entries |
+
+SEQ-R0 separately uses installed tools/runtime and Windows system APIs, without NuGet audio packages,
+downloaded audio libraries or assets. Compiled probe outputs/notices remain local ignored artifacts;
+the following entries describe its independent provenance and obligations.
+
+| Component / author | Form, purpose and source | License/distribution evaluation | Version authority |
+| --- | --- | --- | --- |
+| .NET / .NET Foundation and contributors | Installed SDK/runtime for R1 and framework-dependent experimental host; [official source/license](https://github.com/dotnet/runtime/blob/main/LICENSE.TXT) | Runtime source is MIT; no runtime is bundled here. Future self-contained distribution must retain applicable runtime/transitive notices and review its actual contents | Production [global.json](../global.json), independent experiment-local [global.json](../experiments/seq-r0/global.json); actual experimental runtime in [report](experiments/SEQ-R0_REPORT.md) |
 | GCC / Free Software Foundation, MSYS2 UCRT64 packaging | Existing developer C compiler; [GCC](https://gcc.gnu.org/), [MSYS2](https://www.msys2.org/) | Compiler GPLv3+, not redistributed. Eligible covered runtime code uses GPLv3 with GCC Runtime Library Exception 3.1; installed `COPYING.RUNTIME` and `COPYING3` are copied beside DLL output. No compiler/global installation performed | [build.ps1](../experiments/seq-r0/build.ps1) declares compiler/options; observed package identity in report |
 | MinGW-w64 headers/CRT / MinGW-w64 contributors | Existing Windows API headers/import libraries and linked runtime; [official source/licensing](https://www.mingw-w64.org/support/#licensing) | Mixed runtime notices include permissive ZPL/BSD/public-domain terms and component-specific exceptions. Build copies the complete installed `COPYING.MinGW-w64-runtime.txt`, preserving its full obligations rather than assuming one umbrella license. Future distribution must audit actual linked contents | Build script uses installed MSYS2 UCRT64; exact tested headers/CRT packages in report |
 | Windows WASAPI/COM/MMCSS/UCRT / Microsoft | Installed OS services, not redistributed DLLs; [official API](https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream) | Probe calls OS APIs. System DLLs are not bundled or relicensed. Actual native import list, including a private CRT API-set import, is reported; clean supported distribution remains unvalidated | OS/API and import inspection in report |
@@ -76,7 +89,7 @@ it does not adopt a portable audio dependency or production engine.
 
 | Candidate / direction | Intended evaluation boundary |
 | --- | --- |
-| C# / .NET 10 | User's development direction and proposed application platform; evaluate concrete SDK/runtime and distribution obligations when introduced |
+| Further .NET application delivery | Managed canonical foundation is adopted in R1; workstation executable, self-contained/native packaging and distribution remain unevaluated |
 | Avalonia | Proposed UI framework; evaluate official package/API/platform/license evidence before adoption |
 | miniaudio or comparable backend | Still a portable candidate. Official miniaudio license offers public-domain or MIT-0 terms; PortAudio has an MIT-style license. Neither is downloaded, built, redistributed or device-tested here; concrete revisions/transitive/backend/distribution checks remain necessary |
 | Future ASIO integration | Desired later device capability, not an R0 requirement or adopted SDK/backend; evaluate concrete implementation source, licensing and redistribution when its stage approaches |

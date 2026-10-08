@@ -5,8 +5,63 @@ Read when: Structuring code, reviewing coupling, or evaluating architecture prop
 Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, semantic-action/input boundary, logical undo transactions and async commit integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
-No production architecture is implemented. Accepted responsibilities and musical direction bind future
-design; implementation shape, schemas, and native choices still need bounded design and evidence.
+SEQ-R1 selects a bounded managed canonical foundation below. Audio, graph execution, presentation and
+native choices remain separate future work; domain evidence does not establish their feasibility.
+
+## R1 canonical foundation
+
+The production foundation uses one `Seqvium.Core` library and one `Seqvium.Tests` project. Domain
+values/validation, document operations/history and JSON/filesystem persistence are logical boundaries
+within that library; no assembly-per-layer rule or service framework is needed.
+
+Each document has a persistent project UUID and a fresh nonpersistent lifecycle UUID on creation/open.
+An unnamed pristine document has no explicit saved snapshot/path and is unmodified; its first accepted
+edit becomes dirty. A successful file Save establishes the separately identified saved snapshot.
+An immutable canonical state owns named Patterns, nested identified parts/notes, sound definitions,
+Pattern placements, flat Instrument Groups, resource descriptors and optional processing/route intent.
+References use typed `Id<T>` UUIDs, never names or equal payloads. Pattern parts address sound definitions;
+placements address Patterns. A variation copies parts/notes with fresh identities and retargets one
+placement atomically while preserving sound/resource/processing references. Sound independence instead
+copies durable sound configuration and retargets an explicitly selected part (shared Pattern scope).
+Occurrence-only sound independence first requires a variation; no universal unlink operation is implied.
+
+Processing contexts have distinct item-local or containing-local identities, with optional opaque
+configuration; an item context has exactly one placement owner. A placement may name one containing
+context and a downstream route. Per-part placement relationships can retain distinct contributions
+and explicit performance-interaction UUIDs independently of sound definitions. Route identities are
+intent only, not Mixer channels, executable graphs or automatically instantiated DSP. Organization
+never assigns processing. An explicit aggregate cannot also claim divergent post-mix part routes;
+validation rejects that contradiction. Full graph attachment/topology, execution-domain derivation,
+capability negotiation and Arrangement/Mixer assignment remain Q-019/Q-030/Q-047.
+
+Musical positions/durations use nonnegative/positive Int64 ticks, **960,000 ticks per quarter note**.
+This exactly covers conventional binary subdivisions, triplets and quintuplets with fine edit precision;
+it is a bounded grid, not a promise of every rational subdivision. Positions span over nine trillion
+quarters. Checked arithmetic rejects overflow. Tempo is decimal BPM in [1, 1000], at most six fractional
+digits. Constant-tempo conversions use exact integer rational arithmetic and round to nearest, ties
+toward the later frame/tick. Always convert absolute boundaries; an executed duration is rounded end
+minus rounded start. Adding individually rounded durations can drift and is not scheduling semantics.
+A positive musical duration can map to zero frames below frame resolution; it remains positive in
+canonical state. Audible treatment belongs to the future scheduler/source scope, not this conversion.
+Meters support numerator 1–64 and power-of-two denominator 1–64. Quarter-note tempo does not change
+with meter. Future tempo maps and fixed-time audio mappings require their own bounded representation;
+neither sample frames nor a concrete sample rate are persistent musical time.
+
+One accepted operation builds an isolated immutable candidate, validates the complete state, then
+publishes one revision and one history entry. Failed/no-op operations publish nothing. Undo/Redo retain
+whole coherent state/revision pairs; no unrelated edit coalescing, UI commands or audio history exist.
+The initial configurable history bound defaults to 256 entries; history is not persisted. A saved
+snapshot remains separately identified, so Undo to the saved revision clears dirty state. Transition
+generation advances even on Undo/Redo, and close ends lifecycle authority. These stamps offer a
+conservative future async gate; dependency-specific async acceptance/cancellation is not implemented.
+Current/saved/history snapshots explicitly retain descriptors, without implementing physical media GC.
+Mutation is serialized by the caller on one owning thread; concurrent mutation is outside R1 scope.
+
+R0 demonstrates bounded managed/native execution feasibility only. Its native structs, four-slot
+publication, frame clock and observed 48 kHz / 10 ms endpoint are not production domain contracts.
+Before R2 production audio, a separately reviewed boundary must choose or narrow backend/ABI/DSP
+strategy and required intended-workload, period/device, clock-recovery and distribution evidence.
+Q-001–Q-007 remain open; R1 neither resolves them nor authorizes R2.
 
 ## Accepted constraints
 
@@ -151,7 +206,7 @@ to either without becoming its storage identity or defining routing by itself.
 
 ## Proposed application and audio shape
 
-C# / .NET 10 / Avalonia is the application-layer candidate, not an installed stack here.
+C# / .NET 10 is adopted for R1's canonical foundation; Avalonia remains a presentation candidate.
 [DEVELOPMENT](DEVELOPMENT.md) owns the developer environment, SDK/tool version authority, and setup;
 [CODING_GUIDELINES](CODING_GUIDELINES.md) owns future implementation conventions.
 
@@ -172,7 +227,8 @@ Shared scheduling / node semantics
 production implementation. A C# application with a narrow native boundary and native realtime engine,
 possibly C++ using miniaudio, remains a hypothesis. C++, miniaudio, WASAPI, and ASIO are not accepted
 implementations through this diagram. ASIO is a desired future capability, not an R0 requirement.
-ABI, control publication, backend strategy, and C# decomposition remain open; no final classes exist.
+ABI, control publication and backend strategy remain open. R1's managed decomposition does not select
+an engine or backend.
 
 The editable project graph is the single canonical project truth, including definitions, names,
 parameters, layout and connections. Execution is a derived prepared revision/snapshot identified by
@@ -227,7 +283,7 @@ related canonical changes together from the user's perspective, with one Undo re
 relationship/state and Redo reapplying the accepted edit. Examples include moving a clip and its required
 placement relationship, accepting generated audio and its project resource/reference, making a Pattern
 variation, and explicitly replacing an object with rendered audio. No internal command count, class,
-stack, event-sourcing framework or threading primitive is selected.
+stack or framework follows from this semantic contract; R1's bounded realization is defined above.
 
 Canonical musical, graph, project-owned plugin/sound configuration and applicable project editor-state
 edits belong to document history. Application/user workspace layout, global preferences and external
@@ -351,7 +407,7 @@ these integrity contracts and [recovery state](PROJECT_FORMAT.md#recovery-state)
 The accepted product direction for SEQ-R1 is:
 
 - An **instrument** produces sound.
-- A **musical part** contains notes/events for one instrument; no class or storage schema is selected.
+- A **musical part** contains notes/events for one sound definition; R1 implements the bounded type above.
 - A **Pattern** owns reusable named musical content: parts/events and their references to instrument/sound
   definitions. It may use multiple instruments; it does not own those definitions exclusively or imply an audio bus.
 - A **pattern clip** places/references a pattern in the Playlist/Arrangement's musical time.
@@ -374,8 +430,8 @@ entities; a pattern owns/references musical parts. Neither is the other's storag
 hierarchy/nesting rules remain open; unlimited nesting is not assumed.
 
 The event model must support musical position, pitch where applicable, duration, and velocity or
-equivalent intensity. A `bool[16]` foundation is insufficient. These requirements do not select a
-schema, time representation, class hierarchy, or storage layout. [PROJECT_FORMAT](PROJECT_FORMAT.md)
+equivalent intensity. A `bool[16]` foundation is insufficient. Future event vocabulary and editor APIs
+remain open. R1's initial schema/time are defined above; [PROJECT_FORMAT](PROJECT_FORMAT.md)
 owns persistence compatibility; [UX_CONTRACT](UX_CONTRACT.md) owns observable editing behavior.
 
 ## Project tempo and audio time
@@ -398,7 +454,7 @@ Project-affecting configuration is independently project-owned, including tempo/
 applicable sound/timing/processing settings. New-project defaults are copied at creation, never
 live-linked to user preferences under [SETTINGS](SETTINGS.md#user-configuration-and-project-state).
 [PROJECT_FORMAT](PROJECT_FORMAT.md#required-direction) owns identifying/version compatibility metadata
-and useful open/migration diagnostics without selecting a schema.
+and useful open/migration diagnostics with R1's bounded schema and future migration policy.
 
 ## Separate sharing identities
 
@@ -438,7 +494,8 @@ Pattern and its other uses remain intact. Sound definitions, source media, place
 containing context and routes remain as intended; the action does not implicitly duplicate them or
 runtime plugin instances. Later musical edits to the variation no longer edit the original content.
 Undo restores the original reference and coherent canonical relationships, without deleting material
-still needed by another use or retained history. These are conceptual names, not selected commands.
+still needed by another use or retained history. R1 implements `MakePatternVariation` at this boundary;
+the final user-facing command name is not selected.
 
 ### Independent sound and local processing
 
@@ -480,7 +537,7 @@ The resulting fragment's source event/content, timing and sound use must remain 
 request concerning one occurrence cannot silently change the event in every shared Pattern use or
 leave an unintended second trigger. Whether/how conversion retains a link to the source, removes or
 suppresses its original occurrence, establishes independent content and follows later source edits
-needs investigation under Q-048/Q-029/Q-008. This is not a graph-per-note default or an extra local level.
+needs investigation under Q-048/Q-029 beyond R1's event schema. This is not a graph-per-note default or an extra local level.
 
 Shared instrument settings/definition must not automatically imply shared execution state or
 irreversible mixed audio. For overlapping uses of a shared Bass Synth definition:
@@ -650,7 +707,7 @@ A durable audio resource and a musical occurrence/placement of it must not be as
 mutable object. Several items may reference `kick_017.wav`; local processing of one item must not
 silently rewrite the shared resource or every other use. The default creative model is non-destructive.
 An explicitly destructive/edit-source operation may be justified later, but ordinary item processing
-does not imply it. Resource/reference/edit ownership and storage schemas remain unselected;
+does not imply it. R1 implements descriptor/reference/edit identity; physical-media storage remains open.
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence obligations.
 
 Ordinary import/drag-and-drop creates durable project-managed media independent of its original arbitrary
@@ -691,7 +748,7 @@ the processing-scope and hard-boundary contract; exact state/de-click mechanics 
 or Container may overlap future vocabulary. The accepted semantics are a musical timeline container
 holding independent items, with an explicit context for processing their combined audible result when
 requested. Its domain identity is not assumed identical to Mixer Channel, Instrument Group, or Pattern.
-No classes or schemas are selected.
+R1 implements distinct local context/route intent, without a complete Arrangement container schema.
 
 ## Semi-free Arrangement
 
@@ -792,7 +849,7 @@ channel/processor can exist when the project explicitly routes through that dist
 is not required just because two UI surfaces exist. Global bus/Master processing remains outside
 the two local levels. Graph topology defines order and aggregation, not the pane where a control
 was edited. Exact route assignment/defaults, control bindings and context reference/edit mechanics
-remain Q-030/Q-019; compatibility/terminology remain Q-028. No object model is selected.
+remain Q-030/Q-019; compatibility/terminology remain Q-028. R1's context/route identities are a bounded foundation only.
 
 ### Moving material between contexts
 

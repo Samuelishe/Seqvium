@@ -5,8 +5,8 @@ Read when: Writing, reviewing, or refactoring C# production or test code.
 Authoritative for: Naming/language, code structure, async, lifetime, errors, refactoring, and managed warning policy.
 Not authoritative for: Product behavior, subsystem architecture, package versions, test commands, CI triggers, or platform support status.
 
-These rules bind implementation, including the bounded SEQ-R0 probe; no production managed projects
-exist yet. Read [ARCHITECTURE](ARCHITECTURE.md)
+These rules bind production/test implementation and the separate bounded SEQ-R0 probe.
+Read [ARCHITECTURE](ARCHITECTURE.md)
 and the affected subsystem owner alongside this document; coding policy applies their contracts in code.
 
 ## General C# and structure
@@ -109,9 +109,8 @@ repository-wide inherited MSBuild policy, preferably `Directory.Build.props`, wi
 <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 ```
 
-Exact production properties may be refined with the first application projects. The SEQ-R0 probe
-enforces the policy through experiment-local `Directory.Build.props`; do not create shared build
-files for the empty production solution. Do not use broad `NoWarn`
+Root [Directory.Build.props](../Directory.Build.props) enforces this policy in R1 production/tests.
+The SEQ-R0 probe retains its independent experiment-local `Directory.Build.props`. Do not use broad `NoWarn`
 lists to obtain green output. Suppressions must be narrow, reasoned/documented, and tested where relevant;
 nullability should be established by guards/contracts, not unjustified `!` to silence diagnostics.
 

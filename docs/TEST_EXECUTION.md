@@ -7,16 +7,37 @@ Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, 
 
 ## Current and future execution
 
-No test projects or test framework have been introduced. The standalone [SEQ-R0 assertion harness](../experiments/seq-r0/README.md)
-uses `dotnet bin/Release/net10.0/Probe.dll verify` after `./build.ps1` from `experiments/seq-r0/`;
-it is not a `dotnet test` platform or the future production suite. The empty `Seqvium.sln` must not be
-built for documentation verification. Check links/anchors,
+The R1 [Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj) project uses xUnit v3 3.2.2 with
+explicit MTP v1 support; its lock file resolves Microsoft.Testing.Platform 1.9.1. This suitable setup
+was available in the installed package cache and verified against SDK 10.0.401 / runtime 10.0.12;
+no VSTest adapter, coverage tool or additional runner is introduced. SDK 10 MTP mode is selected in
+[global.json](../global.json). From the repository root:
+
+```text
+dotnet restore Seqvium.sln --locked-mode
+dotnet build Seqvium.sln -c Release --no-restore
+dotnet test --solution Seqvium.sln -c Release --no-build --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --filter-class "*MusicalTimeTests"
+```
+
+Use MTP arguments directly, without a `--` separator. xUnit filtering uses `--filter-class`,
+`--filter-method` or `--filter-trait`, not VSTest's `--filter`. Optional built-in xUnit TRX output uses
+`--report-xunit-trx --results-directory <directory>`; no generic TRX/coverage extension is installed.
+The suite exercises document lifecycle, typed identities/sharing, variations, sound independence,
+transaction rejection/deletion/history, processing relationships, exact time conversions, format
+compatibility/unknown data (including known-field edits), net-zero history, degraded access and
+normal-process save failures. Fixtures are synthetic
+and files use owned temporary directories. The locked-file overwrite check is Windows-specific;
+the directory-target failure and canonical checks are portable. There are no timing sleeps.
+Current local totals and evidence limits belong to [PROJECT_STATE](PROJECT_STATE.md).
+
+The standalone [SEQ-R0 assertion harness](../experiments/seq-r0/README.md) remains independent:
+`dotnet bin/Release/net10.0/Probe.dll verify` after `./build.ps1` in `experiments/seq-r0/`.
+It is not the production test suite. Documentation verification checks links/anchors,
 metadata, ownership/routing, decision status, scope, passive configuration, and Git diffs/status under
 [AGENTS](../AGENTS.md) and [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md).
 
-When tests exist, inspect the actual SDK, test platform (VSTest or Microsoft.Testing.Platform), framework,
-and project setup before recording exact build/test/filter/report commands here. Do not invent commands
-or select packages through this document.
+On setup changes, inspect SDK, platform, framework and manifests before changing commands.
 
 SEQ-R0 device/timer/lifetime commands and exact scope are in the
 [probe README](../experiments/seq-r0/README.md); measured results belong to the
@@ -30,8 +51,9 @@ acceptance, and no hosted checks are introduced.
 
 Prefer **one main managed `Seqvium.Tests` project**, organized by domain/feature folders. Conceptual
 examples are `Domain/`, `MusicalTime/`, `Patterns/`, `Serialization/`, `NodeGraph/`, `Resources/`,
-`Extensions/`, `ProjectStats/`, and `Support/`. These are examples, not required empty folders; none
-is created now. Framework/platform selection remains Q-039 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+`Extensions/`, `ProjectStats/`, and `Support/`. These are examples, not required empty folders;
+the R1 suite uses cohesive feature files. Initial framework/platform selection Q-039 is resolved;
+future materially different execution hosts need separate evidence.
 
 Do not create a test project per production subsystem. Add a separate project only for a materially
 different execution contract: native runtime/materialization, another target framework/platform, a UI

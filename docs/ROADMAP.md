@@ -11,8 +11,9 @@ contracts belong to their canonical owners. Completed stages are removed from cu
 retained in the cold archive under [rolling governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history).
 
 SEQ-R0 has authorized bounded experimental evidence and remains **partially evidenced**; see its
-[report](experiments/SEQ-R0_REPORT.md). No production implementation or R1 work is authorized by this
-roadmap or the probe result. ProjectStats needs separate explicit code authorization;
+[report](experiments/SEQ-R0_REPORT.md). R1 was separately authorized and its bounded foundation is
+complete; see [PROJECT_STATE](PROJECT_STATE.md). This roadmap/probe result grants no authorization
+for later stages. ProjectStats needs separate explicit code authorization;
 whether a dedicated tooling stage is useful remains Q-046, not an inserted commitment.
 [Open questions](KNOWN_PROBLEMS.md), including First Track Release dependency closure Q-061, do not
 reorder stages or make recording, automation, external hosting or ProjectStats implicit prerequisites.
@@ -34,7 +35,7 @@ The conceptual dependency audit supports the present R0–R12 order and the boun
 No hard architectural cycle or additional document-level prerequisite to scoping R0 was identified.
 This is planning-level closure only: Q-061 retains implementation-specific dependency checks, actual
 capability/range choices and end-to-end evidence as stages arrive. No technical feasibility or release
-acceptance follows from this conclusion; work beyond the authorized R0 probe requires separate authorization.
+acceptance follows from this conclusion; each implementation stage requires separate authorization.
 
 ## First Track scenario and acceptance boundary
 
@@ -76,8 +77,9 @@ Under [Audio](AUDIO_ENGINE.md), [Graph](NODE_GRAPH.md), [Architecture](ARCHITECT
 [Test execution](TEST_EXECUTION.md), the minimum execution path develops incrementally:
 
 - R1 establishes compatible event/time and persistent reference/edit foundations, including room for
-  processing contexts/routes without implementing Arrangement or Mixer. Resolve bounded Q-008/Q-009/
-  Q-029 with Q-019 before committing reference shapes that later scopes would have to replace.
+  processing contexts/routes without implementing Arrangement or Mixer. R1's bounded schema resolves
+  Q-008 and narrows Q-009/Q-029/Q-019;
+  later graph/audio capabilities must validate their expanded relationships.
 - R2 owns the core sampler's audible pitched-note, velocity, duration/release and overlapping-event
   behavior for its declared scope, plus basic transport/scheduling and output sufficient to exercise it.
   Short tonal samples can provide meaningful bass/melody; sustained loops, multisampling and a synthesizer
@@ -179,7 +181,7 @@ the following assigns minimum responsibility within existing stages, not a full 
 
 Concrete container/protocol, cadence/retention, GC, cross-platform guarantees and fault/race evidence remain
 Q-058/Q-059; collect/relocate mechanics are not automatically early-stage features. Q-061 still owns
-complete dependency/release closure. Only the bounded R0 probe has started; stages are not renumbered or reordered;
+complete dependency/release closure. R1's bounded foundation is complete; later stages still require separate authorization;
 R0 scope is unchanged and acquires no storage/recovery prerequisite.
 
 ## Platform release acceptance ownership
@@ -199,8 +201,8 @@ distribution are distinct. Minimum responsibility follows existing stages:
 
 Q-041 retains the exact OS/version, architecture/RID, device/backend coverage and delivery prerequisites;
 Q-061 retains the complete scenario/dependency audit. Other owners retain device, storage, UI and extension
-mechanisms. No stage is inserted, renumbered or reordered; only the authorized bounded R0 probe has
-started, with its scope unchanged.
+mechanisms. No stage is inserted, renumbered or reordered; R0 remains partially evidenced and R1 is complete, with later
+implementation still separately authorized.
 
 ## SEQ-R0 — Audio Architecture Probe
 
@@ -229,28 +231,11 @@ evidence-backed decision. See [AUDIO_ENGINE](AUDIO_ENGINE.md) and the [experimen
 Keep engine processing independent of the selected device adapter and compatible with a prepared
 execution boundary. No graph editor, full plugin host, ASIO, or recording workspace is required here.
 
-## SEQ-R1 — Domain and Musical Model Foundation
-
-Establish project/document ownership, musical-time primitives, instrument identity, events/parts,
-named multi-instrument patterns, clips, independent organizational groups, justified stable IDs,
-undo/redo, and a bounded versioned serialization foundation.
-Include first-class new-project/document lifecycle ownership without prescribing its UI or container.
-Include independent project-owned settings copied from creation defaults, plus identifying/version
-metadata and useful compatibility diagnostics under [SETTINGS](SETTINGS.md) and [PROJECT_FORMAT](PROJECT_FORMAT.md).
-Respect shared audio resources versus musical placements and the two local processing levels without
-freezing the final container term/schema or merging Arrangement with mixer identity.
-Provide sufficient identity/reference relationships for shared musical content, independently editable
-sound definitions, occurrences/resources and distinct organization/processing/routing under
-[architecture](ARCHITECTURE.md#separate-sharing-identities). Preserve those intentions in the bounded
-versioned foundation; the Arrangement UI, full compatibility/nesting and detachment workflows belong
-to their later stages, not R1.
-Canonical state is the single saved truth, including incomplete/invalid work; preserve degraded
-document access, critical-format refusal and behavior-changing migration choice. Exact schema and
-transaction mechanics remain open. Avoid UI-heavy implementation. Preserve the intended model in
-[ARCHITECTURE](ARCHITECTURE.md) and
-compatibility direction in [PROJECT_FORMAT](PROJECT_FORMAT.md).
-
 ## SEQ-R2 — Audio Resource / Device Foundation
+
+Status: pending, not authorized by R1. Before production audio, separately review R0's narrowed
+evidence, permanent backend/ABI/DSP boundary and required intended-workload, period/device,
+elapsed-time recovery and distribution evidence. Domain tests do not close Q-001–Q-007.
 
 Establish audio resources, WAV import, preview, managed project media, a simple sampler, note/pitch
 playback, and resource lifetime. Do not expand immediately to every codec or sampler feature.

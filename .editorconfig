@@ -15,5 +15,5 @@ dotnet_diagnostic.CS8602.severity = error
 dotnet_diagnostic.CS1572.severity = error
 dotnet_diagnostic.CS1573.severity = error
 dotnet_diagnostic.CS1587.severity = error
-# Active only when xUnit analyzers are present; no test framework is selected yet.
+# Active with the R1 xUnit test project's analyzers.
 dotnet_diagnostic.xUnit1031.severity = error

@@ -255,3 +255,18 @@ end-to-end evidence remain open. No additional focused KB stage presently justif
 unproven. Details are in the [audit](AUDITS.md#seq-kb-r21--roadmap-dependency-and-first-track-closure-audit),
 current obligations in active Roadmap. Documentation/architecture only; R0 section/scope unchanged,
 SEQ-R0 remains **pending / not started**. See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r21).
+
+## SEQ-R1 — Domain and Musical Model Foundation
+
+Completed 2026-10-08, **local accepted-ready** within the separately authorized bounded R1 scope.
+Established real .NET 10 production/test solution projects; unnamed canonical document lifecycle;
+typed stable musical/sound/resource/placement/group/context/route identities; multi-instrument shared
+Patterns, independent musical variations and independently editable durable sound configuration;
+precise musical time and tested constant-tempo conversion; validated atomic edits/Undo/Redo;
+versioned bounded JSON Save/reopen/unknown/opaque preservation with useful degraded/refusal behavior.
+Release build has zero warnings/errors and all 89 tests pass. Source remains independent of R0.
+No audio/backend, UI, graph execution, media import, recovery or full async result acceptance added.
+Q-008/Q-039 resolved; Q-009/Q-019/Q-029/Q-063 narrowed, Q-001–Q-007 still open. R2 remains pending,
+requiring separate authorization and reviewed backend/evidence disposition.
+Current truth is in [PROJECT_STATE](../PROJECT_STATE.md), contracts in [Architecture](../ARCHITECTURE.md)
+and [Project format](../PROJECT_FORMAT.md); rationale is [D-074](DECISIONS.md#d-074--r1-canonical-musicaldocument-foundation).

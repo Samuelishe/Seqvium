@@ -34,7 +34,12 @@ belong to [UI_DESIGN](UI_DESIGN.md#themes-and-semantic-resources). Settings does
 
 User/application configuration may provide defaults for new projects. At creation, a project receives
 its own values and owns them independently; later changes to defaults do not mutate existing projects.
-Default tempo is a possible example, not a selected default setting or value.
+User-configured default inventories remain open; R1's constructor fallback is selected below.
+
+R1's `ProjectDocument.Create` accepts immutable `ProjectSettings` defaults and uses 120 quarter-note
+BPM / 4/4 when none are supplied. Settings belong to canonical state, edit history and JSON Save;
+there is no preferences store, reset UI or live global link. This constructor fallback is a bounded
+foundation default, not a final new-project template policy.
 
 Plugin-global preferences may include editor size, UI preferences, and default presets/preferences for
 new instances where genuinely global. Instance state affecting saved music is project state. Global

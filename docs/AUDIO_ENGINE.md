@@ -281,6 +281,12 @@ SEQ-R0 implementation requirement.
 
 ## Proposed native direction
 
+R1 keeps persistent musical time and canonical identities independent of every backend and of R0's
+sample-frame/native/publication layouts; see [architecture disposition](ARCHITECTURE.md#r1-canonical-foundation).
+R0's 48 kHz / 10 ms environment is bounded evidence only. Before production audio in R2, separately
+review the backend/ABI/managed-versus-native DSP boundary and necessary intended-workload, lower-period/
+device, elapsed-time recovery and clean-distribution evidence. Q-001–Q-007 are not resolved by R1.
+
 The candidate chain is described in [ARCHITECTURE](ARCHITECTURE.md#proposed-application-and-audio-shape).
 A native realtime engine behind a narrow boundary, possibly C++ with miniaudio, is **proposed**.
 Neither native code alone nor a library choice proves realtime suitability.

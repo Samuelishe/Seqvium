@@ -7,62 +7,59 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R21 planning checkpoint complete. SEQ-R0 bounded experimental work has run (2026-10-08) and is
-**partially evidenced**, with recommendation **narrow**. The [report](experiments/SEQ-R0_REPORT.md)
-records actual Windows device/managed/native/offline evidence and remaining acceptance gaps.
-Both execution candidates meet the measured 10 ms shared-mode budget for the synthetic workload;
-native has smaller measured timing tails under managed pressure. Stream-clock starvation needs a
-separate elapsed-time recovery boundary. No permanent engine/language/backend/ABI or release target
-is adopted. R1 has not started and needs separate authorization.
+**SEQ-R1 is complete / local accepted-ready** for its bounded domain/document foundation.
+The SEQ-KB-R21 planning checkpoint remains the planning baseline. SEQ-R0 is still **partially evidenced**,
+recommendation **narrow**; its [report](experiments/SEQ-R0_REPORT.md) does not choose a permanent engine.
+SEQ-R2 is pending and requires separate authorization plus a reviewed pre-production audio boundary.
+Completed R1 facts/rationale are in the cold archive; current contracts stay in their owners.
 
 ## Implemented capability
 
-Standalone [experiment source/build/run guide](../experiments/seq-r0/README.md): equivalent C# and C
-fixed scheduling/DSP; WASAPI shared event-driven adapter; bounded prepared publication/control;
-monotonic sample clock, loops, release/restart/panic, skip recovery, timer-driven checks and offline
-oracle/capture comparison. Generated triangle/event fixtures only. Uses installed .NET/MSYS2/Windows
-APIs, without downloaded audio libraries or NuGet packages; [provenance](THIRD_PARTY.md) records tools
-and linked-runtime obligations. No production application/UI/graph/plugin host/export/persistence,
-test framework or CI exists; `Seqvium.sln` remains empty.
+[Seqvium.sln](../Seqvium.sln) now contains the .NET 10 `Seqvium.Core` library and one `Seqvium.Tests`
+project. R1 implements unnamed document lifecycle, immutable canonical state and typed stable UUIDs;
+named multi-instrument Patterns, identified parts/pitch-aware notes, shared placements, musical
+variations, independent durable sound configuration, distinct flat Instrument Groups/resource
+descriptors, and bounded local processing/route/performance-interaction intent.
+Validated logical edits, dependency-aware deletion rejection and bounded session Undo/Redo preserve
+coherent relationships. Current/saved revisions, lifecycle and transition stamps stay distinct.
+
+Musical time uses precise Int64 quarter-note ticks with exact constant-tempo conversion and deterministic
+equal-position ordering under [architecture](ARCHITECTURE.md#r1-canonical-foundation).
+Versioned JSON Save/Save As/reopen preserves sharing, project settings, compatible unknown fields and
+opaque extension state; degraded diagnostics and structural/version refusal follow the
+[format](PROJECT_FORMAT.md#r1-canonical-json-format). R1 does not import media or instantiate processing.
+There is no workstation executable, UI, production audio/backend/DSP/graph, plugin host, export,
+recording or recovery engine. [SEQ-R0 source](../experiments/seq-r0/README.md) remains independent.
 
 ## Current focus
 
-Review the bounded findings and remaining R0 scope before an R1 implementation decision. Lower actual
-device periods, intended workload, robust clock/device-loss policy and clean distribution remain
-unvalidated. Experiment code must not become production by implication. The
-[First Track plan](ROADMAP.md#first-track-scenario-and-acceptance-boundary) and owning-stage order
-remain unchanged. No additional KB stage or ProjectStats tool is introduced. History stays cold under
-[governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history).
+Review the completed R1 foundation and narrow R0 findings before separately authorizing R2.
+Canonical musical state is independent of WASAPI/native ABI, callback periods and device rates.
+Before production audio, review backend/ABI/DSP strategy and required intended-workload, period/device,
+elapsed-time recovery and clean-distribution evidence. No permanent engine decision follows from
+domain tests. First Track stage order/scenario remain unchanged under [ROADMAP](ROADMAP.md).
 
 ## Validation baseline
 
-Release managed/native builds pass with zero warnings/errors. The assertion harness verifies 12
-candidate/block cases, exact events, generated audio error 0, bounded controls/publication and lifetime.
-Actual default Windows endpoint runs at 48 kHz/stereo float32, 480-frame period/1056-frame capacity;
-baseline and GC/control pressure have no measured service-period overruns. Deliberate 30 ms stalls
-exhaust padding, recover toward elapsed time and acknowledge panic before shutdown. Captured baseline
-output matches offline; repeated initialization/shutdown and controlled timer evidence are in the
-report. These are local bounded observations, not glitch-free/DAC latency, cross-platform, packaged
-distribution or production architecture acceptance.
+Local Windows x64, SDK 10.0.401 / runtime 10.0.12: locked restore, full Release solution build with
+**zero warnings/errors**, and **89 passing tests, zero failures/skips**. Commands are in
+[DEVELOPMENT](DEVELOPMENT.md) and [TEST_EXECUTION](TEST_EXECUTION.md).
+Tests use synthetic data/owned temporary directories and no arbitrary sleeps. They exercise sharing,
+variation/sound independence, local relationships, coherent history/rejection/deletion, time boundaries/
+rounding/long ranges/drift, round-trip versions/unknown/opaque data and normal-process Save failures.
+No hosted Linux/macOS, production GUI/device, media integrity, crash consistency or distribution
+acceptance is claimed. R0's bounded 48 kHz / 10 ms Windows observations remain experimental.
 
 ## Active blockers / evidence gaps
 
-Q-001–Q-007 remain open with narrowed partial evidence in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
-Q-028 needs final terminology/domain structure, compatibility/default targeting and bounded hierarchy
-mechanics. Q-029 needs identity/reference/detachment/deletion mechanisms, shared-target/acceptance UI,
-serialization coordination and concurrency/capability/performance evidence. One-event extraction and
-source linkage/suppression remain Q-048. Graph attachments (Q-019), route/context assignment (Q-030),
-Q-008/Q-009 identity/time/format, Q-051 stretch and Q-066 cross-context representation/execution/timing/
-lifetime/render/capability/UI remain open. Q-011 retains contextual substitution/restoration; Q-071
-retains generation/similarity, controls/locks, candidate/history limits/storage/UI and evidence.
-High-impact evidence includes source/domain grouping/voice allocation, opaque-source instancing,
-definition synchronization and CPU/RAM behavior (Q-047), concrete recovery replacement/candidate and
-durable-media protocol/GC/reconciliation with platform/fault evidence (Q-058/Q-059), concrete milestone
-dependency/evidence closure (Q-061), DSP/tails (Q-057), graph publication/lifetime (Q-018), device timing/
-recovery (Q-062/Q-069), undo/async mechanisms (Q-063), input/accessibility/platform validation (Q-064),
-Browser/Personal Library mechanisms (Q-065), host-resource lifecycle (Q-067), localization/locale (Q-054)
-and theme APIs/packaging (Q-055). Package/negotiation and backend mechanics remain open.
-Concrete supported platform/CPU/RID/device scopes, delivery prerequisites and actual desktop/audio/
-distribution/storage evidence remain Q-041 and related subsystem questions; no release dates selected.
-[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) contains only open questions. Passive batch-newline policy
-contradiction Q-070 remains unresolved; no configuration change is included in this stage.
+Q-008's bounded schema/time/identity and Q-039's initial managed test setup are resolved.
+Q-009 retains media-capable packaging and future migrations; Q-019 retains graph attachment/execution;
+Q-029 retains expanded detachment/deletion/acceptance UI and capability/concurrency evidence; Q-063
+retains dependency-specific async gates, real pending-work races/adapters and larger history policy.
+These remaining gaps do not block bounded R1 acceptance. Q-001–Q-007 remain open before audio claims.
+Q-028/Q-030 retain full organization/context assignment; Q-047 execution-domain/source-capability and
+performance evidence; Q-048 event extraction; Q-051 audio-time/stretch; Q-058/Q-059 physical media,
+recovery and fault/race-safe ownership; Q-061 whole First Track evidence. Other future subsystem gaps
+remain in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md), which contains only unresolved questions.
+No CI, ProjectStats, global tool installation or new release/platform support claim is introduced.
+Q-070's passive batch-newline policy remains outside this stage.

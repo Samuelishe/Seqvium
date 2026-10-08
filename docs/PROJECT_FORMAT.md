@@ -5,14 +5,80 @@ Read when: Designing save/load, migration, managed media, or extension-state per
 Authoritative for: Compatibility direction, canonical Save/reopen, recovery-state and media integrity, opening/migration, versioned persistence and unknown-data preservation.
 Not authoritative for: A final container/schema, runtime domain classes, extension API, or recovery implementation.
 
-No project format is implemented or selected. This document constrains future choices without
-inventing field names, file extensions, or a container layout.
+SEQ-R1 selects the bounded canonical JSON format below. Media packaging, recovery and later migration
+mechanisms remain open; this is not a final complete-project container.
+
+## R1 canonical JSON format
+
+UTF-8 JSON has `format: "seqvium-project"`, integer `major: 1`, integer `minor: 0`,
+`minimumReaderMinor: 0`, `writerVersion`, `revision` UUID and `state`. State contains project identity,
+nullable name (unnamed), tempo/meter settings and explicit entity arrays. IDs are UUID strings; positions
+and durations encode Int64 tick counts directly as JSON integers. Readers must retain Int64 precision,
+not parse them through binary floating point. Tempo encodes decimal quarter-note BPM. Arrays preserve canonical
+order; notes at equal positions order by part UUID then note UUID, independently of serialized order.
+Saved revision is distinct from project identity. Save As preserves identity; explicit document-fork
+work is deferred. Paths and saved association/history/lifecycle/generation are not serialized.
+
+Known property names use camelCase. All constructor fields are required, including nullable fields
+whose value may be JSON `null`; empty collections are explicit arrays/objects. The exact bounded
+state shape follows [model records](../src/Seqvium.Core/ProjectModel.cs) and
+[codec](../src/Seqvium.Core/ProjectPersistence.cs):
+
+| Object | Known fields |
+| --- | --- |
+| State | `id`, `name`, `settings`, `patterns`, `sounds`, `placements`, `groups`, `resources`, `contexts`, `routes` |
+| Settings / meter | `tempo`, `meter` / `numerator`, `denominator` |
+| Pattern | `id`, `name`, `length`, `parts` |
+| Part | `id`, `name`, `soundId`, `notes` |
+| Note | `id`, `position`, `duration`, `pitch`, `intensity` |
+| Sound | `id`, `name`, `algorithm`, `parameters`, `resourceIds`, `extension` |
+| Resource | `id`, `name`, `managedLocator`, `origin` |
+| Instrument Group | `id`, `name`, `soundIds` |
+| Placement | `id`, `patternId`, `position`, `itemContextId`, `containingContextId`, `routeId`, `partRelationships` |
+| Placement part relationship | `partId`, `sharedPerformanceKey`, `routeId` |
+| Context | `id`, `name`, `level` (`item` or `containing`), `intentionalMix`, `extension` |
+| Route intent | `id`, `name` |
+| Extension state | `extensionId`, `stateVersion`, `payload` |
+
+Pitch is decimal semitones in [0, 127], permitting fractional pitch; intensity is decimal [0, 1].
+Sound parameters are a string-to-decimal map. Notes must fit their Pattern length; a placement end must
+fit Int64 time. UUIDs are globally distinct across identified entities; part relationships refer only
+to parts of that placement's Pattern. A non-null performance key requests interaction across the
+identified sound uses without defining runtime instances. `additionalData` is a reserved codec-internal
+name, never emitted as a format field. Extension payloads and optional unknown values are opaque JSON.
+
+Only major 1 is understood. Higher compatible minor documents are retained at their original minor
+when `minimumReaderMinor <= 0`; unsupported major/required minor is refused. No legacy migration is
+claimed. Unknown JSON properties at envelope, state, settings and every entity/nested part/note are
+preserved semantically at the same object boundary, including through edits/Undo/Save. Reserved known
+fields cannot be overwritten by extension data. Unknown properties are optional by version contract;
+essential new semantics must raise the minimum reader or major. Opaque extension state retains an
+extension identifier, positive state version and arbitrary JSON payload without activation. Missing
+declared extensions or resource availability yields explicit degraded-access diagnostics while retaining
+editable canonical state; no audio execution is provided by this reader.
+
+Malformed JSON, duplicate properties/identities, missing required fields, invalid values/references or
+contradictory essential relationships refuse the document rather than guess intent. A missing media
+artifact differs from a dangling canonical resource ID: the descriptor remains interpretable in the
+former case. Limits are 16 MiB UTF-8 JSON, depth 64, 100,000 total entities and 4,096-character names/
+identifiers/locators. These initial bounds can evolve deliberately; they are not realtime capacities.
+Resource descriptors carry an optional portable relative managed locator and provenance only; R1
+neither imports bytes nor validates codec/media integrity. No external-reference import is adopted.
+Caller-supplied sets of validated available resource/extension identities can suppress the corresponding
+load diagnostics; that is not executable compatibility negotiation or proof of playable audio.
+
+The file adapter serializes a captured snapshot, writes an exclusively created sibling temporary
+file, flushes it and replaces the destination before marking that snapshot saved. Serialization/write
+failure leaves current history and saved association unchanged; owned temporary files are cleaned up.
+This is bounded normal-process failure safety, not proven crash consistency/durability on every OS,
+rolling recovery, media transactions or Save As resource relocation. Streams provide encoding/read
+without implicitly marking saved. History is session-only. No runtime/UI/native/prepared state is stored.
 
 ## Required direction
 
 - Carry project/schema format version, the Seqvium version that saved the project, and relevant
   compatibility metadata for deciding supported loading/migration. Provide migration-aware loading
-  as the model evolves; exact schema and metadata field names remain open.
+  as the model evolves; the bounded R1 fields are defined above, later migrations remain open.
 - When opening/migration is unsupported or fails, give a concise useful reason rather than an
   unexplained failure. Distinguish document-level refusal from recoverable processing unavailability
   under the opening contract below.
@@ -165,14 +231,14 @@ follow [media integrity](#media-and-persistence-integrity), with exact mechanism
 Serialization must respect the distinct identities of named multi-instrument patterns, their musical
 parts/events and placements, organizational instrument/channel groups, and editable signal-graph
 definitions/connections. Group membership must not become pattern storage identity or imply routing.
-Exact schemas and graph scopes remain open; [ARCHITECTURE](ARCHITECTURE.md) and [NODE_GRAPH](NODE_GRAPH.md)
+The bounded R1 schema is defined above; later graph scopes remain open. [ARCHITECTURE](ARCHITECTURE.md) and [NODE_GRAPH](NODE_GRAPH.md)
 own the model and editable/prepared boundary. Saving project state must not require preserving live
 UI objects or treating a prepared realtime representation as the editable document.
 
 Persistence must separately preserve sharing/independence of Pattern musical content, instrument/sound
 definition, placement state, and processing state. Musical-content variation does not implicitly detach
-every sound/resource/processing relationship. This does not select a schema, copy mechanism, class
-hierarchy, or serialized execution instances; [ARCHITECTURE](ARCHITECTURE.md#separate-sharing-identities)
+every sound/resource/processing relationship. R1 implements this bounded copy/reference mechanism;
+it does not serialize execution instances. [ARCHITECTURE](ARCHITECTURE.md#separate-sharing-identities)
 owns the identities.
 
 Preserve intended content/sound-use/resource references, occurrence-local timing/ranges, Arrangement
@@ -189,8 +255,9 @@ Round-trip must preserve a repeated Pattern's shared notes, a variation's indepe
 sounds, an independently editable sound's resource references, and reused media with local clip edits.
 Moves/deletion/Undo preserve or deliberately change the identified relationships under
 [architecture](ARCHITECTURE.md#deletion-scope-and-retained-relationships), rather than rely on heuristics.
-Exact domain/reference structures, identity encoding, migrations, time/range forms and graph attachments
-remain Q-008/Q-009/Q-019/Q-029/Q-051; this does not select persistent Undo history or runtime instances.
+R1 domain IDs, musical time and basic copy/reference operations are implemented. Later migrations,
+graph attachments, expanded edit workflows and audio-time mappings remain Q-009/Q-019/Q-029/Q-051;
+no runtime instance history is selected.
 
 Preserve shared sound-definition settings/content references and canonical relationships needed to
 express intended performance interaction and contribution routing under
@@ -198,7 +265,8 @@ express intended performance interaction and contribution routing under
 grouping, live voices/envelopes/tails, physical instance counts and pools are not a second canonical
 saved model. Persisted plugin/instrument state below means durable sound-defining configuration/opaque
 data, not a mandate to serialize every runtime execution instance or its transient performance state.
-Exact relationship/schema encoding and extension state synchronization remain open.
+R1 retains explicit part/occurrence performance-interaction and route intent. Runtime grouping,
+capability realization and extension-state synchronization remain open.
 
 Main-window pane layout is primarily application/user workspace state under [WORKSPACE](WORKSPACE.md).
 Opening a project should not normally overwrite it. Project-side graph/editor layout is distinct from
@@ -361,7 +429,8 @@ transition is established, A's prior Save, current edited work, destination asso
 ownership remain protected. Partial B is incomplete output, not a successful saved project or authority
 to remove A. Retry/reconciliation must distinguish owned partial output from pre-existing destination
 content; cleanup cannot delete unrelated user files. A successfully established B may become the chosen
-saved destination without deleting A by implication. Identity encoding/fork policy remains Q-009/Q-029.
+saved destination without deleting A by implication. R1 Save As retains the project UUID;
+explicit fork/media relocation policy remains Q-009/Q-029.
 
 Collect/relocate has the same multi-resource obligation: no transfer, some media transferred, or a
 document copied before required media are all insufficient for success. Preserve the coherent source
@@ -460,13 +529,15 @@ its identity, opaque state, musical connections, or contributed graph-node relat
 preservation checks must cover round-trip absent-extension data and compatible reattachment. User
 load/edit/save paths normally remain available under the degraded [opening contract](#opening-and-migration)
 when the document is safely understandable; unavailable processing blocks its dependent operations.
-Exact opaque encoding and compatibility claims are undecided.
+R1 retains opaque JSON payload plus extension identity/state version as defined above. This proves
+data preservation, not executable plugin compatibility or arbitrary runtime duplication.
 
 ## Open format choices
 
-SEQ-R1 should establish only a bounded versioned foundation. Container versus directory, encoding,
-ID/time representation, migration mechanism, unsupported-version behavior, crash-safe save/recovery,
-resource integrity, and extension-state evolution remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+R1 establishes bounded JSON, identity/time encoding, version refusal and compatible unknown-data
+preservation. A media-capable container/directory layout, future migration mechanisms, crash-safe
+save/recovery, resource integrity and executable extension-state evolution remain open in
+[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 Q-058 retains crash-safe snapshot replacement/validation, candidate indexing/selection, cadence/debounce,
 bounded retention, recovery-choice realization and recording reconciliation. Q-059 retains durable-media
 transaction protocol/layout, corruption/integrity validation, repair, owner tracking/GC and Save As/

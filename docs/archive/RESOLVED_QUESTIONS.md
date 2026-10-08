@@ -459,3 +459,24 @@ desktop/device/backend coverage, native packaging, install/launch/signing/notari
 update/removal prerequisites; Q-061 full scenario closure. Q-007/Q-009/Q-014/Q-016/Q-024/Q-026/
 Q-037/Q-038/Q-040/Q-058/Q-059/Q-062/Q-064/Q-069 retain their subsystem mechanisms/evidence.
 No release timeline or exact distribution matrix chosen; no platform runtime/hardware evidence exists.
+
+## 2026-10-08 — SEQ-R1 bounded foundation resolutions
+
+- **Q-008 — Musical-part/event schema and time/ID representation: resolved for the R1 foundation.**
+  Identified named Patterns own identified parts addressing sound definitions and identified notes
+  with musical position, duration, decimal semitone pitch and intensity. Typed UUIDs distinguish
+  definitions, occurrences, organization, resources and context/route intent. Int64 ticks and exact
+  constant-tempo mapping/rounding support the declared long-range and boundary cases. Future tempo
+  execution, event extraction, audio mapping and source capability remain Q-005/Q-048/Q-051/Q-047,
+  rather than keeping the completed initial schema choice open. Current owner:
+  [Architecture](../ARCHITECTURE.md#r1-canonical-foundation).
+- **Q-039 — Initial managed framework/platform/packages: resolved.** One `Seqvium.Tests` project uses
+  installed/cached xUnit v3 3.2.2 with explicit MTP v1, locked MTP 1.9.1 and .NET SDK 10.0.401.
+  Actual Release build/test commands work; no separate subsystem test assemblies, VSTest adapter,
+  coverage tool or CI introduced. Owners: [Test execution](../TEST_EXECUTION.md), [Development](../DEVELOPMENT.md).
+- **Q-009/Q-019/Q-029/Q-063: partially answered, remain open with narrowed scope.** JSON versioning,
+  compatible unknown/opaque preservation, distinct context/route references, sharing/variation/sound
+  independence, dependency-blocking deletion and coherent bounded session history are implemented.
+  Future media container/migration, graph execution/attachments, richer UI/capability/concurrency and
+  dependency-specific async/result ownership remain open in [KNOWN_PROBLEMS](../KNOWN_PROBLEMS.md).
+  Rationale: [D-074](DECISIONS.md#d-074--r1-canonical-musicaldocument-foundation).
