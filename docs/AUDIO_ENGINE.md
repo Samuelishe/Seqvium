@@ -8,14 +8,14 @@ Not authoritative for: Final language/backend/ABI, musical serialization, extens
 ## R2-F1 offline sampler foundation
 
 The reviewed direction is an initial bounded C# scheduler/DSP implementation with replaceable
-execution/device ownership. [F1 source](../src/Seqvium.Core/OfflineSampler.cs) implements resource/event
+execution/device ownership. [F1 source](../src/Seqvium.Core/Audio/OfflineSampler.cs) implements resource/event
 preparation and offline execution, without a production callback or device adapter. R0's native structs,
 four-slot scheduler and 48 kHz endpoint are not reused. A permanent engine/ABI remains unselected;
 F2 must provide intended real-WAV/device/managed-pressure evidence before broader claims.
 
 ### WAV and decoded ownership
 
-[WavDecoder](../src/Seqvium.Core/WavDecoder.cs) supports little-endian RIFF/WAVE PCM16 and IEEE float32,
+[WavDecoder](../src/Seqvium.Core/Media/WavDecoder.cs) supports little-endian RIFF/WAVE PCM16 and IEEE float32,
 mono/stereo, 44,100/48,000 Hz. Supported `fmt` representations are 16 bytes, 18 bytes with zero extension,
 and 40-byte WAVE_FORMAT_EXTENSIBLE with full valid bits and PCM/float subtype GUIDs. Extensible masks
 are unspecified (0), mono front-center (4), or stereo front-left/right (3), preserving L/R ordering;

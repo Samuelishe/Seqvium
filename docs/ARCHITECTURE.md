@@ -66,9 +66,9 @@ evidence must inform subsequent choices. No permanent engine/native ABI follows 
 
 ## R2-F1 managed media and offline execution
 
-The existing library contains [WAV decoding](../src/Seqvium.Core/WavDecoder.cs),
-[media preparation/storage](../src/Seqvium.Core/ProjectMedia.cs) and
-[offline sampler preparation/execution](../src/Seqvium.Core/OfflineSampler.cs). No new assembly or codec
+The existing library contains [WAV decoding](../src/Seqvium.Core/Media/WavDecoder.cs),
+[media preparation/storage](../src/Seqvium.Core/Media/ProjectMedia.cs) and
+[offline sampler preparation/execution](../src/Seqvium.Core/Audio/OfflineSampler.cs). No new assembly or codec
 framework is introduced. Durable source bytes belong to the project; decoded immutable PCM is a
 disposable cache with independent leases for prepared plans and live execution. Device facts and
 execution frames remain derived and absent from the canonical musical model.

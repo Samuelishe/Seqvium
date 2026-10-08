@@ -21,6 +21,11 @@ and the affected subsystem owner alongside this document; coding policy applies 
 - Do not use Service Locator or hide dependencies in mutable global application state.
 - Avoid God objects, ViewModels, and controllers. File/type size is a diagnostic signal, not an automatic
   refactoring command; do not split cohesive code into tiny files for line-count aesthetics.
+- Organize source and tests by cohesive feature or responsibility when this materially improves
+  navigation and ownership. Directories do not imply assembly boundaries. Avoid both indefinitely
+  growing flat directories and premature deep folder hierarchies. Do not split cohesive types or
+  introduce interfaces solely to satisfy file counts or folder conventions. Prefer discoverability
+  and clear dependency ownership over rigid numerical thresholds.
 
 ## Language and documentation
 

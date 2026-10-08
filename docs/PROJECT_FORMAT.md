@@ -21,8 +21,8 @@ work is deferred. Paths and saved association/history/lifecycle/generation are n
 
 Known property names use camelCase. All constructor fields are required, including nullable fields
 whose value may be JSON `null`; empty collections are explicit arrays/objects. The exact bounded
-state shape follows [model records](../src/Seqvium.Core/ProjectModel.cs) and
-[codec](../src/Seqvium.Core/ProjectPersistence.cs):
+state shape follows [model records](../src/Seqvium.Core/Domain/ProjectModel.cs) and
+[codec](../src/Seqvium.Core/Persistence/ProjectPersistence.cs):
 
 | Object | Known fields |
 | --- | --- |
