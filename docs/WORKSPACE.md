@@ -49,8 +49,13 @@ increments an unlimited z-index. The bottom 28-DIP strip reaches every visible/c
 it is fully covered. Hidden panes leave the strip and reopen through Panes, retaining the same content
 within the session. Collapse removes only the working surface, with an upward marker on its strip action.
 
-Floating headers drag within the workspace; the bottom grip resizes each pane. Captured movement uses
-the starting geometry and pointer delta, and saves on release, not every move. Escape, capture loss,
+Floating title/header content moves within the workspace. All four edges and four corners resize;
+each resize keeps its opposite edge/corner fixed and clamps only the dragged coordinates. Blocked
+pointer travel is discarded, so reversing from a boundary or minimum changes the visible edge immediately.
+Movement and workspace reflow use separate containment rules. Captured gestures retain their starting
+rectangle, pointer origin, active edges and workspace size, and save on release, not every move.
+Pane buttons own arrow cursors and never start a move/resize; resize retains focus already inside content.
+Escape, capture loss,
 application deactivation, workspace resizing or a competing pane operation cancel the gesture and
 restore its starting placement. Native main-window chrome is outside this host. All geometry uses
 workspace DIPs, no screen coordinates; the canvas clips safely and preserves the entire header and
@@ -62,7 +67,11 @@ Dock left/right and Float are explicit pane-menu actions. Each edge holds at mos
 an occupied-edge request returns its previous occupant to its retained floating placement. Opposite
 edges each use at most half the workspace width and full usable height, so both remain usable at the
 supported window minimum. A dock's inner-edge grip resizes width while preserving independent floating
-coordinates/height. Floating surfaces may overlap docks. Collapsed/hidden dock placements consume no
+coordinates/width/height. The separate dock width is stored within its actual permitted range and is
+relimited on reflow; rendering does not silently clamp a larger hidden width. Left/right workspace anchors
+remain fixed. Docked panes have horizontal inner-divider resizing only; undocking restores all floating
+edges/corners and the last valid floating rectangle. Floating surfaces may overlap docks. Collapsed/hidden dock
+placements consume no
 edge; restoring them applies the same conflict rule. Disabling Allow docking undocks that pane and
 disables its dock actions without changing another pane's preference. There is no magnetic snapping,
 hover-to-dock, nested layout tree, dock group, detached OS pane or named workspace profile.
@@ -70,8 +79,10 @@ hover-to-dock, nested layout tree, dock group, detached OS pane or named workspa
 Tab reaches pane/strip/menu actions; Enter/Space execute them and normal menu arrows/Home/Enter choose
 actions. F6 / Ctrl+Tab switch available panes in stable capability order; Shift reverses traversal and
 collapsed entries restore. Hidden entries require deliberate reopening. With the pane-actions button
-focused, Ctrl+Arrows move a floating pane and Ctrl+Shift+Arrows resize (docked width only). Ctrl+W hides
-a pane only while focus is inside the workspace. Escape cancels a gesture, dismisses a menu or returns
+focused, Ctrl+Arrows move a floating pane and Ctrl+Shift+Arrows resize (docked width only). Ctrl+W closes
+a pane only while focus is inside the workspace. Close is labeled "Close pane" / "Закрыть панель",
+with the pane title in tooltip/accessibility names and Ctrl+W as the close accelerator. It retains the
+Hidden state/content; Collapse remains a distinct action. Escape cancels a gesture, dismisses a menu or returns
 to Panes without a focus trap. Restore uses a live visible pane-actions button; hiding the final pane
 returns focus to Panes. No disposed-control focus reference is retained. These local bindings introduce
 no global hook or shortcut manager and preserve Alt+Space, Win+Up/Down and Alt+F4.
@@ -81,7 +92,8 @@ DIP sizes, then clamps negative/nonfinite/oversize positions and sizes. Window r
 bounds and edge widths; it does not shrink typography or introduce whole-window scrolling. Last floating
 geometry is separate from a docked rectangle. Storage/failure/shutdown semantics are owned once in
 [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage).
-[F2 evidence](experiments/SEQ-R3-F2_REPORT.md) records actual Windows interaction and screenshots;
+[F2 correction evidence](experiments/SEQ-R3-F2_REPORT.md#geometry-and-chrome-correction) records actual
+Windows interaction/cursors and screenshots. Owner interactive acceptance is still pending;
 high/mixed DPI, cross-monitor and other OS runtime are not accepted from pure geometry tests.
 
 ## One main application window

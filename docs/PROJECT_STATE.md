@@ -13,7 +13,8 @@ R2-F1/F2/F3/F4 are accepted working subdivisions, not new numbered stages.
 The [F4 complete R2 audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit) finds no missing
 R2 prerequisite for scoping R3. **R3 is in progress / partial**: separately authorized R3-F1 implements
 the accepted desktop/presentation foundation. R3-F2 implements bounded internal panes and independent
-user layout persistence; local verification is complete, owner visual review of F2 remains pending.
+user layout persistence. The focused geometry/chrome correction is locally verified; F2 interactive
+acceptance remains incomplete until the owner repeats the previously failing interactions successfully.
 SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / narrow** under its
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 The initial bounded C# scheduler/DSP keeps execution and device ownership replaceable.
@@ -63,8 +64,9 @@ Endpoint selections/facts remain absent from canonical music/settings/Undo and p
 
 ## Current focus
 
-R3-F2 is implemented and locally verified within R3, not a new numbered stage or full R3 acceptance.
-Review actual pane visuals/interaction; later shell/editor integration needs separate bounded authorization.
+R3-F2 is implemented with corrected anchored edge/corner resizing and close chrome; R3 remains partial.
+Owner repetition of the resize/chrome interactions is still required before correction acceptance.
+Later shell/editor integration needs separate bounded authorization.
 Do not infer authorization for further stages. Preserve portable canonical intent and narrow adapters. MIDI/capture
 buffers, clocks,
 lifetime and deliberate durable recording acceptance are planned ownership, not implemented streams.
@@ -74,16 +76,20 @@ The ordered First Track scenario in [ROADMAP](ROADMAP.md) is unchanged.
 ## Validation baseline
 
 Local Windows x64, SDK 10.0.401 / runtime 10.0.12: locked restore and full Release solution build, **zero
-warnings/errors; 346 passing tests, zero failures/skips**, preserving all 308 pre-F2 cases.
+warnings/errors; 396 passing tests, zero failures/skips**, preserving all 346 pre-correction cases.
 34 host cases cover RU/EN fallback, complete Dark/Light roles, compact metrics/version, canonical/pending import
 preservation,
 preference roundtrip/corruption/write failure and pure host lifecycle without a display. Another 38 F2
 cases cover pane transitions, bounded geometry/order, docking conflicts, user-file failures/roundtrip,
 pending-write shutdown and independence from actual project Save/prepared WAV work.
+50 correction cases verify exact anchors/reversal/saturation/cancellation, compact hit-region rules,
+button-source exclusion, localized close semantics and backward-compatible independent dock-width storage.
 Actual Windows 11 x64 desktop smoke verifies chrome movement/resize/minimize/maximize/restore,
 Tab/Enter/Space, Alt+Space, Win+Up/Down and Alt+F4, live language/theme and focus retention at 96 DPI.
-[F2 evidence](experiments/SEQ-R3-F2_REPORT.md) adds 58 actual control/pointer/keyboard/restart checks and
-six inspected screenshots at 1100x750, 640x511 and maximized 1920x1040. No Windows audio adapter loads in
+[F2 correction evidence](experiments/SEQ-R3-F2_REPORT.md#geometry-and-chrome-correction) adds 359 actual
+Windows pointer/control/cursor checks at 1100x750 and 640x511 across RU/EN and Dark/Light. The original
+58-check smoke missed owner-reproduced resize/cursor defects and is insufficient for interactive acceptance.
+Generated screenshots remain ignored local review artifacts. No Windows audio adapter loads in
 the desktop process; no playback/capture/DeviceCheck launch is requested.
 RID-independent desktop build without apphost also passes locally; this is not hosted OS evidence.
 Deterministic synthetic WAV/async-gate tests cover document/media/execution/source integrity plus 23 F4

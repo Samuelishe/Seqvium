@@ -26,7 +26,8 @@ internal sealed class WorkspacePane : Border, IDisposable
     private readonly Button _collapse;
     private readonly Button _hide;
     private readonly Border _header;
-    private readonly Border _grip;
+    private readonly Grid _surface = new();
+    private readonly List<Border> _resizeHandles = [];
     private readonly Border _dockGrip;
     private readonly FirstPartyPaneContent _content;
     private readonly ContextMenu _menu = new();
@@ -35,9 +36,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     private readonly MenuItem _right;
     private readonly MenuItem _permission;
     private IPointer? _pointer;
-    private Point _origin;
-    private PaneBounds _start;
-    private bool _resizing;
+    private PaneGesture? _gesture;
     private bool _disposed;
     private string Id => _definition.InstanceId;
 
@@ -52,8 +51,9 @@ internal sealed class WorkspacePane : Border, IDisposable
         Classes.Add("workspacePane");
         this.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Background"));
         AutomationProperties.SetAutomationId(this, Id);
-        var body = new Grid { RowDefinitions = new("28,*,12") };
-        Child = body;
+        var body = new Grid { RowDefinitions = new("28,*"), Margin = new(5, 10, 5, 10) };
+        Child = _surface;
+        _surface.Children.Add(body);
         _header = new() { Padding = new(6, 0, 2, 0) };
         _header.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Raised"));
         var header = new Grid { ColumnDefinitions = new("*,Auto,Auto,Auto") };
@@ -72,7 +72,7 @@ internal sealed class WorkspacePane : Border, IDisposable
             () => host.State.SetDockingAllowed(Id, !host.State.Get(Id).AllowDocking));
         _permission.ToggleType = MenuItemToggleType.CheckBox;
         AddAction("Pane.Collapse", () => host.State.Collapse(Id));
-        AddAction("Pane.Hide", () => host.State.Hide(Id));
+        AddAction("Pane.Close", () => host.State.Hide(Id));
         var hint = new MenuItem { IsEnabled = false };
         _items.Add((hint, "Pane.MoveHint"));
         _menu.Items.Add(hint);
@@ -85,29 +85,32 @@ internal sealed class WorkspacePane : Border, IDisposable
         _content = new(session, definition, language, theme);
         Grid.SetRow(_content, 1);
         body.Children.Add(_content);
-        _grip = new()
+        AddResizeHandle(HorizontalAlignment.Left, VerticalAlignment.Stretch, PaneGeometry.EdgeThickness, double.NaN,
+            StandardCursorType.SizeWestEast);
+        AddResizeHandle(HorizontalAlignment.Right, VerticalAlignment.Stretch, PaneGeometry.EdgeThickness, double.NaN,
+            StandardCursorType.SizeWestEast);
+        AddResizeHandle(HorizontalAlignment.Stretch, VerticalAlignment.Top, double.NaN, PaneGeometry.EdgeThickness,
+            StandardCursorType.SizeNorthSouth);
+        AddResizeHandle(HorizontalAlignment.Stretch, VerticalAlignment.Bottom, double.NaN, PaneGeometry.EdgeThickness,
+            StandardCursorType.SizeNorthSouth);
+        AddResizeHandle(HorizontalAlignment.Left, VerticalAlignment.Top, 10, 10, StandardCursorType.TopLeftCorner);
+        AddResizeHandle(HorizontalAlignment.Right, VerticalAlignment.Top, 10, 10, StandardCursorType.TopRightCorner);
+        AddResizeHandle(HorizontalAlignment.Left, VerticalAlignment.Bottom, 10, 10,
+            StandardCursorType.BottomLeftCorner);
+        var corner = AddResizeHandle(HorizontalAlignment.Right, VerticalAlignment.Bottom, 10, 10,
+            StandardCursorType.BottomRightCorner);
+        corner.Child = new TextBlock
         {
-            Height = 12, Background = Avalonia.Media.Brushes.Transparent,
-            Cursor = new(StandardCursorType.BottomRightCorner)
+            Text = "◢", FontSize = 10, Classes = { "caption" }, IsHitTestVisible = false
         };
-        var glyph = new TextBlock
-        {
-            Text = "◢", FontSize = 10, HorizontalAlignment = HorizontalAlignment.Right, Classes = { "caption" },
-            Margin = new(0, 0, 3, 0)
-        };
-        _grip.Child = glyph;
-        Grid.SetRow(_grip, 2);
-        body.Children.Add(_grip);
         _dockGrip = new Border
         {
-            Width = 7, Background = Avalonia.Media.Brushes.Transparent,
+            Width = PaneGeometry.EdgeThickness, Background = Avalonia.Media.Brushes.Transparent,
             Cursor = new(StandardCursorType.SizeWestEast)
         };
-        Grid.SetRowSpan(_dockGrip, 3);
-        body.Children.Add(_dockGrip);
+        _surface.Children.Add(_dockGrip);
         _dockGrip.PointerPressed += (_, args) => Begin(args, true);
         _header.PointerPressed += (_, args) => Begin(args, false);
-        _grip.PointerPressed += (_, args) => Begin(args, true);
         AddHandler(PointerPressedEvent, (_, _) => host.Activate(Id), RoutingStrategies.Tunnel);
         AddHandler(GotFocusEvent, (_, _) => host.Activate(Id));
         PointerMoved += Move;
@@ -117,9 +120,26 @@ internal sealed class WorkspacePane : Border, IDisposable
         AddHandler(KeyDownEvent, PaneKeyDown, RoutingStrategies.Tunnel);
     }
 
+    private Border AddResizeHandle(HorizontalAlignment horizontal, VerticalAlignment vertical,
+        double width, double height, StandardCursorType cursor)
+    {
+        var handle = new Border
+        {
+            HorizontalAlignment = horizontal, VerticalAlignment = vertical, Width = width, Height = height,
+            Background = Avalonia.Media.Brushes.Transparent, Cursor = new(cursor)
+        };
+        handle.PointerPressed += (_, args) => Begin(args, true);
+        _resizeHandles.Add(handle);
+        _surface.Children.Add(handle);
+        return handle;
+    }
+
     private Button ChromeButton(string glyph, string action, Grid header, int column)
     {
-        var button = new Button { Content = glyph, Width = 24, Classes = { "shell", "paneChrome" } };
+        var button = new Button
+        {
+            Content = glyph, Width = 24, Cursor = new(StandardCursorType.Arrow), Classes = { "shell", "paneChrome" }
+        };
         AutomationProperties.SetAutomationId(button, Id + "." + action.ToLowerInvariant());
         Grid.SetColumn(button, column);
         header.Children.Add(button);
@@ -152,17 +172,14 @@ internal sealed class WorkspacePane : Border, IDisposable
 
         NameAction(_actions, "Pane.Actions");
         NameAction(_collapse, "Pane.Collapse");
-        NameAction(_hide, "Pane.Hide");
+        NameAction(_hide, "Pane.Close");
         _left.IsEnabled = _right.IsEnabled = pane.AllowDocking;
         _permission.IsChecked = pane.AllowDocking;
-        _grip.IsVisible = pane.Dock == PaneDock.Floating;
+        foreach (var handle in _resizeHandles) handle.IsVisible = pane.Dock == PaneDock.Floating;
         _dockGrip.IsVisible = pane.Dock != PaneDock.Floating;
         _dockGrip.HorizontalAlignment =
             pane.Dock == PaneDock.Right ? HorizontalAlignment.Left : HorizontalAlignment.Right;
         _header.Cursor = new(pane.Dock == PaneDock.Floating ? StandardCursorType.SizeAll : StandardCursorType.Arrow);
-        _grip.Cursor = new(pane.Dock == PaneDock.Floating
-            ? StandardCursorType.BottomRightCorner
-            : StandardCursorType.SizeWestEast);
         _content.Refresh();
     }
 
@@ -170,6 +187,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     {
         var label = _session[key] + ": " + _session[_definition.TitleKey];
         AutomationProperties.SetName(button, label);
+        if (button == _hide) AutomationProperties.SetAcceleratorKey(button, "Ctrl+W");
         ToolTip.SetTip(button, label + (_actions == button ? " · " + _session["Pane.MoveHint"] : ""));
     }
 
@@ -181,32 +199,31 @@ internal sealed class WorkspacePane : Border, IDisposable
     private void Begin(PointerPressedEventArgs args, bool resize)
     {
         if (_disposed || !args.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
-        if (args.Source is Visual source &&
-            source.GetVisualAncestors().Prepend(source).Any(item => item is Button)) return;
+        if (args.Source is Visual source && IsActionSource(source)) return;
         if (!resize && _host.State.Get(Id).Dock != PaneDock.Floating) return;
+        var position = args.GetPosition(_surface);
+        var edges = resize
+            ? PaneGeometry.HitTest(position.X, position.Y, _surface.Bounds.Width,
+                _surface.Bounds.Height, _host.State.Get(Id).Dock)
+            : PaneEdges.None;
+        if (resize && edges == PaneEdges.None) return;
         _host.CancelGestures();
         _pointer = args.Pointer;
-        _origin = args.GetPosition(_host);
-        _start = _host.State.Bounds(Id);
-        _resizing = resize;
+        var origin = args.GetPosition(_host);
+        _gesture = new(_host.State, Id, edges, origin.X, origin.Y);
         args.Pointer.Capture(this);
-        FocusContext();
+        if (!IsKeyboardFocusWithin) FocusContext();
         args.Handled = true;
     }
+
+    internal static bool IsActionSource(Visual source) =>
+        source.GetVisualAncestors().Prepend(source).Any(item => item is Button);
 
     private void Move(object? sender, PointerEventArgs args)
     {
         if (_pointer != args.Pointer) return;
-        var delta = args.GetPosition(_host) - _origin;
-        var dock = _host.State.Get(Id).Dock;
-        var bounds = _resizing
-            ? _start with
-            {
-                Width = _start.Width + (dock == PaneDock.Right ? -delta.X : delta.X),
-                Height = _start.Height + delta.Y
-            }
-            : _start with { X = _start.X + delta.X, Y = _start.Y + delta.Y };
-        _host.State.SetBounds(Id, bounds);
+        var position = args.GetPosition(_host);
+        _gesture?.Update(position.X, position.Y);
         args.Handled = true;
     }
 
@@ -214,6 +231,8 @@ internal sealed class WorkspacePane : Border, IDisposable
     {
         if (_pointer != args.Pointer || args.InitialPressMouseButton != MouseButton.Left) return;
         _pointer = null;
+        _gesture?.Complete();
+        _gesture = null;
         args.Pointer.Capture(null);
         _host.Commit();
         args.Handled = true;
@@ -223,7 +242,8 @@ internal sealed class WorkspacePane : Border, IDisposable
     {
         if (_pointer is not { } pointer) return;
         _pointer = null;
-        if (!_host.State.IsDisposed) _host.State.SetBounds(Id, _start);
+        _gesture?.Cancel();
+        _gesture = null;
         pointer.Capture(null);
     }
 
@@ -241,12 +261,17 @@ internal sealed class WorkspacePane : Border, IDisposable
         var x = args.Key == Key.Left ? -10 : args.Key == Key.Right ? 10 : 0;
         var y = args.Key == Key.Up ? -10 : args.Key == Key.Down ? 10 : 0;
         if (x == 0 && y == 0) return;
-        var bounds = _host.State.Bounds(Id);
-        if (args.KeyModifiers.HasFlag(KeyModifiers.Shift))
-            bounds = bounds with { Width = bounds.Width + x, Height = bounds.Height + y };
-        else if (_host.State.Get(Id).Dock == PaneDock.Floating)
-            bounds = bounds with { X = bounds.X + x, Y = bounds.Y + y };
-        _host.State.SetBounds(Id, bounds);
+        var dock = _host.State.Get(Id).Dock;
+        var edges = args.KeyModifiers.HasFlag(KeyModifiers.Shift)
+            ? dock == PaneDock.Right ? PaneEdges.Left : PaneEdges.Right | PaneEdges.Bottom
+            : PaneEdges.None;
+        if (edges != PaneEdges.None || dock == PaneDock.Floating)
+        {
+            var gesture = new PaneGesture(_host.State, Id, edges, 0, 0);
+            gesture.Update(dock == PaneDock.Right ? -x : x, y);
+            gesture.Complete();
+        }
+
         _host.Commit();
         args.Handled = true;
     }

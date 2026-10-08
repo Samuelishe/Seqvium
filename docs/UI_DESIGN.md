@@ -39,7 +39,12 @@ are evidence only for the implemented Windows shell. Theme switching retains win
 Optional Inspector/Appearance surfaces use 28-DIP headers, 1-DIP boundaries, minimal rounding and the
 existing semantic resources/body typography. Active panes have a distinct outline and stronger title;
 keyboard-focused actions retain the separate visible control focus treatment. The actions, collapse,
-hide and resize affordances are compact; dock actions live in a deliberately opened menu. A 28-DIP
+close and resize affordances are compact; dock actions live in a deliberately opened menu. Floating
+resize strips are 5 DIP with 10x10-DIP corners taking priority. Title/actions/content are inset clear
+of those regions; the 28-DIP title row retains compact typography. The bottom-right marker is inside
+its actual corner hitbox; the remaining bottom edge uses a vertical cursor. Header title space uses
+a move cursor; action buttons own arrow cursors with normal hover/pressed/focus styling. Docked panes
+expose only their horizontal inner divider. Close (×) and Collapse (−) remain distinct. A 28-DIP
 bottom strip appears only while a pane is visible/collapsed, with an upward collapse marker and readable
 localized titles. Hidden/default panes occupy no persistent workspace surface. Inspector rows contain
 real project facts; Appearance offers two real preference actions, without decorative cards or fake editors.

@@ -34,7 +34,11 @@ public sealed record PanePlacement(
     PaneVisibility Visibility,
     PaneBounds FloatingBounds,
     PaneDock Dock,
-    bool AllowDocking);
+    bool AllowDocking)
+{
+    // Independent of the retained floating rectangle; old version-1 layouts omit this field.
+    public double? DockedWidth { get; init; }
+}
 
 public sealed record WorkspaceLayout(
     double Width,
@@ -116,15 +120,28 @@ public sealed class WorkspaceState : IDisposable
             SelectAvailable();
         }
 
+        for (var index = 0; index < _panes.Count; index++)
+        {
+            var pane = _panes[index];
+            _panes[index] = pane with
+            {
+                FloatingBounds = Clamp(pane.FloatingBounds, Definition(pane.InstanceId)),
+                DockedWidth = pane.DockedWidth is { } dockedWidth
+                    ? ClampDockWidth(pane.InstanceId, dockedWidth)
+                    : pane.Dock != PaneDock.Floating
+                        ? ClampDockWidth(pane.InstanceId, pane.FloatingBounds.Width)
+                        : null
+            };
+        }
+
         Changed?.Invoke();
     }
 
     public PaneBounds Bounds(string id)
     {
         var pane = Get(id);
-        var floating = Clamp(pane.FloatingBounds, Definition(id));
-        if (pane.Dock == PaneDock.Floating) return floating;
-        var width = Math.Clamp(floating.Width, Math.Min(Definition(id).MinimumWidth, Width / 2), Width / 2);
+        if (pane.Dock == PaneDock.Floating) return pane.FloatingBounds;
+        var width = pane.DockedWidth!.Value;
         return new(pane.Dock == PaneDock.Left ? 0 : Width - width, 0, width, Height);
     }
 
@@ -138,6 +155,10 @@ public sealed class WorkspaceState : IDisposable
         return new(Math.Clamp(Valid(bounds.X, 0), 0, Width - width),
             Math.Clamp(Valid(bounds.Y, 0), 0, Height - height), width, height);
     }
+
+    private double ClampDockWidth(string id, double width) => Math.Clamp(
+        double.IsFinite(width) ? width : Definition(id).DefaultBounds.Width,
+        Math.Min(Definition(id).MinimumWidth, Width / 2), Width / 2);
 
     public void Open(string id)
     {
@@ -187,14 +208,19 @@ public sealed class WorkspaceState : IDisposable
         CheckAvailable();
         var pane = Get(id);
         if (pane.Visibility != PaneVisibility.Visible) return;
-        var clamped = Clamp(bounds, Definition(id));
-        // A docked resize changes width only. Keep its separate floating placement intact.
-        Replace(pane with
-        {
-            FloatingBounds = pane.Dock == PaneDock.Floating
-                ? clamped
-                : pane.FloatingBounds with { Width = clamped.Width }
-        });
+        var updated = pane.Dock == PaneDock.Floating
+            ? pane with { FloatingBounds = Clamp(bounds, Definition(id)) }
+            : pane with { DockedWidth = ClampDockWidth(id, bounds.Width) };
+        if (updated == pane) return;
+        Replace(updated);
+        Changed?.Invoke();
+    }
+
+    internal void RestorePlacement(PanePlacement placement)
+    {
+        CheckAvailable();
+        if (Get(placement.InstanceId) == placement) return;
+        Replace(placement);
         Changed?.Invoke();
     }
 
@@ -204,7 +230,13 @@ public sealed class WorkspaceState : IDisposable
         if (!Enum.IsDefined(dock)) throw new ArgumentOutOfRangeException(nameof(dock));
         var pane = Get(id);
         if (pane.Visibility != PaneVisibility.Visible || (!pane.AllowDocking && dock != PaneDock.Floating)) return;
-        Replace(pane with { Dock = dock });
+        Replace(pane with
+        {
+            Dock = dock,
+            DockedWidth = dock == PaneDock.Floating
+                ? pane.DockedWidth
+                : ClampDockWidth(id, pane.DockedWidth ?? pane.FloatingBounds.Width)
+        });
         ResolveDockConflict(id);
         Activate(id);
         Changed?.Invoke();

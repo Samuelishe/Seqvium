@@ -8,6 +8,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
     <ItemGroup>
+        <InternalsVisibleTo Include="Seqvium.Tests"/>
         <PackageReference Include="Avalonia.Desktop" Version="12.1.3"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.3"/>
         <ProjectReference Include="../Seqvium.Core/Seqvium.Core.csproj"/>

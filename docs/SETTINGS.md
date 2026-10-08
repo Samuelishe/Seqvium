@@ -38,7 +38,11 @@ platform user configuration directory. It does not change the preference schema,
 Save, device intent, media roots or recovery. Missing layout means two optional hidden panes.
 Version 1 stores usable workspace `width`/`height`, `activePaneId`, and a back-to-front `panes` array.
 Each entry contains `instanceId`, `typeId`, `visibility` (`hidden`/`visible`/`collapsed`), floating
-`x`/`y`/`width`/`height`, `dock` (`floating`/`left`/`right`) and `allowDocking`. IDs are stable English
+`x`/`y`/`width`/`height`, `dock` (`floating`/`left`/`right`) and `allowDocking`. The optional version-1
+`dockedWidth` is independent of the retained floating rectangle and stores actual permitted dock width.
+Older version-1 files omit it: state initializes dock width from floating width within the current
+half-workspace limit, without a read-fallback warning or schema migration. Malformed/nonfinite supplied
+fields retain the existing fallback/write-refusal policy; finite geometry is limited by state. IDs are stable English
 tokens, not localized titles. Controls, focus references, project targets and runtime graphs are absent.
 [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns placement/interaction invariants.
 

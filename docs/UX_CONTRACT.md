@@ -528,7 +528,8 @@ retains preference ownership; exact storage/reset mechanics remain Q-053.
 ## In-window workspace and graph depth
 
 R3-F2 implements the first two optional host panes with explicit open/activate, pointer movement/size,
-collapse versus hide, bounded left/right docking and retained content. Pane activation is not musical
+collapse versus reversible Close (internally Hidden), bounded left/right docking and retained content. Pane activation
+is not musical
 selection or editing authority. The strip and Panes menu provide discoverable restoration/reopening;
 F6/Ctrl+Tab, local pane actions, Escape and Ctrl+W supply complementary keyboard paths without global
 hooks. Restore selects a valid live pane context, and hiding the last surface returns to the host action.

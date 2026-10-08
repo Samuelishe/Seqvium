@@ -111,7 +111,12 @@ public sealed class WorkspaceLayoutStore(string path)
                     fallback = true;
                 }
 
-                entries.Add(new(definition.InstanceId, definition.TypeId, visibility, bounds, dock, allowed));
+                double? dockedWidth = null;
+                if (element.TryGetProperty("dockedWidth", out var savedWidth) &&
+                    savedWidth.ValueKind != JsonValueKind.Null)
+                    dockedWidth = Number(element, "dockedWidth", defaults.Width, ref fallback);
+                entries.Add(new(definition.InstanceId, definition.TypeId, visibility, bounds, dock, allowed)
+                    { DockedWidth = dockedWidth });
             }
 
             var active = String(root, "activePaneId");
@@ -162,7 +167,8 @@ public sealed class WorkspaceLayoutStore(string path)
                     visibility = pane.Visibility.ToString().ToLowerInvariant(),
                     x = pane.FloatingBounds.X, y = pane.FloatingBounds.Y,
                     width = pane.FloatingBounds.Width, height = pane.FloatingBounds.Height,
-                    dock = pane.Dock.ToString().ToLowerInvariant(), allowDocking = pane.AllowDocking
+                    dock = pane.Dock.ToString().ToLowerInvariant(), allowDocking = pane.AllowDocking,
+                    dockedWidth = pane.DockedWidth
                 })
             });
             if (bytes.Length > MaximumBytes) return false;

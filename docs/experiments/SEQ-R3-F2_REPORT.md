@@ -1,9 +1,80 @@
 # SEQ-R3-F2 — Internal workspace panes and layout persistence
 
-Date: 2026-10-09. Status: implemented / locally verified; owner visual acceptance pending.
+Date: 2026-10-09. Status: corrected / locally verified; owner interactive acceptance incomplete.
 F2 is a bounded package within **R3 in progress / partial**, not another stage or R4 authority.
-Baseline: clean `master`, HEAD `88f53891c3308c5ba5f956064213420fcbf7391f`, 308 passing tests;
+Original implementation baseline: clean `master`, HEAD `88f53891c3308c5ba5f956064213420fcbf7391f`, 308 passing tests;
 R1/R2 complete / local accepted-ready, R3-F1 accepted desktop/presentation foundation.
+
+## Geometry and chrome correction
+
+Correction baseline: clean HEAD `db51a2224ff0e0f845a69fa3780a86c1edb00fd6`, 346 passing tests.
+The owner's reproducible resize/cursor defects invalidate any interpretation of the earlier smoke
+as completed interactive acceptance. No attachment was available in this session; investigation used
+the supplied reproduction descriptions, current source and actual Release Windows interaction.
+
+Confirmed causes: `SetBounds` used the same rectangle clamp for placement and resize, shrinking the
+available X/Y range as width/height grew and translating the opposite anchor. Dock resize wrote floating
+width up to full workspace width while `Bounds` rendered only half, accumulating invisible size.
+The entire bottom grip was diagonal, with no other floating edge/corner targets; the header's move
+cursor inherited into action buttons. Absolute pointer overshoot also required backtracking before
+the visible clamped edge could shrink. Close was presented as Hide despite ordinary × semantics.
+
+`PaneGeometry` separates movement from anchored resize and `PaneGesture` retains original placement,
+rectangle, pointer origin, selected edges and workspace bounds. Resize discards blocked pointer travel
+on each axis; reversal changes the visible size immediately. Cancel restores the exact original
+placement, including separate dock width, and ignores late events. Identical previews raise no state
+change. Capture completion/cancel stays on the UI thread; layout commits on release, not movement.
+Workspace reflow normalizes stored rectangles/widths rather than silently rendering different geometry.
+
+`PanePlacement.DockedWidth` is independent of the whole floating rectangle, limited in state to half
+workspace width and preserved in the optional version-1 user-file field. Legacy files initialize it
+from floating width without fallback/write refusal. Dock/undock restores the last valid floating
+rectangle, including width. No project serialization, canonical/Undo/audio or dependency changes.
+
+Chrome has 5-DIP edge strips and 10x10-DIP corners with priority and matching cursors; the marker is
+inside the bottom-right corner. Content/header/buttons are inset clear of resize regions. Docked panes
+expose only the horizontal inner edge. Buttons explicitly own arrow cursors and source/ancestor exclusion
+prevents capture from their visuals. Resize preserves existing content focus. Close tooltips/accessibility
+are "Close pane: Project Inspector" and "Закрыть панель: Инспектор проекта"; Ctrl+W naming matches.
+The existing `.hide` button automation ID, Hidden state and retained content identity are preserved.
+
+Locked restore succeeds; final full Release solution build has **0 warnings / 0 errors**; **396 tests pass, 0 fail / 0
+skip**, preserving all 346 baseline tests. The 50 added cases include 44
+geometry/gesture/hit-region/localization cases, three actual Button/nested-visual source checks and
+three independent/legacy dock-width storage cases. Anchors/reversal use exact rectangle assertions;
+these do not claim actual OS cursors or capture behavior.
+
+Actual Release GUI checks on Windows 11 x64 / 96 DPI: **359 passed** (85 geometry, 256 chrome/theme/
+language/reduced-window, 18 final-binary focus/persistence/reflow/dock checks). UI Automation reads live
+content rectangles during gestures; user32 delivers actual pointer/key input. `GetCursorInfo` handles
+are compared to Windows arrow/move/horizontal/vertical/two-diagonal cursors at each corresponding area.
+Checks include repeated separate and captured resize cycles at the right boundary, immediate reversal
+after overshoot, left/right dock limits and undock retention, all eight resize directions, Escape,
+deactivation/capture loss, OS-window independence and 640x511 reflow. RU/EN and Dark/Light retain exact
+anchors/reversal; Close/Collapse/Actions have actual arrow cursors (including button corner points),
+pointer/Enter/Space activation, visible RU/EN tooltips and accessibility names. Appearance content
+identity/focus survives resize, Escape and close/reopen. Layout file timestamp stays unchanged during
+pointer preview. Final shutdown joins writes; app exited with EN/Dark and optional panes hidden.
+
+Automation limitations discovered and corrected: off-screen dock overshoot was clipped by Windows;
+tooltip text is a descendant of the UIA ToolTip rather than its Name; pressed/focused button bounds
+can differ by one pixel, so exact live pane rectangles are derived from the content surface instead;
+main-window repositioning must use a stable client origin when comparing screen rectangles across
+reflow. One attempted build during GUI execution failed because apphost was locked; after normal
+GUI shutdown the final build succeeds without warnings. These failed attempts are not passed checks.
+
+Inspected generated captures are local-only under ignored `.artifacts/seq-r3-f2-correction/`; the
+ad hoc driver is `.scratch/seq-r3-f2/resize-correction.ps1`. They remain for owner reproduction/review,
+not product assets or permanent tooling. Documentation targets/anchors, owner/status/scope and final
+diff/whitespace are checked. No staging-index, commit or push action is performed.
+
+R3 stays **in progress / partial**. The correction is not marked accepted-ready: the owner must
+successfully repeat the previously failing interactions. Single-monitor/96-DPI automated GUI evidence
+does not certify high/mixed DPI, cross-monitor, other OS, screen readers or subjective pointer feel.
+R4 and broader docking/editor/domain work are outside this correction.
+
+The sections below retain the original implementation's bounded observations; current correction
+results and acceptance limits are those above.
 
 ## Scope and ownership
 

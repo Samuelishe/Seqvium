@@ -8,6 +8,55 @@ namespace Seqvium.Tests;
 
 public sealed class WorkspaceLayoutTests
 {
+    [Theory]
+    [InlineData(PaneDock.Left)]
+    [InlineData(PaneDock.Right)]
+    public async Task IndependentDockWidthRoundtripsWithoutChangingRetainedFloatingBounds(PaneDock dock)
+    {
+        using var directory = new TemporaryDirectory();
+        using var state = new WorkspaceState();
+        const string id = WorkspaceState.InspectorId;
+        state.Reflow(1000, 700);
+        state.Open(id);
+        var floating = new PaneBounds(100, 110, 340, 280);
+        state.SetBounds(id, floating);
+        state.Dock(id, dock);
+        state.SetBounds(id, new(0, 0, 10000, 700));
+        var path = directory.File("layout.json");
+        Assert.True(await new WorkspaceLayoutStore(path).SaveAsync(state.Capture()));
+        var loaded = await new WorkspaceLayoutStore(path).LoadAsync();
+        Assert.False(loaded.UsedFallback);
+        using var reopened = new WorkspaceState(loaded.Layout);
+        reopened.Reflow(1000, 700);
+        Assert.Equal(500, reopened.Get(id).DockedWidth);
+        Assert.Equal(floating, reopened.Get(id).FloatingBounds);
+        reopened.Dock(id, PaneDock.Floating);
+        Assert.Equal(floating, reopened.Bounds(id));
+    }
+
+    [Fact]
+    public async Task PreviousVersionOneWithoutDockWidthRestoresAndCanSaveNormally()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.File("layout.json");
+        await File.WriteAllTextAsync(path, """
+                                           {"version":1,"width":1000,"height":700,"activePaneId":"project-inspector.main",
+                                            "panes":[{"instanceId":"project-inspector.main","typeId":"project-inspector",
+                                             "visibility":"visible","x":100,"y":110,"width":800,"height":280,
+                                             "dock":"right","allowDocking":true}]}
+                                           """, TestContext.Current.CancellationToken);
+        var store = new WorkspaceLayoutStore(path);
+        var load = await store.LoadAsync();
+        Assert.False(load.UsedFallback);
+        using var state = new WorkspaceState(load.Layout);
+        state.Reflow(1000, 700);
+        Assert.Equal(500, state.Get(WorkspaceState.InspectorId).DockedWidth);
+        Assert.Equal(new(500, 0, 500, 700), state.Bounds(WorkspaceState.InspectorId));
+        state.Dock(WorkspaceState.InspectorId, PaneDock.Floating);
+        Assert.Equal(new(100, 110, 800, 280), state.Bounds(WorkspaceState.InspectorId));
+        Assert.True(await store.SaveAsync(state.Capture()));
+    }
+
     [Fact]
     public async Task MissingFileLeavesUserStorageUntouched()
     {
