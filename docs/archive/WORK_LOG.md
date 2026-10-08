@@ -691,3 +691,34 @@ is not established by local history; this log does not duplicate Git's commit ch
   Branch/HEAD/index and empty untracked state preserved; task changes are unstaged Markdown only.
   No pre-existing user work, executable code/projects/scripts/tests/CI/dependencies/installers or
   artifacts introduced. No staging, commit or push. SEQ-R0 remains **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R21
+
+- Completed the [roadmap/First Track dependency audit](AUDITS.md#seq-kb-r21--roadmap-dependency-and-first-track-closure-audit):
+  per-stage consumption/introduction/deferral/acceptance for R0–R14+, cross-stage matrix, complete-track
+  walkthrough, focused investigations A–R, seven alleged cycles and evidence-gated critical path.
+- Found ambiguous production scheduler/offline and sampler acceptance ownership, possible future-context
+  assumptions, basic-stretch/timing boundaries and early integrity/UI acceptance gaps. Existing accepted
+  contracts/questions already own their semantics. Clarified bounded R1/R2/R3/R4/R5/R7/R8/R9/R10/R11/
+  R12 responsibility in active Roadmap without a new stage, fundamental reorder or premature optional
+  hosting/recording/sidechain/library prerequisite. No mandatory capability lacks an owner after correction.
+- Defined a representative multi-section sample-based track with drums/bass/melody, shared Patterns,
+  independent variation/sound settings, direct reused audio, bounded local time/processing, basic Mixer/
+  core effects, canonical WAV output, Save/reopen, missing-media repair and captured unsaved recovery.
+  Generator/resampling integration requires its own stage evidence but its use in that composition is
+  optional. Short tonal core samples suffice conceptually without a new synthesizer; actual source/time/
+  state/overlap behavior remains unproved.
+- Partially answered Q-061 at planning level and narrowed its active scope to concrete stage choices/
+  dependencies and executable end-to-end acceptance. No hard architectural cycle or additional document-
+  level prerequisite to scoping R0 found; another focused KB stage is not presently justified. No Q-ID/
+  D-record was added; technology/schema/ABI/DSP/storage/UI/platform choices remain open in their owners.
+- Verified repository-relative Markdown links/anchors, canonical Q/D uniqueness and reference integrity,
+  current/cold ownership, conceptual capability coverage and hard-prerequisite reasoning, unsupported/
+  optional exclusions, unchanged implementation IDs/order and byte-identical R0 section, UTF-8/LF/
+  whitespace, `git diff --check` and final Git preservation. No builds/tests for the empty solution,
+  permanent verifier, measured realtime/UI/audio/storage/plugin/platform or delivery evidence claimed.
+- Initial baseline: clean `master`, HEAD `45ebcf7b5678114c344f5d0d53b20e758ed6b53a`, checkpoint R20.
+  Branch/HEAD/index and empty untracked baseline preserved; task changes are six unstaged Markdown
+  files only. No user work existed to alter. No code, experiments, projects, dependencies, tests, CI,
+  build scripts, UI/audio prototypes or executable tooling created. No staging, commit or push;
+  SEQ-R0 remains **pending / not started** and requires separate authorization.

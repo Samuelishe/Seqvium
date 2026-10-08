@@ -7,19 +7,19 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R20 complete (2026-10-08). [Portability](PORTABILITY.md#platform-evidence-and-support-scope)
-separates architectural targets, source/build, hosted checks, native loading/interop, actual desktop,
-audio-device, packaged distribution and public support scope. Windows is the primary early development/
-validation environment; Windows/Linux/macOS remain first-class architectural targets. Q-068 is resolved
-at product-policy level: each declared release needs evidence for its actual environment/capability scope;
-neither common source, hosted checks nor an open editor establishes full DAW support. WSLg evidence is
-bounded to Linux execution, graphical interaction and bridged audio there, not native Linux acceptance.
-[Roadmap](ROADMAP.md#platform-release-acceptance-ownership) assigns bounded R0–R12/later responsibility;
-R12 declares and validates intended distribution targets without mandatory simultaneous parity or
-arbitrary Linux/macOS deferral. Q-041 retains exact target/OS/CPU/RID/device/backend and delivery choices;
-Q-061 retains full release-scenario closure. Existing portable document/managed-media, degraded access,
-Save/recovery/Undo/async ownership, musical relationships and presentation contracts remain in force.
-No implementation stage has started.
+SEQ-KB-R21 complete (2026-10-08). The conceptual R0–R12 dependency audit supports the present stage
+order with no hard architectural cycle, missing mandatory owner after bounded clarifications, or new
+document-level prerequisite to scoping R0. [Roadmap](ROADMAP.md#first-track-scenario-and-acceptance-boundary)
+defines a representative finished sample-based composition with drums/pitched phrases, shared Patterns,
+independent variation/sound settings, directly arranged audio, bounded local time/processing, basic
+mixing, canonical WAV export, Save/reopen, degraded repair and captured unnamed/unsaved recovery.
+[Execution ownership](ROADMAP.md#execution-and-timing-acceptance-ownership) clarifies core sampler/event
+acceptance in R2, prepared graph/offline foundations in R4/R8, real audible stretch in R10, core effects
+and supported-path timing in R11, and integrated delivery/integrity in R12. Q-061 is partially answered
+at planning level; concrete stage choices/dependencies and end-to-end evidence remain open. No engine,
+ABI, schema, DSP/storage/UI mechanism or release target is selected. R20 per-target GUI/audio/distribution
+evidence policy remains binding; Q-041 retains exact support scope without simultaneous platform parity.
+No additional focused KB stage is presently justified. No implementation stage has started.
 
 ## Implemented capability
 
@@ -38,8 +38,8 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R20 cases A–T and support/release hypotheses checked conceptually against actual evidence scope,
-portable projects, desktop/device/distribution acceptance and bounded stage ownership.
+R21 bottom-up R0–R14+ and top-down complete-track audits checked conceptual prerequisites, owning-stage
+acceptance, seven alleged cycles, optional/future exclusions and focused investigations A–R.
 Repository-relative Markdown links/anchors, canonical Q/D identity/reference integrity, owner/routing,
 active/cold separation, roadmap IDs/order and unchanged R0 scope, UTF-8/LF/whitespace and Git preservation
 checks passed. Documentation-only; no builds/tests, runtime/audio/hardware, UI, packaged-distribution,
@@ -56,8 +56,8 @@ lifetime/render/capability/UI remain open. Q-011 retains contextual substitution
 retains generation/similarity, controls/locks, candidate/history limits/storage/UI and evidence.
 High-impact evidence includes source/domain grouping/voice allocation, opaque-source instancing,
 definition synchronization and CPU/RAM behavior (Q-047), concrete recovery replacement/candidate and
-durable-media protocol/GC/reconciliation with platform/fault evidence (Q-058/Q-059), full
-milestone dependency closure (Q-061), DSP/tails (Q-057), graph publication/lifetime (Q-018), device timing/
+durable-media protocol/GC/reconciliation with platform/fault evidence (Q-058/Q-059), concrete milestone
+dependency/evidence closure (Q-061), DSP/tails (Q-057), graph publication/lifetime (Q-018), device timing/
 recovery (Q-062/Q-069), undo/async mechanisms (Q-063), input/accessibility/platform validation (Q-064),
 Browser/Personal Library mechanisms (Q-065), host-resource lifecycle (Q-067), localization/locale (Q-054)
 and theme APIs/packaging (Q-055). Package/negotiation and backend mechanics remain open.

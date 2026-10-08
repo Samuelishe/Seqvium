@@ -29,11 +29,88 @@ mandate extra architectural layers/projects.
 A later meaningful end-to-end project/track remains a valuable acceptance milestone. Piano Roll playing
 a pattern alone is insufficient as the final usable-product criterion, and useful closure does not require
 approximating a complete FL Studio. Do not weaken/reorder foundations to reach an MVP at any cost.
-After sufficient foundation decisions/evidence, a dedicated researched roadmap exercise must identify
-dependencies, define safe implementation order and a concrete complete-project/MVP scenario, map each
-required capability to an owning stage, and have Codex/architecture audit gaps and circular dependencies.
-Q-061 retains that future exercise. Current numbering/order is not automatically changed, and the full
-roadmap/milestone closure is not finalized here.
+The conceptual dependency audit supports the present R0–R12 order and the bounded scenario below.
+No hard architectural cycle or additional document-level prerequisite to scoping R0 was identified.
+This is planning-level closure only: Q-061 retains implementation-specific dependency checks, actual
+capability/range choices and end-to-end evidence as stages arrive. No technical feasibility or release
+acceptance follows from this conclusion; R0 still requires separate authorization.
+
+## First Track scenario and acceptance boundary
+
+The bounded R12 acceptance direction is a short composition with distinct sections, rhythm and pitched
+music, rather than a tone or one looping Pattern. A representative case is 16 bars in 4/4 at a chosen
+tempo: imported Kick/Snare/Hat WAVs, a known-pitch short tonal WAV played by the core sampler for bass
+and melody, repeated shared drum/bass Patterns, one explicit independent fill/phrase variation, and
+two occurrences of one directly arranged texture WAV, plus one deliberately independent sampler sound
+configuration. Counts, tempo and genre are illustrative, not format limits, bundled-content commitments
+or a fixed benchmark. No built-in synthesizer is required.
+
+Create it in an unnamed project; find/import/audition resources; edit steps and pitched note durations/
+velocities; arrange shared uses and a variation; move, trim/split, repeat and locally stretch supported
+audio, distinguishing fixed-time from tempo-following behavior. Exercise item-local and explicit
+containing processing with available core processors, distinct basic routes/channels and an intentional
+submix, gain/pan/mute/solo and bounded EQ/compression. Save/Save As, close/reopen and render a coherent
+WAV range from canonical state. Verify timing, sharing, sound/resource references, local edits, routing
+and processing without duplicate DSP. Demonstrate degraded access plus deliberate repair/replacement/
+removal for a missing managed sample, and recovery of a captured unnamed/unsaved revision after simulated
+interruption. Recovery does not promise every edit or unpersisted audio survives.
+
+R7 generation and R8 object resampling require their own bounded acceptance and integration into project
+reuse by R12; using them in this composition is optional. The core sample path must finish the track
+when the removable generator is absent, and accepted generated audio must remain usable without it.
+Unavailable required processing still blocks its dependent render; removal is not permission for silent
+bypass. An external effect/plugin host is unnecessary to exercise the recoverable-media failure case.
+
+Validate each declared distribution target under [platform ownership](#platform-release-acceptance-ownership),
+including the delivered application, actual GUI/audio and project integrity. Scope exact supported
+audio/time operations, formats, rates/channels, render entry-state/tails and platforms with evidence
+during their owning stages. R12 integrates proven foundations; it must not first invent their ownership.
+Rich recording, external hosting, mature sends/sidechains/modulation/automation, Personal Library
+publication and advanced pitch/time processing remain later work. This scenario assigns existing
+requirements to a usable acceptance direction, not a complete R12 specification or implementation claim.
+
+## Execution and timing acceptance ownership
+
+Under [Audio](AUDIO_ENGINE.md), [Graph](NODE_GRAPH.md), [Architecture](ARCHITECTURE.md) and
+[Test execution](TEST_EXECUTION.md), the minimum execution path develops incrementally:
+
+- R1 establishes compatible event/time and persistent reference/edit foundations, including room for
+  processing contexts/routes without implementing Arrangement or Mixer. Resolve bounded Q-008/Q-009/
+  Q-029 with Q-019 before committing reference shapes that later scopes would have to replace.
+- R2 owns the core sampler's audible pitched-note, velocity, duration/release and overlapping-event
+  behavior for its declared scope, plus basic transport/scheduling and output sufficient to exercise it.
+  Short tonal samples can provide meaningful bass/melody; sustained loops, multisampling and a synthesizer
+  are not implied. Resolve that minimum source/time behavior before R5/R9 rely on it. Subsystem/API and
+  controlled device/offline exercises suffice before R3; no mandatory CLI product or polished Browser.
+- R4 extends scheduling into prepared graph execution using bounded model-driven events; source/input,
+  output, gain, convergence/routing and stable attachment ownership must be executable without R5 or
+  optional modules. Compare the supported graph path offline as well as realtime. Reject unsupported
+  topology/dependencies explicitly. Full scope UI and every processor remain later work.
+- R5 proves musical looping/live edits over that same scheduler and event model; R9 extends editing,
+  not sound production. R7 auditions only existing Pattern/sound and processing contexts; unsupported
+  Arrangement targets cannot be offered as working contextual audition before R10.
+- R8 owns production frozen-scope offline preparation/render for at least a Pattern-content scope with
+  its actual sound uses, rate/channels, finite range/state/tails, cancellation and durable acceptance.
+  Other object scopes require actual prior support; no R10 Arrangement or R11 Mixer prerequisite.
+- R10 extends execution/offline scheduling to arranged shared/independent occurrences and audio time
+  mappings, including bounded audible local stretch. R11 extends the same path with core EQ/compression
+  and user-facing routes/controls; those processors must also work in supported local contexts.
+- R4 and every later stage introducing latency-bearing paths own necessary timing/reporting/alignment
+  for those paths, revisited before R8/R10/R11 completion. A deliberately narrower supported processor
+  set can suffice; silently misaligned shipped paths cannot. Q-021 retains mechanisms, not a demand
+  for universal plugin compensation or future Live mode. Q-005/Q-017/Q-018/Q-047/Q-057 retain scheduling,
+  typing, publication, source-state and DSP/range evidence for each actual capability.
+- R12 owns final export controls/WAV output delivery, packaging and whole-scenario evidence. Device-
+  independent preparation, scheduling, DSP and media integrity must already serve prior stages.
+
+R5 integrates simple on-screen musical audition over R2; R9 uses that source path for pitched editing.
+No MIDI recording or global typing-keyboard piano mode is required for the scenario.
+R3 owns initial focus/semantic-action targeting and ordinary keyboard-accessible window/pane controls;
+R4/R5/R7/R9/R10/R11 extend them with each editor, using R1 transaction boundaries. R2 owns resource
+retention for working/saved/history/pending/live owners as applicable from first import; future recovery
+owners must fit that foundation. R12 completes recovery/repair experience, not fundamental lifetime.
+These are bounded ownership/acceptance clarifications. They choose no engine, scheduler, storage protocol,
+DSP algorithm, UI framework or public ABI; all stage IDs/order and R0 scope remain unchanged.
 
 ## Discovery and reuse ownership
 
@@ -295,9 +372,10 @@ Save/reopen preserves canonical work even when invalid. Export validates/prepare
 revision, blocks required dependencies and never silently renders stale playback; preparation requires
 responsive cancellation/state and finite failure handling. Export follows intended project cuts/tails
 under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
-Exercise meaningful shared/independent music and sound references, reused audio with local edits,
-context moves and coherent Undo/reopen under the accepted ownership boundaries. This clarifies integrity
-responsibility, not the full release scenario or capability/dependency audit retained by Q-061.
+Exercise the [bounded First Track scenario](#first-track-scenario-and-acceptance-boundary), including
+meaningful shared/independent music and sound references, reused audio with local edits, context moves
+and coherent Undo/reopen under the accepted ownership boundaries. Q-061 retains implementation-specific
+scope/dependency and end-to-end evidence closure.
 Selected export ranges are hard by default; explicit tail inclusion may extend naturally allowed tails
 without undoing project cuts. Finite tail mechanics (Q-057), exact rolling-recovery workflow (Q-058),
 managed-media integrity mechanics (Q-059) and concrete milestone closure (Q-061) remain open.
@@ -314,8 +392,8 @@ recovery evidence for shipped workflows. Capture/monitoring acceptance applies w
 implicit recording prerequisite. State limitations and hosted-only/experimental status elsewhere;
 shared source or CI does not imply Windows/Linux/macOS release parity. The exact supported matrix and
 delivery prerequisites remain Q-041; portable architecture remains required for other target OS families.
-This is a provisional later acceptance target for the dedicated roadmap research/audit, not permission
-to accelerate visible features by weakening foundations or a finalized MVP capability list.
+This is a bounded later acceptance direction, not permission to start implementation, weaken foundations
+or claim a finalized/technically validated release specification.
 
 ## SEQ-R13 — Extension Ecosystem
 

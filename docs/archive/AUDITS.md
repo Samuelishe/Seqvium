@@ -193,3 +193,422 @@ The actual milestone target subset is still a later Q-041/Q-061 choice: bounded 
 or inclusion of adequately evidenced Linux/macOS environments. No user preference is needed to accept
 these claim limits now; no target subset, delivery date, native/backend/toolchain choice or full R12
 scenario is invented. Q-068 is policy-resolved; related technical questions remain open.
+
+## SEQ-KB-R21 — Roadmap dependency and First Track closure audit
+
+Historical documentation/architecture audit, 2026-10-08, baseline clean `master` at
+`45ebcf7b5678114c344f5d0d53b20e758ed6b53a`, checkpoint SEQ-KB-R20. The solution contains no projects;
+no application, engine, tests, experiments or executable tooling exists. No external technical claims
+were needed: conclusions below derive from repository contracts. No measured feasibility, realtime,
+storage, DSP, accessibility, plugin or platform evidence is claimed.
+
+Current obligations live in [Roadmap](../ROADMAP.md#first-track-scenario-and-acceptance-boundary) and
+[execution ownership](../ROADMAP.md#execution-and-timing-acceptance-ownership); remaining uncertainty
+lives in [Known problems](../KNOWN_PROBLEMS.md). This archive records the audit and partial Q-061 answer,
+not a second authoritative requirement table. No new Q-ID or D-record is justified: identified gaps
+have existing owners/questions, and corrections clarify existing capabilities rather than select
+new product policy, schema, technology or implementation architecture.
+
+### Evidence and dependency vocabulary
+
+- **Accepted requirement:** an existing canonical owner constrains the eventual product. It is not
+  evidence that the behavior works. Roadmap changes here only assign bounded responsibility/acceptance.
+- **Conceptual conclusion:** a dependency follows from those requirements; reasons accompany hard
+  prerequisites. No theoretical model proves runtime correctness.
+- **Bounded design:** a concrete representation, UI or protocol must be chosen before its owning
+  capability is implemented. Several choices remain possible; no universal implementation is inferred.
+- **Measured evidence:** executable probe, lifecycle/fault exercise, DSP comparison or real desktop/
+  device/distribution validation is required. A successful R0 baseline cannot close later cases.
+- **Later capability:** valuable direction that can remain absent from the bounded R12 composition.
+
+**H — Hard prerequisite:** without it the specified operation cannot execute or would violate semantics.
+**I — Incremental foundation:** an earlier narrow capability suffices and grows later.
+**O — Optional enhancement:** useful for the composition but unnecessary to finish it.
+**F — Future expansion:** deliberately beyond the R12 path.
+**E — Evidence dependency:** a technical answer is gated by actual probe/implementation results.
+These labels describe capabilities, not whole stages: adjacency in the roadmap does not make every
+previous stage a hard technical prerequisite. An optional creative path still has its own mandatory
+acceptance when its stage is shipped.
+
+### Pass 1 — Stage-by-stage audit
+
+Each row records consumption/foundation, introduced capability, independently exercisable completion,
+deferral, later consumers, relevant questions and necessary evidence. All completion evidence is future.
+
+| Stage | Consumes and why | Introduces / independently exercisable completion | Defers / later consumers | Open questions / completion evidence |
+| --- | --- | --- | --- | --- |
+| R0 — Audio Architecture Probe | Accepted realtime/control/clock/lifetime and portable-adapter contracts; E feasibility before major production execution choices | Minimal experimental device host, sample/tone events, transport/loop/control stress and bounded offline comparison; inspect timing, overload recovery, managed/native pressure and stop/restart/retirement | No production engine, final schema, graph editor, external host, ASIO, recording or three-platform certification; informs R2/R4 and constrains R1 time/boundary coordination | Q-001–Q-007; declared setup/thresholds/measurements/limits and explicit accept/reject/narrow recommendation; backend/language/ABI require evidence-backed acceptance |
+| R1 — Domain and Musical Model Foundation | H accepted musical/document/settings/format semantics: later edits require identifiable canonical targets; R0 E informs execution-facing assumptions, not pure model testability | Unnamed lifecycle, content/sound/resource/placement/context/route identity relationships, position/pitch/duration/velocity, project settings, coherent transactions/Undo, bounded versioned Save/reopen including unresolved intent | No full Arrangement/Mixer, recovery UI, final attachment inventory, storage GC or event extraction; supplies every later document consumer | Q-008/Q-009/Q-019/Q-023/Q-028/Q-029/Q-063/Q-069; model edits, shared-reference/variation/sound-independence examples, Undo/round-trip, unknown-state/degraded/version cases; no device required |
+| R2 — Audio Resource / Device Foundation | H R1 document/resource/edit ownership for accepted import; E R0 disposition before production callback/backend commitment | WAV access/preview/import/reuse, durable unnamed media, core pitched sampler, event duration/release/velocity and bounded overlap, transport/output/device foundation; exercise through subsystem API and controlled device/offline host | No complete Browser/shell, catalog, multisampler/synth, all codecs/backends, polished input/recording; supplies R4/R5/R7/R8/R9/R10 | Q-005/Q-006/Q-047/Q-057/Q-059/Q-062/Q-069/Q-065/Q-063; imported source removal, failed/partial import, owner retention, tonal pitch/note/release/order and device failure/configuration evidence; no mandatory CLI product |
+| R3 — Workspace Shell Foundation | I R1 lifecycle/actions/settings boundary; host UI candidate needs Q-037 decision. R2 integration is convenient, not needed to prove pane geometry/focus | Main window, limited internal panes, safe user layout, focus/target separation, discoverable pointer and ordinary keyboard window/pane actions, initial RU/EN and Dark/Light rails | No full musical panes, mature resource registry, pixel-perfect system or extension host; all subsequent first-party surfaces consume shell/actions/styles | Q-022/Q-037/Q-053/Q-054/Q-055/Q-064; actual limited desktop/chrome/focus/DPI/escape/restore and preference tests; UI logic alone does not prove native interaction |
+| R4 — Node Graph Foundation | H R1 canonical identity/transactions and R2 source/output/execution boundary: connections need targets and actual audio; H R3 for graph pane only, not pure graph validation | Typed supported connections, source/input/output, gain/mix/routing, stable attachments, prepared revision convergence/retirement; model-driven events produce audible and offline graph output before R5 | No full R10 scopes/UI, R11 effects suite, optional realtime host, universal feedback/sidechain/modulation; supplies musical execution, audition, render and later contexts | Q-005/Q-017/Q-018/Q-019/Q-020/Q-021/Q-029/Q-047/Q-057/Q-063/Q-066; topology/type/blocker, publication/obsolete revision/close/lifetime, contribution separation and supported realtime/offline/state evidence |
+| R5 — Pattern Workspace | H R1 compatible events/shared content, R2 core sound, R4 execution and R3 interaction: step edits must be heard and target the same saved Pattern | Channel Rack, Step Sequencer, multi-channel velocity/loop/live edits, basic sound audition integration and clear shared target; first musical editing workflow | No full Piano Roll/Arrangement, universal per-note graphs, external plugins; R7 uses current Pattern/sound context, R8 renders its content and R9/R10 reuse events | Q-008/Q-029/Q-047/Q-057/Q-063/Q-064; several instruments looping, live note/edit/stop/release, shared edits/Undo/reopen and pointer/keyboard target cases; one tone is insufficient |
+| R6 — Extension Foundation | H existing host/resource/document boundaries and R3 UI rails for actual contributions; I R4 needed only for a module using graph execution | Local bounded first-party identity/discovery/package/capability lifecycle, missing-state and opaque-data preservation, contribution availability/retirement | No marketplace, mature updater or CLAP/VST3 bridge; generator-specific async contract is enough for R7, future realtime guests need stricter contracts | Q-010/Q-024/Q-054/Q-055/Q-067; compatible/incompatible/missing activation, fallback, active-use block/defer, load/unload/close and unknown-state round-trip without external hosting |
+| R7 — Sample Lab / Generator V1 | H R6 for honest removable generator, R2 durable audio, R1 commit gate, R3 pane/resources; H R4/R5 for supported contextual Pattern audition | One/two procedural families, random/related variants, declared locks/history/comparison, standalone and existing sound/Pattern contextual listening, explicit durable resource/shared-sound acceptance | No Arrangement context before R10, event-to-item conversion, arbitrary audio similarity or global library; R12 integrates resulting resources, but track creation does not require generator availability | Q-011/Q-024/Q-029/Q-047/Q-057/Q-059/Q-063/Q-067/Q-071; substitution/current-sound restoration, changed/deleted/closed target races, failed acceptance and generator removal; retained audio versus recipe/history distinguished |
+| R8 — Resampling | H R1 frozen canonical/edit gate, R2 sound/media, R4 prepared graph and event schedule; Pattern scope can be model-tested, R5 supplies ordinary selection. External dependencies H only if used | At least bounded Pattern-content object render, actual source/local processing, finite range/state/tails, rate/channels, cancellation, storage/acceptance and immediate reuse with source intact | No Arrangement capture before R10, complex sends/Master capture or R11 effects dependency; optional replacement needs Q-049 only if offered. R7 generator is not a hard rendering dependency | Q-012/Q-018/Q-021/Q-047/Q-049/Q-057/Q-059/Q-063/Q-066; offline event/DSP output, boundary/dependency exclusion or blocker, finite failure, stale target, Undo/media retention; no silent last-valid render |
+| R9 — Piano Roll | H R1/R5 same canonical events and targets, R2/R4 pitched sound/scheduling, R3 shell; no R7/R8 prerequisite for note editing | Pitch/duration/velocity editing and audition of existing musical content with shared-reference semantics | No new instrument/source engine, recording or timeline; R10/R12 consume completed drum and pitched phrases | Q-008/Q-029/Q-063/Q-064 plus Q-005/Q-047/Q-057 execution; Step/Piano round-trip, durations/pitches/Undo, no hidden copies, pointer/keyboard/focus evidence |
+| R10 — Arrangement | H canonical occurrence/sharing/time/context identity from R1/R4, actual samples/events from R2/R5/R9 and shell; I offline execution from R4/R8 | Shared placements/explicit variations, named containers, direct audio, source-range/split/trim/move/repeat, fixed/follow-tempo and audible local stretch, bounded local/context assignment and arranged offline scheduling | No universal nesting/override/time engine or rich sends; user-facing Mixer/effect suite follows R11. Core Gain/Mix suffices to exercise earlier local/context ownership | Q-008/Q-019/Q-028/Q-029/Q-030/Q-047/Q-051/Q-057/Q-059/Q-063/Q-064/Q-066; overlap/separation, variation versus sound independence, trim/split/tempo/stretch audible round-trip and context-move tests before R12 |
+| R11 — Mixer / Core Processing | H existing separate routes/contributions/contexts from R4/R10 and core sound; Mixer cannot reconstruct independent signals from a premature sum | Channels/basic intentional bus/Master, gain/pan/mute/solo, core EQ/compression usable in applicable local/global scopes; shared controls address one DSP context | No complete sends/sidechains, universal PDC, every processor or external downloads; extends arranged offline path for R12 | Q-017/Q-018/Q-019/Q-021/Q-030/Q-047/Q-057/Q-064/Q-066; independent/aggregate controls, once-only processing, supported rate/channel behavior, state/latency and realtime/offline comparison |
+| R12 — First Track Release | H earlier musical/source/time/graph/routing/media foundations for the scenario; R6/R7/R8 have stage acceptance even though creative use is O | Whole composition, final WAV range/settings/delivery/errors, Save As/repair/recovery usability, packaging and evidence per actual supported platform | No professional-workstation inventory or implicit recording/external host; does not originate scheduler, media lifetime, identities or renderer | Q-009/Q-012/Q-018/Q-021/Q-029/Q-041/Q-047/Q-051/Q-054/Q-055/Q-057/Q-058/Q-059/Q-061/Q-062/Q-063/Q-064/Q-065/Q-067/Q-069; integrated scenario plus negative/fault cases and actual distribution/desktop/device/storage evidence |
+| R13 — Extension Ecosystem | H real R6/R7 lifecycle experience, compatibility and retained document state; E broader packaging/update evidence | Mature install/update/remove and diagnostics within justified supported categories | No mandatory store or external host; no hard predecessor relationship to R12 | Q-010/Q-024/Q-067/Q-014/Q-041; actual package rollback/dependencies/active use and retained project/UI behavior; bounded by categories shipped |
+| R14+ — Evidence-led expansion | H/I existing portable host, identity/time/media/execution contracts as each added feature needs them; E specific new capability evidence | Recording/monitoring, automation, richer instruments/DSP/stretch/routing, external hosting, Personal Library publication and added platform coverage where justified | Order/scope/date open; these cannot become hidden dependencies of the audited composition | Q-016/Q-025/Q-026/Q-027/Q-033/Q-034/Q-041/Q-048/Q-050/Q-065 and extensions of Q-021/Q-047/Q-051/Q-057/Q-066; feature-specific evidence, no blanket early acceptance |
+
+### Cross-stage dependency matrix
+
+Summary of audit coverage; canonical detail remains in the linked owners. “Yes” means the invariant
+must hold for shipped scenario capabilities, not that every possible inventory item is mandatory.
+
+| Capability / invariant | First required | Implemented / extended by | Required for R12? | Evidence / open Q | Risk |
+| --- | --- | --- | --- | --- | --- |
+| Feasible callback/control/lifetime boundary | R0 probe; production R2 | R0 informs R2/R4, later processors | Yes, for actual execution | Q-001–Q-007; measured declared environment | E; selecting engine/ABI without evidence |
+| Canonical document/lifecycle/revision/settings | R1 | R1; each stage adds owned fields; R12 integrity | Yes | Q-008/Q-009/Q-063/Q-069; round-trip/close/concurrent edits | Late or filename-derived identity |
+| Content/sound/resource/occurrence/context/route separation | R1 relationships, R4 concrete attachments | R1/R4, R5/R9 shared edits, R10/R11 scopes | Yes | Q-019/Q-028/Q-029/Q-030; serializable model examples | Destructive redesign if one universal Track/source ID |
+| Canonical transactions/Undo and commit authority | R1 edits; R2 async import | R1/R2/R4/R5/R7/R8/R9/R10/R11 | Yes | Q-063 with Q-059; gesture and deterministic race/failure cases | Wrong target, partial edit, resurrected work |
+| Versioned Save/degraded unknown state | R1 | R1/R4/R6; R12 Save As/repair | Yes | Q-009/Q-018/Q-024/Q-029; invalid/unknown round-trip | Saving executable snapshot instead of intent |
+| Managed WAV import and unnamed multi-owner media | R2 | R2; R7/R8 output; R12 recovery/transfer | Yes | Q-059/Q-063; source removal, storage failure/lifetime | Owner too late if treated as R12 polish |
+| Core pitched sampler and duration/release/velocity | R2 | R2; R4 domains; R5/R9 use, R10 overlap | Yes | Q-005/Q-047/Q-057; audible tonal notes/release | Trigger-only sampler insufficient for declared pitched editing |
+| Transport/event scheduling/time-to-sample mapping | R2 bounded events | R4 graph; R5 loops; R8 offline; R10 arrangement | Yes | Q-005/Q-006/Q-057/Q-069; block/loop/seek/rate tests | Previously implicit production owner |
+| Source/output/gain/mix and contribution-preserving routes | R2 output; R4 graph | R4 bounded paths; R10 contexts; R11 controls | Yes | Q-017/Q-019/Q-030/Q-047; routed independent outputs | Hidden dependency on Mixer or optional node |
+| Graph validity, publication and temporary last-valid | R4 | R4; R7 audition; R8/R10/R11 render/context changes | Yes | Q-018/Q-019/Q-063; obsolete/invalid/close/state retirement | Stale audio exported as canonical |
+| Timing/latency/DSP-state fidelity for supported paths | R2 notes; R4 graph; before latency-bearing path | R4/R5/R8/R10/R11/R12 as capabilities arrive | Yes, applicable subset | Q-005/Q-017/Q-018/Q-021/Q-047/Q-057 | Uncompensated shipped parallel paths; universal PDC too early |
+| UI shell/focus/commands/keyboard/history grouping | R3; R4 first graph editor | R3/R4/R5/R7/R9/R10/R11; R12 integration | Yes | Q-037/Q-063/Q-064; desktop/input/DPI | Late focus patch or inaccessible custom chrome |
+| Localization/theme and contribution lifecycle | R3 host; R6 modules | R3/R6/R7; R12 shipped RU/EN, Dark/Light | Yes, bounded | Q-054/Q-055/Q-067; missing resources/removal/preferences | Shell depends on mature host/SDK |
+| Optional modules/opaque missing state | R6 | R6/R7; R12 integration; R13 management | Yes for shipped modules; no for core sound | Q-010/Q-024/Q-067; activation/unload/unknown data | Removable generator becomes mandatory instrument |
+| Pattern/shared notes, Piano editing, explicit variation | R1 model; R5 editing | R5/R9/R10 | Yes | Q-008/Q-029/Q-063; same events and shared-reference cases | Step-specific boolean schema or invisible copies |
+| Sample Lab generation/context audition | R7 | R7; later R10 contexts; R12 integration | Stage acceptance yes; track use O | Q-011/Q-029/Q-059/Q-063/Q-071 | Unsupported Arrangement context at R7 |
+| Frozen-scope offline object render/acceptance | R4 comparison; production R8 | R8 Pattern; R10 timeline; R11 effects; R12 export | Stage acceptance yes; resampled ingredient O | Q-012/Q-018/Q-021/Q-057/Q-059/Q-063/Q-066 | Renderer first appears during packaging |
+| Direct audio timeline/musical and source mapping | R1 leaves room; R10 audible use | R10; R12 workflow; R14+ richer DSP | Yes, bounded trim/split/repeat/stretch | Q-051/Q-057; audible mapping and saved offsets | “Time stretching later” accidentally defers all basic stretch |
+| Local/container processing and intentional submix | R4 references/primitives | R10 scope UI; R11 core processors and shared views | Yes, supported two levels | Q-019/Q-030/Q-047/Q-057; context move/once-only DSP | Premature aggregation, extra local tree or double DSP |
+| Mixer channels/basic buses/Master/EQ/compressor | R4 routing; R11 common effects/UI | R11; R12 complete mix | Yes, bounded | Q-017/Q-021/Q-030/Q-057; DSP/controls/render | Missing core effects or source separation |
+| WAV range/render settings/output delivery | R8 internal rate/channels/ranges | R10/R11 render extensions; R12 export UX/file delivery | Yes | Q-012/Q-057/Q-061/Q-069; no-device export/error/cancel | Device recording or stale snapshot mistaken for export |
+| Rolling recovery, Save As and repair experience | R1 identity, R2 media lifetime | R12 complete shipped integrity; earlier incremental checks | Yes | Q-058/Q-059; named/unnamed fault/race/coverage cases | Safe earlier media/Save postponed until release |
+| Actual supported-platform delivery | Portable boundaries from R0/R1 | R2 device, R3+ GUI, R12 delivered acceptance | Yes for each declared target | Q-041 plus subsystem evidence; GUI/audio/artifact/storage | Hosted/build success advertised as support |
+| Cross-context send/detector/control dependency | R4 semantic room; first actual connection | R8 checks if present; bounded R10/R11; R14+ expansion | No mature system; integrity H if shipped | Q-066/Q-021/Q-057; capture or explicit blocker | Silent omission or universal framework too early |
+| Recording/ASIO/CLAP/VST3/automation/library/marketplace | Later feature-specific stage | R13 lifecycle; R14+ justified expansion | No | Q-016/Q-025/Q-026/Q-027/Q-033/Q-034/Q-065 | Optional future scope promoted into critical path |
+
+No mandatory invariant remains without a named stage after the bounded ownership clarifications.
+Production scheduler/offline path and minimum sampler/timing acceptance were implicit or ambiguous,
+not evidence of an absent accepted contract. No new implementation milestone is needed to own them.
+
+### Pass 2 — A finished small-track walkthrough
+
+Representative composition: 16 bars, 4/4, user-chosen 100 BPM; intro (1–4), fuller rhythm/bass/melody
+(5–12), a fill/phrase variation and ending (13–16). Import Kick, Snare, Hat, a known-pitch short pluck
+WAV and a texture WAV. Drums Main is a multi-instrument Pattern; Bass A and Melody A use pitched
+sample notes. Repeated clips share their content. A deliberate Drums Fill/phrase variation has its own
+notes while retaining intended shared sounds. Demonstrate a separately editable sampler sound
+configuration without duplicating immutable media. Reuse the texture directly in Arrangement with
+different local ranges/time/processing. Choose deliberate drum aggregation plus separate bass/melody/
+texture routes into Master; preserve independent paths until that intended convergence.
+
+These counts and BPM are an example, not new limits/defaults, required musical genre, supplied sample
+pack or numerical performance promise. Short plucked bass/melody is musically sufficient for a bounded
+sample-based composition. Sustained notes beyond available source audio are not promised; choose notes
+within the declared source behavior rather than invent a looping sampler or synthesizer. The source's
+actual pitch/duration/release/overlap behavior must be demonstrated by R2/R4 before Piano Roll acceptance.
+
+| Candidate step | Contract support / bounded scenario treatment | Stage path and eventual observable evidence |
+| --- | --- | --- |
+| 1 — New unnamed project | Accepted lifecycle and unnamed ownership | R1, R3 UI, R2 media, R12 recovery; distinct working identity before path exists |
+| 2 — Tempo/musical settings | Accepted project tempo/time signature and defaults copied once | R1, later editors; change user defaults without rewriting this project; notes retain musical positions |
+| 3 — Import/audition WAVs | Accepted minimum source/project access; no full catalog | R2 subsystem, R3+ user integration, R12 usability; preview has no Undo/import, accepted source survives origin removal |
+| 4 — Pitched sample instrument | R2 explicitly owns simple sampler and note/pitch; minimum duration/release/velocity acceptance clarified | R2/R4 core; audible known-pitch notes and note-end/source-end behavior without optional generator |
+| 5 — Drum and pitched parts | Accepted multi-instrument events with pitch/duration/intensity | R1/R2/R4/R5/R9; hear several distinct parts, not a tone demo |
+| 6 — Step and Piano editors | Accepted same event model and target | R5/R9; edit phrase in both, preserve unsupported-by-current-view data, Undo/reopen |
+| 7 — Repeated shared Patterns | Accepted normal sharing | R1/R5/R10; edit Main and observe its references without changing independent Fill |
+| 8 — Independent musical variation | Accepted separate from sound independence | R1 model/R10 command; one coherent variation transaction, sound/media references retained; separately exercise sound-setting independence |
+| 9 — Direct Arrangement audio | Accepted supported audio occurrences and non-destructive source use | R2/R10; two clips reference one managed texture, local edits remain independent |
+| 10 — Move/trim/split/local time | Accepted ordinary operations and distinct trim/repeat/stretch; algorithms/limits open | R10 Q-051; hear and save fixed/follow-tempo modes and local stretch; no accidental speed change on trim |
+| 11 — Local processing | Accepted item and one containing context, not every event graph | R4 primitives/R10 target/UI/R11 processors; item Gain/EQ and explicit container compression, own-result hard cuts |
+| 12 — Channels/bus routing | Accepted routes distinct from timeline; no forced 1:1 | R4/R10/R11; separate bass/texture and intentional drum submix to Master, no constituent recovery after sum |
+| 13 — Gain/pan/mute/solo/EQ/compression | R11 explicitly planned bounded common processing; usable core required | R11; audible parameter/route changes, saved controls and offline DSP agree within declared tolerances |
+| 14 — Generate/resample an ingredient | Accepted creative paths, optional in the composition | R6/R7/R8; separately accept candidate/render and reuse it, remove generator without losing accepted bytes |
+| 15 — Coherent WAV output | Accepted First Track and canonical render/cuts | R4 comparison/R8 renderer/R10 schedule/R11 DSP/R12 output; intended range, declared format/rate/channels, finite cancel/errors, no device dependency |
+| 16 — Save/close/reopen | Accepted canonical/versioned Save and coherent captured revision | R1 incremental serialization, each stage's fields, R12 full UX; preserve named/unnamed Save As and old saved state on failure |
+| 17 — Verify reopened relationships | Accepted reference/musical/media/context invariants | All owning stages/R12; shared edits, independent variation/sound settings, timeline offsets, paths and once-only processors match saved canonical intent |
+| 18 — Recoverable failure | Accepted degraded media/capability access; one concrete case suffices for walkthrough, subsystem coverage broader | Remove one managed sample in controlled validation; R12 preserves broken reference, allows healthy editing, blocks dependent export, deliberate managed repair/removal resumes it. No external plugin is required |
+| 19 — Interrupted unsaved work | Accepted recovery, including unnamed project; mechanism not available yet | R1/R2 foundations/R12; simulate interruption after an identified captured revision, offer unsaved recovery separately, preserve last explicit Save/media; state possibly uncaptured interval |
+| 20 — Distributed platform validation | Accepted R20 evidence-led support policy | R12; run identified delivered artifact on every declared supported environment with GUI/audio/project/recovery evidence, not inferred parity |
+
+The walkthrough checks the candidate steps against owners, not automatically upgrades every suggestion
+to an exhaustive release requirement. Basic buses mean intentional aggregation/routing, not arbitrary
+sends. Missing media is the mandatory representative failure; arbitrary optional realtime processing
+is not required to manufacture one. Tail inclusion UI, sustained-sample loops, advanced source analysis,
+exact export formats/rates/channels and full accessibility APIs remain bounded design/evidence choices.
+R12 must identify its supported choices and test them; it cannot defer all basic playable stretch or
+pitched sound production while still advertising this scenario. R7/R8 optional use in the track does
+not waive their own completion evidence or the accepted creative loop.
+
+### Focused investigations A–R
+
+**A — R0 feasibility versus production architecture.** R0 is an E gate for choosing production
+callback/control/buffer-lifetime/backend/language/ABI assumptions before R2 and the R4 prepared graph.
+R1's pure musical/document model can be designed/tested independently of device APIs; execution-facing
+time/ID/publication assumptions must coordinate with the probe disposition. The current sequence keeps
+R0 before major construction by policy, not because every R1 domain invariant needs audio hardware.
+R0 need not prove final graph compilation, plugin compensation, storage recovery, arbitrary source
+instancing or three-platform delivery. A negative/narrow result requires an explicit bounded response,
+not silent commitment to the candidate or infinite workstation planning. Q-001–Q-007 remain E.
+
+**B — R1 sufficiency.** Accepted owners already require lifecycle before paths, canonical revision/
+transactions, justified stable identities, shared Pattern parts and sound-use references, resource
+versus placement, organization versus processing/route, musical time, versioned incomplete Save/reopen
+and project versus user defaults. Nothing genuinely missing calls for a new semantic identity. Concrete
+Q-008/Q-009/Q-029 must coordinate with Q-019 before fixing references, to represent later attachments
+and unresolved endpoints without retrofitting a universal Track ID. Model/round-trip examples suffice:
+three Pattern references, one variation, independent sound settings, two resource uses and a processing
+context/route reference. No actual R10 UI, R11 channel engine or full unknown-type plugin schema is
+required in R1. Evolvable versioning is still necessary; “bounded” cannot mean disposable bool steps.
+
+**C — R2 before R3.** Resource discovery/access is an application/subsystem operation. A controlled
+host or later tests can enumerate user-chosen WAVs/project resources, preview, import, play pitched
+events and inspect canonical/storage outcomes without a mature Browser. Device evidence uses a bounded
+host just as R0 does; this is not a CLI product promise or early polished UI. R3+ integrates the same
+operations into shipped surfaces, R12 proves usability. Storage/availability/failure evidence at R2
+cannot be postponed until a final Browser exists. No hard R2→R3→R2 cycle.
+
+**D — R4 before R5.** Model-driven scheduled events already exist through R1/R2. Feed a prepared
+source→Gain→Mix/Output path, multiple inputs/branches and bounded invalid connections with known
+events/resources. That checks ports, contribution convergence, publication and audio without a musical
+editor. R5 consumes execution rather than being its compiler or scheduler. A minimal graph pane can
+work over R3; pure validation/offline execution is independent of UI. No source plugin, mature route UI,
+every DSP node or all graph scopes is necessary. Minimum graph primitives become completion obligations
+instead of optional wording; full effects still arrive in R11.
+
+**E — Core sound without extensions.** R2's simple sampler with declared pitched-note behavior can
+play drums and short tonal bass/melody. Note duration/release/velocity and bounded overlapping events
+need explicit acceptance; a one-shot trigger with a pitch knob alone cannot prove Piano Roll's behavior.
+Q-047/Q-057 already own source/state evidence, so no new synth question is created. R4 Gain/Mix/routing
+and R11 core EQ/compression require no optional downloads. R6 hosts optional generators, not mandatory
+transport/sampler/graph. Generator absence removes exploration, not accepted audio or the core track.
+General opaque instruments, mono/legato and universal multisampling remain later capability evidence.
+
+**F — R7 contextual audition before Arrangement.** Valid contexts are existing Pattern parts/sampler
+sound definitions with R4-supported processing and downstream output while R5 loops. Standalone is
+always possible. R7 can explicitly update the shared sound definition or accept an unattached reusable
+resource; one placed/event occurrence is offered only if its independent relationship already exists.
+Do not fake an Arrangement target, a containing timeline context or Q-048 extraction. Contextual audition
+must restore current canonical sound after intervening edits, not its launch snapshot. R10 extends the
+available contexts later without weakening the full accepted contextual contract.
+
+**G — R8 scopes before Arrangement/Mixer.** A Pattern musical-content definition has events and sound
+uses; its render needs no Arrangement placement and inherits no arbitrary container/Mixer context.
+Preserve individual required source paths before final render-output aggregation. R4 Gain/source
+behavior suffices; later EQ/compression is not required just to render. A model-local item/context may
+also be supported only if it already exists and is exercisable, not because every candidate scope is
+listed in the owner. No full Arrangement range, complicated sends or whole-Master capture is implied.
+Required external inputs must be frozen with correct history/time or explicitly blocked as unsupported,
+never replaced by convenient silence/stale playback. R8 owns finite production offline render for its
+subset; R10/R11 extend it as their scheduling/DSP arrives.
+
+**H — Shared R5/R9/R10 musical model.** Position, pitch, duration and velocity are already required in
+R1. Step Sequencer projects/edits that canonical data; it cannot replace it with a bool array or erase
+richer data merely because its view is narrower. Piano Roll adds editing, Arrangement adds references/
+timing, variation changes intended content reference in one transaction. Sound independence addresses
+sound settings, local placement edits address one use. Neither the richer editor nor R10 may require
+recreating phrases in a second event schema. Q-008/Q-029/Q-063 concrete model/commands remain R1 and
+incremental stage design, not a separate planning blocker.
+
+**I — R10 time/stretch.** Before first audio timeline gestures, design the bounded mapping between
+project musical position, source sample/time range, tempo relationship and local stretch. Fixed-time
+audio retains physical duration on BPM change; tempo-following stays aligned with its musical duration.
+Notes/Pattern placements remain in musical time. Trim changes range without speed, split preserves
+resource and appropriate offsets/mapping in the pieces, repeat reuses material, stretch changes time
+mapping. Local stretch and project tempo are separate operations. Specify supported combinations and
+rounding so split/move/reopen/offline output do not drift or destructively alter the source. A durable
+flag without audible DSP is insufficient. Q-051 owns algorithm/quality/range and pitch interaction;
+no algorithm or universal pitch-preservation claim is selected. Bounded audible local stretch and both
+tempo relationships belong to R10/R12; rich independent pitch/time tools stay R14+.
+
+**J — Mixer versus routing.** Basic output/voices in R2 and typed gain/convergence/routes in R4 precede
+R11. R10 realizes item/containing context and assignment using existing primitives, without needing
+the common-effects pane. R11 adds route/channel/bus controls and core EQ/compressor with the same
+host processing boundary, accessible in supported local contexts as well. Context C seen in Arrangement
+and Mixer runs once, retaining its scope; a separate deliberate downstream bus is a real additional
+path. Multi-instrument Pattern is no implicit bus. Neither R4 nor R10 should hard-code all instruments
+into one aggregate and expect the Mixer to split it later. No R11→R4 cycle is justified.
+
+**K — Minimum latency/timing/state.** Q-005 owns ordered note time and block/loop/tempo/rate conversion;
+Q-017 types/rates/channel negotiation; Q-018 validation/publication; Q-047 performance independence;
+Q-057 seek/loop/stop/hard-cut/tails; Q-021 latency reporting/alignment. R2 handles source events/release,
+R4 prepared scheduling/state for its paths, R5 live loops, R8 entry state and finite render, R10 timeline
+cuts/overlap/stretch, R11 its actual processor delay and state. If parallel/externally dependent paths
+have meaningful delay, provide required alignment/reporting or narrow/block the unsupported capability.
+A measured low/zero algorithmic-latency core set may avoid a full compensation system, but must not
+hide device/buffer latency or claim universal alignment. R8/R12 offline entry-state/history/cuts must
+reproduce intended supported semantics, not merely matching buffer sizes. No bit identity for arbitrary
+plugins; no full Live/Low-Latency mode, recording compensation or universal plugin PDC required early.
+
+**L — Project integrity sequencing.** R1 Save/reopen protects coherent canonical revisions and
+references; it needs bounded correct Save failure/version behavior before users rely on it, not the
+complete rolling-recovery UI. R2 must establish durable accepted unnamed media before source removal,
+separately retained saved/working/history/pending/live owners and prior-state protection on failed
+acceptance. A conservative retention strategy can precede sophisticated GC; deleting by zero visible
+uses is invalid. R7/R8 use common commit gates and storage, protect unaccepted owned output, and do not
+attach stale results. R12 completes Save As/repair/recovery/reconciliation experience and verifies faults,
+including ambiguous completion and sole unnamed protection. Recovery requires previous lifetime rails;
+it cannot introduce resource ownership retroactively. Q-009/Q-058/Q-059/Q-063 already own this work.
+Full collect/relocate, external-reference and recording protocols need not all ship by R12.
+
+**M — Graph identity/publication.** R1 owns semantic target/reference foundations; R4 chooses bounded
+attachment/endpoint representation for actual graphs with Q-019/Q-029, leaving room for local,
+containing and global contexts and meaningful unresolved references. R10 extends attachments rather
+than changes all IDs. R4 preserves invalid editable state, derives prepared revision, automatically
+converges latest valid state and retires old execution safely (Q-018). Save persists invalid canonical
+intent; reopen does not resurrect a second permanent last-valid graph. Offline freezes/prepares that
+canonical dependency scope and blocks invalid state. No queue/compiler/refcount/thread primitive is
+selected. A source/target deleted or moved revalidates relationships, never retargets by name/position.
+
+**N — Extensions/host services.** R3 host RU/EN, semantic Dark/Light, preferences and fallback exist
+without R6 dynamic hosting. R6 adds only actual first-party contribution registration/availability,
+compatibility and safe retirement; R7 consumes it. Resource translation absence alone cannot fail
+executable compatibility, and unload cannot leave UI callbacks to absent code or erase document state.
+Q-010/Q-024/Q-054/Q-055/Q-067 are stage-local bounded mechanisms. No CLAP/VST3 bridge, external
+editor embedding or full public realtime SDK is needed to implement an async generator package.
+Missing opaque node/capability preservation can be checked with controlled model fixtures rather
+than shipping an external host solely for the audit scenario.
+
+**O — UI/keyboard.** R3 supplies focus/selection/action-target distinction, window/pane reachability,
+escape and safe layout/preferences. R4 graph, R5 steps, R7 audition/acceptance, R9 notes, R10 clips and
+R11 controls each own discoverable pointer and corresponding useful keyboard movement/action access.
+Canonical transactions originate in R1; preview versus commit and held-key versus discrete Undo
+grouping are tested with the actual editor, not deferred to R12. Text/numeric/search focus must not
+trigger unrelated destructive commands. Accessible ordinary move/resize/minimize/maximize/close
+actions accompany custom chrome from R3. Q-064 retains bindings/navigation/API/screen-reader/DPI/
+platform evidence; no pixel-perfect framework or accessibility certification is selected here.
+On-screen simple audition belongs to R5's first musical integration/R9 pitch editor over R2, not a
+recording or global typing-keyboard prerequisite. Mature rebinding UI remains a later design choice.
+
+**P — First Track export.** The path is canonical revision → required closure (events, occurrence/time
+maps, media, processors and any supported external dependencies) → validation/preparation → scheduling/
+DSP in a declared rate/channel context → intended project/local cuts and finite scoped tails → bounded
+WAV delivery/error/cancel. R0 compares only a small execution equivalent; R4 graph comparison guards
+the sibling offline path; R8 realizes production scope/ranges/media acceptance; R10 adds arrangement/
+stretch; R11 adds common DSP/routes; R12 owns final whole-project/range controls/output delivery.
+Output sample rate/channels follow declared rendering intent, not whichever device happens to be open.
+Sample pitch-rate conversion and audio stretch must be valid for that context. File delivery failure
+must not report a usable complete output; cancellation/partial output retains an explicit owner and
+does not mutate the project or corrupt a pre-existing destination. Exact replacement UX is bounded
+R12 design. Invalid canonical processing cannot export last-valid realtime audio; absent device alone
+does not block offline processing. Hard selected range is default, permitted tails are finite and
+cannot restore deliberate cuts; specific inclusion UX/thresholds stay Q-057/Q-012.
+
+**Q — Platform-scoped release.** R20 remains binding: Windows/Linux/macOS architecture, early hosted
+evidence and declared actual supported delivery are distinct. R0 validates its named environment,
+R2 adapters/resources, R3+ GUI; R12 declares distribution targets and requires actual delivered launch/
+native dependencies as applicable, GUI/input/DPI, intended audio and project/media/recovery evidence
+for each. No simultaneous parity, exact CPU/RID/device/OS/toolchain matrix or arbitrary Linux/macOS
+deferral. Q-041 resolves the actual claim with evidence; WSLg never substitutes for native Linux
+desktop/device/distribution acceptance. Broader coverage may ship whenever justified.
+
+**R — Optional/future scope.** Full MIDI/audio recording, monitoring, ASIO, CLAP/VST3, mature sidechain/
+modulation, extensive automation, Personal Library/preset publication, marketplace, every codec,
+exhaustive DSP/graph inventory, advanced monitoring and complete theme customization do not make this
+small track possible in a way the core sample path cannot. They remain R13 lifecycle or R14+ expansion.
+Early models leave room for them; no empty implementation layers or full frameworks are mandated.
+Explicit core buses/output and necessary timing for shipped DSP are earlier requirements, distinct from
+rich sends and universal PDC. Q-048 event extraction is useful future depth, not needed when the track
+uses an existing standalone audio clip for local processing. Q-049 baked replacement is conditional
+on offering that operation; source-preserving R8 output suffices. R7/R8 remain planned stages with
+their own gates even when unused by the core composition.
+
+### Critical path and alleged cycles
+
+The hard capability chain is durable musical/document identity and edits → durable samples/core source
+events → prepared contribution-preserving graph → musical editing/loop evidence → arranged references/
+audio-time/processing contexts → basic Mixer/core DSP → integrated canonical export/Save/recovery/
+delivery. R0 is the evidence gate before committing the production execution boundary. R3 supplies UI
+rails alongside the audio path; R6/R7 form an optional creative branch; R8 supplies early production
+offline/render-acceptance evidence; R9 supplies pitched editing over existing sound/model.
+
+Current stage order is a coherent delivery order, not one serial hard prerequisite chain. After a
+minimum R1 model, shell geometry and pure resource/model design can proceed independently; source/
+graph and shell-specific tests need different evidence. R9 editor work need not technically wait for
+generator/resampling algorithms. R6 async package work need not implement every graph processor.
+This audit preserves stage IDs/order; these independence observations authorize no parallel work or
+stage bypass. No fundamental reorder/split recommendation is warranted.
+
+| Alleged cycle | Actual direction / reason | Classification / closure |
+| --- | --- | --- |
+| R2 resources ↔ R3 Browser/shell | Import/preview are subsystem operations; a Browser invokes them later | I presentation integration, no hard cycle; bounded R2 host/API evidence |
+| R4 graph ↔ R5 musical playback | R1 events/R2 sampler can drive graph without R5 editor; R5 needs that executable path | H R4 execution for R5, no reverse edge; synthetic/model events before UI |
+| R7 contextual audition ↔ R10 Arrangement | Existing Pattern/sound context supplies meaningful audition; Arrangement expands target inventory later | H existing R4/R5 context, F later contexts at R7; no fabricated Arrangement support |
+| R8 render ↔ R10/R11 processing | R8 renders Pattern/source and actual current local paths; timeline/effects extend renderer later | I incremental renderer; unsupported required dependency blocks, no full Mixer gate |
+| R1 identity ↔ R4 attachments | Semantic identities in R1 constrain concrete R4 references; cross-owner design coordination is not runtime consumption of future graphs | Bounded design before freezing R1 reference shapes; no need for R4 execution in R1 |
+| R11 Mixer ↔ earlier routing | R2 output/R4 routes exist before controls; R11 exposes/extends them | H early separation, I later UI/DSP; no reverse engine dependency on Mixer pane |
+| R12 recovery ↔ earlier media lifetime | R1 revision/ownership and R2 retained durable media enable recovery; R12 adds storage/workflow evidence | H lifetime before import/async reliance, I recovery completion; late UI cannot repair lost resources |
+
+Measured gates sit on the path as capabilities arrive: R0 timing/lifetime feasibility; R2 tonal sampler/
+storage/device; R4 publication and independent outputs; R5 loops/live transitions; R8 canonical render/
+state/tails/async; R10 audible stretch/overlap; R11 DSP/alignment; R12 integrity and per-target delivery.
+None is replaced by this conceptual audit. Their scope is bounded to shipped features, not every
+future engine/backend/plugin. Open stage-local design does not justify indefinite documentation delay.
+
+### Findings and smallest corrective actions
+
+| Finding / what matters | Earliest need / bounded owner | Classification | Smallest correction / existing answer |
+| --- | --- | --- | --- |
+| Production scheduler and offline path had implicit ownership; R12 could become first full renderer | R2 events, R4 prepared schedule/comparison, R8 production Pattern render, R10/R11 extensions, R12 delivery | Manageable acceptance/design gap; H capability at consumers, E implementation | Assign incremental owners/closure in Roadmap; Audio already requires shared scheduling/DSP and device independence; Q-005/Q-006/Q-012/Q-018/Q-057 |
+| Simple sampler explicitly promises pitch but completion did not demonstrate duration/release/velocity or overlap | R2 source behavior, R4 domains, before R5/R9 | Ambiguous acceptance; H musical sound, E source/state | Clarify minimal pitched-note acceptance and short-source scenario; Q-047/Q-057/Q-005 own evidence; no new synthesizer |
+| R1/R4 reference design must coordinate before a collapsed identity is persisted | R1 bounded model, R4 attachments | Manageable schema design, high rewrite impact | Existing separate-sharing contracts already answer semantics; add model examples and coordination, Q-008/Q-009/Q-019/Q-029 |
+| R7/R8 wording could assume future context/scopes | R7 Pattern/sound audition, R8 Pattern-content render | Unsupported assumed capability if not bounded | Name existing targets and explicit blockers; Sample workflow already distinguishes object scopes; Q-011/Q-012/Q-066 |
+| R10 “not complete stretch engine” versus later “time stretching” may hide missing basic audible operation | R10 before timeline completion, R12 supported scenario | Ambiguous boundary; H bounded audio-time behavior, E algorithm | State basic audible stretch/fixed-follow modes remain R10; rich tools R14+; Q-051 already identifies gap |
+| Alignment/state correctness could be postponed with universal PDC/Live mode | R4 first relevant path; R8/R10/R11 supported timing | E question; H correct shipped relationships | Require minimum supported-path timing or explicit narrower support/blocker; Q-021/Q-047/Q-057 already own mechanisms, no universal compensation gate |
+| Media lifetime/Save reliability could be interpreted as final-release-only polish | R1 Save/edit identity, R2 durable ownership; R7/R8 consumers; R12 recovery UX | H early integrity; manageable mechanism/E evidence | Clarify earliest applicable owners, allow conservative retention; Q-009/Q-058/Q-059/Q-063 and existing failure matrix answer semantics |
+| UI command/focus/history may be patched after panes exist | R3 rails; each R4/R5/R7/R9/R10/R11 editor | Incremental foundation / stage-local design | Explicit editor acceptance responsibility; existing UX/workspace/actions answer semantics, Q-063/Q-064 retain realization |
+| Core effects and distinct routes must be available in local and Mixer workflows | R4 separation, R10 local scopes, R11 EQ/compressor | H core capability, not optional plugin | Clarify same processor/context path and core availability; existing graph/architecture/R11 already answer semantics, Q-019/Q-030/Q-047 |
+| First Track acceptance lacked a named finished composition and failure/recovery/delivery proof path | R12 direction; earlier component owners | Planning gap partially resolved; E remains | Add bounded scenario and ownership; Q-061 remains for concrete scope/evidence, Q-041/Q-058/Q-059 and subsystem questions unchanged |
+
+No actual hard cycle, unowned required identity or fundamental sequence contradiction was found.
+The material risks are bounded implementation design and evidence gaps, not a reason to manufacture
+another KB stage. A failure discovered by later executable evidence can legitimately reopen ordering
+or architecture review. Optional contexts/hosting/recording should not be promoted just to make the
+roadmap look exhaustive. No new accepted technology decision or D-record follows from running an audit.
+
+### Q-061 disposition, risks and next actions
+
+Q-061 is **partially resolved at planning level**: current R0–R12 order is conceptually coherent,
+the bounded finished-track scenario maps to named owners, no hard cycle/missing mandatory owner remains
+after clarifications, and R13/R14+ expansion is not an implicit prerequisite. This accepted portion is
+recorded here; the active question narrows to actual stage-specific choices/dependencies and cumulative
+end-to-end evidence. It is not closed, moved wholly to resolved questions, or equated to full R12
+specification/feasibility. Other Q-IDs retain their specialized mechanisms and measured scope.
+
+Top architectural risks are: (1) R0 callback/control/lifetime feasibility and bounded overload;
+(2) identity/attachment plus independently addressable overlapping source contributions/publication;
+(3) durable unnamed media, Save/recovery ownership and ambiguous storage/async completion;
+(4) audible stretch/time rounding, DSP state/tails and minimum latency alignment across realtime/offline;
+(5) actual usability and per-target delivered GUI/audio/integrity evidence. Their impact is high, but
+no numerical performance, data-loss or platform guarantee can be claimed before experiments.
+
+Before corresponding implementation, select bounded representations where needed: R0 environment/
+measurements and candidate boundary; R1 event/time/ID/schema/transaction scope; R2 managed-media/source
+protocol and sampler behavior; R4 port/attachment/publication and supported topology; R3 framework/
+focus/resources; R7 target/substitution/lifecycle; R8 render entry-state/range/dependencies; R10 time/
+stretch mapping and R11 processor/alignment choices. These decisions occur at their actual need, not
+all before R0. Q-046 ProjectStats sequencing and Q-070 passive newline discrepancy are not audio-probe
+prerequisites; neither is changed by this documentation-only audit.
+
+Recommended next actions, in dependency order:
+
+1. **Documentation/planning:** separately approve the bounded R0 scope and choose its declared setup,
+   comparisons/thresholds and reporting limits. No additional focused KB stage is presently justified.
+2. **Technical probe, only after authorization:** execute R0 as already scoped, record Q-001–Q-007
+   measurements and accept/reject/narrow the candidate. Do not treat a passing probe as production engine
+   or three-platform certification; do not silently move experimental code into application ownership.
+3. **Stage-local design:** before R1/R2 production commitments, reconcile Q-008/Q-009/Q-019/Q-029/Q-063
+   reference/edit examples and Q-059 unnamed-media ownership with the probe disposition. Choose bounded
+   shapes/protocols rather than a full R10/R11 schema/UI or speculative storage ecosystem.
+4. **Bounded executable evidence at owning stages:** verify sampler overlap/release and prepared
+   contribution/publication, then frozen Pattern render; assess Q-021/Q-047/Q-057 for actual DSP and
+   Q-051 audible stretch before R10 completion. Add only focused probes needed by an undecidable choice.
+5. **Cumulative release closure:** replay/extend the scenario as capabilities arrive; choose Q-041
+   supported distribution environments and substantiate Save/repair/recovery/export/desktop/audio/
+   delivered-artifact evidence before calling R12 complete. Keep Q-061 open until that closure is real.
+
+Architecture is conceptually ready to scope the separately authorized R0 probe. This audit neither
+authorizes/starts it nor establishes feasibility. No additional document-level blocker was identified.
+All implementation IDs/order and the entire R0 section/scope are preserved. Detailed matrices remain
+cold history; active Roadmap retains only current scenario/ownership and Known problems the unresolved
+evidence. Validation for this checkpoint is documentation-only, as recorded in
+[completed work](WORK_LOG.md#2026-10-08--seq-kb-r21).
