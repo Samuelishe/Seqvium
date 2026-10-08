@@ -17,12 +17,12 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [AGENTS](../AGENTS.md) | Operational startup, safety, task routing, and verification |
 | [PROJECT_STATE](PROJECT_STATE.md) | Current checkpoint, implemented capability, focus, validation baseline, blockers/evidence gaps |
 | [PROJECT_VISION](PROJECT_VISION.md) | Product identity, audience, creative philosophy, non-goals |
-| [UX_CONTRACT](UX_CONTRACT.md) | Observable interaction principles and general workflow semantics |
+| [UX_CONTRACT](UX_CONTRACT.md) | Mouse-first, keyboard-efficient input, command composition/bindings, focus/target safety, baseline accessibility, discoverability and general workflow semantics |
 | [UI_DESIGN](UI_DESIGN.md) | Evolving visual/interaction guide: hierarchy, usable responsive layout, chrome, density, indicators, restrained feedback |
-| [ARCHITECTURE](ARCHITECTURE.md) | Foundation-first logical boundaries, project lifecycle, canonical/derived state, logical Undo transactions/history scope and async commit gates, musical/resource identities, shared definitions/semantic execution domains, signal ownership/scopes and Arrangement/Mixer relationships |
+| [ARCHITECTURE](ARCHITECTURE.md) | Foundation-first logical boundaries, project lifecycle, canonical/derived state, semantic-action/input boundary, logical Undo transactions/history scope and async commit gates, musical/resource identities, shared definitions/semantic execution domains, signal ownership/scopes and Arrangement/Mixer relationships |
 | [AUDIO_ENGINE](AUDIO_ENGINE.md) | Realtime state/publication, execution-state lifetime/resource integrity, scheduling, devices, item-local hard boundaries, hard export ranges, finite tails and canonical render/preparation |
 | [NODE_GRAPH](NODE_GRAPH.md) | Core graph, contribution convergence/irreversible mixing, free canvas/topology, progressive interaction, ports, canonical graph and derived execution revisions |
-| [WORKSPACE](WORKSPACE.md) | Main-window chrome/foreground behavior, internal panes, activation/front behavior, docking, user layout state |
+| [WORKSPACE](WORKSPACE.md) | Main-window chrome/keyboard window actions, pane reachability/escape and focus return, activation/front behavior, docking, user layout state |
 | [SETTINGS](SETTINGS.md) | User/project separation, logical input/output devices, bounded reset and production diagnostics |
 | [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, graded compatibility/fallback, package lifecycle/removal safety, degraded access and dependency blockers |
 | [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Standalone/contextual Sample Lab, audition, acceptance, object-render boundary and broader audible-selection capture |

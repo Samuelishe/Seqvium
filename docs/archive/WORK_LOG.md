@@ -282,3 +282,31 @@ is not established by local history; this log does not duplicate Git's commit ch
   and empty untracked baseline preserved; task edits remain unstaged. No production code, experiments,
   projects, dependencies, tests, CI, prototypes, UI/backends/hosts or executable tooling introduced.
   No empty-solution build, tests, staging, commit or push. SEQ-R0 remains **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R13
+
+- Audited existing vision and contracts; accepted "Mouse-first, keyboard-efficient" as an approachable
+  direct-manipulation product direction with first-class precise/repetitive keyboard editing, rather
+  than a separate keyboard musical/document model. Exact bindings and interaction mechanics remain open.
+- Covered cases A/B through common placement semantics and R12 discrete/held-session Undo; C through
+  deliberate modifier composition without global Shift/Ctrl/Alt assignments; D/E through distinct
+  focus/selection/active pane/command targets and protected text/value/search/native-editor input.
+- Covered F/G/H through discoverable actions, binding identity separate from physical defaults and
+  platform conventions; I through optional explicitly activated QWERTY mode with clear boundaries;
+  J/K/L through keyboard window/pane access, escape/focus return, common graph operations and sufficient
+  non-color feedback. No full keyboard graph editor, pixel dimensions or accessibility API selected.
+- Updated current owners, graph input routing, index and compact state. Recorded
+  [D-066](DECISIONS.md#d-066--mouse-first-keyboard-efficient-semantic-actions-and-accessibility-baseline),
+  [Q-064's accepted portion](RESOLVED_QUESTIONS.md#r13-resolved-portion--q-064-input-semantics-accepted-accessibility-evidence-remains-open)
+  and [completed-stage history](ROADMAP.md#seq-kb-r13--input-commands--accessibility-semantics).
+  Q-064 retains concrete bindings/focus/navigation, accessibility implementation, keybinding mechanics
+  and DPI/window/workspace/cross-platform evidence. Q-015/Q-022/Q-028/Q-032/Q-035/Q-051/Q-063/Q-067
+  remain open without separate narrowing; no question fully closed or certification claimed.
+- Verified repository-relative Markdown links/anchors, Q/D ID uniqueness/reference integrity,
+  owner/routing, current/archive separation, accepted/open scope, illustrative-only key choices,
+  documentation-only changes, UTF-8/LF/whitespace and `git diff --check`. Active ROADMAP remains
+  byte-identical to initial HEAD; implementation stage numbering/order and R0 scope are unchanged.
+- Initial baseline: clean `master`, HEAD `da52fb0283b99edd37eaf7b7f7b3b2fea687787a`; branch/HEAD/index
+  and empty untracked baseline preserved, task changes unstaged. No production code, UI, experiments,
+  projects, dependencies, tests, CI, prototypes, tooling, backends or plugin hosts introduced.
+  No empty-solution builds/tests, staging, commit or push. SEQ-R0 remains **pending / not started**.

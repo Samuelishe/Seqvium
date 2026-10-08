@@ -2,32 +2,117 @@
 
 Role: Product contract for observable interaction.
 Read when: Designing editing, audition, workspace behavior, or user-facing actions.
-Authoritative for: Progressive complexity, feedback, discoverability, general workflow semantics.
+Authoritative for: Progressive complexity, input/command and focus semantics, baseline accessibility expectations, feedback, discoverability, general workflow semantics.
 Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or current implementation.
 
 These are intended requirements. No application UI exists yet.
 
 ## Mouse-first creation and complementary input
 
-Users must be able to place, move, resize, and select notes/events; edit steps; move/resize clips;
-select waveform ranges for trimming/processing; manipulate node graphs; adjust parameters; and
-organize the workspace directly with the pointer. Exact gestures and bindings remain open.
+**Mouse-first, keyboard-efficient** means direct pointer manipulation is a first-class, polished path
+for creation and editing, and basic workflows do not require memorized shortcuts. Users must be able
+to place, move, resize, and select notes/events; edit steps; move/resize clips; select waveform ranges
+for trimming/processing; manipulate node graphs; adjust parameters; and organize the workspace directly
+with the pointer. Drag/drop, selection, context operations and parameter manipulation remain excellent.
+
+The ordinary computer keyboard is also a first-class path for precise/repetitive editing, navigation,
+selection changes, action invocation, modifiers, Undo/Redo and focus/accessibility access. Its efficiency
+is complementary, not secondary in quality or dependent on a separate musical/document model.
+Exact gestures and bindings remain open; this direction does not make Seqvium keyboard-first or
+shortcut-dependent.
 
 An on-screen musical keyboard should support audition/simple playing. Future MIDI devices, MIDI
 recording, and realtime note input complement pointer editing and converge on compatible musical
 event data. Audio-interface/microphone recording is also long-term direction, with execution and
 latency owned by [AUDIO_ENGINE](AUDIO_ENGINE.md).
 
-The ordinary computer keyboard remains primarily for application shortcuts/commands. A typing
-keyboard / QWERTY piano must not define default semantics or occupy large parts of the shortcut
-space. If considered later, it must be optional and explicitly activated.
+A typing keyboard / QWERTY piano is not default global behavior and must not consume ordinary command
+space by default. It may later be offered as an optional, explicitly activated musical-input mode,
+with clear mode/focus boundaries and a discoverable exit. Entering, leaving or changing its context
+must not make normal application commands unpredictably unavailable. Exact piano layout, mode-specific
+command coexistence and routing remain open.
+
+### Semantic actions and input composition
+
+An action describes the requested outcome and intended target/scope, independently of how it is
+invoked. Pointer gestures, keyboard bindings, menus/context menus and future accessibility/action
+surfaces may request the same operation under the
+[application boundary](ARCHITECTURE.md#semantic-actions-and-input-boundary).
+
+For example, dragging a clip, a keyboard nudge and a context-menu Move action express the same
+placement-edit semantics, including applicable placement/context relationships. Keyboard movement
+must not invent a second edit model or bypass canonical validation/history. Input surfaces may differ
+in preview or granularity; the accepted edit and its Undo meaning belong to the operation.
+
+The following is an illustrative movement case, not accepted bindings or step sizes:
+
+| Input example | Requested intention |
+| --- | --- |
+| Left / Right | Precise/small nudge of the intended clip/item selection |
+| Modifier + Left / Right | Larger/coarser nudge of that same target |
+
+Separate intentional presses normally remain separate edits; a continuous held-key repeat may form
+one bounded same-intent session under [Undo grouping](#undo-grouping-and-interaction-preview).
+Changing target, an unrelated command or completing the interaction ends grouping; elapsed time alone
+does not define intent. Input device alone must not produce radically inconsistent history for the
+same canonical operation. No repeat delay/rate, grouping time constant or step size is selected.
+
+Modifiers are legitimate gesture/command composition: they may adjust precision, magnitude or mode,
+including constrained movement, temporary snapping or selection extension. Resolve conflicts
+deliberately across relevant contexts, rather than assigning contradictory behavior ad hoc per control.
+No global Shift/Ctrl/Alt meaning, exact modifier or final interaction mechanics is fixed here.
+
+### Focus, selection and command targets
+
+Keep these concepts distinct even where they correlate:
+
+| Concept | Meaning |
+| --- | --- |
+| Keyboard focus | The surface/editor currently receiving keyboard input |
+| Musical/document selection | Selected project material in the relevant editing context |
+| Active workspace pane | The pane currently activated under the workspace contract |
+| Current command target | The explicit target/scope to which a requested action applies |
+
+Keyboard interaction should move focus or selection through relevant timeline items, notes/events,
+graph elements, panes and menus/actions where useful. Every visual object need not be an individual
+tab stop; contextual navigation and action access should avoid tab-stop noise. Common graph selection,
+deletion, navigation, opening settings and command invocation must have room for keyboard access
+without precision pointer work. Free spatial layout does not imply mouse-only interaction. Detailed
+node/timeline navigation and a full keyboard graph editor are not defined here.
+
+Routing must respect the current input context and intended command target. Typing/editing in a text
+field, rename editor, numeric value editor or search/browser field must not also trigger unrelated
+global project edits. Context-local input and explicitly applicable host actions need deliberate
+precedence; an ambiguous, absent or unavailable target must not silently redirect a destructive edit
+to another selection/pane. This is semantic routing, not a chosen focus manager or event API.
+
+Third-party/native editors own their local input; typing there must not accidentally trigger unrelated
+host edits. Re-entering the host must predictably restore a useful, still-valid host context rather
+than use stale targets or steal focus. [WORKSPACE](WORKSPACE.md#keyboard-access-and-focus-return)
+owns pane reachability, escape and detached/native-editor return behavior. Concrete routing, input
+capture and platform integration remain open.
+
+### Binding identity and platform conventions
+
+Semantic action identity is independent of physical keys and default bindings. Preserve room for
+user-configurable bindings without making domain code know physical keys or making later rebinding
+require rewriting editing operations. Binding preferences follow the
+[user configuration boundary](SETTINGS.md#user-configuration-and-project-state).
+
+Actions remain portable across Windows, Linux and macOS, while default bindings may differ to respect
+platform conventions and reserved/system shortcuts. Identical physical shortcuts on every OS are not required;
+[PORTABILITY](PORTABILITY.md#product-target-and-current-evidence) owns target and evidence limits.
+No complete binding editor, persistence format, conflict-resolution UI, import/export, profiles,
+chords/sequences or exact platform defaults is selected.
 
 ## Progressive complexity and discoverability
 
 Expose controls relevant to the current musical task. Advanced capability may be available without
 permanently occupying the primary workspace. A simple default must allow deeper editing rather than
-cap the user's work. Useful hidden capability still needs a discoverable path through contextual
-controls, menus, shortcuts, or a deliberately opened workspace.
+cap the user's work. Important actions must not exist only as undocumented shortcuts. Useful commands
+need discoverable paths where appropriate through menus, context menus, visible/contextual controls,
+a deliberately opened workspace or later command/search surfaces; shortcut hints can teach efficient
+alternatives. Final menus and a command palette are not designed here.
 
 Relevant musical items/containers should visibly indicate processing with a compact, clearly
 interactive control. Graph complexity normally stays hidden; opening that indicator reveals the
@@ -90,6 +175,11 @@ and resampling semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Mis
 represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work retained.
 
 ### Undo grouping and interaction preview
+
+Input source does not determine Undo semantics: a pointer drag is one logical Move transaction, a
+single nudge normally one discrete edit, and a held nudge may be one bounded same-intent session.
+All express canonical edit intentions; gesture updates or repeated input events are not independent
+history policy. The contract below remains authoritative for interaction grouping and preview.
 
 Undo steps follow understandable user intentions under
 [ARCHITECTURE](ARCHITECTURE.md#logical-undo-transactions-and-history-scope). One continuous clip drag
@@ -305,6 +395,21 @@ on demand. Coordinates do not define processing order; connections express depen
 creation must not require learning graph internals; advanced branches/merges remain discoverable.
 [NODE_GRAPH](NODE_GRAPH.md) owns graph semantics, ports, and the editing/execution boundary.
 Compact-chain editing and node-settings presentation remain proposals/open UX questions.
+
+## Essential accessibility feedback
+
+Keyboard focus, selected targets and active context must be understandable. Important invalid state,
+unavailable commands and pending operations need sufficient non-color/structural feedback where
+applicable; color or transient animation alone is insufficient. Use persistent state and concise
+contextual explanation appropriate to the action, without a second visual system or diagnostic-heavy
+workspace. [UI_DESIGN](UI_DESIGN.md#feedback-and-motion) owns visual treatment; specific blocker and
+preparation workflows above retain their specialized behavior.
+
+Essential window/workspace actions must remain keyboard-accessible despite custom chrome under
+[WORKSPACE](WORKSPACE.md#keyboard-access-and-focus-return). These are baseline future requirements,
+not accessibility certification or implemented support. Screen-reader/accessibility-tree integration,
+platform APIs, detailed navigation, DPI/minimum-size evidence and cross-platform acceptance remain
+open under Q-064 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 
 ## Interaction quality
 

@@ -53,6 +53,15 @@ settings/inspector placement, and optional parameter exposure are not final visu
 
 ## Feedback and motion
 
+Make keyboard focus, document selection, active pane and relevant command target sufficiently legible
+without treating them as one visual state. Essential invalid/unavailable state and pending operations
+need non-color/structural cues where applicable, such as shape/outline, labels, icons and concise
+context explanation. Color and transient animation may supplement these cues but cannot be their
+only carrier. Pane chrome, controls and shortcut hints should support discoverable keyboard access
+under [UX](UX_CONTRACT.md#essential-accessibility-feedback) and
+[WORKSPACE](WORKSPACE.md#keyboard-access-and-focus-return). Exact focus visuals, contrast/dimensions,
+accessibility-tree representation and APIs need later design/evidence; no certification is claimed.
+
 Invalid or unpublished graph edits must clearly differ from the graph currently executing under
 [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution). Use concise status/iconography,
 affected node/connection highlighting, restrained color with non-color cues, and concise inline/context

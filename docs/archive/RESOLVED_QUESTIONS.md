@@ -192,3 +192,32 @@ fixed, but reference/detachment, acceptance scope and sharing UI remain open. Q-
 restoration grouping is fixed, but exact baked-chain transformation remains open. Q-018 canonical Undo
 versus execution is coordinated without closing publication/state-transfer/retirement mechanisms.
 Q-019/Q-030/Q-047/Q-057/Q-058/Q-059/Q-066 retain their concrete scopes. No question was fully closed.
+
+## R13 resolved portion — Q-064 input semantics accepted, accessibility evidence remains open
+
+Status: Partial resolution accepted by SEQ-KB-R13, 2026-10-08. Q-064 retains its canonical active
+ID for concrete implementation and evidence; no complete accessibility resolution is claimed.
+Original question: Required keyboard/focus paths, accessible custom-window actions, non-color status
+cues and discoverable actions for mouse-first custom chrome, overlapping panes and graph feedback.
+Accepted portion: Mouse-first is compatible with first-class keyboard-efficient editing without
+memorized shortcuts for basic workflows. Semantic actions are independent of gestures/physical bindings
+and converge on canonical operations/Undo. Precise/repeated/modifier input is legitimate; R12 discrete
+versus bounded held-session grouping remains authoritative. Focus, selection, active pane and command
+target differ; text/value/search/native-editor input is protected from unrelated host editing commands.
+Important actions need discoverable paths, essential feedback cannot rely only on color/transient
+animation, and custom chrome/workspace must preserve baseline keyboard reachability, escape and useful
+focus return. QWERTY musical input stays optional/explicit; rebinding and platform-appropriate defaults
+remain architecturally possible. Cases A–L were covered without choosing final bindings or UI mechanics.
+Rationale: [D-066](DECISIONS.md#d-066--mouse-first-keyboard-efficient-semantic-actions-and-accessibility-baseline).
+Current owners: [UX](../UX_CONTRACT.md#mouse-first-creation-and-complementary-input),
+[architecture](../ARCHITECTURE.md#semantic-actions-and-input-boundary),
+[workspace](../WORKSPACE.md#keyboard-access-and-focus-return), [UI feedback](../UI_DESIGN.md#feedback-and-motion);
+[vision](../PROJECT_VISION.md#creation-musical-structures-and-organization) owns product fit.
+Remaining Q-064: Exact bindings/defaults, modifier conflicts, steps/repeat; concrete focus/command
+routing, detailed node/timeline navigation, pane/overlay escape and external-editor return; platform
+accessibility APIs, screen-reader/accessibility-tree implementation; keybinding editor/storage/conflict
+mechanics, import/export, profiles, chords/sequences; DPI/minimum-size and actual window/workspace/input
+cross-platform validation. No certification, implementation or release parity is implied.
+Related questions: Q-015 visual/detail, Q-022 docking/storage, Q-028 terminology/container identity,
+Q-032 settings placement, Q-035 pane targets/following, Q-051 timeline mechanics, Q-063 history/grouping
+mechanisms and Q-067 localization/theme services remain open and are not separately narrowed here.

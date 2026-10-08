@@ -132,3 +132,16 @@ concrete history, validation/cancellation/reuse mechanisms and evidence remain o
 accepted portions of Q-011/Q-029/Q-049; no question fully closed. Documentation/architecture only;
 active implementation roadmap numbering/order and R0 scope unchanged. SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-07--seq-kb-r12).
+
+## SEQ-KB-R13 — Input, Commands & Accessibility Semantics
+
+Completed 2026-10-08. Audited input cases A–L; accepted mouse-first, keyboard-efficient creation/editing,
+semantic-action/input separation, precise/repeated/modifier commands, distinct focus/selection/pane/
+command targets, protected text/native-editor input, discoverability, binding flexibility and platform
+conventions, optional bounded QWERTY musical mode, baseline keyboard chrome/workspace/graph access and
+non-color feedback. Preserved R12 intent-based Undo grouping and transient/canonical boundaries.
+Partially resolved Q-064 through [D-066](DECISIONS.md#d-066--mouse-first-keyboard-efficient-semantic-actions-and-accessibility-baseline);
+concrete input/accessibility mechanisms and platform evidence remain open. Related questions remain
+open without separate narrowing. Documentation/product-architecture only; no implementation stage
+started or reordered. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r13).

@@ -2,7 +2,7 @@
 
 Role: Main-window workspace-pane behavior and layout-state contract.
 Read when: Designing pane placement, activation, floating, docking, collapse, or layout restoration.
-Authoritative for: Main-window chrome/foreground behavior, internal panes, user-controlled docking, activation/front behavior, layout ownership.
+Authoritative for: Main-window chrome/keyboard window actions, pane reachability/escape and focus return, internal panes, user-controlled docking, activation/front behavior, layout ownership.
 Not authoritative for: Pane-specific editing, final visuals/gestures, framework Z-order API, or project schema.
 
 ## One main application window
@@ -31,8 +31,31 @@ or aggressively steal focus from other applications; avoid unnecessary foregroun
 grabs. Internal pane activation below is distinct from activating the application over another app.
 
 This first-party direction does not prescribe independently rendered external plugin editor visuals.
-Exact Avalonia/platform mechanics remain open. Accessibility, OS window behavior, and platform/DPI
-interaction require later validation; custom chrome is not evidence of cross-platform correctness.
+Custom chrome must preserve normal keyboard-accessible window actions, including move, resize,
+minimize, maximize/restore and close where appropriate to the platform. Essential controls must not
+be pointer-only. Exact bindings, Avalonia/platform mechanics, accessibility APIs and dimensions remain
+open; OS window behavior and platform/DPI interaction need later validation. Custom chrome is not
+evidence of cross-platform correctness or accessibility compliance.
+
+## Keyboard access and focus return
+
+Essential workspace actions need keyboard reachability: enter/switch useful panes, invoke relevant
+actions, restore collapsed or obscured working surfaces, and leave panes/overlays without a focus trap.
+An intentionally modal interaction may scope input, but must provide a clear completion/cancellation
+and return path. Activation through keyboard interaction must make the working pane reachable/visible
+under the activation contract below. Neither every visual object nor every graph node needs a global
+tab stop; detailed traversal and escape bindings remain open.
+
+Follow [UX focus and targets](UX_CONTRACT.md#focus-selection-and-command-targets): pane activation,
+keyboard focus, document selection and current command target are distinct. Restoring or focusing a
+pane must not silently change its document target merely because a different pane/selection was last
+active. Target-following versus retention and multiple graph panes remain Q-035 decisions.
+
+Returning from a detached/native editor, or closing an overlay, should restore a useful still-valid
+host focus/context predictably, without stale target resurrection or aggressive foreground grabs.
+If the prior host target/pane is unavailable, use a safe understandable host context without silently
+redirecting an editing command. Host routing must respect external editor input ownership under UX;
+concrete native focus capture/restoration and accessibility integration still require platform evidence.
 
 ## Flexible composition and activation
 

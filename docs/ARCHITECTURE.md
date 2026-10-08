@@ -2,7 +2,7 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, logical undo transactions and async commit integrity, host UI services.
+Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, semantic-action/input boundary, logical undo transactions and async commit integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 No production architecture is implemented. Accepted responsibilities and musical direction bind future
@@ -40,6 +40,33 @@ Pattern/domain objects must not depend on Avalonia controls; project semantics m
 WASAPI/miniaudio or another backend; tempo/musical time must not depend on a UI window. Persisted plugin
 state must not depend on a button/control instance. UI is not canonical project truth, and audio/backend
 adapters implement requirements rather than define musical semantics.
+
+## Semantic actions and input boundary
+
+A semantic action expresses application intent and target/scope; an input gesture/binding expresses
+how the user requests it. Presentation translates pointer gestures, keyboard bindings, menus/context
+menus and future accessibility/action surfaces into application operations:
+
+```text
+pointer gesture   keyboard binding   menu/context/accessibility action
+        \                |                /
+                 semantic action
+                        |
+          application/domain operation
+```
+
+`MoveSelection(...)`, `DeleteSelection`, `Duplicate`, `Undo`, `Redo`, `OpenProcessing`, `AcceptCandidate`
+and `CancelOperation` illustrate intentions only, not selected names, classes or APIs. Not every action
+mutates the document. A canonical edit uses the same validation and
+[logical Undo boundary](#logical-undo-transactions-and-history-scope) regardless of input surface;
+transient preview remains distinct from canonical commit. There is one canonical project truth and
+no keyboard-specific musical/edit model. Domain objects and edit intent must not encode physical
+keys, modifier events, Avalonia controls or an input framework.
+
+[UX](UX_CONTRACT.md#semantic-actions-and-input-composition) owns input composition, discoverability,
+binding flexibility and focus/command-target safety, including selection distinct from UI focus.
+No global enum, command bus, service locator, command-pattern hierarchy, concrete C# command class,
+Avalonia API or binding framework is selected or required by this boundary.
 
 ## Foundational ownership and project lifecycle
 

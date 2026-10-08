@@ -38,7 +38,8 @@ Sample
 ```
 
 These examples demonstrate creative flow, not mandatory default chains, adopted algorithms, or an
-execution API. [UX_CONTRACT](UX_CONTRACT.md) owns mouse-first input and progressive disclosure;
+execution API. [UX_CONTRACT](UX_CONTRACT.md#focus-selection-and-command-targets) owns mouse-first,
+keyboard-efficient input, common graph keyboard access and progressive disclosure;
 [WORKSPACE](WORKSPACE.md) owns pane placement, activation, and target focus;
 [UI_DESIGN](UI_DESIGN.md) owns progressive visual complexity and canvas presentation principles.
 

@@ -55,9 +55,12 @@ Universality must not turn into feature-count competition over every historical 
 
 ## Creation, musical structures, and organization
 
-Seqvium is primarily mouse-first: direct pointer editing leads creation. On-screen musical keyboard,
-MIDI/realtime note input, and eventual audio recording complement that path. The ordinary computer
-keyboard remains primarily available for shortcuts; [UX_CONTRACT](UX_CONTRACT.md) owns input semantics.
+Seqvium is **mouse-first, keyboard-efficient**. Polished direct pointer manipulation leads creation
+and editing; basic workflows must be approachable without memorized shortcuts. Keyboard editing is a
+complementary path of equal interaction quality for precise and repetitive work, navigation, selection
+and action invocation. It uses the same musical/document model. On-screen musical keyboard,
+MIDI/realtime note input, and eventual audio recording complement creation; optional typing-keyboard
+musical input does not define ordinary command behavior. [UX_CONTRACT](UX_CONTRACT.md) owns input semantics.
 
 Named reusable multi-instrument patterns let users choose the size of a musical idea, from a drum
 part to a full groove. User-defined instrument/channel groups provide flexible organization independently

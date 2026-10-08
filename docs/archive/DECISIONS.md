@@ -16,6 +16,7 @@ D-039 through D-044 record SEQ-KB-R6 on 2026-10-07.
 D-045 through D-049 record SEQ-KB-R7 on 2026-10-07.
 D-050 through D-056 record SEQ-KB-R8 on 2026-10-07.
 D-057 through D-060 record SEQ-KB-R9; D-061 through D-063 record SEQ-KB-R10 on 2026-10-07.
+D-064/D-065 record SEQ-KB-R11/R12 on 2026-10-07; D-066 records SEQ-KB-R13 on 2026-10-08.
 They are accepted direction/constraints, not claims of implementation. Linked owners define the current
 contract. At the R7 checkpoint no explicit supersessions were recorded; those KB stages refined direction
 without accepting technical proposals. R8 records rolling-policy replacement/refinements below.
@@ -89,7 +90,8 @@ Owner: [ARCHITECTURE](../ARCHITECTURE.md); stage scope in [ROADMAP](../ROADMAP.m
 
 ## D-009 — Mouse-first universal creation with complementary performance input
 
-Status: Accepted product direction.
+Status: Accepted product direction; ordinary computer-keyboard wording refined by
+[D-066](#d-066--mouse-first-keyboard-efficient-semantic-actions-and-accessibility-baseline).
 Basis: SEQ-KB-R1 input and product mandate.
 Rationale: Direct pointer editing leads creation, while on-screen keyboard, MIDI/realtime note input,
 and eventual audio/MIDI recording support music across genres. Note-entry paths converge on compatible
@@ -883,3 +885,39 @@ remain open. Q-011/Q-029/Q-049 lose only the accepted validity/grouping portion,
 reference/acceptance scope or baked-chain transformation mechanisms. Q-018/Q-019/Q-030/Q-047/Q-057/
 Q-058/Q-059/Q-066 remain open in their owned scopes. No C# classes, stack, schema, threading API,
 GC/storage algorithm or general ACID guarantee selected. SEQ-R0 remains pending / not started.
+
+## D-066 — Mouse-first, keyboard-efficient semantic actions and accessibility baseline
+
+Status: Accepted by SEQ-KB-R13, 2026-10-08; partially resolves Q-064 and refines
+[D-009](#d-009--mouse-first-universal-creation-with-complementary-performance-input) and the keyboard
+accessibility portion of [D-048](#d-048--unobtrusive-main-chrome-and-usable-responsive-layout).
+Preserves [D-065](#d-065--logical-undo-transactions-and-async-commit-integrity) Undo/preview boundaries.
+Basis: Current vision/owner audit and input/command/accessibility cases A–L; conceptual documentation
+reasoning only, without UI, accessibility-tree, native-editor or platform evidence.
+Rationale: Direct manipulation and an approachable first workflow fit "Easy to start, deep enough to
+grow" while precise/repetitive keyboard editing lets users grow without a second musical model.
+"Mouse-first, keyboard-efficient" therefore refines the earlier shortcuts wording; it does not make
+keyboard input an emergency-only path or require memorization for basic work. The QWERTY piano remains
+optional, explicitly activated and bounded by clear mode/focus semantics.
+An input gesture/binding requests an action; application/domain operations own canonical edit integrity
+and Undo. Pointer drag, keyboard nudge, menus and future accessibility surfaces can express one placement
+intention. Separate presses remain discrete; a held nudge may be a bounded same-intent session, ended
+by unrelated commands/targets or interaction completion, never determined by elapsed time alone.
+Modifiers compose precision/magnitude/mode with deliberate conflict handling; physical keys/defaults
+remain separate from semantic identity so later rebinding and platform conventions stay affordable.
+Focus, document selection, active pane and command target are distinct. Text/value/search/native-editor
+input cannot accidentally trigger unrelated host edits. Keyboard pane/window actions, escape and useful
+focus return, discoverability and sufficient non-color feedback establish a future baseline, without
+requiring every object to be a tab stop or selecting a full keyboard graph editor.
+Current owners: [Vision](../PROJECT_VISION.md#creation-musical-structures-and-organization),
+[UX input](../UX_CONTRACT.md#mouse-first-creation-and-complementary-input),
+[application boundary](../ARCHITECTURE.md#semantic-actions-and-input-boundary),
+[workspace](../WORKSPACE.md#keyboard-access-and-focus-return),
+[visual feedback](../UI_DESIGN.md#feedback-and-motion).
+Remaining Q-064: Exact bindings/defaults, steps/repeat and modifier conflicts; concrete focus/routing,
+detailed timeline/node navigation and native-editor return; binding editor/storage/conflict mechanics,
+import/export/profiles/chords/sequences; platform accessibility APIs and screen-reader/accessibility-tree
+implementation; window/workspace, DPI/minimum-size and actual cross-platform validation.
+Q-015/Q-022/Q-028/Q-032/Q-035/Q-051/Q-063/Q-067 retain their open mechanisms; no additional question
+is narrowed or closed. No final keys, APIs, framework, C# command model, accessibility certification or
+platform parity selected/claimed. Active roadmap scope/order unchanged; SEQ-R0 remains pending / not started.
