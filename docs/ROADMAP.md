@@ -209,8 +209,8 @@ implementation still separately authorized.
 Status: **partially evidenced**. The authorized bounded probe has run; see the
 [protocol](experiments/SEQ-R0_PROTOCOL.md) and [report](experiments/SEQ-R0_REPORT.md).
 Managed/native execution, Windows shared-mode callbacks and controlled/offline checks have evidence;
-production selection, clean distribution and broader device/target evidence remain open. R1 has not
-started and is not authorized by this result.
+production selection, clean distribution and broader device/target evidence remain open. R0 did not
+authorize R1; R1 was separately authorized and is complete under [PROJECT_STATE](PROJECT_STATE.md).
 
 Before future probe work, follow [CODING_GUIDELINES](CODING_GUIDELINES.md), [DEVELOPMENT](DEVELOPMENT.md),
 [PORTABILITY](PORTABILITY.md), and [TEST_EXECUTION](TEST_EXECUTION.md). Policy preparation does not
