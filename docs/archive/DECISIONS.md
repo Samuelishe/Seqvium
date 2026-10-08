@@ -998,3 +998,45 @@ Q-055 theme API/token schema, visual values/fallback and packaging; Q-067 regist
 retirement/versioning and evidence. Q-010/Q-024/Q-015/Q-053/Q-064 retain their specialized mechanisms;
 Q-061 retains full roadmap dependency closure. No framework, files, palettes, plugin-host architecture,
 marketplace, theme SDK, hot reload or customization editor selected; no runtime/platform evidence claimed.
+
+## D-069 — Bounded cross-context routing and sidechain semantics
+
+Status: Accepted by SEQ-KB-R16, 2026-10-08; partially resolves Q-066. Refines the cross-context gap
+left by [D-061](#d-061--musical-ownership-and-explicit-signal-convergence),
+[D-062](#d-062--separate-arrangement-identity-and-shared-mixer-context-presentation) and
+[D-063](#d-063--object-render-convergence-follows-semantic-ownership); preserves
+[D-064](#d-064--shared-sound-definitions-and-semantic-execution-domains) and
+[D-065](#d-065--logical-undo-transactions-and-async-commit-integrity).
+Basis: Current-owner conceptual audit of cases A–O and hypotheses 1–12; no runtime, scheduling,
+latency, plugin-host, render, UI or platform evidence.
+Rationale: Kick influencing a Bass detector is meaningful without adding Kick to Bass audio. Audible
+routes, intentional sends, detector inputs and parameter controls therefore need explicit semantic
+roles. Required logical endpoint/tap/context dependencies remain canonical; runtime connections and
+schedules are derived. Compatible consumers of one signal do not imply several musical performances;
+shared definitions do not justify merging independent placements/domains. Existing contexts suffice
+without a third local level or a giant mandatory graph. A container can receive external detector/control
+influence while its audible processing remains container-owned.
+Tap choice determines signal and permitted tails; moves can retain identity while changing processing.
+Deleting/replacing endpoints cannot rebind by label/position. Safely retained unresolved intent remains
+editable/savable, required dependencies block affected correct execution, and Undo restores canonical
+relationships through ordinary validation rather than DSP rewind. Removing a target does not delete
+source audio. Combined dependencies still require causality/cycle, rate, timing and lifetime validation.
+Object renders freeze necessary external influence/state/time scope without including its audio or
+whole Master by default. Missing/unsupported dependencies cannot be omitted as an equivalent render.
+Hypotheses 1–12 accepted with bounds: fan-out needs compatible intended signal/time; invalid retention
+needs safe representability; validation/publication and realtime/offline equivalence require supported
+scope/capabilities, not universal routing, free execution or arbitrary-plugin bit identity. Zero-delay
+feedback remains disallowed. No final UI, identity schema, ports/buffers, scheduler, compensation,
+fallback DSP, modulation composition or host API selected.
+Current owners: [Node graph](../NODE_GRAPH.md#cross-context-signal-and-control-relationships),
+[Architecture](../ARCHITECTURE.md#cross-context-ownership-and-identity),
+[Audio](../AUDIO_ENGINE.md#cross-context-boundaries-and-timing),
+[Sample workflow](../SAMPLE_WORKFLOW.md#external-dependencies-in-object-rendering),
+[UX](../UX_CONTRACT.md#external-dependency-feedback),
+[Roadmap](../ROADMAP.md#cross-context-routing-ownership).
+Remaining Q-066: Source/tap/target representation, port compatibility/rates, validation/scheduling,
+feedback, latency/timing, state/lifetime and move/delete/replace/reattachment mechanisms, offline
+dependency capture, host/plugin capability support, detailed UI and platform evidence. Related questions
+remain open in their specialized scopes. R4 owns foundations, R8 supported render handling, R10/R11
+bounded workflow needs, R14+ richer expansion; mature routing is no implicit R0/R12 prerequisite.
+Implementation stages/order and R0 scope unchanged; SEQ-R0 remains pending / not started.

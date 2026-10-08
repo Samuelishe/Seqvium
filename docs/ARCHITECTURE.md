@@ -563,6 +563,31 @@ remain available until an intentional mix; the graph owner defines exactly what 
 [NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing). Source/content/resource identities
 remain editable and non-destructive even though a mixed stream cannot recover its independent inputs.
 
+### Cross-context ownership and identity
+
+Explicit cross-context signal/control relationships connect existing processing contexts; they do not
+create another musical owner, a third local processing level or one universal graph. The source owns
+its intended contribution/aggregate and boundary; the receiving processor owns the affected processing
+and detector/control role. [NODE_GRAPH](NODE_GRAPH.md#cross-context-signal-and-control-relationships)
+owns relationship kinds, taps, validity and endpoint lifetime. A detector/control dependency from
+outside a container does not make that signal part of its audible submix or turn its processor into a
+broader audible bus. Actual audible aggregation of outside contributions still belongs to that broader
+route. Arrangement/Mixer exposure does not duplicate either processing or dependencies.
+
+Relationships distinguish occurrences/contributions from reusable sound or Pattern definitions.
+Consumer fan-out alone does not request additional performances; different overlapping placements
+retain the contribution paths and execution-domain intent above. Definitions and performance state
+cannot be merged or duplicated merely to simplify dependency scheduling. Concrete reference/scope
+ownership, grouping and source capability realization remain Q-019/Q-030/Q-047/Q-066.
+
+Moving source or target preserves meaningful logical identity, not necessarily the signal or context.
+An item-owned tap can remain attached across a context move when its boundary survives; a tap on a
+particular containing aggregate still names that aggregate. Changing processing membership may change
+an applicable tapped signal; purely visual/organizational moves cannot silently redirect dependencies.
+Changed endpoints/boundaries/capabilities require revalidation or deliberate reassignment, never matching
+by name, position or selection. The move and necessary relationship edits share one canonical Undo
+transaction; preparation/publication remains derived under the document integrity contract.
+
 ## Resources, placements, and two local processing levels
 
 A durable audio resource and a musical occurrence/placement of it must not be assumed to be one
@@ -643,7 +668,8 @@ channel showing that context. It runs once at the same semantic boundary; viewin
 not apply a second Compressor. Its local scope does not become global merely because Mixer exposes it.
 Conversely, shared processing of an audio aggregate containing contributions from outside that
 container belongs to the broader route; it cannot silently be advertised as exclusively that
-container's own processing. External sidechain/control dependencies remain separately open in Q-066.
+container's own processing. An external detector/control dependency alone does not add such audible
+contributions; [cross-context ownership](#cross-context-ownership-and-identity) preserves that distinction.
 
 ```text
 item contributions -> item-local paths -> container submix -> Compressor context C

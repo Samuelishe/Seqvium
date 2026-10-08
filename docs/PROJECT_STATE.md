@@ -7,20 +7,22 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R15 complete (2026-10-08). Minimum host localization, stable contributor-scoped presentation
-identity, per-resource language fallback and locale/project-data independence are accepted under
-[Architecture](ARCHITECTURE.md#host-localization-and-ui-resources). Shared semantic Dark/Light roles
-and safe baseline fallback belong to [UI design](UI_DESIGN.md#themes-and-semantic-resources);
-[Extensions](EXTENSIONS.md#ui-resource-contribution-lifecycle) owns safe contribution availability/
-retirement without losing project identity/opaque state or retaining code merely for error labels.
-[Roadmap](ROADMAP.md#localization-and-theme-foundation-ownership) assigns R3 host rails, R6 bounded
-contributions, R7 shared-resource consumption and bounded R12 presentation/integrity acceptance.
-Q-054/Q-055/Q-067 retain concrete formats/APIs, packaging, lifetime/versioning and UI/platform evidence.
-Browser/source discovery, transient audition, durable project use and independent Personal Library/
-preset ownership remain in force, with explicit cross-project publication assigned to R14+.
-Mouse-first, keyboard-efficient semantic actions, logical Undo/async integrity, canonical/derived
-execution, musical/signal ownership, recovery/media durability and current/cold-history boundaries remain
-in force. No implementation stage has started.
+SEQ-KB-R16 complete (2026-10-08). Bounded cross-context audible routes, sends, sidechain detectors and
+parameter controls have distinct roles under [Node graph](NODE_GRAPH.md#cross-context-signal-and-control-relationships).
+Explicit endpoint/tap dependencies preserve independent contributions/domains and the two local levels;
+fan-out alone adds no performances, control alone adds no audible mix. Moves revalidate meaningful
+identity/boundaries; deletion/replacement cannot silently retarget. Safely retained unresolved intent
+remains canonical, savable and undoable, with dependency-scoped execution blockers.
+[Audio](AUDIO_ENGINE.md#cross-context-boundaries-and-timing) owns causal timing and hard-boundary/tail
+constraints; [object rendering](SAMPLE_WORKFLOW.md#external-dependencies-in-object-rendering) freezes
+required external influence without automatically including its audio or whole Master.
+[Roadmap](ROADMAP.md#cross-context-routing-ownership) assigns R4 foundations, R8 supported render
+dependency handling, bounded R10/R11 workflows and R14+ richer routing; mature sidechains/modulation
+are not implicit R0/R12 prerequisites. Q-066 retains concrete mechanisms and evidence.
+Musical/signal ownership, canonical/derived execution, logical Undo/async integrity, mouse-first/
+keyboard-efficient UX, resource/plugin preservation, discovery/library ownership, host localization/
+themes, recovery/media durability and current/cold-history boundaries remain in force.
+No implementation stage has started.
 
 ## Implemented capability
 
@@ -39,16 +41,20 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R15 localization/theme cases A–N, compatibility with preference, project identity/opaque-state,
-removal, numeric-state and R13 accessibility contracts, repository-wide relative Markdown links/anchors,
-Q/D ID integrity, owner/routing, current/archive separation, roadmap stage IDs/order, accepted/open
-scope, UTF-8/LF/whitespace and Git preservation checks passed. Documentation-only validation; no builds,
-tests, runtime/audio, contrast/screen-reader certification or platform acceptance is claimed.
+R16 routing/control cases A–O and hypotheses 1–12 checked against ownership, execution-domain,
+canonical Undo, object-render, timing and hard-boundary contracts. Repository-relative Markdown links/
+anchors, canonical Q/D identity/reference integrity, owner/routing, active/cold separation, roadmap
+IDs/order and unchanged R0 scope, UTF-8/LF/whitespace and Git preservation checks passed.
+Documentation-only validation; no builds/tests, runtime/audio, scheduling/latency, UI or platform
+acceptance evidence is claimed.
 
 ## Active blockers / evidence gaps
 
 Concrete graph-scope references/edit ownership (Q-019) and Arrangement route/control assignment (Q-030)
-remain open. High-impact evidence work includes domain grouping, voice allocation, source/plugin instancing,
+remain open. Q-066 requires source/tap/target representation, compatibility/rates, validation/scheduling,
+feedback, timing/latency, state/lifetime and endpoint edit mechanisms, offline dependency capture,
+host/plugin capabilities and detailed UI/platform evidence. High-impact evidence work includes domain
+grouping, voice allocation, source/plugin instancing,
 definition synchronization and measured CPU/RAM/resource behavior (Q-047), exact recovery/media integrity
 mechanisms (Q-058/Q-059), future concrete roadmap/complete-project milestone closure (Q-061), stateful DSP/
 finite-tail mechanics (Q-057), graph publication/lifetime/failure handling

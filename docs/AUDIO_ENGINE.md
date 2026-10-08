@@ -84,7 +84,9 @@ Its explicit hard right boundary still ends its own local result under
 [source boundaries](#source-boundaries-and-effect-tails). Neither action clears B nor arbitrary shared
 downstream state after intentional mixing. Exact tail completion, reset, de-click, seek reconstruction
 and retirement mechanics remain Q-057; publication/state transfer and safe resource lifetime remain
-Q-018. No tail algorithm or unlimited retention is implied.
+Q-018. No tail algorithm or unlimited retention is implied. Cross-context consumers cannot extend a
+source occurrence or keep arbitrary execution alive forever merely because its canonical connection
+still exists; required signal/history availability follows the selected boundary and timing scope.
 
 Correct required audio has priority over hidden resource shortcuts. Never silently merge independent
 performance domains/contributions, collapse required routes, replace requested sound with stale/wrong
@@ -107,8 +109,9 @@ Q-047 requires bounded comparisons of compatible sharing versus independent doma
 separable source outputs, opaque-source instancing, shared-definition parameter synchronization and
 CPU/RAM scaling, including pressure/failure and lifetime cases. Concrete grouping, allocation, pooling,
 instance counts, limits and realtime publication remain open. Q-019/Q-029 own canonical references/edit
-relationships; Q-063 owns undo/async commit, and Q-066 retains permitted cross-context control/sidechain
-dependencies that may affect compatibility. These questions are coordinated, not resolved here.
+relationships; Q-063 owns undo/async commit, and Q-066 retains concrete cross-context control/sidechain
+execution mechanisms under the [graph semantics](NODE_GRAPH.md#cross-context-signal-and-control-relationships).
+These questions are coordinated, not fully resolved here.
 
 Within its existing authorized scope, a future [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-probe) can
 provide baseline sample/tone event ownership, prepared-state lifetime, bounded control/overload and
@@ -147,6 +150,37 @@ consequences would need separate routing/state semantics, not an assumption abou
 Preserve the two local processing levels under
 [ARCHITECTURE](ARCHITECTURE.md#resources-placements-and-two-local-processing-levels).
 [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns understandable editing intentions.
+
+### Cross-context boundaries and timing
+
+The selected [source tap](NODE_GRAPH.md#source-boundaries-and-dependency-scope) determines what a
+sidechain can observe. Before-local audio stops when the occurrence's permitted source input ends;
+after-local audio can include allowed local tails after a natural source end. An explicit item hard
+boundary does not permit either tap to resurrect that occurrence's cut source/local tail. A tap after
+intentional container mixing observes that aggregate, including other continuing contributors or
+permitted shared state; it is not an isolated Kick tail. Independent control generators retain their
+own declared lifetime, rather than inheriting arbitrary audio-item boundaries.
+
+Ending/cutting a source signal is not deleting its canonical dependency, and valid no-signal intervals
+are not missing-input errors. It must not automatically reset an unrelated Bass compressor, control
+smoother or downstream shared DSP. Those processors own their evolving state; Q-057 retains transition,
+de-click, tail and seek/warm-up mechanics without a new fallback/reset algorithm.
+
+Cross-context preparation must establish a realizable dependency schedule and meaningful time
+relationship between tapped source, detector/control input and affected audible/parameter processing.
+Different source/target latencies, control rates, transport positions and changing processor latency
+can change that relationship. Consumers must not silently receive whichever block/value is convenient,
+stale, or from a different occurrence. Equal block indices or a sidechain label do not prove alignment.
+Realtime execution honors the prepared causal relationships within bounded callback work; it cannot
+wait on UI/editor state or perform unbounded graph repair. If supported execution cannot satisfy a
+required relationship, expose the dependency-scoped blocker or explicit degraded handling rather than
+claim equivalence. Temporary Live / Low-Latency differences remain visible under the existing contract.
+
+Offline execution must preserve those intended signal/control and time relationships within its
+declared supported scope, including necessary state/input history. Equivalent intent does not promise
+bit-identical arbitrary-plugin output. Q-005/Q-017/Q-018/Q-020/Q-021/Q-057/Q-066 retain clock/rate,
+validation/scheduling, feedback, compensation and state evidence; no delays, sample offsets, control
+rates, thresholds, cycle-breaking algorithm or plugin latency API are selected.
 
 ### Loop, seek, and playback Stop
 

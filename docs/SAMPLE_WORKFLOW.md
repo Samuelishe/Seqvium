@@ -361,12 +361,40 @@ A container Compressor exposed in Mixer is still included when sampling that con
 is that container's own context, and is applied once. The same Compressor is excluded when sampling
 an individual contained item. An unrelated global bus or Master is excluded in both cases. Shared
 route processing of an aggregate containing contributions beyond the object cannot silently count
-as exclusively object-owned. Cross-scope sidechain/control dependencies remain Q-066, not an automatic
-extension of the object's audio aggregation boundary.
+as exclusively object-owned. Required external detector/control dependencies follow the rules below;
+they do not automatically extend the object's audio aggregation boundary.
 [ARCHITECTURE](ARCHITECTURE.md#arrangement-context-and-mixer-presentation) owns that relationship;
 [NODE_GRAPH](NODE_GRAPH.md#contributions-and-irreversible-mixing) owns signal convergence. Exact taps,
-dependency closure, musical range/tails, rate/channel negotiation and replacement edits remain open
+dependency capture/preparation, musical range/tails, rate/channel negotiation and replacement edits remain open
 under Q-012/Q-021/Q-047/Q-049/Q-057; no renderer or capture mechanism is selected.
+
+### External dependencies in object rendering
+
+If selected Bass owns a Compressor influenced by external Kick, `Create Sample from Object` renders
+Bass through that processing with its required Kick detector signal. Kick need not become audible
+content of the Bass sample. The dependency execution scope can therefore extend beyond the selected
+object while its audible result still stops at the object's own semantic boundary. The same distinction
+applies to required parameter controls and transitive dependencies, not only the first detector link.
+
+Freeze the relevant canonical dependency scope with the object: intended source occurrences/domains,
+tap boundaries, target relationships, required processing/resources/capabilities, musical/time context
+and necessary entry-state/input history. For shared placements, an arbitrary use of the same Pattern
+or sound definition cannot substitute for the intended external contribution. The frozen scope must
+be sufficient to reproduce the requested relationships within declared supported constraints; this is
+not a demand to render the entire Arrangement/Master or promise bit identity for arbitrary plugins.
+An object without an assigned placement/control context cannot inherit one from current selection;
+an unspecified required dependency needs deliberate context assignment or a clear unsupported/blocker
+result. Ordinary supported renders should infer their existing explicit dependencies without a routing
+questionnaire.
+
+Unavailable, invalid or unsupported required dependencies block an equivalent object render; never
+omit Kick/control influence silently or use stale playback while claiming the selected Bass result.
+Source movement, deletion, changed taps/controls or domains can affect render validity and async
+acceptance under the existing [commit gate](ARCHITECTURE.md#async-commit-gate). A deliberately frozen
+artifact remains distinct from a newly requested current-object result. Capturing/preparing dependency
+state, preprocessing/warm-up, actual render taps, ranges/tails and replacement handling remain
+Q-012/Q-018/Q-021/Q-047/Q-057/Q-063/Q-066 mechanisms. `Capture Audible Selection` keeps its separate
+broader audible-context meaning below.
 
 ### Capture Audible Selection
 

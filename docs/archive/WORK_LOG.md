@@ -402,3 +402,59 @@ is not established by local history; this log does not duplicate Git's commit ch
   dependencies, tests, CI, executable tooling/experiments, UI prototypes, localization files, themes,
   packages or plugin hosts created. No builds/tests, staging, commit or push; SEQ-R0 remains
   **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R16
+
+- Accepted bounded explicit cross-context relationships with distinct audible-route/send, sidechain
+  detector and parameter-control roles. Canonical endpoint/tap/context intent is separate from derived
+  scheduling/connections; no third local level, implicit control-to-audio mix or universal graph.
+- Cases A–O were audited against current contracts:
+
+  | Case | Audited outcome / current owner |
+  | --- | --- |
+  | A — Kick/Bass | Kick contribution/tap drives Bass-owned detector; Kick audible output continues, Bass audio remains separate; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
+  | B — several destinations | Compatible consumers share the intended signal without requesting three unrelated performances; no buffer optimization or instance count selected; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
+  | C — local/container | Dependencies connect existing scopes without another local level; target audible ownership survives external influence; [ownership](../ARCHITECTURE.md#cross-context-ownership-and-identity) |
+  | D — source taps | Before-local, after-local and intentional aggregate boundaries can differ; mixed Kick+Snare is not isolated Kick. Exact supported taps remain open; [boundaries](../NODE_GRAPH.md#source-boundaries-and-dependency-scope) |
+  | E — source move | Meaningful item identity/tap can survive; changed applicable processing changes signal. An old container aggregate does not follow Kick implicitly; revalidate or deliberately reassign; [identity](../ARCHITECTURE.md#cross-context-ownership-and-identity) |
+  | F — source deletion/replacement | Retain safely understandable unresolved intent; required input blocks affected correct execution, never same-name retargeting or valid silence. Reattachment validates; Undo restores canonical relationships; explicit removal is coherent; [lifetime](../NODE_GRAPH.md#relationship-lifetime-and-canonical-edits) |
+  | G — target deletion/change | Remove active receiver or revalidate surviving logical role; source normal route/other consumers remain. Canonical edit/Undo preserves necessary relationships; [lifetime](../NODE_GRAPH.md#relationship-lifetime-and-canonical-edits) |
+  | H — modulation | LFO/envelope/automation-derived parameter influence differs from detector audio. Composition/exposure/rates remain Q-033/Q-034/Q-017; [kinds](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
+  | I — mutual dependencies | Combined audio/control/detector paths need causality/cycle validation; labels do not allow arbitrary zero-delay feedback. Delayed/specialized handling remains Q-020; [validation](../NODE_GRAPH.md#dependency-validation-and-remaining-scope) |
+  | J — latency/time | Preserve meaningful source/target time relationship and necessary history; unsupported alignment is a visible blocker/degradation, not convenient stale blocks. Q-005/Q-017/Q-021 mechanisms remain open; [timing](../AUDIO_ENGINE.md#cross-context-boundaries-and-timing) |
+  | K — ends/tails | Tap observes permitted source/local tail/aggregate signal; explicit item cuts cannot resurrect cut local audio. Natural silence differs from missing input; no unrelated target/shared DSP reset; [boundaries](../AUDIO_ENGINE.md#cross-context-boundaries-and-timing) |
+  | L — Bass object render | Freeze required Kick/control/transitive influence, domains/time/entry state; Kick need not be audible in Bass sample. Unknown/unsupported dependencies block equivalence; no whole-Master inclusion; [render](../SAMPLE_WORKFLOW.md#external-dependencies-in-object-rendering) |
+  | M — shared placements | Same Pattern/sound definition does not substitute A+B/B for intended A or merge independent performances to simplify routing; [domains](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
+  | N — missing capability | Preserve understandable connection/identity/opaque state on degraded reopen; dependency-scoped blockers and compatible fallback rules apply, no omitted requirement reported correct; [lifetime](../NODE_GRAPH.md#relationship-lifetime-and-canonical-edits) |
+  | O — canonical edits | Create/change/remove and endpoint consequences use logical document Undo; invalid canonical work stays savable, preparation validates before publication. No runtime Undo stack/stale render; [validation](../NODE_GRAPH.md#dependency-validation-and-remaining-scope) |
+
+- Hypotheses 1–12 accepted with explicit bounds, not assumed universal support:
+
+  | Hypotheses | Audit result |
+  | --- | --- |
+  | 1, 3, 4, 5 | Explicit project relationship and source/tap/dependency scope are necessary; detector/control influence alone adds no audible mix or local processing level |
+  | 2 | Fan-out preserves one compatible intended source signal/performance; it neither guarantees free execution nor merges distinct required domains |
+  | 6, 7 | No silent redirection after endpoint moves/deletes; retain invalid/unresolved intent only when safely understandable, with deliberate repair/removal and Undo |
+  | 8, 9, 10 | Validate combined causal/timing/capability dependencies before realtime publication; offline honors equivalent intended supported relationships. Reject unbounded/universal or arbitrary-plugin bit-identity readings and zero-delay-cycle exemption |
+  | 11, 12 | Advanced dependencies remain optional/discoverable with source/target/tap/validity/blocker feedback; no mandatory manual creation wiring, final UI or giant global graph |
+
+- Updated node/architecture/audio/sample/UX owners, narrowly clarified roadmap stage ownership and
+  index routes, narrowed Q-066 and advanced compact current state. R4 foundations, R8 supported render
+  dependencies, bounded R10/R11 workflow needs and R14+ expansion add no mature-routing R0/R12
+  prerequisite. Other specialized questions remain open; no stage renumbering/reordering.
+- Recorded [D-069](DECISIONS.md#d-069--bounded-cross-context-routing-and-sidechain-semantics),
+  [Q-066's accepted portion](RESOLVED_QUESTIONS.md#r16-resolved-portion--q-066-bounded-cross-context-semantics)
+  and [completed-stage history](ROADMAP.md#seq-kb-r16--cross-context-routing--sidechain-semantics).
+  Q-066 retains representation, compatibility/rates, validation/scheduling, feedback, timing/latency,
+  state/lifetime and endpoint edit/reattachment mechanisms, offline dependency capture, host/plugin
+  capability support, detailed UI and platform evidence. No question fully closed.
+- Verified repository-relative Markdown links/anchors, canonical Q/D definitions/references, owner/
+  routing, active/cold separation, cases/hypotheses against existing ownership/domain/Undo/render/
+  boundary contracts, roadmap stage IDs/order and unchanged R0 section, UTF-8/LF/whitespace and
+  `git diff --check`. Documentation-only; no runtime/audio/render, timing/latency, UI or platform
+  acceptance evidence claimed.
+- Initial baseline: clean `master`, HEAD `0f3ca05ad1eab678831ca82883a3d74124704a2b`, checkpoint R15.
+  Branch/HEAD/index and empty untracked baseline preserved; all task changes are unstaged Markdown.
+  No pre-existing user changes to modify. No code, executable experiments, UI, projects, dependencies,
+  tests, CI, tools, backends or plugin hosts created. No builds/tests, staging, commit or push;
+  SEQ-R0 remains **pending / not started**.

@@ -69,6 +69,23 @@ ecosystem management. R12 does not require additional languages/themes, live res
 third-party recovery or accessibility certification. Q-054/Q-055/Q-067 retain concrete mechanisms and
 evidence; Q-061 retains the full dependency/release-scenario audit. Stage IDs/order and R0 scope stay unchanged.
 
+## Cross-context routing ownership
+
+The [graph contract](NODE_GRAPH.md#cross-context-signal-and-control-relationships) accepts bounded
+semantic dependencies, not universal routing or an early full sidechain/modulation system.
+
+| Stage | Bounded responsibility |
+| --- | --- |
+| R4 — Node Graph Foundation | Preserve semantic distinctions and dependency validation/prepared-execution foundations capable of later explicit cross-context relationships. Validate supported connections; full cross-context UI, all taps and mature scheduling/modulation are not required |
+| R8 — Resampling | Account for required external dependencies in the supported frozen object-render scope, or explicitly report unsupported/blocked cases. Never claim equivalent rendering after silently omitting them |
+| R10/R11 — Arrangement / Mixer | Introduce only bounded routing/control relationships justified by those workflows, honoring existing contexts, meaningful endpoint/tap identity and independent contributions. No mandatory complete sends/sidechain/modulation framework |
+| R12 — First Track Release | Mature cross-context sidechains/modulation are not prerequisites unless indispensable to the later accepted small-track scenario. Any supported relationship must retain Save/Undo, validity and render integrity; Q-061 owns concrete scenario closure |
+| R14+ — Evidence-led expansion | Richer sidechains, sends, control routing and modulation may expand with evidence; representation, timing, lifecycle, capability support and detailed UI remain bounded design work |
+
+This narrows ownership without inserting, renumbering or reordering stages. Q-066 remains open for
+mechanisms/evidence. R0's baseline control exchange is not cross-context routing acceptance; its probe
+scope is unchanged and does not acquire a hidden advanced-routing prerequisite.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 Status: **pending / not started**.

@@ -139,7 +139,8 @@ aggregate, there is one placement result, not independently routable Kick and Sn
 Different downstream instrument routes therefore require retained pre-mix paths or a changed routing
 intention; whole-placement processing must not pretend to preserve those routes through the aggregate.
 The same rule applies to shared containing-container processing at the second local level. Exact
-branch/route UI and cross-scope sidechain/control mechanics remain open (Q-030/Q-066).
+branch/route UI remains open (Q-030); cross-context relationships follow the bounded semantics below,
+with concrete representation/execution still open (Q-066).
 
 ## Conceptual connection kinds
 
@@ -147,7 +148,7 @@ Connections need semantic distinctions; one untyped `object -> object` pipe is i
 
 | Class | Examples / meaning |
 | --- | --- |
-| Audio | Mono, stereo, or multichannel signal flow |
+| Audio | Mono, stereo, or multichannel signals; audible paths/sends and detector inputs have distinct uses below |
 | Musical/event input | Note on/off, musical events, trigger-like events |
 | Control/modulation | Automation values, envelopes, LFO/modulation, parameter control |
 
@@ -167,6 +168,115 @@ Future parameter control must not be blocked by permanently fixed primitive para
 [ARCHITECTURE](ARCHITECTURE.md#future-parameter-control) owns that extensibility requirement. Base value,
 automation, modulation, envelopes/LFO/control sources may contribute to an effective value, but
 composition, units, precedence, smoothing, and rates are not selected here.
+
+## Cross-context signal and control relationships
+
+Explicit dependencies may connect existing item-local, containing-container or global routing contexts
+when their semantic boundaries and capabilities support the intended relationship. This accepted
+direction does not promise every context/tap/target combination. It adds neither a third local
+processing level nor a universal graph that replaces musical ownership or forces all wiring into one
+user-facing canvas. [ARCHITECTURE](ARCHITECTURE.md#cross-context-ownership-and-identity) owns the
+cross-boundary identity responsibilities; concrete references remain Q-019/Q-066.
+
+| Relationship | Meaning / audible consequence |
+| --- | --- |
+| Ordinary audible audio route | Carries a contribution through its intended processing to an audible destination |
+| Audio send | Deliberately branches audio toward another audible processing/mix path; convergence is intentional under the contribution contract, not implied by branching alone |
+| Sidechain detector input | Supplies a processor's detector with a signal influencing its treatment of a separate audible input; it does not add that signal to the target's audible mix |
+| Control/modulation input | Influences a parameter or other supported control behavior; it is not inherently audible audio or a detector input |
+
+A sidechain can carry audio while having a different semantic role from the audible input. Its
+detector use is not interchangeable with parameter modulation. Actual types, compatibility,
+conversions and rates remain Q-017; effective-parameter composition/exposure remain Q-033/Q-034.
+No replace/add/multiply rule or modulation framework is selected.
+
+```text
+Kick contribution -> Drums audible route
+        |
+        +-> external detector signal -> Bass Compressor detector
+
+Bass contribution -> Bass Compressor audible input -> Bass route
+```
+
+The source is the intended Kick contribution at a specified signal boundary, not every use of a
+definition named Kick. The target is the Bass processor's detector role in its own processing context.
+Drums/Kick ownership and Bass processing ownership stay separate. Kick's ordinary output continues
+independently unless an explicit audible-routing edit changes it; Bass contains its own processed
+audio without automatically mixing Kick. Removing a detector destination cannot remove Kick's route.
+
+One such Kick signal may serve its audible route and several compatible detector/control consumers.
+Destination count alone neither duplicates the musical performance/sound definition nor permits
+mixing independent source performances. All consumers refer to the intended signal occurrence and
+timing; this does not mandate buffers, zero-copy fan-out or physical instance counts. Different taps
+can require different paths, still governed by
+[execution domains](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains).
+Overlapping shared Pattern placements keep their intended source contributions, controls and domains;
+a relationship to placement A must not silently consume A+B or placement B because definitions match.
+
+### Source boundaries and dependency scope
+
+The relationship must distinguish the logical source/contribution or intentional aggregate, its
+signal boundary/tap, the target processor/control role, and the context needed to interpret them.
+Required dependencies are part of the intended processing, not optional hints. These are semantic
+obligations for canonical intent, not selected fields, identity schemas, port classes or buffer layouts.
+
+Before item-local processing, after that processing and after intentional container mixing can be
+different detector signals. For example, Kick EQ/Delay can change the post-local detector response;
+a container aggregate can also contain Snare and common processing. Selecting that aggregate cannot
+pretend to select isolated Kick after irreversible mixing. Separate pre-mix paths must actually exist
+if independent Kick is required. No exhaustive supported-tap menu is committed.
+
+Tap interpretation includes occurrence, processing/boundary ownership and relevant time scope.
+Object name, screen position, current selection or whichever output is most convenient cannot supply
+missing semantics. A source tap observes only the signal allowed at that boundary under
+[audio hard-boundary/tail rules](AUDIO_ENGINE.md#cross-context-boundaries-and-timing).
+An intentional silent/end interval is a valid signal condition, distinct from an unresolved source.
+
+### Relationship lifetime and canonical edits
+
+A cross-context relationship belongs to canonical project intent, separately from the derived runtime
+connection/schedule. Create/change/remove is an ordinary logical document transaction under
+[Undo](ARCHITECTURE.md#logical-undo-transactions-and-history-scope). A source/target move or deletion
+and its necessary relationship changes form the same user-level edit, rather than runtime repair edits.
+
+| Change | Required semantic behavior |
+| --- | --- |
+| Source moves | Retain a reference to the same logical source if its specified boundary and target remain meaningful/compatible. Revalidate changed processing, timing and scope; the signal may change even if identity survives. An old-container aggregate is still that aggregate, not an automatic reference to Kick's new container. An unavailable boundary needs an explicit unresolved state or deliberate reassignment |
+| Source deleted/unavailable/replaced | Where safely representable, retain understandable unresolved intent: former logical endpoint, selected boundary and target relationship. Never bind another same-name/position object or assume a replacement is equivalent. Required unavailable input blocks affected execution; it is not valid silence. Explicit reattachment/reassignment requires compatibility and dependency validation |
+| Target moved/changed/replaced | Retain its relationship only if the same logical processor and input/control meaning survive. Revalidate the new context/capability; a replacement is not an implicit compatible destination. Otherwise retain unresolved intent where safe, or explicitly remove/reassign it |
+| Target deleted | Remove its active receiving use, without changing source audible paths or other consumers. Deliberate deletion can remove the incident relationship as part of that edit, retaining sufficient history for Undo; safely retained unresolved intent must not create a phantom receiver |
+| Undo deletion/change | Restore prior logical endpoints/relationships as canonical state where history permits; revalidate/prepare normally. Restored identity does not guarantee an available plugin/tap or revive cancelled async requests, rewind DSP, or authorize stale prepared work |
+| Safe removal | Deliberately remove the connection, or the endpoint and its known dependent relationships, as a coherent canonical edit. Expose effects on dependent targets; no hidden retargeting, unrelated source deletion or runtime-state reset |
+
+An unavailable/missing processor or unsupported detector/control capability preserves canonical
+identity, relationships and compatible opaque state where the document is understandable, under
+[extension blockers](EXTENSIONS.md#degraded-project-opening-and-operation-blockers). Required missing
+input/capability cannot be silently bypassed and called correct output. A supported semantics-preserving
+fallback may be used; a behavior-changing alternative needs an explicit informed choice. Unrelated
+editing and healthy paths remain usable only where their dependencies permit.
+
+### Dependency validation and remaining scope
+
+Preparation considers the actual dependency paths across audible routes, sends, detectors and controls,
+including source/target resolution, tap meaning, capability/rate compatibility, causality, timing and
+lifetime. Sidechain/control labels do not exempt a connection from cycle analysis: A controls B while
+B controls A can require unavailable same-time values. Arbitrary zero-delay cycles remain disallowed;
+explicit delay/state or specialized feedback handling is future Q-020 work, with no cycle-breaking
+algorithm selected. Validation must account for combined paths, not only each local graph separately.
+
+Invalid/unresolved edits remain canonical and savable when safely representable; they cannot publish
+as correct execution. Last-valid in-session playback and visible revision divergence follow the
+editable/prepared contract below. Undo changes canonical intent and triggers ordinary preparation;
+there is no separate runtime Undo stack. Realtime/offline processing honors the same intended
+relationships within declared supported constraints, not guaranteed universal routing or bit identity.
+
+Q-066 remains open for concrete source/tap/target representation, port/rate compatibility, validation/
+scheduling, feedback, timing/latency, state/lifetime and move/delete/reattachment mechanisms, offline
+dependency capture, host/plugin capability support, detailed UI and platform evidence. Q-018/Q-019/
+Q-020/Q-021/Q-030/Q-047/Q-057/Q-063 retain their specialized mechanisms. Ordinary creation needs no
+manual external wiring; [UX](UX_CONTRACT.md#external-dependency-feedback) owns discoverable bounded
+feedback, [sample workflow](SAMPLE_WORKFLOW.md#external-dependencies-in-object-rendering) owns object
+render scope and [roadmap](ROADMAP.md#cross-context-routing-ownership) owns staged delivery.
 
 ## Editable graph and audio execution
 

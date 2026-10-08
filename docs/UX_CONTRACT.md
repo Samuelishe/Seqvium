@@ -247,6 +247,26 @@ organization and audio context must be distinguishable with progressive disclosu
 indicators, gestures and route-assignment workflow remain open. The architecture owner traces the
 [move](ARCHITECTURE.md#moving-material-between-contexts), including possible effects on other submix members.
 
+### External dependency feedback
+
+Ordinary Kick/Bass creation and basic mixing must work without manually wiring every signal or opening
+a full graph. Advanced dependencies are discoverable on demand and use the same mouse-first,
+keyboard-efficient semantic actions. [NODE_GRAPH](NODE_GRAPH.md#cross-context-signal-and-control-relationships)
+owns their meaning; no final wiring gestures, panels, menus, icons or global graph view are selected.
+
+When users intentionally create an external dependency, they can understand which source/occurrence
+and signal boundary influences which processor/control target, whether it is audible routing, a send,
+detector input or parameter control, and whether it is valid. Kick driving Bass compression must not
+look like Kick being added to Bass audio. Changed tap/processing membership can change detector behavior
+even if logical source identity survives; a move, delete or reassignment must reveal meaningful affected
+relationships without requiring a giant graph. Visual position/selection never silently retargets them.
+
+Missing endpoints or unsupported required inputs remain understandable persistent dependency state
+under [blocker feedback](#project-availability-and-dependency-blockers). Explain the affected processing/
+operation, its unavailable requirement and meaningful repair/reattach/remove direction. A Bass object
+render can require external Kick influence while excluding Kick audio; show why a required dependency
+blocks that result. Last-valid playback is visibly distinct from canonical work awaiting valid execution.
+
 ### Audio timeline editing
 
 Ordinary audio timeline editing must support trimming start/end, splitting, and moving/rearranging the

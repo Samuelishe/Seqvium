@@ -289,3 +289,33 @@ Related questions: Q-010 package removal/disable mechanisms, Q-024 executable ne
 visuals, Q-053 preference storage/reset and Q-064 accessibility/platform evidence remain open without
 separate narrowing. Q-061 keeps the full later roadmap dependency audit; this stage resolves only the
 minimum host-resource ownership slice. Missing localization is not a processing compatibility failure.
+
+## R16 resolved portion — Q-066 bounded cross-context semantics
+
+Status: Partial resolution accepted by SEQ-KB-R16, 2026-10-08. Q-066 retains its canonical active ID
+for mechanisms/evidence; no question is fully closed.
+Original question: Cross-context sidechain/control routes may cross two local processing scopes;
+exposure alone does not settle lifetime or scheduling.
+Accepted portion: Explicit audible routes/sends, detector sidechains and parameter controls have
+distinct roles. Control-only influence does not mix source audio into target audio or change local
+processing ownership. Fan-out of a compatible signal need not invent several performances; shared
+placements retain contribution/domain independence. Specified source/tap/target/context intent is
+canonical, with meaningful identity across moves, no name/position retargeting, safely retained unresolved
+connections, scoped blockers and coherent endpoint/edit/Undo behavior. Preparation validates combined
+dependencies, causality, capabilities and timing; arbitrary zero-delay cycles remain disallowed.
+Tap-aware natural ends/hard boundaries do not reset unrelated target DSP. Object rendering freezes
+required external influence without expanding its audible boundary or omitting unsupported dependencies.
+Rationale: [D-069](DECISIONS.md#d-069--bounded-cross-context-routing-and-sidechain-semantics).
+Current owners: [Node graph](../NODE_GRAPH.md#cross-context-signal-and-control-relationships),
+[Architecture](../ARCHITECTURE.md#cross-context-ownership-and-identity),
+[Audio](../AUDIO_ENGINE.md#cross-context-boundaries-and-timing),
+[Sample workflow](../SAMPLE_WORKFLOW.md#external-dependencies-in-object-rendering),
+[UX](../UX_CONTRACT.md#external-dependency-feedback),
+[Roadmap](../ROADMAP.md#cross-context-routing-ownership).
+Remaining Q-066: Concrete source/tap/target representation, port compatibility/rates, graph validation/
+scheduling, feedback, latency/timing, state/lifetime and move/delete/replace/reattachment mechanisms,
+offline dependency capture, host/plugin capability support, detailed UI and platform evidence.
+Related Q-005/Q-012/Q-017/Q-018/Q-019/Q-020/Q-021/Q-028/Q-030/Q-033/Q-034/Q-047/Q-057/Q-063 remain
+open without separate closure. R4 foundations, R8 supported render handling, bounded R10/R11 workflow
+features and R14+ richer expansion preserve implementation order and avoid mandatory mature routing
+in R0/R12. No engine mechanisms or final UI selected; SEQ-R0 remains pending / not started.

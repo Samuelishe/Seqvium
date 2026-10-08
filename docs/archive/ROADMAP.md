@@ -171,3 +171,17 @@ Narrowly assigned R3 host rails, R6 contributions, R7 shared consumption and bou
 Q-061 retains full dependency closure. Documentation/product-architecture only; no implementation stage
 started or reordered. SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r15).
+
+## SEQ-KB-R16 — Cross-Context Routing & Sidechain Semantics
+
+Completed 2026-10-08. Audited cases A–O and hypotheses 1–12; accepted bounded explicit audible/send/
+detector/control dependencies, meaningful source/tap/target identity, compatible fan-out without invented
+performances, move/delete/Undo and missing-capability integrity, causal timing/hard-boundary obligations
+and frozen object-render dependencies without automatic audible-source inclusion. Preserved two local
+levels, contribution/domain independence, canonical/derived state and zero-delay-cycle prohibition.
+Partially resolved Q-066 through [D-069](DECISIONS.md#d-069--bounded-cross-context-routing-and-sidechain-semantics);
+concrete representation/execution, lifetime/capabilities and UI/platform evidence remain open. Narrowly
+assigned R4 foundations, R8 supported render handling, bounded R10/R11 needs and R14+ richer expansion;
+no mature-routing R0/R12 prerequisite or implementation-stage renumbering/reordering. Documentation/
+conceptual architecture only; SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r16).
