@@ -350,5 +350,5 @@ decay, near-unity feedback, oscillation or non-decaying processors need bounded 
 label/UI, silence threshold, maximum extension, processor-tail reporting and non-decaying-tail handling
 are unselected. Q-057 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains finite completion, reset/warm-up,
 loop state ownership, de-click and realtime/offline parity mechanisms; latency/cancellation also need evidence.
-[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics; no engine or
+[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics; no production engine or
 renderer exists at this milestone.

@@ -722,3 +722,28 @@ is not established by local history; this log does not duplicate Git's commit ch
   files only. No user work existed to alter. No code, experiments, projects, dependencies, tests, CI,
   build scripts, UI/audio prototypes or executable tooling created. No staging, commit or push;
   SEQ-R0 remains **pending / not started** and requires separate authorization.
+
+## 2026-10-08 — SEQ-R0 bounded experimental execution
+
+- Executed the explicitly authorized [audio architecture probe](../experiments/SEQ-R0_REPORT.md),
+  with a [protocol declared before measurements](../experiments/SEQ-R0_PROTOCOL.md). Source stays in
+  `experiments/seq-r0/`, independent of the empty production solution. No R1/product implementation.
+- Compared C# and native C scheduling/DSP through one WASAPI shared event-driven worker on Windows
+  11 x64. Actual 48 kHz/stereo/480-frame period and 1056-frame capacity; Release builds and functional
+  oracle pass. Baseline/GC-control pressure have no measured service-period misses; native timing
+  tails are smaller. Both candidates' bounded captured output/events match offline exactly.
+- Exercised coalesced gain/preparation, sticky critical controls, four copied immutable slots,
+  retirement/stale/capacity rejection, callback rooting, skipped-time voice release, and ten fresh
+  device lifetimes per candidate. No stale callback/stuck voice/owned-instance leak observed;
+  process-wide cold handle growth and remaining fault/leak limits are retained in the report.
+- Preserved failures: native GUID materialization, nominal-run join timeout, device-clock starvation
+  and overaggressive timer skipping. Bounded QPC/device recovery and absolute-grid timer refinement
+  were declared before repeat measurements; overload recovers without obsolete callback backlog
+  and acknowledges panic before teardown. Timer-only results remain distinct from device evidence.
+- Recommendation **narrow**, SEQ-R0 **partially evidenced**, all Q-001–Q-007 remain open. No engine,
+  language/backend/ABI, production queue or cross-platform/distribution decision accepted. Updated
+  current state, open-question evidence and actual development/test/provenance facts; no new D-record
+  or resolved-question record. No third-party audio source/assets, global installation or CI.
+- Initial clean `master`, HEAD `edad4704309543bab17f83d7af2b7023895c8ac5`. All task changes remain
+  unstaged; history/index/solution and empty pre-existing user-work baseline preserved. Generated
+  builds/notices/logs stay ignored. No staging, commit or push.

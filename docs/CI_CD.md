@@ -7,7 +7,8 @@ Not authoritative for: Exact test commands, physical audio acceptance, SDK/packa
 
 ## Current boundary and initial managed CI
 
-No GitHub Actions workflow is introduced now: there is no executable source or persistent checker.
+No GitHub Actions workflow is configured. The standalone SEQ-R0 experiment has local verification;
+there are no production projects or persistent documentation checker.
 Exact workflow names, triggers, actions/versions, path filters, and branch-protection rules remain
 implementation choices when real validation exists.
 

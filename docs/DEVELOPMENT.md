@@ -12,9 +12,10 @@ primary IDE. Git is standard source control; [AGENTS](../AGENTS.md) owns safety 
 [PORTABILITY](PORTABILITY.md) owns Windows/Linux/macOS target direction and evidence limits.
 
 C#/.NET 10 is the proposed managed application direction in [ARCHITECTURE](ARCHITECTURE.md).
-Avalonia is proposed/likely, not installed or adopted. No managed/native/test projects, executable
-repository tooling, or restore/build/run entry points exist. `Seqvium.sln` is empty; do not build it as
-stage verification or invent commands for nonexistent projects.
+Avalonia is proposed/likely, not installed or adopted. No production/test projects exist.
+`Seqvium.sln` remains empty. The standalone [SEQ-R0 probe](../experiments/seq-r0/README.md) has actual
+Release build/run entry points; it is not the application topology. Do not build the empty solution
+as stage verification.
 
 Once managed projects exist, the `dotnet` CLI must provide a reproducible build/test path independent
 of Rider. Document actual restore/build/run entry points here and actual test commands in
@@ -22,6 +23,16 @@ of Rider. Document actual restore/build/run entry points here and actual test co
 an acceptable cross-platform repository scripting environment where a concrete need justifies it;
 scripts are not introduced by this policy. Native compiler, CMake, Ninja, and native package managers
 are not selected; document setup only when an implementation stage chooses them.
+
+### SEQ-R0 experimental entry points
+
+Run `./build.ps1` from `experiments/seq-r0/`, then `dotnet bin/Release/net10.0/Probe.dll verify`.
+The [probe README](../experiments/seq-r0/README.md) lists device, pressure, controlled and lifetime
+commands; the [report](experiments/SEQ-R0_REPORT.md) owns actual versions/environment/evidence.
+The experiment-local `global.json` pins the SDK without affecting future application work;
+`build.ps1` declares GCC/options and copies installed runtime notices. No global tools were installed,
+NuGet packages restored, production assemblies created or CMake/Ninja selected. Experiment-local
+`Directory.Build.props` enforces nullable/warnings-as-errors. Production SDK/topology remains open.
 
 ## Version authority
 

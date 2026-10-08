@@ -51,24 +51,34 @@ remains the primary license artifact.
 
 ## Introduced
 
-No executable third-party components, NuGet packages, native libraries, or vendored code have been
-introduced. The pre-existing empty `Seqvium.sln` is repository scaffolding, not evidence of an installed
-.NET/Avalonia dependency graph. Local Rider metadata is not shipped product material.
+SEQ-R0 uses installed tools/runtime and Windows system APIs. No NuGet audio/test packages, downloaded
+audio library, vendored source or third-party asset is introduced. Compiled probe outputs/notices are
+local ignored build artifacts. The empty production `Seqvium.sln` remains scaffolding; this is no
+application architecture or supported distribution decision.
 
-When actual components are introduced, record them here using the fields below. Exact installed
-versions belong to build/package/native manifests once those exist; this ledger links that authority
-and must not become a second package lock.
+| Component / author | Form, purpose and source | License/distribution evaluation | Version authority |
+| --- | --- | --- | --- |
+| .NET / .NET Foundation and contributors | Installed SDK and framework-dependent C# host runtime; [official source/license](https://github.com/dotnet/runtime/blob/main/LICENSE.TXT) | Runtime source is MIT; no runtime is bundled here. Future self-contained distribution must retain applicable runtime/transitive notices and review its actual contents | Experiment-local [global.json](../experiments/seq-r0/global.json); actual runtime in [report](experiments/SEQ-R0_REPORT.md) |
+| GCC / Free Software Foundation, MSYS2 UCRT64 packaging | Existing developer C compiler; [GCC](https://gcc.gnu.org/), [MSYS2](https://www.msys2.org/) | Compiler GPLv3+, not redistributed. Eligible covered runtime code uses GPLv3 with GCC Runtime Library Exception 3.1; installed `COPYING.RUNTIME` and `COPYING3` are copied beside DLL output. No compiler/global installation performed | [build.ps1](../experiments/seq-r0/build.ps1) declares compiler/options; observed package identity in report |
+| MinGW-w64 headers/CRT / MinGW-w64 contributors | Existing Windows API headers/import libraries and linked runtime; [official source/licensing](https://www.mingw-w64.org/support/#licensing) | Mixed runtime notices include permissive ZPL/BSD/public-domain terms and component-specific exceptions. Build copies the complete installed `COPYING.MinGW-w64-runtime.txt`, preserving its full obligations rather than assuming one umbrella license. Future distribution must audit actual linked contents | Build script uses installed MSYS2 UCRT64; exact tested headers/CRT packages in report |
+| Windows WASAPI/COM/MMCSS/UCRT / Microsoft | Installed OS services, not redistributed DLLs; [official API](https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream) | Probe calls OS APIs. System DLLs are not bundled or relicensed. Actual native import list, including a private CRT API-set import, is reported; clean supported distribution remains unvalidated | OS/API and import inspection in report |
+
+The native probe's C scheduling/DSP and generated triangle/event sequence are Seqvium-authored
+Apache-2.0 work. Local native loading succeeds without MSYS2 runtime DLL imports; that does not establish
+clean-machine deployment or general legal/distribution acceptance. No root NOTICE is added in lieu of
+the applicable runtime license files.
 
 ## Planned / under evaluation
 
 These are candidates or product directions, not dependencies, adoption decisions, or promises.
-No official version/license evaluation has been completed for them in the knowledge-documentation stages.
+SEQ-R0's bounded evaluation is recorded in its [protocol](experiments/SEQ-R0_PROTOCOL.md) and report;
+it does not adopt a portable audio dependency or production engine.
 
 | Candidate / direction | Intended evaluation boundary |
 | --- | --- |
 | C# / .NET 10 | User's development direction and proposed application platform; evaluate concrete SDK/runtime and distribution obligations when introduced |
 | Avalonia | Proposed UI framework; evaluate official package/API/platform/license evidence before adoption |
-| miniaudio or comparable backend | SEQ-R0 backend candidate; evaluate realtime/device behavior, official source/license, native binaries and packaging |
+| miniaudio or comparable backend | Still a portable candidate. Official miniaudio license offers public-domain or MIT-0 terms; PortAudio has an MIT-style license. Neither is downloaded, built, redistributed or device-tested here; concrete revisions/transitive/backend/distribution checks remain necessary |
 | Future ASIO integration | Desired later device capability, not an R0 requirement or adopted SDK/backend; evaluate concrete implementation source, licensing and redistribution when its stage approaches |
 | CLAP / VST3 hosting | Later possibility; evaluate concrete SDK terms, bridges, distribution and product need when justified |
 | WAV / FLAC support | Planned/candidate media capabilities; evaluate actual codec/library choices separately |

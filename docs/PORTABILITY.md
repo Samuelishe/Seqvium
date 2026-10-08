@@ -9,7 +9,8 @@ Not authoritative for: Release dates, runtime parity, selected RIDs/toolchains/b
 
 **Seqvium targets Windows, Linux, and macOS.** Windows is the primary early development/runtime
 environment. Linux and macOS are first-class architectural targets from the start, not accidental
-later ports. No application/audio implementation or runtime acceptance exists on any platform yet.
+later ports. No production application or supported release exists. The bounded Windows audio probe
+has [experimental runtime/device evidence](experiments/SEQ-R0_REPORT.md); Linux/macOS remain untested.
 This direction promises neither release dates nor complete parity; CPU architectures and release RIDs
 remain undecided.
 

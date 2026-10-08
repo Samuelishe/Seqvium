@@ -10,8 +10,9 @@ with evidence and product need. Current checkpoint belongs to [PROJECT_STATE](PR
 contracts belong to their canonical owners. Completed stages are removed from current planning and
 retained in the cold archive under [rolling governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history).
 
-SEQ-R0 is the next executable stage and remains **pending / not started**. No implementation is
-authorized by this roadmap. ProjectStats may precede the probe after explicit code authorization;
+SEQ-R0 has authorized bounded experimental evidence and remains **partially evidenced**; see its
+[report](experiments/SEQ-R0_REPORT.md). No production implementation or R1 work is authorized by this
+roadmap or the probe result. ProjectStats needs separate explicit code authorization;
 whether a dedicated tooling stage is useful remains Q-046, not an inserted commitment.
 [Open questions](KNOWN_PROBLEMS.md), including First Track Release dependency closure Q-061, do not
 reorder stages or make recording, automation, external hosting or ProjectStats implicit prerequisites.
@@ -33,7 +34,7 @@ The conceptual dependency audit supports the present R0–R12 order and the boun
 No hard architectural cycle or additional document-level prerequisite to scoping R0 was identified.
 This is planning-level closure only: Q-061 retains implementation-specific dependency checks, actual
 capability/range choices and end-to-end evidence as stages arrive. No technical feasibility or release
-acceptance follows from this conclusion; R0 still requires separate authorization.
+acceptance follows from this conclusion; work beyond the authorized R0 probe requires separate authorization.
 
 ## First Track scenario and acceptance boundary
 
@@ -178,7 +179,7 @@ the following assigns minimum responsibility within existing stages, not a full 
 
 Concrete container/protocol, cadence/retention, GC, cross-platform guarantees and fault/race evidence remain
 Q-058/Q-059; collect/relocate mechanics are not automatically early-stage features. Q-061 still owns
-complete dependency/release closure. No implementation stage is started, renumbered or reordered;
+complete dependency/release closure. Only the bounded R0 probe has started; stages are not renumbered or reordered;
 R0 scope is unchanged and acquires no storage/recovery prerequisite.
 
 ## Platform release acceptance ownership
@@ -198,11 +199,16 @@ distribution are distinct. Minimum responsibility follows existing stages:
 
 Q-041 retains the exact OS/version, architecture/RID, device/backend coverage and delivery prerequisites;
 Q-061 retains the complete scenario/dependency audit. Other owners retain device, storage, UI and extension
-mechanisms. No stage is inserted, renumbered, reordered or started; the R0 probe scope is unchanged.
+mechanisms. No stage is inserted, renumbered or reordered; only the authorized bounded R0 probe has
+started, with its scope unchanged.
 
 ## SEQ-R0 — Audio Architecture Probe
 
-Status: **pending / not started**.
+Status: **partially evidenced**. The authorized bounded probe has run; see the
+[protocol](experiments/SEQ-R0_PROTOCOL.md) and [report](experiments/SEQ-R0_REPORT.md).
+Managed/native execution, Windows shared-mode callbacks and controlled/offline checks have evidence;
+production selection, clean distribution and broader device/target evidence remain open. R1 has not
+started and is not authorized by this result.
 
 Before future probe work, follow [CODING_GUIDELINES](CODING_GUIDELINES.md), [DEVELOPMENT](DEVELOPMENT.md),
 [PORTABILITY](PORTABILITY.md), and [TEST_EXECUTION](TEST_EXECUTION.md). Policy preparation does not

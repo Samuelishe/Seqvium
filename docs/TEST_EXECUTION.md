@@ -7,14 +7,24 @@ Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, 
 
 ## Current and future execution
 
-No test projects, test framework, or executable verifier exists. There are no test commands to run and
-the empty `Seqvium.sln` must not be built for documentation verification. Check links/anchors,
+No test projects or test framework have been introduced. The standalone [SEQ-R0 assertion harness](../experiments/seq-r0/README.md)
+uses `dotnet bin/Release/net10.0/Probe.dll verify` after `./build.ps1` from `experiments/seq-r0/`;
+it is not a `dotnet test` platform or the future production suite. The empty `Seqvium.sln` must not be
+built for documentation verification. Check links/anchors,
 metadata, ownership/routing, decision status, scope, passive configuration, and Git diffs/status under
 [AGENTS](../AGENTS.md) and [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md).
 
 When tests exist, inspect the actual SDK, test platform (VSTest or Microsoft.Testing.Platform), framework,
 and project setup before recording exact build/test/filter/report commands here. Do not invent commands
 or select packages through this document.
+
+SEQ-R0 device/timer/lifetime commands and exact scope are in the
+[probe README](../experiments/seq-r0/README.md); measured results belong to the
+[report](experiments/SEQ-R0_REPORT.md). Release builds treat warnings as errors. Its oracle checks
+ordered absolute events, partition independence, generated float output, critical controls, skipped
+time, prepared-state capacity/publication and ownership. Actual device callbacks and offline captures
+are separate from timer-driven evidence. This does not establish plugin/graph/UI/recording or release
+acceptance, and no hosted checks are introduced.
 
 ## Intended test topology
 

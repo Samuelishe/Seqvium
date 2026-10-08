@@ -5,9 +5,11 @@ Read when: Starting a probe or locating evidence supporting a technical choice.
 Authoritative for: Experiment discovery, report structure, evidence-versus-production boundary.
 Not authoritative for: Accepted architecture, implementation status, or future stage order.
 
-No experiment has been run and no executable probe exists yet. The first intended experiment is
-[SEQ-R0 Audio Architecture Probe](../ROADMAP.md#seq-r0--audio-architecture-probe), guided by
-[AUDIO_ENGINE](../AUDIO_ENGINE.md) and [KNOWN_PROBLEMS](../KNOWN_PROBLEMS.md).
+The [SEQ-R0 Audio Architecture Probe](../ROADMAP.md#seq-r0--audio-architecture-probe) has a
+[pre-measurement protocol](SEQ-R0_PROTOCOL.md), [measured report](SEQ-R0_REPORT.md), and
+[standalone source/build/run guide](../../experiments/seq-r0/README.md). Its observations do not
+adopt an engine/backend/ABI or authorize R1. [AUDIO_ENGINE](../AUDIO_ENGINE.md) and
+[KNOWN_PROBLEMS](../KNOWN_PROBLEMS.md) retain canonical contracts and open questions.
 
 ## Bounded probe discipline
 

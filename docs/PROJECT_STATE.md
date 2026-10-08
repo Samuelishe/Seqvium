@@ -7,46 +7,47 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R21 complete (2026-10-08). The conceptual R0–R12 dependency audit supports the present stage
-order with no hard architectural cycle, missing mandatory owner after bounded clarifications, or new
-document-level prerequisite to scoping R0. [Roadmap](ROADMAP.md#first-track-scenario-and-acceptance-boundary)
-defines a representative finished sample-based composition with drums/pitched phrases, shared Patterns,
-independent variation/sound settings, directly arranged audio, bounded local time/processing, basic
-mixing, canonical WAV export, Save/reopen, degraded repair and captured unnamed/unsaved recovery.
-[Execution ownership](ROADMAP.md#execution-and-timing-acceptance-ownership) clarifies core sampler/event
-acceptance in R2, prepared graph/offline foundations in R4/R8, real audible stretch in R10, core effects
-and supported-path timing in R11, and integrated delivery/integrity in R12. Q-061 is partially answered
-at planning level; concrete stage choices/dependencies and end-to-end evidence remain open. No engine,
-ABI, schema, DSP/storage/UI mechanism or release target is selected. R20 per-target GUI/audio/distribution
-evidence policy remains binding; Q-041 retains exact support scope without simultaneous platform parity.
-No additional focused KB stage is presently justified. No implementation stage has started.
+SEQ-KB-R21 planning checkpoint complete. SEQ-R0 bounded experimental work has run (2026-10-08) and is
+**partially evidenced**, with recommendation **narrow**. The [report](experiments/SEQ-R0_REPORT.md)
+records actual Windows device/managed/native/offline evidence and remaining acceptance gaps.
+Both execution candidates meet the measured 10 ms shared-mode budget for the synthetic workload;
+native has smaller measured timing tails under managed pressure. Stream-clock starvation needs a
+separate elapsed-time recovery boundary. No permanent engine/language/backend/ABI or release target
+is adopted. R1 has not started and needs separate authorization.
 
 ## Implemented capability
 
-Documentation/legal/policy foundation, root [LICENSE](../LICENSE), and passive `.editorconfig` /
-`.gitattributes`. No application/audio/experiment implementation, dependencies, test projects,
-executable tooling, prototypes, plugin hosts or CI exists; pre-existing `Seqvium.sln` contains no projects.
-Accepted runtime/product requirements are future contracts, not running capabilities.
+Standalone [experiment source/build/run guide](../experiments/seq-r0/README.md): equivalent C# and C
+fixed scheduling/DSP; WASAPI shared event-driven adapter; bounded prepared publication/control;
+monotonic sample clock, loops, release/restart/panic, skip recovery, timer-driven checks and offline
+oracle/capture comparison. Generated triangle/event fixtures only. Uses installed .NET/MSYS2/Windows
+APIs, without downloaded audio libraries or NuGet packages; [provenance](THIRD_PARTY.md) records tools
+and linked-runtime obligations. No production application/UI/graph/plugin host/export/persistence,
+test framework or CI exists; `Seqvium.sln` remains empty.
 
 ## Current focus
 
-Preserve the accepted foundation and rolling state-based maintenance under
-[governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history). History is excluded
-from normal startup/default retrieval; current contracts remain in active owners. Executable work
-requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-probe) remains
-**pending / not started**; [ProjectStats](PROJECT_STATS.md) is a future contract, not a runnable tool.
+Review the bounded findings and remaining R0 scope before an R1 implementation decision. Lower actual
+device periods, intended workload, robust clock/device-loss policy and clean distribution remain
+unvalidated. Experiment code must not become production by implication. The
+[First Track plan](ROADMAP.md#first-track-scenario-and-acceptance-boundary) and owning-stage order
+remain unchanged. No additional KB stage or ProjectStats tool is introduced. History stays cold under
+[governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history).
 
 ## Validation baseline
 
-R21 bottom-up R0–R14+ and top-down complete-track audits checked conceptual prerequisites, owning-stage
-acceptance, seven alleged cycles, optional/future exclusions and focused investigations A–R.
-Repository-relative Markdown links/anchors, canonical Q/D identity/reference integrity, owner/routing,
-active/cold separation, roadmap IDs/order and unchanged R0 scope, UTF-8/LF/whitespace and Git preservation
-checks passed. Documentation-only; no builds/tests, runtime/audio/hardware, UI, packaged-distribution,
-storage/fault/race or platform acceptance evidence is claimed.
+Release managed/native builds pass with zero warnings/errors. The assertion harness verifies 12
+candidate/block cases, exact events, generated audio error 0, bounded controls/publication and lifetime.
+Actual default Windows endpoint runs at 48 kHz/stereo float32, 480-frame period/1056-frame capacity;
+baseline and GC/control pressure have no measured service-period overruns. Deliberate 30 ms stalls
+exhaust padding, recover toward elapsed time and acknowledge panic before shutdown. Captured baseline
+output matches offline; repeated initialization/shutdown and controlled timer evidence are in the
+report. These are local bounded observations, not glitch-free/DAC latency, cross-platform, packaged
+distribution or production architecture acceptance.
 
 ## Active blockers / evidence gaps
 
+Q-001–Q-007 remain open with narrowed partial evidence in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 Q-028 needs final terminology/domain structure, compatibility/default targeting and bounded hierarchy
 mechanics. Q-029 needs identity/reference/detachment/deletion mechanisms, shared-target/acceptance UI,
 serialization coordination and concurrency/capability/performance evidence. One-event extraction and
