@@ -212,3 +212,18 @@ open. Narrowly clarified R1/R5/R7/R8/R9/R10/R12 responsibilities without pulling
 R1, selecting terminology/schema/graphs or redefining R12/Q-061. Documentation/product-architecture
 only; implementation stage IDs/order and R0 scope unchanged. SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r18).
+
+## SEQ-KB-R19 — Crash Recovery & Managed Media Integrity
+
+Completed 2026-10-08. Audited cases A–T, principles 1–15 and import, Save, rolling recovery,
+Save As/transfer and async acceptance boundaries. Accepted revision-associated unnamed/named recovery,
+valid-successor/fallback and coverage-based retirement, multi-owner media lifetime, failed versus
+ambiguous persistence completion, coherent repair and honest recording reconciliation. Integrated
+R9–R18 contracts without selecting storage/container/filesystem algorithms or weakening degraded access,
+unknown-state preservation and separate Save/Undo/recovery/candidate/library ownership.
+Partially resolved Q-058/Q-059 through
+[D-072](DECISIONS.md#d-072--recovery-revisions-and-managed-media-failure-ownership); concrete protocols,
+indexing/selection/retention, integrity/GC/transfer/recording and platform/fault/race evidence remain open.
+Narrowly clarified R1/R2/R7/R8/R12 and later recording responsibility; Q-061 retains full dependency/
+release closure. Documentation/conceptual architecture only, no implementation stage started or reordered.
+SEQ-R0 remains **pending / not started**. See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r19).

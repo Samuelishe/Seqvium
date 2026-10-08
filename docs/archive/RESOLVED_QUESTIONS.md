@@ -391,3 +391,43 @@ Current owners: [Architecture](../ARCHITECTURE.md#separate-sharing-identities),
 [Sample workflow](../SAMPLE_WORKFLOW.md#acceptance-scope-and-shared-uses).
 Bounded roadmap ownership preserves stage IDs/order and R0 scope; no full R12 scenario/dependency audit
 is claimed, and Q-061 stays open. SEQ-R0 remains pending / not started.
+
+## R19 resolved portions — Q-058/Q-059 recovery and media failure semantics
+
+Status: Partial resolution accepted by SEQ-KB-R19, 2026-10-08. Each question retains its canonical
+active ID for concrete mechanisms/evidence; neither is fully resolved.
+Original Q-058: Rolling recovery implementation and recovery-choice workflow.
+Accepted portion: Recovery belongs to an identified working document/lifecycle and captured revision,
+including unnamed work before any final path. Recovery acceptance is unsaved working state, separate
+from explicit Save. New recovery protects the older known valid candidate until a valid successor exists;
+incomplete/corrupt candidates require honest validation/fallback. Successful Save permits retirement
+only by document/revision/media coverage with other owners respected; later edits stay unsaved. Storage
+pressure prioritizes disposable/unowned/redundant material, not arbitrary eviction of uniquely protective
+unsaved work. Informed discard has identified scope; preference reset and opening old Save are not discard.
+Remaining Q-058: Replacement/validation protocol, candidate indexing/selection metadata and diagnostics,
+cadence/debounce, bounded retention/layout, exact recovery-choice realization, recording reconciliation
+and cross-platform/process-crash/storage/fault/race evidence. No fixed counts/cadence/locations/UI chosen.
+Original Q-059: Managed-media storage integrity, transactions, failure recovery and lifecycle-aware cleanup.
+Accepted portion: Managed durable storage precedes gate-valid canonical resource/use acceptance, including
+unnamed projects; original source/generator disappearance cannot invalidate accepted audio. Working,
+saved, recovery, reusable resources, staging/cache, Undo/Redo, pending/live-use and independent library
+ownership differ. Definite pre-commit failure preserves prior coherent state and unsaved edits; around-
+commit uncertainty requires evidence-based reconciliation. Partial destination media/document is no
+successful Save As/collect/relocate; source retirement is separate. Degraded opening/Save preserves
+understandable references/unknown extension state without claiming repaired or fully collected audio.
+Repair prepares replacement and validates intended target before one coherent edit; failed repair
+preserves old unresolved intent. Recording recovery is bounded by actually stored interpretable audio
+and captured edits. Cleanup respects every owner and cannot rely on visible uses, names or timestamps.
+Remaining Q-059: Durable storage protocol/layout, integrity/corruption checks, repair/reference transitions,
+operation/recording reconciliation, cross-volume Save As/collect/relocate consistency, owner tracking/GC
+and platform/fault/race evidence. Atomic visibility, crash consistency and durability are distinct;
+no algorithm, ACID/power-loss guarantee, hash/transcoding/dedup or filesystem mechanism selected.
+Rationale: [D-072](DECISIONS.md#d-072--recovery-revisions-and-managed-media-failure-ownership).
+Current owners: [Project format](../PROJECT_FORMAT.md#media-and-persistence-integrity),
+[recovery](../PROJECT_FORMAT.md#recovery-state), [UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work),
+[sample workflow](../SAMPLE_WORKFLOW.md#asynchronous-preparation-and-dependency-availability).
+Related Q-009 schema/migration, Q-011/Q-012 audition/render, Q-029 references/edit scope, Q-047 execution
+lifetime, Q-063 Undo/async, Q-065 library, Q-071 temporary history and Q-010/Q-024 extension preservation
+retain their mechanisms. Q-062 coordinates recording/device loss; Q-061 retains full roadmap closure.
+R1/R2/R7/R8/R12 and later recording responsibility is narrowly clarified without renumbering/reordering
+or expanding R0; SEQ-R0 remains pending / not started.

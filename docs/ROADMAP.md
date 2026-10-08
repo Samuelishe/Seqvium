@@ -86,6 +86,24 @@ This narrows ownership without inserting, renumbering or reordering stages. Q-06
 mechanisms/evidence. R0's baseline control exchange is not cross-context routing acceptance; its probe
 scope is unchanged and does not acquire a hidden advanced-routing prerequisite.
 
+## Recovery and managed-media integrity ownership
+
+[Project format](PROJECT_FORMAT.md#media-and-persistence-integrity) owns the failure/lifetime contract;
+the following assigns minimum responsibility within existing stages, not a full storage feature set.
+
+| Stage | Bounded responsibility |
+| --- | --- |
+| R1 — Domain Foundation | Document identity/lifecycle, coherent canonical versioned Save/reopen and basic edit/Undo boundaries; sufficient revision/resource/ownership relationships for future recovery/media. Full recovery UI, storage GC and every media workflow are not R1 prerequisites |
+| R2 — Audio Resource Foundation | Durable managed import/acceptance, partial-import failure safety, resource/source distinction and unnamed-project media lifetime; preview stays transient, accepted audio survives source disappearance |
+| R7/R8 — Generation / Resampling | Owned async inputs/outputs, prepare/durable-store/revalidate/commit boundaries, cancellation/non-commit handling and Undo-retained audio; explicit fresh reuse where supported, no wrong-target attachment or automatic library publication |
+| R12 — First Track Release | Credible end-to-end explicit Save/Save As, project-media integrity, rolling recovery including unnamed work, bounded safe retention, degraded opening/repair direction and usable failure/ambiguous-completion reporting for shipped workflows |
+| Later recording | Apply the same ownership contract to established durable portions, incomplete material and accepted edits; choose recording-specific reconciliation with storage/device evidence, without promising unpersisted samples |
+
+Concrete container/protocol, cadence/retention, GC, cross-platform guarantees and fault/race evidence remain
+Q-058/Q-059; collect/relocate mechanics are not automatically early-stage features. Q-061 still owns
+complete dependency/release closure. No implementation stage is started, renumbered or reordered;
+R0 scope is unchanged and acquires no storage/recovery prerequisite.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 Status: **pending / not started**.

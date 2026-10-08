@@ -583,3 +583,85 @@ is not established by local history; this log does not duplicate Git's commit ch
   Branch/HEAD/index and empty untracked baseline preserved; all task changes are unstaged Markdown.
   No pre-existing user work to alter. No code, projects, dependencies, experiments, UI, tests, CI,
   tooling or backends created. No staging, commit or push; SEQ-R0 remains **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R19
+
+- Defined the failure/lifetime contract through
+  [D-072](DECISIONS.md#d-072--recovery-revisions-and-managed-media-failure-ownership) and
+  [Q-058/Q-059's accepted portions](RESOLVED_QUESTIONS.md#r19-resolved-portions--q-058q-059-recovery-and-media-failure-semantics).
+  PROJECT_FORMAT owns the semantic-state table, recovery contract and one compact five-operation
+  failure-boundary matrix; UX and SAMPLE_WORKFLOW retain only their observable/specialized obligations.
+  Narrowed Q-058/Q-059, clarified bounded roadmap responsibility and advanced current state.
+  ARCHITECTURE remains unchanged: its domain/application/adapter/presentation and async boundaries suffice.
+  SETTINGS remains unchanged: reset already protects unnamed recovery, managed media and library content.
+  INDEX remains unchanged: no owner or route changes. No second persistence authority introduced.
+- Cases A–T were analyzed conceptually, not executed:
+
+  | Case | Result / current owner |
+  | --- | --- |
+  | A — unnamed hour of work | Candidate identifies the document/lifecycle and captured revision before a filename. Recover captured work/media; no promise for the uncaptured interval. Save As establishes a saved destination only on success; retirement needs coverage/owners or informed discard; [recovery](../PROJECT_FORMAT.md#recovery-state) |
+  | B — saved R10, recovered R15 | R10 remains last explicit Save, R15 is offered and accepted as recovered unsaved work without writing R10. Opening R10 does not discard R15; subsequent explicit Save/Save As has an understandable destination; [UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work) |
+  | C — failed Save | Pre-commit disk-full/permission/write/interruption preserves prior Save/media and unsaved canonical edits, still recovery-eligible. Recovery success/failure is independent; no false Save success. Around-commit uncertainty is handled separately; [Save](../PROJECT_FORMAT.md#save-save-as-and-relocation) |
+  | D — partial Save As A to B | A's saved state/current edits/ownership survive; incomplete B is owned output, not a complete project. Retry validates destination and protects pre-existing user content; B success does not imply deletion of A; [Save As](../PROJECT_FORMAT.md#save-save-as-and-relocation) |
+  | E — interrupted import | Partial staging remains identifiable/owned; no complete accepted resource, partial replacement or successful Undo entry. Retry revalidates source/target and durable material; safely unowned staging can retire; [acceptance](../PROJECT_FORMAT.md#acceptance-and-repair) |
+  | F — accepted unnamed sample | Project-managed lifetime begins at acceptance, not first Save. Deleting original WAV cannot break working audio; Undo/recovery retain dependencies and later Save As cannot prematurely release them; [owners](../PROJECT_FORMAT.md#semantic-states-and-owners) |
+  | G — render output, invalid commit | Durable file cannot attach to deleted/incompatible target. Safely owned temporary output may support fresh explicit unattached-resource acceptance; cleanup waits for owners; no automatic library publication; [async workflow](../SAMPLE_WORKFLOW.md#asynchronous-preparation-and-dependency-availability) |
+  | H — interrupted recording | Separate acknowledged durable portion, interpretable incomplete material, unpersisted samples and accepted edits. Reconcile actual extent with available captured references; no complete-take fiction or recovered samples never stored; [recording](../PROJECT_FORMAT.md#interrupted-recording) |
+  | I — crash during recovery replacement | Older valid candidate/media survives until valid successor established, especially sole recent unnamed work. Incomplete new data is not valid; fallback and uncaptured interval are explained; [replacement](../PROJECT_FORMAT.md#replacement-fallback-and-retirement) |
+  | J — corrupt candidate | Reject unsafe interpretation, diagnose and identify older valid recovery/Save if available; local media failure instead degrades safe state. Independent project corruption cannot be inferred from bad recovery; [fallback](../PROJECT_FORMAT.md#replacement-fallback-and-retirement) |
+  | K — Save and cleanup | Retire covered candidate only with document/revision/media evidence; concurrent newer unsaved work, other documents and other owners survive. Cleanup failure can leave redundant artifacts without invalidating Save; timestamps prove no safety; [retirement](../PROJECT_FORMAT.md#resource-retirement) |
+  | L — damaged sample | Preserve document/resource reference/affected item and unrelated healthy audio; meaningful inspect/repair/relink/replace/remove. Missing Browser origin differs from damaged managed media; whole refusal requires unsafe document interpretation; [opening](../PROJECT_FORMAT.md#opening-and-migration) |
+  | M — repair transaction | Validate intended resource/use scope, prepare/validate/store replacement, revalidate and commit one coherent edit. Failure preserves unresolved reference and item; Undo/recovery preserve prior relations. Same filename is no substitution authority; [repair](../PROJECT_FORMAT.md#acceptance-and-repair) |
+  | N — last visible use deleted | Current reusable ownership, last Save, Undo/Redo, recovery, pending/live use and independent library can retain media. Close ends commit authority, not every owner; persistent history remains Q-063; [retirement](../PROJECT_FORMAT.md#resource-retirement) |
+  | O — collect/relocate | Before transfer, partial media, document before all media and unconfirmed completion each preserve source/current work. Establish destination coherence/required audio, reconcile ambiguity, then validate separately scoped source retirement; no single-volume assumption; [transfer](../PROJECT_FORMAT.md#save-save-as-and-relocation) |
+  | P — external damage while closed | Detect/report what validation can establish, preserve understandable references and offer repair. No silent same-name substitution, protection against arbitrary external changes or universal watcher; [damage](../PROJECT_FORMAT.md#external-damage-and-mixed-capability-reopening) |
+  | Q — storage pressure | Discard disposable caches, safely unowned staging and proven redundant recovery before uniquely protective unsaved work. If refresh fails, retain known good capture and report stale protection; informed discard has scoped ownership, no numerical quotas; [recovery](../PROJECT_FORMAT.md#recovery-state) |
+  | R — commit before UI acknowledgement | Establish available coherent result from adequate identity/operation/revision/integrity evidence; committed new Save can exist without UI success. Do not blindly retry/duplicate/delete or infer acceptance from bytes; insufficient evidence remains explicit ambiguity; [commit evidence](../PROJECT_FORMAT.md#commit-evidence-and-ambiguous-completion) |
+  | S — missing plugin and opaque state | Preserve plugin identity/state/relationships through Save/recovery, with affected execution/render blocked. Healthy accepted audio needs no generator regeneration; missing executable capability differs from damaged media; [mixed reopening](../PROJECT_FORMAT.md#external-damage-and-mixed-capability-reopening) |
+  | T — small project crash | Preserve captured shared Pattern/sound/placement/resource/context/route relationships, healthy accepted WAV/Kick/rendered audio and missing-plugin opaque state; older explicit Save and newer recovery remain separate. Pending generation has no accepted edit or restored old lifecycle authority; detailed consistency check below |
+
+- Small-project consistency check: Main and Fill are several shared Pattern definitions/placements;
+  a deliberate Fill variation retains independent notes with intended shared drum sounds. Imported WAVs,
+  an accepted Sample Lab Kick and a rendered sample reused in two locally edited clips are managed
+  audio, independent of original WAV paths/generator. Save R10 protects its relationships/media; edits
+  reach R15 and recovery captures R14. After crash, offer R14 as recovered unsaved work, preserving its
+  actual sharing, occurrence-local trim/processing, organization, processing membership and Mixer routes;
+  do not reconstruct sharing by labels or assert recovery of R15. R10 remains independently openable.
+  Missing optional plugin state remains preserved. It blocks execution/export/render only where required
+  by the operation's dependency closure; unrelated editing/healthy audio remains available. The reused
+  render and Kick play without their original generators. Undo-held material stays retained only under
+  actual retained history ownership; recovery does not promise restoration of the pre-crash command stack.
+  One pending generation at crash remains unaccepted: available output may be identified/reconciled as
+  safely owned unattached material, never inserted automatically or published into Personal Library.
+  New explicit acceptance needs fresh valid document/target authority. Saved/recovery dependencies and
+  any safely retained pending inputs/output prevent cleanup until their owners legitimately end.
+  This found no contradiction with R9 recovery/media, R12 Undo/async, R14 library or R18 identities;
+  no runtime scenario or full R12 release/dependency closure is claimed.
+- Principles audited: 1 refined to coherent captured Save with necessary media, while explicitly degraded
+  document preservation cannot claim complete collection/repair. 2/3/11 accepted with independent Save,
+  valid-successor and unsaved recovery-choice semantics. 4/5 accepted at separate storage/canonical gates.
+  6 refined to definite pre-commit failure versus evidence-based around-commit ambiguity. 7 accepted with
+  saved/reusable/live owners in addition to history/recovery/pending. 8/9/10 accepted without source,
+  generator or project-cleanup dependency on independent library content. 12 accepted: no silent musical
+  rollback/substitution. 13 requires distinct visibility/crash/durability evidence; 14 preserves separate
+  Undo/recovery/disposable candidate history; 15 rejects speculative complex storage protocols.
+- Matrix conclusions: preparation/storage, canonical acceptance, Save/recovery commit and UI confirmation
+  are different transitions. Owned incomplete output is neither a saved destination nor an accepted edit.
+  Definite failure preserves coherent predecessors; ambiguity needs evidence before retry/deletion.
+  Obsolete material retires only after valid successor/coverage and every owner is checked. No filesystem
+  layout, single-file/container choice, SQLite, journal, rename/fsync/hash, content addressing, numerical
+  retention, GC, exact recovery UI or cross-platform durability guarantee selected.
+- Q-058/Q-059 remain partially answered, with concrete protocol/indexing/selection, corruption validation,
+  cadence/retention, owner/GC, transfer/recording reconciliation and platform/fault/race evidence open.
+  Related Q-009/Q-011/Q-012/Q-029/Q-047/Q-063/Q-065/Q-071/Q-010/Q-024 retain specialized mechanisms;
+  Q-062 coordinates recording. Q-061 retains full roadmap dependency/release audit. Narrow R1/R2/R7/R8/
+  R12 responsibility adds no complete-storage R1 prerequisite, stage renumbering/reordering or R0 scope.
+- Verified repository-relative Markdown links/anchors, canonical Q/D definitions/references, owner/routing,
+  current/cold separation, Save/recovery/source/retirement/degraded/async contracts, stage IDs/order and
+  unchanged R0 scope, UTF-8/LF/whitespace, `git diff --check` and final Git preservation. Documentation-only;
+  no builds/tests, permanent checker, implementation, runtime/UI/storage or fault/platform evidence.
+- Initial baseline: clean `master`, HEAD `e74028f26b0d6c4443059288cd47626d366bf078`, checkpoint R18.
+  Branch/HEAD/index and empty untracked baseline preserved; all task changes are unstaged Markdown.
+  No pre-existing user work to alter. No code, prototypes, experiments, projects, dependencies, tests, CI,
+  executable tools, serialization files or media storage created. No staging, commit or push.
+  SEQ-R0 remains **pending / not started**.

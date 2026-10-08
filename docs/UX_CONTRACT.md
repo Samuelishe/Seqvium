@@ -377,8 +377,29 @@ New project creation is a first-class document operation. Valuable unnamed/never
 eligible for crash recovery without an existing final project path. Explicit Save is the user-confirmed
 saved state; recovery maintains a separate rolling current working snapshot. After abnormal termination,
 offer recovery rather than silently overwrite the last explicit saved version. Recovery existence or
-acceptance alone must not replace the normal project file. Exact New/Open/Save and recovery-choice UI
-remains open; [PROJECT_FORMAT](PROJECT_FORMAT.md#recovery-state) owns recovery and integrity contracts.
+acceptance alone must not replace the normal project file.
+[PROJECT_FORMAT](PROJECT_FORMAT.md#recovery-state) owns recovery and integrity contracts.
+
+Recovery feedback must identify the project or unnamed document, the captured work and its relationship
+to the last explicit Save where one exists, and whether the candidate is usable, locally degraded or
+unsafe/corrupt. A recovered R15 after saved R10 is recovered unsaved work; accepting it is not Save.
+For unnamed recovered work, subsequent Save As chooses its first saved destination only on success.
+For named recovered work, make the intended Save/Save As destination understandable before it can
+replace the older saved version. Opening the older Save alone is not consent to discard newer recovery.
+If an older valid candidate/Save is used as fallback, identify that fact and possible missing recent work.
+No exact dialog, revision-number display, history browser or candidate-comparison UI is selected.
+
+Save/storage failures must leave a concise persistent indication of unsaved work or unavailable/stale
+recovery protection, with meaningful retry/continue/Save As direction where available. A failed Save
+cannot look successful; an operation with uncertain completion must describe uncertainty until the
+available coherent result can be established. Recovery success does not clear explicit-unsaved status.
+Concurrent edits beyond a Save's captured revision remain unsaved. Missing material explains the actual
+affected dependency and available repair/relink/replace/remove direction; do not imply that temporary
+Browser source unavailability or missing generator code destroyed healthy accepted project audio.
+Recording interruption identifies safely available material and gaps without promising unpersisted
+samples. Keep feedback concise and primarily non-modal under
+[recoverable failures](#graph-state-and-recoverable-failures); logs alone are insufficient. Exact windows,
+status presentation, retry and reconciliation interactions remain open.
 
 Ordinary media import/drag-and-drop accepts a durable project-managed resource. After successful
 acceptance, moving/deleting the original arbitrary source file must not break normal project use.

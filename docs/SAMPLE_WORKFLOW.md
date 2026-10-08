@@ -510,6 +510,17 @@ does not claim project acceptance. Q-059 retains storage/cleanup implementation.
 commit reverts active project relationships while lifecycle-aware retention protects media needed by
 history/recovery/pending work; it does not reverse a computation or immediately delete its file.
 
+An output that lost its original commit authority can remain safely owned temporary material while its
+workflow permits reuse, or become explicitly accepted unattached reusable project audio through a fresh
+validated destination/acceptance edit. Neither outcome automatically publishes Personal Library content.
+Cleanup eligibility requires the temporary/pending owner to end and all other owners to be checked;
+completion, cancellation or target deletion alone is insufficient. A crash/reopen does not restore old
+document-lifecycle commit authority. Storage/acceptance ambiguity is reconciled from adequate evidence,
+not file existence, under [project integrity](PROJECT_FORMAT.md#commit-evidence-and-ambiguous-completion).
+Unaccepted disposable history has no new permanent recovery promise. Accepted unnamed-project audio
+and recording material follow the same [ownership](PROJECT_FORMAT.md#semantic-states-and-owners) and
+[recording reconciliation](PROJECT_FORMAT.md#interrupted-recording) boundaries.
+
 ## Resampling
 
 Two accepted operations have different meanings. `Create Sample from Object` and `Capture Audible

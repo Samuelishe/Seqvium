@@ -92,11 +92,46 @@ may grow with the project itself; retained size/history must not grow proportion
 hours worked merely because actions accumulate. A later bounded transient log may be an internal
 mechanism, not the durable product model or an ever-growing user-action history.
 
-After abnormal termination, Seqvium should offer recovery of newer working state instead of silently
-overwriting the last explicit Save. Recovery existence or recovery acceptance must not automatically
-replace the normal project file. Exact recovery-choice UI and interaction with subsequent explicit
-Save remain open. Unnamed/never-saved projects also need recovery protection; a final project path
-must not be a prerequisite. Exact temporary-storage location is unselected.
+### Document identity and recovery choice
+
+A recovery candidate belongs to an identified working document/lifecycle and a captured canonical
+revision, with its required media relationships. An unnamed document has this conceptual identity
+before any final project path exists. Display names, filenames, timestamps and current selection alone
+cannot establish ownership or revision correspondence. Candidate indexing/identity encoding is unselected.
+
+After abnormal termination, offer usable newer working state separately from the last explicit Save.
+For a project saved at R10 with recovery at R15, R10 remains the last explicitly saved state; accepting
+R15 opens recovered working state and does not write over R10. Opening R10 instead does not by itself
+authorize discarding R15. Recovery choice must distinguish candidate availability from acceptance and
+from subsequent explicit Save. Do not infer that a candidate is newer or equivalent solely by timestamp.
+
+Recovery of an unnamed document resumes recoverable canonical work and its managed media without
+inventing a saved filename. Subsequent Save As establishes a chosen saved destination for a specific
+revision; until that succeeds, the recovered work remains unsaved. For a named recovered document,
+subsequent explicit Save may deliberately update its saved destination, or Save As may establish another;
+make the destination and recovered-unsaved status understandable. Exact interaction/windows remain open.
+
+### Replacement, fallback and retirement
+
+Preparing a newer recovery state must not invalidate the older known valid candidate and its required
+media before a valid recoverable successor is established. This also protects the sole known recent copy
+of unnamed work. Incomplete replacement data is not a valid candidate merely because files exist.
+On restart, validate interpretability and available dependencies; distinguish a usable document with
+local media blockers from unsafe fundamental snapshot corruption. Reject the latter as working state,
+report it concisely and offer an older valid candidate or independent explicit Save where available,
+identifying the fallback and possible lost interval. Do not silently label fallback as the latest state.
+A corrupt recovery artifact does not establish corruption of an independent valid saved project.
+If no safe fallback exists, explain what is unavailable; do not fabricate recovered edits or audio.
+
+A successful Save makes a recovery candidate redundant only when document identity, captured revision
+coverage and required durable media establish that the saved result protects its work. Retain candidates
+containing newer unsaved edits, candidates for other documents and resources still owned elsewhere.
+Coverage must account for actual state lineage/content and dependencies; a higher revision number alone
+does not prove inclusion of recovered work across Undo, branching or another document lifecycle.
+Recovery acceptance, project opening, elapsed time or a Save-success notification alone is not proof
+of safe retirement. Before deleting candidate media, apply the [owner rules](#resource-retirement).
+Cleanup failure may leave redundant material; it must not invalidate the saved/recovered result or
+turn a successful Save into a failed document commit. Exact retry/diagnostic mechanics remain open.
 
 Recovery refresh may follow meaningful document transactions, a periodic schedule, debounced changes
 or a hybrid. No exact cadence is accepted. High-frequency interaction such as parameter dragging must
@@ -108,10 +143,17 @@ of unsaved work merely to satisfy an arbitrary size/count threshold. Retention c
 corruption detection, crash-safe replacement and cleanup algorithms remain open. Temporary/staging/
 previous copies may support safe replacement without becoming accumulated action history.
 
+Under storage pressure, prioritize disposable caches, safely unowned staging and demonstrably redundant
+recovery before uniquely protective unsaved work. If a new recovery cannot be established safely, retain
+the known good candidate, report that protection is stale/unavailable and leave canonical work unsaved;
+do not pretend all recent edits are protected. An informed explicit discard/cleanup may release identified
+unsaved recovery ownership, subject to other owners; ordinary preference reset, opening an older Save
+or automatic age/count/size eviction cannot stand in for that choice. This is neither unlimited retention
+nor a recovery-history browser/automatic multi-version backup feature. Numerical quotas remain unselected.
+
 Document recovery does not reconstruct missing audio magically. Future recording/generation and
 accepted imports must manage durable media independently enough for recovery to reconnect to already
-produced material where possible. Exact recording transactions and media reconciliation remain
-Q-058/Q-059 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+produced material where possible, under [recording reconciliation](#interrupted-recording).
 
 Recovery protects canonical working state, not acceptance of pending results or transient previews.
 Separately owned pending/generated media may still require safe preservation/reconciliation; its retention
@@ -249,21 +291,167 @@ remain open for project recovery and managed-media storage/integrity mechanisms.
 
 ## Media and persistence integrity
 
-From the project user's perspective, media acceptance is transactional: project state must not claim
-a newly imported/created resource is durably available until it is successfully placed in project-managed
-durable storage. Disk full, interrupted copy, write error, crash or failed conversion must not corrupt
-the previously valid saved state. This also applies to accepting generated/rendered or recorded material;
-document recovery and media durability are separate integrity concerns.
+### Semantic states and owners
 
-Save, Save As, collect and relocate must fail safely, preserving a previously coherent project if a new
-operation cannot complete. Prepare/stage/validate enough new durable state before treating the operation
-as committed; do not delete old references/state first and then attempt copying. Exact filesystem/database/
-container transactions, atomic rename, temporary directories, checksums, manifests and journaling remain open.
+These are ownership/lifetime states, not required directories, tables, classes or physical copies.
+One resource can have several owners; byte/path equality does not merge semantic identities.
 
-Do not eagerly delete an apparently unused managed resource merely because the visible arrangement no
-longer references it. Undo, recovery, pending asynchronous work or another uncommitted state may still
-need it. Resource cleanup/garbage collection must be explicit and lifecycle-aware; exact retention and
-cleanup policy remains open in Q-059.
+| State / owner | Preservation responsibility |
+| --- | --- |
+| Current canonical working document | Accepted editable intent and resource/use/definition relationships, including unsaved or locally degraded work |
+| Last successfully explicit-saved project | Identified saved canonical revision and its managed-media dependencies, independently of later working edits |
+| Rolling recoverable working state | Identified captured canonical revision and dependencies, independently of Save; not every edit since the capture |
+| Project-managed durable media | Accepted reusable audio independent of source path/generator; may have no visible placement |
+| Prepared/staged unaccepted media | Owned preparation/output whose existence is not canonical acceptance; partial and complete output differ |
+| Transient disposable cache | Regenerable/dispensable preview or derived data; never the sole durable accepted-media copy |
+| Undo/Redo-retained resources | Material needed to restore retained canonical relationships, even with zero current visible uses |
+| Recovery-retained resources | Material needed by retained candidates, including revisions different from current working/saved state |
+| Pending async-owned resources | Inputs/output needed until completion, cancellation, delivery or safe retirement; no implicit project acceptance |
+| Independently owned Personal Library resources | Explicitly retained user content outside project cleanup authority, even if physical storage is shared |
+
+Prepared execution is derived runtime state, outside Save/recovery authority. Active playback/render/
+audition may additionally require safe live-use retirement under the audio owner. Disposable Sample Lab
+candidate history, project Undo and recovery are different mechanisms with different retention promises.
+
+Conceptually: prepare material/state -> establish necessary durable storage -> validate identities,
+dependencies and authority -> commit the canonical edit -> persist Save or recovery independently ->
+retire only safely unowned obsolete material. Canonical acceptance need not wait for explicit Save or
+the next recovery capture; a crash may therefore lose accepted edits not yet captured while leaving
+owned produced media. Honest reconciliation must not present that media as proof of a recovered edit.
+
+### Acceptance and repair
+
+From the user's perspective, acceptance is one coherent resource/reference/use edit after necessary
+managed durable storage and commit validation succeed. Interrupted import/copy/conversion, disk full,
+permission/write failure or unavailable new material cannot leave a complete accepted resource, partial
+target replacement or successful Undo entry. Preserve existing canonical relationships and prior saved
+state; retain identifiable staging under its owner for safe retry or eventual cleanup. Retrying validates
+the source and intended destination anew; it cannot promote an arbitrary leftover file by name.
+
+An unnamed project's accepted audio has project-managed lifetime from acceptance, before first Save.
+It must survive original WAV disappearance and remain available to working state, Undo and recoverable
+captures as applicable. Save As transfers/establishes the saved ownership only after a coherent result;
+it cannot prematurely release the unnamed working/recovery media. Cache lifetime is insufficient.
+
+Repair/relink/replace validates the identified damaged resource or intended use scope, prepares and
+validates replacement audio, establishes managed storage and rechecks target/dependencies at commit.
+Only then accept the intended reference/resource transition coherently, with normal Undo. Preserve the
+old unresolved reference and affected-item identity on failure; retained history/recovery must still
+describe their own prior relationships. Do not destroy old media needed by another owner, silently widen
+repair to unrelated uses, or substitute a same-named file. Whether a repair preserves a resource identity
+or deliberately establishes a replacement is operation-specific Q-029/Q-059 design, not filename inference.
+
+### Save, Save As and relocation
+
+Successful explicit Save identifies a coherent captured canonical revision with the required managed
+media for complete normal use. Save does not require executable plugins or a valid playing graph.
+For already missing/corrupt media, preserve the safely understandable canonical document, references
+and unknown state through degraded Save/reopen; report unresolved dependencies and do not claim complete
+media collection, repair or portable audio availability. This is distinct from accepting unavailable new
+media or silently dropping damaged references to manufacture success.
+
+Save failure before commit preserves the previous coherent saved project and its media; current
+canonical edits remain unsaved and recovery-eligible. It does not silently roll back musical work or
+declare it saved. Recovery may independently succeed or fail; neither proves explicit Save succeeded.
+A Save that captures R10 while edits reach R15 saves R10 only, and must not clear R15's unsaved status.
+Preserve prior saved dependencies during later edits/cleanup, not just the latest working references.
+
+Save As from A to B prepares a coherent captured revision and required destination media. Until that
+transition is established, A's prior Save, current edited work, destination association and recovery/media
+ownership remain protected. Partial B is incomplete output, not a successful saved project or authority
+to remove A. Retry/reconciliation must distinguish owned partial output from pre-existing destination
+content; cleanup cannot delete unrelated user files. A successfully established B may become the chosen
+saved destination without deleting A by implication. Identity encoding/fork policy remains Q-009/Q-029.
+
+Collect/relocate has the same multi-resource obligation: no transfer, some media transferred, or a
+document copied before required media are all insufficient for success. Preserve the coherent source
+until destination state/media and completion are established; transfer may cross filesystems/volumes.
+Even after destination success, source removal is a separate safe ownership/lifecycle step within the
+requested move/cleanup scope. Protect other saved/recovery/history/pending/library owners. A collection
+with known missing material must identify incompleteness rather than claim a complete portable project.
+
+### Commit evidence and ambiguous completion
+
+Atomic visibility means observers see a coherent transition rather than partial publication. Crash
+consistency means interruption leaves an interpretable coherent result/fallback. Actual durable
+persistence concerns what remains stored under stated failure conditions. None establishes the others
+by assertion; process termination, storage errors and power loss require distinct evidence.
+
+A crash after a durable transition but before UI confirmation differs from pre-commit failure. Where
+completion is uncertain, report uncertainty and preserve potentially owned results. Reopening/retry must
+establish which coherent prior/new state and required media are actually available using adequate
+identity, operation/revision and integrity evidence, before duplicating, attaching or deleting anything.
+An established committed result may be recognized despite missing acknowledgement; a partial artifact
+must not be promoted to success. If evidence is insufficient, retain ambiguity and offer safe continuation,
+not invented automatic reconstruction. Definitive failure must not be reported as success; uncertainty
+must not be falsely resolved in either direction. A coherent committed result is the new saved state
+even if acknowledgement was lost, not a rollback to the previous Save by assumption.
+
+Storage adapters must eventually substantiate these requirements for their chosen representation and
+supported operating systems. A single filesystem rename does not establish general cross-file durability;
+no general ACID, cross-volume atomicity or power-loss guarantee is accepted. Layout/container/database,
+journal/log, rename/fsync strategy, integrity/hash algorithm, deduplication/content addressing, source
+retention/transcoding and cleanup protocol remain unselected. Q-058/Q-059 need race/fault-injection and
+platform/storage evidence before concrete guarantees can be claimed.
+
+### Failure-boundary matrix
+
+Here, canonical acceptance, persistence commit and UI acknowledgement are distinct boundaries.
+The matrix states obligations, not a selected transaction protocol or permanent test-case catalogue.
+
+| Operation | Before | Prepared, not committed | Established result | Before-commit failure | Around-commit ambiguity | Retain / eventual cleanup |
+| --- | --- | --- | --- | --- | --- | --- |
+| Import / acceptance | Existing working/saved references; external source | Owned partial/complete staging, then validated durable material; no accepted edit yet | Gate-valid resource/use edit and one Undo transaction; Save/recovery separately capture it | No partial accepted resource/edit; old relationships intact; safe retry | Stored bytes alone prove no edit; reconcile storage and captured acceptance evidence separately | Working/saved/history/recovery/pending owners retain; only safely unowned staging retires |
+| Explicit Save | Last coherent Save; possibly newer working/recovery state | Captured revision and protected required media; previous Save retained | Coherent saved revision/media, with degraded dependencies disclosed; later edits still unsaved | Previous Save/media and current work intact; recovery remains independent | Validate available old/new coherent result; do not infer success/failure from lost UI confirmation | Saved dependencies retain; redundant recovery retires only by identity/revision coverage and owner checks |
+| Recovery update | Valid candidate if one exists; current work may be newer | Owned incomplete successor and dependency material | Valid successor protects its captured revision; explicit Save unchanged | Older valid candidate remains; report uncaptured interval/protection failure | Validate candidate/fallback; incomplete/corrupt data is not latest working state | Unique unsaved protection prioritized; demonstrably superseded candidate ownership can retire |
+| Save As / collect / relocate | Coherent source and edited work; any pre-existing destination | Owned partial destination document/media; no final ownership switch | Identified coherent destination with necessary media; source retirement separately validated | Source/current work protected; destination incomplete; retry/cleanup scoped to owned artifacts | Establish source/destination status before association switch, retry or deletion; no same-volume assumption | Protect source until destination established and other owners released; leave unrelated destination content intact |
+| Async render / acceptance | Frozen scope, original lifecycle/target/authority and owned inputs | Pending computation and durable output; still no canonical edit | Revalidated intended resource/reference edit; execution and persistence follow independently | No accepted edit; old state intact; useful output needs an explicit owner | A completed file cannot prove acceptance or target validity; reopen grants no old lifecycle authority | Pending/unattached owner until deliberate fresh reuse or safe cleanup; accepted history/recovery owners thereafter; no automatic library publication |
+
+### Interrupted recording
+
+Distinguish safely stored/validated material already acknowledged as durable, recoverable incomplete
+recording material, samples that may never have reached durable storage, and canonical recording edits
+already accepted. Acknowledging durable material requires the actual storage guarantee; it is not merely
+acknowledging capture in memory. Crash/device loss must preserve the established durable portion and any
+accepted references available through Save/recovery. Reconcile incomplete material only to the extent
+it can be safely identified and interpreted; show actual available extent and interruption, never a
+fabricated complete take. Unsaved accepted edits beyond the last capture may be unavailable even when
+audio bytes remain. Unattached material needs separate safe identification/reuse, not automatic placement.
+No recovery of unpersisted samples is promised. Recording containers, streaming buffers, commit units
+and reconciliation metadata/evidence remain later recording work coordinated with Q-058/Q-059/Q-062.
+
+### Resource retirement
+
+Zero visible placements is insufficient: an accepted reusable resource may still belong to the working
+document, and the last explicit Save, retained Undo/Redo, recovery candidates, pending operations and
+active prepared execution/render/audition may each prevent deletion. Personal Library ownership remains
+independent. A saved R10 can retain media deleted from working R15; a recovery R15 can retain material
+absent from saved R10. Physical sharing must honor every owner without requiring a particular counter/GC.
+
+Save, Undo, Redo, cancellation or project close does not universally release every owner. Closing ends
+canonical commit permission; it does not erase saved/recovery protection or prove pending tasks have
+stopped using resources. Whether document history persists after close/restart remains Q-063; when
+history is deliberately retired its ownership may end, while other owners remain. Explicit informed
+discard can release the selected unsaved work/candidate, not independent saved/library content. Safe
+cleanup needs validated ownership/lifecycle relevance at retirement, including races with acceptance,
+recovery replacement and Save; age, path/name or timestamps alone are insufficient. Uncertain ownership
+requires retention/reconciliation rather than destructive guessing. Q-059 owns tracking/GC mechanics.
+
+### External damage and mixed-capability reopening
+
+Seqvium must detect/report invalid required material where its validation can establish it, preserve
+safely interpretable state/references/item identity and permit meaningful repair, replacement or removal.
+External deletion, modification, damage or moves while closed do not justify silent substitution or
+reconstruction from equal filenames. Missing Browser origins alone do not damage accepted managed media.
+Protection from arbitrary external changes is not guaranteed, and universal filesystem monitoring is
+not required. Integrity validation coverage/mechanisms remain Q-059 evidence work.
+
+Missing executable plugin capability and damaged audio are separate dependency failures. Save/recovery
+preserves plugin identity, compatible opaque/unknown state and musical/graph relationships; accepted
+audio requires no original generator execution. Safely understandable documents open degraded under
+[opening and migration](#opening-and-migration), with operation-scoped blockers. Fundamental unsafe
+document interpretation alone justifies whole-document refusal; a bad local resource/candidate does
+not prove another independent project artifact is corrupt.
 
 ## Unknown extension data
 
@@ -279,9 +467,11 @@ Exact opaque encoding and compatibility claims are undecided.
 SEQ-R1 should establish only a bounded versioned foundation. Container versus directory, encoding,
 ID/time representation, migration mechanism, unsupported-version behavior, crash-safe save/recovery,
 resource integrity, and extension-state evolution remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
-Q-058 retains exact rolling-snapshot replacement, cadence, retention, corruption detection, recovery
-choice/Save interaction and recorded-media reconciliation. Q-059 retains managed-storage layout,
-transaction/failure mechanics, integrity checks, Save As/collect/relocate and lifecycle-aware cleanup.
+Q-058 retains crash-safe snapshot replacement/validation, candidate indexing/selection, cadence/debounce,
+bounded retention, recovery-choice realization and recording reconciliation. Q-059 retains durable-media
+transaction protocol/layout, corruption/integrity validation, repair, owner tracking/GC and Save As/
+collect/relocate consistency. Cross-platform storage guarantees and race/fault-injection evidence remain
+required; the identity/revision, failed/ambiguous completion and cleanup obligations are fixed above.
 The recovery/media product contracts above are accepted; their implementation mechanisms remain open.
 Exact derived preparation/publication mechanisms remain Q-018; canonical Save/reopen/render policy
 is accepted above and in the audio owner.

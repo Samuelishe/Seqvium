@@ -1136,3 +1136,49 @@ R1 identity/persistence, R5 shared editing, R7 target acceptance, R8 semantic re
 R10 bounded Arrangement and R12 edit/reopen/Undo integrity are clarified only within existing stages.
 Q-061 remains the full future milestone audit. No final terminology, classes, schema, graph attachment,
 UI gestures, clone algorithms, tests or runtime selected; SEQ-R0 remains pending / not started.
+
+## D-072 — Recovery revisions and managed-media failure ownership
+
+Status: Accepted by SEQ-KB-R19, 2026-10-08; partially resolves Q-058/Q-059. Refines
+[D-057](#d-057--rolling-recovery-snapshot-separate-from-explicit-save) and
+[D-058](#d-058--project-managed-ordinary-imported-media-and-degraded-resource-access); integrates
+[D-065](#d-065--logical-undo-transactions-and-async-commit-integrity),
+[D-067](#d-067--browser-discovery-and-explicit-reusable-content-ownership),
+[D-070](#d-070--bounded-sample-lab-exploration-and-candidate-semantics) and
+[D-071](#d-071--arrangement-occurrences-and-separate-shared-edit-ownership), without superseding them.
+Basis: Conceptual audit of cases A–T, principles 1–15 and five operation failure boundaries against
+current owners. No implementation, storage/platform guarantee or fault-injection evidence.
+Rationale: Current working state, last explicit Save and recoverable captured state can differ and
+retain different media. Treating filename, visible use count or file existence as ownership/commit proof
+would lose unnamed work, saved dependencies or Undo material, and attach stale output incorrectly.
+Document/lifecycle and revision association precede final filenames. Accepted media has managed lifetime
+before first Save; recovery acceptance does not write the saved project. Save captures a specific revision,
+not edits accepted during persistence. A known valid recovery candidate/dependencies remain protected
+until a valid successor exists. Corrupt/incomplete recovery requires honest fallback, not silent promotion.
+Cleanup uses identity/revision coverage and all relevant owners; age/count/size/timestamp alone cannot
+discard the sole recent unsaved copy. Explicit informed discard releases only its identified ownership.
+Durable preparation precedes gate-valid canonical acceptance; media existence is no accepted edit.
+Definite pre-commit failure preserves prior coherent saved state and current unsaved work. Ambiguous
+completion around durable commit differs: use adequate operation/revision/integrity evidence to establish
+the available coherent old/new result before retry, attachment or deletion. Lost UI acknowledgement
+does not prove failure, and successful durable storage does not prove canonical acceptance.
+Save As/collect/relocate protects source/current ownership until a coherent destination with required
+media is established; source retirement is separately scoped and validated, including cross-volume work.
+Safely interpretable degraded documents preserve missing-resource references and unknown plugin state
+through Save/reopen without claiming complete audio collection/repair. Replacement validates actual
+target/scope and stored replacement before a coherent Undo edit; failed repair leaves unresolved intent.
+Recording distinguishes acknowledged durable portions, interpretable incomplete material, unpersisted
+samples and accepted edits. It promises no reconstruction of samples never stored or edits never captured.
+Atomic visibility, crash consistency and actual durable persistence require separate evidence. A rename
+is not a general multi-resource durability proof. No ACID, power-loss or cross-volume atomicity guarantee,
+container/database, journal/fsync/hash, dedup/transcoding, quotas, GC or exact recovery UI selected.
+Current owners: [Project format](../PROJECT_FORMAT.md#media-and-persistence-integrity),
+[recovery](../PROJECT_FORMAT.md#recovery-state), [UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work),
+[sample workflow](../SAMPLE_WORKFLOW.md#asynchronous-preparation-and-dependency-availability).
+Architecture's logical separation and Settings' reset protection already suffice; no new persistence
+authority or owner route. Roadmap narrowly assigns R1/R2/R7/R8/R12 and later recording responsibility;
+complete protocol/recovery is not an R1 prerequisite. Q-061 retains full dependency/release closure.
+Remaining Q-058/Q-059: Crash-safe replacement/validation, candidate indexing/selection, cadence/retention,
+durable-media protocol/layout, integrity checks, repair/transfer/recording reconciliation, owner tracking/
+GC and platform/race/fault evidence. Related questions retain specialized mechanisms and canonical IDs.
+Implementation stages/order and R0 scope unchanged; SEQ-R0 remains pending / not started.
