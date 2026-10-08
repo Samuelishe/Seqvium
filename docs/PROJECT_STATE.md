@@ -7,18 +7,18 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R16 complete (2026-10-08). Bounded cross-context audible routes, sends, sidechain detectors and
-parameter controls have distinct roles under [Node graph](NODE_GRAPH.md#cross-context-signal-and-control-relationships).
-Explicit endpoint/tap dependencies preserve independent contributions/domains and the two local levels;
-fan-out alone adds no performances, control alone adds no audible mix. Moves revalidate meaningful
-identity/boundaries; deletion/replacement cannot silently retarget. Safely retained unresolved intent
-remains canonical, savable and undoable, with dependency-scoped execution blockers.
-[Audio](AUDIO_ENGINE.md#cross-context-boundaries-and-timing) owns causal timing and hard-boundary/tail
-constraints; [object rendering](SAMPLE_WORKFLOW.md#external-dependencies-in-object-rendering) freezes
-required external influence without automatically including its audio or whole Master.
-[Roadmap](ROADMAP.md#cross-context-routing-ownership) assigns R4 foundations, R8 supported render
-dependency handling, bounded R10/R11 workflows and R14+ richer routing; mature sidechains/modulation
-are not implicit R0/R12 prerequisites. Q-066 retains concrete mechanisms and evidence.
+SEQ-KB-R17 complete (2026-10-08). [Sample Lab](SAMPLE_WORKFLOW.md#intentional-and-lazy-exploration)
+separates random exploration, family-specific related variation, explicit generation reference,
+supported future-only locks, audible comparison and bounded disposable candidate history. Reference/
+family changes cannot silently reinterpret held constraints; completion order cannot choose the active
+sound or accept it. Source edits and target/project lifecycle changes retain async validity/no-resurrection
+rules. Ending audition restores current canonical sound rather than undoing intervening edits.
+Explicit acceptance validates its project/resource/use scope and creates durable managed audio through
+one coherent project Undo transaction. Multiple candidates can be kept as reusable project samples
+without repeated implicit target replacement; Personal Library publication stays independent and R14+.
+Accepted audio survives generator removal; temporary audio/recipes/metadata have separate availability
+and bounded ownership. Q-071 retains mechanisms, algorithms, exact UI, limits and evidence. Existing
+R7 scope is sufficient for its first one/two families; roadmap IDs/order and R0 scope are unchanged.
 Musical/signal ownership, canonical/derived execution, logical Undo/async integrity, mouse-first/
 keyboard-efficient UX, resource/plugin preservation, discovery/library ownership, host localization/
 themes, recovery/media durability and current/cold-history boundaries remain in force.
@@ -41,8 +41,8 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R16 routing/control cases A–O and hypotheses 1–12 checked against ownership, execution-domain,
-canonical Undo, object-render, timing and hard-boundary contracts. Repository-relative Markdown links/
+R17 exploration cases A–Q and hypotheses 1–13 checked against audition, async/Undo, shared-use,
+durable-media, library and extension-lifetime contracts. Repository-relative Markdown links/
 anchors, canonical Q/D identity/reference integrity, owner/routing, active/cold separation, roadmap
 IDs/order and unchanged R0 scope, UTF-8/LF/whitespace and Git preservation checks passed.
 Documentation-only validation; no builds/tests, runtime/audio, scheduling/latency, UI or platform
@@ -50,11 +50,12 @@ acceptance evidence is claimed.
 
 ## Active blockers / evidence gaps
 
-Concrete graph-scope references/edit ownership (Q-019) and Arrangement route/control assignment (Q-030)
-remain open. Q-066 requires source/tap/target representation, compatibility/rates, validation/scheduling,
-feedback, timing/latency, state/lifetime and endpoint edit mechanisms, offline dependency capture,
-host/plugin capabilities and detailed UI/platform evidence. High-impact evidence work includes domain
-grouping, voice allocation, source/plugin instancing,
+Q-071 requires family generation/similarity and supported-input evidence, concrete controls/locks,
+history/comparison/request-selection UI, limits/storage/retention, temporary lifecycle and performance/
+usability validation. Q-011 contextual substitution/restoration and Q-029 acceptance-scope/reference UI
+remain open. Graph-scope references/edit ownership (Q-019), Arrangement assignment (Q-030) and Q-066
+cross-context representation/execution/timing/lifetime/render/capability/UI evidence also remain open.
+High-impact evidence work includes domain grouping, voice allocation, source/plugin instancing,
 definition synchronization and measured CPU/RAM/resource behavior (Q-047), exact recovery/media integrity
 mechanisms (Q-058/Q-059), future concrete roadmap/complete-project milestone closure (Q-061), stateful DSP/
 finite-tail mechanics (Q-057), graph publication/lifetime/failure handling

@@ -1040,3 +1040,42 @@ dependency capture, host/plugin capability support, detailed UI and platform evi
 remain open in their specialized scopes. R4 owns foundations, R8 supported render handling, R10/R11
 bounded workflow needs, R14+ richer expansion; mature routing is no implicit R0/R12 prerequisite.
 Implementation stages/order and R0 scope unchanged; SEQ-R0 remains pending / not started.
+
+## D-070 — Bounded Sample Lab exploration and candidate semantics
+
+Status: Accepted by SEQ-KB-R17, 2026-10-08; partially resolves Q-071. Refines
+[D-003](#d-003--sound-discovery-and-resampling-define-the-creative-loop) and
+[D-017](#d-017--contextual-sample-lab); preserves
+[D-065](#d-065--logical-undo-transactions-and-async-commit-integrity),
+[D-067](#d-067--browser-discovery-and-explicit-reusable-content-ownership) and
+[D-068](#d-068--minimum-host-localization-and-semantic-theme-foundation).
+Basis: Current-owner conceptual audit of cases A–Q and hypotheses 1–13; no generator, UI, runtime,
+performance or platform evidence.
+Rationale: A playful generate/listen/vary/compare/accept loop needs recoverable recent alternatives
+without turning every experiment into a document edit. Random explores a supported family space;
+related variation intentionally uses an identified supported reference, rather than an unrelated random
+fallback. Relatedness is family-specific, not universal acoustic distance. Supported locks hold declared
+constraints for future requests, not old waveforms; coupled perceptual properties cannot be promised
+independent. Lock constraints stay explicit across reference changes rather than silently adopting new
+values. Family transfer cannot infer compatibility from labels. Each request records the reference and
+constraints actually used; comparison selection/completion does not silently change lineage.
+Bounded temporary history supports revisiting/comparing useful candidates, with understandable
+availability and no implicit Save/recovery, project Undo or permanent-retention claim. Ending contextual
+audition restores current canonical sound, preserving intervening edits and no-resurrection rules.
+Operation identity and user intent govern async results; stale-source artifacts may be explicitly reused
+only with a valid fresh destination. Explicit acceptance establishes durable project audio and a coherent
+scope-aware Undo edit. Independent acceptance as reusable resources lets users keep A and C without
+twice replacing a contextual target. Library publication remains a separate R14+ user-content operation.
+Accepted audio is authoritative and survives generator removal. Temporary audio, recipes and metadata
+have separate availability; historical explanation cannot require executable code. Bounded cleanup
+protects active use, accepted project/Undo/recovery resources and explicitly retained personal content.
+Current owners: [Sample workflow](../SAMPLE_WORKFLOW.md#intentional-and-lazy-exploration),
+[UX](../UX_CONTRACT.md#sample-lab-exploration-feedback),
+[UI design](../UI_DESIGN.md#sample-lab-interaction-hierarchy),
+[Extensions](../EXTENSIONS.md#generator-exploration-capabilities).
+Remaining Q-071: Algorithms/similarity calculations and reference inputs; controls/ranges, lock
+representation/coupling/compatibility; history limits/storage/retention, comparison/request-selection UI,
+ordering/cancellation, temporary ownership/removal and performance/usability evidence. Related questions
+retain their mechanisms. R7's existing one/two-family scope is sufficient; no active roadmap/index change,
+universal similarity, AI, advanced analysis, unlimited branching, complete presets or orchestration
+required. Implementation stages/order and R0 scope unchanged; SEQ-R0 remains pending / not started.

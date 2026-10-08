@@ -253,6 +253,27 @@ acceptance semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
 
 ## Lifecycle and missing capabilities
 
+### Generator exploration capabilities
+
+Each supported generator family must give an honest meaning to its random/related variation and any
+exposed locks under [Sample workflow](SAMPLE_WORKFLOW.md#intentional-and-lazy-exploration). Related
+variation requires supported reference inputs; a family need not analyze arbitrary audio or reproduce
+another family's controls. Locks preserve declared supported constraints, with coupled/unsupported
+properties represented honestly. Family/version compatibility cannot be inferred from matching control
+labels, and unsupported variation cannot silently become random generation. No universal distance,
+parameter/lock schema, capability manifest or mandatory complete recipe is selected; concrete declarations
+and compatibility coordinate Q-024/Q-071.
+
+Retained candidate audio is distinct from a recipe or historical metadata. Accepted project audio
+survives generator removal; safely owned temporary audio may remain useful under bounded retention,
+while generation/editing actions needing missing code become unavailable. Host-readable preserved
+identity/provenance must not require keeping executable code alive merely to display candidate history.
+Removal/disable must safely retire known active generation and contributed UI use rather than unload
+beneath it; exact cancellation/defer/retention mechanisms remain Q-010/Q-067/Q-071. No persistence promise
+for temporary candidates or cross-version bit-identical regeneration follows from metadata preservation.
+
+### Material and capability availability
+
 Discovery, activation, errors, deactivation, and removal need explicit ownership. Installation or
 removal must not unnecessarily destroy music; instance edits and global package removal follow
 different safety contracts below. Exact package manager mechanics remain open in Q-010.

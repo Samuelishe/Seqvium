@@ -185,3 +185,16 @@ assigned R4 foundations, R8 supported render handling, bounded R10/R11 needs and
 no mature-routing R0/R12 prerequisite or implementation-stage renumbering/reordering. Documentation/
 conceptual architecture only; SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r16).
+
+## SEQ-KB-R17 — Sample Lab Exploration & Candidate Semantics
+
+Completed 2026-10-08. Audited exploration cases A–Q and hypotheses 1–13; accepted family-specific
+random/nearby intentions, supported future-only locks, explicit reference/lineage, bounded temporary
+history/comparison, async ordering/source/target validity, scope-aware durable acceptance and candidate/
+generator/resource lifetime boundaries. Preserved contextual restoration, project Undo, media/recovery
+and independent Personal Library publication. Partially resolved Q-071 through
+[D-070](DECISIONS.md#d-070--bounded-sample-lab-exploration-and-candidate-semantics); algorithms, concrete
+controls/locks, history/storage/limits, exact UI/lifecycle and evidence remain open. Existing R7 scope
+suffices for its first one/two families; evidence-led R14+ expansion introduces no new prerequisite or
+stage reordering. Documentation/product-architecture only; SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r17).

@@ -458,3 +458,61 @@ is not established by local history; this log does not duplicate Git's commit ch
   No pre-existing user changes to modify. No code, executable experiments, UI, projects, dependencies,
   tests, CI, tools, backends or plugin hosts created. No builds/tests, staging, commit or push;
   SEQ-R0 remains **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R17
+
+- Established bounded Sample Lab exploration semantics; accepted
+  [D-070](DECISIONS.md#d-070--bounded-sample-lab-exploration-and-candidate-semantics) and archived
+  [Q-071's accepted portion](RESOLVED_QUESTIONS.md#r17-resolved-portion--q-071-bounded-exploration-semantics).
+  Updated sample, UX, UI design and extension owners, narrowed active Q-071 and advanced current state.
+  Existing R7 scope already owns justified variation/locks/history for one/two families; active ROADMAP
+  and INDEX unchanged. Completed stage belongs to [history](ROADMAP.md#seq-kb-r17--sample-lab-exploration--candidate-semantics).
+- Cases A–Q checked against current contracts; conceptual audit, not implementation validation:
+
+  | Case | Accepted result / current owner |
+  | --- | --- |
+  | A — random Kick | Choose family, generate/listen/regenerate, revisit available results, explicitly accept into a valid project; no detailed parameter prerequisite or implicit material creation; [random](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
+  | B — nearby A | Intentionally use A's supported family reference inputs; explain unsupported input instead of hidden unrelated random fallback; no universal metric; [random/nearby](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
+  | C — decay lock | Preserve declared supported constraint while exploring permitted transient/pitch variation; coupled perceptual properties and waveform identity are not promised; [locks](../SAMPLE_WORKFLOW.md#supported-locks-and-reference-changes) |
+  | D — B/C from A | Each request captures A and effective locks; locks affect future requests only. Explicit new reference retains identified held constraints until deliberate release/re-establishment; comparison/completion cannot change lineage; [locks](../SAMPLE_WORKFLOW.md#supported-locks-and-reference-changes) |
+  | E — family switch | Clear/deactivate incompatible constraints with feedback; no matching-label equivalence. Transfer requires declared support and explicit choice; old candidates remain identified, not automatically compatible references; [locks](../SAMPLE_WORKFLOW.md#supported-locks-and-reference-changes) |
+  | F — return to third | Select/audition/compare or deliberately use a retained candidate as reference; retention is bounded, ten is no capacity promise, navigation is not project Undo; [history](../SAMPLE_WORKFLOW.md#temporary-history-and-comparison) |
+  | G — original/A/B | Identify audible sound/context and separate current canonical sound from any old snapshot. Bounded A/B comparison where useful; selection never rewrites accepted source; [comparison](../SAMPLE_WORKFLOW.md#temporary-history-and-comparison) |
+  | H — contextual Kick | Use relevant supported existing processing, with raw/solo possible. Ending/cancelling restores actual current canonical sound; Q-011 mechanics and Q-047/Q-057 state/tails stay open; [context](../SAMPLE_WORKFLOW.md#standalone-and-contextual-sample-lab) |
+  | I — C before B | Preserve request identity/inputs and current user choice; late completion cannot steal reference/audition or accept. Any automatic audition follows still-current request-bound intent and validity; [ordering](../SAMPLE_WORKFLOW.md#request-ordering-and-changed-context) |
+  | J — source edit | Mark old-input result stale for original request; meaningful audition/reuse needs valid context and fresh explicit acceptance, never newer-intent overwrite; [validity](../SAMPLE_WORKFLOW.md#contextual-generation-result-validity) |
+  | K — delete/Undo/close | No target resurrection/current-selection retargeting. Restored identity alone cannot revive cancelled work; retained material needs safe owner and revalidation, not universal retention; [validity](../SAMPLE_WORKFLOW.md#contextual-generation-result-validity) |
+  | L — accept C | Explicit actual destination/scope, durable managed placement, commit gate and one coherent canonical Undo edit; no implicit shared-use replacement; [acceptance](../SAMPLE_WORKFLOW.md#acceptance-and-provenance) |
+  | M — keep two | Independent reusable-project-resource acceptance can retain both without replacing one target twice; each independent acceptance validates anew, no universal action/batch required; [acceptance](../SAMPLE_WORKFLOW.md#acceptance-and-provenance) |
+  | N — Personal Library | Acceptance and project Save do not publish globally. Explicit independent user-content publication remains R14+; visible temporary history is not permanent save; [library](../SAMPLE_WORKFLOW.md#personal-library-and-explicit-publication) |
+  | O — generator absent | Accepted audio survives; safely retained temporary audio may be useful, recipe-only entries are not playable. Missing regeneration is explicit; host can explain metadata without keeping code alive; [lifetime](../SAMPLE_WORKFLOW.md#bounded-ownership-and-unavailable-generators) |
+  | P — provenance | Supported identity/version/parameters/seed/reference/constraints may explain/recreate; accepted audio is authoritative, no mandatory recipe or arbitrary-version bit identity; [provenance](../SAMPLE_WORKFLOW.md#acceptance-and-provenance) |
+  | Q — resources | Explicit bounded disposable history/work ownership; safe cleanup protects active use, accepted project/Undo/recovery resources and retained personal content; no cache sizes/eviction algorithm; [lifetime](../SAMPLE_WORKFLOW.md#bounded-ownership-and-unavailable-generators) |
+
+- Hypotheses audited rather than adopted without bounds:
+
+  | Hypotheses | Audit result |
+  | --- | --- |
+  | 1 | Accepted sound-first beginner loop with optional advanced controls; no detailed parameter knowledge or final layout required |
+  | 2 | Refined: related variation intentionally uses supported family reference state; no universal waveform similarity or arbitrary-audio analysis promise |
+  | 3, 4 | Accepted only for declared supported constraints; future-only, captured per request, coupling/unsupported cases explicit, not waveform identity |
+  | 5 | Accepted bounded revisiting/comparison of available recent results; reject permanent retention or durable project-recovery reading |
+  | 6, 7 | Accepted separate selection/acceptance and no implicit canonical Save/history mutation; generation reference and audition choice also distinguished |
+  | 8 | Refined: restore actual current canonical sound, preserving intervening edits, not a frozen launch original or deleted target; no new DSP reset semantics |
+  | 9, 10 | Accepted validated durable acceptance and coherent project Undo; computation/candidate navigation are outside it, Undo is not immediate media deletion |
+  | 11 | Accepted independent intentional library publication, R14+; project Undo concerns project effects, not published user content |
+  | 12 | Accepted explicit safe bounded lifetime; disposable cleanup cannot delete accepted/Undo/recovery/personal content or unload beneath active use |
+  | 13 | Accepted no baseline exact reproducibility/universal similarity/search; no RNG, algorithms, advanced analysis or mandatory recipe completeness |
+
+- Q-071 remains open for concrete algorithms/similarity/reference inputs, controls/locks/coupling,
+  history limits/storage/retention, exact comparison/request UI, ordering/cancellation, temporary
+  ownership/removal and performance/usability evidence. Q-011/Q-029/Q-063/Q-065/Q-010/Q-024/Q-058/
+  Q-059/Q-047/Q-057 remain open without separate narrowing. No implementation stage started/reordered.
+- Verified repository-relative Markdown links/anchors, Q/D definitions/references, active/archive and
+  owner/routing consistency, cases/hypotheses and candidate/durable/library/Undo boundaries, stage order
+  and unchanged R0 scope, UTF-8/LF/whitespace, `git diff --check` and final Git preservation.
+  Documentation-only; no builds/tests or generator/audio/UI/performance/platform acceptance evidence.
+- Initial baseline: clean `master`, HEAD `8377a5bc897234c37fa3f503c1d82306a17f8da9`, checkpoint R16.
+  Branch/HEAD/index and empty untracked baseline preserved; all task changes are unstaged Markdown.
+  No pre-existing work to modify; no executable tooling, code, projects, dependencies, experiments,
+  tests or CI created. No staging, commit or push; SEQ-R0 remains **pending / not started**.

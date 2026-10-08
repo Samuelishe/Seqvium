@@ -26,6 +26,19 @@ Dark/Light baseline direction is accepted below; exact visuals remain unselected
 - Avoid engineer-tool aesthetics: walls of permanent connectors, diagnostics, and configuration
   fields must not define the ordinary musical workspace.
 
+### Sample Lab interaction hierarchy
+
+Lead with the sound and the next creative action: generation, audition, related variation and explicit
+acceptance. Recent comparison/history helps return to useful alternatives without making a branching
+tree or parameter console the primary surface. Reveal meaningful supported locks and deeper controls
+on demand, with held constraints and their applicability legible. Reference, audible choice, current
+project sound and acceptance scope need distinct understandable feedback; color alone cannot carry
+lock, stale, pending or unavailable meaning. Temporary history must not look permanently saved.
+[Sample workflow](SAMPLE_WORKFLOW.md#intentional-and-lazy-exploration) owns behavior and
+[UX](UX_CONTRACT.md#sample-lab-exploration-feedback) owns action/discoverability requirements. Use the
+host localization and semantic theme foundation; no final layout, control inventory, icons or gestures
+are selected.
+
 ## Responsive layout and usable minimums
 
 First-party Seqvium UI uses responsive/reflowing layout, not uniform graphical scaling of the

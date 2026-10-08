@@ -319,3 +319,35 @@ Related Q-005/Q-012/Q-017/Q-018/Q-019/Q-020/Q-021/Q-028/Q-030/Q-033/Q-034/Q-047/
 open without separate closure. R4 foundations, R8 supported render handling, bounded R10/R11 workflow
 features and R14+ richer expansion preserve implementation order and avoid mandatory mature routing
 in R0/R12. No engine mechanisms or final UI selected; SEQ-R0 remains pending / not started.
+
+## R17 resolved portion — Q-071 bounded exploration semantics
+
+Status: Partial resolution accepted by SEQ-KB-R17, 2026-10-08. Q-071 retains its canonical active ID
+for material implementation mechanisms and evidence; it is not fully resolved.
+Original question: Candidate similarity, parameter locks and exploration history have distinct limits
+and user choices beyond contextual substitution.
+Accepted portion: Random exploration and reference-based nearby variation are distinct intentions
+within a supported family. Declared supported locks apply to future generation, preserve held constraints
+across compatible reference changes and cannot silently transfer between unrelated families. Request
+reference/constraints, audible comparison choice and acceptance destination remain distinct. Bounded
+temporary candidate history supports revisiting/comparing available alternatives without canonical
+edits, document Undo or implicit Save/recovery/library publication. Async operation identity, relevance
+and current user choice survive out-of-order completion and source/target/project changes; no stale
+overwrite, redirection or resurrection. Ending audition restores current canonical sound. Explicit
+scope-validated acceptance creates durable project resources through normal Undo; multiple candidates
+can be independently kept without twice replacing a target. Accepted audio survives generator removal;
+temporary audio, metadata and recipe availability differ, with safe bounded cleanup and no arbitrary
+cross-version bit-identical regeneration promise.
+Rationale: [D-070](DECISIONS.md#d-070--bounded-sample-lab-exploration-and-candidate-semantics).
+Current owners: [Sample workflow](../SAMPLE_WORKFLOW.md#intentional-and-lazy-exploration),
+[UX](../UX_CONTRACT.md#sample-lab-exploration-feedback),
+[UI design](../UI_DESIGN.md#sample-lab-interaction-hierarchy),
+[Extensions](../EXTENSIONS.md#generator-exploration-capabilities).
+Remaining Q-071: Concrete family algorithms/similarity calculations and reference inputs, parameter
+schema/ranges and lock representation/coupling/compatibility, candidate history limits/storage/retention,
+comparison/request-selection UI, ordering/cancellation, temporary ownership/removal lifecycle and
+performance/usability evidence. No algorithm, schema, widgets, numeric limits or storage selected.
+Related Q-011 audition/substitution/restoration, Q-029 sharing/acceptance scope, Q-063 async/Undo,
+Q-065 discovery/publication, Q-010/Q-024 extension availability/compatibility, Q-058/Q-059 recovery/media
+and Q-047/Q-057 execution/tails remain open without separate narrowing. R7 scope already suffices;
+R14+ expansion needs demonstrated need. SEQ-R0 remains pending / not started.

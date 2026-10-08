@@ -317,6 +317,23 @@ An unavailable Browser source needs useful missing/unavailable state. Its proven
 not mark a healthy managed project resource or already applied preset state as broken. Missing actual
 project media or required processing still follows the dependency-blocker contract below.
 
+### Sample Lab exploration feedback
+
+Keep ordinary exploration sound-first: generate, listen, request a related variant, revisit/compare
+recent candidates and explicitly accept. Detailed parameters are optional; supported locks and deeper
+controls appear progressively. These intentions need discoverable pointer paths and efficient keyboard
+access through the same semantic actions, without choosing widgets, bindings or a final layout.
+
+Make the generation family/reference, active held constraints, audible comparison choice/context and
+acceptance destination distinguishable. Reference/family changes must explain retained or unavailable
+locks; pending results retain their request identity rather than stealing a later selection. Explain
+stale inputs and unavailable operations concisely. History is visibly temporary, not a permanent-save
+claim. Acceptance into the project and independent Personal Library publication have separate outcomes.
+Returning from audition restores current canonical sound, preserving intervening project edits; deleted
+targets are not restored by preview. Specialized limits belong to
+[Sample workflow](SAMPLE_WORKFLOW.md#intentional-and-lazy-exploration), with concrete Q-011/Q-029/Q-071
+mechanisms/UI still open. Candidate navigation and lock changes do not enter document Undo/Redo.
+
 ## Project lifecycle and durable work
 
 New project creation is a first-class document operation. Valuable unnamed/never-saved work must be

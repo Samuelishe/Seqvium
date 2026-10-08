@@ -2,7 +2,7 @@
 
 Role: Seqvium's sound exploration and material-transformation contract.
 Read when: Designing discovery, generation, audition, sample acceptance, or resampling.
-Authoritative for: Browser discovery/audition, project-resource reuse, Personal Library publication/ownership, Sample Lab context, candidate acceptance, durable audio, object sampling and audible capture.
+Authoritative for: Browser discovery/audition, project-resource reuse, Personal Library publication/ownership, Sample Lab exploration/reference/locks/history, candidate acceptance, durable audio, object sampling and audible capture.
 Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing, or final resource file format.
 
 ## The creative loop
@@ -146,8 +146,8 @@ index, cloud account/sync, store/marketplace, complex hierarchical catalog or un
 Q-065 retains exact Browser UI/layout, library format, scanning/indexing/watching, metadata, search/
 tags/favorites, deduplication/content addressing, waveform caching, preset format/versioning, bindings,
 performance/scaling, cross-platform paths and backup/sync/import/export. Linked/live presets require
-separate justification if ever proposed. Q-071 retains candidate similarity/locks/history; previewing
-or retaining exploration history alone does not publish a reusable-library item.
+separate justification if ever proposed. Q-071 retains concrete exploration mechanisms and evidence;
+previewing or retaining exploration history alone does not publish a reusable-library item.
 
 ## Standalone and contextual Sample Lab
 
@@ -176,8 +176,12 @@ preview must not be the only way to judge a candidate that sounds substantially 
 acceptance in the real project. Audition remains temporary and reversible until explicit acceptance;
 it must not silently rewrite accepted musical material or a shared audio resource.
 
-Substitution mechanics, stop/cancel/restore, realtime publication and downstream boundaries remain
-open (Q-011). Pending generation and acceptance follow the
+Ending or cancelling contextual audition/exploration restores the actual current canonical project
+sound wherever the target still exists, not a launch-time snapshot that would undo intervening edits.
+Returning to that sound does not itself accept or destroy safely retained candidate work. A deleted
+target is not recreated to restore audition. Concrete substitution, stop/cancel/restore, realtime
+publication and downstream boundaries remain open (Q-011); this is no new DSP state/tail reset policy.
+Pending generation and acceptance follow the
 [async commit gate](ARCHITECTURE.md#async-commit-gate); the cases below specialize validity/reuse.
 Q-063 retains concrete history, precondition and cancellation mechanisms, not an open choice about
 whether completion alone can mutate the target.
@@ -222,24 +226,170 @@ The first generator should be local/procedural and cover one or two bounded fami
 
 ## Intentional and lazy exploration
 
-Random exploration must have structure rather than randomizing every parameter indiscriminately.
-The long-term interaction should be capable of:
+The following are accepted bounded product semantics for future Sample Lab work, not implemented
+capabilities. Start with sound: choose a supported family, generate, listen, explore a related variant,
+and explicitly accept useful material. Detailed parameter knowledge is optional. Advanced controls
+appear progressively under [UX](UX_CONTRACT.md#sample-lab-exploration-feedback); final widgets/layout
+remain open. Generation is bounded asynchronous work outside realtime audio.
 
-- Give me another sound, or something similar.
-- Vary this more.
-- Preserve the attack while changing the tail.
-- Lock selected properties while exploring others.
-- Return to an earlier candidate and compare several candidates.
+### Sources, references and candidates
 
-These are semantic goals; distance metrics, locks, similarity algorithms, history retention, and
-comparison controls are not specified yet. [UX_CONTRACT](UX_CONTRACT.md) owns general feedback and
-discoverability principles. Candidate work must remain bounded and outside the realtime thread.
+| Role | Meaning |
+| --- | --- |
+| Source sound | Existing sound/material being explored, if any; its current accepted project state stays canonical |
+| Generation reference | Explicit sound/candidate and supported input state from which a related variation is requested; not necessarily the project source |
+| Generated candidate | Identified result of one exploration request, with available audio and useful origin information; not automatically accepted project or library material |
+| Generation constraints | Current supported settings and explicitly held locks for future requests; not retroactive edits of existing candidates |
+| Audition/comparison choice | Sound currently being judged, raw or in an identified supported context; not implicit generation-reference or acceptance-target reassignment |
+| Acceptance destination | Explicit project and resource/use scope validated at acceptance; independent of reference, current selection or completion order |
+
+Selecting a candidate for further variation establishes it as the generation reference. Merely switching
+listening/comparison between original, A and B does not silently change that reference. The reference,
+audible choice and destination must be understandable even when they happen to be the same sound.
+If a source is edited later, an older candidate/reference does not become a current-source variation
+by changing its label. No full branching/version-control system is required.
+
+### Random and nearby variation
+
+`Generate Random` and `Generate Similar / Variation` describe distinct intentions, not final labels:
+
+| Intention | Required meaning |
+| --- | --- |
+| Random exploration | Another sound within the chosen family's supported creative space, honoring declared constraints/locks; no selected reference is required |
+| Nearby/related variation | Intentionally use the identified reference and supported input state to explore related sounds within that family's declared variation capability, honoring locks |
+
+With no target, a beginner can choose Kick, request random generation, audition the result, request
+another random candidate or a related variant, revisit available recent results, and explicitly accept
+a chosen result as a reusable project sample or with an intended use. A valid project destination is
+needed at acceptance, not to invent an existing target for exploration. Generation/regeneration alone
+does not add project material. Pending/failure/cancellation state must be understandable.
+
+Random exploration has family-appropriate structure; it does not randomize every control indiscriminately
+or promise uniform coverage, identical distributions across families, a unique result each time or
+exact reproducibility. Active locks constrain random as well as related exploration; users can release
+them for a broader search.
+
+For Candidate A, nearby variation must deliberately use A rather than silently fall back to unrelated
+random generation. Relatedness may concern supported generative controls or characteristics and differs
+by family. It is not a universal acoustic distance, guaranteed perceptual similarity, waveform match or
+analysis/search of arbitrary audio. When the selected reference lacks usable family input/recipe or
+supported variation capability, explain the limitation and offer meaningful supported choices; a random
+fallback must be an explicit different intention. No generation or similarity algorithm is selected.
+
+### Supported locks and reference changes
+
+A lock holds an explicitly declared supported generation control/value or characteristic constraint
+established when the user locks it. Its meaning, held constraint and applicability must be understandable.
+It applies to subsequent requests, including random exploration; it never rewrites A or other old audio.
+Each request captures its own reference and effective constraints; changing locks later does not silently
+reinterpret already pending requests or their results.
+
+For example, a family that supports preserving a Kick's decay may explore its transient or pitch while
+holding the declared decay constraint. That is a capability-dependent example, not accepted control names,
+granularity or ranges. A control lock preserves that control's declared meaning, not every perceptual
+effect it might influence. Coupled properties cannot be presented as independently preservable when
+the generator cannot honor them. A lock is not mathematically identical audio. Unsupported/conflicting
+constraints need a clear limitation or an explicit revised choice, never a silently broken lock; fully
+constrained exploration need not yield a distinct sound.
+
+If A is the reference and a property is locked, requests for B and C from A both use A and their captured
+constraints. B's completion/audition does not silently make C a child of B. Choosing B as the next reference
+is a separate intention. Within a compatible family, existing locks keep their explicitly held constraints
+until released or deliberately re-established; they do not silently take B's values. Show any retained
+constraint's origin/meaning where needed to avoid unclear inheritance. An incompatible reference makes
+affected locks unavailable until explicitly cleared/re-established or compatibility is proven. Historical
+candidate metadata records the constraints used to produce it, not today's live lock state.
+
+Switching Kick to Noise or another family starts that family's exploration context. Old parameters,
+references and locks cannot be treated as equivalent because labels look similar. Clear/deactivate
+incompatible constraints with understandable feedback; compatible transfer requires declared support
+and an explicit user choice. Earlier candidates may remain identified for listening under bounded
+history, but they cannot silently become valid references for the new family. No universal parameter
+compatibility or mandatory per-family settings memory is required.
+
+### Temporary history and comparison
+
+Provide bounded recent candidate history sufficient to revisit useful alternatives while they remain
+available. After ten variations, selecting the third retained candidate lets the user audition it,
+compare it or deliberately use it as a new reference. Ten is an example, not the accepted capacity or
+a promise that every candidate remains available indefinitely. History must make available versus
+discarded/unavailable results understandable and indicate its temporary retention boundary.
+
+Candidate selection, audition, requesting a further variant and project acceptance are separate
+intentions. None of the first three is a canonical project edit or document Undo entry. Project Undo/Redo
+affects accepted edits and may alter the validity of exploration context; it does not mean previous/next
+candidate, regenerate audio or recover evicted candidates. Exploration state/history does not silently
+enter project Save or rolling recovery as accepted work. Independently owned pending/produced material
+may need safe retention/reconciliation under the existing resource contracts without becoming document
+history or a durability promise. Exact persistence/retention/storage remains open.
+
+The user can return to the actual current project sound and compare it with available A and B through
+the relevant supported existing processing; raw/solo listening remains possible. Identify the audible
+sound and listening context clearly, including an old source snapshot if deliberately offered separately
+from the current sound. Bounded A/B-style comparison is useful where it supports this task; no comparison
+matrix, automatic loudness matching or waveform-analysis feature is required. Switching comparison
+choices never rewrites the accepted source or silently changes the generation reference. Q-011 owns
+concrete substitution/publication/restoration; audition lifetime must respect required execution/state
+boundaries rather than resetting unrelated performances/tails (Q-047/Q-057).
+
+### Request ordering and changed context
+
+Each request retains its operation identity, family/capability version, reference and effective inputs/
+constraints, relevant project/target/context dependencies, and current relevance/cancellation status.
+These are semantic obligations, not schema fields. If B is requested, then C, and C finishes first,
+both results remain associated with their own requests. Completion order cannot choose the generation
+reference, active comparison/audition or accepted result. Automatic audition, if offered, must honor a
+still-current request-associated user intention and validate its context; late B cannot displace a later
+request or deliberate selection. No queue, coalescing or parallel scheduling mechanism is selected.
+
+Source edits while generation runs distinguish old-input candidates from current-source variations.
+Useful old results may be clearly identified and auditioned or explicitly reused only where their
+audio/context and ownership remain valid; they do not silently overwrite newer project intent.
+Target deletion/Undo, project switch/close and changed relevant context follow
+[contextual validity](#contextual-generation-result-validity) and the
+[async commit gate](ARCHITECTURE.md#async-commit-gate). History does not resurrect deleted targets,
+renew cancelled work, bind to a new selection or establish universal stale-result retention.
+Explicit reuse validates a fresh destination; keeping a candidate does not validate its old target.
+
+### Bounded ownership and unavailable generators
+
+Temporary candidate audio, metadata, active audition and pending generation need explicit safe owners
+and bounded CPU/memory/storage use. History is disposable; extending exploration cannot imply unlimited
+retention or unbounded background work. Cleanup respects known active audition/pending use and cannot
+delete accepted project audio, Undo/recovery-owned resources or explicitly retained Personal Library
+content. Shared storage, if later chosen, must preserve those ownership boundaries. No numeric limit,
+eviction algorithm, storage format or retention duration is selected.
+
+Accepted audio remains playable after generator removal. If safely retained temporary audio exists,
+generator absence alone need not prevent listening or fresh explicit acceptance of that audio; it does
+not grant permanent retention. A recipe/metadata-only entry cannot claim playable audio. Regeneration/
+variation/recipe editing requiring missing or incompatible code is visibly unavailable, while useful
+preserved identity/provenance can be displayed by the host without executable generator code. Removal
+respects known active generation/UI use under [Extensions](EXTENSIONS.md#instance-removal-and-package-uninstall).
+Exact temporary persistence/removal/retirement mechanics remain Q-010/Q-024/Q-071.
+
+### Initial exploration scope and open mechanisms
+
+R7's existing scope supports only variation, meaningful locks and bounded recent history/comparison
+justified by its first one or two families. It requires no universal similarity, AI generation, advanced
+waveform analysis, unlimited branching, cross-project publication, complete presets or sophisticated
+generator orchestration. R14+ may expand families and exploration only with demonstrated need; no
+roadmap stage/order change follows from these semantics.
+
+Q-071 remains partially answered: concrete generation/similarity calculations, supported reference
+inputs, control schemas/ranges and lock representation/coupling, history limits/storage/retention,
+comparison and request-selection UI, resource/removal mechanics and performance/usability evidence
+remain open. Q-011/Q-029/Q-063 retain audition, acceptance-scope and async/Undo mechanisms;
+Q-065 retains discovery/publication, Q-058/Q-059 recovery/media integrity. No implementation is claimed.
 
 ## Acceptance and provenance
 
 Acceptance makes the rendered audio durable project material. The audio is the result; it must remain
 available when its generator is removed. Where useful, additionally preserve generator identity,
-version, parameters, random seed, and recipe metadata. A seed/recipe is not a substitute for audio.
+version, parameters, random seed, reference and effective constraints/recipe metadata where supported.
+These can explain or help recreate a result; no bit-identical regeneration across arbitrary versions,
+mandatory complete recipe, random-number generator or serialization schema is promised. A seed/recipe
+is not a substitute for authoritative accepted audio.
 
 Ordinary import/drag-and-drop and accepted Sample Lab output create project-managed durable media,
 alongside recordings, used pack audio and other accepted material, including in an unnamed project.
@@ -272,13 +422,24 @@ A durable sample and its musical placements are distinct. For example, `kick_017
 items A, B, and C; ordinary editing/processing of A must not unexpectedly rewrite the resource or
 change B and C. Non-destructive placement processing is the default. Explicit destructive/edit-source
 operations may be considered later but are not implied by normal processing or contextual acceptance.
-The exact acceptance edit for a target and shared-use behavior still need design.
+Acceptance identifies whether the user keeps reusable project audio or changes an existing sound/use.
+It must not automatically change every shared use when a local change was intended. The exact
+acceptance-scope UI and reference/edit mechanics remain Q-029.
 [ARCHITECTURE](ARCHITECTURE.md) owns identity boundaries; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence.
 
 Successful acceptance groups the intended project resource/reference and target/use changes into one
 [logical undo transaction](ARCHITECTURE.md#logical-undo-transactions-and-history-scope), after durable
 placement and commit revalidation. Undo removes/reverts accepted active use; it does not mean deleting
 the durable audio or every other placement using it. History/recovery/pending owners may retain it.
+
+Users must be able to independently accept two interesting candidates as reusable project samples
+without automatically replacing the same contextual target twice. Accepting A as a resource need not
+place it in the music; accepting C as an intended replacement is a distinct scope. Each independent
+acceptance is a fresh validated coherent project edit with normal Undo/Redo; no universal acceptance
+action or mandatory batch command is selected. Navigating history is still separate, and successful
+acceptance does not publish either result to Personal Library. Explicit cross-project publication has
+its own [ownership boundary](#personal-library-and-explicit-publication) and R14+ stage owner. An
+unaccepted history entry must never be described as permanently saved merely because it is visible.
 
 ## Asynchronous preparation and dependency availability
 
