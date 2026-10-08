@@ -33,6 +33,10 @@ SEQ-R2-F4's [endpoint report and complete R2 audit](SEQ-R2-F4_REPORT.md) records
 render/capture discovery and explicitly selected output/join/reinitialization checks. Input enumeration
 and selection do not establish capture/recording capability; full F2 workload evidence remains distinct.
 
+SEQ-R3-F1's [desktop report](SEQ-R3-F1_REPORT.md) records actual window/input and compact Dark/Light
+visual evidence, separate from pure host tests. Its original Seqvium screenshots are evidence assets,
+not the owner's third-party design references. No reference screenshot is copied into the repository.
+
 ## Report contents
 
 A report under this directory should include:

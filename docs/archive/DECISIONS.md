@@ -1359,3 +1359,46 @@ without changing permanent backend/engine, platform release or waveform-processi
 Current owners: [Audio](../AUDIO_ENGINE.md#r2-f4-logical-endpoints-and-independent-selection),
 [Architecture](../ARCHITECTURE.md#r2-f4-endpoint-and-session-ownership), [Settings](../SETTINGS.md).
 [Observed report and complete audit](../experiments/SEQ-R2-F4_REPORT.md) owns evidence/limits.
+
+## D-079 — Bounded Avalonia desktop host and independent presentation state
+
+Status: accepted within separately authorized SEQ-R3-F1; R3 remains in progress / partial.
+
+Adopt Avalonia Desktop/Fluent for the plain .NET 10 first desktop host after actual package, API,
+MIT/native dependency and Windows runtime checks. One Desktop assembly references Core only.
+App/window own resources/chrome; a pure shell session owns the canonical document lifetime and
+localized projection. Startup activates no audio/device/capture service. First-party dotted-key EN/RU
+catalogs use individual English and essential-label fallback; Dark/Light use shared semantic roles.
+Immediate preference refresh retains controls/focus and canonical/pending musical authority.
+Small independent versioned preference JSON falls back without deleting user work, with prior-byte
+backup on explicit replacement. This establishes no extension UI SDK or general docking host.
+Desktop informational identity is 0.0.1-dev, not a product milestone or canonical schema change.
+
+Q-037 framework adoption is resolved for this bounded host; broader Q-053/Q-054/Q-055/Q-064 mechanisms
+remain open. Windows chrome/input at 96 DPI and pure host tests are evidence, not Linux/macOS UI,
+mixed-DPI, distribution or owner visual acceptance. This implements a bounded portion of D-043/D-048/
+D-068, without superseding their future contribution/accessibility/pane boundaries.
+
+Current owners: [Architecture](../ARCHITECTURE.md#r3-f1-desktop-host-and-presentation-ownership),
+[Workspace](../WORKSPACE.md#implemented-r3-f1-host-boundary), [Settings](../SETTINGS.md#implemented-r3-f1-host-preferences),
+[Provenance](../THIRD_PARTY.md#r3-f1-desktop-dependencies). [Report](../experiments/SEQ-R3-F1_REPORT.md).
+
+## D-080 — Professional workspace-first DAW visual direction
+
+Status: accepted owner-supplied long-term design direction during R3-F1 correction, not further implementation
+authority.
+
+The owner rejected the temporary generic card/dashboard direction and supplied complementary
+FL Studio, Cubase, SunVox and modern FL Studio images. Their common transferable direction is compact
+persistent controls, musical-space priority, useful specialized multi-pane composition, purposeful
+color relationships and progressive disclosure. Seqvium keeps original visuals, readable/DPI-correct
+minimums and keyboard access; it does not copy proprietary assets, exact layouts, promotional content
+or SunVox's extreme tracker typography throughout the application.
+
+The current shell replaces cards/hero text with flat compact chrome, canonical project summary,
+quiet reserved work area and on-demand About. Future pane/editor review must use real dense and sparse
+content and actual interaction, local scrolling and bounded reachable geometry, not unit tests alone.
+This refines D-002/D-013/D-048/D-066/D-068 visual direction; existing workspace/UX/domain ownership
+is unchanged. It authorizes no R3-F2, R4, mock musical functionality, docking framework or final palette.
+
+Primary owner: [Professional DAW Workspace Design Target](../UI_DESIGN.md#professional-daw-workspace-design-target).

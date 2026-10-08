@@ -24,6 +24,22 @@ managed host build, and production interop evidence on actual target runner fami
 Runtime identity must be explicit; portable contracts remain backend-independent. Do not copy
 library-specific reference scripts or preselect a native toolchain/RID matrix.
 
+## R3-F1 hosted feasibility assessment
+
+The desktop is plain `net10.0` and does not reference the Windows audio adapter; platform detection and
+guarded chrome avoid Windows-only build requirements. Avalonia uses package-native assets, not global
+templates or desktop SDK workloads. Its RID-independent/no-apphost build passed on the local Windows
+SDK; pure shell tests need neither a display nor physical audio. Therefore a pinned .NET 10 Windows/
+Ubuntu/macOS restore/Release-build/managed-test matrix is technically plausible, but no hosted run,
+runner availability or three-platform result is claimed. Tests now reference Desktop and restore its
+native assets, though pure tests do not initialize Avalonia platform/rendering services.
+
+No workflow or external service was introduced incidentally. Existing exact locked commands remain the
+candidate job steps; inspect pinned SDK availability and OS native prerequisites before introducing jobs.
+GUI smoke on Linux needs display/session setup and macOS requires an actual interactive environment;
+those are separate evidence tiers, not prerequisites for every pure test job. Hosted compilation must
+never be labeled desktop/device or distribution acceptance.
+
 ## Documentation validation and later growth
 
 Once a real documentation checker exists, make docs validation separable from heavyweight application,
@@ -34,9 +50,9 @@ selected here.
 
 Only when full verification has measurable runtime/cost may CI evolve toward:
 
-| Purpose | Possible scope / gates |
-| --- | --- |
-| Fast feedback | Ordinary push/PR: focused/fast Windows validation where useful, portable managed validation, docs |
+| Purpose         | Possible scope / gates                                                                                                                  |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| Fast feedback   | Ordinary push/PR: focused/fast Windows validation where useful, portable managed validation, docs                                       |
 | Full acceptance | Manual, scheduled, milestone and/or release gates: full suite, distribution/runtime checks, heavier DSP/stress/native checks, packaging |
 
 A small project should have a small CI system. Fast feedback must not silently become full acceptance;

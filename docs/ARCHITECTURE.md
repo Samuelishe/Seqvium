@@ -12,6 +12,29 @@ SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed 
 offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
 output adapter; graph, presentation and permanent engine choices remain separate.
 
+## R3-F1 desktop host and presentation ownership
+
+`src/Seqvium.Desktop` is the one framework-dependent `net10.0` desktop executable. It explicitly adopts
+Avalonia Desktop with Fluent base controls; its manifest/lock own versions. Core remains BCL-only and
+does not reference presentation. Desktop references Core only, not `Seqvium.Audio.Windows`, DeviceCheck
+or the R0 experiment. Launch creates no audio/device/capture session and calls no playback service.
+
+`App` owns framework startup and semantic resources; `MainWindow` owns bounded visual/chrome events.
+The display-independent `Presentation/ShellSession` owns one `ProjectDocument.Create`/Close lifetime,
+localized projection and preference commands; it does not edit the document. `HostLocalizer` owns frozen
+first-party stable dotted-key EN/RU catalogs and per-entry fallback. `HostPalette` owns Dark/Light roles;
+`PreferenceStore` owns the independent versioned user JSON. No culture change, canonical discriminator,
+document generation/history or media authority depends on translated strings or UI preference changes.
+Language/theme apply immediately at completed button actions without replacing controls/window/document.
+Numeric display is explicitly invariant; language is not a project parser or automatic name translator.
+
+Windows chrome retains native window styles, resize/move roles and a small guarded OS system-menu
+adapter; other platforms retain native decorations until tested. `WorkspaceRegion` is a composition slot,
+not a pane registry or docking hierarchy. R3-F2 must add actual internal pane activation/focus independent
+of musical selection and user layout independent of project music; those mechanisms are not implemented.
+[Workspace](WORKSPACE.md), [settings](SETTINGS.md) and [UI design](UI_DESIGN.md) own exact behavior/resources;
+[F1 report](experiments/SEQ-R3-F1_REPORT.md) owns observed bounds.
+
 ## R1 canonical foundation
 
 The production foundation uses one `Seqvium.Core` library and one `Seqvium.Tests` project. Domain
@@ -176,7 +199,7 @@ project/assembly per layer:
 | Domain                    | Musical, resource and project concepts/invariants                  |
 | Application / use cases   | Operations coordinating document edits and workflows               |
 | Infrastructure / adapters | Persistence, filesystem, audio devices/backends and plugin loading |
-| Presentation              | Workspace interaction and UI, including Avalonia if selected       |
+| Presentation              | Avalonia desktop shell and future workspace interaction/UI         |
 
 Dependency direction keeps core musical/domain semantics independent from concrete presentation and
 low-level infrastructure. Application operations coordinate domain work; adapters implement host/domain/
@@ -299,7 +322,7 @@ to either without becoming its storage identity or defining routing by itself.
 
 ## Proposed application and audio shape
 
-C# / .NET 10 is adopted for R1's canonical foundation; Avalonia remains a presentation candidate.
+C# / .NET 10 is adopted for the canonical foundation; Avalonia is adopted for the bounded R3-F1 host.
 [DEVELOPMENT](DEVELOPMENT.md) owns the developer environment, SDK/tool version authority, and setup;
 [CODING_GUIDELINES](CODING_GUIDELINES.md) owns future implementation conventions.
 

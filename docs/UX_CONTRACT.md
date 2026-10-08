@@ -2,10 +2,12 @@
 
 Role: Product contract for observable interaction.
 Read when: Designing editing, audition, workspace behavior, or user-facing actions.
-Authoritative for: Progressive complexity, input/command and focus semantics, baseline accessibility expectations, feedback, discoverability, general workflow semantics.
+Authoritative for: Progressive complexity, input/command and focus semantics, baseline accessibility expectations,
+feedback, discoverability, general workflow semantics.
 Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or current implementation.
 
-These are intended requirements. No application UI exists yet.
+These are intended requirements except the explicitly implemented bounded R3-F1 shell below; musical UI remains future
+work.
 
 ## Mouse-first creation and complementary input
 
@@ -46,10 +48,10 @@ in preview or granularity; the accepted edit and its Undo meaning belong to the 
 
 The following is an illustrative movement case, not accepted bindings or step sizes:
 
-| Input example | Requested intention |
-| --- | --- |
-| Left / Right | Precise/small nudge of the intended clip/item selection |
-| Modifier + Left / Right | Larger/coarser nudge of that same target |
+| Input example           | Requested intention                                     |
+|-------------------------|---------------------------------------------------------|
+| Left / Right            | Precise/small nudge of the intended clip/item selection |
+| Modifier + Left / Right | Larger/coarser nudge of that same target                |
 
 Separate intentional presses normally remain separate edits; a continuous held-key repeat may form
 one bounded same-intent session under [Undo grouping](#undo-grouping-and-interaction-preview).
@@ -66,12 +68,12 @@ No global Shift/Ctrl/Alt meaning, exact modifier or final interaction mechanics 
 
 Keep these concepts distinct even where they correlate:
 
-| Concept | Meaning |
-| --- | --- |
-| Keyboard focus | The surface/editor currently receiving keyboard input |
-| Musical/document selection | Selected project material in the relevant editing context |
-| Active workspace pane | The pane currently activated under the workspace contract |
-| Current command target | The explicit target/scope to which a requested action applies |
+| Concept                    | Meaning                                                       |
+|----------------------------|---------------------------------------------------------------|
+| Keyboard focus             | The surface/editor currently receiving keyboard input         |
+| Musical/document selection | Selected project material in the relevant editing context     |
+| Active workspace pane      | The pane currently activated under the workspace contract     |
+| Current command target     | The explicit target/scope to which a requested action applies |
 
 Keyboard interaction should move focus or selection through relevant timeline items, notes/events,
 graph elements, panes and menus/actions where useful. Every visual object need not be an individual
@@ -313,11 +315,11 @@ crop/consolidate/render operation may later create/commit a genuinely new shorte
 
 Keep these edit intentions distinct rather than overload one gesture ambiguously:
 
-| Intention | Meaning |
-| --- | --- |
-| Trim | Change audible/visible source range without changing playback speed |
-| Loop/repeat | Extend material by repeating it |
-| Stretch | Change playback duration/time mapping |
+| Intention   | Meaning                                                             |
+|-------------|---------------------------------------------------------------------|
+| Trim        | Change audible/visible source range without changing playback speed |
+| Loop/repeat | Extend material by repeating it                                     |
+| Stretch     | Change playback duration/time mapping                               |
 
 An ordinary trim must not accidentally change playback speed. Project-wide tempo changes and local
 clip stretch are also distinct; [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) owns the
@@ -447,7 +449,8 @@ overload and plugin-host UX remain open.
 Behavior-affecting migration presents a concise summary and user choice before applying forced
 fallback/default substitution or other nontrivial transformation, including older-version save
 compatibility consequences under the format owner. Global destructive operations check known active
-dependencies; package uninstall is blocked/deferred under [EXTENSIONS](EXTENSIONS.md#instance-removal-and-package-uninstall).
+dependencies; package uninstall is blocked/deferred
+under [EXTENSIONS](EXTENSIONS.md#instance-removal-and-package-uninstall).
 
 Normal audio preferences select logical input/output devices/endpoints under
 [SETTINGS](SETTINGS.md#audio-device-selection), with backend/driver integration internal to the platform.
@@ -497,6 +500,15 @@ Production diagnostics ordinarily need at most a simple enable/disable preferenc
 developer logging levels belong outside ordinary GUI settings under [SETTINGS](SETTINGS.md#production-diagnostics).
 
 ### Language and theme preference changes
+
+R3-F1 applies its two language/theme actions immediately after button activation. Existing controls,
+keyboard focus and document remain alive; no deferred restart is required in this bounded shell.
+RU entries fall back individually to usable English; if an essential host entry is also unusable,
+short independent English action/name labels remain available rather than exposing keys. Other missing
+text gets a meaningful localized unavailable explanation. Blank, control-containing or overlong entries
+are unusable. Dotted keys and first-party catalogs are host-owned, not an extension resource SDK.
+Unnamed display is localized only while canonical name is null; user names and canonical numeric values
+never translate. This shell has no editable localized numeric input or active musical gesture.
 
 Changing host language/theme with a project open is a presentation preference change, not a musical
 edit. Preserve project content/relationships, ongoing editing intent, focus/selection and pending

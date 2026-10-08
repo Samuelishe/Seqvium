@@ -2,7 +2,8 @@
 
 Role: Evolving visual and interaction design guide.
 Read when: Designing visual hierarchy, pane chrome, controls, indicators, or graph presentation.
-Authoritative for: Durable visual principles, usable responsive layout, interaction density, consistency, progressive visual complexity, semantic theme/style resources.
+Authoritative for: Durable visual principles, usable responsive layout, interaction density, consistency, progressive
+visual complexity, semantic theme/style resources.
 Not authoritative for: Workflow semantics, pane lifecycle, graph execution, or a final design system.
 
 ## Design intent and scope
@@ -11,7 +12,131 @@ Seqvium should feel like a creative instrument. Pleasant manipulation, tactile i
 clarity, and visual quality are product requirements under [PROJECT_VISION](PROJECT_VISION.md).
 This is a small evolving guide, not a complete design system. Deliberate later UI design stages must
 establish final colors, typography, pixel dimensions, icons, theme details, control library, and window mockups.
-Dark/Light baseline direction is accepted below; exact visuals remain unselected and no UI is implemented.
+Dark/Light baseline direction is accepted below; R3-F1 implements a restrained initial shell, not the final visual
+system.
+
+## Implemented R3-F1 visual baseline
+
+The shell uses compact flat chrome with project title/unsaved state, one narrow canonical tempo/meter
+and preference toolbar, a quiet full-width workspace and a narrow audio-inactive/status strip. Dashboard
+cards, hero headings and introductory/future-feature paragraphs are absent. Version and bounded
+capability information appear only in the functional About flyout, not in the ordinary workspace.
+System-default font/fallback and simple textual window glyphs require no borrowed assets.
+
+`HostPalette` provides identical Dark/Light keys: `Surface.Background/Raised/Workspace`,
+`Text.Primary/Secondary`, `Border.Default`, `Focus.Active`, `Accent.Action`, `State.Unavailable`,
+`Status.Warning`. No speculative error/pending indicator is displayed. Shared `HostMetrics` supplies
+`Type.Body/Caption` (12/11 DIP), `Chrome.Height` (30), `Toolbar.Height` (30), `Status.Height` (22),
+`Control.Height` (24), `Control.Corner` (2) and `Space.Gap` (6). These are bounded initial shell metrics,
+not a final pane API or a mandate to shrink future editor content to this density.
+XAML consumes semantic brushes rather than per-control theme colors. Fluent supplies base control state
+behavior, while host styles supply shell surface/accent/focus. Color is accompanied by text/shape/state.
+Tests verify complete roles and text contrast; actual Dark/Light screenshots and small-window reachability
+are evidence only for the implemented Windows shell. Theme switching retains window, controls and focus.
+
+## Professional DAW Workspace Design Target
+
+This is an accepted long-term visual direction, not authorization to implement future stages or a
+pixel-perfect design system. It complements [project vision](PROJECT_VISION.md),
+[workspace behavior](WORKSPACE.md) and [UX](UX_CONTRACT.md); their ownership and accessibility contracts
+remain intact. Owner-supplied FL Studio, Cubase, SunVox and modern FL Studio images were inspected as
+complementary references. They are research context only: no reference images or proprietary assets
+are copied into the repository, and no application's palette, icons or exact layout is adopted.
+
+### Transferable reference principles
+
+- FL Studio: flexible internal composition, compact global controls and simultaneous specialized music
+  editing surfaces; take coexistence and fast contextual access, not an exact window arrangement.
+- Cubase: arrangement-first hierarchy, useful track density, detailed time structure and integrated lower
+  working areas; take meaningful allocation between overview/editing/mixing, not mandatory fixed panes.
+- SunVox: compact modular visualization with explicit meaningful node relationships, a distinct inspector
+  and little decorative overhead. Its extreme tracker text density is not the application's default
+  typography or an instruction to make a tracker/editor now.
+- Modern FL Studio: coherent Browser/Arrangement/Mixer composition, shared visual language and useful
+  horizontal/vertical space allocation. Do not copy promotional Browser artwork, proprietary assets,
+  persistent developer counters or the particular control inventory.
+
+No referenced feature must be implemented or visible by default. Purposeful color grouping, strong
+hierarchy and progressive disclosure are shared principles; copying a populated screenshot is not.
+
+### Workspace-first composition and functional density
+
+The workspace is the primary product surface. Persistent chrome, navigation, status and preferences use
+only a small justified fraction of available space. Musical content takes precedence over documentation,
+development status, onboarding and configuration. Empty workspace is preferable to decorative placeholders.
+
+Favor compact predictable controls, toolbars, tracks, inspectors and editors. Reject oversized cards,
+large corner radii, excessive padding/whitespace, repeated explanations, giant ordinary-object headings,
+persistent unavailable-future-feature prose and primary-screen framework/version/build details.
+Density must preserve readable text, keyboard access, useful pointer targets and correct platform DPI.
+Choose dimensions deliberately from hierarchy/content, never microscopic typography or indiscriminate
+whole-application scaling. Accessibility and readable minimums are constraints, not density tradeoffs
+to silently discard. R3-F1's compact metrics are starting values, not immutable future dimensions.
+
+### Specialized musical surfaces and multi-pane composition
+
+Future Pattern, Piano Roll, Arrangement, Mixer, Browser, Graph and Sample Lab share a coherent host
+language while keeping task-specific interaction and useful density:
+
+- Arrangement prioritizes tracks, clips, time structure and editing.
+- Piano Roll prioritizes notes, pitch/time grids and velocity/parameter editing.
+- Mixer prioritizes compact channels, levels and processing controls.
+- Browser prioritizes navigable sources and fast audition.
+- Graph prioritizes readable nodes, ports, meaningful connections and spatial navigation.
+- Pattern and Sample Lab prioritize their actual musical/exploration actions and supported context.
+
+Do not force every surface into identical cards, lists or generic forms. A pane is a substantial working
+surface, not a decorative container. The long-term single-main-window workspace must accommodate useful
+overlap/floating, clear activation/front behavior, independent sizing, collapse/restore and later
+user-controlled docking/magnetism under [WORKSPACE](WORKSPACE.md#flexible-composition-and-activation).
+Not every editor must remain visible. Layout preferences remain separate from canonical music.
+This establishes no docking hierarchy, registry, pane implementation or R3-F2 authorization.
+
+### Stable responsive frame
+
+Design deliberately for ordinary desktop work, including one 1920x1080 display, smaller windows and
+platform DPI changes within declared evidence. Prefer reflow of small command groups, collapsing
+secondary panels, pane-local scrolling, resizable working regions, contextual tools and bounded usable
+minimums. The primary application frame stays stable: no default whole-window scrolling, permanent
+large headers, global font/control shrinking or unreachable offscreen work areas. Actual timelines,
+notes, channels and other editor content may scroll horizontally/vertically where musically appropriate.
+
+### Visual hierarchy, color and control economy
+
+Use restrained predominantly flat surfaces, thin separators, subtle surface contrasts, minimal rounding
+and consistent typography. Dark is the preferred primary working presentation; Light remains coherent
+and functional. Distinguish active context, selected material, keyboard focus and disabled/unavailable
+states. Sparse accents and purposeful musical colors explain track/clip/pattern/context organization,
+activity and relationships, rather than merely decorate. Essential information also needs non-color cues.
+
+Keep frequent actions compact and close to the relevant musical context. Advanced actions may use
+context menus, secondary panels or inspectors. Do not give every preference a large button and paragraph;
+do not hide essential workflows solely to make screenshots clean. Progressive disclosure controls
+complexity without making frequent work laborious or the interface a settings application.
+
+### Honest functionality and GUI review
+
+Never fabricate tracks, editable notes, transport, meters or processing controls ahead of implementation.
+A sparse structurally correct R3-F1 host is acceptable; visual richness must arrive from actual useful
+functionality. No musical domain change or reopening of R1/R2 follows from these references.
+
+For each substantial GUI change, answer through actual rendered windows/screenshots and interaction:
+
+1. What proportion of visible space is available for actual musical work?
+2. Does persistent chrome justify the space it occupies?
+3. Are common controls compact and immediately reachable?
+4. Can relevant working surfaces coexist without excessive obstruction?
+5. Does resizing preserve reachable content and useful minimum dimensions?
+6. Is scrolling local to the appropriate musical surface?
+7. Is layout understandable with RU/EN text and Dark/Light themes?
+8. Are focus, selection, disabled state and active musical context distinguishable?
+9. Are elements functional, rather than decoration or future-development descriptions?
+10. Does this support sustained music production rather than occasional configuration?
+
+When a substantial editor arrives, review representative dense and sparse content, not only its empty
+default. Unit tests are necessary evidence for applicable invariants, not visual acceptance. Record actual
+OS/DPI/size/input bounds and missing evidence. Owner visual review remains required; R3-F1 screenshots
+show reserved workspace capacity, not implemented musical work or multi-pane acceptance.
 
 ## Hierarchy, chrome, and density
 
@@ -42,7 +167,7 @@ are selected.
 ## Responsive layout and usable minimums
 
 First-party Seqvium UI uses responsive/reflowing layout, not uniform graphical scaling of the
-application. Prefer reflow, collapsing secondary content, scrolling/overflow, resizing flexible
+application. Prefer reflow, collapsing secondary content, pane-local scrolling/overflow, resizing flexible
 regions, and preserving minimum usable sizes as available space changes.
 
 Do not continuously shrink fonts, icons, mixer strips, knobs, click/touch targets, or other primary
@@ -81,7 +206,8 @@ affected node/connection highlighting, restrained color with non-color cues, and
 explanations. Persistent missing-capability and execution blockers remain visible at affected elements;
 optional global count/navigation may help reach them. Disappearing notifications are supplementary,
 logs are diagnostic support, and the workspace must not become a diagnostics dashboard. Keep feedback
-visible without interrupting normal editing with cascading modal dialogs; [UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures) owns exceptions
+visible without interrupting normal editing with cascading modal
+dialogs; [UX_CONTRACT](UX_CONTRACT.md#graph-state-and-recoverable-failures) owns exceptions
 where a modal decision is genuinely required. Exact visuals remain open.
 
 Use immediate visual/audio feedback to make manipulation understandable and invite experimentation.
@@ -109,7 +235,8 @@ The R3 shell needs a small host-owned semantic foundation sufficient for the sur
 
 These are responsibility categories, not final tokens, palette values, dimensions, fonts or a complete
 catalog. Concepts such as `Surface.Background`, `Text.Primary`, `Accent.Primary` and `Status.Warning`
-illustrate roles only; they are not accepted API identifiers. Reusable icon/resource roles may be added
+illustrate future categories only; the bounded implemented host keys above are not a public extension API. Reusable
+icon/resource roles may be added
 where justified; the shell does not need every future graph or Sample Lab token in advance.
 
 Dark/Light provide coherent alternative resources for the same UI semantics, not different document
@@ -118,7 +245,8 @@ Seqvium-native extension UI share the host roles as those surfaces arrive. Exten
 independently recreate each Dark/Light style. Justified future plugin customization may coexist with
 the shared foundation; it does not establish a parallel mandatory style system.
 
-Theme changes preserve musical state under [Architecture](ARCHITECTURE.md#preference-changes-and-locale-aware-presentation)
+Theme changes preserve musical state
+under [Architecture](ARCHITECTURE.md#preference-changes-and-locale-aware-presentation)
 and observable preference-change safety under [UX](UX_CONTRACT.md#language-and-theme-preference-changes).
 Selection, focus, warnings/errors, invalid graph state, disabled actions and pending work retain sufficient
 structural/non-color cues under [feedback](#feedback-and-motion). Color alone cannot carry essential
@@ -137,4 +265,4 @@ remain Q-055; additional restrained themes are possible without promising a mark
 theme SDK, dynamic compiler, live reload or customization editor. Host localization ownership belongs
 to [ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources); staged introduction belongs to
 [Roadmap](ROADMAP.md#localization-and-theme-foundation-ownership). No theme packages or localization
-resources are introduced by this direction.
+extension resources are introduced by this direction; R3-F1's first-party catalogs/palettes are implemented above.

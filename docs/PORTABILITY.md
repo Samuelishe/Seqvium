@@ -11,7 +11,7 @@ triggers.
 
 **Seqvium targets Windows, Linux, and macOS.** Windows is the primary early development/runtime
 environment. Linux and macOS are first-class architectural targets from the start, not accidental
-later ports. No production application or supported release exists. The bounded Windows audio probe
+later ports. R3-F1 has a runnable desktop foundation, not a supported product release. The bounded Windows audio probe
 has [experimental runtime/device evidence](experiments/SEQ-R0_REPORT.md). F2 adds a bounded production
 Windows x64 WASAPI output adapter and [physical evidence](experiments/SEQ-R2-F2_REPORT.md), while Core's
 musical/project/PCM contracts remain portable and contain no Windows API. Linux/macOS remain untested.
@@ -37,6 +37,24 @@ Capture endpoints were enumerated/selected only; no input stream, microphone sam
 Other active outputs were listed without audible playback. Linux/macOS runtime/device support and
 packaged distribution remain unverified. No OS preference was changed; endpoint IDs are session facts,
 not portable project requirements.
+
+## R3-F1 desktop feasibility and evidence
+
+Desktop targets plain `net10.0`, not a Windows-only TFM; guarded user32 chrome is never used off Windows.
+Avalonia supplies Win32, X11 and native macOS adapters plus Skia/HarfBuzz native RID assets via packages.
+Linux defaults to X11/XWayland; native Wayland is not enabled. Linux needs a real display/session and
+compatible X11/fontconfig/native libraries; macOS uses `libAvaloniaNative.dylib` and OS frameworks,
+not the .NET macOS workload. Exact distributed prerequisites remain Q-041.
+See official [Linux](https://docs.avaloniaui.net/docs/platform-specific-guides/linux) and
+[macOS](https://docs.avaloniaui.net/docs/platform-specific-guides/macos) platform guidance.
+
+The local Windows SDK builds the RID-independent executable assembly without apphost with zero warnings;
+manifest/lock inspection confirms the cross-platform dependency shape. This supports hosted build/test
+feasibility, not actual Linux/macOS execution or a cross-compiled packaged release. No hosted jobs ran.
+Other desktops keep native window decorations pending OS-specific validation. Windows GUI evidence is
+11 x64, 96 DPI, normal/minimum/maximized sizes, pointer and keyboard actions, both host languages/themes.
+High/mixed DPI, cross-monitor behavior, Linux/macOS window/input/accessibility, screen readers, diverse
+GPU/driver configurations, signing/installers and delivered clean-machine prerequisites remain untested.
 
 ## Platform evidence and support scope
 
@@ -111,7 +129,7 @@ movement/resizing, keyboard actions and focus return, input/pointer interaction,
 pane/overlay/docking behavior, and accessibility integration for the capabilities claimed. External
 plugin window behavior is validated when that hosting capability exists, not required before it.
 [WORKSPACE](WORKSPACE.md) and [UX](UX_CONTRACT.md) retain observable behavior;
-Q-037/Q-064 retain framework adoption and concrete input/accessibility evidence. Hosted UI logic tests
+Avalonia adoption is established; Q-064 retains broader input/accessibility evidence. Hosted UI logic tests
 supplement rather than replace actual interaction. No universal accessibility certification is claimed.
 
 Linux desktop evidence must identify its actual graphical/audio integration and native dependencies.

@@ -3,7 +3,8 @@
 Role: Implementation conventions and engineering invariants.
 Read when: Writing, reviewing, or refactoring C# production or test code.
 Authoritative for: Naming/language, code structure, async, lifetime, errors, refactoring, and managed warning policy.
-Not authoritative for: Product behavior, subsystem architecture, package versions, test commands, CI triggers, or platform support status.
+Not authoritative for: Product behavior, subsystem architecture, package versions, test commands, CI triggers, or
+platform support status.
 
 These rules bind production/test implementation and the separate bounded SEQ-R0 probe.
 Read [ARCHITECTURE](ARCHITECTURE.md)
@@ -81,7 +82,7 @@ than intentional host failure. Preserve unknown/missing plugin state during seri
 
 ## UI code
 
-Avalonia remains a proposed/likely framework until explicit implementation adoption. Regardless of
+Avalonia is adopted for the bounded R3-F1 desktop host. Regardless of
 framework, domain/business/audio logic must not live in pane/control code for convenience. UI owns
 neither realtime execution nor project integrity; workspace panes host presentation/editing surfaces,
 not domain ownership. Keep pure non-visual logic framework-independent where practical and localize
@@ -121,11 +122,11 @@ nullability should be established by guards/contracts, not unjustified `!` to si
 
 The root [.editorconfig](../.editorconfig) already marks particularly important failure classes as errors:
 
-| Diagnostic | Guard |
-| --- | --- |
-| CS8602 | Possible null dereference |
+| Diagnostic               | Guard                                                                                                                              |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| CS8602                   | Possible null dereference                                                                                                          |
 | CS1572 / CS1573 / CS1587 | Stale parameter documentation, missing parameter documentation in a documented signature, or orphaned XML comments after refactors |
-| xUnit1031 | Blocking async test behavior, when xUnit analyzers are present |
+| xUnit1031                | Blocking async test behavior, when xUnit analyzers are present                                                                     |
 
 These explicit rules document recurring mistakes and influence IDE diagnostics even after compiler
 warnings become globally fatal. They do not install analyzers, select xUnit, or require XML boilerplate.

@@ -54,7 +54,8 @@ remains the primary license artifact.
 ## Introduced
 
 R1 adopts the installed .NET 10 SDK/runtime for its framework-dependent canonical library and managed
-tests. Production code has no external NuGet dependency. The test project uses the components below;
+tests. Core production code remains BCL-only; R3-F1 Desktop dependencies are recorded separately below.
+The test project uses the components below;
 its [manifest](../tests/Seqvium.Tests/Seqvium.Tests.csproj) and
 [lock file](../tests/Seqvium.Tests/packages.lock.json) own versions and the complete dependency graph.
 No third-party source/assets are vendored. Local binaries are ignored and no product distribution is
@@ -90,6 +91,37 @@ Apache-2.0 work. Local native loading succeeds without MSYS2 runtime DLL imports
 clean-machine deployment or general legal/distribution acceptance. No root NOTICE is added in lieu of
 the applicable runtime license files.
 
+## R3-F1 desktop dependencies
+
+Avalonia is explicitly adopted for the bounded desktop host, not merely proposed. The actual
+[desktop manifest](../src/Seqvium.Desktop/Seqvium.Desktop.csproj) selects `Avalonia.Desktop` and
+`Avalonia.Themes.Fluent`; its [lock](../src/Seqvium.Desktop/packages.lock.json) owns all exact resolved
+revisions/content hashes. Evaluation on 2026-10-09 verified stable 12.1.3 availability, net10.0 assets,
+MIT license and real Windows startup. The [official package](https://www.nuget.org/packages/Avalonia.Desktop/12.1.3)
+and [tagged license](https://github.com/AvaloniaUI/Avalonia/blob/12.1.3/licence.md) support adoption.
+The test lock also contains this graph because display-independent shell tests reference Desktop.
+No global templates/tools, copied framework source, external theme engine, icon library or font package
+is introduced. Fluent is the framework's base controls/theme, customized through small host styles.
+
+| Component / author                                                                                                                                          | Form/purpose and official source                                                                                                                    | License and redistribution implications                                                                                                                                                                                        |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Avalonia Desktop, Fluent, Win32/X11/Native, Skia/HarfBuzz integration, FreeDesktop/AT-SPI, Remote.Protocol and BuildServices / Avalonia Team, AvaloniaUI OÜ | Managed desktop/rendering/accessibility/build components and macOS native backend; [source](https://github.com/AvaloniaUI/Avalonia)                 | Restored package metadata declares MIT. Retain applicable copyrights/licenses in redistributed binaries; a protocol dependency does not mean Seqvium activates remote diagnostics                                              |
+| Avalonia.Angle.Windows.Natives / Avalonia Team packaging, ANGLE contributors                                                                                | Native Windows GL/ES rendering binaries; [ANGLE](https://github.com/google/angle)                                                                   | Selected package's LICENSE is BSD-3-Clause. Preserve that license and applicable native transitive notices; ANGLE is Avalonia's renderer dependency, not a separately introduced Seqvium engine                                |
+| SkiaSharp and NativeAssets Linux/macOS/Win32/WebAssembly / Microsoft, native Skia contributors                                                              | Managed/native drawing; [source/licenses](https://github.com/mono/SkiaSharp)                                                                        | Selected packages declare MIT and contain wrapper licenses. Underlying Skia uses BSD-style and transitive notices; audit actual native binary notices/third-party contents before redistribution, not just the wrapper license |
+| HarfBuzzSharp and NativeAssets Linux/macOS/Win32/WebAssembly / Microsoft, HarfBuzz contributors                                                             | Managed/native text shaping; [wrapper](https://github.com/mono/SkiaSharp), [upstream terms](https://github.com/harfbuzz/harfbuzz/blob/main/COPYING) | Selected packages declare MIT; preserve wrapper and upstream copyright/license notices and actual native dependency obligations before distribution                                                                            |
+| MicroCom.Runtime / Nikita Tsukanov and contributors                                                                                                         | Managed interop for framework platform adapters; [source](https://github.com/kekekeks/MicroCom)                                                     | Restored package metadata declares MIT; retain copyright/license when redistributed                                                                                                                                            |
+| Tmds.DBus.Protocol / Tom Deseyn                                                                                                                             | Managed Linux D-Bus integration; [source/license](https://github.com/tmds/Tmds.DBus)                                                                | MIT in restored metadata; preserve license/copyright on redistribution                                                                                                                                                         |
+
+This is a framework-dependent local host, not a packaged release or a completed native notice bundle.
+NuGet supplies platform-native assets (actual Windows smoke loaded libSkiaSharp, libHarfBuzzSharp and
+av_libGLESv2); Linux/macOS libraries/runtime/display prerequisites remain separately evidenced in
+[PORTABILITY](PORTABILITY.md#r3-f1-desktop-feasibility-and-evidence). Restore containing WebAssembly
+assets establishes neither a browser UI nor a WebAssembly target. No OS DLL is redistributed; the
+small Windows menu adapter calls installed user32. Future delivered artifacts must include the actual
+applicable licenses/notices and validate dependencies/signing/runtime installation. Permissive package
+terms are compatible with Seqvium-authored Apache-2.0 without relicensing these components; native
+transitive notice completion remains a release gate, not a claim made from this build.
+
 ## Planned / under evaluation
 
 These are candidates or product directions, not dependencies, adoption decisions, or promises.
@@ -98,8 +130,7 @@ it does not adopt a portable audio dependency or production engine.
 
 | Candidate / direction             | Intended evaluation boundary                                                                                                                                                                                                                                                  |
 |-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Further .NET application delivery | Managed canonical foundation is adopted in R1; workstation executable, self-contained/native packaging and distribution remain unevaluated                                                                                                                                    |
-| Avalonia                          | Proposed UI framework; evaluate official package/API/platform/license evidence before adoption                                                                                                                                                                                |
+| Further .NET application delivery | Managed canonical foundation and a framework-dependent desktop host are adopted; self-contained/native packaging and distribution remain unevaluated                                                                                                                          |
 | miniaudio or comparable backend   | Still a portable candidate. Official miniaudio license offers public-domain or MIT-0 terms; PortAudio has an MIT-style license. Neither is downloaded, built, redistributed or device-tested here; concrete revisions/transitive/backend/distribution checks remain necessary |
 | Future ASIO integration           | Desired later device capability, not an R0 requirement or adopted SDK/backend; evaluate concrete implementation source, licensing and redistribution when its stage approaches                                                                                                |
 | CLAP / VST3 hosting               | Later possibility; evaluate concrete SDK terms, bridges, distribution and product need when justified                                                                                                                                                                         |

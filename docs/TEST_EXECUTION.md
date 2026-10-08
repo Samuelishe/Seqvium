@@ -97,6 +97,19 @@ time, prepared-state capacity/publication and ownership. Actual device callbacks
 are separate from timer-driven evidence. This does not establish plugin/graph/UI/recording or release
 acceptance, and no hosted checks are introduced.
 
+## R3-F1 host verification
+
+`Desktop/HostPresentationTests` and `PreferenceStoreTests` add 34 cases to the 274-case R2 baseline.
+They verify stable catalogs and per-entry/essential fallback, both semantic palettes and contrast,
+canonical snapshot/generation/history/name/numeric integrity, acceptance of actual previously prepared
+WAV work after preference changes, shell create/close, ordered preference commands, all four persisted
+combinations, missing/corrupt/oversize/write-failed settings and preservation of unrelated user content.
+They reference Desktop but never initialize the platform or open a physical window/audio stream.
+Use the existing full locked Release commands; `--filter-class "*HostPresentationTests"` selects host
+presentation cases when needed. The [F1 report](experiments/SEQ-R3-F1_REPORT.md) separately records actual
+Windows UI Automation/pointer/keyboard smoke and visual inspection. Compilation/pure tests are not GUI
+acceptance; high/mixed DPI, screen readers and Linux/macOS runtime remain missing evidence.
+
 ## Intended test topology
 
 Prefer **one main managed `Seqvium.Tests` project**, organized by domain/feature folders. Conceptual

@@ -10,6 +10,27 @@ logging implementation.
 These are accepted requirements. R2-F4 implements session-only logical audio selection; no settings UI,
 configuration files, global preference persistence or logging implementation exists.
 
+## Implemented R3-F1 host preferences
+
+The shell persists only language (`en`/`ru`) and theme (`dark`/`light`) in version-1 JSON, default EN/Dark:
+Windows `%LOCALAPPDATA%/Seqvium/preferences.json`; macOS `~/Library/Application Support/Seqvium/preferences.json`;
+Linux absolute `$XDG_CONFIG_HOME/Seqvium/preferences.json`, otherwise `~/.config/Seqvium/preferences.json`.
+This file owns no pane layout, project settings/music, media, device intent or recovery snapshot.
+
+Reads are bounded to 4096 bytes, tolerate missing/malformed/unreadable/unsupported settings, fall back
+per field when possible and never clean/delete the original. Corruption/access failure produces a localized
+notice; missing settings simply use defaults. Explicit changes serialize writes through one owner gate,
+write/flush a same-directory unique temporary file, preserve previous bytes in `preferences.json.previous`
+before replacement and remove only the writer's temporary. Oversize originals or failed backup/replacement
+refuse persistence; the applied in-session preference remains usable with a visible warning.
+The main window awaits pending preference persistence on close. Power-loss durability, multiple writer
+processes, hostile links and a multi-version backup history are not established guarantees.
+
+Language/theme apply immediately, preserve controls/focus and do not edit canonical revision/history,
+translate user project names or invalidate pending imports. No Reset command or full Settings UI exists.
+A future reset must be restricted to independently owned configuration; it cannot delete project files,
+accepted WAV, user-created content or recovery. The `.previous` file is preferences only, not music recovery.
+
 ## User configuration and project state
 
 Per-user/application configuration belongs in the platform-appropriate user configuration area:

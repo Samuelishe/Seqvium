@@ -14,7 +14,7 @@ primary IDE. Git is standard source control; [AGENTS](../AGENTS.md) owns safety 
 [PORTABILITY](PORTABILITY.md) owns Windows/Linux/macOS target direction and evidence limits.
 
 C#/.NET 10 is adopted for the R1 canonical foundation in [ARCHITECTURE](ARCHITECTURE.md#r1-canonical-foundation).
-Avalonia remains proposed, not adopted. [Seqvium.sln](../Seqvium.sln) contains the portable
+Avalonia is adopted for R3-F1. [Seqvium.sln](../Seqvium.sln) contains the portable
 [Seqvium.Core](../src/Seqvium.Core/Seqvium.Core.csproj) library and one
 [Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj) executable test project.
 R2-F1 adds BCL-only WAV/media and offline sampler files within the same library; the
@@ -22,7 +22,8 @@ R2-F1 adds BCL-only WAV/media and offline sampler files within the same library;
 Default unnamed media ownership is under LocalApplicationData; tests always supply owned directories.
 R2-F2 adds the narrow `Seqvium.Audio.Windows` platform library and explicit `Seqvium.DeviceCheck`
 physical verification executable; [architecture](ARCHITECTURE.md#r2-f2-execution-and-platform-ownership)
-owns their dependency boundary. There is no workstation executable or UI. The standalone
+owns their dependency boundary. R3-F1 adds one `Seqvium.Desktop` executable referencing Core only.
+The standalone
 [SEQ-R0 probe](../experiments/seq-r0/README.md) remains independent.
 
 From the repository root with .NET SDK 10.0.401 (or a later patch in the 10.0.4xx band):
@@ -43,6 +44,21 @@ The `dotnet` CLI provides the build/test path independently of Rider; test/filte
 an acceptable cross-platform repository scripting environment where a concrete need justifies it;
 scripts are not introduced by this policy. Native compiler, CMake, Ninja, and native package managers
 are not selected; document setup only when an implementation stage chooses them.
+
+### SEQ-R3-F1 Windows desktop launch
+
+After locked restore and Release build, from the repository root:
+
+```text
+dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-build --no-restore
+```
+
+Alternatively launch `src/Seqvium.Desktop/bin/Release/net10.0/Seqvium.Desktop.exe` directly.
+Installed .NET 10 is needed; no global Avalonia template/tool/workload, server or browser is needed.
+Opening the host creates a pristine unnamed document and loads user preferences only. It never starts
+WASAPI/capture/DeviceCheck or changes system audio settings. RU/EN and theme changes persist to the
+platform configuration path in [SETTINGS](SETTINGS.md#implemented-r3-f1-host-preferences).
+Use the [F1 report](experiments/SEQ-R3-F1_REPORT.md) for actual GUI evidence/limitations.
 
 ### SEQ-R2-F2 physical output verification
 
@@ -92,6 +108,12 @@ NuGet packages restored, production assemblies created or CMake/Ninja selected. 
 the production audio SDK/topology.
 
 ## Version authority
+
+R3-F1 introduces no repository-wide product version scheme. Its desktop manifest owns `0.0.1-dev`;
+About reads the generated assembly informational version, without an automatically appended Git hash.
+This is an early development identity, not a `0.1.0` product milestone or project schema version.
+Core and project serialization versions are unchanged. Work-package IDs belong in About/evidence, not
+the ordinary workspace. Any later product-wide version/release policy remains an explicit decision.
 
 Prefer repository-declared versions/configuration over undocumented machine-global assumptions.
 The R1 SDK pin/roll-forward policy is declared in root `global.json`; evolve it deliberately when

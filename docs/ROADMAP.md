@@ -237,15 +237,24 @@ R2's bounded resource/device foundation is complete / local accepted-ready under
 [PROJECT_STATE](PROJECT_STATE.md) and
 the [complete acceptance audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit).
 Its completed scope/rationale is retained in the cold archive. The next numbered stage is R3, which
-is not started and requires separate authorization; no extra milestone, permanent backend or recording
+is in progress within separately authorized R3-F1; no extra milestone, permanent backend or recording
 prerequisite is introduced. Current audio/source/device contracts remain in their canonical owners.
 
 ## SEQ-R3 — Workspace Shell Foundation
+
+Status: **in progress / partial**. R3-F1 delivers the actual main desktop window, bounded Windows chrome,
+canonical project summary, first-party RU/EN fallback, Dark/Light semantic resources and safe independent
+preference storage; see [current state](PROJECT_STATE.md) and [observed report](experiments/SEQ-R3-F1_REPORT.md).
+F1/F2 are bounded packages within R3, not numbered roadmap stages. Visual review of F1 precedes F2's
+actual internal panes, activation/focus, floating/resizing/collapse, drag/dock and layout persistence.
+Those mechanisms are not implemented; R3 is not complete. No R4/music editor/audio-preview work is included.
 
 Establish one main window and internal workspace-pane infrastructure: activation/front behavior,
 movement/resizing, internal floating, bounded collapse/restore, user-controlled docking where justified,
 and safe application/user layout persistence. Start with limited surfaces; no full visual system or
 aggressive IDE docking framework. Follow [WORKSPACE](WORKSPACE.md) and [UX_CONTRACT](UX_CONTRACT.md).
+Apply [the DAW workspace visual target](UI_DESIGN.md#professional-daw-workspace-design-target) with real
+sparse/dense surface evidence as functionality arrives; the references authorize no stage acceleration.
 Respect custom unobtrusive main chrome, non-intrusive foreground behavior, and responsive layout with
 usable minimums; platform/accessibility mechanics and concrete sizes still require bounded design.
 Introduce the minimum host localization/semantic theme and preference rails assigned in

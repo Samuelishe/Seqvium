@@ -2,8 +2,33 @@
 
 Role: Main-window workspace-pane behavior and layout-state contract.
 Read when: Designing pane placement, activation, floating, docking, collapse, or layout restoration.
-Authoritative for: Main-window chrome/keyboard window actions, pane reachability/escape and focus return, internal panes, user-controlled docking, activation/front behavior, layout ownership.
+Authoritative for: Main-window chrome/keyboard window actions, pane reachability/escape and focus return, internal
+panes, user-controlled docking, activation/front behavior, layout ownership.
 Not authoritative for: Pane-specific editing, final visuals/gestures, framework Z-order API, or project schema.
+
+## Implemented R3-F1 host boundary
+
+One actual main OS window hosts identity, compact canonical project summary, two preference
+actions and a reserved workspace region. No internal working pane, drag/dock manager, layout persistence,
+floating/collapse or per-pane docking preference is implemented; these remain R3-F2/later R3 work.
+The region is deliberately not a speculative pane/plugin framework. Preserve independent pane
+activation/focus versus document selection and user layout versus canonical music as panes arrive.
+
+On Windows the restrained custom 30-DIP header has named/focusable minimize, maximize/restore and close
+buttons. Native styles and Avalonia decoration roles preserve title dragging and border resizing;
+Alt+Space opens the actual OS menu after Alt release, Win+Up/Down and Alt+F4 retain OS behavior.
+The menu uses installed user32 only. It follows OS language, independently of shell RU/EN.
+Other platforms keep native decorations/actions; custom header action buttons are hidden there.
+No TopMost, repeated foreground forcing or global hotkey registration is used. Normal initial activation
+is left to the platform. Header contrast/border, active-state tooltip and visible keyboard focus distinguish state.
+
+Initial client size is 1100x750 DIP; minimum 640x480 DIP. A compact 30-DIP toolbar and 22-DIP status strip
+leave the rest to the quiet workspace; the main frame has no scrolling. Long titles/status use ellipsis
+and full tooltips, not global shrinking. About is a functional dismissible flyout with version/scope,
+not a permanent workspace explanation. Windows PerMonitorV2/layout scaling are enabled, but actual F1 evidence is
+single-monitor
+96 DPI, not mixed/high-DPI acceptance. Tab reaches window and preference actions; Enter/Space execute them.
+[F1 report](experiments/SEQ-R3-F1_REPORT.md) records bounded real-window evidence and remaining checks.
 
 ## One main application window
 
@@ -21,7 +46,7 @@ workspace direction. Seqvium owns the plugin/editor relationship and normal life
 
 The main workspace/pane infrastructure is core platform responsibility. A plugin may contribute a
 surface through host contracts without controlling the host workspace. [ARCHITECTURE](ARCHITECTURE.md)
-owns platform boundaries; each musical owner defines its pane's work. No UI exists yet.
+owns platform boundaries; each musical owner defines its pane's work. The host exists; working panes do not.
 
 ## Main-window chrome and foreground behavior
 
@@ -112,7 +137,8 @@ Exact persistence of positions, sizes, minimized state, and dock relationships r
 
 Workspace preferences/layout belong in the platform-appropriate user configuration area under
 [SETTINGS](SETTINGS.md#user-configuration-and-project-state). Application/plugin preference reset
-must not delete projects or project-managed media; exact configuration paths/formats remain open.
+must not delete projects or project-managed media; pane-layout formats remain open. R3-F1's language/theme
+preference path/format is implemented separately under Settings.
 
 Restored geometry must eventually be clamped/adapted safely to changed main-window size, DPI, or
 display environment so panes remain reachable. Main-window composition must stay responsive and

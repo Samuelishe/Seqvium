@@ -34,14 +34,17 @@ These are planned capabilities and design directions:
 
 ## Current status
 
-**There is currently no runnable Seqvium workstation.** SEQ-R1 provides a .NET 10 canonical musical
+**A runnable desktop foundation now exists; music editors are not implemented.** SEQ-R1 provides a .NET 10 canonical
+musical
 model, document edits/Undo/Redo and versioned JSON Save/reopen, with a managed test suite.
 SEQ-R0 remains **partially evidenced** and selects no permanent backend. R2-F1 provides managed WAV
 preparation/offline sampling; R2-F2 has locally accepted-ready bounded realtime playback through a
 Windows WASAPI output adapter. R2-F3 adds bounded source discovery, transient raw WAV preview and
 explicit reuse of accepted media without copying WAV bytes. R2-F4 adds independent logical input/output
 endpoint discovery/selection and joined output replacement. **Overall R2 is complete / local accepted-ready**
-for this bounded foundation; R3, GUI and later workflows are not started. Input streaming/recording is absent.
+for this bounded foundation. **R3 is in progress / partial**: R3-F1 adds one Avalonia window, actual
+unnamed project summary, RU/EN and Dark/Light preferences. Internal panes/docking and later workflows
+are unimplemented. Opening the desktop never starts audio. Input streaming/recording is absent.
 See the [F2 device/performance evidence](docs/experiments/SEQ-R2-F2_REPORT.md) for its measured scope.
 The [F4 endpoint evidence and R2 audit](docs/experiments/SEQ-R2-F4_REPORT.md) records the selection boundary.
 The [roadmap](docs/ROADMAP.md) describes intended stages, not available features or release promises.
@@ -58,8 +61,12 @@ is not claimed.
 Start with the [documentation index](docs/INDEX.md). Repository agents should read [AGENTS.md](AGENTS.md).
 See [development](docs/DEVELOPMENT.md) and [test execution](docs/TEST_EXECUTION.md) for reproducible
 CLI commands. `Seqvium.sln` contains portable `Seqvium.Core`, `Seqvium.Tests`, narrow
-`Seqvium.Audio.Windows` and the explicit physical `Seqvium.DeviceCheck` harness; there is no UI
-executable yet.
+`Seqvium.Audio.Windows`, the explicit physical `Seqvium.DeviceCheck` harness and `Seqvium.Desktop`.
+After building, launch the silent desktop with:
+
+```text
+dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-build --no-restore
+```
 
 ## License
 
