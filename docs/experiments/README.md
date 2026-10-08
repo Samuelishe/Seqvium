@@ -29,6 +29,10 @@ SEQ-R2-F3's [source/preview report and R2 audit](SEQ-R2-F3_REPORT.md) records de
 access/reuse and explicitly audible transient preview smoke. It distinguishes normal diagnostics-off
 from opt-in capture and post-change F2 regressions; it does not replace F2's full performance protocol.
 
+SEQ-R2-F4's [endpoint report and complete R2 audit](SEQ-R2-F4_REPORT.md) records silent Windows
+render/capture discovery and explicitly selected output/join/reinitialization checks. Input enumeration
+and selection do not establish capture/recording capability; full F2 workload evidence remains distinct.
+
 ## Report contents
 
 A report under this directory should include:

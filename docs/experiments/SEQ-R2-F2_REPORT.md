@@ -6,7 +6,9 @@ Authoritative for: This series' actual environment, workload, measurements, fail
 Not authoritative for: Permanent engine/backend/ABI, product latency guarantees or release support.
 
 Date: 2026-10-08. F2 is **locally accepted-ready within its bounded scope**.
-Overall **R2 remains in progress / partial**. R0 remains partially evidenced / narrow; R1 and F1 remain
+At the F2 checkpoint, overall **R2 remained in progress / partial**. Current R2 acceptance is in
+[PROJECT_STATE](../PROJECT_STATE.md) and the [F4 audit](SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit).
+R0 remains partially evidenced / narrow; R1 and F1 remain
 local accepted-ready. No permanent managed/native engine choice follows.
 
 ## Baseline and ownership
@@ -244,7 +246,7 @@ opaque source domains or live state transfer. Q-062 gains startup/injected-fault
 not real hardware removal or automatic reselection. Q-069 gains queried adaptation and separated clocks,
 not universal synchronization or cross-platform negotiation.
 
-Overall R2 is partial: a user-facing minimal source discovery/preview/reuse path and remaining
+At the F2 checkpoint, R2 was partial: a user-facing minimal source discovery/preview/reuse path and remaining
 input/MIDI/capture foundation planning/implementation evidence need a separately scoped follow-up.
 F2 does not authorize R3 or close the full R2 roadmap merely because output passed.
 Current contracts remain in [Audio](../AUDIO_ENGINE.md#r2-f2-realtime-wav-and-windows-output) and

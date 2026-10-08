@@ -7,7 +7,8 @@ bounded production diagnostics.
 Not authoritative for: Project serialization, workspace behavior, exact paths/formats, localization/theme APIs, or
 logging implementation.
 
-These are accepted future requirements. No settings UI, configuration files, or logging implementation exists.
+These are accepted requirements. R2-F4 implements session-only logical audio selection; no settings UI,
+configuration files, global preference persistence or logging implementation exists.
 
 ## User configuration and project state
 
@@ -51,10 +52,11 @@ instances. Exact default inventories and storage formats remain open.
 ## Audio device selection
 
 Normal Settings exposes meaningful logical endpoints: `Audio Output: Steinberg UR12`, and separately
-`Audio Input: Steinberg UR12 — Input 1` or `Audio Input: USB Microphone`. Input/output selection is
+`Audio Input: Line (Steinberg UR12)` or `Audio Input: USB Microphone`. Input/output selection is
 logically separate where platform/device architecture supports it. An analog/condenser microphone
-through an interface is represented through that interface's input endpoint/channel; a USB microphone
-may appear as its own OS input device.
+through an interface is represented through its OS capture endpoint; future channel choice is distinct
+from logical endpoint selection. Do not fabricate per-channel endpoints from device-level discovery.
+A USB microphone may appear as its own OS input device.
 
 Ordinary users choose devices, not backend libraries or engine implementations. Backend/API/driver
 integration is internal platform responsibility under
@@ -71,8 +73,14 @@ F3 preview's initial gain 0.05 is session-only, not persisted project/preference
 Discovery locations are supplied explicitly; no recent-location store exists. Detailed WASAPI capture/
 observations are opt-in developer diagnostics, disabled by default for ordinary audition under
 [Audio](AUDIO_ENGINE.md#r2-f3-transient-one-shot-execution). No logging/settings UI is introduced.
-Separate logical input/output selection remains required; output-only support does not imply input
-selection, monitoring or capture.
+R2-F4 implements separate input/output session intent: follow an OS default role or retain an explicit
+opaque endpoint ID. Names are never identity. Discovery/resolution and active output facts remain
+separate from intent; missing/inactive explicit IDs never silently fall back. Default following resolves
+at deliberate open, without automatic migration of an active stream. Input selection opens no stream
+and does not stop output. Output selection joins/releases its old session before a replacement can open.
+Availability refresh or device failure changes no project settings/music/history. Session selection is
+not yet stored as a global preference; Windows IDs never enter portable project JSON. Exact failures
+and lifetimes belong to [Audio](AUDIO_ENGINE.md#r2-f4-logical-endpoints-and-independent-selection).
 
 ## Reset boundary
 

@@ -1332,3 +1332,30 @@ The [F3 report](../experiments/SEQ-R2-F3_REPORT.md) records observed tests/smoke
 F3's API scope passes; R2 remains partial for separate logical input/output endpoint foundation.
 MIDI/capture ownership is planned, not implemented recording. Wider Q-001–Q-007/Q-047/Q-062/Q-065/Q-069
 remain open; no R3, input stream, MIDI editor, additional backend or native sampler is inferred.
+
+## D-078 — Independent logical audio endpoint intent and bounded R2 acceptance
+
+Status: accepted within separately authorized SEQ-R2-F4; overall R2 complete / local accepted-ready.
+
+Use portable immutable endpoint observations and separate nonpersistent input/output intent: explicit
+opaque ID or deliberate OS default role. Names are presentation; unavailable fixed identities cannot
+silently fall back. Windows owns all COM/property/state/role details and validates actual direction/state
+again before activating output. A listing or capture selection proves no input stream, channel/clock
+synchronization or recording capability.
+
+The control session owns joined output and its processor through one minimal borrowing lifetime.
+Changing input cannot close output. Changing output joins before release/open; failed join retains old
+ownership for retry. Stop acknowledgment reflects real processing boundaries, never cleanup.
+Default following resolves on deliberate open, without automatic live migration/notifications.
+Keep canonical music/settings/history/persistence independent of all endpoint IDs and environment facts.
+
+R2's actual audio-resource, sampler, scheduling/output, transient/durable discovery/reuse, ownership and
+logical-device requirements are satisfied within declared F1–F4 bounds; MIDI/capture ownership planning
+is sufficient without recording implementation. Wider Q-001–Q-007/Q-026/Q-027/Q-062/Q-069 evidence stays
+open and does not create extra R2 milestones. R3 is not started or implicitly authorized.
+This extends D-076/D-077 and supersedes their then-current partial-R2 completion disposition,
+without changing permanent backend/engine, platform release or waveform-processing scope.
+
+Current owners: [Audio](../AUDIO_ENGINE.md#r2-f4-logical-endpoints-and-independent-selection),
+[Architecture](../ARCHITECTURE.md#r2-f4-endpoint-and-session-ownership), [Settings](../SETTINGS.md).
+[Observed report and complete audit](../experiments/SEQ-R2-F4_REPORT.md) owns evidence/limits.

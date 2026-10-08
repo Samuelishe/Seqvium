@@ -140,7 +140,8 @@ semantic-action/input separation, precise/repeated/modifier commands, distinct f
 command targets, protected text/native-editor input, discoverability, binding flexibility and platform
 conventions, optional bounded QWERTY musical mode, baseline keyboard chrome/workspace/graph access and
 non-color feedback. Preserved R12 intent-based Undo grouping and transient/canonical boundaries.
-Partially resolved Q-064 through [D-066](DECISIONS.md#d-066--mouse-first-keyboard-efficient-semantic-actions-and-accessibility-baseline);
+Partially resolved Q-064
+through [D-066](DECISIONS.md#d-066--mouse-first-keyboard-efficient-semantic-actions-and-accessibility-baseline);
 concrete input/accessibility mechanisms and platform evidence remain open. Related questions remain
 open without separate narrowing. Documentation/product-architecture only; no implementation stage
 started or reordered. SEQ-R0 remains **pending / not started**.
@@ -155,8 +156,8 @@ project-owned compatible state. Browser and Sample Lab interoperate without merg
 Partially resolved Q-065 through [D-067](DECISIONS.md#d-067--browser-discovery-and-explicit-reusable-content-ownership);
 concrete discovery/library/preset mechanisms remain open. Narrowly assigned R2 minimum access,
 R7 integration, R12 usability and R14+ cross-project publication; implementation IDs/order preserved.
-Documentation/product-architecture only; no implementation stage started. SEQ-R0 remains
-**pending / not started**. See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r14).
+Documentation/product-architecture only; no implementation stage started. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r14).
 
 ## SEQ-KB-R15 — Host Localization & Theme Resource Foundation
 
@@ -269,4 +270,36 @@ No audio/backend, UI, graph execution, media import, recovery or full async resu
 Q-008/Q-039 resolved; Q-009/Q-019/Q-029/Q-063 narrowed, Q-001–Q-007 still open. R2 remains pending,
 requiring separate authorization and reviewed backend/evidence disposition.
 Current truth is in [PROJECT_STATE](../PROJECT_STATE.md), contracts in [Architecture](../ARCHITECTURE.md)
-and [Project format](../PROJECT_FORMAT.md); rationale is [D-074](DECISIONS.md#d-074--r1-canonical-musicaldocument-foundation).
+and [Project format](../PROJECT_FORMAT.md); rationale
+is [D-074](DECISIONS.md#d-074--r1-canonical-musicaldocument-foundation).
+
+## SEQ-R2 — Audio Resource / Device Foundation
+
+Completed 2026-10-08, **complete / local accepted-ready** within bounded F1/F2/F3/F4 work packages.
+F4 is a subdivision, not a new numbered milestone. The initial bounded C# execution direction retains
+replaceable backend/device ownership; no permanent engine/native ABI or complete DAW is selected.
+
+Completed stage requirements: audio resources, supported WAV import, preview, managed project media,
+simple pitched/intensity/duration/release/overlap sampler, basic transport/scheduling and resource lifetime.
+Minimum external/project access provides find/audition/import/use/reuse without a mature Browser/catalog
+or workspace prerequisite. Durable accepted media survives original source disappearance.
+A backend-independent logical audio input/output/device foundation now provides independently selected
+default-role or explicit endpoints, meaningful discovery/availability and safe output replacement.
+MIDI/capture buffers, timestamps/clock/channel facts/lifetime and deliberate durable recording acceptance
+are planned ownership; polished recording and every device/backend were not completion prerequisites.
+
+F1/F2/F3 had accepted bounded resource/execution/source paths; their partial checkpoint retained the
+concrete logical input/output discovery/selection gap. F4 fills that gap with portable session contracts,
+Windows all-state/role discovery, no-fallback intent, worker-side native validation and confirmed join
+before release/open. Full local suite 274/274 retains all 251 prior cases; locked restore and Release
+build pass with zero warnings/errors. Physical enumeration observes 25 outputs/8 inputs; three selected
+UR12 44.1 kHz stereo float32 10 ms/970-frame lifetimes, three silent role opens and native refusals pass.
+
+The [complete R2 audit](../experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit) maps every actual
+stage requirement and distinguishes implemented bounds, wider evidence limitations and open long-term
+questions. No genuinely missing R2 prerequisite remains before separately scoped R3; R3 is not started.
+No capture/MIDI stream, monitoring/recording, ASIO, graph/plugin/GUI, clean distribution, Linux/macOS
+runtime, DAC/low-latency guarantee or permanent backend follows. Q-001–Q-007/Q-026/Q-027/Q-062/Q-069
+remain open for their wider mechanisms/evidence. Current truth stays in [PROJECT_STATE](../PROJECT_STATE.md)
+and owners, rationale
+in [D-078](DECISIONS.md#d-078--independent-logical-audio-endpoint-intent-and-bounded-r2-acceptance).

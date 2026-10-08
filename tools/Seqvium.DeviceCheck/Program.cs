@@ -81,9 +81,16 @@ internal static class DeviceCheck
 
     internal static async Task<int> Run(string[] args)
     {
+        string mode = args.Length == 0 ? "smoke" : args[0];
+        if (mode == "endpoints") return EndpointCheck.Enumerate();
+        if (mode == "endpoint-session")
+        {
+            if (args.Length != 2) throw new ArgumentException("endpoint-session <explicit output endpoint ID>");
+            return await EndpointCheck.Session(args[1]);
+        }
+
         Console.Error.WriteLine(
             "WARNING: explicit physical verification plays sound on the selected output. No system volume/settings are changed.");
-        string mode = args.Length == 0 ? "smoke" : args[0];
         if (mode == "audition-smoke") return await AuditionCheck.Run();
         int seconds = args.Length > 1 ? int.Parse(args[1], System.Globalization.CultureInfo.InvariantCulture) :
             mode == "measure" ? 60 : 2;

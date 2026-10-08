@@ -43,7 +43,7 @@ Transport Stop/Start restarts within the stream; fault recovery uses a fresh out
 
 ## Transient preview smoke and diagnostic mode
 
-All commands warn on stderr that sound **will play**. `audition-smoke` authors an external one-second
+Audible commands warn on stderr that sound **will play**. `audition-smoke` authors an external one-second
 220 Hz sine WAV (amplitude 0.02) in a private UUID fixture, with initial preview gain 0.05. It imports
 nothing and checks two fresh sessions: normal diagnostics-off, then opt-in bounded capture/observations.
 Checks include initial silence, source deletion after preparation, EOF, Stop, replacement, live cancel,
@@ -58,3 +58,24 @@ zero timing/allocation fields mean **not measured**. All existing F2 harness pat
 `diagnostics: true`, preserving reporting and instrumentation capacity failure. Supplying a nonzero
 capture capacity without diagnostics is refused; arrays stay bounded when enabled. No system volume,
 sample-rate, endpoint preference or other audio setting is changed.
+
+## Endpoint snapshot and independent selection
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll endpoints
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll endpoint-session "<output endpoint ID>"
+```
+
+`endpoints` is silent: it enumerates all render/capture states and Console/Multimedia/Communications
+defaults, without activating output/capture clients. Its names and opaque IDs describe only this machine.
+Device-level capture entries are not channel/microphone or tested-recording capabilities.
+
+`endpoint-session` requires a supplied output ID. It **plays sound**, warns explicitly and uses an
+authored 220 Hz sine at amplitude 0.02 with sampler gain 0.05 (peak about 0.001). Invoke it only for a
+known desired output. Three fresh sessions test selected output, independent real/default input intent,
+Stop acknowledgment, active-session selection change/join/state release and injected invalidation/reopen.
+Missing output and native inactive/wrong-direction IDs must refuse without fallback. All three role
+defaults are additionally opened without Start (silent). No system volume/default/rate is changed.
+No capture stream is opened; PCM diagnostics copy render-buffer samples before submission, never
+microphone audio. It is not the full F2 performance protocol. Results/limits and complete R2 audit are
+in the [F4 report](../../docs/experiments/SEQ-R2-F4_REPORT.md).

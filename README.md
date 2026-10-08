@@ -39,9 +39,11 @@ model, document edits/Undo/Redo and versioned JSON Save/reopen, with a managed t
 SEQ-R0 remains **partially evidenced** and selects no permanent backend. R2-F1 provides managed WAV
 preparation/offline sampling; R2-F2 has locally accepted-ready bounded realtime playback through a
 Windows WASAPI output adapter. R2-F3 adds bounded source discovery, transient raw WAV preview and
-explicit reuse of accepted media without copying WAV bytes. Overall R2 remains partial; GUI and later
-workflows remain future work.
+explicit reuse of accepted media without copying WAV bytes. R2-F4 adds independent logical input/output
+endpoint discovery/selection and joined output replacement. **Overall R2 is complete / local accepted-ready**
+for this bounded foundation; R3, GUI and later workflows are not started. Input streaming/recording is absent.
 See the [F2 device/performance evidence](docs/experiments/SEQ-R2-F2_REPORT.md) for its measured scope.
+The [F4 endpoint evidence and R2 audit](docs/experiments/SEQ-R2-F4_REPORT.md) records the selection boundary.
 The [roadmap](docs/ROADMAP.md) describes intended stages, not available features or release promises.
 
 ## Platforms

@@ -38,13 +38,15 @@ public enum OutputFailure
     ClockDiscontinuity,
     WaitTimeout,
     InvalidPacket,
-    InstrumentationFull
+    InstrumentationFull,
+    EndpointUnavailable,
+    InvalidEndpoint
 }
 
 /// <summary>Explicit Windows shared/event-driven output lifetime. One dedicated managed worker owns all COM/resources.
 /// Physical tests opt in. The caller retains the sampler until Close joins. No canonical data enters this adapter.</summary>
 [SupportedOSPlatform("windows")]
-public sealed unsafe class WasapiOutput : IDisposable
+public sealed unsafe class WasapiOutput : IAudioOutputLifetime
 {
     private readonly Thread _worker;
     private readonly ManualResetEventSlim _ready = new(false), _started = new(false);
@@ -85,7 +87,14 @@ public sealed unsafe class WasapiOutput : IDisposable
     public ReadOnlySpan<int> CapturePartitions => _partitions.AsSpan(0, _capturePackets);
 
     public WasapiOutput(int captureSamples = 0, string? endpointId = null, bool diagnostics = false)
+        : this(endpointId is null ? AudioEndpointIntent.Default() : AudioEndpointIntent.Explicit(endpointId),
+            captureSamples, diagnostics)
     {
+    }
+
+    public WasapiOutput(AudioEndpointIntent selection, int captureSamples = 0, bool diagnostics = false)
+    {
+        ArgumentNullException.ThrowIfNull(selection);
         if (!OperatingSystem.IsWindows() || !Environment.Is64BitProcess)
             throw new PlatformNotSupportedException("Windows x64 output only.");
         if (captureSamples is < 0 or > 8388608) throw new ArgumentOutOfRangeException(nameof(captureSamples));
@@ -104,7 +113,7 @@ public sealed unsafe class WasapiOutput : IDisposable
             throw new InvalidOperationException($"CreateEvent: {Marshal.GetLastPInvokeError()}");
         }
 
-        _worker = new Thread(() => Run(endpointId)) { IsBackground = true, Name = "Seqvium WASAPI output" };
+        _worker = new Thread(() => Run(selection)) { IsBackground = true, Name = "Seqvium WASAPI output" };
         _worker.Start();
         if (!_ready.Wait(TimeSpan.FromSeconds(5)))
         {
@@ -168,7 +177,7 @@ public sealed unsafe class WasapiOutput : IDisposable
         return false;
     }
 
-    private void Run(string? endpointId)
+    private void Run(AudioEndpointIntent selection)
     {
         nint enumerator = 0,
             device = 0,
@@ -186,16 +195,31 @@ public sealed unsafe class WasapiOutput : IDisposable
             if (!Check(CoInitializeEx(0, 0))) return;
             initialized = true;
             if (!Check(CoCreateInstance(EnumeratorClass, 0, 23, EnumeratorInterface, out enumerator))) return;
-            if (endpointId is null)
+            if (selection.FollowsDefault)
             {
                 if (!Check(((delegate* unmanaged[Stdcall]<nint, int, int, nint*, int>)Method(enumerator, 4))(enumerator,
-                        0, 0, &device))) return;
+                        0, (int)selection.Role, &device))) return;
             }
             else
-                fixed (char* id = endpointId)
+                fixed (char* id = selection.EndpointId)
                     if (!Check(((delegate* unmanaged[Stdcall]<nint, char*, nint*, int>)Method(enumerator, 5))(
                             enumerator, id, &device)))
                         return;
+
+            uint state = 0;
+            int direction = -1;
+            if (!Check(DeviceState(device, &state)) || !Check(DeviceDirection(device, &direction))) return;
+            if (direction != 0)
+            {
+                Failure = OutputFailure.InvalidEndpoint;
+                return;
+            }
+
+            if (state != 1)
+            {
+                Failure = OutputFailure.EndpointUnavailable;
+                return;
+            }
 
             if (!Check(((delegate* unmanaged[Stdcall]<nint, nint*, int>)Method(device, 5))(device, &endpoint))) return;
             Guid clientId = ClientInterface;

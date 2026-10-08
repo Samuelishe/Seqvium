@@ -66,6 +66,21 @@ authored PCM. It checks both diagnostics-off and opt-in capture, with a separate
 oracle and joined release. [F3 evidence/audit](experiments/SEQ-R2-F3_REPORT.md) distinguishes short smoke,
 post-change pressure, historical full F2 evidence and unmeasured acoustic/platform/device behavior.
 
+F4 adds `AudioEndpointTests` with injected immutable discovery results: independent direction/intent,
+duplicate names/distinct IDs, role-following versus fixed IDs, default disappearance/query failure,
+missing/inactive/wrong-direction refusal, invalid selection, frozen observations and no project edit.
+Real Core preparation/retirement is exercised with only a borrowing/join boundary stub, never fake WASAPI.
+Changing output preserves processed Stop acknowledgments, does not invent unprocessed acknowledgments,
+joins before state release and retains ownership after thrown or unconfirmed join. Fresh attachment
+and input failure leave unrelated output valid. A discovery-call counter stays unchanged through
+100 Process packets; source review additionally verifies native enumeration is outside the service loop.
+`endpoints` is silent physical discovery. Explicit `endpoint-session <ID>` warns and uses gain 0.05;
+it validates selected output/Stop/join/reopen and injected failure, not microphone capture. The
+[F4 report and complete R2 audit](experiments/SEQ-R2-F4_REPORT.md) retains results and evidence limits.
+The full F2 performance matrix is unnecessary for F4: scheduling/DSP/service processing did not change;
+new enumeration is control-side and native validation precedes stream activation. Bounded selected
+physical lifetimes and the full deterministic suite complement existing F2/F3 workload evidence.
+
 The standalone [SEQ-R0 assertion harness](../experiments/seq-r0/README.md) remains independent:
 `dotnet bin/Release/net10.0/Probe.dll verify` after `./build.ps1` in `experiments/seq-r0/`.
 It is not the production test suite. Documentation verification checks links/anchors,

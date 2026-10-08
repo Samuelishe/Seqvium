@@ -141,10 +141,14 @@ Core `D15889C41D5F0E9CF1AB1DF3F0EE59FE9BEDF8D04B2DB7288009D422CF5E7A41`;
 Windows adapter `56E1DA006D9C1A14E1446CA711E80C4612EB7F313FE422B93B62DF6F37B688C4`;
 harness `D852449E5BC0E9388281A3C8A303F5077E891699E169AD4B3EBADD4A5F44C211`.
 
-## R2 completion audit
+## R2 completion audit at the F3 checkpoint
+
+This audit records the then-unimplemented endpoint gap.
+The [F4 audit](SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit)
+supersedes its completion disposition; current truth is in [PROJECT_STATE](../PROJECT_STATE.md).
 
 F3 is **locally accepted-ready** in its bounded API scope. It is not a numbered roadmap stage.
-Auditing actual [R2 roadmap requirements](../ROADMAP.md#seq-r2--audio-resource--device-foundation):
+Auditing actual [R2 roadmap requirements](../archive/ROADMAP.md#seq-r2--audio-resource--device-foundation):
 
 | Requirement                                                                        | Implemented/local evidence                                                                                                                  | Disposition                                                   |
 |------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|

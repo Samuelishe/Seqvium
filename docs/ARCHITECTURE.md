@@ -139,6 +139,22 @@ copy or implicit shared-definition/part retarget. Canonical schema/time, history
 unchanged; no assembly, dependency, GUI, catalog or backend SDK is added. Separate logical input/output
 selection and MIDI/capture preparation are scoped in Audio; output does not prove operational input.
 
+## R2-F4 endpoint and session ownership
+
+Portable [AudioEndpoints](../src/Seqvium.Core/Audio/AudioEndpoints.cs) owns environment observations,
+independent input/output intent/resolution and one serialized `AudioDeviceSession`. It has no project
+reference or preference persistence. `IAudioOutputLifetime` is the sole minimal join/release contract
+for concrete borrowed PCM ownership; there is no device-management framework or backend hierarchy.
+`Seqvium.Audio.Windows` implements OS enumeration, role queries, property/COM ownership and selected
+WASAPI open with worker-side state/direction validation. Only the adapter interprets native error codes.
+Core never references Windows; callbacks never discover devices or read the control session.
+
+Changing output stops/joins the existing borrower before releasing its processor and before explicit
+replacement initialization. Input selection changes only input intent and opens no capture stream.
+Current facts, active endpoint and future availability remain separate from intended selection and
+portable canonical music. [Audio](AUDIO_ENGINE.md#r2-f4-logical-endpoints-and-independent-selection)
+owns lifecycle/failure behavior; [Settings](SETTINGS.md#audio-device-selection) owns configuration scope.
+
 ## Accepted constraints
 
 Use simple architecture for the current product with extension points justified by known requirements.

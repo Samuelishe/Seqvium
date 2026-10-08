@@ -178,14 +178,53 @@ commands opt in, warn before sound and change no system volume/settings.
 The [F3 report](experiments/SEQ-R2-F3_REPORT.md) records post-change smoke/pressure evidence, without
 claiming a repeat of the full original [F2 series](experiments/SEQ-R2-F2_REPORT.md).
 
-### Remaining logical devices, MIDI and capture foundation
+## R2-F4 logical endpoints and independent selection
 
-Output supports default logical Windows endpoint or explicit adapter endpoint ID. Input/output must
-have separately owned session selections/availability, not a joint backend choice or saved musical
-identity. The smallest remaining foundation can enumerate meaningful logical input/output endpoints,
-validate independent selections, report capabilities/unavailability and close/reinitialize affected
-session ownership without editing music. Input enumeration/selection and streaming are not implemented;
-the bounded logical-endpoint foundation remains an R2 completion gap.
+[AudioEndpoints](../src/Seqvium.Core/Audio/AudioEndpoints.cs) provides portable immutable endpoint/default
+observations, default-role versus explicit opaque-ID intent, resolution and a serialized session owner.
+`AudioDeviceSession` holds independent nonpersistent input/output selections. Selecting input cannot
+close/change output; selecting output cannot change input. Neither owner nor callback references a
+document, canonical settings, musical identities or Undo. Windows IDs never enter project persistence.
+
+[WindowsAudioEndpoints](../src/Seqvium.Audio.Windows/WindowsAudioEndpoints.cs) reads render and capture
+MMDevice endpoints with all OS states: Active, Disabled, NotPresent and Unplugged. Names are optional
+presentation, IDs are opaque OS identity. Console, Multimedia and Communications defaults are queried
+separately in each direction. A missing default is explicit; other default-query errors retain a failed
+query and opaque diagnostic code. Infrastructure/enumeration failures throw with native diagnostics;
+there is no partial-success listing. Name-property failures retain the ID/state and a name error code.
+Collections/devices/property stores are released, GetId storage is CoTaskMemFree'd, PROPVARIANT is
+cleared and only this call's successful COM initialization is uninitialized. No capture client is activated.
+Input endpoints are device-level observations; channels are not fabricated as separate microphones.
+
+A snapshot is neither a future availability guarantee nor a format/recording test. Explicit absent,
+inactive or wrong-direction IDs refuse resolution without default fallback. A role-following choice
+resolves afresh on each deliberate open; an explicit choice remains fixed. Observation refresh does
+not rewrite intent, stop another direction or migrate an active stream. There are no device notifications
+or automatic live default switching. The active stream keeps its queried endpoint until Close/fault;
+control observes refreshed availability and output Failure/HResult separately from intent.
+
+`WasapiSelection.OpenOutput` first joins/releases the previous output, takes fresh discovery (a narrow
+injectable result function), resolves intent, then opens a fresh worker. Before activation, the worker
+requeries default/explicit device, actual state and direction; unplug/change races may still fail later
+through ordinary HRESULT fault-stop. Discovery never enters the packet loop. Existing format refusal,
+rate/channels/period/capacity/clock, PCM, Stop/Panic, native-buffer and fault ordering remain unchanged.
+The open result contains earlier resolution plus actual native outcome; `OutputFacts.Endpoint` identifies
+what was actually opened, including a default change between snapshot and worker query.
+
+The session owns attached output and sampler. After awaited preparation, a different output intent
+issues Stop, closes and joins the borrower, then disposes output and active/pending/retired sampler state.
+An unsuccessful/unconfirmed join retains old intent/resources for retry and opens no replacement.
+Cleanup preserves real Stop acknowledgment; termination never invents an unprocessed acknowledgment.
+Opening alone starts no playback; the caller explicitly prepares/starts the fresh sampler. There is no
+seamless cross-device state/voice migration. Same intent selection is a no-op; deliberate reopen refreshes
+even a default role without changing its intent. The single lifetime interface expresses borrowing/join
+ownership, not a processing/backend hierarchy. Legacy direct WasapiOutput callers still must join before
+disposing their own borrowed processor.
+
+The [F4 report/audit](experiments/SEQ-R2-F4_REPORT.md) records real endpoint facts and bounded physical
+checks. Logical input discovery/selection is implemented; input streaming/monitoring/recording is not.
+
+### Remaining MIDI and capture ownership
 
 MIDI/capture preparation is an ownership plan, not recording implementation: MIDI adapter owns bounded
 messages/timestamps/connection lifetime; the host deliberately translates accepted input into musical
@@ -438,8 +477,8 @@ latency-aware workflows. MIDI input/recording must converge on the musical model
 
 Ordinary users select logical audio input/output devices/endpoints, not backend libraries. Input and
 output are separate selections where platform/device architecture supports it. An analog/condenser
-microphone through an interface is represented by the interface input endpoint/channel (for example
-`Steinberg UR12 — Input 1`); it is not necessarily a separate OS device. A USB microphone may be its
+microphone through an interface is represented by its OS capture endpoint, with future stream channels
+owned separately; do not invent `Input 1` endpoints from a device-level OS listing. A USB microphone may be its
 own input device. [SETTINGS](SETTINGS.md#audio-device-selection) owns ordinary selection UX.
 
 Backend/API/driver integration is an internal platform responsibility. Exact backend selection,

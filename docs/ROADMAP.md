@@ -233,38 +233,12 @@ evidence-backed decision. See [AUDIO_ENGINE](AUDIO_ENGINE.md) and the [experimen
 Keep engine processing independent of the selected device adapter and compatible with a prepared
 execution boundary. No graph editor, full plugin host, ASIO, or recording workspace is required here.
 
-## SEQ-R2 — Audio Resource / Device Foundation
-
-Status: **in progress / partial**. Separately authorized R2-F1 is the first bounded work package within
-R2, locally accepted-ready for managed WAV/import/Save As and offline pitched musical execution under
-the current [audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) and
-[format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout) owners. F1 is a working subdivision, not a new
-official numbered stage. The reviewed direction permits initial bounded C# scheduler/DSP with
-replaceable execution/device ownership, without adopting a permanent engine/native ABI. Separately
-authorized R2-F2 is locally accepted-ready for bounded real WAV/Windows output, shared offline PCM,
-preparation/publication/retirement and safe device fault-stop under its
-[report](experiments/SEQ-R2-F2_REPORT.md). Q-001–Q-007 stay open for wider workload/period/device,
-clock/recovery and distribution evidence. R2-F3 is locally accepted-ready for one-level filesystem/
-project-resource access, raw transient one-shot audition and explicit independent-sound reuse under
-its [audit/report](experiments/SEQ-R2-F3_REPORT.md). F1/F2/F3 remain work packages, not new numbered stages.
-R2 is not complete: separate logical input/output endpoint discovery/selection foundation still lacks
-implementation/evidence. Scope that bounded follow-up explicitly; input streaming, recording, MIDI
-editor/controller mapping, new backends or a permanent SDK are not implied. MIDI/capture ownership
-preparation is documented in [Audio](AUDIO_ENGINE.md#remaining-logical-devices-midi-and-capture-foundation).
-Wider device/clock, graph/plugin, catalog/contextual preview and release-platform questions remain open
-without requiring all those future workflows before R3. F3 itself does not authorize R3.
-
-Establish audio resources, WAV import, preview, managed project media, a simple sampler, note/pitch
-playback, and resource lifetime. Do not expand immediately to every codec or sampler feature.
-Own a minimal source/resource access path to find external WAV files and current project samples,
-audition transiently, explicitly import/use external audio and reuse accepted project resources.
-Exercise durable managed acceptance and coherent project edits; source disappearance after successful
-acceptance must not break use. This does not require a mature Browser pane, full workspace shell,
-personal cross-project library, catalog/database, background scanner or advanced search.
-Establish a bounded backend-independent audio input/output/device foundation informed by R0. Plan
-MIDI input and capture ownership without requiring polished recording UX or all device backends now.
-Normal device UX selects separate logical input/output endpoints where supported, with backend/API
-integration internal; rate/channel/clock and recovery mechanics still need evidence.
+R2's bounded resource/device foundation is complete / local accepted-ready under
+[PROJECT_STATE](PROJECT_STATE.md) and
+the [complete acceptance audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit).
+Its completed scope/rationale is retained in the cold archive. The next numbered stage is R3, which
+is not started and requires separate authorization; no extra milestone, permanent backend or recording
+prerequisite is introduced. Current audio/source/device contracts remain in their canonical owners.
 
 ## SEQ-R3 — Workspace Shell Foundation
 

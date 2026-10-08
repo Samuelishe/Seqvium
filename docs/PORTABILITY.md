@@ -30,6 +30,14 @@ filesystem/device runtime remain unverified. Its [physical raw-preview smoke](ex
 validates only the existing UR12 44.1 kHz stereo float32 endpoint, with no input stream/selection, MIDI,
 new backend or additional support claim. Compilation alone does not establish other formats/platforms.
 
+F4 adds portable session intent/snapshot/resolution and Windows x64 render/capture endpoint enumeration,
+with independent logical selections and joined output replacement. The [F4 report](experiments/SEQ-R2-F4_REPORT.md)
+records this machine's endpoints, role/default/status observations and explicitly selected UR12 checks.
+Capture endpoints were enumerated/selected only; no input stream, microphone samples or recording test.
+Other active outputs were listed without audible playback. Linux/macOS runtime/device support and
+packaged distribution remain unverified. No OS preference was changed; endpoint IDs are session facts,
+not portable project requirements.
+
 ## Platform evidence and support scope
 
 These are distinct, complementary dimensions. They can coexist; this table is neither a mandatory
@@ -157,7 +165,8 @@ Q-062/Q-069 retain device failure/recovery, clocks and runtime configuration mec
 F2 supports float32 mono/stereo 44.1/48 kHz output with queried period/capacity and standard channel order;
 the report distinguishes actually tested facts from merely supported adapter configurations. Faulted
 playback stops and requires deliberate fresh initialization, without canonical/media mutation or a
-seamless-recovery claim. Input/MIDI/ASIO, other platforms/endpoints and delivered packaging are unevidenced.
+seamless-recovery claim. F4's logical input selection is distinct from unevidenced input streaming,
+MIDI/ASIO, broader endpoint playback, other platforms and delivered packaging.
 
 Cross-platform offline tests can establish intended musical relationships, scheduling/DSP behavior,
 valid rendering and declared numerical tolerances without a physical audio device, following

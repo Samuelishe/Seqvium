@@ -69,6 +69,17 @@ remain hardware-independent. The [harness guide](../tools/Seqvium.DeviceCheck/RE
 Default WasapiOutput has no large capture/observation arrays; detailed physical commands explicitly
 enable diagnostics. No catalog, GUI, dependency or additional assembly/tool is installed.
 
+### SEQ-R2-F4 endpoint discovery and selected output
+
+After Release build, `dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll endpoints`
+prints render/capture IDs, names, states and six defaults without opening streams or playing sound.
+To explicitly test a known output, invoke `endpoint-session "<opaque output ID from discovery>"` on
+the same harness. It warns before sound, uses authored PCM and gain 0.05, and checks three fresh
+selected lifetimes, independent input selection, Stop, joined replacement and injected fault recovery.
+Additional default-role opens do not Start. This opens no capture stream and changes no system setting.
+The [harness guide](../tools/Seqvium.DeviceCheck/README.md) and [F4 report](experiments/SEQ-R2-F4_REPORT.md)
+retain exact commands, endpoint observations and scope. No dependencies/tools/frameworks are added.
+
 ### SEQ-R0 experimental entry points
 
 Run `./build.ps1` from `experiments/seq-r0/`, then `dotnet bin/Release/net10.0/Probe.dll verify`.
