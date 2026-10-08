@@ -1308,3 +1308,27 @@ Current owners: [Architecture](../ARCHITECTURE.md#r2-f2-execution-and-platform-o
 [Audio](../AUDIO_ENGINE.md#r2-f2-realtime-wav-and-windows-output),
 [Portability](../PORTABILITY.md), [Test execution](../TEST_EXECUTION.md).
 Q-001–Q-007 and Q-047/Q-062/Q-069 stay open for their wider remaining scope. Overall R2 stays partial.
+
+## D-077 — Transient raw audition and explicit same-resource sound reuse
+
+Status: accepted within separately authorized SEQ-R2-F3; no permanent backend/SDK, catalog or GUI choice.
+
+Keep explicitly selected external sources, temporary preview PCM and accepted project resources distinct.
+Bound one-level discovery and expose availability/truncation diagnostics; never infer semantic equality
+from equal names/paths/hashes. Preview prepares one ephemeral raw source using F1 DSP, not a fake saved
+project or second sampler. Close/Stop/cancel/EOF/fault end its execution; F2 handoff/retirement owns leases.
+Tag preview Start by source authority so retirement backpressure cannot restart the wrong old source.
+
+Reuse accepted ResourceId through explicit fresh independent sound configuration and one document edit,
+without copying WAV bytes or silently retargeting other uses. Conservative preparation/acceptance gates,
+integrity, Undo/Redo and Save retention remain. Contextual processing and cross-project publication are
+later work. Normal output has no large diagnostic arrays; opt-in detailed instrumentation preserves
+physical verification rather than disabling checks to obtain acceptance.
+
+Current owners: [Sample workflow](../SAMPLE_WORKFLOW.md#r2-f3-bounded-source-access-raw-preview-and-reuse),
+[Audio](../AUDIO_ENGINE.md#r2-f3-transient-one-shot-execution),
+[Architecture](../ARCHITECTURE.md#r2-f3-source-access-and-audition-ownership), [Settings](../SETTINGS.md).
+The [F3 report](../experiments/SEQ-R2-F3_REPORT.md) records observed tests/smoke and actual R2 audit.
+F3's API scope passes; R2 remains partial for separate logical input/output endpoint foundation.
+MIDI/capture ownership is planned, not implemented recording. Wider Q-001–Q-007/Q-047/Q-062/Q-065/Q-069
+remain open; no R3, input stream, MIDI editor, additional backend or native sampler is inferred.

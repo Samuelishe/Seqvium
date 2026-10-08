@@ -15,6 +15,8 @@ progress / partial**. Separately authorized R2-F1 is locally accepted-ready for 
 WAV media and offline sampler foundations; it is a work package within R2, not a new numbered stage.
 Separately authorized **R2-F2 is locally accepted-ready** for shared managed WAV realtime execution,
 bounded preparation/publication/retirement and Windows output under its [report](experiments/SEQ-R2-F2_REPORT.md).
+**R2-F3 is locally accepted-ready** for bounded filesystem/project discovery, transient raw WAV audition
+and explicit independent sound reuse under its [report](experiments/SEQ-R2-F3_REPORT.md).
 The reviewed initial bounded C# scheduler/DSP direction keeps execution/device replaceable; no permanent
 engine is adopted. Completed facts/rationale are in the cold archive; current contracts stay in owners.
 
@@ -45,10 +47,15 @@ captured revision gates, one preparation candidate and active/pending/retired ow
 queries endpoint/rate/channels/period/capacity/clock, owns joined lifetimes and safely fault-stops without
 editing canonical music/media. There is no workstation/UI, graph engine, plugin host, export, recording or
 recovery engine. [SEQ-R0 source](../experiments/seq-r0/README.md) remains independent.
+F3 separates transient sources from accepted resources: one-level bounded access, one-shot preview with
+no project edit/storage, safe cancellation/Close/retirement, and fresh sound configuration over one
+existing ResourceId without copying bytes or retargeting other uses. WASAPI diagnostics are opt-in.
 
 ## Current focus
 
-Scope remaining R2 source discovery/preview/reuse and device foundation work separately; do not start R3.
+Scope remaining R2 separate logical input/output endpoint discovery/selection foundation; do not start R3.
+MIDI/capture ownership is planned, not streaming/recording/editor implementation. Source access is complete
+for its bounded API scope; broader catalog/contextual audition/Personal Library remains later work.
 Canonical musical state remains independent of WASAPI/native ABI, sample frames, periods and device
 rates. Wider periods/workloads/devices, clock/recovery and clean distribution remain evidence gaps.
 First Track sequence/scenario remains unchanged under [ROADMAP](ROADMAP.md).
@@ -56,7 +63,7 @@ First Track sequence/scenario remains unchanged under [ROADMAP](ROADMAP.md).
 ## Validation baseline
 
 Local Windows x64, SDK 10.0.401 / runtime 10.0.12: locked restore, full Release solution build with **zero
-warnings/errors**, and **215 passing tests, zero failures/skips**, preserving all 199 prior tests (including 89 R1
+warnings/errors**, and **251 passing tests, zero failures/skips**, preserving all 215 prior tests (including 89 R1
 tests). Commands are in
 [DEVELOPMENT](DEVELOPMENT.md) and [TEST_EXECUTION](TEST_EXECUTION.md).
 Tests use tiny generated WAV/synthetic data, owned temporary directories and deterministic async gates,
@@ -69,6 +76,9 @@ exhaustion. Capture/offline error 0; independent oracle below 2e-6. Ten fresh li
 unavailable/invalidation/stall checks pass; 30 ms stall faults safely with one miss/exhaustion per run.
 Timing/allocation boundaries and limits are in the report. No DAC latency/dropout, hardware removal,
 multi-hour, hosted Linux/macOS, GUI, power-loss/crash or distribution acceptance is claimed.
+F3's two fresh physical preview sessions pass EOF/Stop/replacement/cancel/Close with 6/6 state release
+each; default diagnostic payload 0 bytes, capture oracle error 5.53e-11. Post-change F2 short 1/4/8-voice
+smoke and eight-voice 60 s pressure pass with zero misses/exhaustion; the full F2 series was not repeated.
 
 ## Active blockers / evidence gaps
 
@@ -78,6 +88,8 @@ Q-029 retains expanded detachment/deletion/acceptance UI and capability/concurre
 retains dependency-specific rebase, broader pending-work races/adapters and larger history policy.
 Q-001–Q-007 remain open with bounded F2 workload/lifetime/clock/fault/parity evidence; Q-062/Q-069 retain
 real hardware loss/change, broader recovery/negotiation/synchronization and platform evidence.
+Separate input endpoint discovery/selection is a concrete remaining R2 gap; MIDI/capture timing and
+broader device/graph/platform questions do not require implementing recording or a permanent SDK now.
 Q-028/Q-030 retain full organization/context assignment; Q-047 execution-domain/source-capability and
 performance evidence beyond F1/F2 PCM voices; Q-048 event extraction; Q-051 audio-time/stretch; Q-058/Q-059
 recovery, repair/GC and wider crash/fault/race/platform-safe media ownership; Q-061 whole First Track.

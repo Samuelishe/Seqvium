@@ -2,8 +2,10 @@
 
 Role: Application/user configuration, bounded reset, and production diagnostic policy.
 Read when: Designing preferences, configuration storage/reset, or product logging controls/storage.
-Authoritative for: User/project configuration separation, logical device-selection UX, preference-reset limits, quiet bounded production diagnostics.
-Not authoritative for: Project serialization, workspace behavior, exact paths/formats, localization/theme APIs, or logging implementation.
+Authoritative for: User/project configuration separation, logical device-selection UX, preference-reset limits, quiet
+bounded production diagnostics.
+Not authoritative for: Project serialization, workspace behavior, exact paths/formats, localization/theme APIs, or
+logging implementation.
 
 These are accepted future requirements. No settings UI, configuration files, or logging implementation exists.
 
@@ -64,6 +66,13 @@ Exact backend/API/ASIO constraints, clock domains, rate/channel/buffer adaptatio
 open (Q-062/Q-069 and related audio questions). Selecting an endpoint does not settle project audio
 intent versus negotiated runtime facts; device changes while recording follow subsystem lifetime and
 known-active-dependency safety.
+
+F3 preview's initial gain 0.05 is session-only, not persisted project/preference state or system volume.
+Discovery locations are supplied explicitly; no recent-location store exists. Detailed WASAPI capture/
+observations are opt-in developer diagnostics, disabled by default for ordinary audition under
+[Audio](AUDIO_ENGINE.md#r2-f3-transient-one-shot-execution). No logging/settings UI is introduced.
+Separate logical input/output selection remains required; output-only support does not imply input
+selection, monitoring or capture.
 
 ## Reset boundary
 

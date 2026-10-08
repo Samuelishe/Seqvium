@@ -24,6 +24,12 @@ actual OS/version, architecture, runtime/backend, environment, and bounded behav
 runner is not automatically Windows 11 desktop acceptance. [TEST_EXECUTION](TEST_EXECUTION.md) owns
 evidence tiers; [CI_CD](CI_CD.md) owns hosted validation evolution.
 
+F3 discovery/temporary PCM/reuse stays in portable Core and uses explicit platform filesystem paths.
+Local tests exercise Windows paths and exclusive-file refusal; Linux/macOS permissions, links and
+filesystem/device runtime remain unverified. Its [physical raw-preview smoke](experiments/SEQ-R2-F3_REPORT.md)
+validates only the existing UR12 44.1 kHz stereo float32 endpoint, with no input stream/selection, MIDI,
+new backend or additional support claim. Compilation alone does not establish other formats/platforms.
+
 ## Platform evidence and support scope
 
 These are distinct, complementary dimensions. They can coexist; this table is neither a mandatory

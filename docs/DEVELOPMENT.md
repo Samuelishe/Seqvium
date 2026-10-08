@@ -54,6 +54,21 @@ the [protocol](experiments/SEQ-R2-F2_PROTOCOL.md) declares workload/budgets and 
 The framework-dependent adapter uses installed Windows system APIs, with no audio package, native
 toolchain, global installation or future application/backend selection UI.
 
+### SEQ-R2-F3 explicitly audible preview smoke
+
+After the full Release build, explicitly run:
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll audition-smoke
+```
+
+This **plays sound** on the default output, warns on stderr and uses preview gain 0.05 with quiet
+project-authored PCM. It changes no system volume/settings and imports nothing. Discovery/reuse tests
+remain hardware-independent. The [harness guide](../tools/Seqvium.DeviceCheck/README.md) and
+[F3 report](experiments/SEQ-R2-F3_REPORT.md) document opt-in diagnostics, observations and stage limits.
+Default WasapiOutput has no large capture/observation arrays; detailed physical commands explicitly
+enable diagnostics. No catalog, GUI, dependency or additional assembly/tool is installed.
+
 ### SEQ-R0 experimental entry points
 
 Run `./build.ps1` from `experiments/seq-r0/`, then `dotnet bin/Release/net10.0/Probe.dll verify`.

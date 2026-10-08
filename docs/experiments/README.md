@@ -25,6 +25,10 @@ the exact code location/build shape should be selected when a concrete probe exi
 Do not infer architectural acceptance from a working demo. Record failures and limitations as well
 as successful measurements. Production must not depend on the probe's host, UI, or types.
 
+SEQ-R2-F3's [source/preview report and R2 audit](SEQ-R2-F3_REPORT.md) records deterministic source
+access/reuse and explicitly audible transient preview smoke. It distinguishes normal diagnostics-off
+from opt-in capture and post-change F2 regressions; it does not replace F2's full performance protocol.
+
 ## Report contents
 
 A report under this directory should include:

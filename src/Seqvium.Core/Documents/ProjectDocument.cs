@@ -1,17 +1,23 @@
 // SPDX-License-Identifier: Apache-2.0
+
 namespace Seqvium.Core;
 
 /// <summary>Single-owner canonical document. Callers serialize mutations; preview and execution live elsewhere.</summary>
 public sealed class ProjectDocument
 {
     private sealed record HistoryEntry(ProjectSnapshot Before, ProjectSnapshot After, string Description);
+
     private readonly List<HistoryEntry> _undo = [];
     private readonly Stack<HistoryEntry> _redo = new();
     private readonly int _historyLimit;
     private readonly Guid _initialRevision;
     private bool _editing;
     internal string? UnnamedMediaRoot { get; set; }
+
     internal List<string> MediaRoots { get; } = [];
+
+    // Owner-thread lifetime notification, never called from execution or preparation workers.
+    internal event Action? Closed;
 
     public Guid LifecycleId { get; } = Guid.NewGuid();
     public long Generation { get; private set; }
@@ -71,7 +77,11 @@ public sealed class ProjectDocument
             Generation = nextGeneration;
             return true;
         }
-        finally { edit.Seal(); _editing = false; }
+        finally
+        {
+            edit.Seal();
+            _editing = false;
+        }
     }
 
     public bool Undo()
@@ -103,7 +113,8 @@ public sealed class ProjectDocument
     public IEnumerable<ProjectSnapshot> RetainedSnapshots =>
         new[] { Current }.Concat(Saved is { } saved ? [saved] : [])
             .Concat(_undo.SelectMany(entry => new[] { entry.Before, entry.After }))
-            .Concat(_redo.SelectMany(entry => new[] { entry.Before, entry.After })).DistinctBy(snapshot => snapshot.Revision);
+            .Concat(_redo.SelectMany(entry => new[] { entry.Before, entry.After }))
+            .DistinctBy(snapshot => snapshot.Revision);
 
     public void Close()
     {
@@ -112,6 +123,7 @@ public sealed class ProjectDocument
         IsClosed = true;
         _undo.Clear();
         _redo.Clear();
+        Closed?.Invoke();
     }
 
     internal void MarkSaved(ProjectSnapshot snapshot, string path)
@@ -133,28 +145,34 @@ public sealed class ProjectDocument
     private static bool HasSameContent(ProjectState left, ProjectState right)
     {
         if (left == right) return true;
-        return left with { Patterns = right.Patterns, Sounds = right.Sounds, Placements = right.Placements,
-            Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes } == right
-            && SameSequence(left.Patterns, right.Patterns, (a, b) =>
-                a with { Parts = b.Parts } == b && SameSequence(a.Parts, b.Parts, (partA, partB) =>
-                    partA with { Notes = partB.Notes } == partB && partA.Notes.SequenceEqual(partB.Notes)))
-            && SameSequence(left.Sounds, right.Sounds, (a, b) =>
-                a with { Parameters = b.Parameters, ResourceIds = b.ResourceIds } == b &&
-                a.ResourceIds.SequenceEqual(b.ResourceIds) && a.Parameters.Count == b.Parameters.Count &&
-                a.Parameters.All(pair => b.Parameters.TryGetValue(pair.Key, out var value) && value == pair.Value))
-            && SameSequence(left.Placements, right.Placements, (a, b) =>
-                a with { PartRelationships = b.PartRelationships } == b && a.PartRelationships.SequenceEqual(b.PartRelationships))
-            && SameSequence(left.Groups, right.Groups, (a, b) =>
-                a with { SoundIds = b.SoundIds } == b && a.SoundIds.SequenceEqual(b.SoundIds))
-            && left.Resources.SequenceEqual(right.Resources) && left.Contexts.SequenceEqual(right.Contexts)
-            && left.Routes.SequenceEqual(right.Routes);
+        return left with
+               {
+                   Patterns = right.Patterns, Sounds = right.Sounds, Placements = right.Placements,
+                   Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes
+               } == right
+               && SameSequence(left.Patterns, right.Patterns, (a, b) =>
+                   a with { Parts = b.Parts } == b && SameSequence(a.Parts, b.Parts, (partA, partB) =>
+                       partA with { Notes = partB.Notes } == partB && partA.Notes.SequenceEqual(partB.Notes)))
+               && SameSequence(left.Sounds, right.Sounds, (a, b) =>
+                   a with { Parameters = b.Parameters, ResourceIds = b.ResourceIds } == b &&
+                   a.ResourceIds.SequenceEqual(b.ResourceIds) && a.Parameters.Count == b.Parameters.Count &&
+                   a.Parameters.All(pair => b.Parameters.TryGetValue(pair.Key, out var value) && value == pair.Value))
+               && SameSequence(left.Placements, right.Placements, (a, b) =>
+                   a with { PartRelationships = b.PartRelationships } == b &&
+                   a.PartRelationships.SequenceEqual(b.PartRelationships))
+               && SameSequence(left.Groups, right.Groups, (a, b) =>
+                   a with { SoundIds = b.SoundIds } == b && a.SoundIds.SequenceEqual(b.SoundIds))
+               && left.Resources.SequenceEqual(right.Resources) && left.Contexts.SequenceEqual(right.Contexts)
+               && left.Routes.SequenceEqual(right.Routes);
     }
 
     private static bool SameSequence<T>(System.Collections.Immutable.ImmutableArray<T> left,
         System.Collections.Immutable.ImmutableArray<T> right, Func<T, T, bool> equal)
     {
         if (left.Length != right.Length) return false;
-        for (int index = 0; index < left.Length; index++) if (!equal(left[index], right[index])) return false;
+        for (int index = 0; index < left.Length; index++)
+            if (!equal(left[index], right[index]))
+                return false;
         return true;
     }
 }

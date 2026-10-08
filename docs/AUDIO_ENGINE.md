@@ -151,6 +151,50 @@ does not establish measured DAC/acoustic latency, physical dropout counts, lower
 multi-hour stability, all endpoints, platform parity or clean distribution. F2's hard Stop preserves F1;
 the broader user-facing settling/de-click and stateful seek/tail mechanisms remain Q-057.
 
+## R2-F3 transient one-shot execution
+
+`SamplerPreparation.PrepareOneShot` derives one ephemeral native-pitch voice and natural-EOF frame
+boundary from decoded PCM, leasing source independently. It reuses OfflineSampler interpolation,
+channel mapping, cursor and EOF semantics, including supported 44.1/48 kHz rate conversion. Empty
+revision/occurrence denotes no canonical music; no saved project/Pattern is fabricated. No second
+sampler, looping, contextual substitution or processing is added.
+
+`WavAudition` owns a dedicated RealtimeSampler, not a mix into unrelated project playback. Optional
+document Close notification runs on the control owner; Process has no document reference. F2's
+one-candidate and active/pending/retired capacities apply. Tagged Start waits for the intended source
+handoff, never restarting an old source under retirement backpressure. Musical F2 Start/Stop stays
+unchanged. A published transient state's cancellation token is checked without allocation/waiting
+each packet. EOF/cancel/explicit Stop retires temporary state at a consumer boundary; control-side
+RetireCompleted releases leases. Full retirement capacity delays handoff/release, not voice stopping.
+Fault termination rejects later publication and requires a fresh consumer/output lifetime. Cleanup
+never invents Stop acknowledgment; callers await preparation and join output before Dispose.
+
+Default `WasapiOutput()` now has no capture, observation/partition array payload, per-packet finite/
+silence scan or allocation instrumentation. Clock/padding/fault-stop and joined native ownership remain.
+Detailed timing/miss/allocation fields are **not measured** in default mode: their zeros are not timing
+or zero-allocation evidence. Explicit `diagnostics: true` retains F2's bounded observations/reporting
+and instrumentation-full failure. Capture additionally requires a declared capacity. Physical harness
+commands opt in, warn before sound and change no system volume/settings.
+The [F3 report](experiments/SEQ-R2-F3_REPORT.md) records post-change smoke/pressure evidence, without
+claiming a repeat of the full original [F2 series](experiments/SEQ-R2-F2_REPORT.md).
+
+### Remaining logical devices, MIDI and capture foundation
+
+Output supports default logical Windows endpoint or explicit adapter endpoint ID. Input/output must
+have separately owned session selections/availability, not a joint backend choice or saved musical
+identity. The smallest remaining foundation can enumerate meaningful logical input/output endpoints,
+validate independent selections, report capabilities/unavailability and close/reinitialize affected
+session ownership without editing music. Input enumeration/selection and streaming are not implemented;
+the bounded logical-endpoint foundation remains an R2 completion gap.
+
+MIDI/capture preparation is an ownership plan, not recording implementation: MIDI adapter owns bounded
+messages/timestamps/connection lifetime; the host deliberately translates accepted input into musical
+ticks. Audio input owns buffers, channel/clock facts and device lifetime. Later recording acceptance
+must distinguish unfinished capture from durable managed media and use preparation/revalidation plus
+explicit canonical editing. Monitoring, clock alignment, compensation, hardware loss, ASIO and
+recording UX remain Q-026/Q-027/Q-062/Q-069 and later evidence. No permanent SDK, input stream or MIDI
+controller/editor is introduced merely to document these owners.
+
 ## Accepted realtime constraints
 
 Realtime audio is separate from ordinary application work. The eventual execution path must prevent

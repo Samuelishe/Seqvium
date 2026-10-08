@@ -20,11 +20,17 @@ public sealed class RealtimeSampler : IDisposable
         internal readonly PreparedSampler Plan;
         internal readonly OfflineSampler Execution;
         internal readonly long Authority;
+        internal readonly bool Transient;
+        internal readonly CancellationToken Cancellation;
+        internal readonly long StopAtPublication;
 
-        internal State(PreparedSampler plan, long authority)
+        internal State(PreparedSampler plan, long authority, bool transient, CancellationToken cancellation, long stop)
         {
             Plan = plan;
             Authority = authority;
+            Transient = transient;
+            Cancellation = cancellation;
+            StopAtPublication = stop;
             Execution = plan.CreateExecution();
         }
 
@@ -36,7 +42,7 @@ public sealed class RealtimeSampler : IDisposable
     }
 
     private State? _pending, _active, _retired;
-    private long _authority, _stop, _start, _seenStart, _command;
+    private long _authority, _stop, _start, _seenStart, _command, _startAuthority;
     private int _preparing;
     private float _gain = 1;
     private bool _playing, _disposed, _terminated;
@@ -51,6 +57,7 @@ public sealed class RealtimeSampler : IDisposable
     public long RenderPosition => Volatile.Read(ref _position);
 
     public int ActiveVoices => Volatile.Read(ref _voices);
+    public bool IsTerminated => Volatile.Read(ref _terminated);
 
     // Read after a boundary synchronization or worker join; Guid is not an atomic status primitive.
     public Guid ExecutingRevision => _revision;
@@ -88,7 +95,8 @@ public sealed class RealtimeSampler : IDisposable
         return new(this, document, target, voiceCapacity, repeats, start, InvalidatePreparation());
     }
 
-    internal SamplerPublication Publish(PreparedSampler plan, long authority, bool valid, bool cancelled)
+    internal SamplerPublication Publish(PreparedSampler plan, long authority, bool valid, bool cancelled,
+        bool transient = false, CancellationToken lifetimeCancellation = default)
     {
         if (cancelled)
         {
@@ -96,7 +104,7 @@ public sealed class RealtimeSampler : IDisposable
             return SamplerPublication.Cancelled;
         }
 
-        if (_disposed || !valid || authority != Volatile.Read(ref _authority))
+        if (_disposed || IsTerminated || !valid || authority != Volatile.Read(ref _authority))
         {
             StalePublications++;
             return SamplerPublication.Stale;
@@ -118,7 +126,8 @@ public sealed class RealtimeSampler : IDisposable
             if (count > 64) throw new NotSupportedException("Realtime event density exceeds 64 events per frame.");
         }
 
-        Volatile.Write(ref _pending, new State(plan, authority));
+        Volatile.Write(ref _pending,
+            new State(plan, authority, transient, lifetimeCancellation, Volatile.Read(ref _stop)));
         PreparedStatesCreated++;
         return SamplerPublication.Accepted;
     }
@@ -131,7 +140,13 @@ public sealed class RealtimeSampler : IDisposable
 
     internal bool TryBeginWork() => Interlocked.CompareExchange(ref _preparing, 1, 0) == 0;
     internal void EndWork() => Volatile.Write(ref _preparing, 0);
-    public void Start() => Volatile.Write(ref _start, Interlocked.Increment(ref _command));
+    public void Start() => StartPrepared(0);
+
+    internal void StartPrepared(long authority)
+    {
+        Volatile.Write(ref _startAuthority, authority);
+        Volatile.Write(ref _start, Interlocked.Increment(ref _command));
+    }
 
     public long Stop()
     {
@@ -155,7 +170,7 @@ public sealed class RealtimeSampler : IDisposable
             pending = Interlocked.Exchange(ref _pending, null);
             if (pending is not null)
             {
-                if (pending.Authority != Volatile.Read(ref _authority))
+                if (pending.Authority != Volatile.Read(ref _authority) || pending.Cancellation.IsCancellationRequested)
                 {
                     ConsumerStaleRejections++;
                     Volatile.Write(ref _retired, pending);
@@ -182,9 +197,13 @@ public sealed class RealtimeSampler : IDisposable
 
         if (start != _seenStart)
         {
-            _seenStart = start;
-            if (start > stop)
+            long startAuthority = Volatile.Read(ref _startAuthority);
+            // Audition Start belongs to the requested source, not whichever older state remains active
+            // during retirement backpressure. Retry at later boundaries until its handoff is possible.
+            if (start <= stop) _seenStart = start;
+            else if (startAuthority == 0 || _active?.Authority == startAuthority)
             {
+                _seenStart = start;
                 _active?.Execution.Restart();
                 _playing = _active is not null;
                 _epoch++;
@@ -192,6 +211,13 @@ public sealed class RealtimeSampler : IDisposable
         }
 
         var active = _active;
+        bool cancelled = active?.Cancellation.IsCancellationRequested == true;
+        if (cancelled)
+        {
+            active!.Execution.Stop();
+            _playing = false;
+        }
+
         if (_playing && active is not null)
         {
             int frames = (int)Math.Min(output.Length / Channels, active.Plan.EndFrame - active.Execution.Position);
@@ -204,6 +230,15 @@ public sealed class RealtimeSampler : IDisposable
         Volatile.Write(ref _position, active?.Execution.Position ?? 0);
         Volatile.Write(ref _voices, active?.Execution.ActiveVoices ?? 0);
         Volatile.Write(ref _acknowledgedStop, stop);
+        // Transient owners end at EOF/cancel/explicit Stop. Initial handoff may precede Start;
+        // the Stop preceding publication must not prematurely retire that prepared source.
+        if (active is { Transient: true } && !_playing && Volatile.Read(ref _retired) is null &&
+            (cancelled || active.Execution.Position == active.Plan.EndFrame || stop > active.StopAtPublication))
+        {
+            _active = null;
+            Volatile.Write(ref _retired, active);
+        }
+
         return true;
     }
 
@@ -213,7 +248,7 @@ public sealed class RealtimeSampler : IDisposable
         if (_terminated) return;
         _active?.Execution.Stop();
         _playing = false;
-        _terminated = true;
+        Volatile.Write(ref _terminated, true);
         TerminationBoundaries++;
         Volatile.Write(ref _voices, 0);
     }

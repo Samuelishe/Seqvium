@@ -2,8 +2,10 @@
 
 Role: Seqvium's sound exploration and material-transformation contract.
 Read when: Designing discovery, generation, audition, sample acceptance, or resampling.
-Authoritative for: Browser discovery/audition, project-resource reuse, Personal Library publication/ownership, Sample Lab exploration/reference/locks/history, candidate acceptance, durable audio, object sampling and audible capture.
-Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing, or final resource file format.
+Authoritative for: Browser discovery/audition, project-resource reuse, Personal Library publication/ownership, Sample
+Lab exploration/reference/locks/history, candidate acceptance, durable audio, object sampling and audible capture.
+Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing,
+or final resource file format.
 
 ## R2-F1 minimum import and use
 
@@ -23,6 +25,47 @@ permits explicitly reported degraded Save, while accepting unavailable new mater
 No Browser, live audition UI/device, library publication, generator, object resampling or export is
 implemented by this path. [Audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) owns the offline
 pitched source and supported execution configurations. Personal Library ownership remains separate.
+
+## R2-F3 bounded source access, raw preview and reuse
+
+`SourceAccess.DiscoverDirectoryAsync` inspects one explicitly selected directory without opening a
+project, recursion, indexing, watchers or background scanning. Default visit limit: 64 entries,
+caller-bounded to 1–256; folders count and are not traversed. Sequential validation uses F1's WAV
+bounds outside realtime. Results distinguish supported/unsupported/missing/inaccessible sources,
+directory failure and truncation. Enumeration order is not a catalog order; equal names/paths/bytes
+do not establish shared semantic identity. `InspectExternalAsync` rechecks a selected source;
+discovered availability is not a later-use guarantee.
+
+`DiscoverProjectAsync` captures an already open immutable revision and media roots on its owner,
+then validates bounded accepted ResourceIds on a worker. Results identify lifecycle/revision and
+degraded resources, never manufacturing external-source identities. Missing/corrupt/unvalidated
+accepted media remains canonical; discovery grants no stale import/reuse authority.
+
+`WavAudition` offers raw/solo native-pitch one-shot preview of an external WAV or accepted resource
+through the shared F1/F2 execution/device boundary. It creates no import, descriptor, sound, Pattern,
+canonical edit, Undo entry, project-media directory or persistent reference. Initial gain 0.05 is a
+conservative preview default, not system volume or a loudness/limiter guarantee. Decoded temporary
+PCM may finish after source deletion; subsequent audition/import must reread the source. A bound
+document Close ends preview; unbound preview has explicit lifetime termination. Accepted-resource
+preview must be bound to that document and validates its conservative transition generation.
+
+Replacement stops old preview even if new preparation fails. One candidate is admitted until awaited
+publication/disposal; decode never runs in Process. Stop, EOF, cancellation, replacement and lifetime/
+device termination use consumer boundaries and control-side retirement. The preparation token owns
+live preview lifetime; an additional Publish token gates publication only. Join output before final
+Dispose. [Audio](AUDIO_ENGINE.md#r2-f3-transient-one-shot-execution) owns execution details.
+Contextual Arrangement/Mixer/graph audition and Personal Library publication remain future work.
+
+External acceptance still uses F1 BeginImport/Prepare/Accept independently of preview.
+`ProjectMedia.BeginReuse` / `WavResourceReuse.PrepareAsync` / `Accept` validates an existing managed
+ResourceId, then creates one new **independent sound configuration** in one document edit. No new
+resource or physical WAV copy, no automatic part retarget and no mutation of another shared sound.
+Attach that SoundId to explicitly selected parts through ordinary ProjectEdit; deliberate sharing
+of an existing SoundId is a different scope. Undo/Redo/Save As/reopen retain existing semantics.
+Reuse of degraded/unvalidated or cross-project resources fails without editing canonical state.
+
+The [F3 report](experiments/SEQ-R2-F3_REPORT.md) owns deterministic and explicitly audible smoke
+evidence. No Browser pane, GUI, catalog, library or general content-management system is implemented.
 
 ## The creative loop
 
@@ -47,13 +90,13 @@ It is not isolated from the composition. No Sample Lab is implemented yet.
 Browser is a discovery/access surface for finding and auditioning available material, not an ownership
 model or a universal asset identity. These accepted future semantics distinguish five roles:
 
-| Role | Meaning |
-| --- | --- |
-| Browser/discovery surface | Presents available sources/material and requests preview or explicit use |
-| Source/origin | Filesystem file, installed pack, generated candidate, preset source, project resource or library item from which material is offered |
-| Project-managed resource/state | Durable audio or sound/plugin configuration actually accepted into one project; resource and placement identities remain separate |
-| Personal Library | User-owned reusable content intentionally retained independently across projects; not one project's media directory or application preferences |
-| Preset/template source | Reusable configuration applied to create/update project-owned sound/plugin state under [Extensions](EXTENSIONS.md#preset-sources-and-project-state) |
+| Role                           | Meaning                                                                                                                                             |
+|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Browser/discovery surface      | Presents available sources/material and requests preview or explicit use                                                                            |
+| Source/origin                  | Filesystem file, installed pack, generated candidate, preset source, project resource or library item from which material is offered                |
+| Project-managed resource/state | Durable audio or sound/plugin configuration actually accepted into one project; resource and placement identities remain separate                   |
+| Personal Library               | User-owned reusable content intentionally retained independently across projects; not one project's media directory or application preferences      |
+| Preset/template source         | Reusable configuration applied to create/update project-owned sound/plugin state under [Extensions](EXTENSIONS.md#preset-sources-and-project-state) |
 
 A source may itself have a durable owner, such as another project or the Personal Library. Presenting it
 in Browser does not transfer that ownership. Equal bytes, names or paths are insufficient to collapse
@@ -68,10 +111,10 @@ The bounded capability owners are in [Roadmap](ROADMAP.md#discovery-and-reuse-ow
 
 ### Preview, contextual audition and accepted use
 
-| Intention | Project effect |
-| --- | --- |
-| Raw/solo preview | Transient listening; no project media acceptance, canonical edit or project Undo entry |
-| Contextual temporary audition | Reversible listening in an identified musical/processing context; no implicit import, replacement or project Undo entry |
+| Intention                      | Project effect                                                                                                                                         |
+|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Raw/solo preview               | Transient listening; no project media acceptance, canonical edit or project Undo entry                                                                 |
+| Contextual temporary audition  | Reversible listening in an identified musical/processing context; no implicit import, replacement or project Undo entry                                |
 | Explicit use/import/acceptance | Validates its intended destination and commits the appropriate durable project resource/reference/state and use changes through normal project editing |
 
 Repeatedly auditioning `D:\Samples\Kick\kick_17.wav` does not import it or make it saved/recoverable
@@ -211,20 +254,21 @@ Starting contextual generation for Kick #42 captures its original document/lifec
 and expected relationship/scope, relevant source/settings and processing context/dependencies, plus
 operation intent, relevance and cancellation status. Target may mean a sound definition or a placement
 according to the explicitly identified [acceptance scope](#acceptance-scope-and-shared-uses); Q-029
-retains its UI/reference mechanisms. Current selection is never a replacement for that captured destination. Generation produces candidate material, not an
+retains its UI/reference mechanisms. Current selection is never a replacement for that captured destination. Generation
+produces candidate material, not an
 automatic canonical edit; even a valid contextual result needs explicit acceptance. Temporary contextual
 audition must also validate its required target/context and use the reversible preview/publication path.
 
 Each following change is assessed independently against that launch state:
 
-| Change before completion | Candidate/acceptance disposition |
-| --- | --- |
-| Select Snare | Selection alone does not invalidate Kick's inputs or redirect its candidate to Snare. Candidate may remain available for Kick; active contextual audition may need suspension/revalidation. Acceptance still targets the identified Kick scope |
-| Edit Kick | If relevant source/settings/context changed, the result is stale for the original request and cannot silently overwrite the edit. An unrelated change need not invalidate known sufficient preconditions. Offer clearly identified old material for fresh explicit acceptance/reuse where meaningful, or recompute for a current contextual result |
-| Delete Kick | Targeted acceptance/audition is unavailable. Cancel/invalidate the request, or keep safely owned unattached/suspended candidate work where the workflow explicitly supports it; never bind to a similarly named/positioned or selected object |
-| Undo deletion | Restoring the same logical identity may permit revalidation only if relevant dependencies/relationships/context match and the request was retained rather than cancelled/invalidated. Otherwise useful material can only be accepted through a fresh explicit action. If Kick was also edited since launch, Undo of deletion alone does not remove that staleness |
-| Switch project | An open original project retains its identity; the candidate never targets the newly active project. Retained exploration may continue, but active audition/context and eventual explicit acceptance need their own valid destination/gate |
-| Close original project | No canonical acceptance or target audition may occur after close. Cancel/invalidate project-bound work; independently owned reusable material may survive only under an explicitly justified candidate/export workflow, otherwise discard/lifecycle-clean safely |
+| Change before completion | Candidate/acceptance disposition                                                                                                                                                                                                                                                                                                                                  |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Select Snare             | Selection alone does not invalidate Kick's inputs or redirect its candidate to Snare. Candidate may remain available for Kick; active contextual audition may need suspension/revalidation. Acceptance still targets the identified Kick scope                                                                                                                    |
+| Edit Kick                | If relevant source/settings/context changed, the result is stale for the original request and cannot silently overwrite the edit. An unrelated change need not invalidate known sufficient preconditions. Offer clearly identified old material for fresh explicit acceptance/reuse where meaningful, or recompute for a current contextual result                |
+| Delete Kick              | Targeted acceptance/audition is unavailable. Cancel/invalidate the request, or keep safely owned unattached/suspended candidate work where the workflow explicitly supports it; never bind to a similarly named/positioned or selected object                                                                                                                     |
+| Undo deletion            | Restoring the same logical identity may permit revalidation only if relevant dependencies/relationships/context match and the request was retained rather than cancelled/invalidated. Otherwise useful material can only be accepted through a fresh explicit action. If Kick was also edited since launch, Undo of deletion alone does not remove that staleness |
+| Switch project           | An open original project retains its identity; the candidate never targets the newly active project. Retained exploration may continue, but active audition/context and eventual explicit acceptance need their own valid destination/gate                                                                                                                        |
+| Close original project   | No canonical acceptance or target audition may occur after close. Cancel/invalidate project-bound work; independently owned reusable material may survive only under an explicitly justified candidate/export workflow, otherwise discard/lifecycle-clean safely                                                                                                  |
 
 Undo of the state that made generation relevant must not let late completion resurrect it. Redo alone
 does not renew invalidated/cancelled work; restored preconditions and relevance must be established under
@@ -253,14 +297,14 @@ remain open. Generation is bounded asynchronous work outside realtime audio.
 
 ### Sources, references and candidates
 
-| Role | Meaning |
-| --- | --- |
-| Source sound | Existing sound/material being explored, if any; its current accepted project state stays canonical |
-| Generation reference | Explicit sound/candidate and supported input state from which a related variation is requested; not necessarily the project source |
-| Generated candidate | Identified result of one exploration request, with available audio and useful origin information; not automatically accepted project or library material |
-| Generation constraints | Current supported settings and explicitly held locks for future requests; not retroactive edits of existing candidates |
-| Audition/comparison choice | Sound currently being judged, raw or in an identified supported context; not implicit generation-reference or acceptance-target reassignment |
-| Acceptance destination | Explicit project and resource/use scope validated at acceptance; independent of reference, current selection or completion order |
+| Role                       | Meaning                                                                                                                                                  |
+|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Source sound               | Existing sound/material being explored, if any; its current accepted project state stays canonical                                                       |
+| Generation reference       | Explicit sound/candidate and supported input state from which a related variation is requested; not necessarily the project source                       |
+| Generated candidate        | Identified result of one exploration request, with available audio and useful origin information; not automatically accepted project or library material |
+| Generation constraints     | Current supported settings and explicitly held locks for future requests; not retroactive edits of existing candidates                                   |
+| Audition/comparison choice | Sound currently being judged, raw or in an identified supported context; not implicit generation-reference or acceptance-target reassignment             |
+| Acceptance destination     | Explicit project and resource/use scope validated at acceptance; independent of reference, current selection or completion order                         |
 
 Selecting a candidate for further variation establishes it as the generation reference. Merely switching
 listening/comparison between original, A and B does not silently change that reference. The reference,
@@ -272,9 +316,9 @@ by changing its label. No full branching/version-control system is required.
 
 `Generate Random` and `Generate Similar / Variation` describe distinct intentions, not final labels:
 
-| Intention | Required meaning |
-| --- | --- |
-| Random exploration | Another sound within the chosen family's supported creative space, honoring declared constraints/locks; no selected reference is required |
+| Intention                | Required meaning                                                                                                                                                  |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Random exploration       | Another sound within the chosen family's supported creative space, honoring declared constraints/locks; no selected reference is required                         |
 | Nearby/related variation | Intentionally use the identified reference and supported input state to explore related sounds within that family's declared variation capability, honoring locks |
 
 With no target, a beginner can choose Kick, request random generation, audition the result, request
@@ -465,11 +509,11 @@ unaccepted history entry must never be described as permanently saved merely bec
 
 While editing an existing Pattern's Kick, accepting a candidate has distinct possible intentions:
 
-| Intended scope | Canonical effect |
-| --- | --- |
-| Keep a reusable project sample | Accept durable managed audio for later reuse; no implicit placement or replacement of the contextual Kick |
+| Intended scope                        | Canonical effect                                                                                                                                                                                                                     |
+|---------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Keep a reusable project sample        | Accept durable managed audio for later reuse; no implicit placement or replacement of the contextual Kick                                                                                                                            |
 | Replace one identified occurrence/use | Accept durable audio and change only that intended use/reference; preserve other occurrences, shared musical content, sound definitions and source media unless the action explicitly requires an explained independent relationship |
-| Change the shared sound definition | Explicitly update that definition's intended audio/content configuration; its other uses follow the change, without rewriting the old shared resource or changing musical notes |
+| Change the shared sound definition    | Explicitly update that definition's intended audio/content configuration; its other uses follow the change, without rewriting the old shared resource or changing musical notes                                                      |
 
 These are semantic distinctions, not mandatory buttons or a universal acceptance action. Show the
 actual destination and meaningful shared-use consequences in the active workflow, using predictable
@@ -561,11 +605,11 @@ and container processing; that does not automatically extend to unrelated downst
 
 The selection's semantic owner determines the stop point, independently of where its controls appear:
 
-| Selected object | Included result / stop point |
-| --- | --- |
-| Pattern musical content without a placement context | Its instrument/sound-definition uses executing its events; no arbitrary Arrangement placement or downstream Mixer context is inherited |
-| Pattern placement or another standalone item | That occurrence's contributions and own item-local paths, including its intentional whole-placement submix/processing if present; before containing-context/global processing |
-| Musical container with common processing | Its contained item results through its own explicit container submix/processing; before broader downstream channel/bus/Master processing |
+| Selected object                                     | Included result / stop point                                                                                                                                                  |
+|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Pattern musical content without a placement context | Its instrument/sound-definition uses executing its events; no arbitrary Arrangement placement or downstream Mixer context is inherited                                        |
+| Pattern placement or another standalone item        | That occurrence's contributions and own item-local paths, including its intentional whole-placement submix/processing if present; before containing-context/global processing |
+| Musical container with common processing            | Its contained item results through its own explicit container submix/processing; before broader downstream channel/bus/Master processing                                      |
 
 For `Drums Main`, a reusable sample may require combining Kick and Snare into the rendered audio:
 

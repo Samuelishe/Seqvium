@@ -54,6 +54,18 @@ budgets/fault policy are predeclared in the [F2 protocol](experiments/SEQ-R2-F2_
 results and exact allocation boundaries are in the [report](experiments/SEQ-R2-F2_REPORT.md).
 No hardware removal, DAC measurement or hosted CI result follows from injected errors or PCM comparison.
 
+F3 adds SourceAccessTests, WavAuditionTests and WavResourceReuseTests. Deterministic tests cover bounded
+one-level discovery/truncation/diagnostics, Windows exclusive-file refusal, unavailable external versus
+degraded accepted media, no canonical/storage preview side effects, independent temporary leases,
+rate/interpolation/EOF, Stop/live cancellation/Close/fault/supersession, in-flight gates and capacity,
+source-specific Start under retirement backpressure, explicit import/source deletion, one resource
+with independent sound/part uses, Undo/Redo and Save As/reopen. No physical device opens during tests.
+Warm preview allocation checks measure Process only, not general runtime/native costs.
+The explicit `audition-smoke` Release command warns about sound and uses gain 0.05 with low-amplitude
+authored PCM. It checks both diagnostics-off and opt-in capture, with a separate independent raw-source
+oracle and joined release. [F3 evidence/audit](experiments/SEQ-R2-F3_REPORT.md) distinguishes short smoke,
+post-change pressure, historical full F2 evidence and unmeasured acoustic/platform/device behavior.
+
 The standalone [SEQ-R0 assertion harness](../experiments/seq-r0/README.md) remains independent:
 `dotnet bin/Release/net10.0/Probe.dll verify` after `./build.ps1` in `experiments/seq-r0/`.
 It is not the production test suite. Documentation verification checks links/anchors,

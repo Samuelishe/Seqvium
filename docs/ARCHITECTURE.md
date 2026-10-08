@@ -119,6 +119,26 @@ Input/MIDI/capture remain future distinct adapter responsibilities: input buffer
 to their device lifetime, while deliberate recording acceptance and durable musical placement belong to
 the project owner. F2 implements none of those workflows.
 
+## R2-F3 source access and audition ownership
+
+[SourceAccess](../src/Seqvium.Core/Media/SourceAccess.cs) separates explicit external-directory
+observations from accepted ResourceIds. Discovery does not mutate/open a project; project discovery
+captures an already open revision, then validates frozen media on a worker. Observed availability is
+not acceptance authority, and equal paths/names/hashes are not semantic identities.
+
+[WavAudition](../src/Seqvium.Core/Audio/WavAudition.cs) owns ephemeral raw/solo state over F1/F2, not
+a fake canonical project. A narrow owner-thread Close event ends bound preview; output never reads
+the document. Cancellation, handoff and retirement use bounded prepared-state ownership. The caller
+joins the borrowing worker before final
+disposal. [Sample workflow](SAMPLE_WORKFLOW.md#r2-f3-bounded-source-access-raw-preview-and-reuse)
+owns workflow; [Audio](AUDIO_ENGINE.md#r2-f3-transient-one-shot-execution) owns execution/lifetime.
+
+[WavResourceReuse](../src/Seqvium.Core/Media/WavResourceReuse.cs) validates captured/current integrity
+and authority, then creates an independent sound over one existing ResourceId through Edit. No byte
+copy or implicit shared-definition/part retarget. Canonical schema/time, history and Save owners stay
+unchanged; no assembly, dependency, GUI, catalog or backend SDK is added. Separate logical input/output
+selection and MIDI/capture preparation are scoped in Audio; output does not prove operational input.
+
 ## Accepted constraints
 
 Use simple architecture for the current product with extension points justified by known requirements.

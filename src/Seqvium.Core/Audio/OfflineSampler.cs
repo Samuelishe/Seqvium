@@ -99,6 +99,24 @@ public sealed class PreparedSampler : IDisposable
 
 public static class SamplerPreparation
 {
+    /// <summary>Ephemeral raw source at native pitch. Empty revision/occurrence denotes no canonical music;
+    /// leases are independent of source. No document, resource, Pattern or Undo state is manufactured.</summary>
+    public static PreparedSampler PrepareOneShot(DecodedPcm source, int sampleRate, int channels)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (sampleRate is not (44100 or 48000) || channels is not (1 or 2))
+            throw new NotSupportedException("One-shot supports 44.1/48 kHz mono/stereo execution.");
+        double step = PcmSampler.Step(source.SampleRate, sampleRate, 60, 60);
+        long end = (long)Math.Ceiling(source.Frames / step);
+        var lease = source.Lease();
+        return new(Guid.Empty, sampleRate, channels, 1, 0, end, 0,
+            [new(default, 0, step, 1, 0, end, 0)],
+            [
+                new(0, default, ExecutionEventKind.NoteOn, default(ExecutionOccurrence), 0),
+                new(end, default, ExecutionEventKind.Stop, null, -1)
+            ], [lease]);
+    }
+
     public const int MaximumEvents = 100_001;
     public const int MaximumDecodedBytes = 128 * 1024 * 1024;
 

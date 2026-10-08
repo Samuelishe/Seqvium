@@ -2,7 +2,8 @@
 
 Role: Serialization compatibility and resource-preservation contract.
 Read when: Designing save/load, migration, managed media, or extension-state persistence.
-Authoritative for: Compatibility direction, canonical Save/reopen, recovery-state and media integrity, opening/migration, versioned persistence and unknown-data preservation.
+Authoritative for: Compatibility direction, canonical Save/reopen, recovery-state and media integrity,
+opening/migration, versioned persistence and unknown-data preservation.
 Not authoritative for: A final container/schema, runtime domain classes, extension API, or recovery implementation.
 
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
@@ -24,21 +25,21 @@ whose value may be JSON `null`; empty collections are explicit arrays/objects. T
 state shape follows [model records](../src/Seqvium.Core/Domain/ProjectModel.cs) and
 [codec](../src/Seqvium.Core/Persistence/ProjectPersistence.cs):
 
-| Object | Known fields |
-| --- | --- |
-| State | `id`, `name`, `settings`, `patterns`, `sounds`, `placements`, `groups`, `resources`, `contexts`, `routes` |
-| Settings / meter | `tempo`, `meter` / `numerator`, `denominator` |
-| Pattern | `id`, `name`, `length`, `parts` |
-| Part | `id`, `name`, `soundId`, `notes` |
-| Note | `id`, `position`, `duration`, `pitch`, `intensity` |
-| Sound | `id`, `name`, `algorithm`, `parameters`, `resourceIds`, `extension` |
-| Resource | `id`, `name`, `managedLocator`, `origin` |
-| Instrument Group | `id`, `name`, `soundIds` |
-| Placement | `id`, `patternId`, `position`, `itemContextId`, `containingContextId`, `routeId`, `partRelationships` |
-| Placement part relationship | `partId`, `sharedPerformanceKey`, `routeId` |
-| Context | `id`, `name`, `level` (`item` or `containing`), `intentionalMix`, `extension` |
-| Route intent | `id`, `name` |
-| Extension state | `extensionId`, `stateVersion`, `payload` |
+| Object                      | Known fields                                                                                              |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------|
+| State                       | `id`, `name`, `settings`, `patterns`, `sounds`, `placements`, `groups`, `resources`, `contexts`, `routes` |
+| Settings / meter            | `tempo`, `meter` / `numerator`, `denominator`                                                             |
+| Pattern                     | `id`, `name`, `length`, `parts`                                                                           |
+| Part                        | `id`, `name`, `soundId`, `notes`                                                                          |
+| Note                        | `id`, `position`, `duration`, `pitch`, `intensity`                                                        |
+| Sound                       | `id`, `name`, `algorithm`, `parameters`, `resourceIds`, `extension`                                       |
+| Resource                    | `id`, `name`, `managedLocator`, `origin`                                                                  |
+| Instrument Group            | `id`, `name`, `soundIds`                                                                                  |
+| Placement                   | `id`, `patternId`, `position`, `itemContextId`, `containingContextId`, `routeId`, `partRelationships`     |
+| Placement part relationship | `partId`, `sharedPerformanceKey`, `routeId`                                                               |
+| Context                     | `id`, `name`, `level` (`item` or `containing`), `intentionalMix`, `extension`                             |
+| Route intent                | `id`, `name`                                                                                              |
+| Extension state             | `extensionId`, `stateVersion`, `payload`                                                                  |
 
 Pitch is decimal semitones in [0, 127], permitting fractional pitch; intensity is decimal [0, 1].
 Sound parameters are a string-to-decimal map. Notes must fit their Pattern length; a placement end must
@@ -83,7 +84,8 @@ unknown properties and opaque extension data. F1 needs no structural schema migr
 `ResourceDescriptor.managedLocator` is `wav/<random UUID N>-<SHA-256 lowercase hex>.wav` for accepted
 WAV. UUIDs distinguish imports even for equal bytes; the hash verifies integrity, not deduplication or
 resource identity. `origin` is descriptive provenance and never a playback dependency. Sampler intent
-uses existing sound algorithm/decimal parameter fields under the [audio owner](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation).
+uses existing sound algorithm/decimal parameter fields under
+the [audio owner](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation).
 R1 readers can preserve this JSON but cannot reproduce the new algorithm or establish media availability.
 Legacy R1 descriptor-only resources remain interpretable/unvalidated; they are never promoted to
 accepted WAV by filename or caller availability assertions. Only the F1 `wav/` namespace is decoded/copied.
@@ -122,6 +124,12 @@ No accepted-file GC is implemented: even history eviction/Close retains bytes, f
 premature cleanup. Disk growth, orphan reconciliation, relink/repair, general owner tracking and recovery
 remain Q-059/Q-058. Disposable unaccepted request files and exclusively owned write temporaries may be
 removed after their operation ends. Each WAV is bounded to 16 MiB; total durable disk quota is unselected.
+
+F3 adds no persisted fields/schema change. Discovery/preview are nonpersistent; preview creates no
+accepted descriptor or project-owned source bytes. Explicit project reuse creates a fresh SoundId
+over the same ResourceId/managed locator, with no duplicate WAV or semantic deduplication. Independently
+imported equal files remain distinct resources. Save As transfers a shared resource once per destination
+under the existing integrity/retention rules.
 
 ## Required direction
 
@@ -280,7 +288,8 @@ follow [media integrity](#media-and-persistence-integrity), with exact mechanism
 Serialization must respect the distinct identities of named multi-instrument patterns, their musical
 parts/events and placements, organizational instrument/channel groups, and editable signal-graph
 definitions/connections. Group membership must not become pattern storage identity or imply routing.
-The bounded R1 schema is defined above; later graph scopes remain open. [ARCHITECTURE](ARCHITECTURE.md) and [NODE_GRAPH](NODE_GRAPH.md)
+The bounded R1 schema is defined above; later graph scopes remain open. [ARCHITECTURE](ARCHITECTURE.md)
+and [NODE_GRAPH](NODE_GRAPH.md)
 own the model and editable/prepared boundary. Saving project state must not require preserving live
 UI objects or treating a prepared realtime representation as the editable document.
 
@@ -414,18 +423,18 @@ remain open for project recovery and managed-media storage/integrity mechanisms.
 These are ownership/lifetime states, not required directories, tables, classes or physical copies.
 One resource can have several owners; byte/path equality does not merge semantic identities.
 
-| State / owner | Preservation responsibility |
-| --- | --- |
-| Current canonical working document | Accepted editable intent and resource/use/definition relationships, including unsaved or locally degraded work |
-| Last successfully explicit-saved project | Identified saved canonical revision and its managed-media dependencies, independently of later working edits |
-| Rolling recoverable working state | Identified captured canonical revision and dependencies, independently of Save; not every edit since the capture |
-| Project-managed durable media | Accepted reusable audio independent of source path/generator; may have no visible placement |
-| Prepared/staged unaccepted media | Owned preparation/output whose existence is not canonical acceptance; partial and complete output differ |
-| Transient disposable cache | Regenerable/dispensable preview or derived data; never the sole durable accepted-media copy |
-| Undo/Redo-retained resources | Material needed to restore retained canonical relationships, even with zero current visible uses |
-| Recovery-retained resources | Material needed by retained candidates, including revisions different from current working/saved state |
-| Pending async-owned resources | Inputs/output needed until completion, cancellation, delivery or safe retirement; no implicit project acceptance |
-| Independently owned Personal Library resources | Explicitly retained user content outside project cleanup authority, even if physical storage is shared |
+| State / owner                                  | Preservation responsibility                                                                                      |
+|------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| Current canonical working document             | Accepted editable intent and resource/use/definition relationships, including unsaved or locally degraded work   |
+| Last successfully explicit-saved project       | Identified saved canonical revision and its managed-media dependencies, independently of later working edits     |
+| Rolling recoverable working state              | Identified captured canonical revision and dependencies, independently of Save; not every edit since the capture |
+| Project-managed durable media                  | Accepted reusable audio independent of source path/generator; may have no visible placement                      |
+| Prepared/staged unaccepted media               | Owned preparation/output whose existence is not canonical acceptance; partial and complete output differ         |
+| Transient disposable cache                     | Regenerable/dispensable preview or derived data; never the sole durable accepted-media copy                      |
+| Undo/Redo-retained resources                   | Material needed to restore retained canonical relationships, even with zero current visible uses                 |
+| Recovery-retained resources                    | Material needed by retained candidates, including revisions different from current working/saved state           |
+| Pending async-owned resources                  | Inputs/output needed until completion, cancellation, delivery or safe retirement; no implicit project acceptance |
+| Independently owned Personal Library resources | Explicitly retained user content outside project cleanup authority, even if physical storage is shared           |
 
 Prepared execution is derived runtime state, outside Save/recovery authority. Active playback/render/
 audition may additionally require safe live-use retirement under the audio owner. Disposable Sample Lab
@@ -518,13 +527,13 @@ platform/storage evidence before concrete guarantees can be claimed.
 Here, canonical acceptance, persistence commit and UI acknowledgement are distinct boundaries.
 The matrix states obligations, not a selected transaction protocol or permanent test-case catalogue.
 
-| Operation | Before | Prepared, not committed | Established result | Before-commit failure | Around-commit ambiguity | Retain / eventual cleanup |
-| --- | --- | --- | --- | --- | --- | --- |
-| Import / acceptance | Existing working/saved references; external source | Owned partial/complete staging, then validated durable material; no accepted edit yet | Gate-valid resource/use edit and one Undo transaction; Save/recovery separately capture it | No partial accepted resource/edit; old relationships intact; safe retry | Stored bytes alone prove no edit; reconcile storage and captured acceptance evidence separately | Working/saved/history/recovery/pending owners retain; only safely unowned staging retires |
-| Explicit Save | Last coherent Save; possibly newer working/recovery state | Captured revision and protected required media; previous Save retained | Coherent saved revision/media, with degraded dependencies disclosed; later edits still unsaved | Previous Save/media and current work intact; recovery remains independent | Validate available old/new coherent result; do not infer success/failure from lost UI confirmation | Saved dependencies retain; redundant recovery retires only by identity/revision coverage and owner checks |
-| Recovery update | Valid candidate if one exists; current work may be newer | Owned incomplete successor and dependency material | Valid successor protects its captured revision; explicit Save unchanged | Older valid candidate remains; report uncaptured interval/protection failure | Validate candidate/fallback; incomplete/corrupt data is not latest working state | Unique unsaved protection prioritized; demonstrably superseded candidate ownership can retire |
-| Save As / collect / relocate | Coherent source and edited work; any pre-existing destination | Owned partial destination document/media; no final ownership switch | Identified coherent destination with necessary media; source retirement separately validated | Source/current work protected; destination incomplete; retry/cleanup scoped to owned artifacts | Establish source/destination status before association switch, retry or deletion; no same-volume assumption | Protect source until destination established and other owners released; leave unrelated destination content intact |
-| Async render / acceptance | Frozen scope, original lifecycle/target/authority and owned inputs | Pending computation and durable output; still no canonical edit | Revalidated intended resource/reference edit; execution and persistence follow independently | No accepted edit; old state intact; useful output needs an explicit owner | A completed file cannot prove acceptance or target validity; reopen grants no old lifecycle authority | Pending/unattached owner until deliberate fresh reuse or safe cleanup; accepted history/recovery owners thereafter; no automatic library publication |
+| Operation                    | Before                                                             | Prepared, not committed                                                               | Established result                                                                             | Before-commit failure                                                                          | Around-commit ambiguity                                                                                     | Retain / eventual cleanup                                                                                                                            |
+|------------------------------|--------------------------------------------------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Import / acceptance          | Existing working/saved references; external source                 | Owned partial/complete staging, then validated durable material; no accepted edit yet | Gate-valid resource/use edit and one Undo transaction; Save/recovery separately capture it     | No partial accepted resource/edit; old relationships intact; safe retry                        | Stored bytes alone prove no edit; reconcile storage and captured acceptance evidence separately             | Working/saved/history/recovery/pending owners retain; only safely unowned staging retires                                                            |
+| Explicit Save                | Last coherent Save; possibly newer working/recovery state          | Captured revision and protected required media; previous Save retained                | Coherent saved revision/media, with degraded dependencies disclosed; later edits still unsaved | Previous Save/media and current work intact; recovery remains independent                      | Validate available old/new coherent result; do not infer success/failure from lost UI confirmation          | Saved dependencies retain; redundant recovery retires only by identity/revision coverage and owner checks                                            |
+| Recovery update              | Valid candidate if one exists; current work may be newer           | Owned incomplete successor and dependency material                                    | Valid successor protects its captured revision; explicit Save unchanged                        | Older valid candidate remains; report uncaptured interval/protection failure                   | Validate candidate/fallback; incomplete/corrupt data is not latest working state                            | Unique unsaved protection prioritized; demonstrably superseded candidate ownership can retire                                                        |
+| Save As / collect / relocate | Coherent source and edited work; any pre-existing destination      | Owned partial destination document/media; no final ownership switch                   | Identified coherent destination with necessary media; source retirement separately validated   | Source/current work protected; destination incomplete; retry/cleanup scoped to owned artifacts | Establish source/destination status before association switch, retry or deletion; no same-volume assumption | Protect source until destination established and other owners released; leave unrelated destination content intact                                   |
+| Async render / acceptance    | Frozen scope, original lifecycle/target/authority and owned inputs | Pending computation and durable output; still no canonical edit                       | Revalidated intended resource/reference edit; execution and persistence follow independently   | No accepted edit; old state intact; useful output needs an explicit owner                      | A completed file cannot prove acceptance or target validity; reopen grants no old lifecycle authority       | Pending/unattached owner until deliberate fresh reuse or safe cleanup; accepted history/recovery owners thereafter; no automatic library publication |
 
 ### Interrupted recording
 

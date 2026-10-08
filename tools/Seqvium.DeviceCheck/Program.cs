@@ -81,7 +81,10 @@ internal static class DeviceCheck
 
     internal static async Task<int> Run(string[] args)
     {
+        Console.Error.WriteLine(
+            "WARNING: explicit physical verification plays sound on the selected output. No system volume/settings are changed.");
         string mode = args.Length == 0 ? "smoke" : args[0];
+        if (mode == "audition-smoke") return await AuditionCheck.Run();
         int seconds = args.Length > 1 ? int.Parse(args[1], System.Globalization.CultureInfo.InvariantCulture) :
             mode == "measure" ? 60 : 2;
         if (mode is not ("smoke" or "measure" or "pressure" or "lifetimes" or "faults") || seconds is < 1 or > 120)
@@ -130,7 +133,7 @@ internal static class DeviceCheck
     {
         using var fixture = new Fixture(voices);
         await fixture.Initialize(voices);
-        using var output = new WasapiOutput(Math.Min(1048576, seconds * 44100));
+        using var output = new WasapiOutput(Math.Min(1048576, seconds * 44100), diagnostics: true);
         if (output.Facts is not { } facts)
         {
             output.Close();
@@ -360,7 +363,7 @@ internal static class DeviceCheck
     {
         using var fixture = new Fixture(8);
         await fixture.Initialize(8);
-        using var output = new WasapiOutput(0);
+        using var output = new WasapiOutput(0, diagnostics: true);
         if (output.Facts is not { } facts)
         {
             output.Close();
@@ -405,7 +408,7 @@ internal static class DeviceCheck
         using var fixture = new Fixture(8);
         await fixture.Initialize(8);
         byte[] before = ProjectPersistence.Encode(fixture.Document);
-        using var output = new WasapiOutput(0);
+        using var output = new WasapiOutput(0, diagnostics: true);
         if (output.Facts is not { } facts)
         {
             output.Close();
@@ -447,7 +450,8 @@ internal static class DeviceCheck
         using var fixture = new Fixture(1);
         await fixture.Initialize(1);
         byte[] before = ProjectPersistence.Encode(fixture.Document);
-        using var output = new WasapiOutput(0, "{0.0.0.00000000}.{00000000-0000-0000-0000-000000000000}");
+        using var output = new WasapiOutput(0, "{0.0.0.00000000}.{00000000-0000-0000-0000-000000000000}",
+            diagnostics: true);
         output.Close();
         using var plan = SamplerPreparation.PreparePattern(fixture.Document, fixture.Pattern, 48000);
         bool unchanged = before.SequenceEqual(ProjectPersistence.Encode(fixture.Document));

@@ -244,9 +244,15 @@ replaceable execution/device ownership, without adopting a permanent engine/nati
 authorized R2-F2 is locally accepted-ready for bounded real WAV/Windows output, shared offline PCM,
 preparation/publication/retirement and safe device fault-stop under its
 [report](experiments/SEQ-R2-F2_REPORT.md). Q-001–Q-007 stay open for wider workload/period/device,
-clock/recovery and distribution evidence. R2 is not complete: scope the remaining minimal source
-discovery/transient preview/project-resource reuse path and broader device/input/MIDI foundation
-follow-up explicitly; F2 does not authorize R3, a recording workflow or a permanent engine SDK.
+clock/recovery and distribution evidence. R2-F3 is locally accepted-ready for one-level filesystem/
+project-resource access, raw transient one-shot audition and explicit independent-sound reuse under
+its [audit/report](experiments/SEQ-R2-F3_REPORT.md). F1/F2/F3 remain work packages, not new numbered stages.
+R2 is not complete: separate logical input/output endpoint discovery/selection foundation still lacks
+implementation/evidence. Scope that bounded follow-up explicitly; input streaming, recording, MIDI
+editor/controller mapping, new backends or a permanent SDK are not implied. MIDI/capture ownership
+preparation is documented in [Audio](AUDIO_ENGINE.md#remaining-logical-devices-midi-and-capture-foundation).
+Wider device/clock, graph/plugin, catalog/contextual preview and release-platform questions remain open
+without requiring all those future workflows before R3. F3 itself does not authorize R3.
 
 Establish audio resources, WAV import, preview, managed project media, a simple sampler, note/pitch
 playback, and resource lifetime. Do not expand immediately to every codec or sampler feature.

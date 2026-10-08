@@ -53,9 +53,15 @@ public sealed unsafe class WasapiOutput : IDisposable
     private bool _disposed, _startRequested;
     private int _injectStall, _injectFailure;
     private readonly float[] _capture;
-    private readonly ServiceObservation[] _observations = new ServiceObservation[20000];
+    private readonly bool _diagnostics;
+    private readonly ServiceObservation[] _observations;
     private int _count, _captureCount, _capturePackets;
-    private readonly int[] _partitions = new int[20001];
+    private readonly int[] _partitions;
+    public bool DiagnosticsEnabled => _diagnostics;
+
+    public int DiagnosticStorageBytes => _capture.Length * sizeof(float) + _partitions.Length * sizeof(int) +
+                                         _observations.Length * sizeof(ServiceObservation);
+
     public OutputFacts? Facts { get; private set; }
     public OutputFailure Failure { get; private set; }
     public int HResult { get; private set; }
@@ -74,16 +80,21 @@ public sealed unsafe class WasapiOutput : IDisposable
     public int MaximumObservedVoices { get; private set; }
     public double ElapsedSeconds { get; private set; }
     public int CallbackCount => Volatile.Read(ref _count);
-    public ReadOnlySpan<ServiceObservation> Observations => _observations.AsSpan(0, _count);
+    public ReadOnlySpan<ServiceObservation> Observations => _observations.AsSpan(0, _diagnostics ? _count : 0);
     public ReadOnlySpan<float> Capture => _capture.AsSpan(0, _captureCount);
     public ReadOnlySpan<int> CapturePartitions => _partitions.AsSpan(0, _capturePackets);
 
-    public WasapiOutput(int captureSamples = 1048576, string? endpointId = null)
+    public WasapiOutput(int captureSamples = 0, string? endpointId = null, bool diagnostics = false)
     {
         if (!OperatingSystem.IsWindows() || !Environment.Is64BitProcess)
             throw new PlatformNotSupportedException("Windows x64 output only.");
         if (captureSamples is < 0 or > 8388608) throw new ArgumentOutOfRangeException(nameof(captureSamples));
+        if (!diagnostics && captureSamples != 0)
+            throw new ArgumentException("PCM capture requires explicit diagnostics.", nameof(captureSamples));
+        _diagnostics = diagnostics;
         _capture = new float[captureSamples];
+        _observations = diagnostics ? new ServiceObservation[20000] : [];
+        _partitions = captureSamples == 0 ? [] : new int[20001];
         _quit = CreateEventW(0, 1, 0, null);
         _activate = CreateEventW(0, 0, 0, null);
         if (_quit == 0 || _activate == 0)
@@ -270,13 +281,13 @@ public sealed unsafe class WasapiOutput : IDisposable
             }
 
             CapturePacket(prefill, (int)capacity);
-            ObservePacket(prefill, sampler);
+            if (_diagnostics) ObservePacket(prefill, sampler);
             if (!Check(ReleaseBuffer(render, capacity, 0))) return;
             if (!Check(Simple(client, 10))) return;
             streaming = true;
             first = Stopwatch.GetTimestamp();
             long previous = first;
-            workerAllocation = GC.GetAllocatedBytesForCurrentThread();
+            if (_diagnostics) workerAllocation = GC.GetAllocatedBytesForCurrentThread();
             _started.Set();
             waits[1] = audioEvent;
             ulong previousClock = 0;
@@ -293,7 +304,8 @@ public sealed unsafe class WasapiOutput : IDisposable
                     break;
                 }
 
-                long serviceStart = Stopwatch.GetTimestamp(), serviceAllocated = GC.GetAllocatedBytesForCurrentThread();
+                long serviceStart = Stopwatch.GetTimestamp(),
+                    serviceAllocated = _diagnostics ? GC.GetAllocatedBytesForCurrentThread() : 0;
                 if (Interlocked.Exchange(ref _injectStall, 0) != 0)
                 {
                     long until = serviceStart + Stopwatch.Frequency * 30 / 1000;
@@ -336,12 +348,17 @@ public sealed unsafe class WasapiOutput : IDisposable
                 {
                     if (!Check(GetBuffer(render, (uint)frames, &buffer))) break;
                     var output = new Span<float>((void*)buffer, frames * channels);
-                    long processorStart = Stopwatch.GetTimestamp(), allocated = GC.GetAllocatedBytesForCurrentThread();
+                    long processorStart = _diagnostics ? Stopwatch.GetTimestamp() : 0,
+                        allocated = _diagnostics ? GC.GetAllocatedBytesForCurrentThread() : 0;
                     bool valid = sampler.Process(output);
-                    ProcessorAllocatedBytes += GC.GetAllocatedBytesForCurrentThread() - allocated;
-                    processorTicks = Stopwatch.GetTimestamp() - processorStart;
+                    if (_diagnostics)
+                    {
+                        ProcessorAllocatedBytes += GC.GetAllocatedBytesForCurrentThread() - allocated;
+                        processorTicks = Stopwatch.GetTimestamp() - processorStart;
+                    }
+
                     CapturePacket(output, frames);
-                    ObservePacket(output, sampler);
+                    if (_diagnostics) ObservePacket(output, sampler);
                     if (!Check(ReleaseBuffer(render, (uint)frames, valid ? 0u : 2u))) break;
                     if (!valid)
                     {
@@ -353,25 +370,30 @@ public sealed unsafe class WasapiOutput : IDisposable
                 }
 
                 long end = Stopwatch.GetTimestamp(), serviceTicks = end - serviceStart;
-                ServiceAllocatedBytes += GC.GetAllocatedBytesForCurrentThread() - serviceAllocated;
-                if (processorTicks > periodTicks) ProcessorMisses++;
-                if (serviceTicks > periodTicks) ServiceMisses++;
-                if (frames > 0 && serviceTicks > (double)frames / rate * Stopwatch.Frequency) PacketMisses++;
                 int index = _count;
-                if (index == _observations.Length)
+                if (_diagnostics)
                 {
-                    Failure = OutputFailure.InstrumentationFull;
-                    break;
+                    ServiceAllocatedBytes += GC.GetAllocatedBytesForCurrentThread() - serviceAllocated;
+                    if (processorTicks > periodTicks) ProcessorMisses++;
+                    if (serviceTicks > periodTicks) ServiceMisses++;
+                    if (frames > 0 && serviceTicks > (double)frames / rate * Stopwatch.Frequency) PacketMisses++;
+                    if (index == _observations.Length)
+                    {
+                        Failure = OutputFailure.InstrumentationFull;
+                        break;
+                    }
+
+                    _observations[index] = new(processorTicks, serviceTicks, serviceStart - previous, frames,
+                        (int)padding,
+                        position, qpc, submitted);
                 }
 
-                _observations[index] = new(processorTicks, serviceTicks, serviceStart - previous, frames, (int)padding,
-                    position, qpc, submitted);
-                Volatile.Write(ref _count, index + 1);
+                Volatile.Write(ref _count, index == int.MaxValue ? index : index + 1);
                 previous = serviceStart;
                 if (Failure != OutputFailure.None) break;
             }
 
-            WorkerAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - workerAllocation;
+            if (_diagnostics) WorkerAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - workerAllocation;
         }
         catch (Exception error)
         {
