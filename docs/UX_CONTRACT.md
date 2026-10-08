@@ -174,6 +174,43 @@ not silently reapply that exact baked chain. Specialized audition, acceptance, c
 and resampling semantics are owned by [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md). Missing capabilities should be
 represented explicitly according to [EXTENSIONS](EXTENSIONS.md), with user work retained.
 
+### Edit target and sharing feedback
+
+Opening an editor from a placement must make its editing scope understandable. Musical editing names
+the referenced Pattern and affects its shared musical content; it does not silently create a private
+copy. Placement editing instead affects that occurrence's position, supported local range/timing and
+item-local processing. Moving one occurrence does not move other uses or reorganize its definition.
+Sound settings identify the sound definition/use; containing effects identify the processing context;
+media-level work identifies the durable resource. Focus or selection alone cannot establish ownership.
+
+Use stable contextual target/scope and meaningful sharing information so users can anticipate affected
+uses, with deeper relationship detail available when needed. A persistent target indication, an
+understandable account of other uses and explicit independence actions are useful directions, not
+selected controls, icons, counts or editor composition. Ordinary edits should follow predictable
+targets without constant modal questions; meaningful shared-state consequences must remain visible.
+When scope is ambiguous or unavailable, resolve it before mutation rather than silently widen it.
+
+For three uses of Pattern A, a Snare note edit affects all three. Conceptual `Make Pattern Variation`
+for B gives B independent notes while A/C retain the original and sounds remain shared unless separately
+changed. Conceptual `Make Sound Independent` instead gives the intended sound use independent settings;
+notes and immutable samples can remain shared. Each independence action is one coherent Undo edit,
+including its reference changes. Different effects on two placements require neither of these actions.
+Exact reference/detachment and opaque-plugin support remain open under
+[architecture](ARCHITECTURE.md#independent-sound-and-local-processing).
+
+A `Drums` container's preferred purpose may guide convenient defaults without forbidding an otherwise
+compatible Bass Pattern or claiming ownership of its synth. Genuine unsupported placement relationships
+are understandable constraints; do not silently convert or duplicate content. Arrangement organization
+and explicit processing assignment have different consequences under the
+[bounded container model](ARCHITECTURE.md#compatible-material-and-bounded-organization).
+
+Deleting a selected placement removes that use. Deleting a definition, container or resource is a
+different scope with known dependencies. Explain affected uses and any block/defer or deliberate choice
+needed to resolve them; do not silently cascade to unrelated content/media or redirect uses by name.
+Predictable local deletion need not require a modal questionnaire. Undo restores the intended canonical
+relationships, subject to ordinary validation; exact deletion/confirmation mechanics remain open under
+[deletion scope](ARCHITECTURE.md#deletion-scope-and-retained-relationships).
+
 ### Undo grouping and interaction preview
 
 Input source does not determine Undo semantics: a pointer drag is one logical Move transaction, a

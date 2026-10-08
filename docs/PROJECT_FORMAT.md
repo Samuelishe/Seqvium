@@ -133,6 +133,23 @@ every sound/resource/processing relationship. This does not select a schema, cop
 hierarchy, or serialized execution instances; [ARCHITECTURE](ARCHITECTURE.md#separate-sharing-identities)
 owns the identities.
 
+Preserve intended content/sound-use/resource references, occurrence-local timing/ranges, Arrangement
+organizational membership and any preferred-purpose configuration, actual item/containing processing
+membership and downstream route relationships independently where applicable. The
+[identity boundaries](ARCHITECTURE.md#separate-sharing-identities) are persistence obligations, not a
+class or field inventory. Organization alone cannot be decoded as a bus or exclusive sound owner.
+Different supported musical fragments, Pattern placements, audio clips and later recordings need not
+be forced into one identical stored shape.
+
+Saving only visible Arrangement layout and reconstructing sharing on reopen is insufficient. Equal
+labels, events, presets or audio bytes do not prove one identity; different labels do not prove independence.
+Round-trip must preserve a repeated Pattern's shared notes, a variation's independent notes with shared
+sounds, an independently editable sound's resource references, and reused media with local clip edits.
+Moves/deletion/Undo preserve or deliberately change the identified relationships under
+[architecture](ARCHITECTURE.md#deletion-scope-and-retained-relationships), rather than rely on heuristics.
+Exact domain/reference structures, identity encoding, migrations, time/range forms and graph attachments
+remain Q-008/Q-009/Q-019/Q-029/Q-051; this does not select persistent Undo history or runtime instances.
+
 Preserve shared sound-definition settings/content references and canonical relationships needed to
 express intended performance interaction and contribution routing under
 [ARCHITECTURE](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains). Derived execution-domain

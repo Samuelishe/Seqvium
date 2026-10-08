@@ -402,17 +402,68 @@ and useful open/migration diagnostics without selecting a schema.
 
 ## Separate sharing identities
 
-Pattern musical content, instrument/sound definition, placement state, and processing state are
-distinct identities whose sharing or independence must be expressible separately. There is no single
-universal linked/unlinked state. Editing shared Pattern content changes every placement using it;
-changing placement-local position, processing, or future fades does not change all those placements.
+The following identities and relationships are independently meaningful and must remain separately
+editable and persistable where applicable. They describe ownership, not a required class per row.
 
-An explicit action conceptually called `Make Pattern Variation` copies/detaches musical content.
-It must not implicitly detach every associated sound, resource, or processing relationship. A separate
-intention, conceptually `Make Sound Independent`, may copy/detach an instrument/sound definition.
-These are conceptual names, not selected commands, UI, or internal copy mechanics. A hidden
-unlink-everything operation must not be the only model. [UX_CONTRACT](UX_CONTRACT.md) owns making
-meaningful sharing understandable; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns relationship preservation.
+| Conceptual identity | Owns / relates to | Does not imply |
+| --- | --- | --- |
+| Musical content definition | Pattern's named reusable parts/events and references to instrument/sound definitions; each part addresses one instrument | Exclusive sound ownership, a placement, or an audio bus |
+| Instrument / sound definition | Reusable sound intent, durable settings/configuration and required content references | Pattern ownership, shared live performance state, or routing every use together |
+| Musical occurrence / placement | One use of identified content/resource at a timeline position, supported local timing/range and item-local relationships | A new musical definition, resource rewrite, or movement of other uses |
+| Durable audio resource | Accepted source audio and resource availability/lifetime, separately from its occurrences | A clip's position, trim, effects or processing membership |
+| Arrangement container | User-named timeline organization and placement membership, preferred purpose where useful; may expose an explicit containing processing context | Exclusive instrument/sound ownership, Pattern identity or Mixer identity |
+| Instrument Group | Organizational membership/naming of instruments independently of Pattern use | Timeline placement or audible aggregation |
+| Item / containing processing context | Actual contribution membership, local processing and continuation to routes; explicit aggregate where requested | Musical-content ownership or aggregation from mere visual containment |
+| Mixer route / channel / bus | Global routing, deliberate mixing and processing; may present an existing local context | One container per channel or another copy of that context's DSP |
+
+Content references, sound-use references, placement timing, organizational membership, actual processing
+membership and downstream routes must not be collapsed into one relationship. Names, equal data or
+proximity do not establish shared identity. This does not require a separate user operation for every
+relationship: one coherent action can deliberately change several, with its scope understandable.
+
+### Shared content and independent variations
+
+Repeated placements normally reference one Pattern. Opening its musical editor from Placement B and
+editing a Snare note edits that shared definition, so A, B and C all reflect the change. Opening from a
+placement does not silently create private notes. B's start position, supported local timing/visible
+range, item-local processing and future placement-specific properties instead affect B's occurrence.
+Such properties do not rewrite the referenced events or change A/C; exact inventories/time forms remain
+open. Moving B between Arrangement containers moves B alone, not every reference or the Pattern.
+Renaming/reorganizing the reusable definition is a different scope from moving an occurrence or
+assigning processing; changing definition organization cannot silently relocate its placements.
+
+An explicit action conceptually called `Make Pattern Variation` creates/detaches independent musical
+content and retargets the intended placement to it in one logical Undo transaction. The original
+Pattern and its other uses remain intact. Sound definitions, source media, placement-local processing,
+containing context and routes remain as intended; the action does not implicitly duplicate them or
+runtime plugin instances. Later musical edits to the variation no longer edit the original content.
+Undo restores the original reference and coherent canonical relationships, without deleting material
+still needed by another use or retained history. These are conceptual names, not selected commands.
+
+### Independent sound and local processing
+
+`Make Sound Independent` instead establishes independently editable sound-defining settings and updates
+the explicitly intended sound-use reference(s). Two Patterns can retain their different notes while one
+uses an independent Bass Synth definition. The new definition no longer follows edits to the old one;
+it may still reference the same immutable sample/content. Musical notes and resources need not be copied.
+If the intended scope is one occurrence of shared musical content, changing a reference stored in that
+shared content would affect its other uses: the action must establish the intended independent use,
+or explain an unavailable scope, rather than silently edit the shared reference. Reference/detachment
+mechanisms remain Q-029; no universal per-property override system is selected.
+
+This is a coherent logical edit distinct from Pattern variation. Supported durable/opaque source state
+must be handled without a promise that every plugin supports arbitrary duplication. Unsupported required
+independence is an explicit capability blocker or informed alternative, under the
+[execution-domain contract](#shared-sound-definitions-and-execution-domains), not a hidden preset change.
+Definition independence and runtime performance independence are separate; neither determines a plugin
+instance count. Q-047 retains capability, synchronization and resource/performance evidence.
+
+Two placements can share the same sound definition and have different item-local effects without
+detaching that definition. Their required contributions remain independent before intentional mixing,
+and their performance interaction follows the existing execution-domain semantics. There is no single
+universal linked/unlinked state or mandatory unlink-everything operation.
+[UX_CONTRACT](UX_CONTRACT.md#edit-target-and-sharing-feedback) owns understandable target/sharing feedback;
+[PROJECT_FORMAT](PROJECT_FORMAT.md#musical-content-and-workspace-state) owns relationship preservation.
 
 ## Processing granularity and shared definitions
 
@@ -424,7 +475,12 @@ standalone musical item/clip/fragment/placement-like scope, not every event in a
 For one hit needing substantially independent processing, provide a low-ceremony path conceptually
 like `select event -> process separately / make independent fragment -> standalone item -> local graph`.
 Users should not need to understand internal decomposition to make that hit sound different. Exact
-command, event-to-item transformation, domain names, and graph ownership remain open.
+command, event-to-item transformation, domain names, and graph ownership remain open (Q-048).
+The resulting fragment's source event/content, timing and sound use must remain understandable. A
+request concerning one occurrence cannot silently change the event in every shared Pattern use or
+leave an unintended second trigger. Whether/how conversion retains a link to the source, removes or
+suppresses its original occurrence, establishes independent content and follows later source edits
+needs investigation under Q-048/Q-029/Q-008. This is not a graph-per-note default or an extra local level.
 
 Shared instrument settings/definition must not automatically imply shared execution state or
 irreversible mixed audio. For overlapping uses of a shared Bass Synth definition:
@@ -649,9 +705,62 @@ Atmosphere  |          Long Texture               |
 ```
 
 A container may have a preferred/default musical purpose or content relationship. That must not
-automatically make it the permanent owner of one instrument or Mixer Channel. Compatible material
-should be movable/reusable without arbitrary structural duplication. Compatibility, preferred-target
-behavior, ownership, nesting, and audio-clip semantics remain open.
+automatically make it the permanent or exclusive owner of one instrument, sound definition or Mixer
+Channel. A `Drums` purpose can guide naming, initial targeting and useful compatible defaults. A Bass
+Pattern is not incompatible merely because of that name/purpose: where the container supports the
+musical occurrence and its required context, reuse is allowed without copying or reassigning its sounds.
+Defaults cannot silently convert content, detach sharing or change established processing/routing.
+An explicit processing-context placement can change sound, with the feedback below. Exact defaults,
+compatibility tests and warnings remain Q-028/Q-030.
+
+### Compatible material and bounded organization
+
+The minimum compatibility boundary is a supported timeline occurrence with meaningful placement/time
+relationships and supported intended processing/routing semantics. Multi-instrument Patterns, standalone
+musical fragments, audio sample clips and later recorded-audio occurrences belong to the Arrangement direction
+when supported. They retain their own content, musical/source-time, resource and processing relationships;
+they need not share an identical internal shape. Recorded audio has a durable source resource separately
+from its timeline use; recording/capture alignment is not resolved here.
+
+Semi-free does not mean accepting every object everywhere. A sound definition, Instrument Group or
+Mixer route alone is not a timed occurrence. An unsupported structural/content/time relationship can
+block placement or require a deliberate supported transformation; do not silently render, destructively
+convert or duplicate material to make it fit. Container purpose is a preference, while actual supported
+relationships are constraints. Compatibility algorithms and the first supported type inventory remain
+open; no final public Track/Layer/Lane/Container term is selected.
+
+Document compatibility is distinct from current executability: safely representable material with
+missing media/plugins or incomplete graphs may remain arranged/editable, with dependency-scoped execution
+blockers. A capability failure cannot silently convert its content or change required sound to make it
+playable. The existing degraded-access/canonical-save contracts remain binding.
+
+Nested organization may be useful for naming/collapse, but does not by itself add processing. The
+minimum ordinary model remains items in named containers with distinguishable organization and optional
+explicit containing processing. An occurrence's ordinary local path has item-local processing and at
+most one containing-container processing level. An organizational ancestor cannot automatically add
+another aggregate/chain; nesting two serial processing containers after item-local processing would
+violate that bound. Global buses remain explicit routing responsibilities, not an invisible relabeling
+of extra nested local levels. Flat-only versus bounded organizational nesting, depth, presentation,
+membership/assignment mechanics and handling of competing containing contexts remain Q-028; Instrument
+Group hierarchy remains Q-023. No unlimited processing tree or universal overrides are accepted.
+
+### Deletion scope and retained relationships
+
+| Requested deletion | Semantic boundary |
+| --- | --- |
+| One Pattern placement | Remove that occurrence and its intended local relationships; preserve the Pattern, other placements, shared sound definitions and media |
+| A shared Pattern definition | Check its known uses; block/defer or offer a deliberate dependency-resolving choice rather than silently removing placements or redirecting them to similar content |
+| An Arrangement container | Distinguish organization removal from removing contained occurrences or its processing context. With known members/routes/dependencies, resolve their disposition deliberately; no hidden broad cascade or sound-changing reassignment |
+| A sound definition still used elsewhere | Respect those uses; block/defer or deliberately replace/detach/remove affected references with understandable scope, never destroy unrelated musical content or shared media |
+
+Deletion of a visible use does not establish that its definitions/resources are disposable. Undo restores
+the intended canonical relationships coherently; it does not rewind DSP state or renew cancelled async
+work. Known endpoint/dependency changes follow
+[cross-context ownership](#cross-context-ownership-and-identity) and
+[document integrity](#document-integrity-and-asynchronous-publication). Exact cascades, orphan handling,
+reference storage/counting, confirmation and history/resource retention remain Q-029/Q-019/Q-063/Q-059.
+Explicit future edit-source/destructive media operations need separately defined affected-use/lifetime
+semantics; ordinary trim, movement and local processing do not rewrite source audio.
 
 ### Arrangement context and Mixer presentation
 
@@ -709,6 +818,41 @@ sound-neutral regrouping. [UX_CONTRACT](UX_CONTRACT.md#processing-context-and-mi
 that consequence visible without requiring graph expertise. A move's accepted placement/context changes
 form one [logical undo transaction](#logical-undo-transactions-and-history-scope); exact assignment,
 edit representation and execution-transition mechanics remain Q-030/Q-019/Q-063/Q-057.
+
+### Small composition ownership example
+
+`Drums Main` contains Kick, Snare and Hat parts and is placed repeatedly. One placement becomes
+`Drums Fill` through musical-content variation; Main and Fill still reference the shared Kick/Snare
+sound definitions. An independent Bass Pattern references Bass Synth. Two audio clips reuse one
+managed sample. These definitions and occurrences remain distinct even if some labels or data match.
+
+Two Arrangement containers expose explicit contexts: `Drums` has Compressor, `Textures` has
+Distortion/Delay. Drum placements intentionally join the first aggregate; reused audio occurrences can
+join different contexts. Bass can retain a separate contribution route or deliberately join a compatible
+context. Outside explicit submixes, Kick/Snare/Hat outputs can retain their own Mixer routes; after an
+intentional aggregate, its route carries the aggregate, not recovered individual instruments. The named
+containers do not create Pattern buses or dictate one Mixer channel each. Ordinary global routes/buses
+continue to Master; Mixer may expose either local context without applying it twice.
+
+Editing a Main Snare note updates Main's repeated uses; Fill's notes remain independent. Editing the
+shared Kick definition updates its intended Main/Fill uses, while local effects on one occurrence do
+not. Moving one Fill occurrence to Textures changes its processing/aggregate membership and any assigned
+downstream route, potentially changing both mixes, without moving Main or editing shared sounds/media.
+Simultaneous occurrences in both contexts retain independently required contributions and R11
+performance-domain intent; they cannot be recovered from one prematurely mixed source output.
+
+Variation, sound independence, moves and accepted sample-use changes each commit their own coherent
+logical Undo edit. Save/reopen preserves the resulting references, memberships and routes explicitly,
+including incomplete canonical work; it cannot infer sharing from layout. Later object rendering follows
+the selected owner: Main definition without a placement context, one placement through item-local
+processing, or a container through its own processing. It preserves the source and does not automatically
+bake unrelated downstream Mixer/Master processing, under
+[object sampling](SAMPLE_WORKFLOW.md#create-sample-from-object). No new render/release scenario is defined.
+
+The ordinary path needs no ownership questionnaire: arrange occurrences, edit named shared music,
+change a selected occurrence locally, and request independence when needed. Target/sharing and explicit
+mix consequences must be understandable. Exact representation/UI/capability evidence remains open; the
+example establishes semantics rather than an implemented composition or the full R12 acceptance case.
 
 ## Future parameter control
 

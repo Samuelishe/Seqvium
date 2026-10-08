@@ -198,3 +198,17 @@ controls/locks, history/storage/limits, exact UI/lifecycle and evidence remain o
 suffices for its first one/two families; evidence-led R14+ expansion introduces no new prerequisite or
 stage reordering. Documentation/product-architecture only; SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r17).
+
+## SEQ-KB-R18 — Arrangement Containers & Shared Edit Ownership
+
+Completed 2026-10-08. Audited cases A–T and hypotheses 1–15; accepted distinct content/sound/occurrence/
+resource/organization/processing/route scopes, purpose versus compatibility, bounded nesting,
+shared/local edits, musical variation versus independent sound, scope-aware acceptance and dependency-aware
+delete/Undo/reopen. Preserved independent contributions/performance domains, non-destructive durable
+media and canonical/derived/async contracts. Partially resolved Q-028/Q-029 through
+[D-071](DECISIONS.md#d-071--arrangement-occurrences-and-separate-shared-edit-ownership); concrete structures,
+compatibility/defaults/hierarchy, reference/detachment/deletion/target UI, storage and evidence remain
+open. Narrowly clarified R1/R5/R7/R8/R9/R10/R12 responsibilities without pulling Arrangement UI into
+R1, selecting terminology/schema/graphs or redefining R12/Q-061. Documentation/product-architecture
+only; implementation stage IDs/order and R0 scope unchanged. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r18).

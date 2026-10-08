@@ -119,6 +119,11 @@ Include independent project-owned settings copied from creation defaults, plus i
 metadata and useful compatibility diagnostics under [SETTINGS](SETTINGS.md) and [PROJECT_FORMAT](PROJECT_FORMAT.md).
 Respect shared audio resources versus musical placements and the two local processing levels without
 freezing the final container term/schema or merging Arrangement with mixer identity.
+Provide sufficient identity/reference relationships for shared musical content, independently editable
+sound definitions, occurrences/resources and distinct organization/processing/routing under
+[architecture](ARCHITECTURE.md#separate-sharing-identities). Preserve those intentions in the bounded
+versioned foundation; the Arrangement UI, full compatibility/nesting and detachment workflows belong
+to their later stages, not R1.
 Canonical state is the single saved truth, including incomplete/invalid work; preserve degraded
 document access, critical-format refusal and behavior-changing migration choice. Exact schema and
 transaction mechanics remain open. Avoid UI-heavy implementation. Preserve the intended model in
@@ -167,6 +172,8 @@ Publication/compiler/cancellation/failure strategy remains open; no manual Apply
 
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,
 several channels, velocity, and responsive live editing over extensible musical events.
+Edit the identified shared Pattern content so all its references reflect note edits, with understandable
+target/sharing scope; do not introduce invisible musical copies when opened from a placement.
 
 ## SEQ-R6 — Extension Foundation
 
@@ -195,6 +202,9 @@ audio. Resolve bounded substitution/publication/restoration behavior. Follow [SA
 Accepted/generated material joins the same discoverable project-resource audition/reuse path established
 in R2; candidate exploration remains separate from acceptance. No hidden Sample Lab resource universe or
 automatic global Personal Library publication. R7 does not require cross-project publication.
+Acceptance identifies reusable-resource, specific-use or explicitly shared-definition intent under
+[sample scope](SAMPLE_WORKFLOW.md#acceptance-scope-and-shared-uses), validates the actual target and
+commits coherently. Implement only supported bounded scopes; no full Arrangement/event-conversion UI prerequisite.
 Use host localization and semantic styles for the removable generator's first-party UI under
 [foundation ownership](#localization-and-theme-foundation-ownership), rather than a separate resource system.
 
@@ -208,11 +218,15 @@ operation must be undoable and avoid silently reapplying exact baked processing.
 arrangement, and multiple-source capture need not arrive together. Render the frozen canonical scope,
 block required invalid/unavailable dependencies, handle preparation finitely and revalidate the target
 before asynchronous acceptance; exact taps/transactions remain open.
+Use the selected content/occurrence/container's semantic ownership rather than infer it from a label
+or editor entry point; rendering one use cannot silently transform every shared reference.
 
 ## SEQ-R9 — Piano Roll
 
 Add richer pitch, duration, and velocity editing over the same underlying musical event model as
 the Step Sequencer.
+The richer editor retains the same shared-content target semantics; opening from a placement does not
+detach it or create another event model.
 
 ## SEQ-R10 — Arrangement
 
@@ -221,6 +235,9 @@ independent variations. Follow the semi-free direction: user-named structured co
 default content relationships, and compatible material reuse without permanent one-instrument
 ownership or mixer-channel identity. Resolve bounded compatibility/container-processing relationships
 and audio-clip scope rather than assuming a final Track schema or full DAW timeline.
+Provide bounded placement-local versus shared-content editing, explicit musical variation and
+understandable organization/context moves and dependency-aware deletion. Apply the two local processing
+levels to any supported hierarchy; do not add an arbitrary processing tree or universal overrides.
 Respect project-tempo relationships and independent local stretch; ordinary audio trim/split/rearrange
 preserves source resources and keeps trim, loop/repeat, and stretch distinct. Exact representation,
 algorithms, gestures, and the implemented scope need bounded design rather than a complete stretch engine here.
@@ -241,6 +258,9 @@ Save/reopen preserves canonical work even when invalid. Export validates/prepare
 revision, blocks required dependencies and never silently renders stale playback; preparation requires
 responsive cancellation/state and finite failure handling. Export follows intended project cuts/tails
 under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
+Exercise meaningful shared/independent music and sound references, reused audio with local edits,
+context moves and coherent Undo/reopen under the accepted ownership boundaries. This clarifies integrity
+responsibility, not the full release scenario or capability/dependency audit retained by Q-061.
 Selected export ranges are hard by default; explicit tail inclusion may extend naturally allowed tails
 without undoing project cuts. Finite tail mechanics (Q-057), exact rolling-recovery workflow (Q-058),
 managed-media integrity mechanics (Q-059) and concrete milestone closure (Q-061) remain open.

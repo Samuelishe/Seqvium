@@ -351,3 +351,43 @@ Related Q-011 audition/substitution/restoration, Q-029 sharing/acceptance scope,
 Q-065 discovery/publication, Q-010/Q-024 extension availability/compatibility, Q-058/Q-059 recovery/media
 and Q-047/Q-057 execution/tails remain open without separate narrowing. R7 scope already suffices;
 R14+ expansion needs demonstrated need. SEQ-R0 remains pending / not started.
+
+## R18 resolved portions — Q-028/Q-029 container and shared-edit semantics
+
+Status: Partial resolution accepted by SEQ-KB-R18, 2026-10-08. Q-028 and Q-029 each retain their
+canonical active ID for concrete mechanisms/evidence; neither is fully resolved.
+Original Q-028: Arrangement container term/domain identity, compatibility, preferred target, ownership
+and nesting. Accepted portion: User-named containers organize compatible timed occurrences and may
+expose explicit containing processing. Purpose is not exclusive sound/instrument ownership; supported
+content/time/context relationships are constraints, with no identical-shape or live-availability rule.
+Organization is distinct from processing membership and can be sound-neutral. Musical containment
+creates no bus or one-to-one Pattern/Instrument Group/Mixer mapping. Organizational nesting cannot add
+a third ordinary local processing level; at most one containing local context follows item-local
+processing. Flat-only versus bounded organizational hierarchy remains undecided.
+Remaining Q-028: Final public term/domain structure, compatibility/capability tests, default-target and
+feedback algorithms, hierarchy/depth/assignment mechanics and evidence, coordinated with Q-023/Q-030/
+Q-008/Q-051. No classes, exact nested tree or flat-only restriction selected.
+Original Q-029: Reference/edit ownership, sharing and contextual acceptance across music, sound,
+placements, processing and media. Accepted portion: Shared notes edit their one Pattern; local changes
+and moves edit the occurrence. Musical variation detaches content for intended references, independently
+of sound/resource/processing sharing. Independent sound establishes independent settings for intended
+uses without mandatory note/media copies or instance counts. Local effects do not require detachment.
+Resource reuse remains non-destructive. Delete occurrence, definition, container and used sound have
+different dependency-aware scopes; coherent Undo restores canonical relationships without hidden cascades
+or eager media deletion. Contextual acceptance distinguishes reusable resource, one use and explicitly
+shared sound; target/dependency validation and durable storage precede coherent commit. Save/reopen
+preserves actual relationships, never reconstructs them by labels/data/layout. Scope/sharing feedback
+must be understandable without constant modal questionnaires or a universal unlink/override model.
+Remaining Q-029: Concrete identity/reference storage and transitions, one-use detachment within shared
+content, edit/copy and opaque-state capability handling, deletion/cascade/orphan/lifetime mechanisms,
+sharing/target and acceptance UI, serialization/migration/graph coordination, concurrency/performance
+evidence. Event conversion/source linkage stays Q-048; Q-008/Q-009/Q-019/Q-047/Q-049/Q-051/Q-059/
+Q-063/Q-065/Q-066 retain specialized mechanisms. No schema, clone or cleanup algorithm selected.
+Rationale: [D-071](DECISIONS.md#d-071--arrangement-occurrences-and-separate-shared-edit-ownership).
+Current owners: [Architecture](../ARCHITECTURE.md#separate-sharing-identities),
+[Arrangement](../ARCHITECTURE.md#semi-free-arrangement),
+[UX](../UX_CONTRACT.md#edit-target-and-sharing-feedback),
+[Project format](../PROJECT_FORMAT.md#musical-content-and-workspace-state),
+[Sample workflow](../SAMPLE_WORKFLOW.md#acceptance-scope-and-shared-uses).
+Bounded roadmap ownership preserves stage IDs/order and R0 scope; no full R12 scenario/dependency audit
+is claimed, and Q-061 stays open. SEQ-R0 remains pending / not started.

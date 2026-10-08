@@ -7,21 +7,20 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R17 complete (2026-10-08). [Sample Lab](SAMPLE_WORKFLOW.md#intentional-and-lazy-exploration)
-separates random exploration, family-specific related variation, explicit generation reference,
-supported future-only locks, audible comparison and bounded disposable candidate history. Reference/
-family changes cannot silently reinterpret held constraints; completion order cannot choose the active
-sound or accept it. Source edits and target/project lifecycle changes retain async validity/no-resurrection
-rules. Ending audition restores current canonical sound rather than undoing intervening edits.
-Explicit acceptance validates its project/resource/use scope and creates durable managed audio through
-one coherent project Undo transaction. Multiple candidates can be kept as reusable project samples
-without repeated implicit target replacement; Personal Library publication stays independent and R14+.
-Accepted audio survives generator removal; temporary audio/recipes/metadata have separate availability
-and bounded ownership. Q-071 retains mechanisms, algorithms, exact UI, limits and evidence. Existing
-R7 scope is sufficient for its first one/two families; roadmap IDs/order and R0 scope are unchanged.
-Musical/signal ownership, canonical/derived execution, logical Undo/async integrity, mouse-first/
-keyboard-efficient UX, resource/plugin preservation, discovery/library ownership, host localization/
-themes, recovery/media durability and current/cold-history boundaries remain in force.
+SEQ-KB-R18 complete (2026-10-08). [Arrangement](ARCHITECTURE.md#semi-free-arrangement) organizes
+supported occurrences separately from reusable music, sound definitions, resources, Instrument Groups,
+actual processing membership and Mixer routes. Preferred purpose is not exclusive sound ownership;
+compatibility does not require identical content shapes or current executability. Bounded organization
+cannot add a third ordinary local processing level. Shared Pattern edits affect its references;
+placement-local edits and moves affect the occurrence. Musical variation and independent sound have
+separate coherent Undo scopes. Resource/use/shared-definition Sample Lab acceptance explicitly identifies
+its target; dependency-aware deletion and Save/reopen preserve intended relationships without heuristics.
+Q-028/Q-029 are partially answered; concrete structures, hierarchy/compatibility/defaults, reference/
+detachment/deletion, target UI, serialization and evidence remain open. Roadmap responsibility is narrowly
+clarified for R1/R5/R7/R8/R9/R10/R12 without pulling Arrangement UI into R1 or defining the full release case.
+Musical/signal ownership, independent execution, canonical/derived state, logical Undo/async integrity,
+R17 candidate/history, non-destructive durable media, discovery/library, input/accessibility, host
+localization/themes, recovery and current/cold-history boundaries remain in force.
 No implementation stage has started.
 
 ## Implemented capability
@@ -41,28 +40,27 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R17 exploration cases A–Q and hypotheses 1–13 checked against audition, async/Undo, shared-use,
-durable-media, library and extension-lifetime contracts. Repository-relative Markdown links/
-anchors, canonical Q/D identity/reference integrity, owner/routing, active/cold separation, roadmap
-IDs/order and unchanged R0 scope, UTF-8/LF/whitespace and Git preservation checks passed.
-Documentation-only validation; no builds/tests, runtime/audio, scheduling/latency, UI or platform
-acceptance evidence is claimed.
+R18 cases A–T and hypotheses 1–15 checked conceptually against distinct sharing/placement/container,
+compatibility, two local levels, signal mixing/domain, deletion, durable-resource, render, Undo and async
+contracts. Repository-relative Markdown links/anchors, canonical Q/D identity/reference integrity,
+owner/routing, active/cold separation, roadmap IDs/order and unchanged R0 scope, UTF-8/LF/whitespace
+and Git preservation checks passed. Documentation-only; no builds/tests, runtime/audio, concurrency,
+performance, UI or platform acceptance evidence is claimed.
 
 ## Active blockers / evidence gaps
 
-Q-071 requires family generation/similarity and supported-input evidence, concrete controls/locks,
-history/comparison/request-selection UI, limits/storage/retention, temporary lifecycle and performance/
-usability validation. Q-011 contextual substitution/restoration and Q-029 acceptance-scope/reference UI
-remain open. Graph-scope references/edit ownership (Q-019), Arrangement assignment (Q-030) and Q-066
-cross-context representation/execution/timing/lifetime/render/capability/UI evidence also remain open.
-High-impact evidence work includes domain grouping, voice allocation, source/plugin instancing,
-definition synchronization and measured CPU/RAM/resource behavior (Q-047), exact recovery/media integrity
-mechanisms (Q-058/Q-059), future concrete roadmap/complete-project milestone closure (Q-061), stateful DSP/
-finite-tail mechanics (Q-057), graph publication/lifetime/failure handling
-(Q-018), device timing/recovery (Q-062/Q-069), concrete undo/async commit mechanisms/evidence (Q-063)
-and input/focus/accessibility implementation and platform validation (Q-064). Concrete Browser,
-Personal Library/preset publication and discovery/scaling/storage mechanisms remain open (Q-065).
-Format/migration, package/negotiation, host resource registration/retirement/versioning (Q-067),
-localization/locale presentation (Q-054), theme APIs/packaging (Q-055) and backend mechanics remain open.
+Q-028 needs final terminology/domain structure, compatibility/default targeting and bounded hierarchy
+mechanics. Q-029 needs identity/reference/detachment/deletion mechanisms, shared-target/acceptance UI,
+serialization coordination and concurrency/capability/performance evidence. One-event extraction and
+source linkage/suppression remain Q-048. Graph attachments (Q-019), route/context assignment (Q-030),
+Q-008/Q-009 identity/time/format, Q-051 stretch and Q-066 cross-context representation/execution/timing/
+lifetime/render/capability/UI remain open. Q-011 retains contextual substitution/restoration; Q-071
+retains generation/similarity, controls/locks, candidate/history limits/storage/UI and evidence.
+High-impact evidence includes source/domain grouping/voice allocation, opaque-source instancing,
+definition synchronization and CPU/RAM behavior (Q-047), recovery/media integrity (Q-058/Q-059), full
+milestone dependency closure (Q-061), DSP/tails (Q-057), graph publication/lifetime (Q-018), device timing/
+recovery (Q-062/Q-069), undo/async mechanisms (Q-063), input/accessibility/platform validation (Q-064),
+Browser/Personal Library mechanisms (Q-065), host-resource lifecycle (Q-067), localization/locale (Q-054)
+and theme APIs/packaging (Q-055). Package/negotiation and backend mechanics remain open.
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) contains only open questions. Passive batch-newline policy
 contradiction Q-070 remains unresolved; no configuration change is included in this stage.

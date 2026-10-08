@@ -516,3 +516,70 @@ is not established by local history; this log does not duplicate Git's commit ch
   Branch/HEAD/index and empty untracked baseline preserved; all task changes are unstaged Markdown.
   No pre-existing work to modify; no executable tooling, code, projects, dependencies, experiments,
   tests or CI created. No staging, commit or push; SEQ-R0 remains **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R18
+
+- Established Arrangement/shared-edit semantics through
+  [D-071](DECISIONS.md#d-071--arrangement-occurrences-and-separate-shared-edit-ownership) and archived
+  [Q-028/Q-029's accepted portions](RESOLVED_QUESTIONS.md#r18-resolved-portions--q-028q-029-container-and-shared-edit-semantics).
+  Updated architecture, UX, format and sample owners; narrowed active Q-028/Q-029 and conversion Q-048,
+  clarified bounded R1/R5/R7/R8/R9/R10/R12 responsibilities and advanced current state. Completed stage
+  belongs to [history](ROADMAP.md#seq-kb-r18--arrangement-containers--shared-edit-ownership).
+  NODE_GRAPH remains unchanged: no new processing/signal scope was required. INDEX remains unchanged:
+  current routing already names the correct owners. No new owner or active history ledger introduced.
+- Cases A–T audited conceptually against current owners; these are not implementation tests:
+
+  | Case | Result / current owner |
+  | --- | --- |
+  | A — Drums Main placement | Pattern owns Kick/Snare/Hat parts/events and sound references; occurrence owns its timing/local relationships; Drums owns timeline organization and optional explicit context. No automatic Pattern bus; independent instrument routes survive before intentional aggregation; [identities](../ARCHITECTURE.md#separate-sharing-identities) |
+  | B — Bass in Drums | Purpose can guide compatible defaults, not exclusive synth ownership. A supported Bass occurrence is not incompatible merely by name; no silent copy/conversion or route mutation; [Arrangement](../ARCHITECTURE.md#semi-free-arrangement) |
+  | C — heterogeneous content | Supported Pattern, fragment, sample clip and future recording occurrences retain distinct content/time/resource/context relationships. Fundamentally unsupported structural relationships can block or require deliberate transformation; missing execution does not erase safely representable intent; [compatibility](../ARCHITECTURE.md#compatible-material-and-bounded-organization) |
+  | D — organization move | Equivalent organization with unchanged timing, processing and routes is sound-neutral. Explicit context moves have different audible consequences; [moves](../ARCHITECTURE.md#moving-material-between-contexts) |
+  | E — Compressor to Distortion/Delay | Kick leaves old aggregate, enters new processing/mix scope and applicable routes; other mix members may change. Shared notes/sounds/media remain intact; move/dependency changes are one Undo edit; [moves](../ARCHITECTURE.md#moving-material-between-contexts) |
+  | F — three shared uses | Snare note edit changes the one Pattern, reflected in all three; opening from one use creates no private copy; [shared content](../ARCHITECTURE.md#shared-content-and-independent-variations) |
+  | G — one clip local edit | Position, supported local timing/range, local processing and future occurrence properties affect that clip, not shared notes or other clips; exact inventory/time forms open; [shared/local](../ARCHITECTURE.md#shared-content-and-independent-variations) |
+  | H — Pattern variation | Independent notes plus retargeted B in one Undo action; original/A/C preserved, sounds/media/contexts remain as intended without implicit instance duplication; [variation](../ARCHITECTURE.md#shared-content-and-independent-variations) |
+  | I — independent Bass sound | Independent durable settings and intended sound-use reference(s), separately from notes; immutable samples may stay shared. One-occurrence independence within shared content must be established explicitly; no arbitrary opaque clone guarantee or runtime-instance count; [sound independence](../ARCHITECTURE.md#independent-sound-and-local-processing) |
+  | J — different local effects | Shared sound can feed separately required local contributions/effects; no preset detachment required, R11 performance semantics retained; [local processing](../ARCHITECTURE.md#independent-sound-and-local-processing) |
+  | K — one Kick hit chain | Low-ceremony standalone fragment direction; source/time/sound and affected-use scope understandable, no unintended double trigger. Link versus detach, suppression/removal and later source edits stay Q-048; no per-note graph default; [granularity](../ARCHITECTURE.md#processing-granularity-and-shared-definitions) |
+  | L — one shared placement move | Move that occurrence only; editing/reorganizing the reusable definition and changing processing assignment have separate scopes, no hidden relocation of other references; [shared/local](../ARCHITECTURE.md#shared-content-and-independent-variations) |
+  | M — simultaneous contexts | Same intended notes/sound can retain local effects and context routes with independent contributions/domains where required. Never split a prematurely mixed source to recover independent performances; [execution](../ARCHITECTURE.md#shared-sound-definitions-and-execution-domains) |
+  | N — better Kick acceptance | Keep reusable project resource, replace one identified use and explicitly change shared sound are different actions. Actual scope/dependencies/durable storage validate before coherent commit; history/selection cannot authorize shared mutation; [acceptance](../SAMPLE_WORKFLOW.md#acceptance-scope-and-shared-uses) |
+  | O — three resource uses | Ordinary trim/move/effects affect the clip, retain shared managed source and need no immediate media copy. Future destructive source edit has separate scope; [media](../PROJECT_FORMAT.md#media-policy-boundary) |
+  | P — deletions/Undo | Placement versus shared Pattern/container/used sound removal has different scope. Resolve known dependencies through block/defer/deliberate choice, preserve unrelated uses/media and coherent Undo relationships; exact cascades/retention/confirmation open; [deletion](../ARCHITECTURE.md#deletion-scope-and-retained-relationships) |
+  | Q — bounded nesting | Organization may nest if later justified; no extra processing by ancestry. Item-local plus at most one containing local level, explicit global buses distinct; no flat-only decision or arbitrary processing tree; [bounds](../ARCHITECTURE.md#compatible-material-and-bounded-organization) |
+  | R — target/sharing feedback | Understand shared Pattern, sound use/definition, occurrence, context and resource targets through contextual scope/sharing information and explicit independence, without constant modal questions. Focus/selection alone insufficient; exact controls open; [UX](../UX_CONTRACT.md#edit-target-and-sharing-feedback) |
+  | S — persistence | Save/reopen explicitly preserves intended sharing, resources, local timing, organization, processing and routes. Labels/data/layout are not identity evidence; no schema or persisted runtime/history selected; [format](../PROJECT_FORMAT.md#musical-content-and-workspace-state) |
+  | T — small track | Repeated Main, independent Fill notes with shared drum sounds, Bass, reused audio, two processing contexts and ordinary Mixer support edits/moves/Undo/reopen/later semantic rendering. No contradiction under deliberate aggregation and bounded targets; no executed scenario or redefinition of R12; [example](../ARCHITECTURE.md#small-composition-ownership-example) |
+
+- Hypotheses audited with concrete bounds:
+
+  | Hypotheses | Disposition |
+  | --- | --- |
+  | 1, 2, 3 | Accepted distinct reusable content/occurrence and normal many-use sharing; local ownership does not require a frozen property inventory or one class per responsibility |
+  | 4, 5 | Accepted no automatic bus; containing processing aggregates only explicitly intended audible contributions, not external detector inputs or all uses of a definition. Independent required paths precede mixing |
+  | 6, 7, 8 | Accepted separately expressible music/sound/occurrence/media independence. Detaching music retains intended sounds/contexts; detaching sound need not copy notes/media or live instances; unsupported opaque-state independence is explicit |
+  | 9, 10 | Accepted organization can be sound-neutral; context reassignment changes membership/aggregates, potentially downstream routes and other shared-mix members. Neither rewrites shared definitions automatically |
+  | 11 | Accepted dependency-aware deletion and resource lifetime; reject silent cascade/eager cleanup or Undo as automatic cancelled-work revival |
+  | 12 | Accepted understandable contextual targets and sharing; controls/indicators remain open, no ownership questionnaire for every edit |
+  | 13 | Refined: reuse convenient for supported structural/time/context relationships; not arbitrary-object placement, forced identical shapes, destructive conversion or live-executability prerequisite |
+  | 14 | Accepted no one-to-one Pattern/container/Instrument Group/Mixer map, no universal Track; multiple surfaces can show the same context without duplicate DSP |
+  | 15 | Accepted bounded ordinary local model and explicit independence; reject unlimited nested processing/universal overrides. Flat versus bounded organizational hierarchy remains open |
+
+- Q-028/Q-029 remain partially answered, not closed: exact terminology/types/reference storage,
+  compatibility/defaults/hierarchy, detachment/deletion/cascade/retention, opaque-state handling,
+  sharing/acceptance UI, schema/migration/graph coordination and concurrency/performance evidence remain
+  open. Q-048 is narrowed to exact scope/conversion/source-linkage mechanics. Q-008/Q-009/Q-019/Q-023/
+  Q-030/Q-047/Q-049/Q-051/Q-063/Q-065/Q-066 retain their existing IDs and specialized open work.
+  No blocking user-preference decision was needed for these semantics; future public vocabulary,
+  organizational hierarchy and exact interaction choices remain intentionally undecided. Q-061 retains
+  the full milestone/dependency audit, without new release prerequisites or stage reordering.
+- Verified relative Markdown links/anchors, canonical Q/D definitions/references, owner/routing and
+  current/cold separation; cases/hypotheses against no implicit Pattern bus/Mixer map, independent
+  contribution/sharing, two local levels, non-destructive media, target/Undo/async and render boundaries;
+  roadmap IDs/order and unchanged R0 scope, UTF-8/LF/whitespace, `git diff --check` and final Git preservation.
+  Documentation-only; no builds/tests, executable checker or runtime/audio/UI/performance evidence.
+- Initial baseline: clean `master`, HEAD `847c5383ae2e85a70daffff7aa9246b874841224`, checkpoint R17.
+  Branch/HEAD/index and empty untracked baseline preserved; all task changes are unstaged Markdown.
+  No pre-existing user work to alter. No code, projects, dependencies, experiments, UI, tests, CI,
+  tooling or backends created. No staging, commit or push; SEQ-R0 remains **pending / not started**.

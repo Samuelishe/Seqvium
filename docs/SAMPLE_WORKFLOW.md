@@ -82,7 +82,7 @@ imported/generated/resampled samples. A small project-resource view/access path 
 catalog, full media-asset-management system or global publication is required. Reuse can create a new
 musical placement/reference to existing managed audio without destructively rewriting its other uses.
 It is a canonical project edit where it changes the document, under the existing separate identities
-and Undo rules. Exact reference, sharing and target scope remain Q-029.
+and Undo rules. Concrete reference mechanisms, sharing feedback and target selection remain Q-029.
 
 Browser finds existing material; Sample Lab explores/generates/mutates candidates and contextual
 alternatives. They interoperate through the same accepted project-resource path:
@@ -191,8 +191,8 @@ whether completion alone can mutate the target.
 Starting contextual generation for Kick #42 captures its original document/lifecycle, logical target
 and expected relationship/scope, relevant source/settings and processing context/dependencies, plus
 operation intent, relevance and cancellation status. Target may mean a sound definition or a placement
-according to the explicitly identified workflow; Q-029 retains exact acceptance scope. Current selection
-is never a replacement for that captured destination. Generation produces candidate material, not an
+according to the explicitly identified [acceptance scope](#acceptance-scope-and-shared-uses); Q-029
+retains its UI/reference mechanisms. Current selection is never a replacement for that captured destination. Generation produces candidate material, not an
 automatic canonical edit; even a valid contextual result needs explicit acceptance. Temporary contextual
 audition must also validate its required target/context and use the reversible preview/publication path.
 
@@ -423,8 +423,9 @@ items A, B, and C; ordinary editing/processing of A must not unexpectedly rewrit
 change B and C. Non-destructive placement processing is the default. Explicit destructive/edit-source
 operations may be considered later but are not implied by normal processing or contextual acceptance.
 Acceptance identifies whether the user keeps reusable project audio or changes an existing sound/use.
-It must not automatically change every shared use when a local change was intended. The exact
-acceptance-scope UI and reference/edit mechanics remain Q-029.
+It must not automatically change every shared use when a local change was intended. The
+[scope distinctions](#acceptance-scope-and-shared-uses) below are accepted; exact UI and reference/edit
+mechanics remain Q-029.
 [ARCHITECTURE](ARCHITECTURE.md) owns identity boundaries; [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence.
 
 Successful acceptance groups the intended project resource/reference and target/use changes into one
@@ -440,6 +441,37 @@ action or mandatory batch command is selected. Navigating history is still separ
 acceptance does not publish either result to Personal Library. Explicit cross-project publication has
 its own [ownership boundary](#personal-library-and-explicit-publication) and R14+ stage owner. An
 unaccepted history entry must never be described as permanently saved merely because it is visible.
+
+### Acceptance scope and shared uses
+
+While editing an existing Pattern's Kick, accepting a candidate has distinct possible intentions:
+
+| Intended scope | Canonical effect |
+| --- | --- |
+| Keep a reusable project sample | Accept durable managed audio for later reuse; no implicit placement or replacement of the contextual Kick |
+| Replace one identified occurrence/use | Accept durable audio and change only that intended use/reference; preserve other occurrences, shared musical content, sound definitions and source media unless the action explicitly requires an explained independent relationship |
+| Change the shared sound definition | Explicitly update that definition's intended audio/content configuration; its other uses follow the change, without rewriting the old shared resource or changing musical notes |
+
+These are semantic distinctions, not mandatory buttons or a universal acceptance action. Show the
+actual destination and meaningful shared-use consequences in the active workflow, using predictable
+context and explicit scope/independence when needed rather than asking the same questionnaire at every
+acceptance. Being launched from a placement or hearing a candidate there does not authorize mutation
+of every use of its sound definition.
+
+One event inside shared Pattern content is not already an independently addressable audio clip. A
+one-occurrence replacement must establish a supported independent relationship/fragment or explain its
+unavailability; it cannot silently rewrite the shared event/reference or leave duplicate triggers.
+Event-to-fragment mechanics remain Q-048, shared-use/detachment mechanics Q-029 and substitution Q-011.
+No arbitrary graph per note or universal occurrence override system follows from these scopes.
+
+Each acceptance validates its actual document, target identity, intended reference scope and relevant
+current source/context/dependencies at commit, including dependencies changed by moves, detachment or
+deletion. Candidate retention or restored selection cannot validate an old destination; fresh explicit
+reuse validates anew under [contextual validity](#contextual-generation-result-validity). Durable storage
+and the intended resource/reference/target changes form one coherent Undo edit. Failure leaves prior
+canonical relationships intact. Undo restores the intended use/configuration without indiscriminately
+deleting accepted media still needed by other uses/history. R17 temporary history, comparison, request
+ordering, current-sound restoration and independent Personal Library publication remain in force.
 
 ## Asynchronous preparation and dependency availability
 

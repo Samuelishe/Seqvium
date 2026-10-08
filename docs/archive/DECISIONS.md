@@ -1079,3 +1079,60 @@ ordering/cancellation, temporary ownership/removal and performance/usability evi
 retain their mechanisms. R7's existing one/two-family scope is sufficient; no active roadmap/index change,
 universal similarity, AI, advanced analysis, unlimited branching, complete presets or orchestration
 required. Implementation stages/order and R0 scope unchanged; SEQ-R0 remains pending / not started.
+
+## D-071 — Arrangement occurrences and separate shared edit ownership
+
+Status: Accepted by SEQ-KB-R18, 2026-10-08; partially resolves Q-028/Q-029. Refines
+[D-022](#d-022--semi-free-arrangement-with-separate-mixer-identity) and
+[D-034](#d-034--separate-musical-sharing-identities); preserves
+[D-061](#d-061--musical-ownership-and-explicit-signal-convergence),
+[D-064](#d-064--shared-sound-definitions-and-semantic-execution-domains),
+[D-065](#d-065--logical-undo-transactions-and-async-commit-integrity),
+[D-069](#d-069--bounded-cross-context-routing-and-sidechain-semantics) and
+[D-070](#d-070--bounded-sample-lab-exploration-and-candidate-semantics).
+Basis: Current-owner conceptual audit of cases A–T and hypotheses 1–15; no implementation/runtime evidence.
+Rationale: Reusable music, independently shared sound, occurrences and resources have different edit
+scopes. Combining them with organization/routing in one Track would make note edits, variations, local
+processing, context moves and candidate acceptance unpredictably affect unrelated uses. The eight
+conceptual responsibilities remain separately editable/persistable where applicable, without one class
+per identity, a universal linked state or an override matrix.
+Containers organize supported occurrences; a preferred purpose guides defaults but cannot make a
+sound exclusive or arbitrarily reject otherwise compatible Bass music in Drums. Compatibility concerns
+supported time/content/context relationships, not identical internal shapes, names or live availability.
+Unavailable but safely representable content retains degraded document access. Organization can remain
+sound-neutral; explicit context reassignment changes intended contribution/aggregate membership and
+possibly routes/other submix members. Pattern placement creates no automatic bus. Independent required
+outputs and R11 performance intent survive simultaneous uses until intentional mixing.
+A Pattern note edit changes its shared content; placement-local edits/moves affect the occurrence.
+Musical variation retargets the intended use to independent notes while sounds/media/contexts remain
+as intended. Independent sound instead changes the intended definition/use reference without mandatory
+note/sample copying or arbitrary opaque-plugin clone guarantees. One-use independence within shared
+content must be established or explained as unavailable, never silently widen the target. Event-to-item
+extraction retains understandable source/time/sound scope and no unintended double trigger; mechanics
+and future source linkage remain Q-048. Different local effects require neither musical nor sound detachment.
+Sample Lab distinguishes keeping a reusable project resource, replacing one use and explicitly changing
+a shared sound definition. Durable placement, target/dependency revalidation and intended reference edits
+form one Undo transaction; candidate navigation/retention cannot authorize acceptance. Ordinary trim,
+movement and processing preserve media. Deletion distinguishes occurrences, definitions and containers,
+checks known dependencies and cannot silently destroy unrelated uses or media. Undo restores canonical
+relationships; it does not rewind DSP, revive invalidated async work or imply eager resource cleanup.
+Nested organization may be useful but cannot add another ordinary containing DSP level. At most one
+containing local context follows item-local processing; unlimited processing trees and hidden relabeling
+as global buses are rejected. Flat versus bounded organizational hierarchy and assignment stay open.
+Save/reopen must preserve intended references/memberships/routes rather than infer sharing from visible
+layout, equal labels or data. Target/sharing consequences are understandable progressively without
+constant modal questions. The small composition example found no semantic contradiction under these
+bounds; exact UI, capability and performance feasibility still need evidence.
+Current owners: [Architecture](../ARCHITECTURE.md#separate-sharing-identities),
+[Arrangement](../ARCHITECTURE.md#semi-free-arrangement),
+[UX](../UX_CONTRACT.md#edit-target-and-sharing-feedback),
+[Project format](../PROJECT_FORMAT.md#musical-content-and-workspace-state),
+[Sample workflow](../SAMPLE_WORKFLOW.md#acceptance-scope-and-shared-uses).
+Remaining Q-028/Q-029: Final terms/types, compatibility/defaults/hierarchy mechanics, identity/reference
+storage, detachment/edit/deletion/cascade/retention and opaque-state handling, target/acceptance UI,
+schema/migration/graph coordination and concurrency/performance evidence. Q-008/Q-009/Q-019/Q-023/
+Q-030/Q-047/Q-048/Q-049/Q-051/Q-063/Q-065/Q-066 retain their specialized open mechanisms.
+R1 identity/persistence, R5 shared editing, R7 target acceptance, R8 semantic render, R9 same events,
+R10 bounded Arrangement and R12 edit/reopen/Undo integrity are clarified only within existing stages.
+Q-061 remains the full future milestone audit. No final terminology, classes, schema, graph attachment,
+UI gestures, clone algorithms, tests or runtime selected; SEQ-R0 remains pending / not started.
