@@ -808,3 +808,16 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
 - All changes remain unstaged. No commit/push, staging/history mutation or pre-existing work removal.
   Wider disk-full/permission/crash/around-commit/platform evidence, repair/GC and realtime behavior
   remain explicit limitations; F1 is locally accepted-ready within its declared scope.
+
+## 2026-10-08 — SEQ-R2-F1 redundant WAV decoding removal
+
+- From clean `master`, HEAD `c7b912a4959aaebe89f5e67e51dfdbd648b42d37`, changed `ProjectMedia.Decode`
+  to return the first successfully decoded retained copy. A shared private search returns path and PCM;
+  `Resolve` still disposes validation PCM and returns a validated path for Save As media transfer.
+  Locator checks, retained-root order, SHA-256/WAV validation and unavailable-copy errors are preserved.
+- Added seven cases covering first-copy success, corrupt/missing-copy fallback, all-copy failure,
+  independent returned PCM lifetime and validated Save As fallback without source mutation.
+- Locked restore and full Release build pass with zero warnings/errors; the complete xUnit/MTP suite
+  passes 199 tests, zero failures/skips, preserving all 192 existing tests. Windows x64, SDK 10.0.401.
+  Existing source-removal, degraded access, destination-corruption and execution-lease tests still pass.
+- No dependencies, device/backend work or R2-F2 implementation; no staging, commit or push.

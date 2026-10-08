@@ -148,7 +148,7 @@ public static partial class ProjectMedia
         document.CheckAvailable();
         var resource = document.Current.State.Resources.SingleOrDefault(item => item.Id == resourceId)
             ?? throw new InvalidOperationException("Resource does not belong to the current document.");
-        return DecodePath(Resolve(document, resource), resource.ManagedLocator!);
+        return DecodeStoredCopy(document, resource).Pcm;
     }
 
     internal static bool IsManagedWav(ResourceDescriptor resource) => resource.ManagedLocator?.StartsWith("wav/", StringComparison.Ordinal) == true;
@@ -160,13 +160,20 @@ public static partial class ProjectMedia
 
     internal static string Resolve(ProjectDocument document, ResourceDescriptor resource)
     {
+        var (path, pcm) = DecodeStoredCopy(document, resource);
+        using (pcm) { }
+        return path;
+    }
+
+    private static (string Path, DecodedPcm Pcm) DecodeStoredCopy(ProjectDocument document, ResourceDescriptor resource)
+    {
         if (!IsManagedWav(resource)) throw new IOException("Resource is not a validated managed WAV.");
         Exception? unavailable = null;
         foreach (var root in document.MediaRoots.AsEnumerable().Reverse())
         {
             var path = PathFor(root, resource.ManagedLocator!);
             if (!File.Exists(path)) continue;
-            try { using (DecodePath(path, resource.ManagedLocator!)) { } return path; }
+            try { return (path, DecodePath(path, resource.ManagedLocator!)); }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException) { unavailable = error; }
         }
         if (unavailable is not null) throw new IOException($"Managed WAV {resource.Id} has no usable stored copy.", unavailable);

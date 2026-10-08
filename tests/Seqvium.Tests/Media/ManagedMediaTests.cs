@@ -42,6 +42,80 @@ public sealed class ManagedMediaTests
         Assert.False(ProjectPersistence.Open(Path.Combine(relocated, "second.json")).IsDegraded);
     }
 
+    [Theory]
+    [InlineData("valid")]
+    [InlineData("corrupt")]
+    [InlineData("missing")]
+    public async Task DecodeUsesFirstValidRetainedCopyAndOwnsReturnedPcm(string newestCopy)
+    {
+        using var directory = new TemporaryDirectory();
+        var document = ProjectDocument.Create();
+        var accepted = await WavFixtures.Import(document, directory, [0.5f, -0.25f]);
+        string owned = Directory.GetFiles(directory.File("owned"), "*.wav", SearchOption.AllDirectories).Single();
+        string first = directory.File("first.json");
+        ProjectPersistence.Save(document, first);
+        var locator = document.Current.State.Resources.Single().ManagedLocator!;
+        string newest = Path.Combine(first + ".media", locator.Replace('/', Path.DirectorySeparatorChar));
+        if (newestCopy == "valid") File.WriteAllBytes(owned, [1, 2, 3]);
+        if (newestCopy == "corrupt") File.WriteAllBytes(newest, WavFixtures.Create([0.75f, 0.25f]));
+        if (newestCopy == "missing") File.Delete(newest);
+        byte[] ownedBytes = File.ReadAllBytes(owned);
+        byte[]? newestBytes = File.Exists(newest) ? File.ReadAllBytes(newest) : null;
+
+        using var pcm = ProjectMedia.Decode(document, accepted.ResourceId);
+        Assert.Equal(48000, pcm.SampleRate);
+        Assert.Equal(1, pcm.Channels);
+        Assert.Equal(2, pcm.Frames);
+        Assert.Equal(0.5f, pcm.Sample(0, 0));
+        Assert.Equal(-0.25f, pcm.Sample(1, 0));
+        using (var independent = ProjectMedia.Decode(document, accepted.ResourceId))
+            Assert.Equal(0.5f, independent.Sample(0, 0));
+
+        string second = directory.File("second.json");
+        Assert.False(ProjectPersistence.SaveWithReport(document, second).IsDegraded);
+        var reopened = ProjectPersistence.Open(second);
+        Assert.False(reopened.IsDegraded);
+        reopened.Document.Close();
+        document.Close();
+        Assert.Equal(-0.25f, pcm.Sample(1, 0));
+        Assert.Equal(ownedBytes, File.ReadAllBytes(owned));
+        if (newestBytes is null) Assert.False(File.Exists(newest));
+        else Assert.Equal(newestBytes, File.ReadAllBytes(newest));
+    }
+
+    [Theory]
+    [InlineData("missing", "missing")]
+    [InlineData("corrupt", "missing")]
+    [InlineData("missing", "corrupt")]
+    [InlineData("corrupt", "corrupt")]
+    public async Task DecodeRejectsAllUnavailableRetainedCopies(string newestCopy, string olderCopy)
+    {
+        using var directory = new TemporaryDirectory();
+        var document = ProjectDocument.Create();
+        var accepted = await WavFixtures.Import(document, directory, [0.5f]);
+        string owned = Directory.GetFiles(directory.File("owned"), "*.wav", SearchOption.AllDirectories).Single();
+        string project = directory.File("project.json");
+        ProjectPersistence.Save(document, project);
+        var locator = document.Current.State.Resources.Single().ManagedLocator!;
+        string newest = Path.Combine(project + ".media", locator.Replace('/', Path.DirectorySeparatorChar));
+        if (newestCopy == "missing") File.Delete(newest);
+        else File.WriteAllBytes(newest, [1, 2, 3]);
+        if (olderCopy == "missing") File.Delete(owned);
+        else File.WriteAllBytes(owned, [1, 2, 3]);
+
+        if (newestCopy == "missing" && olderCopy == "missing")
+        {
+            var error = Assert.Throws<FileNotFoundException>(() => ProjectMedia.Decode(document, accepted.ResourceId));
+            Assert.Equal($"Managed WAV {accepted.ResourceId} is missing.", error.Message);
+        }
+        else
+        {
+            var error = Assert.Throws<IOException>(() => ProjectMedia.Decode(document, accepted.ResourceId));
+            Assert.Equal($"Managed WAV {accepted.ResourceId} has no usable stored copy.", error.Message);
+            Assert.IsType<WavFormatException>(error.InnerException);
+        }
+    }
+
     [Fact]
     public async Task ReplacingExplicitSoundIsOneEditAndRetainsOldMediaAcrossUndoRedoSaveAndLiveDecode()
     {

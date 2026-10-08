@@ -49,7 +49,8 @@ evidence remain necessary. First Track sequence/scenario remains unchanged under
 ## Validation baseline
 
 Local Windows x64, SDK 10.0.401 / runtime 10.0.12: locked restore, full Release solution build with
-**zero warnings/errors**, and **192 passing tests, zero failures/skips**, preserving all 89 R1 tests. Commands are in
+**zero warnings/errors**, and **199 passing tests, zero failures/skips**, preserving all 192 prior tests
+(including 89 R1 tests). Commands are in
 [DEVELOPMENT](DEVELOPMENT.md) and [TEST_EXECUTION](TEST_EXECUTION.md).
 Tests use tiny generated WAV/synthetic data, owned temporary directories and deterministic async gates,
 without sleeps. They cover R1 contracts plus malformed media, unnamed/source-removal/Save As ownership,
