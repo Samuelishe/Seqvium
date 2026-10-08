@@ -68,9 +68,18 @@ The future Settings experience must permit bounded operations conceptually equiv
 - a specific plugin's global preferences;
 - all application/plugin-global preferences.
 
-Configuration reset must not delete user projects or project-managed audio/media. Project-affecting
-plugin instance state remains project state, separate from these preference resets. Exact command names,
-button layout, scope controls, and confirmation flow remain open under [UX_CONTRACT](UX_CONTRACT.md).
+Configuration reset must not delete user projects or project-managed audio/media. Personal Library
+samples, user-created presets and other intentionally retained reusable content are user work, not
+application/plugin-global preferences or disposable caches. Reset must not erase them even if their
+future storage shares a platform user-data area. Discovery-location preferences may be configuration;
+resetting those preferences must not delete the content they point to. Exact library rediscovery,
+storage/backup policy and reset UI remain open.
+
+Project-affecting plugin instance state remains project state, separate from preference resets and
+reusable preset sources under [Extensions](EXTENSIONS.md#preset-sources-and-project-state).
+[Sample workflow](SAMPLE_WORKFLOW.md#personal-library-and-explicit-publication) owns intentional reusable
+content retention. Exact command names, button layout, scope controls, and confirmation flow remain
+open under [UX_CONTRACT](UX_CONTRACT.md).
 
 Recoverable working documents, including unnamed/unsaved projects, are user work rather than disposable
 preferences or diagnostic logs. Preference reset must not discard their recovery state. Recovery is

@@ -2,8 +2,8 @@
 
 Role: Seqvium's sound exploration and material-transformation contract.
 Read when: Designing discovery, generation, audition, sample acceptance, or resampling.
-Authoritative for: Sample Lab context, candidate audition/acceptance, durable audio, object sampling and audible capture.
-Not authoritative for: Generator algorithms, DSP/render details, package API, or final resource file format.
+Authoritative for: Browser discovery/audition, project-resource reuse, Personal Library publication/ownership, Sample Lab context, candidate acceptance, durable audio, object sampling and audible capture.
+Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing, or final resource file format.
 
 ## The creative loop
 
@@ -22,6 +22,132 @@ discover/create sound
 The transition between exploration and musical context should be unusually cheap. Sample Lab is
 a dedicated creative workspace pane, with behavior/layout owned by [WORKSPACE](WORKSPACE.md).
 It is not isolated from the composition. No Sample Lab is implemented yet.
+
+## Browser discovery and ownership
+
+Browser is a discovery/access surface for finding and auditioning available material, not an ownership
+model or a universal asset identity. These accepted future semantics distinguish five roles:
+
+| Role | Meaning |
+| --- | --- |
+| Browser/discovery surface | Presents available sources/material and requests preview or explicit use |
+| Source/origin | Filesystem file, installed pack, generated candidate, preset source, project resource or library item from which material is offered |
+| Project-managed resource/state | Durable audio or sound/plugin configuration actually accepted into one project; resource and placement identities remain separate |
+| Personal Library | User-owned reusable content intentionally retained independently across projects; not one project's media directory or application preferences |
+| Preset/template source | Reusable configuration applied to create/update project-owned sound/plugin state under [Extensions](EXTENSIONS.md#preset-sources-and-project-state) |
+
+A source may itself have a durable owner, such as another project or the Personal Library. Presenting it
+in Browser does not transfer that ownership. Equal bytes, names or paths are insufficient to collapse
+filesystem, pack, personal-library and project meanings into one identity. Future hashing/deduplication
+may optimize storage only while preserving distinct ownership, provenance and edit relationships.
+
+Browser should be capable of presenting user-chosen filesystem locations, installed content packs,
+current project resources, personal reusable samples and presets where meaningful. Recent/favorite
+access may be added later. These can share discovery without sharing ownership; not every source class
+is required in the first implementation. Initial discovery can remain filesystem/source-oriented.
+The bounded capability owners are in [Roadmap](ROADMAP.md#discovery-and-reuse-ownership).
+
+### Preview, contextual audition and accepted use
+
+| Intention | Project effect |
+| --- | --- |
+| Raw/solo preview | Transient listening; no project media acceptance, canonical edit or project Undo entry |
+| Contextual temporary audition | Reversible listening in an identified musical/processing context; no implicit import, replacement or project Undo entry |
+| Explicit use/import/acceptance | Validates its intended destination and commits the appropriate durable project resource/reference/state and use changes through normal project editing |
+
+Repeatedly auditioning `D:\Samples\Kick\kick_17.wav` does not import it or make it saved/recoverable
+project material. Preview does not survive project close as an accepted resource; project-bound audition
+ends on close. Remembering a Browser location/recent item or retaining a disposable preview cache, if
+later offered, would be separate from acceptance and would not guarantee the source's availability.
+If the file disappears after preview, further source access/audition/use may be unavailable until
+restored; a prior audition is not proof of durable acceptance. Unavailability needs useful source-level
+feedback, not a fabricated project-media blocker.
+
+Dragging that file into a project or choosing explicit use/import follows the existing
+[acceptance boundary](#acceptance-and-provenance). After successful acceptance, moving/deleting its
+original path cannot break project use. The same applies to a used pack or Personal Library sample;
+unused source contents need not be accepted. Source provenance may be useful, but is not a required live
+dependency under [Project format](PROJECT_FORMAT.md#source-provenance-and-reusable-content).
+
+Where meaningful, existing Browser material should be quickly auditionable in musical context before
+acceptance, alongside raw preview. It shares Sample Lab's reversible, target-validated audition boundary;
+it does not silently replace accepted material or create a permanent resource merely to preview it.
+Q-011 retains concrete substitution/publication, downstream scope and stop/cancel/restoration mechanics;
+this requirement does not prescribe a universal contextual-preview feature for every source type.
+
+### Reusing current project resources
+
+An open project needs a discoverable way to find, audition and explicitly reuse its already accepted
+imported/generated/resampled samples. A small project-resource view/access path is sufficient; no
+catalog, full media-asset-management system or global publication is required. Reuse can create a new
+musical placement/reference to existing managed audio without destructively rewriting its other uses.
+It is a canonical project edit where it changes the document, under the existing separate identities
+and Undo rules. Exact reference, sharing and target scope remain Q-029.
+
+Browser finds existing material; Sample Lab explores/generates/mutates candidates and contextual
+alternatives. They interoperate through the same accepted project-resource path:
+
+```text
+Browser source -> preview/audition -> explicit project use
+Sample Lab candidate -> explicit acceptance -> project resource -> audition/reuse in that project
+project/generated/resampled sample -> explicit Personal Library publication
+Personal Library -> Browser -> explicit use in a future project
+```
+
+Acceptance/rendered sample creation gives immediate reuse inside the current project, without making
+it global. There is no separate hidden Sample Lab sample universe. Browser and Sample Lab keep distinct
+responsibilities; their exact UI composition remains open under [Workspace](WORKSPACE.md).
+
+## Personal Library and explicit publication
+
+Personal Library is intentionally retained user work/content, initially justified for reusable samples
+and user-created presets; other content needs a later demonstrated workflow. Every imported project
+file, generated candidate, render or project plugin state must not automatically become a global item.
+Accepting generated audio into Project X creates project material only. Creating an accepted resampled
+object likewise creates a reusable project resource. Ordinary project Save does not publish either.
+
+An explicit reusable-library action may publish selected project/candidate material or intentionally
+retain an external favorite independently of its arbitrary original source. A library item must not
+claim independent retention merely by registering a fragile path to disposable project/candidate media.
+The action establishes library ownership; copying, registering a safely owned representation, storage
+layout and completion/failure mechanics are unselected. No final command wording is selected.
+
+```text
+Personal Library sample
+    +-> accepted use in Project A -> Project A managed resource
+    +-> accepted use in Project B -> Project B managed resource
+```
+
+Removing the library item later cannot break either accepted project use. Project cleanup cannot
+delete the personal-library original; library ownership is independent even if future storage is shared.
+Temporarily unavailable library folders/sources affect Browser access, not healthy self-contained
+project uses. Removing a source does not implicitly edit all projects that once used it, nor require
+crawling every project. Known active preview/preparation use still needs safe lifetime handling under
+[Architecture](ARCHITECTURE.md#document-integrity-and-asynchronous-publication).
+
+Personal-library publication is a user-content mutation separate from project document Undo. A command
+that intentionally both accepts/edits project material and publishes reusable content has two effects
+and must report their outcomes honestly: project Undo reverses the project edit, not the independent
+library publication. Failure must not masquerade as success of both. Generated/rendered preparation
+remains async work until the appropriate explicit acceptance/publication boundary. No global library
+Undo stack, cross-owner atomic storage transaction or final history UX is implied. Preset application
+and explicit saving use the [preset contract](EXTENSIONS.md#preset-sources-and-project-state).
+
+Preference reset cannot erase library samples, user-created presets or other retained reusable content
+under [Settings](SETTINGS.md#reset-boundary). Library backup/storage policy remains open.
+
+## Discovery evolution limits
+
+Users need a practical way to find material by source/location and name. Folders, categories,
+favorites/tags or search can grow with evidenced need; none selects a mandatory metadata model now.
+No global background filesystem crawling, mandatory catalog database, AI tagging, waveform-analysis
+index, cloud account/sync, store/marketplace, complex hierarchical catalog or universal tags is implied.
+
+Q-065 retains exact Browser UI/layout, library format, scanning/indexing/watching, metadata, search/
+tags/favorites, deduplication/content addressing, waveform caching, preset format/versioning, bindings,
+performance/scaling, cross-platform paths and backup/sync/import/export. Linked/live presets require
+separate justification if ever proposed. Q-071 retains candidate similarity/locks/history; previewing
+or retaining exploration history alone does not publish a reusable-library item.
 
 ## Standalone and contextual Sample Lab
 
@@ -80,8 +206,9 @@ Each following change is assessed independently against that launch state:
 Undo of the state that made generation relevant must not let late completion resurrect it. Redo alone
 does not renew invalidated/cancelled work; restored preconditions and relevance must be established under
 [history rules](ARCHITECTURE.md#history-and-pending-work-relevance). Operation-specific candidate retention,
-discard/reuse, dependency validation and suspension controls remain open; no personal library/catalog
-or universal stale-result policy is introduced. Explicit reuse selects and validates a destination anew.
+discard/reuse, dependency validation and suspension controls remain open. Candidate retention alone
+does not publish to the Personal Library; no catalog or universal stale-result policy is introduced.
+Explicit reuse selects and validates a destination anew.
 
 ## Specialized generation in a shared exploration surface
 

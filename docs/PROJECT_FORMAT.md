@@ -207,6 +207,29 @@ or another versioned container. Exact embedding/copying policy, deduplication, g
 unused media, collect/relocate workflow, checksums/content addressing, and storage layout remain open.
 Preserving user material does not authorize automatic deletion of unused resources.
 
+## Source provenance and reusable content
+
+Browser availability and origin metadata are distinct from durable project ownership under
+[Sample workflow](SAMPLE_WORKFLOW.md#browser-discovery-and-ownership). Ordinary use of a filesystem,
+pack or Personal Library sample accepts a managed project resource through the same media boundary.
+Only used material is required; using one item does not create a dependency on its whole library.
+Moving/removing/offlining its source must not damage properly accepted self-contained project audio.
+Provenance may preserve useful origin information without requiring that origin on reopen/playback.
+
+Personal Library ownership is independent of project media: project cleanup cannot delete a retained
+library original, and library removal cannot remove accepted project uses. A future shared physical
+storage/deduplication strategy must preserve these separate ownership/lifetime guarantees. Equal bytes,
+filenames or paths alone do not establish one semantic resource/source identity. No copy, container,
+content-addressing or metadata schema is selected.
+
+Applying a preset/template retains sufficient project-owned sound configuration and required extension
+identity/compatible state, including opaque data where applicable, under
+[Extensions](EXTENSIONS.md#preset-sources-and-project-state). Renaming/editing/removing the source
+preset does not silently change that accepted state. Saving a project does not publish its state as a
+global preset or sample; explicit library publication belongs to a separate user-content workflow.
+Library format/backup/import/export is outside the project container decision Q-009; Q-058/Q-059
+remain open for project recovery and managed-media storage/integrity mechanisms.
+
 ## Media and persistence integrity
 
 From the project user's perspective, media acceptance is transactional: project state must not claim

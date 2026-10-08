@@ -35,6 +35,20 @@ required capability to an owning stage, and have Codex/architecture audit gaps a
 Q-061 retains that future exercise. Current numbering/order is not automatically changed, and the full
 roadmap/milestone closure is not finalized here.
 
+## Discovery and reuse ownership
+
+Minimum discovery/reuse has bounded owners under
+[Sample workflow](SAMPLE_WORKFLOW.md#browser-discovery-and-ownership): R2 establishes external WAV and
+project-resource find/audition/import/reuse; R7 integrates accepted Sample Lab material; R8 returns
+rendered samples to that same project-resource path; R12 requires usable external/installed-pack and
+project-resource access sufficient for a small track. These are capability commitments, not a mature
+Browser/catalog or a requirement to build the full workspace shell before R3.
+
+Explicit cross-project Personal Library sample/preset publication belongs to **SEQ-R14+**, after R12,
+with bounded delivery scope/order still to be designed there. It is not a First Track Release prerequisite.
+Earlier project acceptance/reuse must work without it and must not silently accumulate global content.
+No stage is inserted, renumbered or reordered; Q-061 retains broader release dependency closure.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 Status: **pending / not started**.
@@ -78,6 +92,11 @@ compatibility direction in [PROJECT_FORMAT](PROJECT_FORMAT.md).
 
 Establish audio resources, WAV import, preview, managed project media, a simple sampler, note/pitch
 playback, and resource lifetime. Do not expand immediately to every codec or sampler feature.
+Own a minimal source/resource access path to find external WAV files and current project samples,
+audition transiently, explicitly import/use external audio and reuse accepted project resources.
+Exercise durable managed acceptance and coherent project edits; source disappearance after successful
+acceptance must not break use. This does not require a mature Browser pane, full workspace shell,
+personal cross-project library, catalog/database, background scanner or advanced search.
 Establish a bounded backend-independent audio input/output/device foundation informed by R0. Plan
 MIDI input and capture ownership without requiring polished recording UX or all device backends now.
 Normal device UX selects separate logical input/output endpoints where supported, with backend/API
@@ -132,6 +151,9 @@ random and nearby/similar variants, justified parameter locks, candidate history
 workspace pane with standalone and contextual entry. Provide temporary contextual audition through
 relevant existing downstream processing alongside solo audition, then explicit acceptance as durable
 audio. Resolve bounded substitution/publication/restoration behavior. Follow [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
+Accepted/generated material joins the same discoverable project-resource audition/reuse path established
+in R2; candidate exploration remains separate from acceptance. No hidden Sample Lab resource universe or
+automatic global Personal Library publication. R7 does not require cross-project publication.
 
 ## SEQ-R8 — Resampling
 
@@ -179,6 +201,10 @@ under [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
 Selected export ranges are hard by default; explicit tail inclusion may extend naturally allowed tails
 without undoing project cuts. Finite tail mechanics (Q-057), exact rolling-recovery workflow (Q-058),
 managed-media integrity mechanics (Q-059) and concrete milestone closure (Q-061) remain open.
+Require a usable find/audition/use workflow for current project samples and ordinary external/installed
+pack material needed to finish a small track. Preview remains transient; accepted audio remains durable
+after source/pack removal. Personal cross-project sample/preset publication is assigned to R14+;
+advanced search/organization and a mature catalog are not R12 prerequisites.
 This is a provisional later acceptance target for the dedicated roadmap research/audit, not permission
 to accelerate visible features by weakening foundations or a finalized MVP capability list.
 
@@ -188,6 +214,11 @@ Add mature install/update/remove management and extension diagnostics after real
 the lifecycle and compatibility requirements.
 
 ## SEQ-R14+ — Evidence-led expansion
+
+Own explicit cross-project Personal Library retention/publication of selected samples and user-created
+presets under [Sample workflow](SAMPLE_WORKFLOW.md#personal-library-and-explicit-publication) and
+[Extensions](EXTENSIONS.md#preset-sources-and-project-state). Concrete delivery scope, UI, formats,
+organization and backup/import/export remain open; no catalog/store/cloud feature is committed.
 
 Expand MIDI and audio recording/monitoring into complete user workflows, then consider automation,
 richer synthesizers/effects, CLAP/VST3 hosting, additional specialized nodes, pitch/time

@@ -7,17 +7,18 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R13 complete (2026-10-08). Mouse-first, keyboard-efficient creation/editing is accepted under
-[Vision](PROJECT_VISION.md#creation-musical-structures-and-organization) and
-[UX](UX_CONTRACT.md#mouse-first-creation-and-complementary-input). Semantic actions are independent
-of physical input under [Architecture](ARCHITECTURE.md#semantic-actions-and-input-boundary);
-[Workspace](WORKSPACE.md#keyboard-access-and-focus-return) owns keyboard window/pane access and focus
-return, [UI design](UI_DESIGN.md#feedback-and-motion) owns sufficient non-color feedback. Q-064 remains
-open for concrete bindings/routing/navigation, accessibility implementation and platform evidence.
-R12 logical Undo, bounded intent-based grouping, transient preview and async commit integrity remain
-accepted; Q-063 retains concrete mechanisms/evidence and history persistence/limits. Established
-canonical/derived execution, musical/signal ownership, recovery/media integrity and current/cold-history
-boundaries remain in force. No implementation stage has started.
+SEQ-KB-R14 complete (2026-10-08). Browser discovery/source access, temporary audition, durable project
+use and explicit Personal Library publication have distinct scopes under
+[Sample workflow](SAMPLE_WORKFLOW.md#browser-discovery-and-ownership). Personal Library is independent
+user work protected from preference reset under [Settings](SETTINGS.md#reset-boundary); applied preset
+state belongs to the project under [Extensions](EXTENSIONS.md#preset-sources-and-project-state).
+Source/library/pack removal cannot break properly accepted project audio; mutable preset sources cannot
+silently rewrite accepted project state. [Roadmap](ROADMAP.md#discovery-and-reuse-ownership) assigns
+minimum discovery to R2, Sample Lab integration to R7, track-ready reuse to R12 and explicit cross-project
+sample/preset publication to R14+. Q-065 retains concrete discovery/library/preset mechanisms.
+Mouse-first, keyboard-efficient semantic actions, logical Undo/async integrity, canonical/derived
+execution, musical/signal ownership, recovery/media durability and current/cold-history boundaries remain
+in force. No implementation stage has started.
 
 ## Implemented capability
 
@@ -36,10 +37,11 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R13 input/command/accessibility cases A–L, compatibility with R12 Undo, repository-wide relative
-Markdown links/anchors, question/decision ID integrity, owner/routing, current/archive separation,
-accepted/open scope, UTF-8/LF/whitespace and Git preservation checks passed. Documentation-only validation;
-no solution build, tests, runtime/audio or platform acceptance is claimed.
+R14 discovery/library/preset cases A–N, compatibility with durable managed media and logical Undo/async
+contracts, repository-wide relative Markdown links/anchors, Q/D ID integrity, owner/routing,
+current/archive separation, roadmap stage IDs/order, accepted/open scope, UTF-8/LF/whitespace and Git
+preservation checks passed. Documentation-only validation; no builds, tests, runtime/audio or platform
+acceptance is claimed.
 
 ## Active blockers / evidence gaps
 
@@ -49,7 +51,8 @@ definition synchronization and measured CPU/RAM/resource behavior (Q-047), exact
 mechanisms (Q-058/Q-059), future concrete roadmap/complete-project milestone closure (Q-061), stateful DSP/
 finite-tail mechanics (Q-057), graph publication/lifetime/failure handling
 (Q-018), device timing/recovery (Q-062/Q-069), concrete undo/async commit mechanisms/evidence (Q-063)
-and input/focus/accessibility implementation and platform validation (Q-064).
+and input/focus/accessibility implementation and platform validation (Q-064). Concrete Browser,
+Personal Library/preset publication and discovery/scaling/storage mechanisms remain open (Q-065).
 Format/migration, package/negotiation, localization and backend mechanics still require design/evidence.
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) contains only open questions. Passive batch-newline policy
 contradiction Q-070 remains unresolved; no configuration change is included in this stage.

@@ -221,3 +221,35 @@ cross-platform validation. No certification, implementation or release parity is
 Related questions: Q-015 visual/detail, Q-022 docking/storage, Q-028 terminology/container identity,
 Q-032 settings placement, Q-035 pane targets/following, Q-051 timeline mechanics, Q-063 history/grouping
 mechanisms and Q-067 localization/theme services remain open and are not separately narrowed here.
+
+## R14 resolved portion — Q-065 discovery and reusable ownership semantics
+
+Status: Partial resolution accepted by SEQ-KB-R14, 2026-10-08. Q-065 retains its canonical active ID
+for concrete workflow/mechanism design and evidence; no library/catalog implementation is claimed.
+Original question: Discovery/reuse is central but Browser and personal sample/preset library have no
+bounded workflow or stage owner commitment.
+Accepted portion: Browser is a discovery/access surface across distinct source/ownership classes.
+Preview/contextual temporary audition is transient and outside project Undo; explicit use accepts durable
+project audio or configuration. Project resources support discoverable audition/reuse. Generation/render
+acceptance creates project material only; intentional Personal Library publication is independent user
+content protected from preference reset. Source/pack/library removal cannot break accepted project audio;
+project cleanup cannot delete library originals. Applied preset/template state is project-owned, including
+compatible opaque state where applicable; mutable source changes/removal cannot rewrite it. Provenance
+does not become a live dependency, and equal bytes/name/path do not collapse ownership meanings.
+R2 owns minimum external WAV/project-resource access, R7 accepted-generation integration, R8 project
+render reuse and R12 small-track discovery usability. Explicit cross-project sample/preset publication
+belongs to R14+ after R12. No implementation stage renumbered/reordered/started.
+Rationale: [D-067](DECISIONS.md#d-067--browser-discovery-and-explicit-reusable-content-ownership).
+Current owners: [Sample workflow](../SAMPLE_WORKFLOW.md#browser-discovery-and-ownership),
+[UX](../UX_CONTRACT.md#discovery-audition-and-reusable-content),
+[format](../PROJECT_FORMAT.md#source-provenance-and-reusable-content),
+[settings](../SETTINGS.md#reset-boundary), [presets](../EXTENSIONS.md#preset-sources-and-project-state),
+[roadmap](../ROADMAP.md#discovery-and-reuse-ownership).
+Remaining Q-065: Exact Browser UI/layout, library filesystem/database format, scanning/indexing/watching,
+metadata, search/tags/favorites, dedup/content addressing, waveform caching, preset format/versioning/
+overwrite and plugin-defined formats, bindings, scaling/performance, cross-platform paths, backup/sync/
+import/export. Linked/live presets and portable packages require separate justification.
+Related questions: Q-009 schema/container, Q-010 package lifecycle, Q-011 contextual audition mechanics,
+Q-024 preset/capability/state compatibility, Q-029 references/sharing/acceptance scope, Q-058/Q-059
+recovery/storage, Q-063 history/commit and Q-071 candidate similarity/history remain open without separate
+narrowing. Their accepted contracts are coordinated, not fully solved by this semantic boundary.

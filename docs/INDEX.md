@@ -24,8 +24,8 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [NODE_GRAPH](NODE_GRAPH.md) | Core graph, contribution convergence/irreversible mixing, free canvas/topology, progressive interaction, ports, canonical graph and derived execution revisions |
 | [WORKSPACE](WORKSPACE.md) | Main-window chrome/keyboard window actions, pane reachability/escape and focus return, activation/front behavior, docking, user layout state |
 | [SETTINGS](SETTINGS.md) | User/project separation, logical input/output devices, bounded reset and production diagnostics |
-| [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, graded compatibility/fallback, package lifecycle/removal safety, degraded access and dependency blockers |
-| [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Standalone/contextual Sample Lab, audition, acceptance, object-render boundary and broader audible-selection capture |
+| [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, preset-template versus project-instance state, graded compatibility/fallback, package lifecycle/removal safety, degraded access and dependency blockers |
+| [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Browser/source discovery and preview/use, Personal Library ownership/publication, project-resource reuse, standalone/contextual Sample Lab, acceptance, object render and audible capture |
 | [PROJECT_FORMAT](PROJECT_FORMAT.md) | Canonical Save/reopen, rolling recovery, failure-safe managed-media durability, degraded resource access, migration and unknown-data preservation |
 | [CODING_GUIDELINES](CODING_GUIDELINES.md) | C# implementation/refactoring, English source language, async/lifetime, warning baseline |
 | [DEVELOPMENT](DEVELOPMENT.md) | Developer environment, local tools, SDK/version authority, eventual entry points, text consistency |

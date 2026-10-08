@@ -279,6 +279,24 @@ option may extend it for naturally permitted tails, never restore project audio 
 editing. Exact label/UI and finite tail-completion policy remain open under
 [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction).
 
+## Discovery, audition and reusable content
+
+Finding and auditioning material must make its scope understandable: temporary preview, accepted project
+use and explicit Personal Library publication are distinct intentions under
+[Sample workflow](SAMPLE_WORKFLOW.md#browser-discovery-and-ownership). Browser provides access to sources;
+it does not turn all displayed material into project or global library content. A small discoverable
+find/audition/use path, including reuse of current project samples, is sufficient initially.
+
+Raw preview and contextual temporary audition do not enter project Undo or implicitly import/replace
+accepted material. Explicit project use follows one coherent project edit where appropriate. Applying
+a preset edits project-owned state; explicitly preserving a sample/preset across projects is a separate
+user-content mutation. A combined action must expose its separate outcomes; project Undo normally
+concerns the project effect. Exact controls, publication wording and global-history UX remain open.
+
+An unavailable Browser source needs useful missing/unavailable state. Its provenance going offline must
+not mark a healthy managed project resource or already applied preset state as broken. Missing actual
+project media or required processing still follows the dependency-blocker contract below.
+
 ## Project lifecycle and durable work
 
 New project creation is a first-class document operation. Valuable unnamed/never-saved work must be
@@ -370,8 +388,9 @@ and unresolved latency/reporting/compensation/bypass policy, not a selected UI c
 ## Application preferences and reset
 
 The future Settings experience supports bounded application/plugin-global preference resets under
-[SETTINGS](SETTINGS.md#reset-boundary). Configuration reset must not delete user projects or
-project-managed audio/media. Exact button layout and confirmation flow remain open.
+[SETTINGS](SETTINGS.md#reset-boundary). Configuration reset must not delete user projects,
+project-managed audio/media, user-created samples/presets or Personal Library content. Exact button
+layout and confirmation flow remain open.
 Production diagnostics ordinarily need at most a simple enable/disable preference where useful;
 developer logging levels belong outside ordinary GUI settings under [SETTINGS](SETTINGS.md#production-diagnostics).
 

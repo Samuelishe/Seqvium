@@ -310,3 +310,50 @@ is not established by local history; this log does not duplicate Git's commit ch
   and empty untracked baseline preserved, task changes unstaged. No production code, UI, experiments,
   projects, dependencies, tests, CI, prototypes, tooling, backends or plugin hosts introduced.
   No empty-solution builds/tests, staging, commit or push. SEQ-R0 remains **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R14
+
+- Audited existing owners and accepted Browser discovery versus source, project-managed resource/state,
+  independent Personal Library user content and reusable preset/template roles. Preserved R9 durable
+  managed-media and R12 logical Undo/async contracts without selecting storage or UI mechanics.
+- Cases A–N were checked against current owners with these semantic outcomes:
+
+  | Case | Audited outcome / current owner |
+  | --- | --- |
+  | A — filesystem preview | Repeated `D:\Samples\Kick\kick_17.wav` preview accepts no project media/Undo; close retains no accepted preview resource. Source disappearance affects further discovery/access, not project durability; [preview](../SAMPLE_WORKFLOW.md#preview-contextual-audition-and-accepted-use) |
+  | B — filesystem use | Successful explicit import/use is coherent managed project acceptance; deleting/moving origin cannot break use; provenance is optional non-live metadata; [format](../PROJECT_FORMAT.md#source-provenance-and-reusable-content) |
+  | C — content pack | Preview remains transient; only used audio is managed. Later Pack A uninstall cannot lose that audio; required active executable/preview lifetimes still respect existing safety; [extensions](../EXTENSIONS.md#lifecycle-and-missing-capabilities) |
+  | D — Sample Lab result | Acceptance into Project X creates project material only; separate intentional publication establishes cross-project library ownership; [library](../SAMPLE_WORKFLOW.md#personal-library-and-explicit-publication) |
+  | E — resampled object | Accepted render is immediately reusable inside the project, with no automatic global item; [project reuse](../SAMPLE_WORKFLOW.md#reusing-current-project-resources) |
+  | F — personal sample | Explicitly retained kick has independent library ownership; Projects A/B accept their own durable managed uses. Library removal protects projects; project cleanup protects library original; [library](../SAMPLE_WORKFLOW.md#personal-library-and-explicit-publication) |
+  | G — reset | User-created samples/presets/library content survive preference reset; exact storage/backup remains open; [settings](../SETTINGS.md#reset-boundary) |
+  | H — project resources | Small discoverable find/audition/reuse path covers imported/generated/resampled resources; no DAM/catalog required; [project reuse](../SAMPLE_WORKFLOW.md#reusing-current-project-resources) |
+  | I — applying preset | Apply creates/updates independent project-owned compatible configuration/identity, including opaque state where needed. Source rename/edit/removal cannot silently rewrite projects; [presets](../EXTENSIONS.md#preset-sources-and-project-state) |
+  | J — saving preset | Explicit reusable-content publication differs from project Save and document Undo; combined project edit/publication reports separate outcomes without claiming one storage object/global history; [presets](../EXTENSIONS.md#preset-sources-and-project-state) |
+  | K — missing library source | Useful unavailable/missing Browser state; already self-contained project uses remain healthy; [UX](../UX_CONTRACT.md#discovery-audition-and-reusable-content) |
+  | L — equal audio, distinct origins | Equal bytes/name/path do not establish universal semantic identity; future storage dedup preserves ownership/provenance; [discovery](../SAMPLE_WORKFLOW.md#browser-discovery-and-ownership) |
+  | M — finding/organizing | Initial source/location/name discovery is sufficient; richer organization/search needs evidence. No mandatory crawl/database/AI/index/cloud/store; [limits](../SAMPLE_WORKFLOW.md#discovery-evolution-limits) |
+  | N — musical audition | Raw preview, reversible target-validated contextual audition and acceptance remain distinct; Q-011 retains concrete substitution/publication/restoration; [preview](../SAMPLE_WORKFLOW.md#preview-contextual-audition-and-accepted-use) |
+
+- Browser finds existing material; Sample Lab explores/generates/mutates candidates. Accepted outputs
+  join the same project-resource path; explicit publication may later feed Browser for future projects.
+  No forced pane merge, automatic global accumulation or mutable-source project dependency.
+- Narrowly updated active roadmap capability ownership: R2 minimum external WAV/project-resource
+  find/audition/import/reuse; R7 accepted-generation integration; R12 usable small-track discovery;
+  explicit cross-project sample/preset publication assigned to R14+ after R12. R8's inside-project reuse
+  stays in the common resource path. Stage IDs/order and R0 scope preserved; Q-061 broader closure open.
+- Updated canonical sample/UX/format/settings/extensions owners, index and compact current state.
+  Recorded [D-067](DECISIONS.md#d-067--browser-discovery-and-explicit-reusable-content-ownership),
+  [Q-065's accepted portion](RESOLVED_QUESTIONS.md#r14-resolved-portion--q-065-discovery-and-reusable-ownership-semantics)
+  and [completed-stage history](ROADMAP.md#seq-kb-r14--browser-library--reusable-content-semantics).
+  Q-065 is partially resolved: semantics/stage ownership accepted; concrete mechanisms/evidence open.
+  Q-009/Q-010/Q-011/Q-024/Q-029/Q-058/Q-059/Q-063/Q-071 remain open without separate narrowing.
+- Verified 34 repository Markdown files, 1,059 relative links/anchors, 71 unique canonical Q IDs
+  (68 open, 3 fully archived), D-001 through D-067 and reference integrity; owner/routing,
+  current/archive separation, roadmap numbering/order and unchanged R0 scope, media/preset/Undo consistency,
+  documentation-only scope, UTF-8/LF/whitespace and `git diff --check`. No runtime evidence claimed.
+- Initial baseline: clean `master`, HEAD `de5d825f6bd83558da9428d9ee6bbce941d38e72`, checkpoint R13.
+  Branch/HEAD/index and empty untracked baseline preserved; task edits unstaged. No production code,
+  UI, projects, dependencies, tests, CI, prototypes, executable tooling, databases, indexes, scanners,
+  backends or plugin hosts introduced. No builds/tests, staging, commit or push. SEQ-R0 remains
+  **pending / not started**.

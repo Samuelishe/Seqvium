@@ -921,3 +921,41 @@ implementation; window/workspace, DPI/minimum-size and actual cross-platform val
 Q-015/Q-022/Q-028/Q-032/Q-035/Q-051/Q-063/Q-067 retain their open mechanisms; no additional question
 is narrowed or closed. No final keys, APIs, framework, C# command model, accessibility certification or
 platform parity selected/claimed. Active roadmap scope/order unchanged; SEQ-R0 remains pending / not started.
+
+## D-067 — Browser discovery and explicit reusable content ownership
+
+Status: Accepted by SEQ-KB-R14, 2026-10-08; partially resolves Q-065. Refines the discovery/reuse loop
+in [D-003](#d-003--sound-discovery-and-resampling-define-the-creative-loop), preserves managed-media
+durability in [D-058](#d-058--project-managed-ordinary-imported-media-and-degraded-resource-access) and
+Undo/async boundaries in [D-065](#d-065--logical-undo-transactions-and-async-commit-integrity).
+Basis: Audit of current owners and discovery/library/preset cases A–N; product/architecture reasoning
+only, with no implementation, storage, indexing, hosting or performance evidence.
+Rationale: Fast discovery and reuse are central to the creative loop, but a shared Browser cannot define
+one ownership identity for filesystem files, packs, candidates, project resources, library content and
+preset templates. Preview is transient discovery; explicit project use establishes durable managed
+audio or project-owned configuration. Remembered provenance must not make that use fragile.
+Project/generated/resampled material is immediately reusable in its own project without automatically
+accumulating global content. Intentionally publishing selected material establishes independent Personal
+Library ownership. Project cleanup and library removal protect each other's durable originals/uses;
+preference reset protects reusable samples/presets as user work.
+Preset application retains sufficient compatible project-owned identity/configuration/opaque state;
+later mutable preset edits/removal cannot silently change it. This preserves the existing capability/
+sound-compatibility limits, not permanent historical algorithm emulation. Library publication has its
+own user-content effect, separate from document Undo; a combined action must expose both outcomes.
+Browser finds existing material while Sample Lab explores candidates; accepted output rejoins the same
+project-resource path. Raw preview, reversible contextual audition and accepted use remain distinct.
+Narrow stage ownership avoids leaving discovery unowned or inflating R2 into media-asset management:
+R2 owns minimum external WAV/project-resource access; R7 owns accepted-generation integration; R8
+continues project sample reuse; R12 owns small-track discovery usability. Explicit cross-project sample/
+preset publication belongs to R14+, not a R12 prerequisite. No stage numbering/order changes.
+Current owners: [Sample workflow](../SAMPLE_WORKFLOW.md#browser-discovery-and-ownership),
+[UX](../UX_CONTRACT.md#discovery-audition-and-reusable-content),
+[format](../PROJECT_FORMAT.md#source-provenance-and-reusable-content),
+[settings](../SETTINGS.md#reset-boundary), [presets](../EXTENSIONS.md#preset-sources-and-project-state),
+[roadmap](../ROADMAP.md#discovery-and-reuse-ownership).
+Remaining Q-065: Exact UI, library/storage/metadata, discovery/indexing/watching, organization/search,
+dedup/caching, preset formats/versioning/update, bindings, performance/scaling, paths and backup/sync/
+import/export. Live-linked presets need separate justification; no catalog, database, scanner, cloud,
+store or marketplace chosen. Q-009/Q-010/Q-011/Q-024/Q-029/Q-058/Q-059/Q-063/Q-071 remain open in
+their concrete scopes without separate resolution. No production work authorized or performed;
+SEQ-R0 remains pending / not started.

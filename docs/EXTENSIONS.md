@@ -2,7 +2,7 @@
 
 Role: Optional-capability and extension lifecycle contract.
 Read when: Designing extension boundaries, packages, removal, or missing-capability behavior.
-Authoritative for: Categories, base-versus-optional policy, compatibility/fallback, lifecycle/removal safety, degraded availability and dependency blockers.
+Authoritative for: Categories, base-versus-optional policy, preset-source versus project-state boundaries, compatibility/fallback, lifecycle/removal safety, degraded availability and dependency blockers.
 Not authoritative for: A final public API, package format, project container, DSP implementation, or store.
 
 ## Base and optional capabilities
@@ -120,6 +120,39 @@ does not promise indefinite historical engine emulation under
 [AUDIO_ENGINE](AUDIO_ENGINE.md#sound-compatibility-boundary); specific future breaking changes need
 deliberate policy when they occur.
 
+## Preset sources and project state
+
+A reusable preset/template has identity/content separate from the project sound/plugin state it creates
+or updates. Explicitly applying/accepting an installed or Personal Library preset is a project edit:
+
+```text
+library/installed preset source -> apply/accept -> project-owned sound/plugin state
+```
+
+The accepted project must retain sufficient compatible configuration, capability identity and state
+to reproduce its intended sound under this document's compatibility/sound-responsibility contracts.
+Later renaming, editing, overwriting or deleting the source preset must not silently rewrite existing
+project state or make it dependent on that mutable preset. Provenance may be remembered separately.
+Any audio accepted from a preset's source follows normal managed-media durability; retaining preset
+state does not turn missing required executable processing into available audio.
+
+Do not assume every plugin exposes host-readable parameters. Sound-defining opaque plugin state may
+be project-owned; its identity/state/schema preservation and compatible restoration remain necessary
+under [Project format](PROJECT_FORMAT.md#source-provenance-and-reusable-content). This does not promise
+exact historical sonic identity across algorithm changes or select a parameter/state-exchange API.
+Missing/incompatible capabilities retain their normal degraded access and dependency-scoped blockers.
+
+Explicitly saving modified sound settings for future projects publishes reusable user content, separate
+from ordinary project Save and from the project's own state edits. User-created presets belong to the
+[Personal Library boundary](SAMPLE_WORKFLOW.md#personal-library-and-explicit-publication), not disposable
+plugin-global preferences. Project Undo normally covers application/configuration edits to the project,
+not independent preset publication. An intentionally combined edit/publication has distinct effects
+and failure outcomes; no shared storage object or global-history UX is presumed.
+
+Linked/live presets, versioning, overwrite/update workflow, plugin-defined formats, categories/tags
+and portable preset packages remain open or require separate justification. Q-024 retains capability/
+state compatibility and negotiation; Q-065 retains concrete reusable-preset/discovery mechanisms.
+
 ## Failure containment limits
 
 Seqvium hosts compatible third-party plugins according to defined host contracts. Third-party code
@@ -194,6 +227,8 @@ different safety contracts below. Exact package manager mechanics remain open in
 - **Used content-pack sample:** normally becomes managed project media by default; later pack removal
   must not lose already managed used audio. Explicit external references are an alternative governed by
   [PROJECT_FORMAT](PROJECT_FORMAT.md#media-policy-boundary), not the normal durability path.
+- **Preset source:** removing its pack/library entry changes discovery availability, not already
+  accepted project state. Required executable capability removal still follows the rules below.
 - **Realtime instrument/effect:** when the algorithm is needed to reproduce sound, preserve stable
   extension identity, serialized state, musical relationships, and sufficient opaque/unknown data.
   The UI explicitly represents the unavailable extension; affected execution is blocked where its

@@ -145,3 +145,15 @@ concrete input/accessibility mechanisms and platform evidence remain open. Relat
 open without separate narrowing. Documentation/product-architecture only; no implementation stage
 started or reordered. SEQ-R0 remains **pending / not started**.
 See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r13).
+
+## SEQ-KB-R14 — Browser, Library & Reusable Content Semantics
+
+Completed 2026-10-08. Audited discovery/library/preset cases A–N and accepted Browser versus source/
+ownership, transient preview versus durable project use, independent Personal Library user work,
+explicit global publication, reset/removal safety, project-resource reuse and preset-template versus
+project-owned compatible state. Browser and Sample Lab interoperate without merging responsibilities.
+Partially resolved Q-065 through [D-067](DECISIONS.md#d-067--browser-discovery-and-explicit-reusable-content-ownership);
+concrete discovery/library/preset mechanisms remain open. Narrowly assigned R2 minimum access,
+R7 integration, R12 usability and R14+ cross-project publication; implementation IDs/order preserved.
+Documentation/product-architecture only; no implementation stage started. SEQ-R0 remains
+**pending / not started**. See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r14).
