@@ -49,6 +49,24 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Space.Gap}"
                             VerticalAlignment="Center">
+                    <Button x:Name="PaneMenuAction" Classes="shell" Content="{Binding [Workspace.Panes]}"
+                            AutomationProperties.AutomationId="Workspace.Panes"
+                            AutomationProperties.Name="{Binding [Workspace.Panes]}"
+                            ToolTip.Tip="{Binding [Workspace.KeyboardHint]}">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight">
+                                <StackPanel Spacing="4">
+                                    <Button Classes="shell" Content="{Binding [Pane.Inspector]}"
+                                            Click="InspectorClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenInspector" />
+                                    <Button Classes="shell" Content="{Binding [Pane.Appearance]}"
+                                            Click="AppearanceClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenAppearance" />
+                                    <TextBlock Classes="caption" Text="{Binding [Workspace.KeyboardHint]}" />
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
                     <Button Classes="shell" Content="{Binding LanguageCode}" Click="LanguageClicked"
                             AutomationProperties.AutomationId="Preference.Language"
                             AutomationProperties.Name="{Binding LanguageLabel}" ToolTip.Tip="{Binding LanguageLabel}" />
@@ -63,7 +81,7 @@
                                 <StackPanel Width="280" Spacing="8">
                                     <TextBlock Text="Seqvium" FontWeight="SemiBold" />
                                     <TextBlock Text="{Binding Version}" />
-                                    <TextBlock Text="SEQ-R3-F1" Classes="caption" />
+                                    <TextBlock Text="SEQ-R3-F2" Classes="caption" />
                                     <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
                                 </StackPanel>
                             </Flyout>
@@ -72,7 +90,6 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <!-- Only the composition slot exists. Future pane activation remains separate from document selection. -->
         <Border Grid.Row="2" x:Name="WorkspaceRegion" Background="{DynamicResource Surface.Workspace}" />
         <Border Grid.Row="3" Height="{DynamicResource Status.Height}" BorderBrush="{DynamicResource Border.Default}"
                 BorderThickness="0,1,0,0" Padding="6,0">

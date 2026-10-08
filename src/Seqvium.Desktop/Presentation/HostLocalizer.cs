@@ -51,8 +51,20 @@ public sealed class HostLocalizer
             "Preferences could not be fully read. Safe defaults are in use; existing files were preserved.",
         ["Preference.SaveFailed"] = "Preference was applied for this session but could not be saved.",
         ["Audio.Idle"] = "Audio inactive", ["Host.About"] = "About Seqvium",
+        ["Workspace.Panes"] = "Panes", ["Workspace.KeyboardHint"] = "F6 / Ctrl+Tab: switch · Esc: leave · Ctrl+W: hide",
+        ["Pane.Inspector"] = "Project Inspector", ["Pane.Appearance"] = "Appearance",
+        ["Pane.Actions"] = "Pane actions", ["Pane.Activate"] = "Activate", ["Pane.Restore"] = "Restore pane",
+        ["Pane.Collapse"] = "Collapse pane", ["Pane.Hide"] = "Hide pane",
+        ["Pane.DockLeft"] = "Dock left", ["Pane.DockRight"] = "Dock right", ["Pane.Float"] = "Float / undock",
+        ["Pane.AllowDocking"] = "Allow docking",
+        ["Pane.MoveHint"] = "Actions focused: Ctrl+Arrows move · +Shift resize",
+        ["Inspector.Project"] = "Project", ["Inspector.Status"] = "Status", ["Inspector.Patterns"] = "Patterns",
+        ["Inspector.Sounds"] = "Sounds", ["Inspector.Resources"] = "Resources",
+        ["Workspace.LoadFallback"] =
+            "Layout read incompletely; safe entries restored. Original file preserved; layout saving disabled this session.",
+        ["Workspace.SaveFailed"] = "Workspace layout could not be saved; this session remains usable.",
         ["Host.Scope"] =
-            "Music editors, internal panes, Browser, Graph and Sample Lab are not available yet. Project Open / Save UI is deferred."
+            "Internal Project Inspector and Appearance panes are available. Music editors, Browser, Graph, Sample Lab and Project Open / Save UI are deferred."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     public static IReadOnlyDictionary<string, string> Russian { get; } = new Dictionary<string, string>
@@ -70,7 +82,21 @@ public sealed class HostLocalizer
         ["Preference.SaveFailed"] = "Настройка применена для этого сеанса, но сохранить её не удалось.",
         ["Audio.Idle"] = "Аудио не активно",
         ["Host.About"] = "О Seqvium",
+        ["Workspace.Panes"] = "Панели",
+        ["Workspace.KeyboardHint"] = "F6 / Ctrl+Tab: панели · Esc: выйти · Ctrl+W: скрыть",
+        ["Pane.Inspector"] = "Инспектор проекта", ["Pane.Appearance"] = "Оформление",
+        ["Pane.Actions"] = "Действия панели", ["Pane.Activate"] = "Активировать",
+        ["Pane.Restore"] = "Восстановить панель",
+        ["Pane.Collapse"] = "Свернуть панель", ["Pane.Hide"] = "Скрыть панель",
+        ["Pane.DockLeft"] = "Закрепить слева", ["Pane.DockRight"] = "Закрепить справа", ["Pane.Float"] = "Открепить",
+        ["Pane.AllowDocking"] = "Разрешить закрепление",
+        ["Pane.MoveHint"] = "Фокус на действиях: Ctrl+стрелки — сдвиг · +Shift — размер",
+        ["Inspector.Project"] = "Проект", ["Inspector.Status"] = "Состояние", ["Inspector.Patterns"] = "Паттерны",
+        ["Inspector.Sounds"] = "Звуки", ["Inspector.Resources"] = "Ресурсы",
+        ["Workspace.LoadFallback"] =
+            "Макет прочитан не полностью; допустимые панели восстановлены. Исходный файл сохранён; запись макета отключена в этом сеансе.",
+        ["Workspace.SaveFailed"] = "Сохранить макет не удалось; панели доступны в текущем сеансе.",
         ["Host.Scope"] =
-            "Музыкальные редакторы, внутренние панели, Browser, Graph и Sample Lab пока недоступны. Открытие и сохранение через UI отложены."
+            "Доступны внутренние панели инспектора проекта и оформления. Музыкальные редакторы, Browser, Graph, Sample Lab и открытие / сохранение через UI отложены."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 }

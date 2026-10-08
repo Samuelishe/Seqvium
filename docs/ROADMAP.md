@@ -237,7 +237,7 @@ R2's bounded resource/device foundation is complete / local accepted-ready under
 [PROJECT_STATE](PROJECT_STATE.md) and
 the [complete acceptance audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit).
 Its completed scope/rationale is retained in the cold archive. The next numbered stage is R3, which
-is in progress within separately authorized R3-F1; no extra milestone, permanent backend or recording
+is in progress within separately authorized R3-F1/F2; no extra milestone, permanent backend or recording
 prerequisite is introduced. Current audio/source/device contracts remain in their canonical owners.
 
 ## SEQ-R3 — Workspace Shell Foundation
@@ -245,9 +245,13 @@ prerequisite is introduced. Current audio/source/device contracts remain in thei
 Status: **in progress / partial**. R3-F1 delivers the actual main desktop window, bounded Windows chrome,
 canonical project summary, first-party RU/EN fallback, Dark/Light semantic resources and safe independent
 preference storage; see [current state](PROJECT_STATE.md) and [observed report](experiments/SEQ-R3-F1_REPORT.md).
-F1/F2 are bounded packages within R3, not numbered roadmap stages. Visual review of F1 precedes F2's
-actual internal panes, activation/focus, floating/resizing/collapse, drag/dock and layout persistence.
-Those mechanisms are not implemented; R3 is not complete. No R4/music editor/audio-preview work is included.
+F1 is the accepted desktop/presentation foundation. F2 adds two optional real first-party internal panes,
+bounded activation/front order, captured drag/resize, collapse/hide/reopen, explicit reversible edge docking,
+keyboard paths and independent user layout persistence; see [F2 evidence](experiments/SEQ-R3-F2_REPORT.md).
+F1/F2 are bounded packages within R3, not numbered roadmap stages. F2 is locally verified and awaits owner
+visual review; R3 is not complete without a separate full-stage audit and remaining evidence/integration.
+No R4/music editor/audio-preview work is included. Future pane/editor semantic targets, broader platform/
+DPI/accessibility evidence and delivered-shell validation remain distinct work, not implicit F2 authority.
 
 Establish one main window and internal workspace-pane infrastructure: activation/front behavior,
 movement/resizing, internal floating, bounded collapse/restore, user-controlled docking where justified,

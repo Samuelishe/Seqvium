@@ -110,6 +110,20 @@ presentation cases when needed. The [F1 report](experiments/SEQ-R3-F1_REPORT.md)
 Windows UI Automation/pointer/keyboard smoke and visual inspection. Compilation/pure tests are not GUI
 acceptance; high/mixed DPI, screen readers and Linux/macOS runtime remain missing evidence.
 
+## R3-F2 workspace verification
+
+`Desktop/WorkspaceStateTests` and `WorkspaceLayoutTests` add 38 deterministic cases, for **346 total**,
+retaining all 308 pre-F2 cases. They cover stable identity/localization, bounded front order, overlap
+activation, floating/docked geometry and reflow, collapse/hide/reopen, traversal/disposal, per-pane docking
+permission/conflicts, restored dock intent, early-close snapshots, bounded/partial/corrupt/future files,
+roundtrip/backup/write failures and latest-pending shutdown. Actual canonical Save, prepared WAV acceptance
+and preference changes verify ownership independence. These tests initialize no platform or physical audio.
+
+Use the same locked restore/full Release commands. The [F2 report](experiments/SEQ-R3-F2_REPORT.md) records
+58 separate actual Windows control/pointer/keyboard/restart checks, retained control identity and six real
+screenshots. Pure state tests do not establish control focus, pointer capture, visual or OS acceptance.
+High/mixed DPI, screen-reader certification, Linux/macOS and crash/power-loss guarantees remain untested.
+
 ## Intended test topology
 
 Prefer **one main managed `Seqvium.Tests` project**, organized by domain/feature folders. Conceptual

@@ -31,6 +31,17 @@
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="CornerRadius" Value="0" />
         </Style>
+        <Style Selector="Button.paneChrome">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+        <Style Selector="Border.workspacePane">
+            <Setter Property="BorderBrush" Value="{DynamicResource Border.Default}" />
+        </Style>
+        <Style Selector="Border.workspacePane.active">
+            <Setter Property="BorderBrush" Value="{DynamicResource Focus.Active}" />
+        </Style>
         <Style Selector="Button.shell:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource Surface.Workspace}" />
             <Setter Property="BorderBrush" Value="{DynamicResource Accent.Action}" />

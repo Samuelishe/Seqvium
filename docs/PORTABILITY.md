@@ -56,6 +56,13 @@ Other desktops keep native window decorations pending OS-specific validation. Wi
 High/mixed DPI, cross-monitor behavior, Linux/macOS window/input/accessibility, screen readers, diverse
 GPU/driver configurations, signing/installers and delivered clean-machine prerequisites remain untested.
 
+R3-F2's [workspace evidence](experiments/SEQ-R3-F2_REPORT.md) adds 58 actual Windows 11 x64 checks and
+six inspected pane screenshots on one 1920x1080 display at 96 DPI: 1100x750, reduced 640x511 and maximized
+1920x1040 clients. State/persistence stay platform-independent and use the existing configuration paths;
+native input automation is a local evidence method, not production pane code. Changed scaling, mixed DPI,
+cross-monitor, screen-reader certification and Linux/macOS desktop/configuration runtime are untested.
+No new OS support or packaged-distribution claim follows from F2.
+
 ## Platform evidence and support scope
 
 These are distinct, complementary dimensions. They can coexist; this table is neither a mandatory

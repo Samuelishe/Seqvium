@@ -35,32 +35,32 @@ record actual distributed third-party provenance separately in THIRD_PARTY.
 
 All routes start with current state; add these owners as needed:
 
-| Task | Read |
-| --- | --- |
-| Product / feature / UX | [PROJECT_VISION](docs/PROJECT_VISION.md), [UX_CONTRACT](docs/UX_CONTRACT.md) |
-| Visual system / interaction design quality | [UI_DESIGN](docs/UI_DESIGN.md), UX contract; workspace or graph owner for affected behavior |
-| Architecture | [ARCHITECTURE](docs/ARCHITECTURE.md) |
-| Audio / realtime | [AUDIO_ENGINE](docs/AUDIO_ENGINE.md), architecture |
-| Node / processing graph, ports, node execution | [NODE_GRAPH](docs/NODE_GRAPH.md) + affected audio/architecture owner |
-| Workspace panes, docking, floating, layout, activation | [WORKSPACE](docs/WORKSPACE.md), UX contract |
-| User/application preferences, reset, production logging | [SETTINGS](docs/SETTINGS.md); project format for project-owned persistence, development for developer diagnostics |
-| Samples / generation / resampling | [SAMPLE_WORKFLOW](docs/SAMPLE_WORKFLOW.md); audio or extensions for affected boundaries |
-| Extensions / packages | [EXTENSIONS](docs/EXTENSIONS.md) |
-| Project serialization | [PROJECT_FORMAT](docs/PROJECT_FORMAT.md); extensions for opaque state |
-| C# implementation / refactoring | [CODING_GUIDELINES](docs/CODING_GUIDELINES.md), architecture + affected owner |
-| Development environment / local tooling / SDK | [DEVELOPMENT](docs/DEVELOPMENT.md) |
-| Tests / verification | [TEST_EXECUTION](docs/TEST_EXECUTION.md) + affected owner and actual test setup |
-| ProjectStats / structural repository diagnostics | [PROJECT_STATS](docs/PROJECT_STATS.md), development and test execution for introduction/verification |
-| Portability / platform-specific work | [PORTABILITY](docs/PORTABILITY.md) + affected architecture owner |
-| CI / hosted automation / release validation | [CI_CD](docs/CI_CD.md); test execution / portability as needed |
-| Planning | [ROADMAP](docs/ROADMAP.md) |
-| Speculative ideas / alternatives | [IDEAS](docs/IDEAS.md) |
-| Existing implementation compromises | [TECH_DEBT](docs/TECH_DEBT.md) |
-| Concrete unresolved risks / evidence gaps | [KNOWN_PROBLEMS](docs/KNOWN_PROBLEMS.md); current contracts stay in their active owners |
-| Historical decision / resolved question / completed work | [Cold archive](docs/archive/INDEX.md), only when explicitly needed; never default current context |
-| Documentation / ownership | [DOCUMENTATION_GOVERNANCE](docs/DOCUMENTATION_GOVERNANCE.md) |
-| Project licensing / third-party dependencies or resources | [THIRD_PARTY](docs/THIRD_PARTY.md), root [LICENSE](LICENSE) for license text + affected owner |
-| Experiments | [Experiment guide](docs/experiments/README.md) + affected technical owner |
+| Task                                                      | Read                                                                                                              |
+|-----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| Product / feature / UX                                    | [PROJECT_VISION](docs/PROJECT_VISION.md), [UX_CONTRACT](docs/UX_CONTRACT.md)                                      |
+| Visual system / interaction design quality                | [UI_DESIGN](docs/UI_DESIGN.md), UX contract; workspace or graph owner for affected behavior                       |
+| Architecture                                              | [ARCHITECTURE](docs/ARCHITECTURE.md)                                                                              |
+| Audio / realtime                                          | [AUDIO_ENGINE](docs/AUDIO_ENGINE.md), architecture                                                                |
+| Node / processing graph, ports, node execution            | [NODE_GRAPH](docs/NODE_GRAPH.md) + affected audio/architecture owner                                              |
+| Workspace panes, docking, floating, layout, activation    | [WORKSPACE](docs/WORKSPACE.md), UX contract                                                                       |
+| User/application preferences, reset, production logging   | [SETTINGS](docs/SETTINGS.md); project format for project-owned persistence, development for developer diagnostics |
+| Samples / generation / resampling                         | [SAMPLE_WORKFLOW](docs/SAMPLE_WORKFLOW.md); audio or extensions for affected boundaries                           |
+| Extensions / packages                                     | [EXTENSIONS](docs/EXTENSIONS.md)                                                                                  |
+| Project serialization                                     | [PROJECT_FORMAT](docs/PROJECT_FORMAT.md); extensions for opaque state                                             |
+| C# implementation / refactoring                           | [CODING_GUIDELINES](docs/CODING_GUIDELINES.md), architecture + affected owner                                     |
+| Development environment / local tooling / SDK             | [DEVELOPMENT](docs/DEVELOPMENT.md)                                                                                |
+| Tests / verification                                      | [TEST_EXECUTION](docs/TEST_EXECUTION.md) + affected owner and actual test setup                                   |
+| ProjectStats / structural repository diagnostics          | [PROJECT_STATS](docs/PROJECT_STATS.md), development and test execution for introduction/verification              |
+| Portability / platform-specific work                      | [PORTABILITY](docs/PORTABILITY.md) + affected architecture owner                                                  |
+| CI / hosted automation / release validation               | [CI_CD](docs/CI_CD.md); test execution / portability as needed                                                    |
+| Planning                                                  | [ROADMAP](docs/ROADMAP.md)                                                                                        |
+| Speculative ideas / alternatives                          | [IDEAS](docs/IDEAS.md)                                                                                            |
+| Existing implementation compromises                       | [TECH_DEBT](docs/TECH_DEBT.md)                                                                                    |
+| Concrete unresolved risks / evidence gaps                 | [KNOWN_PROBLEMS](docs/KNOWN_PROBLEMS.md); current contracts stay in their active owners                           |
+| Historical decision / resolved question / completed work  | [Cold archive](docs/archive/INDEX.md), only when explicitly needed; never default current context                 |
+| Documentation / ownership                                 | [DOCUMENTATION_GOVERNANCE](docs/DOCUMENTATION_GOVERNANCE.md)                                                      |
+| Project licensing / third-party dependencies or resources | [THIRD_PARTY](docs/THIRD_PARTY.md), root [LICENSE](LICENSE) for license text + affected owner                     |
+| Experiments                                               | [Experiment guide](docs/experiments/README.md) + affected technical owner                                         |
 
 ## Change and verification
 
@@ -76,6 +76,14 @@ and completed roadmap stages out of active registers; append decision rationale 
 completed work directly to the archive. Preserve current truth in active owners, not only in history.
 Follow [governance](docs/DOCUMENTATION_GOVERNANCE.md) for conflicts.
 Finish with verification results and final Git status, distinguishing task changes from existing work.
+At the end of every substantial task, inspect untracked content too and distinguish product source,
+permanent tests/runtime resources, user work and disposable task outputs. Preserve all required build/
+runtime material and reusable verification tools; remove only task-owned temporary files no longer needed.
+Keep transient GUI screenshots in ignored local artifact directories, repair documentation references
+after cleanup and report intentionally retained artifacts with their reason. Follow the
+[evidence retention policy](docs/experiments/README.md#evidence-retention) and
+[resource placement policy](docs/CODING_GUIDELINES.md#resource-and-shared-code-placement).
+Do not use broad Git cleanup/history/index mutations to achieve cleanliness.
 When a task creates or modifies tracked files, always include one concise suggested English commit
 message describing the actual outcome. Begin with the stage/milestone ID when applicable. If no tracked
 files changed, no message is needed. A suggested message never authorizes commit or push.

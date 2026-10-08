@@ -34,6 +34,21 @@ behavior, while host styles supply shell surface/accent/focus. Color is accompan
 Tests verify complete roles and text contrast; actual Dark/Light screenshots and small-window reachability
 are evidence only for the implemented Windows shell. Theme switching retains window, controls and focus.
 
+## Implemented R3-F2 pane presentation
+
+Optional Inspector/Appearance surfaces use 28-DIP headers, 1-DIP boundaries, minimal rounding and the
+existing semantic resources/body typography. Active panes have a distinct outline and stronger title;
+keyboard-focused actions retain the separate visible control focus treatment. The actions, collapse,
+hide and resize affordances are compact; dock actions live in a deliberately opened menu. A 28-DIP
+bottom strip appears only while a pane is visible/collapsed, with an upward collapse marker and readable
+localized titles. Hidden/default panes occupy no persistent workspace surface. Inspector rows contain
+real project facts; Appearance offers two real preference actions, without decorative cards or fake editors.
+Pane-local scrolling preserves readable content at minimum size. RU titles use ellipsis/tooltips when
+needed. No palette, font scaling scheme or full control framework is introduced. The
+[F2 visual observations](experiments/SEQ-R3-F2_REPORT.md#visual-observations-and-local-review-artifacts)
+record actual overlap, dock/floating, collapse, small geometry and Light. Generated captures are local
+review artifacts, not committed assets; the professional DAW target below remains the review direction.
+
 ## Professional DAW Workspace Design Target
 
 This is an accepted long-term visual direction, not authorization to implement future stages or a
@@ -90,7 +105,8 @@ surface, not a decorative container. The long-term single-main-window workspace 
 overlap/floating, clear activation/front behavior, independent sizing, collapse/restore and later
 user-controlled docking/magnetism under [WORKSPACE](WORKSPACE.md#flexible-composition-and-activation).
 Not every editor must remain visible. Layout preferences remain separate from canonical music.
-This establishes no docking hierarchy, registry, pane implementation or R3-F2 authorization.
+The bounded F2 host above implements this direction for two optional host surfaces; it grants no
+authorization for specialized musical editors or a general docking hierarchy/registry.
 
 ### Stable responsive frame
 
@@ -135,8 +151,10 @@ For each substantial GUI change, answer through actual rendered windows/screensh
 
 When a substantial editor arrives, review representative dense and sparse content, not only its empty
 default. Unit tests are necessary evidence for applicable invariants, not visual acceptance. Record actual
-OS/DPI/size/input bounds and missing evidence. Owner visual review remains required; R3-F1 screenshots
-show reserved workspace capacity, not implemented musical work or multi-pane acceptance.
+OS/DPI/size/input bounds and missing evidence. Owner visual review remains required; the recorded R3-F1
+visual observations describe reserved workspace capacity, not musical work or multi-pane acceptance.
+Generated screenshots remain local under [evidence retention](experiments/README.md#evidence-retention),
+not product assets or a default Git deliverable.
 
 ## Hierarchy, chrome, and density
 

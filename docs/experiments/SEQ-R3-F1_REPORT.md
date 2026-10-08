@@ -85,13 +85,16 @@ physical audio certification or claims about sound from other running applicatio
 
 All four final images were visually inspected after layout settled, including maximization animation.
 They are original Seqvium screenshots, not copies/derivations of the owner's third-party reference images.
+During the authorized R3-F2 hygiene pass the four generated PNGs were removed from the current tracked
+tree. The essential observations, dimensions and limitations below are retained; this report no longer
+depends on image files in Git. The table records what was observed, not a screenshot download inventory.
 
-| State                                          | Actual client area at 96 DPI | Reserved work area height | Observation                                                                                                  |
-|------------------------------------------------|------------------------------|---------------------------|--------------------------------------------------------------------------------------------------------------|
-| [Dark / EN](seq-r3-f1/dark.png)                | 1100x750                     | 668 (89.1%)               | Quiet large work area, compact chrome, visible keyboard theme focus                                          |
-| [Light / EN](seq-r3-f1/light.png)              | 1100x750                     | 668 (89.1%)               | Same geometry/roles, readable text and separators                                                            |
-| [Reduced Dark / RU](seq-r3-f1/small.png)       | 640x511                      | 429 (84.0%)               | Requested approximately 640x500; native sizing yields 511 client height, all controls/title/status reachable |
-| [Maximized Dark / RU](seq-r3-f1/maximized.png) | 1920x1040                    | 958 (92.1%)               | Single 1920x1080 display/work area, stable frame, no shell scrollbars or clipped actions                     |
+| State               | Actual client area at 96 DPI | Reserved work area height | Observation                                                                                                  |
+|---------------------|------------------------------|---------------------------|--------------------------------------------------------------------------------------------------------------|
+| Dark / EN           | 1100x750                     | 668 (89.1%)               | Quiet large work area, compact chrome, visible keyboard theme focus                                          |
+| Light / EN          | 1100x750                     | 668 (89.1%)               | Same geometry/roles, readable text and separators                                                            |
+| Reduced Dark / RU   | 640x511                      | 429 (84.0%)               | Requested approximately 640x500; native sizing yields 511 client height, all controls/title/status reachable |
+| Maximized Dark / RU | 1920x1040                    | 958 (92.1%)               | Single 1920x1080 display/work area, stable frame, no shell scrollbars or clipped actions                     |
 
 These percentages measure **reserved space**, not implemented musical content. Header/status claims are
 source metrics; screenshot/native rectangle evidence confirms the geometry at this DPI. Thin separators,
@@ -160,5 +163,7 @@ Native notice bundling, delivered prerequisites and product support claims remai
 
 Task changes consist of Desktop source/manifest/lock, solution/test reference/lock and two host test
 files; README/current owning docs, narrowed questions, archive rationale/work records and this report
-with four original screenshots. Initial baseline was clean; final status is entirely task work, unstaged,
+originally accompanied by four generated screenshots, since removed from the current tree under the
+[retention policy](README.md#evidence-retention). Initial baseline was clean; final status was entirely task work,
+unstaged,
 including new untracked source/evidence. No commit or push was performed.

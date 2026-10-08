@@ -8,11 +8,8 @@ Not authoritative for: Pane-specific editing, final visuals/gestures, framework 
 
 ## Implemented R3-F1 host boundary
 
-One actual main OS window hosts identity, compact canonical project summary, two preference
-actions and a reserved workspace region. No internal working pane, drag/dock manager, layout persistence,
-floating/collapse or per-pane docking preference is implemented; these remain R3-F2/later R3 work.
-The region is deliberately not a speculative pane/plugin framework. Preserve independent pane
-activation/focus versus document selection and user layout versus canonical music as panes arrive.
+One actual main OS window hosts identity, compact canonical project summary, preference actions and
+`WorkspaceRegion`. R3-F2 adds the bounded internal host below while retaining the accepted F1 frame.
 
 On Windows the restrained custom 30-DIP header has named/focusable minimize, maximize/restore and close
 buttons. Native styles and Avalonia decoration roles preserve title dragging and border resizing;
@@ -30,6 +27,63 @@ single-monitor
 96 DPI, not mixed/high-DPI acceptance. Tab reaches window and preference actions; Enter/Space execute them.
 [F1 report](experiments/SEQ-R3-F1_REPORT.md) records bounded real-window evidence and remaining checks.
 
+## Implemented R3-F2 internal panes
+
+The toolbar's Panes action deliberately opens Project Inspector or Appearance. Both are optional and
+hidden in a missing/default layout. Inspector projects actual open `ProjectDocument` name/status,
+tempo/meter and Pattern/sound/resource counts; Appearance invokes the existing language/theme actions.
+No invented music, editor controls, audio startup or dashboard is introduced.
+
+`WorkspaceState` owns only placement, visibility, docking permission, active identity and bounded
+back-to-front ordering. Type IDs (`project-inspector`, `appearance`), singleton instance IDs (`project-inspector.main`,
+`appearance.main`) and localized title keys are distinct. These two capabilities
+support one instance each; this is not a policy for all future editors or a plugin registry/interface.
+`WorkspaceHost` lazily creates and retains pane/content controls until host disposal. Collapse, hide,
+overlap, docking and preference refresh do not replace them. The content owner projects its document
+or holds its own controls/scroll context; geometry operations never select or edit musical material.
+Keyboard focus and semantic command targets are not fields of the layout model.
+
+Interaction with exposed content/header activates and brings that pane forward. Front order is a
+permutation of the bounded existing entries, rendered with compact indices; repeated activation never
+increments an unlimited z-index. The bottom 28-DIP strip reaches every visible/collapsed pane even if
+it is fully covered. Hidden panes leave the strip and reopen through Panes, retaining the same content
+within the session. Collapse removes only the working surface, with an upward marker on its strip action.
+
+Floating headers drag within the workspace; the bottom grip resizes each pane. Captured movement uses
+the starting geometry and pointer delta, and saves on release, not every move. Escape, capture loss,
+application deactivation, workspace resizing or a competing pane operation cancel the gesture and
+restore its starting placement. Native main-window chrome is outside this host. All geometry uses
+workspace DIPs, no screen coordinates; the canvas clips safely and preserves the entire header and
+working rectangle. Current minima are 280x210 DIP (Inspector) and 280x170 DIP (Appearance); content
+may scroll locally at its minimum. A theoretical workspace smaller than its minimum contains the pane
+within the available area; the normal main-window minimum remains 640x480.
+
+Dock left/right and Float are explicit pane-menu actions. Each edge holds at most one visible pane;
+an occupied-edge request returns its previous occupant to its retained floating placement. Opposite
+edges each use at most half the workspace width and full usable height, so both remain usable at the
+supported window minimum. A dock's inner-edge grip resizes width while preserving independent floating
+coordinates/height. Floating surfaces may overlap docks. Collapsed/hidden dock placements consume no
+edge; restoring them applies the same conflict rule. Disabling Allow docking undocks that pane and
+disables its dock actions without changing another pane's preference. There is no magnetic snapping,
+hover-to-dock, nested layout tree, dock group, detached OS pane or named workspace profile.
+
+Tab reaches pane/strip/menu actions; Enter/Space execute them and normal menu arrows/Home/Enter choose
+actions. F6 / Ctrl+Tab switch available panes in stable capability order; Shift reverses traversal and
+collapsed entries restore. Hidden entries require deliberate reopening. With the pane-actions button
+focused, Ctrl+Arrows move a floating pane and Ctrl+Shift+Arrows resize (docked width only). Ctrl+W hides
+a pane only while focus is inside the workspace. Escape cancels a gesture, dismisses a menu or returns
+to Panes without a focus trap. Restore uses a live visible pane-actions button; hiding the final pane
+returns focus to Panes. No disposed-control focus reference is retained. These local bindings introduce
+no global hook or shortcut manager and preserve Alt+Space, Win+Up/Down and Alt+F4.
+
+Layout restore adapts positions using the saved usable workspace dimensions while retaining readable
+DIP sizes, then clamps negative/nonfinite/oversize positions and sizes. Window resizing recomputes usable
+bounds and edge widths; it does not shrink typography or introduce whole-window scrolling. Last floating
+geometry is separate from a docked rectangle. Storage/failure/shutdown semantics are owned once in
+[Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage).
+[F2 evidence](experiments/SEQ-R3-F2_REPORT.md) records actual Windows interaction and screenshots;
+high/mixed DPI, cross-monitor and other OS runtime are not accepted from pure geometry tests.
+
 ## One main application window
 
 Major working surfaces should normally be internal **workspace panes** in one main application window.
@@ -46,7 +100,8 @@ workspace direction. Seqvium owns the plugin/editor relationship and normal life
 
 The main workspace/pane infrastructure is core platform responsibility. A plugin may contribute a
 surface through host contracts without controlling the host workspace. [ARCHITECTURE](ARCHITECTURE.md)
-owns platform boundaries; each musical owner defines its pane's work. The host exists; working panes do not.
+owns platform boundaries; each musical owner defines its pane's work. The initial two host panes are
+implemented; specialized musical panes remain future work.
 
 ## Main-window chrome and foreground behavior
 
@@ -98,8 +153,8 @@ surface. The workspace must not require every possible pane to remain open simul
 
 ## User-controlled docking and magnetism
 
-Each pane should have its own magnetic/docking preference: it may allow docking/magnetism or remain
-freely floating. Exact settings may be boolean or richer; no schema is chosen.
+Each pane has its own docking permission in the bounded F2 host; broader magnetic gestures remain future
+work. A pane may remain freely floating independently of other panes.
 
 User intent takes priority over automatic layout. Snapping must be predictable and easy to escape.
 Approaching an edge alone must not aggressively capture a pane or fight free placement. Dock previews
@@ -133,14 +188,15 @@ from project-side node/connection data or graph-editor layout described in [NODE
 
 The speculative named/saved workspace and optional project-specific layout possibilities are retained
 as [I-001](IDEAS.md#i-001--optional-saved-workspace-arrangements); they are not initial requirements.
-Exact persistence of positions, sizes, minimized state, and dock relationships remains open.
+F2 persists the bounded placement/visibility/permission/order representation above; named arrangements
+and richer relationships remain future work.
 
 Workspace preferences/layout belong in the platform-appropriate user configuration area under
 [SETTINGS](SETTINGS.md#user-configuration-and-project-state). Application/plugin preference reset
-must not delete projects or project-managed media; pane-layout formats remain open. R3-F1's language/theme
-preference path/format is implemented separately under Settings.
+must not delete projects or project-managed media. Language/theme and the F2 pane-layout files remain
+independently owned under Settings.
 
-Restored geometry must eventually be clamped/adapted safely to changed main-window size, DPI, or
+Restored geometry must be clamped/adapted safely to changed main-window size, DPI, or
 display environment so panes remain reachable. Main-window composition must stay responsive and
 respect [UX_CONTRACT](UX_CONTRACT.md). Final visuals, layout algorithms, storage, and pane-specific
-geometry policies remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+geometry policies beyond the bounded F2 implementation remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).

@@ -6,7 +6,7 @@ Authoritative for: Progressive complexity, input/command and focus semantics, ba
 feedback, discoverability, general workflow semantics.
 Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or current implementation.
 
-These are intended requirements except the explicitly implemented bounded R3-F1 shell below; musical UI remains future
+These are intended requirements except the explicitly implemented bounded R3-F1/F2 host below; musical UI remains future
 work.
 
 ## Mouse-first creation and complementary input
@@ -526,6 +526,15 @@ owns semantic styles and non-color feedback. [Settings](SETTINGS.md#user-configu
 retains preference ownership; exact storage/reset mechanics remain Q-053.
 
 ## In-window workspace and graph depth
+
+R3-F2 implements the first two optional host panes with explicit open/activate, pointer movement/size,
+collapse versus hide, bounded left/right docking and retained content. Pane activation is not musical
+selection or editing authority. The strip and Panes menu provide discoverable restoration/reopening;
+F6/Ctrl+Tab, local pane actions, Escape and Ctrl+W supply complementary keyboard paths without global
+hooks. Restore selects a valid live pane context, and hiding the last surface returns to the host action.
+Language/theme refresh retain existing controls, working context and layout. Exact bindings and scope
+are owned once in [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes); broader editor/native-editor
+routing and accessibility remain open, not established by these two non-musical surfaces.
 
 Major surfaces normally use internal workspace panes in one main window. Interaction activates a pane
 and brings it ahead of overlapping panes, including when only part is visible. Moving/resizing, internal

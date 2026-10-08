@@ -1402,3 +1402,47 @@ This refines D-002/D-013/D-048/D-066/D-068 visual direction; existing workspace/
 is unchanged. It authorizes no R3-F2, R4, mock musical functionality, docking framework or final palette.
 
 Primary owner: [Professional DAW Workspace Design Target](../UI_DESIGN.md#professional-daw-workspace-design-target).
+
+## D-081 — Bounded internal pane ownership and independent user layout
+
+Status: accepted implementation choice within separately authorized R3-F2; R3 remains partial and
+owner review of actual pane presentation is pending.
+
+Use a small explicit state owner and one internal canvas/strip rather than a general docking framework.
+The two first-party singleton capabilities have stable type/instance identity independent of titles;
+content lives until host disposal and survives overlap, collapse and hide. Placement/visibility/front
+order are host-owned; focus and musical selection/command targets are not layout fields. A bounded
+permutation avoids z-index growth. Left/right docking is explicit and reversible, with per-pane
+permission and reachable conflict displacement, no unsolicited snapping or nested hierarchy.
+
+Keep layout in a separate bounded version-1 user file beside preferences, not canonical JSON/history.
+Independent valid entries restore safely; any unsafe/fallback read preserves the original and disables
+session writes rather than silently repairing potentially future/user data. Latest-pending snapshots
+write only at stable boundaries and shutdown joins them before content/document disposal. This is
+bounded normal-session behavior, not arbitrary UI serialization or universal crash/filesystem guarantees.
+
+The implementation and Windows 96-DPI evidence refine D-043/D-048/D-068/D-080 without authorizing
+future editor/plugin APIs, full Settings, arbitrary instancing, R4 or cross-platform acceptance.
+Current owners: [Workspace](../WORKSPACE.md#implemented-r3-f2-internal-panes),
+[Settings](../SETTINGS.md#implemented-r3-f2-workspace-layout-storage),
+[UI design](../UI_DESIGN.md#implemented-r3-f2-pane-presentation).
+[Observed F2 report](../experiments/SEQ-R3-F2_REPORT.md).
+
+## D-082 — Product-source repository and selective evidence retention
+
+Status: accepted owner-requested repository policy during pre-commit R3-F2 hygiene; no product behavior change.
+
+Git retains product sources, tests, intentional runtime resources and meaningful engineering knowledge,
+not every generated capture or iteration report. Default GUI screenshots/raw output stay ignored locally;
+significant compact reports and exceptional reproducibility evidence remain when technically useful.
+Approximately 1–3 current detailed investigations is guidance, not a destructive quota. Minor completed
+iterations update authoritative owners and existing history rather than create another report.
+F1 PNG observations survive in Markdown; F2 PNGs are temporary local pending-review material. R0/R2
+realtime measurements and distinct source/device/desktop reports retain their current technical value.
+
+Resources/code stay at their narrow consuming responsibility boundary, with real build/licensing ownership;
+no global media ignores or generic Common/Shared assembly are justified. Agents finish with scoped cleanup,
+repaired references and artifact disposition, preserving user work, tests, reusable tools and the Git index.
+Current owners: [evidence retention](../experiments/README.md#evidence-retention),
+[resource/code placement](../CODING_GUIDELINES.md#resource-and-shared-code-placement),
+[local verification outputs](../DEVELOPMENT.md#verification-output-organization) and [AGENTS](../../AGENTS.md).

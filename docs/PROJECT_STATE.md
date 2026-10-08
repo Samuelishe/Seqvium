@@ -12,7 +12,8 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 R2-F1/F2/F3/F4 are accepted working subdivisions, not new numbered stages.
 The [F4 complete R2 audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit) finds no missing
 R2 prerequisite for scoping R3. **R3 is in progress / partial**: separately authorized R3-F1 implements
-the first desktop host; internal pane management remains unimplemented R3-F2 work.
+the accepted desktop/presentation foundation. R3-F2 implements bounded internal panes and independent
+user layout persistence; local verification is complete, owner visual review of F2 remains pending.
 SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / narrow** under its
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 The initial bounded C# scheduler/DSP keeps execution and device ownership replaceable.
@@ -24,12 +25,19 @@ The .NET 10 solution contains portable Core, one Tests project, a narrow Windows
 explicit physical-device harness, plus one Avalonia `Seqvium.Desktop` executable.
 [Architecture](ARCHITECTURE.md) owns topology. The host opens one silent main window, presents a real
 pristine `ProjectDocument.Create` (120 BPM, 4/4), and persists immediately applied RU/EN and Dark/Light
-preferences separately from music/layout/media. Windows custom chrome has accessible actions and OS
+preferences and workspace layout separately from music/media. Windows custom chrome has accessible actions and OS
 movement/resize; other desktops retain native chrome until evidenced. No editor, file-dialog lifecycle,
-internal docking, audio startup or reset UI is implemented. [F1 report](experiments/SEQ-R3-F1_REPORT.md)
+audio startup or reset UI is implemented. Optional internal Project Inspector and Appearance panes support
+floating, activation/front order, captured drag/resize, collapse/hide/reopen and explicit left/right docking.
+[Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns
+behavior; [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage)
+owns the versioned bounded user file and failure safety. [F1 report](experiments/SEQ-R3-F1_REPORT.md)
 records actual desktop evidence and limits. The compact 30/30/22-DIP frame has no global scrolling;
 version/scope are in About only. [DAW visual target](UI_DESIGN.md#professional-daw-workspace-design-target)
-owns future design review; the owner's visual acceptance of F1 remains pending.
+owns design review; F1 is accepted,
+while [F2 visual observations](experiments/SEQ-R3-F2_REPORT.md#visual-observations-and-local-review-artifacts)
+support pending owner review. Its screenshots are ignored local review artifacts, not Git assets.
+Neither package implements musical editors or a general docking framework.
 R1 provides unnamed immutable canonical documents, typed stable IDs, shared multi-instrument Patterns,
 pitch-aware notes, variations, independent sound/resource/organization/processing intent, validated edits,
 bounded Undo/Redo and precise ticks/constant-tempo conversion. Versioned JSON preserves compatible unknown
@@ -55,7 +63,8 @@ Endpoint selections/facts remain absent from canonical music/settings/Undo and p
 
 ## Current focus
 
-R3-F1 shell is available for visual review before separately scoped R3-F2 internal pane work.
+R3-F2 is implemented and locally verified within R3, not a new numbered stage or full R3 acceptance.
+Review actual pane visuals/interaction; later shell/editor integration needs separate bounded authorization.
 Do not infer authorization for further stages. Preserve portable canonical intent and narrow adapters. MIDI/capture
 buffers, clocks,
 lifetime and deliberate durable recording acceptance are planned ownership, not implemented streams.
@@ -65,13 +74,17 @@ The ordered First Track scenario in [ROADMAP](ROADMAP.md) is unchanged.
 ## Validation baseline
 
 Local Windows x64, SDK 10.0.401 / runtime 10.0.12: locked restore and full Release solution build, **zero
-warnings/errors; 308 passing tests, zero failures/skips**, preserving all 274 R2 cases.
+warnings/errors; 346 passing tests, zero failures/skips**, preserving all 308 pre-F2 cases.
 34 host cases cover RU/EN fallback, complete Dark/Light roles, compact metrics/version, canonical/pending import
 preservation,
-preference roundtrip/corruption/write failure and pure host lifecycle without a display.
+preference roundtrip/corruption/write failure and pure host lifecycle without a display. Another 38 F2
+cases cover pane transitions, bounded geometry/order, docking conflicts, user-file failures/roundtrip,
+pending-write shutdown and independence from actual project Save/prepared WAV work.
 Actual Windows 11 x64 desktop smoke verifies chrome movement/resize/minimize/maximize/restore,
 Tab/Enter/Space, Alt+Space, Win+Up/Down and Alt+F4, live language/theme and focus retention at 96 DPI.
-No Windows audio adapter loads in that process; no playback/capture/DeviceCheck launch is requested.
+[F2 evidence](experiments/SEQ-R3-F2_REPORT.md) adds 58 actual control/pointer/keyboard/restart checks and
+six inspected screenshots at 1100x750, 640x511 and maximized 1920x1040. No Windows audio adapter loads in
+the desktop process; no playback/capture/DeviceCheck launch is requested.
 RID-independent desktop build without apphost also passes locally; this is not hosted OS evidence.
 Deterministic synthetic WAV/async-gate tests cover document/media/execution/source integrity plus 23 F4
 intent/failure/join cases. No physical hardware opens during ordinary tests.
@@ -99,6 +112,6 @@ Q-058/Q-059 recovery/repair/GC and wider storage/fault/race evidence; Q-061 whol
 Conservative accepted-file retention may grow storage; unnamed musical-state recovery is absent.
 Other open questions remain in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); Q-070 remains outside this task.
 Q-037 is resolved by bounded Avalonia adoption; Q-053/Q-054/Q-055/Q-064 are narrowed by shell evidence,
-not closed for broader preferences, contributions, panes or platform accessibility.
+not closed for broader preferences, contributions, future editors or platform accessibility.
 No CI, global tool or release-platform support is introduced. Desktop NuGet/native dependencies are
 recorded in [THIRD_PARTY](THIRD_PARTY.md); no alternative rendering stack is added by Seqvium.

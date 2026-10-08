@@ -122,6 +122,12 @@ applicable licenses/notices and validate dependencies/signing/runtime installati
 terms are compatible with Seqvium-authored Apache-2.0 without relicensing these components; native
 transitive notice completion remains a release gate, not a claim made from this build.
 
+R3-F2 adds no dependency, docking package, copied source or external asset. Generated F1/F2 screenshots
+are not distributed runtime resources: F1 PNGs were removed from the current tree, and F2 captures remain
+ignored locally for pending review under [evidence retention](experiments/README.md#evidence-retention).
+They depict original Seqvium output, not third-party DAW references. Pane chrome/content remain
+Seqvium-authored Apache-2.0 code; intentional future runtime assets still require normal provenance.
+
 ## Planned / under evaluation
 
 These are candidates or product directions, not dependencies, adoption decisions, or promises.

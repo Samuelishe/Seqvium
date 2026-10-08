@@ -2,13 +2,13 @@
 
 Role: Application/user configuration, bounded reset, and production diagnostic policy.
 Read when: Designing preferences, configuration storage/reset, or product logging controls/storage.
-Authoritative for: User/project configuration separation, logical device-selection UX, preference-reset limits, quiet
-bounded production diagnostics.
-Not authoritative for: Project serialization, workspace behavior, exact paths/formats, localization/theme APIs, or
+Authoritative for: User/project configuration separation, implemented host configuration paths/formats and failure
+safety, logical device-selection UX, preference-reset limits, quiet bounded production diagnostics.
+Not authoritative for: Project serialization, workspace interaction/geometry, localization/theme APIs, or
 logging implementation.
 
-These are accepted requirements. R2-F4 implements session-only logical audio selection; no settings UI,
-configuration files, global preference persistence or logging implementation exists.
+R2-F4 implements session-only logical audio selection. R3-F1/F2 implement the bounded preferences and
+workspace layout files below plus the optional Appearance pane; broader Settings/reset/logging UI is absent.
 
 ## Implemented R3-F1 host preferences
 
@@ -31,14 +31,46 @@ translate user project names or invalidate pending imports. No Reset command or 
 A future reset must be restricted to independently owned configuration; it cannot delete project files,
 accepted WAV, user-created content or recovery. The `.previous` file is preferences only, not music recovery.
 
+## Implemented R3-F2 workspace layout storage
+
+`WorkspaceLayoutStore` owns `workspace-layout.json` alongside `preferences.json` in the same
+platform user configuration directory. It does not change the preference schema, project JSON, Undo,
+Save, device intent, media roots or recovery. Missing layout means two optional hidden panes.
+Version 1 stores usable workspace `width`/`height`, `activePaneId`, and a back-to-front `panes` array.
+Each entry contains `instanceId`, `typeId`, `visibility` (`hidden`/`visible`/`collapsed`), floating
+`x`/`y`/`width`/`height`, `dock` (`floating`/`left`/`right`) and `allowDocking`. IDs are stable English
+tokens, not localized titles. Controls, focus references, project targets and runtime graphs are absent.
+[Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns placement/interaction invariants.
+
+Reads cap actual bytes at 32 KiB plus one sentinel, JSON depth at 16, and input entries at 16; only
+the two known independent instances can enter state. Unknown/duplicate entries are skipped, malformed
+fields fall back independently, invalid geometry is adapted/clamped and dock conflicts remain reachable.
+Unsupported/stale versions, malformed/oversize/unreadable data leave the app usable. No read repairs
+the original file. If any read used fallback, this store refuses every write for the session and shows
+a localized persistent notice, preserving original bytes at their original path even during shutdown.
+Valid independent entries still restore. Repair/migration UI and multi-version schema migration are absent.
+
+Completed pane actions, pointer release and resize settling (250 ms) request immutable snapshots.
+`WorkspaceLayoutPersistence` serializes writes and coalesces only the latest pending snapshot, never
+allocating a queue per pointer move. Disk work runs off the UI thread. The writer flushes a unique
+same-directory temporary, copies prior bounded bytes to `.previous`, replaces the layout, then cleans
+only its own temporary. Backup/replacement failure retains the last file and shows a warning without
+disabling this session's panels. Shutdown first cancels gestures/stops the resize timer and new requests,
+then joins the final layout and preference writes before disposing pane controls/document. This is
+normal-process failure evidence, not crash/power-loss durability, hostile-link or multi-process guarantees.
+Neither layout failure nor future configuration reset may delete musical work/media/recovery.
+
 ## User configuration and project state
+
+The implemented file policies above cover only language/theme and the two first-party pane placements.
+Other application/plugin settings remain future work.
 
 Per-user/application configuration belongs in the platform-appropriate user configuration area:
 `AppData` conceptually on Windows, with platform equivalents elsewhere. This includes application
 preferences, selected language, theme, workspace preferences/layout, device/user preferences, and
 plugin-global preferences where provided. Device selection is an environment preference; any associated
 setting affecting project sound, timing, musical meaning, or reproducible behavior is project-owned.
-Exact filesystem paths and serialization formats remain open.
+Paths/formats beyond the implemented host files remain open.
 
 Any setting that can change one project's sound, timing, musical meaning, or reproducible behavior
 belongs to that project. This includes tempo, time signature, instrument/plugin instance state,

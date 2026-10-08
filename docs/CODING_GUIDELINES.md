@@ -2,7 +2,8 @@
 
 Role: Implementation conventions and engineering invariants.
 Read when: Writing, reviewing, or refactoring C# production or test code.
-Authoritative for: Naming/language, code structure, async, lifetime, errors, refactoring, and managed warning policy.
+Authoritative for: Naming/language, code/resource placement, async, lifetime, errors, refactoring, and managed warning
+policy.
 Not authoritative for: Product behavior, subsystem architecture, package versions, test commands, CI triggers, or
 platform support status.
 
@@ -27,6 +28,27 @@ and the affected subsystem owner alongside this document; coding policy applies 
   growing flat directories and premature deep folder hierarchies. Do not split cohesive types or
   introduce interfaces solely to satisfy file counts or folder conventions. Prefer discoverability
   and clear dependency ownership over rigid numerical thresholds.
+
+## Resource and shared-code placement
+
+Keep intentional application resources in Git under the consuming project's ownership, with explicit
+build inclusion and applicable licensing/provenance in [THIRD_PARTY](THIRD_PARTY.md). Desktop icons/
+graphics normally belong in `src/Seqvium.Desktop/Assets/`; desktop-wide styles/themes belong in `Styles/`
+or an existing cohesive equivalent such as current application resources. Workspace controls/presentation
+belong in `src/Seqvium.Desktop/Workspace/`. Feature-specific resources may stay beside their feature.
+These are placement examples, not instructions to create empty directories or reorganize working code.
+A repository-level shared asset location needs multiple real project consumers and clear packaging/
+license ownership. Avoid duplicated real resources without confusing generated captures with assets.
+
+Shared C# belongs at the narrowest correct responsibility boundary: UI-independent musical/domain
+logic in Core where appropriate, reusable desktop UI inside Desktop, platform-specific code in its
+adapter and test-only helpers with tests. Use concrete dependency direction and ownership, not merely
+the number of files referencing a helper. Do not move UI/utilities into Core for convenience or create
+`Seqvium.Common`, `Seqvium.Shared`, new assemblies or generic dumping grounds without demonstrated
+multiple consumers and a justified dependency boundary. One-off probe code is not a permanent utility.
+Reusable verification tools belong in appropriate `tests/` or `tools/` locations under
+[development policy](DEVELOPMENT.md#verification-output-organization); disposable evidence follows
+[experiment retention](experiments/README.md#evidence-retention).
 
 ## Language and documentation
 

@@ -47,13 +47,15 @@ Other documents may summarize and link but must not create competing contracts. 
   registers below represent distinct states rather than interchangeable task lists.
 
 The cold decision archive retains acceptance/rationale/supersession history; current owners state
-accepted behavior directly without requiring historical D-records. An experiment report owns its observations, not final production contracts. AGENTS owns operational
+accepted behavior directly without requiring historical D-records. An experiment report owns its observations, not final
+production contracts. AGENTS owns operational
 startup/routing and stays short; it must not accumulate product detail or history.
 
 [THIRD_PARTY](THIRD_PARTY.md) is the canonical provenance ledger and candidate evaluation boundary,
 including the Apache-2.0 project licensing boundary, musical content, other assets, repository
 services/actions, current candidates and current obligations. Removed/replaced history may be archived
-only when current license/provenance obligations remain fully preserved. Root [LICENSE](../LICENSE) owns authoritative license text;
+only when current license/provenance obligations remain fully preserved. Root [LICENSE](../LICENSE) owns authoritative
+license text;
 the ledger never substitutes for legally required bundled notices or relicenses third-party material.
 Exact installed versions belong to build/package/native manifests or workflows once present; the
 ledger links them instead of maintaining a second lock. Asset-local creation/derivation evidence may
@@ -82,12 +84,12 @@ merely to enforce this discipline.
 
 ## Planning-state separation
 
-| Register | Meaning / update boundary |
-| --- | --- |
-| [ROADMAP](ROADMAP.md) | Current stage if any, pending/future stages, and current sequence/scope constraints only |
+| Register                            | Meaning / update boundary                                                                                                         |
+|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| [ROADMAP](ROADMAP.md)               | Current stage if any, pending/future stages, and current sequence/scope constraints only                                          |
 | [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) | Concrete unresolved risks/questions requiring design, evidence, experimentation, or a decision before/while related work proceeds |
-| [IDEAS](IDEAS.md) | Still-active speculative/exploring alternatives; neither accepted nor rejected/completed nor required to resolve |
-| [TECH_DEBT](TECH_DEBT.md) | Compromises actually present in implementation; design uncertainty is not debt |
+| [IDEAS](IDEAS.md)                   | Still-active speculative/exploring alternatives; neither accepted nor rejected/completed nor required to resolve                  |
+| [TECH_DEBT](TECH_DEBT.md)           | Compromises actually present in implementation; design uncertainty is not debt                                                    |
 
 Do not mechanically move open owner questions into IDEAS. Promote an idea only through the relevant
 owner and decision/roadmap/risk record, leaving a traceable reference. When moving material, preserve
@@ -172,30 +174,31 @@ automatic supersession. Record uncertainty if evidence is incomplete.
 
 When a durable decision changes, update its current owner in the same change and preserve the
 previous/new decision relationship and rationale in the archive. If a material choice remains
-unresolved, preserve the distinction and ask for needed input rather than invent acceptance. External references never override Seqvium owners.
+unresolved, preserve the distinction and ask for needed input rather than invent acceptance. External references never
+override Seqvium owners.
 
 ## Update triggers
 
-| Changed truth/state | Update in the same change |
-| --- | --- |
-| Current checkpoint, capability, focus, validation baseline or active gap | PROJECT_STATE; no chronology, live Git status or transient attempt log |
-| Product/architecture/subsystem or engineering contract | Corresponding current owner; associated configuration only when actually justified |
-| New accepted product/architecture decision | Current owner, remove/narrow affected open question, append rationale/decision record to archive DECISIONS |
-| Decision superseded | Current owner gets new truth; archive retains old/new relationship, rationale and IDs; no stale competing active contract |
-| Concrete uncertainty new/narrowed | KNOWN_PROBLEMS contains only the remaining open mechanism |
-| Question resolved | Remove from KNOWN_PROBLEMS, append ID/question/resolution/current owners and related open mechanisms to archive RESOLVED_QUESTIONS |
-| Current/future scope or stage order | Active ROADMAP; no accidental authorization or reordering |
-| Roadmap stage completed | Remove when no longer useful to current planning; append/preserve stage in archive ROADMAP |
-| Meaningful work completed | Update current state if its truth changed; one bounded factual record directly in archive WORK_LOG |
-| Idea explored | Active IDEAS while still speculative/exploring |
-| Idea promoted/rejected/completed | Update resulting current owner/plan/question if applicable, remove inactive idea, preserve useful outcome in archive |
-| Existing implementation compromise introduced | TECH_DEBT with actual evidence, impact and exit condition |
-| Debt resolved | Remove from TECH_DEBT; preserve useful evidence/history in archive |
-| Component/service/asset evaluated/introduced/upgraded or current obligation changed | THIRD_PARTY retains current obligations and manifest version authority |
-| Component removed/replaced | Current THIRD_PARTY reflects remaining obligations; archive history when legally safe |
-| Owner added/moved or route changed | INDEX; AGENTS if operational routing changes |
-| Experiment completed | Bounded report; update current owners for supported findings, archive decision/work/resolved-question history as appropriate |
-| Audit/checkpoint becomes historical | Preserve ranking/narrative/checkpoint in archive AUDITS; retain still-open findings as ordinary current questions |
+| Changed truth/state                                                                 | Update in the same change                                                                                                                                                                                                                |
+|-------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Current checkpoint, capability, focus, validation baseline or active gap            | PROJECT_STATE; no chronology, live Git status or transient attempt log                                                                                                                                                                   |
+| Product/architecture/subsystem or engineering contract                              | Corresponding current owner; associated configuration only when actually justified                                                                                                                                                       |
+| New accepted product/architecture decision                                          | Current owner, remove/narrow affected open question, append rationale/decision record to archive DECISIONS                                                                                                                               |
+| Decision superseded                                                                 | Current owner gets new truth; archive retains old/new relationship, rationale and IDs; no stale competing active contract                                                                                                                |
+| Concrete uncertainty new/narrowed                                                   | KNOWN_PROBLEMS contains only the remaining open mechanism                                                                                                                                                                                |
+| Question resolved                                                                   | Remove from KNOWN_PROBLEMS, append ID/question/resolution/current owners and related open mechanisms to archive RESOLVED_QUESTIONS                                                                                                       |
+| Current/future scope or stage order                                                 | Active ROADMAP; no accidental authorization or reordering                                                                                                                                                                                |
+| Roadmap stage completed                                                             | Remove when no longer useful to current planning; append/preserve stage in archive ROADMAP                                                                                                                                               |
+| Meaningful work completed                                                           | Update current state if its truth changed; one bounded factual record directly in archive WORK_LOG                                                                                                                                       |
+| Idea explored                                                                       | Active IDEAS while still speculative/exploring                                                                                                                                                                                           |
+| Idea promoted/rejected/completed                                                    | Update resulting current owner/plan/question if applicable, remove inactive idea, preserve useful outcome in archive                                                                                                                     |
+| Existing implementation compromise introduced                                       | TECH_DEBT with actual evidence, impact and exit condition                                                                                                                                                                                |
+| Debt resolved                                                                       | Remove from TECH_DEBT; preserve useful evidence/history in archive                                                                                                                                                                       |
+| Component/service/asset evaluated/introduced/upgraded or current obligation changed | THIRD_PARTY retains current obligations and manifest version authority                                                                                                                                                                   |
+| Component removed/replaced                                                          | Current THIRD_PARTY reflects remaining obligations; archive history when legally safe                                                                                                                                                    |
+| Owner added/moved or route changed                                                  | INDEX; AGENTS if operational routing changes                                                                                                                                                                                             |
+| Experiment completed                                                                | Preserve meaningful conclusions in current owners and existing archive history; retain a compact report only when technically useful under [evidence retention](experiments/README.md#evidence-retention), not for every minor iteration |
+| Audit/checkpoint becomes historical                                                 | Preserve ranking/narrative/checkpoint in archive AUDITS; retain still-open findings as ordinary current questions                                                                                                                        |
 
 Do not update every file after every task or add duplicate handoff documents. History preservation is
 permanent rolling policy, not a reason to keep chronology in active owners. Archive does not become a

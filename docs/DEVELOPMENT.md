@@ -2,7 +2,8 @@
 
 Role: Developer environment, version authority, and local tooling policy.
 Read when: Setting up development or introducing SDKs, local tools, or build/run entry points.
-Authoritative for: Recommended environment, SDK/tool version authority, local versus global tooling, and eventual entry
+Authoritative for: Recommended environment, SDK/tool version authority, local versus global tooling, verification-output
+organization, and eventual entry
 points.
 Not authoritative for: Git safety, implementation style, package locks, test commands, CI triggers, or platform
 acceptance.
@@ -55,10 +56,15 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 
 Alternatively launch `src/Seqvium.Desktop/bin/Release/net10.0/Seqvium.Desktop.exe` directly.
 Installed .NET 10 is needed; no global Avalonia template/tool/workload, server or browser is needed.
-Opening the host creates a pristine unnamed document and loads user preferences only. It never starts
+Opening the host creates a pristine unnamed document and loads user preferences and the bounded user
+workspace layout. It never starts
 WASAPI/capture/DeviceCheck or changes system audio settings. RU/EN and theme changes persist to the
 platform configuration path in [SETTINGS](SETTINGS.md#implemented-r3-f1-host-preferences).
-Use the [F1 report](experiments/SEQ-R3-F1_REPORT.md) for actual GUI evidence/limitations.
+The Panes toolbar menu deliberately opens Project Inspector/Appearance; a missing layout leaves them
+hidden. [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns local keyboard paths and
+[Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage) owns the separate layout file.
+Use the [F1 report](experiments/SEQ-R3-F1_REPORT.md) and [F2 report](experiments/SEQ-R3-F2_REPORT.md)
+for actual GUI evidence/limitations. The executable/launch command is unchanged by F2.
 
 ### SEQ-R2-F2 physical output verification
 
@@ -136,6 +142,23 @@ requirement. Selection must follow task scope and actual project needs.
 [PROJECT_STATS](PROJECT_STATS.md) defines the accepted future BCL-only/cross-platform diagnostics
 direction. No CLI/project exists or is authorized by that contract alone; introduction waits for explicit
 code authorization. It is independent repository tooling, not part of the SEQ-R0 audio probe.
+
+## Verification output organization
+
+The repository is product source of truth, not a warehouse of generated test/research output. Use
+ignored root `.artifacts/` for disposable captures/screenshots/logs and `.scratch/` for task-local
+exploration scripts/work files. Keep user data and required runtime/build resources separate; never
+globally ignore image/audio/JSON/Markdown extensions. Narrow generated-image ignores under
+`docs/experiments/` do not hide intentional resources elsewhere. Git ignore rules do not untrack
+existing files; any removal still needs scoped authorization and must not alter the staging index.
+
+Small reproducible cases belong in the regular test suite. A genuinely reusable, adopted verification
+tool belongs in an appropriate `tests/` or `tools/` location with documented setup/input/output and
+existing tool-introduction/licensing review, not in a generated-artifact folder or a common utility.
+An ad hoc local UI driver may remain ignored while needed for pending review; this does not adopt it
+as supported permanent tooling. Do not delete reusable harnesses during artifact cleanup.
+Use [evidence retention](experiments/README.md#evidence-retention) for observations/reports and
+[coding guidelines](CODING_GUIDELINES.md#resource-and-shared-code-placement) for runtime assets/code.
 
 ## Developer diagnostics
 

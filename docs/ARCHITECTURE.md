@@ -29,9 +29,13 @@ Language/theme apply immediately at completed button actions without replacing c
 Numeric display is explicitly invariant; language is not a project parser or automatic name translator.
 
 Windows chrome retains native window styles, resize/move roles and a small guarded OS system-menu
-adapter; other platforms retain native decorations until tested. `WorkspaceRegion` is a composition slot,
-not a pane registry or docking hierarchy. R3-F2 must add actual internal pane activation/focus independent
-of musical selection and user layout independent of project music; those mechanisms are not implemented.
+adapter; other platforms retain native decorations until tested. `WorkspaceRegion` hosts R3-F2's compact
+`WorkspaceState` (pure placement/visibility/order), `WorkspaceHost`/`WorkspacePane` (retained controls,
+pointer capture and local focus), and `FirstPartyPaneContent` (read-only document projection or existing
+preference actions). `WorkspaceLayoutStore` owns a separate user file and `WorkspaceLayoutPersistence`
+joins/coalesces requested snapshots; `MainWindow` coordinates their shutdown with preference writes.
+Pane instance/type, active pane, focused control, canonical selection and semantic edit target are
+distinct. No document selection/target, native pane window, extension hierarchy or audio owner is added.
 [Workspace](WORKSPACE.md), [settings](SETTINGS.md) and [UI design](UI_DESIGN.md) own exact behavior/resources;
 [F1 report](experiments/SEQ-R3-F1_REPORT.md) owns observed bounds.
 

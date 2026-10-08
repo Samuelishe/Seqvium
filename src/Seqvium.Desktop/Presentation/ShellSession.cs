@@ -13,6 +13,7 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
     private readonly HostLocalizer _localizer;
     private readonly PreferenceStore _store;
     private string? _noticeKey;
+    private string? _layoutNoticeKey;
 
     public ProjectDocument Document { get; }
     public HostPreferences Preferences { get; private set; }
@@ -37,8 +38,18 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
     public string ThemeLabel =>
         $"{this["Preference.Theme"]}: {this[Preferences.Theme == HostTheme.Dark ? "Preference.Dark" : "Preference.Light"]}";
 
-    public string? Notice => _noticeKey is null ? null : this[_noticeKey];
-    public bool HasNotice => _noticeKey is not null;
+    public string? Notice => string.Join(" · ", new[] { _noticeKey, _layoutNoticeKey }
+        .Where(key => key is not null).Select(key => this[key!]));
+
+    public bool HasNotice => _noticeKey is not null || _layoutNoticeKey is not null;
+
+    public void SetLayoutNotice(string? key)
+    {
+        if (IsClosed) return;
+        _layoutNoticeKey = key;
+        Refresh();
+    }
+
     public string LanguageCode => Preferences.Language == HostLanguage.Russian ? "RU" : "EN";
     public string ThemeName => this[Preferences.Theme == HostTheme.Dark ? "Preference.Dark" : "Preference.Light"];
 

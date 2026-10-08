@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Seqvium.Desktop.Presentation;
+using Seqvium.Desktop.Workspace;
 
 namespace Seqvium.Desktop;
 
@@ -25,8 +26,10 @@ public sealed partial class App : Application
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
         var store = new PreferenceStore(PreferenceStore.DefaultPath());
         var session = new ShellSession(store, await store.LoadAsync());
+        var layoutStore = new WorkspaceLayoutStore(WorkspaceLayoutStore.DefaultPath());
+        var layout = await layoutStore.LoadAsync();
         ApplyTheme(session.Preferences.Theme);
-        desktop.MainWindow = new MainWindow(session, this);
+        desktop.MainWindow = new MainWindow(session, this, layoutStore, layout);
         desktop.MainWindow.Show();
     }
 
