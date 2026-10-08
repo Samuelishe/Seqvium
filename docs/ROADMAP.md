@@ -49,6 +49,26 @@ with bounded delivery scope/order still to be designed there. It is not a First 
 Earlier project acceptance/reuse must work without it and must not silently accumulate global content.
 No stage is inserted, renumbered or reordered; Q-061 retains broader release dependency closure.
 
+## Localization and theme foundation ownership
+
+Minimum host presentation dependencies have bounded stage owners under
+[Architecture](ARCHITECTURE.md#host-localization-and-ui-resources),
+[UI design](UI_DESIGN.md#themes-and-semantic-resources) and
+[Extensions](EXTENSIONS.md#ui-resource-contribution-lifecycle):
+
+| Stage | Minimum responsibility |
+| --- | --- |
+| R3 — Workspace Shell Foundation | Host-owned stable localization lookup, initial first-party RU/EN with English/per-resource host fallback, semantic Dark/Light roles sufficient for the shell, and safe user language/theme preference behavior. The shell works without future extension hosting or mature dynamic registration. |
+| R6 — Extension Foundation | Extend the R3 foundation with contributor-scoped identity, supported languages/fallback, bounded registration/availability and safe resource/UI retirement for actual native first-party modules. Late contributions use current host preferences; metadata discovery need not activate arbitrary executable code. Resource contract evolution must be handled deliberately, with exact versioning/registration mechanics still open. |
+| R7 — Sample Lab / Generator V1 | The default-installed removable generator and its first-party UI consume R3/R6 host localization/semantic styles, including fallback and removal behavior; no separate translation/theme stack. |
+| R12 — First Track Release | Within the bounded small-track scenario, require coherent RU/EN and Dark/Light presentation, safe preference changes, usable missing-resource/missing-capability host explanation and preservation of project values/state. Validate the surfaces actually shipped; missing presentation must not become apparent project corruption. |
+
+This assigns minimum capabilities, not a framework, resource format, token catalog, packaging model,
+marketplace or arbitrary external-native-editor control. R6 does not require mature theme/plugin
+ecosystem management. R12 does not require additional languages/themes, live resource reload, universal
+third-party recovery or accessibility certification. Q-054/Q-055/Q-067 retain concrete mechanisms and
+evidence; Q-061 retains the full dependency/release-scenario audit. Stage IDs/order and R0 scope stay unchanged.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 Status: **pending / not started**.
@@ -110,6 +130,8 @@ and safe application/user layout persistence. Start with limited surfaces; no fu
 aggressive IDE docking framework. Follow [WORKSPACE](WORKSPACE.md) and [UX_CONTRACT](UX_CONTRACT.md).
 Respect custom unobtrusive main chrome, non-intrusive foreground behavior, and responsive layout with
 usable minimums; platform/accessibility mechanics and concrete sizes still require bounded design.
+Introduce the minimum host localization/semantic theme and preference rails assigned in
+[foundation ownership](#localization-and-theme-foundation-ownership); extension hosting is not a shell prerequisite.
 
 ## SEQ-R4 — Node Graph Foundation
 
@@ -143,6 +165,8 @@ prefer lightweight declared checks and handle real activation failure without ma
 self-tests of every plugin at every startup. Support graded compatibility/localization fallback and
 dependency-scoped blockers with normally degraded document access. Block/defer package uninstall under
 known active use; exact package lifecycle and manifest/API negotiation remain open.
+Extend existing host resources with bounded contribution identity, availability/fallback and safe
+UI-resource retirement under [foundation ownership](#localization-and-theme-foundation-ownership).
 
 ## SEQ-R7 — Sample Lab / Generator V1
 
@@ -154,6 +178,8 @@ audio. Resolve bounded substitution/publication/restoration behavior. Follow [SA
 Accepted/generated material joins the same discoverable project-resource audition/reuse path established
 in R2; candidate exploration remains separate from acceptance. No hidden Sample Lab resource universe or
 automatic global Personal Library publication. R7 does not require cross-project publication.
+Use host localization and semantic styles for the removable generator's first-party UI under
+[foundation ownership](#localization-and-theme-foundation-ownership), rather than a separate resource system.
 
 ## SEQ-R8 — Resampling
 
@@ -205,6 +231,8 @@ Require a usable find/audition/use workflow for current project samples and ordi
 pack material needed to finish a small track. Preview remains transient; accepted audio remains durable
 after source/pack removal. Personal cross-project sample/preset publication is assigned to R14+;
 advanced search/organization and a mature catalog are not R12 prerequisites.
+Require coherent bounded language/theme and missing-presentation behavior on shipped surfaces under
+[foundation ownership](#localization-and-theme-foundation-ownership), without altering project state.
 This is a provisional later acceptance target for the dedicated roadmap research/audit, not permission
 to accelerate visible features by weakening foundations or a finalized MVP capability list.
 

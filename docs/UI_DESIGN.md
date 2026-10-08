@@ -85,13 +85,43 @@ themes later. A theme is primarily a coherent resource/style set, not a complete
 First-party Seqvium UI and Seqvium-native plugin surfaces consume centralized semantic UI resources
 rather than hard-code concrete colors/fonts throughout individual plugins.
 
-Leave room for semantic colors, typography/font roles, common sizing/style resources, and reusable
-icon/resource roles where justified. Concepts such as `Surface.Background`, `Text.Primary`,
-`Accent.Primary`, and `Status.Warning` illustrate roles only; they are not accepted API identifiers.
-Centralization should let future theme evolution avoid manually redesigning hundreds of first-party
-plugins. Independently rendered third-party external native editors need not adopt Seqvium themes.
+The R3 shell needs a small host-owned semantic foundation sufficient for the surfaces actually built:
 
-Theme packaging as extensions/plugins/data packages remains open, as do final resource/API and
-visual choices. Host ownership and first-party localization consumption belong to
-[ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources); no theme packages or localization
+- Surface background and readable primary/secondary text establish hierarchy.
+- Selection, focus and outlines distinguish selected targets, keyboard focus and boundaries.
+- Accent/action emphasis and warning/error, disabled/unavailable and pending-state treatment support
+  the states exposed by the shell; later panes extend this vocabulary only where actual workflows need it.
+- Common control sizing/spacing and typography roles preserve readable hierarchy and usable targets
+  under the responsive-layout contract.
+
+These are responsibility categories, not final tokens, palette values, dimensions, fonts or a complete
+catalog. Concepts such as `Surface.Background`, `Text.Primary`, `Accent.Primary` and `Status.Warning`
+illustrate roles only; they are not accepted API identifiers. Reusable icon/resource roles may be added
+where justified; the shell does not need every future graph or Sample Lab token in advance.
+
+Dark/Light provide coherent alternative resources for the same UI semantics, not different document
+models. Main workspace chrome, Browser/project-resource surfaces, node graph, Sample Lab and first-party
+Seqvium-native extension UI share the host roles as those surfaces arrive. Extensions should not
+independently recreate each Dark/Light style. Justified future plugin customization may coexist with
+the shared foundation; it does not establish a parallel mandatory style system.
+
+Theme changes preserve musical state under [Architecture](ARCHITECTURE.md#preference-changes-and-locale-aware-presentation)
+and observable preference-change safety under [UX](UX_CONTRACT.md#language-and-theme-preference-changes).
+Selection, focus, warnings/errors, invalid graph state, disabled actions and pending work retain sufficient
+structural/non-color cues under [feedback](#feedback-and-motion). Color alone cannot carry essential
+meaning. No screen-reader compatibility, contrast certification or platform validation is claimed.
+
+Host baseline roles must remain usable when a noncritical contributed style/icon is missing or invalid:
+use a safe host role, simple host indicator or meaningful label rather than an unreadable/broken essential
+control. A complete unavailable contributed theme falls back coherently to a usable host baseline;
+the exact choice and preference-retention mechanism remain open. Contributor removal follows
+[Extensions](EXTENSIONS.md#ui-resource-contribution-lifecycle); arbitrary malformed external UI is not
+promised recoverable. Independently rendered third-party native editors may keep their own theme,
+language and visual behavior; surrounding host UI still uses host resources.
+
+Theme packaging as extensions/plugins/data packages, exact resource/API/token schema and visual choices
+remain Q-055; additional restrained themes are possible without promising a marketplace, third-party
+theme SDK, dynamic compiler, live reload or customization editor. Host localization ownership belongs
+to [ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources); staged introduction belongs to
+[Roadmap](ROADMAP.md#localization-and-theme-foundation-ownership). No theme packages or localization
 resources are introduced by this direction.

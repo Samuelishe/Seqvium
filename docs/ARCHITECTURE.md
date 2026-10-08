@@ -695,22 +695,77 @@ normalized versus physical domains, precedence, smoothing, and control rate rema
 
 ## Host localization and UI resources
 
-Localization is a platform concern. Seqvium UI is intended to support Russian and English initially,
-with additional languages later. Translated user-visible display text must not serve as stable internal
-identity. First-party Seqvium UI/extensions consume host localization resources/contracts rather than
-hard-code one language into reusable UI. Missing localization must prefer a usable common fallback
-rather than disable a working capability. English is the baseline fallback for Seqvium-authored /
-Seqvium-native first-party contributions; additional languages may be provided. If host Spanish is
-unavailable in a plugin supporting Russian and English, that plugin uses English without changing
-the host language. Independent third-party native editors are outside host-rendered localization
-control where applicable. Resource format, contribution mechanism and exact fallback schema remain
-open (Q-054); canonical repository/source language remains English under [CODING_GUIDELINES](CODING_GUIDELINES.md).
+Localization and semantic UI resources are host platform responsibilities. These are accepted logical
+boundaries, not proposed services/classes/interfaces or implemented capabilities. Keep distinct stable
+semantic resource identity, localized display content, current host language preference, contributor
+language support/fallback, semantic style roles, current host theme and provider ownership/lifetime.
+Lookup and rendering depend on those presentation concerns; musical-domain identity does not.
+First-party Seqvium UI/extensions and Seqvium-native contributions consume the host foundation rather
+than introduce parallel localization/style systems. [UI_DESIGN](UI_DESIGN.md#themes-and-semantic-resources)
+owns semantic Dark/Light roles; [EXTENSIONS](EXTENSIONS.md#ui-resource-contribution-lifecycle) owns
+contribution availability/removal, and [ROADMAP](ROADMAP.md#localization-and-theme-foundation-ownership)
+owns minimum introduction timing. Independent third-party native editors retain their own presentation.
 
-The host also owns centralized semantic theme/style resources for first-party UI and Seqvium-native
-plugin surfaces. [UI_DESIGN](UI_DESIGN.md#themes-and-semantic-resources) owns Dark/Light baseline
-direction and resource roles. Theme packaging as extensions, plugins, or data packages is undecided;
-independently rendered third-party native editors need not adopt host themes. These service boundaries
-do not select an SDK/API, UI framework, localization files, or theme packages.
+### Stable identity and provider ownership
+
+Seqvium-authored display content uses stable localization identifiers independent of translated text.
+Commands, parameters, statuses and actions can change labels without changing persisted command
+identities, project property keys, node/port identities, extension capability identifiers or serialization
+discriminators. Presentation-resource identity does not replace those domain identities. User-created
+Pattern, sample and track names remain user content, not automatic host translations.
+
+Contributed resources are scoped by stable contributor identity as well as resource identity. A similar
+human-readable name/key from two providers must not collide or silently replace another provider's
+resource, including host-owned fallback resources. The host owns resolution rules and the contributor
+owns its supplied content and availability; labels do not establish ownership. Exact identifier syntax,
+manifest fields, duplicate-registration handling and APIs remain open in Q-054/Q-055/Q-067.
+
+### Language support and resource fallback
+
+Russian and English are the initial first-party UI baseline, with room for additional languages.
+English is the baseline fallback for Seqvium-authored/native first-party contributions. The host's
+selected language and each contributor's supported languages/fallback are independent:
+
+- Use a usable entry for the host language when the contributor supplies it. An English-only extension
+  in a Russian host uses its English fallback; the capability remains available and other surfaces stay
+  Russian. Likewise, future host Spanish can coexist with a RU/EN contributor using English.
+- Resolve missing or unusable entries per resource, even when the contributor advertises the selected
+  language. A missing Russian first-party label falls back to that resource's usable English entry,
+  not a change to the entire host or contributor language. Invalid translation values take the same
+  fallback direction; exact validation/parser and diagnostic representation are unselected.
+- If neither the requested entry nor the supported contributor fallback is usable/available, provide
+  understandable host-owned generic presentation appropriate to the action/status and available stable
+  metadata. Do not require contributor code to supply an error label, expose an unexplained raw key as
+  the sole essential label, substitute a translated label for identity or hide an unrelated capability.
+
+Other native contributors may supply additional languages and a supported fallback without changing
+the user preference. Localization availability is not executable capability/version compatibility.
+Noncritical missing presentation resources cannot alone disable working processing, delete project data
+or change compatibility outcomes. This does not promise recovery of every malformed third-party
+resource or safe rendering of arbitrary broken UI; contain unavailable presentation and retain host
+explanation under [Extensions](EXTENSIONS.md#ui-resource-contribution-lifecycle).
+
+### Preference changes and locale-aware presentation
+
+Language/theme are user/application preferences under [SETTINGS](SETTINGS.md#user-configuration-and-project-state).
+Changing them with a project open must preserve musical content, routing, automation, sound settings,
+saved resources, stable identities and in-progress editing intent. Observable application/defer behavior
+belongs to [UX](UX_CONTRACT.md#language-and-theme-preference-changes); no instantaneous hot switch,
+window reconstruction or mandatory restart policy is selected.
+
+Localized number/musical-value/unit presentation and formatted diagnostic messages must remain distinct
+from canonical numeric values and serialization. Neither translated strings nor operating-system
+culture may determine persisted musical values or reinterpret unchanged project data. Units may have
+localized display labels without changing the represented quantity. Future text entry must resolve
+accepted input deliberately to the intended canonical value and handle ambiguity visibly; a preference
+change must not silently reinterpret an in-progress numeric edit. Exact decimal/parsing/display rules,
+formatting APIs and locale-selection policy remain Q-054, not a selected runtime culture model.
+
+Resource formats, contribution/registration APIs, fallback representation, contract versioning,
+theme packaging and platform evidence remain open in Q-054/Q-055/Q-067. No UI framework, resource files,
+SDK or packaging model is selected. Later expansion does not commit to downloadable language packs,
+an online translation platform, theme marketplace/SDK/compiler, live resource reload or customization
+editor. Canonical repository/source language remains English under [CODING_GUIDELINES](CODING_GUIDELINES.md).
 
 ## Open architecture work
 

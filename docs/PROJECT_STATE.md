@@ -7,15 +7,17 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R14 complete (2026-10-08). Browser discovery/source access, temporary audition, durable project
-use and explicit Personal Library publication have distinct scopes under
-[Sample workflow](SAMPLE_WORKFLOW.md#browser-discovery-and-ownership). Personal Library is independent
-user work protected from preference reset under [Settings](SETTINGS.md#reset-boundary); applied preset
-state belongs to the project under [Extensions](EXTENSIONS.md#preset-sources-and-project-state).
-Source/library/pack removal cannot break properly accepted project audio; mutable preset sources cannot
-silently rewrite accepted project state. [Roadmap](ROADMAP.md#discovery-and-reuse-ownership) assigns
-minimum discovery to R2, Sample Lab integration to R7, track-ready reuse to R12 and explicit cross-project
-sample/preset publication to R14+. Q-065 retains concrete discovery/library/preset mechanisms.
+SEQ-KB-R15 complete (2026-10-08). Minimum host localization, stable contributor-scoped presentation
+identity, per-resource language fallback and locale/project-data independence are accepted under
+[Architecture](ARCHITECTURE.md#host-localization-and-ui-resources). Shared semantic Dark/Light roles
+and safe baseline fallback belong to [UI design](UI_DESIGN.md#themes-and-semantic-resources);
+[Extensions](EXTENSIONS.md#ui-resource-contribution-lifecycle) owns safe contribution availability/
+retirement without losing project identity/opaque state or retaining code merely for error labels.
+[Roadmap](ROADMAP.md#localization-and-theme-foundation-ownership) assigns R3 host rails, R6 bounded
+contributions, R7 shared-resource consumption and bounded R12 presentation/integrity acceptance.
+Q-054/Q-055/Q-067 retain concrete formats/APIs, packaging, lifetime/versioning and UI/platform evidence.
+Browser/source discovery, transient audition, durable project use and independent Personal Library/
+preset ownership remain in force, with explicit cross-project publication assigned to R14+.
 Mouse-first, keyboard-efficient semantic actions, logical Undo/async integrity, canonical/derived
 execution, musical/signal ownership, recovery/media durability and current/cold-history boundaries remain
 in force. No implementation stage has started.
@@ -37,11 +39,11 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R14 discovery/library/preset cases A–N, compatibility with durable managed media and logical Undo/async
-contracts, repository-wide relative Markdown links/anchors, Q/D ID integrity, owner/routing,
-current/archive separation, roadmap stage IDs/order, accepted/open scope, UTF-8/LF/whitespace and Git
-preservation checks passed. Documentation-only validation; no builds, tests, runtime/audio or platform
-acceptance is claimed.
+R15 localization/theme cases A–N, compatibility with preference, project identity/opaque-state,
+removal, numeric-state and R13 accessibility contracts, repository-wide relative Markdown links/anchors,
+Q/D ID integrity, owner/routing, current/archive separation, roadmap stage IDs/order, accepted/open
+scope, UTF-8/LF/whitespace and Git preservation checks passed. Documentation-only validation; no builds,
+tests, runtime/audio, contrast/screen-reader certification or platform acceptance is claimed.
 
 ## Active blockers / evidence gaps
 
@@ -53,6 +55,7 @@ finite-tail mechanics (Q-057), graph publication/lifetime/failure handling
 (Q-018), device timing/recovery (Q-062/Q-069), concrete undo/async commit mechanisms/evidence (Q-063)
 and input/focus/accessibility implementation and platform validation (Q-064). Concrete Browser,
 Personal Library/preset publication and discovery/scaling/storage mechanisms remain open (Q-065).
-Format/migration, package/negotiation, localization and backend mechanics still require design/evidence.
+Format/migration, package/negotiation, host resource registration/retirement/versioning (Q-067),
+localization/locale presentation (Q-054), theme APIs/packaging (Q-055) and backend mechanics remain open.
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) contains only open questions. Passive batch-newline policy
 contradiction Q-070 remains unresolved; no configuration change is included in this stage.

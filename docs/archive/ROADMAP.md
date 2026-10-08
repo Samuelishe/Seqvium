@@ -157,3 +157,17 @@ concrete discovery/library/preset mechanisms remain open. Narrowly assigned R2 m
 R7 integration, R12 usability and R14+ cross-project publication; implementation IDs/order preserved.
 Documentation/product-architecture only; no implementation stage started. SEQ-R0 remains
 **pending / not started**. See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r14).
+
+## SEQ-KB-R15 — Host Localization & Theme Resource Foundation
+
+Completed 2026-10-08. Audited localization/theme cases A–N; accepted stable contributor-scoped resource
+identity, host-language versus supported-language separation, per-resource English/host fallback,
+locale/project-data independence, safe contributed-UI retirement and shared minimum semantic Dark/Light
+roles. Preserved project/opaque state, active-use unload safety, non-color accessibility meaning and
+independent external-editor presentation. Partially resolved Q-054/Q-055/Q-067 through
+[D-068](DECISIONS.md#d-068--minimum-host-localization-and-semantic-theme-foundation); concrete formats,
+APIs/schema/packaging, registration/lifetime/versioning and UI/platform evidence remain open.
+Narrowly assigned R3 host rails, R6 contributions, R7 shared consumption and bounded R12 acceptance;
+Q-061 retains full dependency closure. Documentation/product-architecture only; no implementation stage
+started or reordered. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r15).

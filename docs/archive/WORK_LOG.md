@@ -357,3 +357,48 @@ is not established by local history; this log does not duplicate Git's commit ch
   UI, projects, dependencies, tests, CI, prototypes, executable tooling, databases, indexes, scanners,
   backends or plugin hosts introduced. No builds/tests, staging, commit or push. SEQ-R0 remains
   **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R15
+
+- Accepted minimum host localization/theme responsibilities with separate semantic identity, translated
+  content, host preference, contributor support/fallback, visual roles and provider lifetime. Preserved
+  initial first-party RU/EN, English baseline, user preference ownership and project independence.
+- Cases A–N were checked against current owners with these semantic outcomes:
+
+  | Case | Audited outcome / current owner |
+  | --- | --- |
+  | A — Russian host, English-only extension | Local English fallback keeps the capability available and other host surfaces Russian; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
+  | B — missing/invalid translated entry | Per-resource usable English first-party fallback, then understandable host-owned generic presentation; no changed identity or unrelated capability loss; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
+  | C — stable semantic identity | Display text never becomes command/property/node/port/capability/serialization identity; user Pattern/sample/track names stay user content; [identity](../ARCHITECTURE.md#stable-identity-and-provider-ownership) |
+  | D — similar contribution keys | Stable contributor scope plus resource identity prevents silent cross-provider/host replacement; exact syntax/duplicate handling remains open; [identity](../ARCHITECTURE.md#stable-identity-and-provider-ownership) |
+  | E — contributor unavailable/disabled/removed | Safely retire labels/icons/native UI dependencies, retain project/opaque state and explain missing capability with host resources without retaining executable code just for a label; active-use unload protection remains; [lifecycle](../EXTENSIONS.md#ui-resource-contribution-lifecycle) |
+  | F — language change during editing | Preserve musical state and ongoing input/intent, focus/selection and pending operations; predictable apply/defer behavior, no chosen instant refresh/restart policy; [UX](../UX_CONTRACT.md#language-and-theme-preference-changes) |
+  | G — locale-aware numbers/units/diagnostics | Localized presentation/input remains separate from canonical values and culture-independent serialization; no silent reinterpretation of in-progress numeric edits; exact parsing/display remains open; [locale boundary](../ARCHITECTURE.md#preference-changes-and-locale-aware-presentation) |
+  | H — semantic Dark/Light minimum | R3 needs surface/text, selection/focus/outline, action/status and common sizing/spacing/typography categories for actual shell states; no final token catalog/palette; [themes](../UI_DESIGN.md#themes-and-semantic-resources) |
+  | I — one theme across surfaces | Workspace, Browser/project resources, graph, Sample Lab and native first-party UI consume shared roles as they arrive; justified later customization remains possible without duplicate mandatory stacks; [themes](../UI_DESIGN.md#themes-and-semantic-resources) |
+  | J — status/accessibility | Selection/focus, warning/error, invalid graph, disabled actions and pending work keep structural/non-color meaning; R13 preserved, no compatibility/contrast/platform certification; [feedback](../UI_DESIGN.md#feedback-and-motion) |
+  | K — independent native editor | External editor may retain language/theme/visuals; host surrounding UI and lifecycle remain host responsibility; [editor boundary](../EXTENSIONS.md#external-plugin-lifecycle-and-editors) |
+  | L — missing presentation | Safe host translation/style/icon baseline keeps noncritical failures from deleting data or changing processing compatibility; unsafe contributed surfaces may be contained, no universal malformed-resource recovery promised; [lifecycle](../EXTENSIONS.md#ui-resource-contribution-lifecycle) |
+  | M — shell startup and late contribution | R3 host rails precede R6 bounded lifecycle; late native contributions resolve against current preferences; metadata discovery does not require arbitrary executable activation; [stage ownership](../ROADMAP.md#localization-and-theme-foundation-ownership) |
+  | N — future expansion | Additional languages/restrained themes remain possible; no online translation service, packs/marketplace/theme SDK/compiler, hot reload or editor committed; [limits](../ARCHITECTURE.md#host-localization-and-ui-resources) |
+
+- Assigned only minimum R3 host rails, R6 bounded real contribution lifecycle, R7 shared-resource
+  generator UI and R12 coherent shipped-surface presentation/fallback within the small-track scenario.
+  Stage IDs/order and R0 scope preserved; Q-061 retains full dependency/release-scenario closure.
+- Updated architecture/UI/extensions/UX owners, roadmap, index, narrowed open questions and compact
+  current state. Settings ownership/reset contracts are unchanged; no settings file edit required.
+  Recorded [D-068](DECISIONS.md#d-068--minimum-host-localization-and-semantic-theme-foundation),
+  [accepted portions](RESOLVED_QUESTIONS.md#r15-resolved-portions--q-054q-055q-067-host-resource-semantics-and-staging)
+  and [completed-stage history](ROADMAP.md#seq-kb-r15--host-localization--theme-resource-foundation).
+  Q-054/Q-055/Q-067 remain open for formats/API/schema/packaging, registration/retirement/versioning,
+  concrete UI behavior and evidence. Q-010/Q-024/Q-015/Q-053/Q-064 remain open without separate narrowing.
+- Verified repository-relative Markdown links/anchors, canonical Q/D uniqueness/reference integrity,
+  owner/routing, current/archive separation, semantic fallback/identity/preference/removal/accessibility
+  consistency, roadmap IDs/order and unchanged R0 scope, UTF-8/LF/whitespace and `git diff --check`.
+  Documentation-only checks; no runtime/audio, UI, numerical parsing, contrast/screen-reader or platform
+  acceptance evidence claimed.
+- Initial baseline: clean `master`, HEAD `c2d9ca121de6d55bfe54687256f681e79ef5c4b5`, checkpoint R14.
+  Branch/HEAD/index and empty untracked baseline preserved; all task edits unstaged. No code, projects,
+  dependencies, tests, CI, executable tooling/experiments, UI prototypes, localization files, themes,
+  packages or plugin hosts created. No builds/tests, staging, commit or push; SEQ-R0 remains
+  **pending / not started**.

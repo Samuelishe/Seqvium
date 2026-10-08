@@ -959,3 +959,42 @@ import/export. Live-linked presets need separate justification; no catalog, data
 store or marketplace chosen. Q-009/Q-010/Q-011/Q-024/Q-029/Q-058/Q-059/Q-063/Q-071 remain open in
 their concrete scopes without separate resolution. No production work authorized or performed;
 SEQ-R0 remains pending / not started.
+
+## D-068 — Minimum host localization and semantic theme foundation
+
+Status: Accepted by SEQ-KB-R15, 2026-10-08; partially resolves Q-054/Q-055/Q-067. Refines
+[D-043](#d-043--host-owned-localization-and-semantic-theme-resources) and
+[D-051](#d-051--graded-compatibility-metadata-and-usable-localization-fallback), preserves
+[D-066](#d-066--mouse-first-keyboard-efficient-semantic-actions-and-accessibility-baseline).
+Basis: Current-owner audit and cases A–N; documentation/product-architecture reasoning only.
+Rationale: The first shell needs legitimate RU/EN and Dark/Light host resources before real extension
+hosting exists. Stable semantic resource identity, localized content, host language, contributor support/
+fallback, style roles, theme selection and provider lifetime are distinct concerns. Presentation must
+not become musical identity or culture-dependent serialization; user names remain user content.
+Contributor-scoped resource identity avoids replacement by similar labels. Per-resource usable selected
+language, supported contributor fallback (English for first-party), then host-owned generic explanation
+keeps missing translations from becoming executable compatibility errors or changing host preferences.
+Missing noncritical style/icon resources likewise use a safe coherent host baseline. Arbitrary malformed
+third-party UI/resources cannot be promised recoverable; unavailable surfaces are contained and explained.
+Safe retirement removes active contributor UI dependencies while preserving project identities,
+relationships, saved resources and opaque state. Existing known-active-use unload/uninstall safety
+remains; absent code need not run or remain loaded solely to render an error label.
+Shared semantic surface/text, selection/focus/outline, action/status, sizing/spacing and typography roles
+are sufficient categories for R3 without a token catalog. Later Browser, graph, Sample Lab and native
+first-party extensions consume that foundation; non-color accessibility meaning remains required.
+Independent third-party native editors keep their own language/theme, with host surroundings/lifecycle
+still host-owned. Preference changes preserve musical values and ongoing input/intent; exact refresh,
+defer and numeric parsing/display behavior needs concrete UI evidence.
+Timing: R3 owns host-only rails; R6 extends bounded contributions/availability/retirement; R7 consumes
+them for the removable default generator; R12 checks coherent shipped-surface presentation/fallback and
+project independence within the small-track scenario. No implementation stage inserted/reordered/started.
+Current owners: [Architecture](../ARCHITECTURE.md#host-localization-and-ui-resources),
+[UI design](../UI_DESIGN.md#themes-and-semantic-resources),
+[Extensions](../EXTENSIONS.md#ui-resource-contribution-lifecycle),
+[UX](../UX_CONTRACT.md#language-and-theme-preference-changes),
+[Roadmap](../ROADMAP.md#localization-and-theme-foundation-ownership).
+Remaining: Q-054 format/identifier/schema/API, translation validation/diagnostics and locale rules;
+Q-055 theme API/token schema, visual values/fallback and packaging; Q-067 registration/availability/
+retirement/versioning and evidence. Q-010/Q-024/Q-015/Q-053/Q-064 retain their specialized mechanisms;
+Q-061 retains full roadmap dependency closure. No framework, files, palettes, plugin-host architecture,
+marketplace, theme SDK, hot reload or customization editor selected; no runtime/platform evidence claimed.

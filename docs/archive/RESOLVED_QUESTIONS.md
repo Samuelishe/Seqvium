@@ -253,3 +253,39 @@ Related questions: Q-009 schema/container, Q-010 package lifecycle, Q-011 contex
 Q-024 preset/capability/state compatibility, Q-029 references/sharing/acceptance scope, Q-058/Q-059
 recovery/storage, Q-063 history/commit and Q-071 candidate similarity/history remain open without separate
 narrowing. Their accepted contracts are coordinated, not fully solved by this semantic boundary.
+
+## R15 resolved portions — Q-054/Q-055/Q-067 host resource semantics and staging
+
+Status: Partial resolution accepted by SEQ-KB-R15, 2026-10-08. All three Q IDs retain canonical active
+definitions for concrete mechanisms/evidence; no question is fully closed.
+Original questions: Q-054 localization format/contributions/fallback; Q-055 semantic themes/API/packaging;
+Q-067 minimum host service staging and contribution lifetime/versioning.
+Accepted portions: Stable resource and contributor scope, content, host language, contributor languages/
+fallback, style roles, theme selection and lifetime are separated from project identity. Initial first-party
+RU/EN uses English baseline; per-resource missing/invalid entries fall back locally, then to host-owned
+generic explanation when necessary, without changing host language or executable compatibility. Shared
+Dark/Light role categories and safe host baseline cover first-party/native surfaces with non-color meaning;
+independent external editors are exempt. Contributor retirement invalidates active UI dependencies safely,
+retains project identities/opaque state and does not keep executable code just to display missing labels.
+Language/theme changes preserve musical state and ongoing editing intent; canonical values/serialization
+are independent of translated presentation and OS culture. R3 owns host-only rails, R6 bounded real
+contributions, R7 shared-resource generator UI and R12 coherent shipped-surface fallback/integrity within
+the small-track scenario. Stage IDs/order preserved; SEQ-R0 remains pending / not started.
+Rationale: [D-068](DECISIONS.md#d-068--minimum-host-localization-and-semantic-theme-foundation).
+Current owners: [Architecture](../ARCHITECTURE.md#host-localization-and-ui-resources),
+[UI design](../UI_DESIGN.md#themes-and-semantic-resources),
+[Extensions](../EXTENSIONS.md#ui-resource-contribution-lifecycle),
+[UX](../UX_CONTRACT.md#language-and-theme-preference-changes),
+[Roadmap](../ROADMAP.md#localization-and-theme-foundation-ownership).
+Remaining Q-054: Resource format/identifier syntax, supported-language/fallback schema, registration APIs,
+translation-value validation/diagnostics, numeric/musical/unit/diagnostic formatting and text parsing,
+locale selection and safe preference application with actual UI evidence.
+Remaining Q-055: Resource API/token schema, colors/fonts/dimensions/icons, validation/fallback details,
+theme preference retention/application, packaging and visual/platform evidence; no palette or package chosen.
+Remaining Q-067: Registration/duplicate handling, availability/caching/invalidation, late contribution,
+safe dependent-UI retirement, load/unload sequencing/reference ownership, resource contract evolution/
+versioning representation and compatibility rules with bounded lifecycle evidence.
+Related questions: Q-010 package removal/disable mechanisms, Q-024 executable negotiation, Q-015 final
+visuals, Q-053 preference storage/reset and Q-064 accessibility/platform evidence remain open without
+separate narrowing. Q-061 keeps the full later roadmap dependency audit; this stage resolves only the
+minimum host-resource ownership slice. Missing localization is not a processing compatibility failure.

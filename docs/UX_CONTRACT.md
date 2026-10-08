@@ -394,6 +394,23 @@ layout and confirmation flow remain open.
 Production diagnostics ordinarily need at most a simple enable/disable preference where useful;
 developer logging levels belong outside ordinary GUI settings under [SETTINGS](SETTINGS.md#production-diagnostics).
 
+### Language and theme preference changes
+
+Changing host language/theme with a project open is a presentation preference change, not a musical
+edit. Preserve project content/relationships, ongoing editing intent, focus/selection and pending
+operations without committing, discarding or reinterpreting user input merely to refresh presentation.
+UI behavior must be predictable: make clear when the new preference takes effect and any necessary
+deferral. Applying safely at a defined boundary is permitted; instantaneous hot switching, rebuilding
+every window or mandatory restart is not an accepted policy. Concrete behavior requires later UI evidence.
+
+Missing translation/style resources use understandable host fallback without hiding working unrelated
+capabilities. Different contributor language support may produce a local fallback without changing other
+host surfaces. Independent native editors may retain their own language/theme; host-owned surrounding
+UI follows the host preference. [Architecture](ARCHITECTURE.md#host-localization-and-ui-resources) owns
+identity, per-resource fallback and locale/data separation; [UI design](UI_DESIGN.md#themes-and-semantic-resources)
+owns semantic styles and non-color feedback. [Settings](SETTINGS.md#user-configuration-and-project-state)
+retains preference ownership; exact storage/reset mechanics remain Q-053.
+
 ## In-window workspace and graph depth
 
 Major surfaces normally use internal workspace panes in one main window. Interaction activates a pane

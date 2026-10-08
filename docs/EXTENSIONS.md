@@ -103,13 +103,48 @@ language, and optional last-tested/last-updated Seqvium platform information. Pl
 helps diagnosis; `older than host -> reject` is not the rule. No manifest format, exact fields or API/ABI
 is selected; Q-024 retains negotiation representation and state compatibility schema.
 
-Missing localization must use a usable common fallback rather than disable working processing.
-Seqvium-authored / Seqvium-native first-party contributions use English as the baseline fallback;
-Russian/English are initial platform directions with room for other languages. A plugin supporting
-RU/EN uses English when host Spanish is unavailable without changing host language. Independent
-third-party native editors remain outside host-rendered localization control where applicable.
-[ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources) owns the platform principle;
-Q-054 retains resource format, contribution mechanism and fallback schema/details.
+Localization support/fallback metadata is independent of executable capability/version compatibility.
+Missing localization does not reject otherwise compatible processing or change the host language.
+[ARCHITECTURE](ARCHITECTURE.md#language-support-and-resource-fallback) owns per-resource fallback,
+the initial first-party RU/EN baseline and English fallback; Q-054 retains concrete format/schema.
+Human-readable metadata should be discoverable without requiring activation of arbitrary plugin code;
+no manifest fields or discovery/registration API are selected. Independent third-party native editors
+remain outside host-rendered localization control where applicable.
+
+## UI resource contribution lifecycle
+
+R6 extends the existing host foundation only for actual first-party/native extension surfaces; R3 shell
+localization/styling must not wait for mature plugin hosting. Registration associates resources with a
+stable contributor scope, supported languages/fallback and availability under
+[Architecture](ARCHITECTURE.md#stable-identity-and-provider-ownership). Similar names from separate
+providers cannot silently replace each other or the host baseline. Late contributions use the current
+host language and semantic theme through host resolution, without resetting user preferences or
+requiring executable activation solely to discover labels. Registration here is a semantic lifecycle
+obligation, not a chosen load mechanism, manifest or public API.
+
+When a contributor becomes unavailable, disabled or removed, the host must safely withdraw/invalidate
+its active labels, icons, style contributions and native UI content. Close, detach or replace dependent
+surfaces with host-owned presentation as appropriate; no dangling active UI references or stale callback
+dependency on retired contributor code may remain. Do not unload beneath known active use: existing
+[uninstall safety](#instance-removal-and-package-uninstall) applies to processing and open editors;
+presentation dependencies also need safe retirement. Exact sequencing, caching, reference counting,
+load/unload and deferred disable/uninstall mechanics remain Q-010/Q-067.
+
+Retiring presentation must not erase project-owned capability/node/port identities, relationships,
+saved resources or serialized/opaque state. Missing-capability explanation uses host-owned resources
+and available stable metadata; it must work without keeping/activating the absent executable just to
+display an error label. Known missing processing remains a scoped execution blocker under
+[degraded operation](#degraded-project-opening-and-operation-blockers), not a translation failure.
+
+Missing/invalid noncritical translation, icon or style contributions use host fallbacks under
+[Architecture](ARCHITECTURE.md#language-support-and-resource-fallback) and
+[UI design](UI_DESIGN.md#themes-and-semantic-resources). They must not silently hide unrelated
+capabilities, remove data or change executable compatibility. If a particular contributed UI cannot
+be rendered safely, contain that surface and explain its unavailability through host UI while retaining
+processing where independently safe and compatible. No universal recovery from malformed third-party
+resources/code is promised. Required executable/API incompatibility still follows Q-024; absence of a
+translation alone is not such incompatibility. Resource contract evolution/versioning must be deliberate,
+but its representation and compatibility rules remain Q-067 with Q-054/Q-055, not an assumed plugin ABI.
 
 ## Plugin sound responsibility
 
@@ -283,7 +318,7 @@ with the project. [SETTINGS](SETTINGS.md) owns this separation and preference-re
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns instance-state preservation. Executable installation/discovery
 locations are separate from preferences and remain open.
 
-Identity namespace, version compatibility, manifest and package format, executable trust/isolation,
+Exact identity namespace syntax, version compatibility, manifest and package format, executable trust/isolation,
 loading mechanism, API/ABI, update policy, and realtime contracts are open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 SEQ-R6 should implement only what the first optional content/generator modules require; later realtime
 capabilities must meet [AUDIO_ENGINE](AUDIO_ENGINE.md), not inherit an asynchronous generator contract.
