@@ -105,6 +105,7 @@ semantic tests. Record source revision, environment, input/configuration, result
 | Native interop | Selected native build/materialization/loading and production interop for a declared platform/RID |
 | Local/manual runtime | Actual application interaction on a declared real desktop/audio environment |
 | Hardware/audio-device | Behavior with a declared real interface/device/backend and settings |
+| Delivered distribution | Identified packaged artifact installation/materialization, launch/dependency loading and applicable update/removal behavior in a declared clean environment |
 
 Hosted CI can prove compilation, offline DSP, serialization, graph scheduling, native loading/interop,
 and packaging contracts when those checks exist. It cannot alone prove stable real-device low latency,
@@ -112,6 +113,14 @@ ASIO quality, USB interface behavior, glitch-free playback under desktop load, m
 monitoring quality, or user-perceived UI behavior on every desktop environment. Use actual runtime/device
 evidence for those claims. [AUDIO_ENGINE](AUDIO_ENGINE.md) owns audio constraints and probe acceptance;
 [PORTABILITY](PORTABILITY.md) owns platform claim boundaries.
+
+Interpret runner families separately: Windows restore/Release build/tests do not establish actual
+Windows desktop/device operation; Ubuntu build/offline checks do not cover all Linux desktops/audio
+environments; macOS managed/native compilation does not establish a release-ready desktop application.
+Checks prove only behavior actually exercised. Record WSLg runtime/GUI/bridged-audio evidence separately
+from native Linux acceptance under [Portability](PORTABILITY.md#desktop-and-delivered-environment-acceptance).
+Release claims combine the required evidence dimensions under
+[release policy](PORTABILITY.md#evidence-led-release-policy), rather than treating any one tier as sufficient.
 
 Useful optional status labels are **local accepted-ready** (declared local checks passed),
 **hosted-confirmed** (hosted checks actually succeeded at a stated revision/platform scope),

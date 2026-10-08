@@ -104,6 +104,25 @@ Q-058/Q-059; collect/relocate mechanics are not automatically early-stage featur
 complete dependency/release closure. No implementation stage is started, renumbered or reordered;
 R0 scope is unchanged and acquires no storage/recovery prerequisite.
 
+## Platform release acceptance ownership
+
+[PORTABILITY](PORTABILITY.md#evidence-led-release-policy) owns platform targets and evidence-based
+support claims. Windows-first development, early cross-platform hosted checks and actual supported
+distribution are distinct. Minimum responsibility follows existing stages:
+
+| Stage | Bounded responsibility |
+| --- | --- |
+| R0 — Audio Architecture Probe | Investigate realtime architecture on its declared environment, retain backend-independent contracts, consider cross-platform managed/native feasibility and distribution consequences, and report accurate limits. No full three-platform GUI/device/product certification |
+| R1 — Domain Foundation | Keep musical/document/serialization contracts free of Windows-only assumptions, including portable identity and paths; exact format/storage evidence remains Q-009/Q-058/Q-059 |
+| R2 — Audio Resource / Device Foundation | Establish portable resources and logical device/backend boundaries. Validate implemented adapters honestly; portable interfaces do not require or prove every OS backend |
+| R3–R7 — Shell and first-party extension surfaces | Keep shell/resources/module contracts cross-platform; hosted checks exercise actual supported managed/native contracts when present. Identify real UI/extension issues at their platform boundary as capabilities arrive, without full R12 certification at R3 |
+| R12 — First Track Release | Identify intended distribution environments and require sufficient software/project-integrity, actual desktop, intended audio and delivered-artifact evidence for each declared supported target. Label hosted-only or experimental environments accurately and retain other OS families as architectural targets |
+| R14+ — Evidence-led expansion | Expand platform delivery, backend/device and CPU architecture coverage as evidence supports it. Adequately evidenced Linux/macOS delivery may also occur earlier; no fixed release dates, order or simultaneous parity commitment |
+
+Q-041 retains the exact OS/version, architecture/RID, device/backend coverage and delivery prerequisites;
+Q-061 retains the complete scenario/dependency audit. Other owners retain device, storage, UI and extension
+mechanisms. No stage is inserted, renumbered, reordered or started; the R0 probe scope is unchanged.
+
 ## SEQ-R0 — Audio Architecture Probe
 
 Status: **pending / not started**.
@@ -288,6 +307,13 @@ after source/pack removal. Personal cross-project sample/preset publication is a
 advanced search/organization and a mature catalog are not R12 prerequisites.
 Require coherent bounded language/theme and missing-presentation behavior on shipped surfaces under
 [foundation ownership](#localization-and-theme-foundation-ownership), without altering project state.
+Declare the environments intended for distribution and accept each supported target under
+[platform ownership](#platform-release-acceptance-ownership): actual desktop/workspace interaction,
+intended audio output, applicable native loading, clean delivered launch and project/media Save/reopen/
+recovery evidence for shipped workflows. Capture/monitoring acceptance applies when shipped, not as an
+implicit recording prerequisite. State limitations and hosted-only/experimental status elsewhere;
+shared source or CI does not imply Windows/Linux/macOS release parity. The exact supported matrix and
+delivery prerequisites remain Q-041; portable architecture remains required for other target OS families.
 This is a provisional later acceptance target for the dedicated roadmap research/audit, not permission
 to accelerate visible features by weakening foundations or a finalized MVP capability list.
 
@@ -307,8 +333,10 @@ Expand MIDI and audio recording/monitoring into complete user workflows, then co
 richer synthesizers/effects, CLAP/VST3 hosting, additional specialized nodes, pitch/time
 processing and time stretching, deeper routing/sends, FLAC and other justified formats, and additional
 platform release coverage. Portable architecture and early hosted checks are already required direction,
-not deferred platform ownership. Latency awareness and realtime safety constrain applicable earlier
-work; advanced compensation is not presumed implemented. Later order and release schedules remain open.
+not deferred platform ownership; adequately evidenced targets may ship earlier under
+[release acceptance ownership](#platform-release-acceptance-ownership). Latency awareness and realtime
+safety constrain applicable earlier work; advanced compensation is not presumed implemented. Later
+order and release schedules remain open.
 Future Live / Low-Latency mode for performance/monitoring must visibly distinguish temporary live
 handling from the full graph without rewriting project state or altering intended final/offline render.
 Latency reporting, thresholds, compensation, and bypass strategy remain open under [AUDIO_ENGINE](AUDIO_ENGINE.md).

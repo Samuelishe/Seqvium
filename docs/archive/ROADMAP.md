@@ -227,3 +227,16 @@ indexing/selection/retention, integrity/GC/transfer/recording and platform/fault
 Narrowly clarified R1/R2/R7/R8/R12 and later recording responsibility; Q-061 retains full dependency/
 release closure. Documentation/conceptual architecture only, no implementation stage started or reordered.
 SEQ-R0 remains **pending / not started**. See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r19).
+
+## SEQ-KB-R20 — Cross-Platform Release Scope & Acceptance
+
+Completed 2026-10-08. Audited cases A–T and accepted evidence-led per-environment platform claims,
+separating architecture/build/hosted/native/desktop/device/distribution from actual support scope.
+Retained Windows-first development and first-class Windows/Linux/macOS architecture without forced
+release parity or arbitrary Linux/macOS deferral. Resolved Q-068 at policy level through
+[D-073](DECISIONS.md#d-073--evidence-led-platform-release-scope-and-acceptance); Q-041 retains concrete
+target versions/CPU/RIDs/device/backend/delivery choices and evidence, Q-061 full release closure.
+Narrowly assigned R0–R12/later platform responsibility and explicit R12 per-target acceptance.
+Documentation/product-architecture only; stage IDs/order and R0 probe scope unchanged, no executable
+work or platform acceptance evidence. SEQ-R0 remains **pending / not started**.
+See [completed work](WORK_LOG.md#2026-10-08--seq-kb-r20).

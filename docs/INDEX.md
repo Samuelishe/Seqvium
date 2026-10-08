@@ -31,7 +31,7 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [DEVELOPMENT](DEVELOPMENT.md) | Developer environment, local tools, SDK/version authority, eventual entry points, text consistency |
 | [TEST_EXECUTION](TEST_EXECUTION.md) | Test topology/quality, proportional verification, future commands, Release gates, evidence tiers |
 | [PROJECT_STATS](PROJECT_STATS.md) | Future structural diagnostics contract: metrics/reports, advisory signals, privacy/exclusions, evolution boundary; no tool exists |
-| [PORTABILITY](PORTABILITY.md) | Windows/Linux/macOS target, portable boundaries, conditional native distribution, claim limits |
+| [PORTABILITY](PORTABILITY.md) | Windows/Linux/macOS architectural targets, evidence-led release/support scope, desktop/device/distribution and WSLg claim limits, portable boundaries and conditional native distribution |
 | [CI_CD](CI_CD.md) | Simple initial managed matrix, docs validation, later feedback/acceptance split, workflow principles |
 | [ROADMAP](ROADMAP.md) | Ordered future stages and their scope |
 | [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) | Concrete unresolved questions, risks, validation gaps requiring resolution |

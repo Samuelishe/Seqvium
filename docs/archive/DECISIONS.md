@@ -1182,3 +1182,36 @@ Remaining Q-058/Q-059: Crash-safe replacement/validation, candidate indexing/sel
 durable-media protocol/layout, integrity checks, repair/transfer/recording reconciliation, owner tracking/
 GC and platform/race/fault evidence. Related questions retain specialized mechanisms and canonical IDs.
 Implementation stages/order and R0 scope unchanged; SEQ-R0 remains pending / not started.
+
+## D-073 — Evidence-led platform release scope and acceptance
+
+Status: Accepted by SEQ-KB-R20, 2026-10-08; resolves Q-068 at product-policy level. Refines
+[D-025](#d-025--windowslinuxmacos-product-target-with-bounded-evidence) without removing any target OS,
+and preserves hosted/physical evidence separation, portable project integrity and backend independence.
+Rationale: Architectural target status and common source are necessary direction, not actual product
+readiness. Successful hosted checks, real hardware use and delivered-artifact acceptance establish
+different facts; none can replace missing evidence in another required dimension.
+Acceptance: Distinguish architecture, source/build, hosted verification, native materialization/loading/
+interop, actual desktop, actual device/backend, delivered distribution and public support scope. Attach
+revision/artifact, actual environment/configuration, result and limits. Conceptual status descriptions
+are not final marketing terms, enums, a mandatory ladder or percentage score.
+Windows remains primary early development/validation; Linux/macOS remain first-class architectural
+targets with early hosted evidence once projects exist. Per-target release support requires sufficient
+software/project-integrity, real desktop, intended audio and distribution evidence for claimed scope.
+Recording/monitoring applies when shipped, not as an implicit early prerequisite. WSLg Linux execution,
+GUI and bridged audio are separate useful observations, not comprehensive native Linux acceptance.
+Unavailable audio/plugin code does not itself forbid safe document access. Preserve project meaning,
+managed media and compatible opaque state; scope blockers and readiness feedback honestly.
+Release targets may differ in readiness, dates and delivery requirements. Linux/macOS are neither
+forced to ship with Windows nor forbidden to ship earlier than R14+ when sufficient evidence exists.
+R12 declares actual distribution environments and limitations; other target families retain portable
+architecture. Later coverage expands without requiring a domain redesign or arbitrary parity promises.
+Q-041 retains concrete milestone targets, OS versions, CPU/RIDs, device/backend coverage, prerequisites,
+native packaging, install/signing/notarization and applicable update/removal choices and evidence.
+Q-001/Q-002/Q-003/Q-007/Q-009/Q-014/Q-016/Q-024/Q-026/Q-037/Q-038/Q-040/Q-058/Q-059/Q-061/
+Q-062/Q-064/Q-069 remain open within their existing technical/product boundaries.
+Current owners: [Portability](../PORTABILITY.md#evidence-led-release-policy),
+[verification](../TEST_EXECUTION.md#evidence-tiers),
+[UX](../UX_CONTRACT.md#project-availability-and-dependency-blockers),
+[roadmap](../ROADMAP.md#platform-release-acceptance-ownership).
+No runtime evidence, selected backend/toolchain/RID, release date, executable work or expanded R0 scope.

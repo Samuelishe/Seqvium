@@ -1,8 +1,8 @@
 # Portability
 
-Role: Cross-platform target and portable engineering boundary.
+Role: Cross-platform architecture, release-scope policy and portable engineering boundary.
 Read when: Choosing project targets, platform/device APIs, native distribution, or platform evidence.
-Authoritative for: OS target direction, portable/shared versus platform-specific rules, and platform claim limits.
+Authoritative for: OS target direction, portable/shared versus platform-specific rules, evidence-based release scope and platform claim limits.
 Not authoritative for: Release dates, runtime parity, selected RIDs/toolchains/backends, developer setup, or CI triggers.
 
 ## Product target and current evidence
@@ -18,6 +18,142 @@ acceptance may arrive later and must never be inferred from hosted success. Repo
 actual OS/version, architecture, runtime/backend, environment, and bounded behavior; a hosted Windows
 runner is not automatically Windows 11 desktop acceptance. [TEST_EXECUTION](TEST_EXECUTION.md) owns
 evidence tiers; [CI_CD](CI_CD.md) owns hosted validation evolution.
+
+## Platform evidence and support scope
+
+These are distinct, complementary dimensions. They can coexist; this table is neither a mandatory
+sequence nor a readiness score. Evidence is required for the capabilities actually implemented and
+claimed, not every future workstation feature.
+
+| Dimension | Meaning and limit |
+| --- | --- |
+| Architectural target | Shared domain/project contracts and platform boundaries deliberately accommodate the OS family; no functioning application or release is implied |
+| Source/build compatibility | Declared source restores/compiles for a particular environment; compilation alone proves no GUI, device or delivered-artifact behavior |
+| Automated hosted verification | Checks actually passed at a stated revision on identified runners; only their exercised contracts are established |
+| Native runtime/materialization verification | If native components are used, the correct materialized component loads and interoperates with the actual host for the declared environment; managed compilation or developer-installed libraries are insufficient |
+| Actual desktop GUI acceptance | Implemented windowing, input, focus, scaling and workspace interaction work on the declared desktop; nominally portable types and hosted tests do not establish this |
+| Actual audio-device/backend acceptance | Claimed playback, and capture/monitoring where shipped, work with declared devices/backends and configurations; GUI availability and offline rendering are separate |
+| Packaged distribution acceptance | The delivered artifact installs/materializes as applicable, launches and resolves dependencies in a declared clean environment, with applicable delivery obligations met; source builds and development launches are separate |
+| Publicly declared support scope | A bounded product claim based on the necessary software, desktop, device and distribution evidence together, with supported environments/capabilities and limitations stated |
+
+Record revision/artifact identity, OS/version, CPU architecture/runtime, desktop/integration environment,
+native dependencies where applicable, and tested behavior/result/limits. Audio evidence additionally
+identifies device/interface, backend/driver, sample rate, channel and buffer configuration and workload.
+Storage evidence identifies filesystem/volume and tested failure conditions. None of these facts may
+be invented before implementation. One device/configuration does not establish every device on an OS;
+one Ubuntu environment does not establish every Linux distribution or desktop/audio environment.
+An untested combination is not accepted merely because a nearby combination passed. The eventual
+supported coverage and evidence sufficient for it must be justified explicitly, not assumed universal.
+
+Conceptual descriptions may distinguish **architectural target**, **build/test-verified environment**,
+**experimentally usable runtime**, **bounded desktop/device-validated environment**, and
+**distributable supported release target**. They are not final marketing terms, enum values or a
+universal ladder. Attach actual scope, missing evidence and known limitations; a hardware-validated
+runtime can still lack packaging or serialization acceptance. No percentage-based readiness metric.
+Build-only, hosted-only or experimental results must not be presented as full DAW support.
+
+## Evidence-led release policy
+
+Windows remains the primary early implementation and manual-validation environment. Windows-first
+work is legitimate when shared domain, audio/plugin, resource and persistence contracts remain portable
+and platform behavior stays at narrow adapters. This development priority neither selects Windows as
+the sole release platform nor weakens Linux/macOS architectural ownership.
+
+- Begin hosted Windows/Linux/macOS checks early when executable projects exist, under the existing
+  [CI policy](CI_CD.md#current-boundary-and-initial-managed-ci). Hosted success is one evidence dimension.
+- Before declaring a platform release supported, identify its intended environment/capability scope
+  and establish the necessary software/project-integrity, actual desktop, audio and packaged-distribution
+  evidence. Successful hardware use cannot replace serialization tests or delivery validation.
+- Intended audio output must be verified and available within a supported DAW release scope. An editor
+  that opens without audio remains useful but does not establish full DAW acceptance. Recording and
+  monitoring readiness are separate claims when those capabilities are shipped; future recording is
+  not made an early release prerequisite.
+- State supported scope and limitations publicly for each distributed target. Windows acceptance,
+  Linux hosted-only checks and macOS build-only verification must retain those different descriptions;
+  common source or green matrix results do not establish release parity.
+- Linux/macOS delivery need not share a Windows release date. Adequately evidenced targets may ship
+  at the same milestone; no policy forbids earlier readiness or mandates deferral to R14+. Insufficient
+  release evidence does not remove an OS family from first-class architecture or early verification.
+- Expand distribution/backend/device/architecture coverage incrementally when evidence supports it,
+  preserving portable project meaning. Keep unavailable capabilities honest and dependencies scoped.
+
+At each release milestone, the remaining product choice is which adequately evidenced environments to
+distribute: a bounded Windows-first scope or inclusion of ready Linux/macOS environments are sensible
+options, not binding commitments. No exact OS/version, CPU/RID, device/backend list, prerequisites,
+artifact layout, installation/signing/notarization method, distribution destination or timeline is
+selected. Q-041 owns the concrete supported target matrix and prerequisites; Q-061 owns the complete
+release scenario/dependency audit in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+[ROADMAP](ROADMAP.md#platform-release-acceptance-ownership) assigns bounded stage responsibility.
+
+## Desktop and delivered-environment acceptance
+
+For implemented first-party UI, actual desktop validation covers window lifecycle and custom chrome,
+movement/resizing, keyboard actions and focus return, input/pointer interaction, high DPI/scaling,
+pane/overlay/docking behavior, and accessibility integration for the capabilities claimed. External
+plugin window behavior is validated when that hosting capability exists, not required before it.
+[WORKSPACE](WORKSPACE.md) and [UX](UX_CONTRACT.md) retain observable behavior;
+Q-037/Q-064 retain framework adoption and concrete input/accessibility evidence. Hosted UI logic tests
+supplement rather than replace actual interaction. No universal accessibility certification is claimed.
+
+Linux desktop evidence must identify its actual graphical/audio integration and native dependencies.
+Different environments may require separate bounded checks for windowing, input/focus, scaling, audio
+output, device selection, filesystem behavior and dependency loading. X11/Wayland and ALSA/PipeWire
+are examples of differences to investigate, not selected implementations or mandatory support lists.
+macOS compilation likewise proves neither functioning desktop/audio behavior nor distribution,
+signing/notarization readiness; actual applicable delivery requirements remain later choices.
+
+WSLg evidence must distinguish Linux process/runtime execution, graphical interaction under WSLg,
+and audio through its bridged environment. A success in one does not prove the others. Even success
+in all three is bounded to that environment; it does not substitute for native Linux desktop,
+device/backend or packaged-distribution acceptance. WSLg is useful additional evidence, not a proxy
+for every Linux desktop or hardware configuration.
+
+Distinguish source restore/build, direct launch of development output, packaging/materialization,
+clean-environment installation where applicable, delivered launch/dependency loading, and eventual
+update/removal behavior where applicable. A Rider/developer-CLI launch is not proof that the delivered
+artifact works. Do not require an installer or updater implementation through this policy. Native
+loading must work without undeclared developer-installed libraries; licenses/redistribution obligations
+remain [THIRD_PARTY](THIRD_PARTY.md) and Q-014, not inferred from a successful build.
+
+## Portable documents and environment availability
+
+Case-sensitive and case-insensitive filesystem behavior must preserve project references, package
+identity, extension resources and internal paths. Case-only filename differences must not silently
+collide or break links when content moves. Filename/path spelling is not semantic identity. Future
+formats/resource mechanisms must prevent incompatible collisions or explicitly detect and report them
+before unsafe materialization; no case-folding, naming scheme or storage format is chosen here.
+
+A Windows-created project moved to Linux/macOS must retain safely understandable canonical musical
+meaning, relationships and accepted managed audio under [PROJECT_FORMAT](PROJECT_FORMAT.md).
+Prior platform-specific paths, audio devices, monitor geometry, theme/language or user-layout settings
+must not be required merely to edit it. Environment preferences adapt under [SETTINGS](SETTINGS.md)
+and [WORKSPACE](WORKSPACE.md#layout-ownership-and-restoration); project intent must not be silently
+rewritten to match negotiated device facts. Exact adaptation/migration remains Q-053/Q-069.
+
+First-party modules and third-party plugins may be unavailable on another OS. Metadata/identity
+availability proves no executable compatibility. Preserve stable identity, compatible opaque state
+and relationships; safely interpretable projects use existing
+[degraded access](EXTENSIONS.md#degraded-project-opening-and-operation-blockers) and scoped blockers.
+No identical third-party plugin availability or early CLAP/VST3 hosting is promised (Q-016/Q-024).
+
+Application/document availability, playback readiness, recording readiness and device/backend
+availability are separate. If no suitable output/backend exists, retain safe document access and
+available editing, while explaining unavailable playback and supported recovery direction through
+[UX feedback](UX_CONTRACT.md#project-availability-and-dependency-blockers). Input failure does not
+automatically prove output failure or vice versa. Offline render remains device-independent where
+its canonical processing dependencies are available; device independence cannot bypass missing code.
+Q-062/Q-069 retain device failure/recovery, clocks and runtime configuration mechanisms.
+
+Cross-platform offline tests can establish intended musical relationships, scheduling/DSP behavior,
+valid rendering and declared numerical tolerances without a physical audio device, following
+[AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction). They establish neither physical playback
+quality nor bit-identical output across arbitrary processors, platforms or plugin versions.
+
+Save/recovery/media integrity follows the accepted
+[persistence contract](PROJECT_FORMAT.md#commit-evidence-and-ambiguous-completion). Windows success or
+one rename does not prove another OS/filesystem/volume's atomic visibility, crash consistency or durable
+persistence. Future adapters must demonstrate the guarantees actually claimed on declared environments,
+with applicable failure/race evidence; Q-009/Q-058/Q-059 retain formats, protocols and validation.
 
 ## Portable architecture rules
 
@@ -44,10 +180,11 @@ Where practical, build/smoke on actual target runner families and validate manag
 against the materialized native runtime, following the conceptual evidence chain:
 
 ```text
-native build -> package/materialize -> smoke -> managed host build -> production interop test
+native build -> package/materialize -> runtime loading -> managed/native interoperability -> bounded actual execution
 ```
 
 A developer-installed library or a managed compile alone cannot prove the distributed runtime works.
+This is a conceptual chain of evidence, not a selected build pipeline or three-platform R0 certification.
 C++, CMake, MSVC, Clang, GCC, miniaudio, and any concrete RID matrix remain unselected.
 [THIRD_PARTY](THIRD_PARTY.md) owns actual provenance;
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) tracks choices when they become necessary.

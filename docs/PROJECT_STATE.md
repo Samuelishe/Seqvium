@@ -7,19 +7,18 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-SEQ-KB-R19 complete (2026-10-08). [Project integrity](PROJECT_FORMAT.md#media-and-persistence-integrity)
-distinguishes working, explicitly saved and recoverable revisions; accepted media, staging/cache,
-Undo/Redo, recovery, pending and independent Personal Library owners. Unnamed work/media has lifetime
-before first Save. Recovery choice does not Save; replacement protects a known valid candidate until
-a valid successor exists. Failed Save/Save As/transfer preserves prior coherent state and unsaved work;
-ambiguous completion requires evidence-based reconciliation. Degraded media/plugin access, coherent
-repair, interrupted-recording honesty and owner/coverage-based cleanup are accepted contracts.
-Q-058/Q-059 are partially answered, not closed: storage/protocol, candidate indexing/selection,
-integrity validation, retention/cadence, GC, recording/transfer and platform/fault/race evidence remain.
-Bounded R1/R2/R7/R8/R12 responsibilities are clarified without making complete recovery/storage an R1
-prerequisite or defining Q-061's full release case. Arrangement/sharing, independent execution,
-canonical/derived state, logical Undo/async integrity, disposable candidate history, discovery/library,
-input/accessibility, localization/themes and current/cold-history boundaries remain in force.
+SEQ-KB-R20 complete (2026-10-08). [Portability](PORTABILITY.md#platform-evidence-and-support-scope)
+separates architectural targets, source/build, hosted checks, native loading/interop, actual desktop,
+audio-device, packaged distribution and public support scope. Windows is the primary early development/
+validation environment; Windows/Linux/macOS remain first-class architectural targets. Q-068 is resolved
+at product-policy level: each declared release needs evidence for its actual environment/capability scope;
+neither common source, hosted checks nor an open editor establishes full DAW support. WSLg evidence is
+bounded to Linux execution, graphical interaction and bridged audio there, not native Linux acceptance.
+[Roadmap](ROADMAP.md#platform-release-acceptance-ownership) assigns bounded R0–R12/later responsibility;
+R12 declares and validates intended distribution targets without mandatory simultaneous parity or
+arbitrary Linux/macOS deferral. Q-041 retains exact target/OS/CPU/RID/device/backend and delivery choices;
+Q-061 retains full release-scenario closure. Existing portable document/managed-media, degraded access,
+Save/recovery/Undo/async ownership, musical relationships and presentation contracts remain in force.
 No implementation stage has started.
 
 ## Implemented capability
@@ -39,12 +38,12 @@ requires explicit authorization. [SEQ-R0](ROADMAP.md#seq-r0--audio-architecture-
 
 ## Validation baseline
 
-R19 cases A–T, principles 1–15 and five operation failure boundaries checked conceptually against
-Save/recovery, ownership, degraded opening/repair, async/Undo and durability evidence limits.
+R20 cases A–T and support/release hypotheses checked conceptually against actual evidence scope,
+portable projects, desktop/device/distribution acceptance and bounded stage ownership.
 Repository-relative Markdown links/anchors, canonical Q/D identity/reference integrity, owner/routing,
 active/cold separation, roadmap IDs/order and unchanged R0 scope, UTF-8/LF/whitespace and Git preservation
-checks passed. Documentation-only; no builds/tests, fault injection, runtime/audio, concurrency,
-performance, UI or platform durability evidence is claimed.
+checks passed. Documentation-only; no builds/tests, runtime/audio/hardware, UI, packaged-distribution,
+storage/fault/race or platform acceptance evidence is claimed.
 
 ## Active blockers / evidence gaps
 
@@ -62,5 +61,7 @@ milestone dependency closure (Q-061), DSP/tails (Q-057), graph publication/lifet
 recovery (Q-062/Q-069), undo/async mechanisms (Q-063), input/accessibility/platform validation (Q-064),
 Browser/Personal Library mechanisms (Q-065), host-resource lifecycle (Q-067), localization/locale (Q-054)
 and theme APIs/packaging (Q-055). Package/negotiation and backend mechanics remain open.
+Concrete supported platform/CPU/RID/device scopes, delivery prerequisites and actual desktop/audio/
+distribution/storage evidence remain Q-041 and related subsystem questions; no release dates selected.
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) contains only open questions. Passive batch-newline policy
 contradiction Q-070 remains unresolved; no configuration change is included in this stage.

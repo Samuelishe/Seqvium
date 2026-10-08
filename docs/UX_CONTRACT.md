@@ -409,6 +409,13 @@ reference, if offered, needs separate justification and clear distinction from o
 
 ## Project availability and dependency blockers
 
+Distinguish document access, playback readiness, recording readiness and device/backend availability.
+A safely understandable project remains accessible for available editing when suitable audio output
+is absent; explain the unavailable operation and supported recovery direction as current UI state.
+Input and output readiness may differ; an open editor must not imply that playback or recording works.
+[PORTABILITY](PORTABILITY.md#portable-documents-and-environment-availability) owns platform claim limits;
+Q-062/Q-069 retain exact device startup/loss/recovery and runtime-configuration mechanisms.
+
 A safely understandable project normally opens degraded for local capability/resource failures:
 missing/disabled/incompatible or recoverably failed ordinary plugins, missing/corrupt managed media,
 failed media integrity validation/decoding and unavailable ordinary execution capabilities. Retain its

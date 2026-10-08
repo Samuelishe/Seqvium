@@ -153,3 +153,43 @@ integrity (Q-058/Q-059), divergent graph save/render (Q-060), and milestone depe
 Audio architecture, toolchain/test choices and later workflow mechanisms remain unvalidated in the
 [global audit register](AUDITS.md#seq-kb-r7-global-audit-findings). Compact handoff policy belongs to
 [documentation governance](../DOCUMENTATION_GOVERNANCE.md#compact-current-state-contract).
+
+## SEQ-KB-R20 — Cross-platform release scope audit
+
+Historical conceptual audit, 2026-10-08; no build, runtime, hardware or distributed artifact was tested.
+Current policy belongs to [Portability](../PORTABILITY.md#evidence-led-release-policy), not this record.
+
+| Case | Conclusion within the documentation audit |
+| --- | --- |
+| A — Hosted Windows | Restore/Release build/tests establish only the checked runner contracts, not actual Windows desktop or physical audio-device reliability |
+| B — Hosted Linux | Ubuntu build/offline tests establish bounded build/software evidence, not all distributions, desktops, audio servers or hardware |
+| C — Hosted macOS | Managed/native compilation does not establish working desktop/audio, delivered dependencies or applicable signing/notarization readiness; no tools/architectures selected |
+| D — Windows primary | Windows 11 development/manual tests are legitimate early priority; domain, audio/plugin and storage boundaries remain portable for all three OS targets |
+| E — WSLg | Separately report Linux process/runtime, WSLg GUI and bridged audio. Success is useful only for that environment; native Linux desktop/device acceptance remains separate |
+| F — Native Linux | Check implemented window/chrome, input/focus, scaling, output/device selection, filesystem and native dependencies in named actual environments; no X11/Wayland or ALSA/PipeWire choice |
+| G — GUI without audio | Keep safely interpretable document access and editing; explicitly separate playback, recording and device readiness. An editor opening does not establish full DAW support |
+| H — Different devices | One interface/backend/configuration does not validate another. Declare actual rate/channel/buffer/workload scope; no universal platform claim or numeric performance threshold |
+| I — Native distribution | If native is chosen, substantiate build -> materialization -> loading -> interop -> bounded execution with the delivered component; undeclared developer libraries cannot prove deployment |
+| J — CPU architecture | Architectural portability does not promise every CPU; exact OS/CPU/RID/prerequisites remain Q-041, and delivery requirements may differ |
+| K — Install and launch | Source build, development-output launch, packaging, clean delivered installation/materialization, launch/dependencies and applicable update/removal are separate evidence; no installer/updater selected |
+| L — Filesystem case | Preserve identity/references/resource paths on sensitive and insensitive filesystems; prevent or honestly detect case collisions before unsafe materialization, without choosing a format |
+| M — Project across OS | Preserve canonical meaning/relationships and managed audio independently of old device/path preferences. Missing executable plugins retain identity/opaque state and scoped degraded behavior; no universal plugin portability |
+| N — Save/recovery | R19 failure/durability contracts remain. Validate claimed OS/filesystem/volume guarantees; Windows success or one rename cannot establish cross-platform crash consistency |
+| O — Preferences/workspace | Environment language/theme/layout/device preferences must not become musical dependencies; old monitor/device/platform paths cannot be required merely to edit moved work |
+| P — First-party UI | Actual implemented window/chrome, keyboard/focus, DPI/pointer, panes/overlays/docking and claimed accessibility need bounded desktop evidence; external editor checks follow hosting implementation |
+| Q — Extensions/plugins | Metadata does not prove platform executable compatibility. Preserve stable identity/state and existing missing-capability behavior; no early CLAP/VST3 or arbitrary external-plugin portability |
+| R — Offline rendering | Device-independent validation can establish musical/scheduling/DSP/render correctness with declared numerical assumptions; no physical-device claim or arbitrary cross-processor/platform bit identity |
+| S — Conditional release | Windows with sufficient declared software/desktop/audio/delivery evidence may be supported; Linux hosted-only and macOS build-only retain those labels. All three remain architectural targets |
+| T — Later evidence | Add supported environments/backends/devices/architectures as evidence grows, using existing portable boundaries rather than redesigning the domain; no dates/order/parity promised |
+
+Working release-policy directions 1–10 accepted with bounded scope: Windows remains the early primary
+environment, all three OS families retain architecture and early hosted ownership, and release claims
+require actual capability evidence. Linux/macOS dates are not tied to Windows; ready targets may ship
+earlier than R14+. R12 declares accepted environments; later coverage expands without abandoning
+portable document meaning. Missing/unverified intended audio forbids full DAW support claims.
+Deferred distribution does not make architecture/CI optional. Conceptual labels are neither a final
+public vocabulary nor a readiness percentage, and hardware cannot replace software/packaging evidence.
+The actual milestone target subset is still a later Q-041/Q-061 choice: bounded Windows-first delivery
+or inclusion of adequately evidenced Linux/macOS environments. No user preference is needed to accept
+these claim limits now; no target subset, delivery date, native/backend/toolchain choice or full R12
+scenario is invented. Q-068 is policy-resolved; related technical questions remain open.

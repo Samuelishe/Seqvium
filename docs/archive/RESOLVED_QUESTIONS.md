@@ -431,3 +431,31 @@ lifetime, Q-063 Undo/async, Q-065 library, Q-071 temporary history and Q-010/Q-0
 retain their mechanisms. Q-062 coordinates recording/device loss; Q-061 retains full roadmap closure.
 R1/R2/R7/R8/R12 and later recording responsibility is narrowly clarified without renumbering/reordering
 or expanding R0; SEQ-R0 remains pending / not started.
+
+## Q-068 — Architectural targets versus platform release scope
+
+Status: Resolved at product-policy level by SEQ-KB-R20, 2026-10-08; no runtime acceptance or concrete
+release target selection is implied.
+Original question: Linux/macOS architectural targets and hosted checks do not define platform release
+scope. Which desktop/device acceptance is required for each intended release, distinct from Q-041's
+RIDs/prerequisites and later additional-platform delivery?
+Resolution: Windows/Linux/macOS remain first-class architectural targets, with Windows primary early
+development/validation and early hosted checks once code exists. Distinguish architecture, build,
+hosted, native loading/interop, actual desktop, physical audio and delivered distribution evidence from
+the public support claim. Each declared supported target requires the necessary software/project,
+desktop, intended audio and delivered-artifact evidence within identified environment/capability scope.
+Editor availability without audio is useful degraded access, not full DAW acceptance. WSLg observations
+do not substitute for native Linux acceptance. R0 remains a bounded declared-environment probe;
+R1/R2 preserve portable contracts/adapters, R3–R7 validate arriving UI/modules at the proper boundary,
+and R12 explicitly declares/evidences actual distribution scope. Later evidence can expand support;
+neither simultaneous three-platform releases nor arbitrary Linux/macOS deferral is required.
+Rationale: [D-073](DECISIONS.md#d-073--evidence-led-platform-release-scope-and-acceptance).
+Current owners: [Portability](../PORTABILITY.md#platform-evidence-and-support-scope),
+[release stage ownership](../ROADMAP.md#platform-release-acceptance-ownership),
+[verification](../TEST_EXECUTION.md#evidence-tiers),
+[observable availability](../UX_CONTRACT.md#project-availability-and-dependency-blockers).
+Remaining choices/evidence: Q-041 actual milestone distribution targets, OS/version, CPU/RIDs,
+desktop/device/backend coverage, native packaging, install/launch/signing/notarization and applicable
+update/removal prerequisites; Q-061 full scenario closure. Q-007/Q-009/Q-014/Q-016/Q-024/Q-026/
+Q-037/Q-038/Q-040/Q-058/Q-059/Q-062/Q-064/Q-069 retain their subsystem mechanisms/evidence.
+No release timeline or exact distribution matrix chosen; no platform runtime/hardware evidence exists.

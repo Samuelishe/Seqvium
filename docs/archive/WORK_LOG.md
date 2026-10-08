@@ -665,3 +665,29 @@ is not established by local history; this log does not duplicate Git's commit ch
   No pre-existing user work to alter. No code, prototypes, experiments, projects, dependencies, tests, CI,
   executable tools, serialization files or media storage created. No staging, commit or push.
   SEQ-R0 remains **pending / not started**.
+
+## 2026-10-08 — SEQ-KB-R20
+
+- Defined canonical evidence-led platform release scope in Portability: architecture, source/build,
+  hosted, native materialization/loading/interop, actual desktop, actual device/backend, delivered
+  distribution and public support claims are distinct. Retained Windows-first development and
+  first-class Windows/Linux/macOS targets without simultaneous release parity or mandatory deferral.
+- Audited [cases A–T and release hypotheses](AUDITS.md#seq-kb-r20--cross-platform-release-scope-audit),
+  including WSLg versus native Linux, bounded device/configuration evidence, clean delivered launch,
+  filesystem case/project movement, Save/recovery guarantees and device-independent offline render.
+  Clarified observable document/playback/recording/device readiness and verification interpretation.
+- Resolved Q-068 at policy level through
+  [D-073](DECISIONS.md#d-073--evidence-led-platform-release-scope-and-acceptance) and archived its resolution.
+  Q-041 retains actual milestone targets, OS/CPU/RIDs, devices/backends and delivery prerequisites;
+  Q-061 retains full release dependency closure. Other related subsystem choices stay open.
+- Narrowly assigned R0–R12/later platform responsibility and R12 evidence for actual distributed
+  targets. R0 section/scope and all implementation stage IDs/order remain unchanged. Existing CI and
+  Development policy already express their boundary and required no edits or new pipelines/tooling.
+- Verified Markdown relative links/anchors, canonical Q/D definitions/references, owner/routing,
+  current/cold separation, bounded platform claims, unchanged R0/stage order, UTF-8/LF/whitespace,
+  `git diff --check` and final Git preservation. Documentation-only; no builds/nonexistent tests or
+  runtime/UI/audio/device/native/distribution/storage evidence is claimed.
+- Initial baseline: clean `master`, HEAD `74ab6125ced330e1164118398c2e812d25072071`, checkpoint R19.
+  Branch/HEAD/index and empty untracked state preserved; task changes are unstaged Markdown only.
+  No pre-existing user work, executable code/projects/scripts/tests/CI/dependencies/installers or
+  artifacts introduced. No staging, commit or push. SEQ-R0 remains **pending / not started**.
