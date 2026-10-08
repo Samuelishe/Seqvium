@@ -2,11 +2,15 @@
 
 Role: Logical responsibility and dependency boundary guide.
 Read when: Structuring code, reviewing coupling, or evaluating architecture proposals.
-Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, semantic-action/input boundary, logical undo transactions and async commit integrity, host UI services.
+Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle,
+timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and
+processing scopes, Arrangement/Mixer relationships, canonical/derived state, semantic-action/input boundary, logical
+undo transactions and async commit integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
 SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed WAV resources and
-offline PCM execution. Realtime/device, graph, presentation and permanent engine choices remain separate.
+offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
+output adapter; graph, presentation and permanent engine choices remain separate.
 
 ## R1 canonical foundation
 
@@ -42,7 +46,8 @@ digits. Constant-tempo conversions use exact integer rational arithmetic and rou
 toward the later frame/tick. Always convert absolute boundaries; an executed duration is rounded end
 minus rounded start. Adding individually rounded durations can drift and is not scheduling semantics.
 A positive musical duration can map to zero frames below frame resolution; it remains positive in
-canonical state. F1 reports and omits zero-frame executions under the [audio owner](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation), without changing the note.
+canonical state. F1 reports and omits zero-frame executions under
+the [audio owner](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation), without changing the note.
 Meters support numerator 1–64 and power-of-two denominator 1–64. Quarter-note tempo does not change
 with meter. Future tempo maps and fixed-time audio mappings require their own bounded representation;
 neither sample frames nor a concrete sample rate are persistent musical time.
@@ -60,7 +65,8 @@ Mutation is serialized by the caller on one owning thread; concurrent mutation i
 R0 demonstrates bounded managed/native execution feasibility only. Its native structs, four-slot
 publication, frame clock and observed 48 kHz / 10 ms endpoint are not production domain contracts.
 The reviewed pre-R2 disposition permits an initial bounded C# scheduler/DSP direction with a replaceable
-execution/device boundary. F1 implements backend-independent resources and offline execution only.
+execution/device boundary. F1 implements backend-independent resources/offline execution; F2 adds the
+bounded realtime and platform ownership below.
 Q-001–Q-007 remain open; intended-workload realtime, period/device, clock-recovery and distribution
 evidence must inform subsequent choices. No permanent engine/native ABI follows from F1.
 
@@ -76,12 +82,14 @@ execution frames remain derived and absent from the canonical musical model.
 `ProjectMedia.BeginImport` captures project/lifecycle/generation and an explicit optional sound target.
 `WavImport.PrepareAsync` owns an unattached candidate, reads bounded source bytes, validates WAV on a
 worker and establishes flushed managed bytes. Completion grants no edit authority. The owner awaits
-completion, then `Accept` rechecks captured and current cancellation, open lifecycle, generation, project/target identity
+completion, then `Accept` rechecks captured and current cancellation, open lifecycle, generation, project/target
+identity
 and stored integrity before one `ProjectDocument.Edit` adds the descriptor and creates/configures the
 sampler. Any intervening edit, Undo or Redo rejects the request even if content later looks identical.
 Save alone does not invalidate unchanged inputs; acceptance after Save creates newer dirty work.
 Cancellation observed at the acceptance gate permanently withdraws that request; cancellation after
-an established edit does not undo it. No selection lookup or implicit rebase occurs. Dispose after awaited completion ends an unaccepted
+an established edit does not undo it. No selection lookup or implicit rebase occurs. Dispose after awaited completion
+ends an unaccepted
 candidate; accepted bytes are retained. Prepare/Accept/Dispose of one request may not overlap, and
 document mutations remain caller-serialized. There is no general concurrency/worker framework.
 
@@ -89,6 +97,27 @@ The [format owner](PROJECT_FORMAT.md#r2-f1-managed-wav-layout) defines storage/S
 [audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) defines bounded pitches, events and voices.
 Frozen single-Pattern execution rejects unsupported required processing/route/performance dependencies.
 It is neither Arrangement rendering nor a graph engine, and leaves execution replaceable for F2 evidence.
+
+## R2-F2 execution and platform ownership
+
+Portable Core now adds [prepared realtime control](../src/Seqvium.Core/Audio/RealtimeSampler.cs) over the same
+F1 execution. Control captures an immutable revision and media roots, prepares off-thread and checks
+lifecycle/target/revision/generation/cancellation before publication. The callback owns execution only;
+it cannot read the source document. One candidate and active/pending/retired states provide explicit
+capacity and control-side retirement. A replacement resets the transport epoch, without live voice transfer.
+[Audio](AUDIO_ENGINE.md#r2-f2-realtime-wav-and-windows-output) owns exact controls, budgets and failure policy.
+
+`Seqvium.Audio.Windows` owns actual WASAPI COM/output/clock/wake/teardown in a justified platform assembly,
+referencing Core in one direction. OS vtables are private adapter plumbing, not a musical or engine ABI.
+`Seqvium.DeviceCheck` is an explicit physical-device verification executable, separate from deterministic
+tests and from any future workstation. No additional framework or backend interface is required for
+this concrete ownership. Native execution, arbitrary graph publication and platform release remain open.
+
+Output unavailability/faults end execution safely without editing the document or managed source storage.
+Restart uses a fresh stream/consumer epoch; no universal QPC/clock synchronization policy is adopted.
+Input/MIDI/capture remain future distinct adapter responsibilities: input buffers/timestamps would belong
+to their device lifetime, while deliberate recording acceptance and durable musical placement belong to
+the project owner. F2 implements none of those workflows.
 
 ## Accepted constraints
 
@@ -106,12 +135,12 @@ architecture. Dependency correctness guides sequencing; not every subsystem must
 Keep these concerns logically distinct, without mandating Clean Architecture boilerplate or a
 project/assembly per layer:
 
-| Concern | Responsibility |
-| --- | --- |
-| Domain | Musical, resource and project concepts/invariants |
-| Application / use cases | Operations coordinating document edits and workflows |
+| Concern                   | Responsibility                                                     |
+|---------------------------|--------------------------------------------------------------------|
+| Domain                    | Musical, resource and project concepts/invariants                  |
+| Application / use cases   | Operations coordinating document edits and workflows               |
 | Infrastructure / adapters | Persistence, filesystem, audio devices/backends and plugin loading |
-| Presentation | Workspace interaction and UI, including Avalonia if selected |
+| Presentation              | Workspace interaction and UI, including Avalonia if selected       |
 
 Dependency direction keeps core musical/domain semantics independent from concrete presentation and
 low-level infrastructure. Application operations coordinate domain work; adapters implement host/domain/
@@ -155,7 +184,8 @@ Avalonia API or binding framework is selected or required by this boundary.
 Creating a new project and the first-class project/document lifecycle are fundamental, not optional late
 features. The project owns musical state, project settings, managed media, plugin instances/state,
 processing relationships and later arrangement/automation/recording data. New/Open/Save UI and container
-complete container remains open under [PROJECT_FORMAT](PROJECT_FORMAT.md); F1 selects a bounded JSON/media directory layout.
+complete container remains open under [PROJECT_FORMAT](PROJECT_FORMAT.md); F1 selects a bounded JSON/media directory
+layout.
 
 Early architecture deliberately establishes the rails later work depends on: document and musical-domain
 ownership, versioned serialization, settings/configuration separation, diagnostics/logging, extension
@@ -169,22 +199,22 @@ the appropriate stage. This does not require all subsystems, extra layers or int
 Keep these logical responsibilities distinct even if some later share an assembly. This is long-term
 ownership, not a requirement to implement every capability in the first stages:
 
-| Responsibility | Boundary |
-| --- | --- |
-| Application shell / workspace panes | Owns main-window composition and user workspace state; [WORKSPACE](WORKSPACE.md) owns behavior |
-| Project / document model | Owns musical relationships, edits, resource references, and document integrity |
-| Transport / musical clock | Host-owned musical execution context; cannot be replaced by a plugin |
-| Audio engine / execution | Owns scheduling and execution-time state; isolated from arbitrary mutable UI/project objects |
-| Node graph engine | Core signal-graph ownership; [NODE_GRAPH](NODE_GRAPH.md) owns its contract |
-| Audio device abstraction | Host-owned input/output boundary below engine processing contracts |
-| MIDI device / input foundation | Host owns device selection and musical input integration |
-| Audio / MIDI recording foundations | Host owns capture and timeline/resource integration; polished recording UX may arrive later |
-| Mixer / bus foundations | Core mixing/routing primitives may precede the full Mixer workspace |
-| Audio resource ownership | Controls availability and lifetime of project audio independently of optional UI |
-| Undo / redo | Owns coherent document edits; optional surfaces cannot replace edit integrity |
-| Serialization | Preserves versioned document and extension data under the format contract |
-| Extension hosting / lifecycle | Hosts attached capabilities; fundamental platform ownership stays in the base |
-| User configuration / diagnostics | Host owns application preferences and bounded production diagnostics; [SETTINGS](SETTINGS.md) owns policy |
+| Responsibility                       | Boundary                                                                                                    |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| Application shell / workspace panes  | Owns main-window composition and user workspace state; [WORKSPACE](WORKSPACE.md) owns behavior              |
+| Project / document model             | Owns musical relationships, edits, resource references, and document integrity                              |
+| Transport / musical clock            | Host-owned musical execution context; cannot be replaced by a plugin                                        |
+| Audio engine / execution             | Owns scheduling and execution-time state; isolated from arbitrary mutable UI/project objects                |
+| Node graph engine                    | Core signal-graph ownership; [NODE_GRAPH](NODE_GRAPH.md) owns its contract                                  |
+| Audio device abstraction             | Host-owned input/output boundary below engine processing contracts                                          |
+| MIDI device / input foundation       | Host owns device selection and musical input integration                                                    |
+| Audio / MIDI recording foundations   | Host owns capture and timeline/resource integration; polished recording UX may arrive later                 |
+| Mixer / bus foundations              | Core mixing/routing primitives may precede the full Mixer workspace                                         |
+| Audio resource ownership             | Controls availability and lifetime of project audio independently of optional UI                            |
+| Undo / redo                          | Owns coherent document edits; optional surfaces cannot replace edit integrity                               |
+| Serialization                        | Preserves versioned document and extension data under the format contract                                   |
+| Extension hosting / lifecycle        | Hosts attached capabilities; fundamental platform ownership stays in the base                               |
+| User configuration / diagnostics     | Host owns application preferences and bounded production diagnostics; [SETTINGS](SETTINGS.md) owns policy   |
 | Localization / semantic UI resources | Host owns shared localization and theme/style contracts for first-party UI and Seqvium-native contributions |
 
 Basic musical editing, routing, level control, and common processing must be usable without optional
@@ -221,11 +251,11 @@ backend boundary; [EXTENSIONS](EXTENSIONS.md) owns capability compatibility and 
 
 ## Timeline, organization, and signal graph
 
-| Concept | Describes | Canonical boundary |
-| --- | --- | --- |
-| Musical timeline | Patterns, notes/events, pattern/audio clips, later automation and recordings in musical time | Musical model below |
-| User organization | Instrument/channel groups, names, and workspace organization | Group identity below; pane composition in WORKSPACE |
-| Signal graph | Sources, processors, mixing/splitting, effects, buses/output where applicable | NODE_GRAPH |
+| Concept           | Describes                                                                                    | Canonical boundary                                  |
+|-------------------|----------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| Musical timeline  | Patterns, notes/events, pattern/audio clips, later automation and recordings in musical time | Musical model below                                 |
+| User organization | Instrument/channel groups, names, and workspace organization                                 | Group identity below; pane composition in WORKSPACE |
+| Signal graph      | Sources, processors, mixing/splitting, effects, buses/output where applicable                | NODE_GRAPH                                          |
 
 Do not collapse these into one universal graph. Arrangement places music in time; the signal graph
 describes audio/control flow and does not replace Arrangement. Organization may visually correspond
@@ -277,16 +307,16 @@ are not commit authority. [Async commit gate](#async-commit-gate) and
 
 ### Edit, preparation and resource boundaries
 
-| Concept | Semantic responsibility |
-| --- | --- |
-| User intent / logical edit | The requested musical/document outcome and its target/scope; requesting long work does not itself mutate the document |
-| Canonical document mutation | A change to the single editable project truth, validated against the state in which it is accepted |
-| Undo transaction | One coherent accepted document intention, potentially changing several canonical relationships together |
-| Transient interaction preview | Explicit temporary feedback/audition with a cancel/restore path; not accepted document state or history |
-| Async computation/preparation | Produces a candidate/prepared result from identified inputs; completion alone is not an edit |
-| Async result commit | Revalidates the operation and accepts its canonical effect through the normal transaction boundary |
-| Derived realtime publication | Makes a valid prepared canonical revision executable under the graph/audio contract; not a second editable history |
-| Durable resource creation | Establishes storage/ownership of produced material; a file's existence alone neither inserts it into the project nor authorizes an edit |
+| Concept                       | Semantic responsibility                                                                                                                 |
+|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| User intent / logical edit    | The requested musical/document outcome and its target/scope; requesting long work does not itself mutate the document                   |
+| Canonical document mutation   | A change to the single editable project truth, validated against the state in which it is accepted                                      |
+| Undo transaction              | One coherent accepted document intention, potentially changing several canonical relationships together                                 |
+| Transient interaction preview | Explicit temporary feedback/audition with a cancel/restore path; not accepted document state or history                                 |
+| Async computation/preparation | Produces a candidate/prepared result from identified inputs; completion alone is not an edit                                            |
+| Async result commit           | Revalidates the operation and accepts its canonical effect through the normal transaction boundary                                      |
+| Derived realtime publication  | Makes a valid prepared canonical revision executable under the graph/audio contract; not a second editable history                      |
+| Durable resource creation     | Establishes storage/ownership of produced material; a file's existence alone neither inserts it into the project nor authorizes an edit |
 
 ```text
 user requests operation -> capture intent and sufficient preconditions
@@ -488,16 +518,16 @@ and useful open/migration diagnostics with R1's bounded schema and future migrat
 The following identities and relationships are independently meaningful and must remain separately
 editable and persistable where applicable. They describe ownership, not a required class per row.
 
-| Conceptual identity | Owns / relates to | Does not imply |
-| --- | --- | --- |
-| Musical content definition | Pattern's named reusable parts/events and references to instrument/sound definitions; each part addresses one instrument | Exclusive sound ownership, a placement, or an audio bus |
-| Instrument / sound definition | Reusable sound intent, durable settings/configuration and required content references | Pattern ownership, shared live performance state, or routing every use together |
-| Musical occurrence / placement | One use of identified content/resource at a timeline position, supported local timing/range and item-local relationships | A new musical definition, resource rewrite, or movement of other uses |
-| Durable audio resource | Accepted source audio and resource availability/lifetime, separately from its occurrences | A clip's position, trim, effects or processing membership |
-| Arrangement container | User-named timeline organization and placement membership, preferred purpose where useful; may expose an explicit containing processing context | Exclusive instrument/sound ownership, Pattern identity or Mixer identity |
-| Instrument Group | Organizational membership/naming of instruments independently of Pattern use | Timeline placement or audible aggregation |
-| Item / containing processing context | Actual contribution membership, local processing and continuation to routes; explicit aggregate where requested | Musical-content ownership or aggregation from mere visual containment |
-| Mixer route / channel / bus | Global routing, deliberate mixing and processing; may present an existing local context | One container per channel or another copy of that context's DSP |
+| Conceptual identity                  | Owns / relates to                                                                                                                               | Does not imply                                                                  |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| Musical content definition           | Pattern's named reusable parts/events and references to instrument/sound definitions; each part addresses one instrument                        | Exclusive sound ownership, a placement, or an audio bus                         |
+| Instrument / sound definition        | Reusable sound intent, durable settings/configuration and required content references                                                           | Pattern ownership, shared live performance state, or routing every use together |
+| Musical occurrence / placement       | One use of identified content/resource at a timeline position, supported local timing/range and item-local relationships                        | A new musical definition, resource rewrite, or movement of other uses           |
+| Durable audio resource               | Accepted source audio and resource availability/lifetime, separately from its occurrences                                                       | A clip's position, trim, effects or processing membership                       |
+| Arrangement container                | User-named timeline organization and placement membership, preferred purpose where useful; may expose an explicit containing processing context | Exclusive instrument/sound ownership, Pattern identity or Mixer identity        |
+| Instrument Group                     | Organizational membership/naming of instruments independently of Pattern use                                                                    | Timeline placement or audible aggregation                                       |
+| Item / containing processing context | Actual contribution membership, local processing and continuation to routes; explicit aggregate where requested                                 | Musical-content ownership or aggregation from mere visual containment           |
+| Mixer route / channel / bus          | Global routing, deliberate mixing and processing; may present an existing local context                                                         | One container per channel or another copy of that context's DSP                 |
 
 Content references, sound-use references, placement timing, organizational membership, actual processing
 membership and downstream routes must not be collapsed into one relationship. Names, equal data or
@@ -527,7 +557,7 @@ the final user-facing command name is not selected.
 ### Independent sound and local processing
 
 `Make Sound Independent` instead establishes independently editable sound-defining settings and updates
-the explicitly intended sound-use reference(s). Two Patterns can retain their different notes while one
+the explicitly intended sound-use reference (s). Two Patterns can retain their different notes while one
 uses an independent Bass Synth definition. The new definition no longer follows edits to the old one;
 it may still reference the same immutable sample/content. Musical notes and resources need not be copied.
 If the intended scope is one occurrence of shared musical content, changing a reference stored in that
@@ -564,7 +594,8 @@ The resulting fragment's source event/content, timing and sound use must remain 
 request concerning one occurrence cannot silently change the event in every shared Pattern use or
 leave an unintended second trigger. Whether/how conversion retains a link to the source, removes or
 suppresses its original occurrence, establishes independent content and follows later source edits
-needs investigation under Q-048/Q-029 beyond R1's event schema. This is not a graph-per-note default or an extra local level.
+needs investigation under Q-048/Q-029 beyond R1's event schema. This is not a graph-per-note default or an extra local
+level.
 
 Shared instrument settings/definition must not automatically imply shared execution state or
 irreversible mixed audio. For overlapping uses of a shared Bass Synth definition:
@@ -591,13 +622,13 @@ constraints; Q-047 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains mechanism/perf
 
 The following semantic distinctions are accepted future contracts, not implemented objects:
 
-| Concept | Ownership / meaning |
-| --- | --- |
-| Shared instrument/sound definition | Durable reusable sound intent: source/algorithm identity, base parameters, preset/configuration, content/resource references and sound-defining opaque extension data where applicable |
-| Runtime performance state | Active voices, note ownership, mono/legato/retrigger history, voice-stealing interaction, envelopes, sample cursors and evolving source DSP state derived during execution |
-| Execution domain | The semantic boundary within which musical events intentionally interact through runtime performance state; it may serve several occurrences and produce one or several distinguishable contributions |
-| Independently processable contribution | A required distinguishable audible result under [signal ownership](#signal-ownership-and-processing-contexts); neither a domain nor a voice/placement/instance by definition |
-| Processing/routing context | Canonical relationships specifying processing membership, paths and intentional convergence; derived processor state follows those scopes rather than definition identity |
+| Concept                                | Ownership / meaning                                                                                                                                                                                   |
+|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Shared instrument/sound definition     | Durable reusable sound intent: source/algorithm identity, base parameters, preset/configuration, content/resource references and sound-defining opaque extension data where applicable                |
+| Runtime performance state              | Active voices, note ownership, mono/legato/retrigger history, voice-stealing interaction, envelopes, sample cursors and evolving source DSP state derived during execution                            |
+| Execution domain                       | The semantic boundary within which musical events intentionally interact through runtime performance state; it may serve several occurrences and produce one or several distinguishable contributions |
+| Independently processable contribution | A required distinguishable audible result under [signal ownership](#signal-ownership-and-processing-contexts); neither a domain nor a voice/placement/instance by definition                          |
+| Processing/routing context             | Canonical relationships specifying processing membership, paths and intentional convergence; derived processor state follows those scopes rather than definition identity                             |
 
 A definition can feed several independent execution domains without becoming several independent
 sound definitions. Domains are derived from musical/performance intent and processing relationships;
@@ -633,12 +664,12 @@ both be realized, follow the explicit capability-blocking direction in
 
 ### Overlapping performance cases
 
-| Case | Accepted semantic result |
-| --- | --- |
-| A — same polyphonic definition, same context | Multiple overlapping placements/events may share a domain when all conditions above hold and their aggregate occurs at an intended convergence. Placement count alone does not require duplication; the same destination alone does not permit it |
-| B — clean A versus Distortion/Delay B | Preserve A/B outputs before local processing. Independently performed A/B have independent performance domains using the same definition; never split an already mixed source output to obtain them |
+| Case                                         | Accepted semantic result                                                                                                                                                                                                                                                                                                       |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| A — same polyphonic definition, same context | Multiple overlapping placements/events may share a domain when all conditions above hold and their aggregate occurs at an intended convergence. Placement count alone does not require duplication; the same destination alone does not permit it                                                                              |
+| B — clean A versus Distortion/Delay B        | Preserve A/B outputs before local processing. Independently performed A/B have independent performance domains using the same definition; never split an already mixed source output to obtain them                                                                                                                            |
 | C — mono, legato/retrigger or voice stealing | An intended shared performance lets A/B notes interact; an independent performance gives each domain its own interaction history/voice competition. Splitting or combining those domains can change pitch selection, attack and stolen notes even with the same preset; that sonic consequence is part of the musical contract |
-| D — separable sampler/source voices | Where source capabilities preserve the required semantics, separately routable voices/events can implement contributions efficiently, sharing immutable sample/definition data. Several independent semantic domains may be realized inside one capable source implementation; one domain can serve several placements/events |
+| D — separable sampler/source voices          | Where source capabilities preserve the required semantics, separately routable voices/events can implement contributions efficiently, sharing immutable sample/definition data. Several independent semantic domains may be realized inside one capable source implementation; one domain can serve several placements/events  |
 
 For a last-note-priority mono Bass with legato enabled, A holds C2 when B starts E2. An intended shared
 performance selects E2 with that instrument's legato behavior; independent domains can keep C2 and E2
@@ -681,15 +712,15 @@ results continue to other routes. Its canonical project relationships determine 
 is derived. Graph scope does not itself require one mixed audio output. Scope identities below are
 semantic responsibilities, not concrete types or a requirement to instantiate a graph for every item.
 
-| Scope / identity | Responsibility |
-| --- | --- |
-| Pattern | Reusable musical content and sound-definition references; no automatic submix |
-| Instrument / sound definition | Sound-producing behavior/settings reused by musical occurrences; intrinsic synthesis/sampler processing does not create another nested placement-local level or authorize mixing all uses |
-| Item / placement-local context | Independent processing of one placed musical occurrence, including distinguishable contribution paths or an intentional whole-placement submix |
-| Containing musical-container context | Common processing of an explicit aggregate of contained item results; timeline containment alone does not require aggregation |
-| Instrument/channel organizational group | Naming, membership and organization; no implied audio processing or bus |
-| Mixer channel / bus context | Audio routing, deliberate aggregation and processing/control of routed results, separately from timeline identity |
-| Master / Output | Global final aggregation/processing and output boundary |
+| Scope / identity                        | Responsibility                                                                                                                                                                            |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Pattern                                 | Reusable musical content and sound-definition references; no automatic submix                                                                                                             |
+| Instrument / sound definition           | Sound-producing behavior/settings reused by musical occurrences; intrinsic synthesis/sampler processing does not create another nested placement-local level or authorize mixing all uses |
+| Item / placement-local context          | Independent processing of one placed musical occurrence, including distinguishable contribution paths or an intentional whole-placement submix                                            |
+| Containing musical-container context    | Common processing of an explicit aggregate of contained item results; timeline containment alone does not require aggregation                                                             |
+| Instrument/channel organizational group | Naming, membership and organization; no implied audio processing or bus                                                                                                                   |
+| Mixer channel / bus context             | Audio routing, deliberate aggregation and processing/control of routed results, separately from timeline identity                                                                         |
+| Master / Output                         | Global final aggregation/processing and output boundary                                                                                                                                   |
 
 The two ordinary local levels remain item-local and containing-container. Source-definition behavior
 and global channel/bus/Master processing do not add further nested local levels. A Pattern's musical
@@ -831,12 +862,12 @@ Group hierarchy remains Q-023. No unlimited processing tree or universal overrid
 
 ### Deletion scope and retained relationships
 
-| Requested deletion | Semantic boundary |
-| --- | --- |
-| One Pattern placement | Remove that occurrence and its intended local relationships; preserve the Pattern, other placements, shared sound definitions and media |
-| A shared Pattern definition | Check its known uses; block/defer or offer a deliberate dependency-resolving choice rather than silently removing placements or redirecting them to similar content |
-| An Arrangement container | Distinguish organization removal from removing contained occurrences or its processing context. With known members/routes/dependencies, resolve their disposition deliberately; no hidden broad cascade or sound-changing reassignment |
-| A sound definition still used elsewhere | Respect those uses; block/defer or deliberately replace/detach/remove affected references with understandable scope, never destroy unrelated musical content or shared media |
+| Requested deletion                      | Semantic boundary                                                                                                                                                                                                                      |
+|-----------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| One Pattern placement                   | Remove that occurrence and its intended local relationships; preserve the Pattern, other placements, shared sound definitions and media                                                                                                |
+| A shared Pattern definition             | Check its known uses; block/defer or offer a deliberate dependency-resolving choice rather than silently removing placements or redirecting them to similar content                                                                    |
+| An Arrangement container                | Distinguish organization removal from removing contained occurrences or its processing context. With known members/routes/dependencies, resolve their disposition deliberately; no hidden broad cascade or sound-changing reassignment |
+| A sound definition still used elsewhere | Respect those uses; block/defer or deliberately replace/detach/remove affected references with understandable scope, never destroy unrelated musical content or shared media                                                           |
 
 Deletion of a visible use does not establish that its definitions/resources are disposable. Undo restores
 the intended canonical relationships coherently; it does not rewind DSP state or renew cancelled async

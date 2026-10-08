@@ -13,6 +13,11 @@ adopt an engine/backend/ABI or authorize R1. [AUDIO_ENGINE](../AUDIO_ENGINE.md) 
 
 ## Bounded probe discipline
 
+SEQ-R2-F2's [protocol](SEQ-R2-F2_PROTOCOL.md), [report](SEQ-R2-F2_REPORT.md) and
+[explicit Release harness](../../tools/Seqvium.DeviceCheck/README.md) evaluate production F1 PCM
+through the scoped Windows output adapter. Reports own measurements; audio/architecture owners retain
+the implemented contract. F2 neither promotes R0 experimental plumbing nor selects a permanent engine.
+
 State the question and scope before coding. A minimal host should test a risky boundary without
 becoming an early production application. Keep experiment code separate from future production code;
 the exact code location/build shape should be selected when a concrete probe exists.

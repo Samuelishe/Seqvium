@@ -2,15 +2,19 @@
 
 Role: Cross-platform architecture, release-scope policy and portable engineering boundary.
 Read when: Choosing project targets, platform/device APIs, native distribution, or platform evidence.
-Authoritative for: OS target direction, portable/shared versus platform-specific rules, evidence-based release scope and platform claim limits.
-Not authoritative for: Release dates, runtime parity, selected RIDs/toolchains/backends, developer setup, or CI triggers.
+Authoritative for: OS target direction, portable/shared versus platform-specific rules, evidence-based release scope and
+platform claim limits.
+Not authoritative for: Release dates, runtime parity, selected RIDs/toolchains/backends, developer setup, or CI
+triggers.
 
 ## Product target and current evidence
 
 **Seqvium targets Windows, Linux, and macOS.** Windows is the primary early development/runtime
 environment. Linux and macOS are first-class architectural targets from the start, not accidental
 later ports. No production application or supported release exists. The bounded Windows audio probe
-has [experimental runtime/device evidence](experiments/SEQ-R0_REPORT.md); Linux/macOS remain untested.
+has [experimental runtime/device evidence](experiments/SEQ-R0_REPORT.md). F2 adds a bounded production
+Windows x64 WASAPI output adapter and [physical evidence](experiments/SEQ-R2-F2_REPORT.md), while Core's
+musical/project/PCM contracts remain portable and contain no Windows API. Linux/macOS remain untested.
 This direction promises neither release dates nor complete parity; CPU architectures and release RIDs
 remain undecided.
 
@@ -26,16 +30,16 @@ These are distinct, complementary dimensions. They can coexist; this table is ne
 sequence nor a readiness score. Evidence is required for the capabilities actually implemented and
 claimed, not every future workstation feature.
 
-| Dimension | Meaning and limit |
-| --- | --- |
-| Architectural target | Shared domain/project contracts and platform boundaries deliberately accommodate the OS family; no functioning application or release is implied |
-| Source/build compatibility | Declared source restores/compiles for a particular environment; compilation alone proves no GUI, device or delivered-artifact behavior |
-| Automated hosted verification | Checks actually passed at a stated revision on identified runners; only their exercised contracts are established |
-| Native runtime/materialization verification | If native components are used, the correct materialized component loads and interoperates with the actual host for the declared environment; managed compilation or developer-installed libraries are insufficient |
-| Actual desktop GUI acceptance | Implemented windowing, input, focus, scaling and workspace interaction work on the declared desktop; nominally portable types and hosted tests do not establish this |
-| Actual audio-device/backend acceptance | Claimed playback, and capture/monitoring where shipped, work with declared devices/backends and configurations; GUI availability and offline rendering are separate |
-| Packaged distribution acceptance | The delivered artifact installs/materializes as applicable, launches and resolves dependencies in a declared clean environment, with applicable delivery obligations met; source builds and development launches are separate |
-| Publicly declared support scope | A bounded product claim based on the necessary software, desktop, device and distribution evidence together, with supported environments/capabilities and limitations stated |
+| Dimension                                   | Meaning and limit                                                                                                                                                                                                             |
+|---------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Architectural target                        | Shared domain/project contracts and platform boundaries deliberately accommodate the OS family; no functioning application or release is implied                                                                              |
+| Source/build compatibility                  | Declared source restores/compiles for a particular environment; compilation alone proves no GUI, device or delivered-artifact behavior                                                                                        |
+| Automated hosted verification               | Checks actually passed at a stated revision on identified runners; only their exercised contracts are established                                                                                                             |
+| Native runtime/materialization verification | If native components are used, the correct materialized component loads and interoperates with the actual host for the declared environment; managed compilation or developer-installed libraries are insufficient            |
+| Actual desktop GUI acceptance               | Implemented windowing, input, focus, scaling and workspace interaction work on the declared desktop; nominally portable types and hosted tests do not establish this                                                          |
+| Actual audio-device/backend acceptance      | Claimed playback, and capture/monitoring where shipped, work with declared devices/backends and configurations; GUI availability and offline rendering are separate                                                           |
+| Packaged distribution acceptance            | The delivered artifact installs/materializes as applicable, launches and resolves dependencies in a declared clean environment, with applicable delivery obligations met; source builds and development launches are separate |
+| Publicly declared support scope             | A bounded product claim based on the necessary software, desktop, device and distribution evidence together, with supported environments/capabilities and limitations stated                                                  |
 
 Record revision/artifact identity, OS/version, CPU architecture/runtime, desktop/integration environment,
 native dependencies where applicable, and tested behavior/result/limits. Audio evidence additionally
@@ -46,9 +50,9 @@ one Ubuntu environment does not establish every Linux distribution or desktop/au
 An untested combination is not accepted merely because a nearby combination passed. The eventual
 supported coverage and evidence sufficient for it must be justified explicitly, not assumed universal.
 
-Conceptual descriptions may distinguish **architectural target**, **build/test-verified environment**,
-**experimentally usable runtime**, **bounded desktop/device-validated environment**, and
-**distributable supported release target**. They are not final marketing terms, enum values or a
+Conceptual descriptions may distinguish **architectural target**, **build/test-verified environment**, **experimentally
+usable runtime**, **bounded desktop/device-validated environment**, and **distributable supported release target**. They
+are not final marketing terms, enum values or a
 universal ladder. Attach actual scope, missing evidence and known limitations; a hardware-validated
 runtime can still lack packaging or serialization acceptance. No percentage-based readiness metric.
 Build-only, hosted-only or experimental results must not be presented as full DAW support.
@@ -144,6 +148,10 @@ available editing, while explaining unavailable playback and supported recovery 
 automatically prove output failure or vice versa. Offline render remains device-independent where
 its canonical processing dependencies are available; device independence cannot bypass missing code.
 Q-062/Q-069 retain device failure/recovery, clocks and runtime configuration mechanisms.
+F2 supports float32 mono/stereo 44.1/48 kHz output with queried period/capacity and standard channel order;
+the report distinguishes actually tested facts from merely supported adapter configurations. Faulted
+playback stops and requires deliberate fresh initialization, without canonical/media mutation or a
+seamless-recovery claim. Input/MIDI/ASIO, other platforms/endpoints and delivered packaging are unevidenced.
 
 Cross-platform offline tests can establish intended musical relationships, scheduling/DSP behavior,
 valid rendering and declared numerical tolerances without a physical audio device, following

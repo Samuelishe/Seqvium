@@ -2,16 +2,18 @@
 
 Role: Audio execution and realtime boundary contract.
 Read when: Designing the audio probe, scheduling, nodes, device I/O, recording, or rendering boundaries.
-Authoritative for: Realtime constraints, execution-state lifetime/resource integrity, processing context, backend/device boundary, recording, item-local hard boundaries, manual export ranges, finite tails, canonical offline render and finite preparation failure.
+Authoritative for: Realtime constraints, execution-state lifetime/resource integrity, processing context, backend/device
+boundary, recording, item-local hard boundaries, manual export ranges, finite tails, canonical offline render and finite
+preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
 ## R2-F1 offline sampler foundation
 
 The reviewed direction is an initial bounded C# scheduler/DSP implementation with replaceable
 execution/device ownership. [F1 source](../src/Seqvium.Core/Audio/OfflineSampler.cs) implements resource/event
-preparation and offline execution, without a production callback or device adapter. R0's native structs,
+preparation and the shared PCM execution used by offline and bounded F2 realtime targets. R0's native structs,
 four-slot scheduler and 48 kHz endpoint are not reused. A permanent engine/ABI remains unselected;
-F2 must provide intended real-WAV/device/managed-pressure evidence before broader claims.
+F2's [report](experiments/SEQ-R2-F2_REPORT.md) provides scoped real-WAV/device evidence; broader claims remain open.
 
 ### WAV and decoded ownership
 
@@ -35,7 +37,7 @@ separate under [project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout).
 `DecodedPcm` owns an immutable private sample array; Dispose releases its cache reference. Prepared
 and live execution hold independent leases to the same immutable array. Disposing a document/cache/
 prepared owner cannot invalidate an already created execution; execution disposal retires its leases.
-Owners are serialized; no concurrent lease/dispose or realtime reclamation protocol is claimed.
+Lease creation/disposal remains owner-serialized; F2's handoff protocol below prevents disposal while borrowed.
 
 ### Pitches, voices and output
 
@@ -90,8 +92,64 @@ decoded PCM per plan. Preparation can temporarily hold one additional bounded re
 output memory belongs to the caller and may be streamed in bounded blocks. No filesystem, decode,
 document traversal or output allocation occurs in Process. Same declared inputs are partition invariant
 locally; sample oracles use absolute tolerance 2e-6. Finite output, 120/137 BPM and both execution rates
-are tested. Cross-platform numerical parity, realtime deadlines/allocations and device output remain
+are tested. F2 adds bounded realtime/device observations below; cross-platform numerical parity remains
 unevidenced. This is not R8 resampling, final WAV export, full transport, graph or Mixer execution.
+
+## R2-F2 realtime WAV and Windows output
+
+[RealtimeSampler](../src/Seqvium.Core/Audio/RealtimeSampler.cs) wraps the same `OfflineSampler` scheduling,
+interpolation, occurrence-owned voices and envelope code. F1's hot-path free-slot search and voice count
+use bounded loops rather than LINQ. Musical events are never a disposable control queue. Realtime packets
+may vary up to the caller-declared negotiated capacity (1–65536 frames); complete mono/stereo frames only.
+The wrapper zero-fills before start, after Stop and beyond prepared completion. Invalid packets return false.
+No musical capability, graph, Mixer, plugin ABI or permanent engine SDK is added.
+
+The document owner captures a canonical snapshot, lifecycle, transition generation, target Pattern and
+media-root list. One preparation candidate, including a completed unpublished result, reserves capacity.
+The worker decodes/validates through F1 from an isolated frozen document; cancellation is checked before
+and after bounded preparation and at publication. The owning publication gate rejects close, target/revision/
+generation changes, cancellation and supersession. Owner-serialized calls must await preparation before
+Publish/Dispose. No dependency-specific rebase is inferred. On relevant edits/target changes, the owner
+invalidates authority or begins a new preparation; the callback checks that authority without document access.
+An identified older active revision may continue; its revision is distinct from the canonical document.
+
+There are one active, one pending and one retired execution, plus at most one preparation candidate.
+Publishing into an occupied pending slot reports capacity rejection. At a packet boundary the consumer
+can switch only when retirement capacity is free; it hands the old execution to the retired mailbox and
+never borrows it again. The control owner reclaims its leases; lack of reclamation delays replacement
+without growing storage. A superseded pending state retires without execution. Accepted replacements
+restart at their prepared absolute start in a new epoch, terminate old voices and do not claim seamless
+live-state transfer. Source leases remain immutable and independent; no canonical mutable data reaches Process.
+Plans over 64 events at one frame are refused wholly before realtime publication.
+
+Gain in [0,1] is latest-wins. Start and sticky Stop/Panic use separately retained monotonic command identities:
+Start followed by Stop stays stopped, Stop followed by deliberate Start first clears old state then restarts.
+Stop acknowledgment is published after that processing boundary's voice observation. A separate consumer
+termination boundary stops a faulted/closed execution permanently; resource cleanup does not fabricate a
+packet Stop/Panic acknowledgment. Dispose requires a successfully joined consumer. Preparation/disposal,
+controls and document mutations have one serialized owner; Process has one consumer. This is bounded
+single-Pattern execution, not general multi-producer event admission or graph publication.
+
+[Windows output](../src/Seqvium.Audio.Windows/WasapiOutput.cs) owns COM, endpoint/mix-format discovery,
+shared event-driven initialization, period/capacity/clock queries, MMCSS, native buffers and joined shutdown.
+Its narrow assembly references portable Core; Core references no Windows API. Float32 mono/stereo
+44.1/48 kHz with unspecified/standard mono or stereo channel masks is supported; unsupported facts yield
+explicit unavailability. Rate, capacity and period are queried, never assumed from R0. Native PreserveSig
+vtable calls avoid RCW allocation and exception-driven normal HRESULT handling. No native sampler DLL,
+audio NuGet library or OS setting mutation is introduced.
+
+Canonical ticks, prepared absolute frames, render position/epoch, submitted stream frames, raw device clock
+units/frequency and QPC elapsed time stay separate and nonpersistent. On padding exhaustion, clock regression/
+prolonged nonadvance, wait failure or native device error, the worker terminates execution, stops/resets the
+stream and retires OS ownership. Deliberate restart requires a fresh output/consumer lifetime. There is no
+elapsed-time fallback, old Note On replay, backlog catch-up or seamless dropout claim.
+
+The explicit [Release harness](../tools/Seqvium.DeviceCheck/README.md), [protocol](experiments/SEQ-R2-F2_PROTOCOL.md)
+and [report](experiments/SEQ-R2-F2_REPORT.md) own physical timing/capture observations and their limits.
+Prepared numerical/voice/lifetime tests remain in the ordinary hardware-independent suite. Device output
+does not establish measured DAC/acoustic latency, physical dropout counts, lower hardware periods,
+multi-hour stability, all endpoints, platform parity or clean distribution. F2's hard Stop preserves F1;
+the broader user-facing settling/de-click and stateful seek/tail mechanisms remain Q-057.
 
 ## Accepted realtime constraints
 
@@ -445,4 +503,4 @@ label/UI, silence threshold, maximum extension, processor-tail reporting and non
 are unselected. Q-057 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains finite completion, reset/warm-up,
 loop state ownership, de-click and realtime/offline parity mechanisms; latency/cancellation also need evidence.
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics. F1's offline
-single-Pattern sampler is implemented above; product render/export and realtime execution remain future work.
+single-Pattern sampler and F2 realtime output are implemented above; product render/export remains future work.

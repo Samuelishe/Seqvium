@@ -2,8 +2,10 @@
 
 Role: Developer environment, version authority, and local tooling policy.
 Read when: Setting up development or introducing SDKs, local tools, or build/run entry points.
-Authoritative for: Recommended environment, SDK/tool version authority, local versus global tooling, and eventual entry points.
-Not authoritative for: Git safety, implementation style, package locks, test commands, CI triggers, or platform acceptance.
+Authoritative for: Recommended environment, SDK/tool version authority, local versus global tooling, and eventual entry
+points.
+Not authoritative for: Git safety, implementation style, package locks, test commands, CI triggers, or platform
+acceptance.
 
 ## Current environment and entry points
 
@@ -18,7 +20,9 @@ Avalonia remains proposed, not adopted. [Seqvium.sln](../Seqvium.sln) contains t
 R2-F1 adds BCL-only WAV/media and offline sampler files within the same library; the
 [architecture](ARCHITECTURE.md#r2-f1-managed-media-and-offline-execution) lists source responsibilities.
 Default unnamed media ownership is under LocalApplicationData; tests always supply owned directories.
-There is no workstation executable, UI, realtime engine or device adapter. The standalone
+R2-F2 adds the narrow `Seqvium.Audio.Windows` platform library and explicit `Seqvium.DeviceCheck`
+physical verification executable; [architecture](ARCHITECTURE.md#r2-f2-execution-and-platform-ownership)
+owns their dependency boundary. There is no workstation executable or UI. The standalone
 [SEQ-R0 probe](../experiments/seq-r0/README.md) remains independent.
 
 From the repository root with .NET SDK 10.0.401 (or a later patch in the 10.0.4xx band):
@@ -39,6 +43,16 @@ The `dotnet` CLI provides the build/test path independently of Rider; test/filte
 an acceptable cross-platform repository scripting environment where a concrete need justifies it;
 scripts are not introduced by this policy. Native compiler, CMake, Ninja, and native package managers
 are not selected; document setup only when an implementation stage chooses them.
+
+### SEQ-R2-F2 physical output verification
+
+After the solution Release build, explicitly run
+`dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll measure 60` on Windows x64.
+The [harness guide](../tools/Seqvium.DeviceCheck/README.md) lists smoke/lifetime/fault commands;
+the [protocol](experiments/SEQ-R2-F2_PROTOCOL.md) declares workload/budgets and the
+[report](experiments/SEQ-R2-F2_REPORT.md) records actual endpoint/environment and evidence gaps.
+The framework-dependent adapter uses installed Windows system APIs, with no audio package, native
+toolchain, global installation or future application/backend selection UI.
 
 ### SEQ-R0 experimental entry points
 
@@ -90,15 +104,15 @@ If a rule can be enforced cheaply and deterministically by compiler/editor/build
 over relying on agent memory. Enforcement must remain proportionate; capability alone is not a reason
 to introduce a tool.
 
-| Rule | Authority / enforcement point |
-| --- | --- |
-| UTF-8, LF, final newline, whitespace, basic C# indentation | Root [.editorconfig](../.editorconfig) |
-| Predictable tracked-text and working-tree newline policy | Root [.gitattributes](../.gitattributes): automatic text detection with LF; explicit `.bat`/`.cmd` CRLF exceptions |
-| Important correctness diagnostics | `.editorconfig`; rationale in [CODING_GUIDELINES](CODING_GUIDELINES.md) |
-| Nullable / warnings-as-errors | Inherited root `Directory.Build.props`; experiment-local policy remains separate |
-| SDK version | Root `global.json` for R1; independent experiment-local pin |
-| Formatting/analyzers | Future repository configuration only for a concrete need |
-| Portable build/test | Future CI under [CI_CD](CI_CD.md) |
+| Rule                                                       | Authority / enforcement point                                                                                      |
+|------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| UTF-8, LF, final newline, whitespace, basic C# indentation | Root [.editorconfig](../.editorconfig)                                                                             |
+| Predictable tracked-text and working-tree newline policy   | Root [.gitattributes](../.gitattributes): automatic text detection with LF; explicit `.bat`/`.cmd` CRLF exceptions |
+| Important correctness diagnostics                          | `.editorconfig`; rationale in [CODING_GUIDELINES](CODING_GUIDELINES.md)                                            |
+| Nullable / warnings-as-errors                              | Inherited root `Directory.Build.props`; experiment-local policy remains separate                                   |
+| SDK version                                                | Root `global.json` for R1; independent experiment-local pin                                                        |
+| Formatting/analyzers                                       | Future repository configuration only for a concrete need                                                           |
+| Portable build/test                                        | Future CI under [CI_CD](CI_CD.md)                                                                                  |
 
 Do not rewrite unrelated files to normalize line endings. Inspect and report normalization impact
 before changes; preserve user work and the staging index under AGENTS. No speculative binary asset

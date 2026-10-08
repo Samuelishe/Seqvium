@@ -2,8 +2,10 @@
 
 Role: Proportional verification, test quality, and evidence guide.
 Read when: Planning, running, or interpreting verification and future tests.
-Authoritative for: Test topology/quality, verification scope, future commands/platform discovery, Release gates, and evidence tiers.
-Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current progress.
+Authoritative for: Test topology/quality, verification scope, future commands/platform discovery, Release gates, and
+evidence tiers.
+Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
+progress.
 
 ## Current and future execution
 
@@ -39,6 +41,18 @@ release, equal-frame conflicts, zero-frame notes, partition/loop invariance, roo
 44.1/48 kHz and 120/137 BPM. Capacity/dependency failures must occur before output. This is local
 functional evidence, not device timing, real disk-full/power-loss, process-crash or cross-platform proof.
 Current local totals and evidence limits belong to [PROJECT_STATE](PROJECT_STATE.md).
+
+F2 adds `RealtimeSamplerTests` for shared offline/packet PCM and independent ramp/release/rational oracles,
+1/4/8 voices, Stop/Start command order, sticky Panic under gain bursts, stale/cancelled/closed/removed-target
+acceptance, transition-generation rejection after Undo/Redo, pending/retired backpressure and preparation
+candidate capacity, packet refusal, explicit termination and lease release. Per-thread allocation checks
+surround warmed Process/control entry only; native/runtime-entry evidence is separate.
+The [physical harness](../tools/Seqvium.DeviceCheck/README.md) runs explicitly in Release, never as an
+ordinary test or a hardware-dependent skip. Its pre-output capture is compared to offline execution at
+the same actual partitions and to an independent source/interpolation/envelope sum. Baseline and pressure
+budgets/fault policy are predeclared in the [F2 protocol](experiments/SEQ-R2-F2_PROTOCOL.md);
+results and exact allocation boundaries are in the [report](experiments/SEQ-R2-F2_REPORT.md).
+No hardware removal, DAC measurement or hosted CI result follows from injected errors or PCM comparison.
 
 The standalone [SEQ-R0 assertion harness](../experiments/seq-r0/README.md) remains independent:
 `dotnet bin/Release/net10.0/Probe.dll verify` after `./build.ps1` in `experiments/seq-r0/`.
@@ -77,17 +91,17 @@ if justified. A standalone tooling project does not itself justify a standalone 
 
 Categories describe required kinds of evidence as their owning capabilities arrive, not installed suites.
 
-| Category | Bounded scope / method |
-| --- | --- |
-| Pure/domain | Musical time, events, shared patterns/variations, IDs, undo/redo, serialization model, graph validation |
-| DSP/offline | Generated impulse, sine, fixed-seed noise, bounded synthetic buffers; numerical behavior with declared tolerances, no physical device |
-| Scheduler/transport | Virtual/offline time; block/loop boundaries, event ordering, note start/end, seek/start/stop, tempo transitions when introduced; avoid wall-clock sleeps |
-| Graph contracts | Valid topology, branches/merges, invalid type connections, missing nodes, prepared publication, state preservation |
-| Serialization compatibility | Load/edit/save/reload, migrations, stable identities, unknown/missing plugin state, graph relationships, shared resources versus placements |
-| Plugin compatibility | Later host/plugin version combinations, missing optional capability, incompatible required capability, disabled plugin, opaque state preservation |
-| UI logic | Pure geometry/state independent from UI framework/runtime where practical |
-| Runtime/manual UI | Pointer feel, DPI, docking, animation, real windowing; unit tests alone do not establish these |
-| Physical audio-device | Separate actual device/backend/sample-rate/buffer evidence; hosted/offline success does not establish device acceptance |
+| Category                    | Bounded scope / method                                                                                                                                   |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Pure/domain                 | Musical time, events, shared patterns/variations, IDs, undo/redo, serialization model, graph validation                                                  |
+| DSP/offline                 | Generated impulse, sine, fixed-seed noise, bounded synthetic buffers; numerical behavior with declared tolerances, no physical device                    |
+| Scheduler/transport         | Virtual/offline time; block/loop boundaries, event ordering, note start/end, seek/start/stop, tempo transitions when introduced; avoid wall-clock sleeps |
+| Graph contracts             | Valid topology, branches/merges, invalid type connections, missing nodes, prepared publication, state preservation                                       |
+| Serialization compatibility | Load/edit/save/reload, migrations, stable identities, unknown/missing plugin state, graph relationships, shared resources versus placements              |
+| Plugin compatibility        | Later host/plugin version combinations, missing optional capability, incompatible required capability, disabled plugin, opaque state preservation        |
+| UI logic                    | Pure geometry/state independent from UI framework/runtime where practical                                                                                |
+| Runtime/manual UI           | Pointer feel, DPI, docking, animation, real windowing; unit tests alone do not establish these                                                           |
+| Physical audio-device       | Separate actual device/backend/sample-rate/buffer evidence; hosted/offline success does not establish device acceptance                                  |
 
 Subsystem contracts remain in [AUDIO_ENGINE](AUDIO_ENGINE.md), [NODE_GRAPH](NODE_GRAPH.md),
 [PROJECT_FORMAT](PROJECT_FORMAT.md), [EXTENSIONS](EXTENSIONS.md), and [WORKSPACE](WORKSPACE.md).
@@ -138,15 +152,15 @@ is retained as deferred [I-002](IDEAS.md#i-002--named-test-routes); no filters/r
 These are complementary evidence classes, not a ranking in which a higher-looking tier replaces lower
 semantic tests. Record source revision, environment, input/configuration, result, and material limits.
 
-| Evidence | Proves within its declared scope |
-| --- | --- |
-| Unit / pure | Bounded deterministic logic |
-| Integration | Controlled subsystem interaction |
-| Hosted cross-platform CI | Build/test/runtime boundaries on hosted Windows/Linux/macOS environments |
-| Native interop | Selected native build/materialization/loading and production interop for a declared platform/RID |
-| Local/manual runtime | Actual application interaction on a declared real desktop/audio environment |
-| Hardware/audio-device | Behavior with a declared real interface/device/backend and settings |
-| Delivered distribution | Identified packaged artifact installation/materialization, launch/dependency loading and applicable update/removal behavior in a declared clean environment |
+| Evidence                 | Proves within its declared scope                                                                                                                            |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Unit / pure              | Bounded deterministic logic                                                                                                                                 |
+| Integration              | Controlled subsystem interaction                                                                                                                            |
+| Hosted cross-platform CI | Build/test/runtime boundaries on hosted Windows/Linux/macOS environments                                                                                    |
+| Native interop           | Selected native build/materialization/loading and production interop for a declared platform/RID                                                            |
+| Local/manual runtime     | Actual application interaction on a declared real desktop/audio environment                                                                                 |
+| Hardware/audio-device    | Behavior with a declared real interface/device/backend and settings                                                                                         |
+| Delivered distribution   | Identified packaged artifact installation/materialization, launch/dependency loading and applicable update/removal behavior in a declared clean environment |
 
 Hosted CI can prove compilation, offline DSP, serialization, graph scheduling, native loading/interop,
 and packaging contracts when those checks exist. It cannot alone prove stable real-device low latency,
@@ -163,10 +177,9 @@ from native Linux acceptance under [Portability](PORTABILITY.md#desktop-and-deli
 Release claims combine the required evidence dimensions under
 [release policy](PORTABILITY.md#evidence-led-release-policy), rather than treating any one tier as sufficient.
 
-Useful optional status labels are **local accepted-ready** (declared local checks passed),
-**hosted-confirmed** (hosted checks actually succeeded at a stated revision/platform scope),
-**runtime/manual accepted** (bounded real application interaction accepted), and
-**hardware/audio-device accepted** (bounded real device/backend/settings accepted).
+Useful optional status labels are **local accepted-ready** (declared local checks passed), **hosted-confirmed** (hosted
+checks actually succeeded at a stated revision/platform scope), **runtime/manual accepted** (bounded real application
+interaction accepted), and **hardware/audio-device accepted** (bounded real device/backend/settings accepted).
 Use them only with declared evidence and material limits, not as ceremony for trivial tasks.
 `hosted-confirmed` never implies physical audio-device acceptance. Link detailed reports rather than
 accumulating individual runs in [PROJECT_STATE](PROJECT_STATE.md).

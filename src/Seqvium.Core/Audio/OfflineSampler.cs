@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Immutable;
 
 namespace Seqvium.Core;
@@ -6,27 +7,52 @@ namespace Seqvium.Core;
 public static class PcmSampler
 {
     public const string Algorithm = "core.pcm-sampler.linear-v1";
+
     public static void ValidateConfiguration(decimal rootPitch, decimal releaseMilliseconds)
     {
         if (rootPitch is < 0 or > 127 || releaseMilliseconds is < 0 or > 1000)
             throw new ArgumentOutOfRangeException(nameof(rootPitch), "Root must be 0–127; release must be 0–1000 ms.");
     }
+
     public static double Step(int sourceRate, int executionRate, decimal rootPitch, decimal notePitch)
     {
         ValidateConfiguration(rootPitch, 0);
         if (sourceRate is not (44100 or 48000) || executionRate is not (44100 or 48000) ||
             notePitch is < 0 or > 127 || Math.Abs(notePitch - rootPitch) > 12)
-            throw new NotSupportedException("Sampler supports 44100/48000 Hz and root ±12 semitones within MIDI 0–127.");
+            throw new NotSupportedException(
+                "Sampler supports 44100/48000 Hz and root ±12 semitones within MIDI 0–127.");
         return (double)sourceRate / executionRate * Math.Pow(2, (double)(notePitch - rootPitch) / 12);
     }
 }
 
-public readonly record struct ExecutionOccurrence(Id<Pattern> PatternId, Id<MusicalPart> PartId, Id<NoteEvent> NoteId, int Iteration);
-public enum ExecutionEventKind { Stop, NoteOff, NoteOn }
-public sealed record PreparedEvent(long Frame, MusicalPosition Position, ExecutionEventKind Kind,
-    ExecutionOccurrence? Occurrence, int NoteIndex);
-internal sealed record PreparedNote(ExecutionOccurrence Occurrence, int SourceIndex, double Step, float Gain,
-    long StartFrame, long EndFrame, int ReleaseFrames);
+public readonly record struct ExecutionOccurrence(
+    Id<Pattern> PatternId,
+    Id<MusicalPart> PartId,
+    Id<NoteEvent> NoteId,
+    int Iteration);
+
+public enum ExecutionEventKind
+{
+    Stop,
+    NoteOff,
+    NoteOn
+}
+
+public sealed record PreparedEvent(
+    long Frame,
+    MusicalPosition Position,
+    ExecutionEventKind Kind,
+    ExecutionOccurrence? Occurrence,
+    int NoteIndex);
+
+internal sealed record PreparedNote(
+    ExecutionOccurrence Occurrence,
+    int SourceIndex,
+    double Step,
+    float Gain,
+    long StartFrame,
+    long EndFrame,
+    int ReleaseFrames);
 
 /// <summary>Frozen single-Pattern execution, bounded repeats and source leases. Derived state, never persistent musical truth.</summary>
 public sealed class PreparedSampler : IDisposable
@@ -45,14 +71,28 @@ public sealed class PreparedSampler : IDisposable
     internal PreparedSampler(Guid revision, int rate, int channels, int capacity, long start, long end, int zero,
         ImmutableArray<PreparedNote> notes, ImmutableArray<PreparedEvent> events, PcmLease[] sources)
     {
-        Revision = revision; SampleRate = rate; Channels = channels; VoiceCapacity = capacity;
-        StartFrame = start; EndFrame = end; ZeroFrameNotes = zero; Notes = notes; Events = events; _sources = sources;
+        Revision = revision;
+        SampleRate = rate;
+        Channels = channels;
+        VoiceCapacity = capacity;
+        StartFrame = start;
+        EndFrame = end;
+        ZeroFrameNotes = zero;
+        Notes = notes;
+        Events = events;
+        _sources = sources;
     }
-    internal PcmLease[] LeaseSources() => (_sources ?? throw new ObjectDisposedException(nameof(PreparedSampler))).Select(source => source.Lease()).ToArray();
+
+    internal PcmLease[] LeaseSources() => (_sources ?? throw new ObjectDisposedException(nameof(PreparedSampler)))
+        .Select(source => source.Lease()).ToArray();
+
     public OfflineSampler CreateExecution() => new(this);
+
     public void Dispose()
     {
-        if (_sources is { } sources) foreach (var source in sources) source.Dispose();
+        if (_sources is { } sources)
+            foreach (var source in sources)
+                source.Dispose();
         _sources = null;
     }
 }
@@ -68,17 +108,19 @@ public static class SamplerPreparation
         MusicalPosition? stop = null)
     {
         document.CheckAvailable();
-        if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || voiceCapacity is < 1 or > 8 || repeats is < 1 or > 1024)
+        if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || voiceCapacity is < 1 or > 8 ||
+            repeats is < 1 or > 1024)
             throw new NotSupportedException("F1 supports 44100/48000 Hz, mono/stereo, 1–8 voices, 1–1024 repeats.");
         var snapshot = document.Current;
         var state = snapshot.State;
         var pattern = state.Patterns.SingleOrDefault(item => item.Id == patternId)
-            ?? throw new InvalidOperationException("Pattern is unavailable.");
+                      ?? throw new InvalidOperationException("Pattern is unavailable.");
         long musicalEnd = checked(start.Ticks + checked(pattern.Length.Ticks * repeats));
         if (stop is { } stopPosition && (stopPosition.Ticks < start.Ticks || stopPosition.Ticks > musicalEnd))
             throw new ArgumentOutOfRangeException(nameof(stop));
         var ordered = pattern.OrderedNotes().ToArray();
-        if ((long)ordered.Length * repeats * 2 + 1 > MaximumEvents) throw new NotSupportedException("Prepared event capacity exceeded.");
+        if ((long)ordered.Length * repeats * 2 + 1 > MaximumEvents)
+            throw new NotSupportedException("Prepared event capacity exceeded.");
         var notes = ImmutableArray.CreateBuilder<PreparedNote>();
         var events = new List<PreparedEvent>();
         var sources = new List<PcmLease>();
@@ -89,11 +131,15 @@ public static class SamplerPreparation
             foreach (var part in pattern.Parts)
             {
                 var sound = state.Sounds.Single(item => item.Id == part.SoundId);
-                if (sound.Algorithm != PcmSampler.Algorithm || sound.Extension is not null || sound.ResourceIds.Length != 1 ||
-                    sound.Parameters.Count != 2 || !sound.Parameters.ContainsKey("rootPitch") || !sound.Parameters.ContainsKey("releaseMilliseconds") ||
+                if (sound.Algorithm != PcmSampler.Algorithm || sound.Extension is not null ||
+                    sound.ResourceIds.Length != 1 ||
+                    sound.Parameters.Count != 2 || !sound.Parameters.ContainsKey("rootPitch") ||
+                    !sound.Parameters.ContainsKey("releaseMilliseconds") ||
                     !sound.AdditionalData.IsEmpty || !part.AdditionalData.IsEmpty)
-                    throw new NotSupportedException("Offline sampler requires one core PCM resource, explicit root/release and understood sound/part dependencies.");
-                PcmSampler.ValidateConfiguration(sound.Parameters["rootPitch"], sound.Parameters["releaseMilliseconds"]);
+                    throw new NotSupportedException(
+                        "Offline sampler requires one core PCM resource, explicit root/release and understood sound/part dependencies.");
+                PcmSampler.ValidateConfiguration(sound.Parameters["rootPitch"],
+                    sound.Parameters["releaseMilliseconds"]);
                 var resource = sound.ResourceIds[0];
                 if (!resourceIndices.ContainsKey(resource))
                 {
@@ -104,37 +150,54 @@ public static class SamplerPreparation
                         lease.Dispose();
                         throw new NotSupportedException("Decoded resource budget exceeded.");
                     }
+
                     decodedBytes += lease.Bytes;
-                    resourceIndices.Add(resource, sources.Count); sources.Add(lease);
+                    resourceIndices.Add(resource, sources.Count);
+                    sources.Add(lease);
                 }
             }
+
             if (!pattern.AdditionalData.IsEmpty || state.Placements.Any(placement => placement.PatternId == patternId &&
-                (placement.ItemContextId is not null || placement.ContainingContextId is not null || placement.RouteId is not null ||
-                 placement.PartRelationships.Any(relation => relation.RouteId is not null || relation.SharedPerformanceKey is not null))))
-                throw new NotSupportedException("Processing/route/performance or unknown Pattern dependencies require later execution support.");
+                    (placement.ItemContextId is not null || placement.ContainingContextId is not null ||
+                     placement.RouteId is not null ||
+                     placement.PartRelationships.Any(relation =>
+                         relation.RouteId is not null || relation.SharedPerformanceKey is not null))))
+                throw new NotSupportedException(
+                    "Processing/route/performance or unknown Pattern dependencies require later execution support.");
             for (int iteration = 0; iteration < repeats; iteration++)
-            foreach (var item in ordered)
-            {
-                var part = pattern.Parts.Single(part => part.Id == item.PartId);
-                var sound = state.Sounds.Single(sound => sound.Id == part.SoundId);
-                var note = item.Note;
-                if (!note.AdditionalData.IsEmpty) throw new NotSupportedException("Unknown note dependencies are not executable.");
-                int sourceIndex = resourceIndices[sound.ResourceIds[0]];
-                double step = PcmSampler.Step(sources[sourceIndex].Rate, sampleRate, sound.Parameters["rootPitch"], note.Pitch);
-                var position = new MusicalPosition(checked(start.Ticks + checked(iteration * pattern.Length.Ticks) + note.Position.Ticks));
-                var end = position.Add(note.Duration);
-                long on = ConstantTempoConversion.ToFrames(position, state.Settings.Tempo, sampleRate);
-                long off = ConstantTempoConversion.ToFrames(end, state.Settings.Tempo, sampleRate);
-                if (stop is { } hardStop && position.Ticks >= hardStop.Ticks) continue;
-                if (on == off) { zero++; continue; } // Positive canonical duration; explicitly inaudible, no orphan release.
-                int release = checked((int)decimal.Round(sound.Parameters["releaseMilliseconds"] * sampleRate / 1000m, 0, MidpointRounding.AwayFromZero));
-                maximumRelease = Math.Max(maximumRelease, release);
-                var occurrence = new ExecutionOccurrence(patternId, part.Id, note.Id, iteration);
-                int index = notes.Count;
-                notes.Add(new(occurrence, sourceIndex, step, (float)note.Intensity, on, off, release));
-                events.Add(new(on, position, ExecutionEventKind.NoteOn, occurrence, index));
-                events.Add(new(off, end, ExecutionEventKind.NoteOff, occurrence, index));
-            }
+                foreach (var item in ordered)
+                {
+                    var part = pattern.Parts.Single(part => part.Id == item.PartId);
+                    var sound = state.Sounds.Single(sound => sound.Id == part.SoundId);
+                    var note = item.Note;
+                    if (!note.AdditionalData.IsEmpty)
+                        throw new NotSupportedException("Unknown note dependencies are not executable.");
+                    int sourceIndex = resourceIndices[sound.ResourceIds[0]];
+                    double step = PcmSampler.Step(sources[sourceIndex].Rate, sampleRate, sound.Parameters["rootPitch"],
+                        note.Pitch);
+                    var position = new MusicalPosition(checked(start.Ticks + checked(iteration * pattern.Length.Ticks) +
+                                                               note.Position.Ticks));
+                    var end = position.Add(note.Duration);
+                    long on = ConstantTempoConversion.ToFrames(position, state.Settings.Tempo, sampleRate);
+                    long off = ConstantTempoConversion.ToFrames(end, state.Settings.Tempo, sampleRate);
+                    if (stop is { } hardStop && position.Ticks >= hardStop.Ticks) continue;
+                    if (on == off)
+                    {
+                        zero++;
+                        continue;
+                    } // Positive canonical duration; explicitly inaudible, no orphan release.
+
+                    int release = checked((int)decimal.Round(
+                        sound.Parameters["releaseMilliseconds"] * sampleRate / 1000m, 0,
+                        MidpointRounding.AwayFromZero));
+                    maximumRelease = Math.Max(maximumRelease, release);
+                    var occurrence = new ExecutionOccurrence(patternId, part.Id, note.Id, iteration);
+                    int index = notes.Count;
+                    notes.Add(new(occurrence, sourceIndex, step, (float)note.Intensity, on, off, release));
+                    events.Add(new(on, position, ExecutionEventKind.NoteOn, occurrence, index));
+                    events.Add(new(off, end, ExecutionEventKind.NoteOff, occurrence, index));
+                }
+
             long first = ConstantTempoConversion.ToFrames(start, state.Settings.Tempo, sampleRate);
             var stopTicks = stop ?? new MusicalPosition(musicalEnd);
             long last = ConstantTempoConversion.ToFrames(stopTicks, state.Settings.Tempo, sampleRate);
@@ -142,16 +205,23 @@ public static class SamplerPreparation
             events.RemoveAll(item => item.Frame >= last);
             events.Add(new(last, stopTicks, ExecutionEventKind.Stop, null, -1));
             // Conflict precedence is semantic before identity: Stop, release old voices, start new voices.
-            var sorted = events.OrderBy(item => item.Frame).ThenBy(item => item.Kind).ThenBy(item => item.Position.Ticks)
+            var sorted = events.OrderBy(item => item.Frame).ThenBy(item => item.Kind)
+                .ThenBy(item => item.Position.Ticks)
                 .ThenBy(item => item.Occurrence?.PartId.Value).ThenBy(item => item.Occurrence?.NoteId.Value)
                 .ThenBy(item => item.Occurrence?.Iteration).ToImmutableArray();
             ValidateCapacity(sorted, notes, sources, voiceCapacity, last);
-            return new(snapshot.Revision, sampleRate, channels, voiceCapacity, first, last, zero, notes.ToImmutable(), sorted, [.. sources]);
+            return new(snapshot.Revision, sampleRate, channels, voiceCapacity, first, last, zero, notes.ToImmutable(),
+                sorted, [.. sources]);
         }
-        catch { foreach (var source in sources) source.Dispose(); throw; }
+        catch
+        {
+            foreach (var source in sources) source.Dispose();
+            throw;
+        }
     }
 
-    private static void ValidateCapacity(ImmutableArray<PreparedEvent> events, ImmutableArray<PreparedNote>.Builder notes,
+    private static void ValidateCapacity(ImmutableArray<PreparedEvent> events,
+        ImmutableArray<PreparedNote>.Builder notes,
         List<PcmLease> sources, int capacity, long stop)
     {
         // Conservative lifetime includes release and EOF. This preflight refuses the whole plan before any output.
@@ -163,7 +233,8 @@ public static class SamplerPreparation
             long eof = checked(note.StartFrame + (long)Math.Ceiling(sources[note.SourceIndex].Frames / note.Step));
             long end = Math.Min(stop, Math.Min(eof, checked(note.EndFrame + note.ReleaseFrames)));
             if (end > item.Frame) ends.Add(end);
-            if (ends.Count > capacity) throw new NotSupportedException("Voice capacity exceeded; no notes were dropped.");
+            if (ends.Count > capacity)
+                throw new NotSupportedException("Voice capacity exceeded; no notes were dropped.");
         }
     }
 }
@@ -177,34 +248,59 @@ public sealed class OfflineSampler : IDisposable
         internal long Age;
         internal int ReleaseAge = -1;
     }
+
     private readonly PreparedSampler _plan;
     private readonly Voice[] _voices;
     private PcmLease[]? _sources;
     private int _eventIndex;
     private bool _stopped;
     public long Position { get; private set; }
-    public int ActiveVoices => _voices.Count(voice => voice.Note is not null);
+
+    public int ActiveVoices
+    {
+        get
+        {
+            int count = 0;
+            foreach (var voice in _voices)
+                if (voice.Note is not null)
+                    count++;
+            return count;
+        }
+    }
 
     internal OfflineSampler(PreparedSampler plan)
     {
-        _sources = plan.LeaseSources(); _plan = plan;
+        _sources = plan.LeaseSources();
+        _plan = plan;
         _voices = Enumerable.Range(0, plan.VoiceCapacity).Select(_ => new Voice()).ToArray();
         Position = plan.StartFrame;
     }
+
     public void Restart()
     {
-        CheckAvailable(); Stop(); _stopped = false; _eventIndex = 0; Position = _plan.StartFrame;
+        CheckAvailable();
+        Stop();
+        _stopped = false;
+        _eventIndex = 0;
+        Position = _plan.StartFrame;
     }
+
     public void Stop()
     {
-        CheckAvailable(); foreach (var voice in _voices) voice.Note = null; _stopped = true;
+        CheckAvailable();
+        foreach (var voice in _voices) voice.Note = null;
+        _stopped = true;
     }
+
     public void Process(Span<float> interleavedOutput)
     {
         CheckAvailable();
-        if (interleavedOutput.Length % _plan.Channels != 0) throw new ArgumentException("Output must contain complete frames.");
+        if (interleavedOutput.Length % _plan.Channels != 0)
+            throw new ArgumentException("Output must contain complete frames.");
         int frames = interleavedOutput.Length / _plan.Channels;
-        if (frames > _plan.EndFrame - Position) throw new ArgumentOutOfRangeException(nameof(interleavedOutput), "Block exceeds the prepared end boundary.");
+        if (frames > _plan.EndFrame - Position)
+            throw new ArgumentOutOfRangeException(nameof(interleavedOutput),
+                "Block exceeds the prepared end boundary.");
         interleavedOutput.Clear();
         for (int frame = 0; frame < frames; frame++)
         {
@@ -214,8 +310,14 @@ public sealed class OfflineSampler : IDisposable
                 if (voice.Note is not { } note) continue;
                 var source = _sources![note.SourceIndex];
                 double cursor = voice.Age * note.Step; // Derive from age; block partitions cannot change accumulation.
-                if (cursor >= source.Frames) { voice.Note = null; continue; }
-                double gain = note.Gain * (voice.ReleaseAge < 0 ? 1 : 1 - (double)voice.ReleaseAge / note.ReleaseFrames);
+                if (cursor >= source.Frames)
+                {
+                    voice.Note = null;
+                    continue;
+                }
+
+                double gain = note.Gain *
+                              (voice.ReleaseAge < 0 ? 1 : 1 - (double)voice.ReleaseAge / note.ReleaseFrames);
                 double left = Interpolate(source, cursor, 0);
                 double right = source.Channels == 1 ? left : Interpolate(source, cursor, 1);
                 if (_plan.Channels == 1) interleavedOutput[frame] += (float)((left + right) * 0.5 * gain);
@@ -224,21 +326,31 @@ public sealed class OfflineSampler : IDisposable
                     interleavedOutput[frame * 2] += (float)(left * gain);
                     interleavedOutput[frame * 2 + 1] += (float)(right * gain);
                 }
+
                 voice.Age++;
-                if (voice.ReleaseAge >= 0 && ++voice.ReleaseAge >= note.ReleaseFrames || voice.Age * note.Step >= source.Frames)
+                if (voice.ReleaseAge >= 0 && ++voice.ReleaseAge >= note.ReleaseFrames ||
+                    voice.Age * note.Step >= source.Frames)
                     voice.Note = null;
             }
+
             Position++;
         }
+
         // Events at block end belong to the following block, except final retirement is immediate.
         if (Position == _plan.EndFrame) Stop();
     }
+
     private void ApplyEvents()
     {
         while (_eventIndex < _plan.Events.Length && _plan.Events[_eventIndex].Frame == Position)
         {
             var item = _plan.Events[_eventIndex++];
-            if (item.Kind == ExecutionEventKind.Stop) { Stop(); continue; }
+            if (item.Kind == ExecutionEventKind.Stop)
+            {
+                Stop();
+                continue;
+            }
+
             if (_stopped) continue;
             if (item.Kind == ExecutionEventKind.NoteOff)
             {
@@ -251,12 +363,22 @@ public sealed class OfflineSampler : IDisposable
             }
             else
             {
-                var voice = _voices.FirstOrDefault(voice => voice.Note is null)
-                    ?? throw new InvalidOperationException("Prepared voice capacity invariant failed.");
-                voice.Note = _plan.Notes[item.NoteIndex]; voice.Age = 0; voice.ReleaseAge = -1;
+                Voice? voice = null;
+                foreach (var candidate in _voices)
+                    if (candidate.Note is null)
+                    {
+                        voice = candidate;
+                        break;
+                    }
+
+                if (voice is null) throw new InvalidOperationException("Prepared voice capacity invariant failed.");
+                voice.Note = _plan.Notes[item.NoteIndex];
+                voice.Age = 0;
+                voice.ReleaseAge = -1;
             }
         }
     }
+
     private static double Interpolate(PcmLease source, double cursor, int channel)
     {
         int index = (int)cursor;
@@ -265,10 +387,15 @@ public sealed class OfflineSampler : IDisposable
         double second = index + 1 < source.Frames ? source.Samples[(index + 1) * source.Channels + channel] : 0;
         return first + (second - first) * fraction;
     }
+
     private void CheckAvailable() => ObjectDisposedException.ThrowIf(_sources is null, this);
+
     public void Dispose()
     {
-        if (_sources is { } sources) foreach (var source in sources) source.Dispose();
-        _sources = null; foreach (var voice in _voices) voice.Note = null;
+        if (_sources is { } sources)
+            foreach (var source in sources)
+                source.Dispose();
+        _sources = null;
+        foreach (var voice in _voices) voice.Note = null;
     }
 }

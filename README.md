@@ -36,21 +36,26 @@ These are planned capabilities and design directions:
 
 **There is currently no runnable Seqvium workstation.** SEQ-R1 provides a .NET 10 canonical musical
 model, document edits/Undo/Redo and versioned JSON Save/reopen, with a managed test suite.
-SEQ-R0 has bounded experimental audio evidence and remains **partially evidenced**; it selects no
-permanent backend. Production audio, GUI and later workflows remain future work.
+SEQ-R0 remains **partially evidenced** and selects no permanent backend. R2-F1 provides managed WAV
+preparation/offline sampling; R2-F2 has locally accepted-ready bounded realtime playback through a
+Windows WASAPI output adapter. Overall R2 remains partial; GUI and later workflows remain future work.
+See the [F2 device/performance evidence](docs/experiments/SEQ-R2-F2_REPORT.md) for its measured scope.
 The [roadmap](docs/ROADMAP.md) describes intended stages, not available features or release promises.
 
 ## Platforms
 
 Windows, Linux, and macOS are the intended targets. Windows is the primary early development environment;
-R1 currently has local Windows build/test evidence. R0 device observations are experimental;
-no production desktop/audio or supported-distribution acceptance is claimed.
+The managed solution has local Windows build/test evidence; F2 physically validates one Windows 11
+44.1 kHz stereo float32 output endpoint. Other endpoint/platform and supported-distribution acceptance
+is not claimed.
 
 ## Development
 
 Start with the [documentation index](docs/INDEX.md). Repository agents should read [AGENTS.md](AGENTS.md).
 See [development](docs/DEVELOPMENT.md) and [test execution](docs/TEST_EXECUTION.md) for reproducible
-CLI commands. `Seqvium.sln` contains `Seqvium.Core` and `Seqvium.Tests`; there is no UI executable yet.
+CLI commands. `Seqvium.sln` contains portable `Seqvium.Core`, `Seqvium.Tests`, narrow
+`Seqvium.Audio.Windows` and the explicit physical `Seqvium.DeviceCheck` harness; there is no UI
+executable yet.
 
 ## License
 

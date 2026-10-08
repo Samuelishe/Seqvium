@@ -8,7 +8,8 @@ Not authoritative for: Completion history, accepted technical contracts, or exis
 This is a direction, not a promise to implement all capabilities in v0.1. Later ordering may change
 with evidence and product need. Current checkpoint belongs to [PROJECT_STATE](PROJECT_STATE.md);
 contracts belong to their canonical owners. Completed stages are removed from current planning and
-retained in the cold archive under [rolling governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history).
+retained in the cold archive
+under [rolling governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge-and-cold-history).
 
 SEQ-R0 has authorized bounded experimental evidence and remains **partially evidenced**; see its
 [report](experiments/SEQ-R0_REPORT.md). R1 was separately authorized and its bounded foundation is
@@ -136,12 +137,12 @@ Minimum host presentation dependencies have bounded stage owners under
 [UI design](UI_DESIGN.md#themes-and-semantic-resources) and
 [Extensions](EXTENSIONS.md#ui-resource-contribution-lifecycle):
 
-| Stage | Minimum responsibility |
-| --- | --- |
-| R3 — Workspace Shell Foundation | Host-owned stable localization lookup, initial first-party RU/EN with English/per-resource host fallback, semantic Dark/Light roles sufficient for the shell, and safe user language/theme preference behavior. The shell works without future extension hosting or mature dynamic registration. |
-| R6 — Extension Foundation | Extend the R3 foundation with contributor-scoped identity, supported languages/fallback, bounded registration/availability and safe resource/UI retirement for actual native first-party modules. Late contributions use current host preferences; metadata discovery need not activate arbitrary executable code. Resource contract evolution must be handled deliberately, with exact versioning/registration mechanics still open. |
-| R7 — Sample Lab / Generator V1 | The default-installed removable generator and its first-party UI consume R3/R6 host localization/semantic styles, including fallback and removal behavior; no separate translation/theme stack. |
-| R12 — First Track Release | Within the bounded small-track scenario, require coherent RU/EN and Dark/Light presentation, safe preference changes, usable missing-resource/missing-capability host explanation and preservation of project values/state. Validate the surfaces actually shipped; missing presentation must not become apparent project corruption. |
+| Stage                           | Minimum responsibility                                                                                                                                                                                                                                                                                                                                                                                                                |
+|---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R3 — Workspace Shell Foundation | Host-owned stable localization lookup, initial first-party RU/EN with English/per-resource host fallback, semantic Dark/Light roles sufficient for the shell, and safe user language/theme preference behavior. The shell works without future extension hosting or mature dynamic registration.                                                                                                                                      |
+| R6 — Extension Foundation       | Extend the R3 foundation with contributor-scoped identity, supported languages/fallback, bounded registration/availability and safe resource/UI retirement for actual native first-party modules. Late contributions use current host preferences; metadata discovery need not activate arbitrary executable code. Resource contract evolution must be handled deliberately, with exact versioning/registration mechanics still open. |
+| R7 — Sample Lab / Generator V1  | The default-installed removable generator and its first-party UI consume R3/R6 host localization/semantic styles, including fallback and removal behavior; no separate translation/theme stack.                                                                                                                                                                                                                                       |
+| R12 — First Track Release       | Within the bounded small-track scenario, require coherent RU/EN and Dark/Light presentation, safe preference changes, usable missing-resource/missing-capability host explanation and preservation of project values/state. Validate the surfaces actually shipped; missing presentation must not become apparent project corruption.                                                                                                 |
 
 This assigns minimum capabilities, not a framework, resource format, token catalog, packaging model,
 marketplace or arbitrary external-native-editor control. R6 does not require mature theme/plugin
@@ -154,13 +155,13 @@ evidence; Q-061 retains the full dependency/release-scenario audit. Stage IDs/or
 The [graph contract](NODE_GRAPH.md#cross-context-signal-and-control-relationships) accepts bounded
 semantic dependencies, not universal routing or an early full sidechain/modulation system.
 
-| Stage | Bounded responsibility |
-| --- | --- |
-| R4 — Node Graph Foundation | Preserve semantic distinctions and dependency validation/prepared-execution foundations capable of later explicit cross-context relationships. Validate supported connections; full cross-context UI, all taps and mature scheduling/modulation are not required |
-| R8 — Resampling | Account for required external dependencies in the supported frozen object-render scope, or explicitly report unsupported/blocked cases. Never claim equivalent rendering after silently omitting them |
-| R10/R11 — Arrangement / Mixer | Introduce only bounded routing/control relationships justified by those workflows, honoring existing contexts, meaningful endpoint/tap identity and independent contributions. No mandatory complete sends/sidechain/modulation framework |
-| R12 — First Track Release | Mature cross-context sidechains/modulation are not prerequisites unless indispensable to the later accepted small-track scenario. Any supported relationship must retain Save/Undo, validity and render integrity; Q-061 owns concrete scenario closure |
-| R14+ — Evidence-led expansion | Richer sidechains, sends, control routing and modulation may expand with evidence; representation, timing, lifecycle, capability support and detailed UI remain bounded design work |
+| Stage                         | Bounded responsibility                                                                                                                                                                                                                                           |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R4 — Node Graph Foundation    | Preserve semantic distinctions and dependency validation/prepared-execution foundations capable of later explicit cross-context relationships. Validate supported connections; full cross-context UI, all taps and mature scheduling/modulation are not required |
+| R8 — Resampling               | Account for required external dependencies in the supported frozen object-render scope, or explicitly report unsupported/blocked cases. Never claim equivalent rendering after silently omitting them                                                            |
+| R10/R11 — Arrangement / Mixer | Introduce only bounded routing/control relationships justified by those workflows, honoring existing contexts, meaningful endpoint/tap identity and independent contributions. No mandatory complete sends/sidechain/modulation framework                        |
+| R12 — First Track Release     | Mature cross-context sidechains/modulation are not prerequisites unless indispensable to the later accepted small-track scenario. Any supported relationship must retain Save/Undo, validity and render integrity; Q-061 owns concrete scenario closure          |
+| R14+ — Evidence-led expansion | Richer sidechains, sends, control routing and modulation may expand with evidence; representation, timing, lifecycle, capability support and detailed UI remain bounded design work                                                                              |
 
 This narrows ownership without inserting, renumbering or reordering stages. Q-066 remains open for
 mechanisms/evidence. R0's baseline control exchange is not cross-context routing acceptance; its probe
@@ -171,17 +172,18 @@ scope is unchanged and does not acquire a hidden advanced-routing prerequisite.
 [Project format](PROJECT_FORMAT.md#media-and-persistence-integrity) owns the failure/lifetime contract;
 the following assigns minimum responsibility within existing stages, not a full storage feature set.
 
-| Stage | Bounded responsibility |
-| --- | --- |
-| R1 — Domain Foundation | Document identity/lifecycle, coherent canonical versioned Save/reopen and basic edit/Undo boundaries; sufficient revision/resource/ownership relationships for future recovery/media. Full recovery UI, storage GC and every media workflow are not R1 prerequisites |
-| R2 — Audio Resource Foundation | Durable managed import/acceptance, partial-import failure safety, resource/source distinction and unnamed-project media lifetime; preview stays transient, accepted audio survives source disappearance |
-| R7/R8 — Generation / Resampling | Owned async inputs/outputs, prepare/durable-store/revalidate/commit boundaries, cancellation/non-commit handling and Undo-retained audio; explicit fresh reuse where supported, no wrong-target attachment or automatic library publication |
-| R12 — First Track Release | Credible end-to-end explicit Save/Save As, project-media integrity, rolling recovery including unnamed work, bounded safe retention, degraded opening/repair direction and usable failure/ambiguous-completion reporting for shipped workflows |
-| Later recording | Apply the same ownership contract to established durable portions, incomplete material and accepted edits; choose recording-specific reconciliation with storage/device evidence, without promising unpersisted samples |
+| Stage                           | Bounded responsibility                                                                                                                                                                                                                                               |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R1 — Domain Foundation          | Document identity/lifecycle, coherent canonical versioned Save/reopen and basic edit/Undo boundaries; sufficient revision/resource/ownership relationships for future recovery/media. Full recovery UI, storage GC and every media workflow are not R1 prerequisites |
+| R2 — Audio Resource Foundation  | Durable managed import/acceptance, partial-import failure safety, resource/source distinction and unnamed-project media lifetime; preview stays transient, accepted audio survives source disappearance                                                              |
+| R7/R8 — Generation / Resampling | Owned async inputs/outputs, prepare/durable-store/revalidate/commit boundaries, cancellation/non-commit handling and Undo-retained audio; explicit fresh reuse where supported, no wrong-target attachment or automatic library publication                          |
+| R12 — First Track Release       | Credible end-to-end explicit Save/Save As, project-media integrity, rolling recovery including unnamed work, bounded safe retention, degraded opening/repair direction and usable failure/ambiguous-completion reporting for shipped workflows                       |
+| Later recording                 | Apply the same ownership contract to established durable portions, incomplete material and accepted edits; choose recording-specific reconciliation with storage/device evidence, without promising unpersisted samples                                              |
 
 Concrete container/protocol, cadence/retention, GC, cross-platform guarantees and fault/race evidence remain
 Q-058/Q-059; collect/relocate mechanics are not automatically early-stage features. Q-061 still owns
-complete dependency/release closure. R1's bounded foundation is complete; later stages still require separate authorization;
+complete dependency/release closure. R1's bounded foundation is complete; later stages still require separate
+authorization;
 R0 scope is unchanged and acquires no storage/recovery prerequisite.
 
 ## Platform release acceptance ownership
@@ -190,14 +192,14 @@ R0 scope is unchanged and acquires no storage/recovery prerequisite.
 support claims. Windows-first development, early cross-platform hosted checks and actual supported
 distribution are distinct. Minimum responsibility follows existing stages:
 
-| Stage | Bounded responsibility |
-| --- | --- |
-| R0 — Audio Architecture Probe | Investigate realtime architecture on its declared environment, retain backend-independent contracts, consider cross-platform managed/native feasibility and distribution consequences, and report accurate limits. No full three-platform GUI/device/product certification |
-| R1 — Domain Foundation | Keep musical/document/serialization contracts free of Windows-only assumptions, including portable identity and paths; exact format/storage evidence remains Q-009/Q-058/Q-059 |
-| R2 — Audio Resource / Device Foundation | Establish portable resources and logical device/backend boundaries. Validate implemented adapters honestly; portable interfaces do not require or prove every OS backend |
-| R3–R7 — Shell and first-party extension surfaces | Keep shell/resources/module contracts cross-platform; hosted checks exercise actual supported managed/native contracts when present. Identify real UI/extension issues at their platform boundary as capabilities arrive, without full R12 certification at R3 |
-| R12 — First Track Release | Identify intended distribution environments and require sufficient software/project-integrity, actual desktop, intended audio and delivered-artifact evidence for each declared supported target. Label hosted-only or experimental environments accurately and retain other OS families as architectural targets |
-| R14+ — Evidence-led expansion | Expand platform delivery, backend/device and CPU architecture coverage as evidence supports it. Adequately evidenced Linux/macOS delivery may also occur earlier; no fixed release dates, order or simultaneous parity commitment |
+| Stage                                            | Bounded responsibility                                                                                                                                                                                                                                                                                            |
+|--------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R0 — Audio Architecture Probe                    | Investigate realtime architecture on its declared environment, retain backend-independent contracts, consider cross-platform managed/native feasibility and distribution consequences, and report accurate limits. No full three-platform GUI/device/product certification                                        |
+| R1 — Domain Foundation                           | Keep musical/document/serialization contracts free of Windows-only assumptions, including portable identity and paths; exact format/storage evidence remains Q-009/Q-058/Q-059                                                                                                                                    |
+| R2 — Audio Resource / Device Foundation          | Establish portable resources and logical device/backend boundaries. Validate implemented adapters honestly; portable interfaces do not require or prove every OS backend                                                                                                                                          |
+| R3–R7 — Shell and first-party extension surfaces | Keep shell/resources/module contracts cross-platform; hosted checks exercise actual supported managed/native contracts when present. Identify real UI/extension issues at their platform boundary as capabilities arrive, without full R12 certification at R3                                                    |
+| R12 — First Track Release                        | Identify intended distribution environments and require sufficient software/project-integrity, actual desktop, intended audio and delivered-artifact evidence for each declared supported target. Label hosted-only or experimental environments accurately and retain other OS families as architectural targets |
+| R14+ — Evidence-led expansion                    | Expand platform delivery, backend/device and CPU architecture coverage as evidence supports it. Adequately evidenced Linux/macOS delivery may also occur earlier; no fixed release dates, order or simultaneous parity commitment                                                                                 |
 
 Q-041 retains the exact OS/version, architecture/RID, device/backend coverage and delivery prerequisites;
 Q-061 retains the complete scenario/dependency audit. Other owners retain device, storage, UI and extension
@@ -238,9 +240,13 @@ R2, locally accepted-ready for managed WAV/import/Save As and offline pitched mu
 the current [audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) and
 [format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout) owners. F1 is a working subdivision, not a new
 official numbered stage. The reviewed direction permits initial bounded C# scheduler/DSP with
-replaceable execution/device ownership, without adopting a permanent engine/native ABI. Subsequent F2
-realtime/device work is not implemented or authorized by F1; intended-workload, period/device,
-elapsed-time recovery and distribution evidence remain necessary. Q-001–Q-007 stay open. R2 is not complete.
+replaceable execution/device ownership, without adopting a permanent engine/native ABI. Separately
+authorized R2-F2 is locally accepted-ready for bounded real WAV/Windows output, shared offline PCM,
+preparation/publication/retirement and safe device fault-stop under its
+[report](experiments/SEQ-R2-F2_REPORT.md). Q-001–Q-007 stay open for wider workload/period/device,
+clock/recovery and distribution evidence. R2 is not complete: scope the remaining minimal source
+discovery/transient preview/project-resource reuse path and broader device/input/MIDI foundation
+follow-up explicitly; F2 does not authorize R3, a recording workflow or a permanent engine SDK.
 
 Establish audio resources, WAV import, preview, managed project media, a simple sampler, note/pitch
 playback, and resource lifetime. Do not expand immediately to every codec or sampler feature.

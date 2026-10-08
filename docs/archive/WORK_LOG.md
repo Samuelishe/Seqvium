@@ -146,7 +146,8 @@ is not established by local history; this log does not duplicate Git's commit ch
 ## 2026-10-07 — SEQ-KB-R8
 
 - Integrated degraded document opening and critical format/refusal boundary, operation-scoped dependency
-  blockers and persistent object-level UI feedback; resolved [Q-013](RESOLVED_QUESTIONS.md#q-013--missingincompatible-required-plugin-during-project-open).
+  blockers and persistent object-level UI feedback;
+  resolved [Q-013](RESOLVED_QUESTIONS.md#q-013--missingincompatible-required-plugin-during-project-open).
 - Established one canonical editable graph, derived revisioned realtime execution, automatic latest-valid
   convergence, savable invalid work, canonical reopen and frozen canonical export without stale fallback;
   resolved [Q-060](RESOLVED_QUESTIONS.md#q-060--canonical-graph-versus-last-valid-execution-in-savereopenrender).
@@ -189,17 +190,17 @@ is not established by local history; this log does not duplicate Git's commit ch
   [Q-056](RESOLVED_QUESTIONS.md#q-056--manual-export-range-and-permitted-effect-tails), narrowed
   Q-057/Q-058/Q-059/Q-061 and archived accepted portions. Aligned Q-012 capture-specific scope;
   Q-065 Browser/personal-library question remained unchanged. Updated current owner routing without
-  recreating active history ledgers; completed R9 stage is in [archive ROADMAP](ROADMAP.md#seq-kb-r9--recovery-media-durability--foundation-strategy).
-- Verified all 34 repository Markdown files' relative links/anchors, 71 unique canonical Q definitions
-  (68 open and Q-013/Q-056/Q-060 fully archived), D-001 through D-060 uniqueness/reference traceability,
+  recreating active history ledgers; completed R9 stage is
+  in [archive ROADMAP](ROADMAP.md#seq-kb-r9--recovery-media-durability--foundation-strategy).
+- Verified all 34 repository Markdown files' relative links/anchors, 71 unique canonical Q definitions (68 open and
+  Q-013/Q-056/Q-060 fully archived), D-001 through D-060 uniqueness/reference traceability,
   owner/routing, accepted/open/current/archive separation, LF and Markdown-only scope. Q-065 and all
   implementation stage headings/order match HEAD; archive remains excluded from default context/RAG.
   `git diff --check` passed. Initial tree/index/untracked baseline was clean on `master` at
   `c953da727f4912c351e3a023d448f83138f54d68`; branch/HEAD/staging index preserved.
 - Refreshed compact current state. No application/audio/native implementation, recovery/media files,
   projects, tests, dependencies, CI, executable tooling, prototypes, codecs, plugin hosts, UI or passive
-  configuration introduced. No empty-solution build, tests, commit or push. SEQ-R0 remains
-  **pending / not started**.
+  configuration introduced. No empty-solution build, tests, commit or push. SEQ-R0 remains **pending / not started**.
 
 ## 2026-10-07 — SEQ-KB-R10
 
@@ -215,7 +216,8 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Recorded [D-061 through D-063](DECISIONS.md#d-061--musical-ownership-and-explicit-signal-convergence),
   archived [Q-019/Q-030 accepted portions](RESOLVED_QUESTIONS.md#r10-resolved-portions--signal-semantics-accepted-concrete-bindings-remain-open),
   narrowed their remaining concrete mechanisms and retained Q-047 execution evidence as open.
-  Updated current owners/routing/state and [completed stage](ROADMAP.md#seq-kb-r10--signal-ownership--routing-semantics).
+  Updated current owners/routing/state
+  and [completed stage](ROADMAP.md#seq-kb-r10--signal-ownership--routing-semantics).
 - Verified repository-relative Markdown links/anchors, canonical Q definitions and D references,
   owner/routing consistency, current/open versus resolved/archive separation, implementation-stage
   headings/order, no implementation claims, LF/whitespace and Markdown-only scope; `git diff --check`
@@ -247,14 +249,14 @@ is not established by local history; this log does not duplicate Git's commit ch
   overlapping-source/opaque-host evidence. Active ROADMAP is byte-identical to HEAD; no stage inserted,
   renumbered, reordered or started. Updated compact current state, owner routing and
   [completed-stage history](ROADMAP.md#seq-kb-r11--independent-execution-domains--shared-sound-state).
-- Verified all 34 repository Markdown files' relative links/anchors, 71 unique canonical questions
-  (68 open, 3 fully archived), D-001 through D-064 uniqueness/reference integrity, owner/routing,
+- Verified all 34 repository Markdown files' relative links/anchors, 71 unique canonical questions (68 open, 3 fully
+  archived), D-001 through D-064 uniqueness/reference integrity, owner/routing,
   current/open versus historical/partial separation, documentation-only scope and LF/UTF-8/whitespace.
   `git diff --check` passed. Initial baseline: clean `master` at
   `36e6644cbf7b5eca5feeb89afc2b36dde23d8154`; branch/HEAD/index/untracked baseline preserved.
 - No production code, experiments, projects, dependencies, tests, CI, backends, plugin hosts, prototypes
-  or executable tooling created. No solution builds/tests, staging, commit or push. SEQ-R0 remains
-  **pending / not started**.
+  or executable tooling created. No solution builds/tests, staging, commit or push. SEQ-R0 remains **pending / not
+  started**.
 
 ## 2026-10-07 — SEQ-KB-R12
 
@@ -319,7 +321,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–N were checked against current owners with these semantic outcomes:
 
   | Case | Audited outcome / current owner |
-  | --- | --- |
+    | --- | --- |
   | A — filesystem preview | Repeated `D:\Samples\Kick\kick_17.wav` preview accepts no project media/Undo; close retains no accepted preview resource. Source disappearance affects further discovery/access, not project durability; [preview](../SAMPLE_WORKFLOW.md#preview-contextual-audition-and-accepted-use) |
   | B — filesystem use | Successful explicit import/use is coherent managed project acceptance; deleting/moving origin cannot break use; provenance is optional non-live metadata; [format](../PROJECT_FORMAT.md#source-provenance-and-reusable-content) |
   | C — content pack | Preview remains transient; only used audio is managed. Later Pack A uninstall cannot lose that audio; required active executable/preview lifetimes still respect existing safety; [extensions](../EXTENSIONS.md#lifecycle-and-missing-capabilities) |
@@ -348,15 +350,15 @@ is not established by local history; this log does not duplicate Git's commit ch
   and [completed-stage history](ROADMAP.md#seq-kb-r14--browser-library--reusable-content-semantics).
   Q-065 is partially resolved: semantics/stage ownership accepted; concrete mechanisms/evidence open.
   Q-009/Q-010/Q-011/Q-024/Q-029/Q-058/Q-059/Q-063/Q-071 remain open without separate narrowing.
-- Verified 34 repository Markdown files, 1,059 relative links/anchors, 71 unique canonical Q IDs
-  (68 open, 3 fully archived), D-001 through D-067 and reference integrity; owner/routing,
+- Verified 34 repository Markdown files, 1,059 relative links/anchors, 71 unique canonical Q IDs (68 open, 3 fully
+  archived), D-001 through D-067 and reference integrity; owner/routing,
   current/archive separation, roadmap numbering/order and unchanged R0 scope, media/preset/Undo consistency,
   documentation-only scope, UTF-8/LF/whitespace and `git diff --check`. No runtime evidence claimed.
 - Initial baseline: clean `master`, HEAD `de5d825f6bd83558da9428d9ee6bbce941d38e72`, checkpoint R13.
   Branch/HEAD/index and empty untracked baseline preserved; task edits unstaged. No production code,
   UI, projects, dependencies, tests, CI, prototypes, executable tooling, databases, indexes, scanners,
-  backends or plugin hosts introduced. No builds/tests, staging, commit or push. SEQ-R0 remains
-  **pending / not started**.
+  backends or plugin hosts introduced. No builds/tests, staging, commit or push. SEQ-R0 remains **pending / not
+  started**.
 
 ## 2026-10-08 — SEQ-KB-R15
 
@@ -366,7 +368,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–N were checked against current owners with these semantic outcomes:
 
   | Case | Audited outcome / current owner |
-  | --- | --- |
+    | --- | --- |
   | A — Russian host, English-only extension | Local English fallback keeps the capability available and other host surfaces Russian; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
   | B — missing/invalid translated entry | Per-resource usable English first-party fallback, then understandable host-owned generic presentation; no changed identity or unrelated capability loss; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
   | C — stable semantic identity | Display text never becomes command/property/node/port/capability/serialization identity; user Pattern/sample/track names stay user content; [identity](../ARCHITECTURE.md#stable-identity-and-provider-ownership) |
@@ -400,8 +402,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Initial baseline: clean `master`, HEAD `c2d9ca121de6d55bfe54687256f681e79ef5c4b5`, checkpoint R14.
   Branch/HEAD/index and empty untracked baseline preserved; all task edits unstaged. No code, projects,
   dependencies, tests, CI, executable tooling/experiments, UI prototypes, localization files, themes,
-  packages or plugin hosts created. No builds/tests, staging, commit or push; SEQ-R0 remains
-  **pending / not started**.
+  packages or plugin hosts created. No builds/tests, staging, commit or push; SEQ-R0 remains **pending / not started**.
 
 ## 2026-10-08 — SEQ-KB-R16
 
@@ -411,7 +412,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–O were audited against current contracts:
 
   | Case | Audited outcome / current owner |
-  | --- | --- |
+    | --- | --- |
   | A — Kick/Bass | Kick contribution/tap drives Bass-owned detector; Kick audible output continues, Bass audio remains separate; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
   | B — several destinations | Compatible consumers share the intended signal without requesting three unrelated performances; no buffer optimization or instance count selected; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
   | C — local/container | Dependencies connect existing scopes without another local level; target audible ownership survives external influence; [ownership](../ARCHITECTURE.md#cross-context-ownership-and-identity) |
@@ -431,7 +432,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses 1–12 accepted with explicit bounds, not assumed universal support:
 
   | Hypotheses | Audit result |
-  | --- | --- |
+    | --- | --- |
   | 1, 3, 4, 5 | Explicit project relationship and source/tap/dependency scope are necessary; detector/control influence alone adds no audible mix or local processing level |
   | 2 | Fan-out preserves one compatible intended source signal/performance; it neither guarantees free execution nor merges distinct required domains |
   | 6, 7 | No silent redirection after endpoint moves/deletes; retain invalid/unresolved intent only when safely understandable, with deliberate repair/removal and Undo |
@@ -466,11 +467,12 @@ is not established by local history; this log does not duplicate Git's commit ch
   [Q-071's accepted portion](RESOLVED_QUESTIONS.md#r17-resolved-portion--q-071-bounded-exploration-semantics).
   Updated sample, UX, UI design and extension owners, narrowed active Q-071 and advanced current state.
   Existing R7 scope already owns justified variation/locks/history for one/two families; active ROADMAP
-  and INDEX unchanged. Completed stage belongs to [history](ROADMAP.md#seq-kb-r17--sample-lab-exploration--candidate-semantics).
+  and INDEX unchanged. Completed stage belongs
+  to [history](ROADMAP.md#seq-kb-r17--sample-lab-exploration--candidate-semantics).
 - Cases A–Q checked against current contracts; conceptual audit, not implementation validation:
 
   | Case | Accepted result / current owner |
-  | --- | --- |
+    | --- | --- |
   | A — random Kick | Choose family, generate/listen/regenerate, revisit available results, explicitly accept into a valid project; no detailed parameter prerequisite or implicit material creation; [random](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
   | B — nearby A | Intentionally use A's supported family reference inputs; explain unsupported input instead of hidden unrelated random fallback; no universal metric; [random/nearby](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
   | C — decay lock | Preserve declared supported constraint while exploring permitted transient/pitch variation; coupled perceptual properties and waveform identity are not promised; [locks](../SAMPLE_WORKFLOW.md#supported-locks-and-reference-changes) |
@@ -492,7 +494,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses audited rather than adopted without bounds:
 
   | Hypotheses | Audit result |
-  | --- | --- |
+    | --- | --- |
   | 1 | Accepted sound-first beginner loop with optional advanced controls; no detailed parameter knowledge or final layout required |
   | 2 | Refined: related variation intentionally uses supported family reference state; no universal waveform similarity or arbitrary-audio analysis promise |
   | 3, 4 | Accepted only for declared supported constraints; future-only, captured per request, coupling/unsupported cases explicit, not waveform identity |
@@ -530,7 +532,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–T audited conceptually against current owners; these are not implementation tests:
 
   | Case | Result / current owner |
-  | --- | --- |
+    | --- | --- |
   | A — Drums Main placement | Pattern owns Kick/Snare/Hat parts/events and sound references; occurrence owns its timing/local relationships; Drums owns timeline organization and optional explicit context. No automatic Pattern bus; independent instrument routes survive before intentional aggregation; [identities](../ARCHITECTURE.md#separate-sharing-identities) |
   | B — Bass in Drums | Purpose can guide compatible defaults, not exclusive synth ownership. A supported Bass occurrence is not incompatible merely by name; no silent copy/conversion or route mutation; [Arrangement](../ARCHITECTURE.md#semi-free-arrangement) |
   | C — heterogeneous content | Supported Pattern, fragment, sample clip and future recording occurrences retain distinct content/time/resource/context relationships. Fundamentally unsupported structural relationships can block or require deliberate transformation; missing execution does not erase safely representable intent; [compatibility](../ARCHITECTURE.md#compatible-material-and-bounded-organization) |
@@ -555,7 +557,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses audited with concrete bounds:
 
   | Hypotheses | Disposition |
-  | --- | --- |
+    | --- | --- |
   | 1, 2, 3 | Accepted distinct reusable content/occurrence and normal many-use sharing; local ownership does not require a frozen property inventory or one class per responsibility |
   | 4, 5 | Accepted no automatic bus; containing processing aggregates only explicitly intended audible contributions, not external detector inputs or all uses of a definition. Independent required paths precede mixing |
   | 6, 7, 8 | Accepted separately expressible music/sound/occurrence/media independence. Detaching music retains intended sounds/contexts; detaching sound need not copy notes/media or live instances; unsupported opaque-state independence is explicit |
@@ -598,7 +600,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–T were analyzed conceptually, not executed:
 
   | Case | Result / current owner |
-  | --- | --- |
+    | --- | --- |
   | A — unnamed hour of work | Candidate identifies the document/lifecycle and captured revision before a filename. Recover captured work/media; no promise for the uncaptured interval. Save As establishes a saved destination only on success; retirement needs coverage/owners or informed discard; [recovery](../PROJECT_FORMAT.md#recovery-state) |
   | B — saved R10, recovered R15 | R10 remains last explicit Save, R15 is offered and accepted as recovered unsaved work without writing R10. Opening R10 does not discard R15; subsequent explicit Save/Save As has an understandable destination; [UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work) |
   | C — failed Save | Pre-commit disk-full/permission/write/interruption preserves prior Save/media and unsaved canonical edits, still recovery-eligible. Recovery success/failure is independent; no false Save success. Around-commit uncertainty is handled separately; [Save](../PROJECT_FORMAT.md#save-save-as-and-relocation) |
@@ -694,7 +696,8 @@ is not established by local history; this log does not duplicate Git's commit ch
 
 ## 2026-10-08 — SEQ-KB-R21
 
-- Completed the [roadmap/First Track dependency audit](AUDITS.md#seq-kb-r21--roadmap-dependency-and-first-track-closure-audit):
+- Completed
+  the [roadmap/First Track dependency audit](AUDITS.md#seq-kb-r21--roadmap-dependency-and-first-track-closure-audit):
   per-stage consumption/introduction/deferral/acceptance for R0–R14+, cross-stage matrix, complete-track
   walkthrough, focused investigations A–R, seven alleged cycles and evidence-gated critical path.
 - Found ambiguous production scheduler/offline and sampler acceptance ownership, possible future-context
@@ -821,3 +824,28 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   passes 199 tests, zero failures/skips, preserving all 192 existing tests. Windows x64, SDK 10.0.401.
   Existing source-removal, degraded access, destination-corruption and execution-lease tests still pass.
 - No dependencies, device/backend work or R2-F2 implementation; no staging, commit or push.
+
+## 2026-10-08 — SEQ-R2-F2 bounded realtime WAV and device integration
+
+- From clean master HEAD `4b709df6f3def521e1130ac33150992cc8ca982e`, reused F1 PCM/event/voice semantics
+  behind bounded realtime packets, ordered sticky controls, immutable revision preparation, candidate
+  admission, active/pending/retired handoff and control-side lease disposal. Added a narrow managed
+  Windows WASAPI output assembly and explicit Release physical harness; no native sampler or dependency.
+- Actual Windows 11 x64 / SDK 10.0.401 / runtime 10.0.12, Intel i7-13700KF and Steinberg UR12:
+  44.1 kHz stereo float32, 10 ms / 441-frame period, 970-frame capacity. Six 60 s 1/4/8-voice baseline/
+  GC/control runs and two eight-voice supplements passed with no period/packet misses or exhausted
+  padding. Whole running worker, service and processor managed allocation counters were zero within
+  declared boundaries. Independent oracle errors stayed below 2e-6; captured offline error was zero.
+- Ten fresh lifetimes, Stop/Restart/Panic, silence, publication/reclamation and joined release passed.
+  Supplements observed 93 in-flight cancellations and 47 supersessions each. Root sound changes use
+  fresh prepared coefficients, not callback mutation of canonical state. A separate termination boundary
+  never fabricates packet Stop acknowledgment. All prepared state counts reached zero after disposal.
+- The 30 ms stall intentionally produced one service/packet miss and exhausted padding, then fault-stopped
+  without catch-up. Injected invalidation returned 0x88890004; well-formed missing endpoint 0x80070490.
+  Canonical JSON and managed media remained accessible. These are not real hardware removal/DAC tests.
+- Locked restore/full Release build pass with zero warnings/errors; 215 tests pass, zero failures/skips,
+  preserving all 199 prior tests. Protocol/report retain exact timings, workloads, earlier oracle-check
+  failures, corrected full rerun, artifact identities and missing evidence. Current owners updated;
+  D-076 records bounded ownership/fault-policy rationale. Q-001–Q-007 and Q-047/Q-062/Q-069 stay open.
+- F2 is locally accepted-ready; overall R2 remains partial for its wider requirements. No R3/UI/graph/
+  Mixer/hosting/recording/permanent SDK, CI, commit/push, staging mutation or user work removal.

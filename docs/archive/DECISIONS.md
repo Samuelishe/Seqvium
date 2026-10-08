@@ -459,7 +459,8 @@ logging is activated outside it. Per-user preferences and project-affecting plug
 different ownership, and configuration reset must not delete projects or managed media.
 Owners: [SETTINGS](../SETTINGS.md) for policy/reset,
 [PROJECT_FORMAT](../PROJECT_FORMAT.md#project-state-and-user-preferences) for instance persistence,
-[WORKSPACE](../WORKSPACE.md) for layout, [DEVELOPMENT](../DEVELOPMENT.md#developer-diagnostics) for developer activation,
+[WORKSPACE](../WORKSPACE.md) for layout, [DEVELOPMENT](../DEVELOPMENT.md#developer-diagnostics) for developer
+activation,
 [UX_CONTRACT](../UX_CONTRACT.md) for settings interaction.
 Open mechanics: Q-052/Q-053; no exact log limits, paths, formats, or reset controls selected.
 
@@ -538,7 +539,8 @@ TopMost and unnecessary foreground/focus grabs are excluded. Reflow/overflow and
 preserve readable usable controls instead of continuously shrinking them. Independently rendered
 third-party editor visuals are outside this direction.
 Owners: [WORKSPACE](../WORKSPACE.md#main-window-chrome-and-foreground-behavior) for window behavior,
-[UI_DESIGN](../UI_DESIGN.md#responsive-layout-and-usable-minimums) for layout, [UX_CONTRACT](../UX_CONTRACT.md) for interaction.
+[UI_DESIGN](../UI_DESIGN.md#responsive-layout-and-usable-minimums) for layout, [UX_CONTRACT](../UX_CONTRACT.md) for
+interaction.
 Open mechanics: platform/framework behavior, accessibility validation, dimensions and breakpoints.
 
 ## D-049 — Research context is distinct from public material provenance
@@ -1279,3 +1281,30 @@ Current owners: [Architecture](../ARCHITECTURE.md#r2-f1-managed-media-and-offlin
 [Project format](../PROJECT_FORMAT.md#r2-f1-managed-wav-layout),
 [Sample workflow](../SAMPLE_WORKFLOW.md#r2-f1-minimum-import-and-use).
 Q-001–Q-007 remain open; Q-005/Q-006/Q-009/Q-047/Q-059/Q-063 are narrowed only within F1 evidence.
+
+## D-076 — Bounded F2 managed PCM execution and Windows output ownership
+
+Status: accepted within separately authorized SEQ-R2-F2; no permanent engine/backend/ABI choice.
+
+Reuse F1's musical/PCM kernel instead of a second realtime or native sampler. A narrow Windows assembly
+is justified by exclusive COM/output/clock/worker ownership; Core retains portable musical/project/PCM
+contracts. Use direct private OS vtables and installed system DLLs without a wrapper dependency or native
+sampler distribution. Physical measurements remain scoped evidence in the
+[F2 report](../experiments/SEQ-R2-F2_REPORT.md).
+
+One off-thread candidate and active/pending/retired execution states provide bounded ownership; consumer
+handoff precedes control-side release. Conservative lifecycle/revision/target/generation/cancellation
+acceptance and authority invalidation refuse stale work. Musical events stay complete and ordered;
+only gain coalesces. Sticky Stop/Panic survives control bursts. Replacement restarts the prepared Pattern
+in a new epoch without live voice transfer. This is not a graph compiler or general engine SDK.
+
+Choose fault-stop and explicit fresh reinitialization on starvation, clock discontinuity or device error.
+R0 showed that one stream clock can lag elapsed time; its experimental QPC fallback does not establish
+universal recovery. Do not replay old Note On events or grow a catch-up backlog. Terminal worker execution
+and lease cleanup are distinct from packet Stop/Panic acknowledgment. Broader recovery, de-click,
+lower periods, hardware removal, native comparison and clean distribution remain separate evidence.
+
+Current owners: [Architecture](../ARCHITECTURE.md#r2-f2-execution-and-platform-ownership),
+[Audio](../AUDIO_ENGINE.md#r2-f2-realtime-wav-and-windows-output),
+[Portability](../PORTABILITY.md), [Test execution](../TEST_EXECUTION.md).
+Q-001–Q-007 and Q-047/Q-062/Q-069 stay open for their wider remaining scope. Overall R2 stays partial.
