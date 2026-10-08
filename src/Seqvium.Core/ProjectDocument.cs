@@ -10,6 +10,8 @@ public sealed class ProjectDocument
     private readonly int _historyLimit;
     private readonly Guid _initialRevision;
     private bool _editing;
+    internal string? UnnamedMediaRoot { get; set; }
+    internal List<string> MediaRoots { get; } = [];
 
     public Guid LifecycleId { get; } = Guid.NewGuid();
     public long Generation { get; private set; }
@@ -17,6 +19,7 @@ public sealed class ProjectDocument
     public ProjectSnapshot Current { get; private set; }
     public ProjectSnapshot? Saved { get; private set; }
     public string? SavedPath { get; private set; }
+    public System.Collections.Immutable.ImmutableArray<string> SavedMediaDiagnostics { get; internal set; } = [];
     public bool IsDirty => (Saved?.Revision ?? _initialRevision) != Current.Revision;
     internal ProjectCompatibility Compatibility { get; set; } = new(0, 0);
     public int UndoCount => _undo.Count;

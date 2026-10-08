@@ -5,6 +5,94 @@ Read when: Designing the audio probe, scheduling, nodes, device I/O, recording, 
 Authoritative for: Realtime constraints, execution-state lifetime/resource integrity, processing context, backend/device boundary, recording, item-local hard boundaries, manual export ranges, finite tails, canonical offline render and finite preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
+## R2-F1 offline sampler foundation
+
+The reviewed direction is an initial bounded C# scheduler/DSP implementation with replaceable
+execution/device ownership. [F1 source](../src/Seqvium.Core/OfflineSampler.cs) implements resource/event
+preparation and offline execution, without a production callback or device adapter. R0's native structs,
+four-slot scheduler and 48 kHz endpoint are not reused. A permanent engine/ABI remains unselected;
+F2 must provide intended real-WAV/device/managed-pressure evidence before broader claims.
+
+### WAV and decoded ownership
+
+[WavDecoder](../src/Seqvium.Core/WavDecoder.cs) supports little-endian RIFF/WAVE PCM16 and IEEE float32,
+mono/stereo, 44,100/48,000 Hz. Supported `fmt` representations are 16 bytes, 18 bytes with zero extension,
+and 40-byte WAVE_FORMAT_EXTENSIBLE with full valid bits and PCM/float subtype GUIDs. Extensible masks
+are unspecified (0), mono front-center (4), or stereo front-left/right (3), preserving L/R ordering;
+other masks/container/valid-bit configurations are explicit refusals. These variants correspond to
+ordinary [Microsoft extensible format definitions](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ksmedia/ns-ksmedia-waveformatextensible).
+No compressed codecs, RF64/RIFX, PCM24/32, other rates/channel layouts, wavl/multiple data chunks,
+sample loops or generic codec plugins are supported.
+
+Require exact RIFF length, one prior `fmt` and one nonempty frame-aligned `data`, consistent byte rate/
+block alignment and valid extension/chunk bounds including odd padding. Unknown bounded chunks,
+including metadata/fact, are skipped; a fact chunk is not required for common float files. Do not use
+declared chunk lengths to allocate. Source input is limited to 16 MiB, decoded interleaved floats to
+at most 32 MiB per resource. PCM16 scales by 32768; finite float overload saturates to [-1,1]; NaN/Inf
+refuse the resource. Decode/read/hash/storage happen outside execution. Durable source bytes are
+separate under [project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout).
+
+`DecodedPcm` owns an immutable private sample array; Dispose releases its cache reference. Prepared
+and live execution hold independent leases to the same immutable array. Disposing a document/cache/
+prepared owner cannot invalidate an already created execution; execution disposal retires its leases.
+Owners are serialized; no concurrent lease/dispose or realtime reclamation protocol is claimed.
+
+### Pitches, voices and output
+
+`core.pcm-sampler.linear-v1` uses exactly one resource and explicit decimal `rootPitch` (0–127) and
+`releaseMilliseconds` (0–1000) in R1's sound parameters. MIDI-like note pitch permits fractional
+semitones within root ±12 and canonical [0,127]. Source cursor step is
+`sourceRate / executionRate * 2^((notePitch - rootPitch) / 12)`; root playback adapts source rate.
+Linear interpolation uses adjacent samples, interpolating the final sample toward zero. Cursor is
+derived from integer voice age, avoiding partition-dependent incremental floating-point drift.
+This bounded choice permits direct ramp oracles; it promises no anti-aliasing/high-quality stretching.
+
+Gain is canonical intensity directly in [0,1]. Mono duplicates to stereo; stereo preserves L/R or
+downmixes to mono with `(L+R)/2`. Independent voices sum into float output with headroom (no limiter,
+pan law, Master or FX). Note Off targets one `(Pattern, part, note, iteration)` execution occurrence,
+starts a linear release of `round(releaseMilliseconds * executionRate / 1000)` frames (ties later),
+or immediately retires when zero. Release gains are 1, (N-1)/N, ..., 1/N over N frames. Natural EOF may
+retire earlier. One note/iteration never resets another voice using the same sound/resource.
+
+Plans explicitly support 1–8 voice slots, with tested 1/4/8 configurations; these are F1 acceptance
+bounds, not a permanent universal ceiling or mono/legato/voice-stealing policy. Preflight considers
+duration, release, EOF and stop; an over-capacity plan is rejected wholly before output. All sources,
+including zero-frame note dependencies, must be understood and available. Unsupported algorithms,
+opaque sound state, extra sound parameters, relevant unknown Pattern/part/note/sound data and required
+placement processing/route/shared-performance relationships are refused, rather than silently omitted.
+Full execution domains, separate contribution outputs and plugins remain Q-047.
+
+### Timing, processing ranges and determinism
+
+Preparation freezes one current canonical revision and one Pattern. It supports a nonnegative absolute
+musical start and 1–1024 bounded repetitions; it does not render Arrangement placements. Every note
+start/end and iteration boundary is converted independently from absolute ticks with R1's exact
+constant-tempo mapper. No rounded duration/loop-period accumulation occurs. Events retain musical
+positions/IDs separately from Int64 derived execution frames. Rate changes never rewrite musical intent.
+
+Same-frame policy is Stop before Note Off before Note On; within a kind, absolute tick, part UUID,
+note UUID and iteration give deterministic order consistent with R1 equal-position starts. Positive
+notes whose rounded start/end coincide increment `ZeroFrameNotes` and emit neither On nor Off;
+canonical duration remains positive. The final hard boundary excludes all starts/releases there and
+retires every voice. An explicit musical Stop selects that boundary exactly. Without explicit Stop,
+offline completion allows at most the largest configured release after the absolute final Pattern
+boundary; the final Stop marker retains that musical boundary and its derived frame includes this
+bounded technical tail allowance. Ordinary repeats let prior releases continue independently.
+
+`OfflineSampler.Process` consumes caller-owned interleaved float spans over sequential [start,end)
+blocks. A boundary event belongs to the next block; reaching the final end retires voices immediately.
+Blocks cannot exceed the prepared range or split a frame. Stop clears technical execution state;
+Restart clears voices/event cursor and starts the same frozen plan deterministically. This offline
+hard stop does not choose future user-facing realtime de-click/settling or seek-state reconstruction.
+
+Working state is fixed slots plus immutable events/sources: at most 100,001 events and 128 MiB retained
+decoded PCM per plan. Preparation can temporarily hold one additional bounded resource/source buffer;
+output memory belongs to the caller and may be streamed in bounded blocks. No filesystem, decode,
+document traversal or output allocation occurs in Process. Same declared inputs are partition invariant
+locally; sample oracles use absolute tolerance 2e-6. Finite output, 120/137 BPM and both execution rates
+are tested. Cross-platform numerical parity, realtime deadlines/allocations and device output remain
+unevidenced. This is not R8 resampling, final WAV export, full transport, graph or Mixer execution.
+
 ## Accepted realtime constraints
 
 Realtime audio is separate from ordinary application work. The eventual execution path must prevent
@@ -283,9 +371,9 @@ SEQ-R0 implementation requirement.
 
 R1 keeps persistent musical time and canonical identities independent of every backend and of R0's
 sample-frame/native/publication layouts; see [architecture disposition](ARCHITECTURE.md#r1-canonical-foundation).
-R0's 48 kHz / 10 ms environment is bounded evidence only. Before production audio in R2, separately
-review the backend/ABI/managed-versus-native DSP boundary and necessary intended-workload, lower-period/
-device, elapsed-time recovery and clean-distribution evidence. Q-001–Q-007 are not resolved by R1.
+R0's 48 kHz / 10 ms environment is bounded evidence only. The reviewed disposition starts bounded
+managed F1 above; subsequent realtime/device work must evaluate intended workload, lower periods,
+elapsed-time recovery and clean distribution before wider engine/backend choices. Q-001–Q-007 stay open.
 
 The candidate chain is described in [ARCHITECTURE](ARCHITECTURE.md#proposed-application-and-audio-shape).
 A native realtime engine behind a narrow boundary, possibly C++ with miniaudio, is **proposed**.
@@ -356,5 +444,5 @@ decay, near-unity feedback, oscillation or non-decaying processors need bounded 
 label/UI, silence threshold, maximum extension, processor-tail reporting and non-decaying-tail handling
 are unselected. Q-057 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains finite completion, reset/warm-up,
 loop state ownership, de-click and realtime/offline parity mechanisms; latency/cancellation also need evidence.
-[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics; no production engine or
-renderer exists at this milestone.
+[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics. F1's offline
+single-Pattern sampler is implemented above; product render/export and realtime execution remain future work.

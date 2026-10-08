@@ -60,6 +60,20 @@ public sealed class ProjectEdit
                 ? sound : sound with { Parameters = parameters }) };
     }
 
+    public void ConfigurePcmSampler(Id<SoundDefinition> soundId, Id<ResourceDescriptor> resourceId,
+        decimal rootPitch, decimal releaseMilliseconds)
+    {
+        CheckActive();
+        PcmSampler.ValidateConfiguration(rootPitch, releaseMilliseconds);
+        State = State with { Sounds = Replace(State.Sounds, item => item.Id == soundId, sound =>
+        {
+            ProjectValidation.Require(sound.Algorithm == PcmSampler.Algorithm && sound.Extension is null,
+                "Only a first-party PCM sampler can accept this configuration.");
+            return sound with { ResourceIds = [resourceId], Parameters = sound.Parameters
+                .SetItem("rootPitch", rootPitch).SetItem("releaseMilliseconds", releaseMilliseconds) };
+        }) };
+    }
+
     public Id<InstrumentGroup> AddGroup(string name, params Id<SoundDefinition>[] soundIds)
     {
         CheckActive();

@@ -15,7 +15,10 @@ C#/.NET 10 is adopted for the R1 canonical foundation in [ARCHITECTURE](ARCHITEC
 Avalonia remains proposed, not adopted. [Seqvium.sln](../Seqvium.sln) contains the portable
 [Seqvium.Core](../src/Seqvium.Core/Seqvium.Core.csproj) library and one
 [Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj) executable test project.
-There is no workstation executable, UI or production audio engine. The standalone
+R2-F1 adds BCL-only WAV/media and offline sampler files within the same library; the
+[architecture](ARCHITECTURE.md#r2-f1-managed-media-and-offline-execution) lists source responsibilities.
+Default unnamed media ownership is under LocalApplicationData; tests always supply owned directories.
+There is no workstation executable, UI, realtime engine or device adapter. The standalone
 [SEQ-R0 probe](../experiments/seq-r0/README.md) remains independent.
 
 From the repository root with .NET SDK 10.0.401 (or a later patch in the 10.0.4xx band):

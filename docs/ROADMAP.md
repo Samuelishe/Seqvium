@@ -233,9 +233,14 @@ execution boundary. No graph editor, full plugin host, ASIO, or recording worksp
 
 ## SEQ-R2 — Audio Resource / Device Foundation
 
-Status: pending, not authorized by R1. Before production audio, separately review R0's narrowed
-evidence, permanent backend/ABI/DSP boundary and required intended-workload, period/device,
-elapsed-time recovery and distribution evidence. Domain tests do not close Q-001–Q-007.
+Status: **in progress / partial**. Separately authorized R2-F1 is the first bounded work package within
+R2, locally accepted-ready for managed WAV/import/Save As and offline pitched musical execution under
+the current [audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) and
+[format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout) owners. F1 is a working subdivision, not a new
+official numbered stage. The reviewed direction permits initial bounded C# scheduler/DSP with
+replaceable execution/device ownership, without adopting a permanent engine/native ABI. Subsequent F2
+realtime/device work is not implemented or authorized by F1; intended-workload, period/device,
+elapsed-time recovery and distribution evidence remain necessary. Q-001–Q-007 stay open. R2 is not complete.
 
 Establish audio resources, WAV import, preview, managed project media, a simple sampler, note/pitch
 playback, and resource lifetime. Do not expand immediately to every codec or sampler feature.

@@ -5,6 +5,25 @@ Read when: Designing discovery, generation, audition, sample acceptance, or resa
 Authoritative for: Browser discovery/audition, project-resource reuse, Personal Library publication/ownership, Sample Lab exploration/reference/locks/history, candidate acceptance, durable audio, object sampling and audible capture.
 Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing, or final resource file format.
 
+## R2-F1 minimum import and use
+
+The first bounded implementation exposes `ProjectMedia.BeginImport` / `WavImport.PrepareAsync` /
+`Accept`, using an explicit WAV path/stream and optional identified existing first-party sampler.
+Acceptance creates a managed resource and sampler sound, or replaces that sampler's resource/root/
+release configuration in one document edit. It never chooses a target from current selection. Callers
+await preparation, then accept on the document owner with cancellation and conservative generation
+validation; Dispose ends an unaccepted candidate. Previous accepted resource references and bytes stay
+coherent through rejection, Undo/Redo and Save. Physical preparation alone grants no canonical reference.
+
+Accepted bytes survive removal of the external source in unnamed projects, then bounded Save As/reopen
+under [project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout). Current project resources may be
+decoded/reused by identified sounds; decoded PCM is disposable, durable WAV is project-owned.
+Missing/corrupt accepted media preserves document intent and reports degraded access; existing damage
+permits explicitly reported degraded Save, while accepting unavailable new material is refused.
+No Browser, live audition UI/device, library publication, generator, object resampling or export is
+implemented by this path. [Audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) owns the offline
+pitched source and supported execution configurations. Personal Library ownership remains separate.
+
 ## The creative loop
 
 A sample is a first-class project resource. The intended loop is:

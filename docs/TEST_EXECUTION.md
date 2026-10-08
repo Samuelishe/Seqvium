@@ -29,6 +29,15 @@ compatibility/unknown data (including known-field edits), net-zero history, degr
 normal-process save failures. Fixtures are synthetic
 and files use owned temporary directories. The locked-file overwrite check is Windows-specific;
 the directory-target failure and canonical checks are portable. There are no timing sleeps.
+F1 adds `WavDecoderTests`, `ManagedMediaTests`, `OfflineSamplerTests` and the independent tiny
+`WavFixtures` writer. They cover supported/extensible PCM/float WAV, all truncated prefixes/chunk bounds,
+durable unnamed acceptance/source removal, Save As/reopen/relocation, actual integrity/degraded Save,
+pending/stale/Undo/close/cancel gates, interrupted reads/storage blockers and partial transfer failures.
+Async tests use explicit completion gates and cancellation, without sleeps. DSP tests use independent
+linear-ramp/envelope/rational timing oracles (absolute float tolerance 2e-6), 1/4/8 voices, independent
+release, equal-frame conflicts, zero-frame notes, partition/loop invariance, root/fractional pitch,
+44.1/48 kHz and 120/137 BPM. Capacity/dependency failures must occur before output. This is local
+functional evidence, not device timing, real disk-full/power-loss, process-crash or cross-platform proof.
 Current local totals and evidence limits belong to [PROJECT_STATE](PROJECT_STATE.md).
 
 The standalone [SEQ-R0 assertion harness](../experiments/seq-r0/README.md) remains independent:

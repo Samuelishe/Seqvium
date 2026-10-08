@@ -15,12 +15,16 @@ public sealed record ProjectLoadResult(ProjectDocument Document, ImmutableArray<
 {
     public bool IsDegraded => !Diagnostics.IsEmpty;
 }
+public sealed record ProjectSaveResult(ProjectSnapshot Snapshot, string Path, ImmutableArray<string> Diagnostics)
+{
+    public bool IsDegraded => !Diagnostics.IsEmpty;
+}
 
-/// <summary>Canonical encoding and a bounded synchronous file adapter; no media import or crash-recovery guarantee.</summary>
+/// <summary>Canonical encoding and bounded file/media publication; no crash-recovery guarantee.</summary>
 public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
-    public const string WriterVersion = "0.1.0-r1";
+    public const string WriterVersion = "0.2.0-r2-f1";
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     public static byte[] Encode(ProjectDocument document)
@@ -99,11 +103,27 @@ public static class ProjectPersistence
         var fullPath = Path.GetFullPath(path);
         using var stream = File.OpenRead(fullPath);
         var result = Read(stream, availableExtensions, availableResources);
+        result.Document.MediaRoots.Add(fullPath + ".media");
+        var diagnostics = result.Diagnostics.ToBuilder();
+        foreach (var resource in result.Document.Current.State.Resources.Where(ProjectMedia.IsManagedWav))
+        {
+            diagnostics.Remove($"Resource {resource.Id} is unavailable or has not been validated.");
+            try { using (ProjectMedia.Decode(result.Document, resource.Id)) { } }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+                diagnostics.Add($"Managed WAV {resource.Id} is unavailable or corrupt: {error.Message}");
+            }
+        }
         result.Document.MarkSaved(result.Document.Current, fullPath);
-        return result;
+        result.Document.SavedMediaDiagnostics = diagnostics.ToImmutable();
+        return result with { Diagnostics = diagnostics.ToImmutable() };
     }
 
     public static void Save(ProjectDocument document, string path)
+        => SaveWithReport(document, path);
+
+    /// <summary>Reports incomplete media availability while preserving safely interpretable canonical edits.</summary>
+    public static ProjectSaveResult SaveWithReport(ProjectDocument document, string path)
     {
         document.CheckAvailable();
         var snapshot = document.Current;
@@ -114,6 +134,7 @@ public static class ProjectPersistence
         bool ownsTemporary = false;
         try
         {
+            var diagnostics = ProjectMedia.PrepareSave(document, snapshot, destination);
             using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
                 ownsTemporary = true;
@@ -123,6 +144,9 @@ public static class ProjectPersistence
             File.Move(temporary, destination, overwrite: true);
             ownsTemporary = false;
             document.MarkSaved(snapshot, destination);
+            document.SavedMediaDiagnostics = diagnostics;
+            if (!document.MediaRoots.Contains(destination + ".media")) document.MediaRoots.Add(destination + ".media");
+            return new(snapshot, destination, diagnostics);
         }
         finally
         {

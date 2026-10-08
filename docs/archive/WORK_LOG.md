@@ -779,3 +779,32 @@ Regression sensitivity was demonstrated for lost unknown settings/part-relations
 invented no-op history: both new assertions failed before the fix and pass after preserving the
 original object-boundary data and comparing canonical collection content. Composed net-zero edits
 also retain revision/generation and Redo authority.
+
+## 2026-10-08 — SEQ-R2-F1
+
+Completed the first separately authorized R2 work package from clean `master`,
+HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partial.
+
+- Added bounded PCM16/float32 RIFF/WAVE decoding, mono/stereo and 44.1/48 kHz including the declared
+  full-valid-bit extensible variants. Tiny project-authored fixtures exercise formats/chunks/truncation,
+  nonfinite rejection and finite saturation; no media assets or dependencies were downloaded/introduced.
+- Added project-owned persistent unnamed media and associated JSON media directories, SHA-256 checks,
+  async preparation and conservative lifecycle/generation/target/cancellation acceptance through Edit.
+  Source deletion, explicit-target replacement, history retention and live decoded lifetime are tested.
+- Extended Save As with validated media-first/JSON-last publication, preservation on partial transfer/
+  destination failure and actual degraded Open/Save reports. R1 identities/unknown/opaque compatibility
+  remain unchanged. Accepted bytes and prior directories are retained; no destructive GC or recovery.
+- Added immutable device-independent single-Pattern plans and bounded offline PCM interpolation,
+  pitched/rate-adapted output, intensity, finite release/EOF, independent voices, hard Stop/Restart,
+  absolute repeated musical endpoints and semantic equal-frame ordering. Unsupported voice/event/
+  dependency scope rejects before output; zero-frame notes do not become stuck voices.
+- Locked restore and full Release solution build succeed with zero warnings/errors; full SDK 10 MTP
+  suite passes **192 tests, zero failures/skips**, including all 89 R1 tests. Windows x64, SDK 10.0.401 /
+  runtime 10.0.12. Independent ramp/envelope/rational oracles use float tolerance 2e-6; async gates use
+  completion sources/cancellation rather than sleeps. No physical device or cross-platform acceptance.
+- Updated affected current owners/open gaps and recorded D-075. Q-001–Q-007 stay open; bounded offline,
+  voice and normal-process storage/async evidence narrows Q-005/Q-006/Q-009/Q-047/Q-059/Q-063 only.
+  No permanent engine, callback/device F2, R3, graph/Mixer/FX, export, hosting, rolling recovery or CI.
+- All changes remain unstaged. No commit/push, staging/history mutation or pre-existing work removal.
+  Wider disk-full/permission/crash/around-commit/platform evidence, repair/GC and realtime behavior
+  remain explicit limitations; F1 is locally accepted-ready within its declared scope.

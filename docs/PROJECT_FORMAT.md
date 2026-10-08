@@ -5,8 +5,8 @@ Read when: Designing save/load, migration, managed media, or extension-state per
 Authoritative for: Compatibility direction, canonical Save/reopen, recovery-state and media integrity, opening/migration, versioned persistence and unknown-data preservation.
 Not authoritative for: A final container/schema, runtime domain classes, extension API, or recovery implementation.
 
-SEQ-R1 selects the bounded canonical JSON format below. Media packaging, recovery and later migration
-mechanisms remain open; this is not a final complete-project container.
+SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
+Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
 
 ## R1 canonical JSON format
 
@@ -63,7 +63,8 @@ artifact differs from a dangling canonical resource ID: the descriptor remains i
 former case. Limits are 16 MiB UTF-8 JSON, depth 64, 100,000 total entities and 4,096-character names/
 identifiers/locators. These initial bounds can evolve deliberately; they are not realtime capacities.
 Resource descriptors carry an optional portable relative managed locator and provenance only; R1
-neither imports bytes nor validates codec/media integrity. No external-reference import is adopted.
+alone neither imports bytes nor validates codec/media integrity; F1 supplies those boundaries below.
+No external-reference import is adopted.
 Caller-supplied sets of validated available resource/extension identities can suppress the corresponding
 load diagnostics; that is not executable compatibility negotiation or proof of playable audio.
 
@@ -71,8 +72,56 @@ The file adapter serializes a captured snapshot, writes an exclusively created s
 file, flushes it and replaces the destination before marking that snapshot saved. Serialization/write
 failure leaves current history and saved association unchanged; owned temporary files are cleaned up.
 This is bounded normal-process failure safety, not proven crash consistency/durability on every OS,
-rolling recovery, media transactions or Save As resource relocation. Streams provide encoding/read
+rolling recovery or general media transactions. F1 extends this adapter for bounded media Save As below.
+Streams provide encoding/read
 without implicitly marking saved. History is session-only. No runtime/UI/native/prepared state is stored.
+
+## R2-F1 managed WAV layout
+
+JSON remains major 1/minor 0, retaining compatible loaded higher minors and all R1 identities,
+unknown properties and opaque extension data. F1 needs no structural schema migration: existing
+`ResourceDescriptor.managedLocator` is `wav/<random UUID N>-<SHA-256 lowercase hex>.wav` for accepted
+WAV. UUIDs distinguish imports even for equal bytes; the hash verifies integrity, not deduplication or
+resource identity. `origin` is descriptive provenance and never a playback dependency. Sampler intent
+uses existing sound algorithm/decimal parameter fields under the [audio owner](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation).
+R1 readers can preserve this JSON but cannot reproduce the new algorithm or establish media availability.
+Legacy R1 descriptor-only resources remain interpretable/unvalidated; they are never promoted to
+accepted WAV by filename or caller availability assertions. Only the F1 `wav/` namespace is decoded/copied.
+
+Before first Save, the document's lifecycle owns a persistent
+`LocalApplicationData/Seqvium/ManagedMedia/<lifecycle UUID N>/wav/` directory. A caller may supply an
+owned parent for isolated tests/application integration. This is separate from temp decoded caches and
+Personal Library. A request exclusively creates/flushed-writes a `.pending` file, then renames to its
+unique immutable WAV path before acceptance. File existence alone is never canonical acceptance.
+There is no persisted unnamed document manifest or crash reconstruction: stored bytes remain protected,
+but recovery of musical edits still requires R12. Close/Undo/Redo/Save never delete accepted source bytes.
+
+For a named project `song.json`, locators resolve below `song.json.media/`. Move/copy JSON and this
+whole associated directory together. Save As preserves the project UUID and references. It validates
+source length/hash/codec, copies available current resources to exclusive temporary destination files,
+flushes and validates each copy, then installs immutable destination WAVs without overwriting existing
+bytes. Only after this prepares successfully does the sibling-temp JSON replacement mark the captured
+revision/path saved. A conflicting destination WAV or destination write/JSON failure preserves the
+previous Save and current unsaved work. Valid partial destination WAVs may remain conservatively;
+they do not establish a successful document Save and retries must validate them. Source directories and
+pre-existing destination content are never removed. JSON is the final normal-process publication point;
+this is not a cross-volume transaction, crash consistency or power-loss durability guarantee.
+
+Open checks actual F1 file bytes even when callers supply available-resource IDs. Missing, malformed,
+unsupported or hash-damaged media yields degraded diagnostics while references/unknown state remain.
+Execution refuses unavailable dependencies. Already unavailable input media permits degraded Save
+of safely interpretable edits: `SaveWithReport` returns diagnostics and `SavedMediaDiagnostics` also
+exposes the last Save/Open report for existing `Save` callers. Degraded Save As preserves unresolved
+locators and reports incomplete portable availability; it never substitutes bytes or claims repair.
+Errors transferring an available source still fail Save. Stream Read has no filesystem ownership and
+cannot validate WAV availability; stream Write/Encode neither collects media nor marks explicit Save.
+
+Current/saved/Undo/Redo snapshots retain canonical descriptors; session source roots remain available
+across Save As, pending requests own their candidate, and live decoded leases own independent PCM.
+No accepted-file GC is implemented: even history eviction/Close retains bytes, favoring protection over
+premature cleanup. Disk growth, orphan reconciliation, relink/repair, general owner tracking and recovery
+remain Q-059/Q-058. Disposable unaccepted request files and exclusively owned write temporaries may be
+removed after their operation ends. Each WAV is bounded to 16 MiB; total durable disk quota is unselected.
 
 ## Required direction
 
@@ -331,7 +380,8 @@ addressing or codec library is selected. Runtime cache must never be the only du
 
 This default does not select a single archive/file, directory/bundle, manifest plus media directory,
 or another versioned container. Exact embedding/copying policy, deduplication, garbage collection of
-unused media, collect/relocate workflow, checksums/content addressing, and storage layout remain open.
+unused media and general collect/relocate remain open. F1 chooses only the bounded layout/integrity
+hash above; wider content addressing, transcoding and cleanup remain open.
 Preserving user material does not authorize automatic deletion of unused resources.
 
 ## Source provenance and reusable content
@@ -346,8 +396,8 @@ Provenance may preserve useful origin information without requiring that origin 
 Personal Library ownership is independent of project media: project cleanup cannot delete a retained
 library original, and library removal cannot remove accepted project uses. A future shared physical
 storage/deduplication strategy must preserve these separate ownership/lifetime guarantees. Equal bytes,
-filenames or paths alone do not establish one semantic resource/source identity. No copy, container,
-content-addressing or metadata schema is selected.
+filenames or paths alone do not establish one semantic resource/source identity. F1 copies accepted
+WAV into project ownership; no shared library store, deduplication or library metadata schema is selected.
 
 Applying a preset/template retains sufficient project-owned sound configuration and required extension
 identity/compatible state, including opaque data where applicable, under
@@ -459,8 +509,8 @@ even if acknowledgement was lost, not a rollback to the previous Save by assumpt
 Storage adapters must eventually substantiate these requirements for their chosen representation and
 supported operating systems. A single filesystem rename does not establish general cross-file durability;
 no general ACID, cross-volume atomicity or power-loss guarantee is accepted. Layout/container/database,
-journal/log, rename/fsync strategy, integrity/hash algorithm, deduplication/content addressing, source
-retention/transcoding and cleanup protocol remain unselected. Q-058/Q-059 need race/fault-injection and
+journal/log, broader rename/fsync guarantees, deduplication/content addressing, transcoding and cleanup
+remain unselected beyond F1's bounded adapter above. Q-058/Q-059 need wider race/fault-injection and
 platform/storage evidence before concrete guarantees can be claimed.
 
 ### Failure-boundary matrix
@@ -535,15 +585,15 @@ data preservation, not executable plugin compatibility or arbitrary runtime dupl
 ## Open format choices
 
 R1 establishes bounded JSON, identity/time encoding, version refusal and compatible unknown-data
-preservation. A media-capable container/directory layout, future migration mechanisms, crash-safe
-save/recovery, resource integrity and executable extension-state evolution remain open in
+preservation. F1 adds the bounded managed WAV layout above. Broader containers/migrations, crash-safe
+save/recovery, wider resource integrity and executable extension-state evolution remain open in
 [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
 Q-058 retains crash-safe snapshot replacement/validation, candidate indexing/selection, cadence/debounce,
 bounded retention, recovery-choice realization and recording reconciliation. Q-059 retains durable-media
-transaction protocol/layout, corruption/integrity validation, repair, owner tracking/GC and Save As/
-collect/relocate consistency. Cross-platform storage guarantees and race/fault-injection evidence remain
+protocol beyond F1, repair, owner tracking/GC and broader Save As/collect/relocate consistency.
+Cross-platform storage guarantees and wider race/fault-injection evidence remain
 required; the identity/revision, failed/ambiguous completion and cleanup obligations are fixed above.
-The recovery/media product contracts above are accepted; their implementation mechanisms remain open.
+The recovery/media product contracts above are accepted; mechanisms beyond bounded F1 remain open.
 Exact derived preparation/publication mechanisms remain Q-018; canonical Save/reopen/render policy
 is accepted above and in the audio owner.
 WAV export is an audio deliverable, not a substitute for project serialization.

@@ -5,8 +5,8 @@ Read when: Structuring code, reviewing coupling, or evaluating architecture prop
 Authoritative for: Foundation-first logical domain/application/adapter/presentation boundaries, project lifecycle, timeline/organization/graph separation, musical/resource identities, semantic execution domains, signal ownership and processing scopes, Arrangement/Mixer relationships, canonical/derived state, semantic-action/input boundary, logical undo transactions and async commit integrity, host UI services.
 Not authoritative for: Exact project decomposition, audio internals, extension API, file format, or progress.
 
-SEQ-R1 selects a bounded managed canonical foundation below. Audio, graph execution, presentation and
-native choices remain separate future work; domain evidence does not establish their feasibility.
+SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed WAV resources and
+offline PCM execution. Realtime/device, graph, presentation and permanent engine choices remain separate.
 
 ## R1 canonical foundation
 
@@ -42,7 +42,7 @@ digits. Constant-tempo conversions use exact integer rational arithmetic and rou
 toward the later frame/tick. Always convert absolute boundaries; an executed duration is rounded end
 minus rounded start. Adding individually rounded durations can drift and is not scheduling semantics.
 A positive musical duration can map to zero frames below frame resolution; it remains positive in
-canonical state. Audible treatment belongs to the future scheduler/source scope, not this conversion.
+canonical state. F1 reports and omits zero-frame executions under the [audio owner](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation), without changing the note.
 Meters support numerator 1–64 and power-of-two denominator 1–64. Quarter-note tempo does not change
 with meter. Future tempo maps and fixed-time audio mappings require their own bounded representation;
 neither sample frames nor a concrete sample rate are persistent musical time.
@@ -53,15 +53,42 @@ whole coherent state/revision pairs; no unrelated edit coalescing, UI commands o
 The initial configurable history bound defaults to 256 entries; history is not persisted. A saved
 snapshot remains separately identified, so Undo to the saved revision clears dirty state. Transition
 generation advances even on Undo/Redo, and close ends lifecycle authority. These stamps offer a
-conservative future async gate; dependency-specific async acceptance/cancellation is not implemented.
+conservative F1 import gate; dependency-specific rebasing and general async adapters remain future work.
 Current/saved/history snapshots explicitly retain descriptors, without implementing physical media GC.
 Mutation is serialized by the caller on one owning thread; concurrent mutation is outside R1 scope.
 
 R0 demonstrates bounded managed/native execution feasibility only. Its native structs, four-slot
 publication, frame clock and observed 48 kHz / 10 ms endpoint are not production domain contracts.
-Before R2 production audio, a separately reviewed boundary must choose or narrow backend/ABI/DSP
-strategy and required intended-workload, period/device, clock-recovery and distribution evidence.
-Q-001–Q-007 remain open; R1 neither resolves them nor authorizes R2.
+The reviewed pre-R2 disposition permits an initial bounded C# scheduler/DSP direction with a replaceable
+execution/device boundary. F1 implements backend-independent resources and offline execution only.
+Q-001–Q-007 remain open; intended-workload realtime, period/device, clock-recovery and distribution
+evidence must inform subsequent choices. No permanent engine/native ABI follows from F1.
+
+## R2-F1 managed media and offline execution
+
+The existing library contains [WAV decoding](../src/Seqvium.Core/WavDecoder.cs),
+[media preparation/storage](../src/Seqvium.Core/ProjectMedia.cs) and
+[offline sampler preparation/execution](../src/Seqvium.Core/OfflineSampler.cs). No new assembly or codec
+framework is introduced. Durable source bytes belong to the project; decoded immutable PCM is a
+disposable cache with independent leases for prepared plans and live execution. Device facts and
+execution frames remain derived and absent from the canonical musical model.
+
+`ProjectMedia.BeginImport` captures project/lifecycle/generation and an explicit optional sound target.
+`WavImport.PrepareAsync` owns an unattached candidate, reads bounded source bytes, validates WAV on a
+worker and establishes flushed managed bytes. Completion grants no edit authority. The owner awaits
+completion, then `Accept` rechecks captured and current cancellation, open lifecycle, generation, project/target identity
+and stored integrity before one `ProjectDocument.Edit` adds the descriptor and creates/configures the
+sampler. Any intervening edit, Undo or Redo rejects the request even if content later looks identical.
+Save alone does not invalidate unchanged inputs; acceptance after Save creates newer dirty work.
+Cancellation observed at the acceptance gate permanently withdraws that request; cancellation after
+an established edit does not undo it. No selection lookup or implicit rebase occurs. Dispose after awaited completion ends an unaccepted
+candidate; accepted bytes are retained. Prepare/Accept/Dispose of one request may not overlap, and
+document mutations remain caller-serialized. There is no general concurrency/worker framework.
+
+The [format owner](PROJECT_FORMAT.md#r2-f1-managed-wav-layout) defines storage/Save integrity;
+[audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) defines bounded pitches, events and voices.
+Frozen single-Pattern execution rejects unsupported required processing/route/performance dependencies.
+It is neither Arrangement rendering nor a graph engine, and leaves execution replaceable for F2 evidence.
 
 ## Accepted constraints
 
@@ -128,7 +155,7 @@ Avalonia API or binding framework is selected or required by this boundary.
 Creating a new project and the first-class project/document lifecycle are fundamental, not optional late
 features. The project owns musical state, project settings, managed media, plugin instances/state,
 processing relationships and later arrangement/automation/recording data. New/Open/Save UI and container
-format remain open under [PROJECT_FORMAT](PROJECT_FORMAT.md).
+complete container remains open under [PROJECT_FORMAT](PROJECT_FORMAT.md); F1 selects a bounded JSON/media directory layout.
 
 Early architecture deliberately establishes the rails later work depends on: document and musical-domain
 ownership, versioned serialization, settings/configuration separation, diagnostics/logging, extension
@@ -308,7 +335,7 @@ Pending work conceptually carries original document identity and lifecycle, oper
 authorization, target identities/scope, expected ownership relationships, relevant context, sufficient
 source/settings/dependency preconditions, and relevance/cancellation state. Its relationship to the
 history state that made it meaningful must be known where needed. These are semantic requirements,
-not selected token fields, UUIDs, revision stamps, schemas or cancellation APIs.
+not a universal token schema or cancellation API. F1's conservative import realization is defined above.
 
 Before canonical commit, establish all applicable conditions together at the mutation boundary:
 
@@ -707,7 +734,8 @@ A durable audio resource and a musical occurrence/placement of it must not be as
 mutable object. Several items may reference `kick_017.wav`; local processing of one item must not
 silently rewrite the shared resource or every other use. The default creative model is non-destructive.
 An explicitly destructive/edit-source operation may be justified later, but ordinary item processing
-does not imply it. R1 implements descriptor/reference/edit identity; physical-media storage remains open.
+does not imply it. R1 implements descriptor/reference/edit identity; F1 implements bounded managed WAV
+storage under [project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout). Wider resource mechanisms remain open.
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns persistence obligations.
 
 Ordinary import/drag-and-drop creates durable project-managed media independent of its original arbitrary

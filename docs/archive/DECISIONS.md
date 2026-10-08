@@ -1245,3 +1245,37 @@ evidence to a separately reviewed pre-R2 boundary. Q-001–Q-007 are not closed 
 Current owners: [Architecture](../ARCHITECTURE.md#r1-canonical-foundation),
 [Project format](../PROJECT_FORMAT.md#r1-canonical-json-format), [Development](../DEVELOPMENT.md),
 [Test execution](../TEST_EXECUTION.md). Open remainder: Q-009/Q-019/Q-029/Q-063 and affected audio/media owners.
+
+## D-075 — Bounded managed WAV and offline sampler direction
+
+Accepted and implemented for separately authorized SEQ-R2-F1, 2026-10-08; R2 remains partial.
+The reviewed pre-R2 recommendation permits an initial C# scheduler/DSP direction with replaceable
+execution/device ownership. R0 evidenced managed/native viability at one Windows shared-mode
+48 kHz/stereo/10 ms endpoint, with better native timing tails under managed pressure; the small
+synthetic workload did not justify mandatory native DSP. Choose real WAV production foundations
+as the next evidence source, without promoting R0 structs/four-slot scheduling or a permanent engine.
+F1 implements no realtime callback, device adapter, native ABI or R3 work.
+
+Keep one Core library and the R1 canonical JSON/UUID/unknown/opaque contracts. Existing locators and
+sound parameters suffice for a bounded associated media directory and explicit sampler root/release;
+avoid an archive/database/schema migration/deduplication framework without demonstrated need. Unnamed
+documents own persistent lifecycle directories before Save. Unique immutable WAV filenames include
+SHA-256 for integrity, not semantic identity. Prepare/flush/validate media before a generation- and
+cancellation-gated owning transaction; physical files alone are never accepted musical state.
+Save As prepares/verifies destination media before replacing JSON, preserving prior source/current
+work and conservatively retaining partial/accepted bytes. Degraded Save preserves existing unresolved
+references with an explicit report; destination storage failures still fail. No power-loss, crash-safe
+recovery, cross-volume atomicity or general GC guarantee follows from this normal-process adapter.
+
+Choose linear interpolation as a bounded verifiable PCM algorithm with source/execution-rate-aware
+pitch, direct intensity gain, finite release/EOF and independent occurrence voices. Freeze single-
+Pattern immutable plans with absolute endpoint conversion, semantic Stop/Off/On ordering and explicit
+inaudible zero-frame handling. Preflight 1–8 slots prevents silent note loss; immutable PCM leases
+separate source lifetime from note/release ownership. Partition/loop oracles provide functional
+evidence; realtime workload/performance/parity and wider domains remain future evidence.
+
+Current owners: [Architecture](../ARCHITECTURE.md#r2-f1-managed-media-and-offline-execution),
+[Audio](../AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation),
+[Project format](../PROJECT_FORMAT.md#r2-f1-managed-wav-layout),
+[Sample workflow](../SAMPLE_WORKFLOW.md#r2-f1-minimum-import-and-use).
+Q-001–Q-007 remain open; Q-005/Q-006/Q-009/Q-047/Q-059/Q-063 are narrowed only within F1 evidence.
