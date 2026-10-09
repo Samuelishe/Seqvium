@@ -1446,3 +1446,27 @@ repaired references and artifact disposition, preserving user work, tests, reusa
 Current owners: [evidence retention](../experiments/README.md#evidence-retention),
 [resource/code placement](../CODING_GUIDELINES.md#resource-and-shared-code-placement),
 [local verification outputs](../DEVELOPMENT.md#verification-output-organization) and [AGENTS](../../AGENTS.md).
+
+## D-083 — Expanded resize targets and workspace boundary arbitration
+
+Status: accepted bounded implementation choice within the owner-authorized R3-F2 usability correction;
+R3 remains partial pending interactive acceptance.
+
+Separate the 1-DIP visible border from inward/outward DIP interaction tolerance. Expanded pane-local
+overlays cannot safely arbitrate neighbours or exposed portions of overlapping surfaces. One narrow
+workspace resolver therefore owns hover/press selection using actual visible geometry and front order,
+with control precedence, visible-surface ownership, covered-boundary exclusion and nearest-boundary /
+front-order gap ties. It freezes pane/edge identity before activation. Direction cursor plus transient
+edge accent provides feedback without changing selection or activation; capture keeps the existing
+anchored geometry and cancellation lifetime.
+
+This refines D-081 without introducing a generic docking/collision framework. Touching floating panes
+and current left/right docks remain independent; exact seams choose the front pane and resizing changes
+only its width. Future magnetic alignment must not imply a persistent relationship. A future explicitly
+shared structural boundary should have one workspace splitter with activation-independent hit testing
+and adjacent minimum-size constraints, rather than two local handles. No snapping, splitter or dock tree
+is implemented by this decision.
+
+Current owner: [Workspace boundary ownership](../WORKSPACE.md#resize-hit-targets-and-boundary-ownership).
+[Usability evidence](../experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records
+pure tests, actual Windows Release checks and the exact-seam framework cursor-route correction.

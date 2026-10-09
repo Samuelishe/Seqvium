@@ -40,10 +40,16 @@ Optional Inspector/Appearance surfaces use 28-DIP headers, 1-DIP boundaries, min
 existing semantic resources/body typography. Active panes have a distinct outline and stronger title;
 keyboard-focused actions retain the separate visible control focus treatment. The actions, collapse,
 close and resize affordances are compact; dock actions live in a deliberately opened menu. Floating
-resize strips are 5 DIP with 10x10-DIP corners taking priority. Title/actions/content are inset clear
-of those regions; the 28-DIP title row retains compact typography. The bottom-right marker is inside
-its actual corner hitbox; the remaining bottom edge uses a vertical cursor. Header title space uses
-a move cursor; action buttons own arrow cursors with normal hover/pressed/focus styling. Docked panes
+resize targets use invisible inward/outward tolerance around the narrow visual boundary, with larger
+corner regions taking priority. Interactive target size is separate from border thickness: density
+must not require precise placement on a hairline. Controls and visible neighbouring content keep
+input ownership; no additional permanent padding or decorative grips are needed. A transient accent
+on the chosen 1-DIP boundary edges and the direction cursor identify the intended pane/action before capture,
+without activation or selection changes. [Workspace](WORKSPACE.md#resize-hit-targets-and-boundary-ownership)
+owns exact tolerance and arbitration. The 28-DIP title row retains compact typography. The existing
+bottom-right marker stays inside its corner target; the remaining bottom edge uses a vertical cursor.
+Header title space uses a move cursor; action buttons own arrow cursors with normal hover/pressed/focus styling. Docked
+panes
 expose only their horizontal inner divider. Close (×) and Collapse (−) remain distinct. A 28-DIP
 bottom strip appears only while a pane is visible/collapsed, with an upward collapse marker and readable
 localized titles. Hidden/default panes occupy no persistent workspace surface. Inspector rows contain

@@ -92,9 +92,70 @@ DIP sizes, then clamps negative/nonfinite/oversize positions and sizes. Window r
 bounds and edge widths; it does not shrink typography or introduce whole-window scrolling. Last floating
 geometry is separate from a docked rectangle. Storage/failure/shutdown semantics are owned once in
 [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage).
-[F2 correction evidence](experiments/SEQ-R3-F2_REPORT.md#geometry-and-chrome-correction) records actual
-Windows interaction/cursors and screenshots. Owner interactive acceptance is still pending;
+[F2 correction evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records actual
+Windows interaction/cursors and screenshots. The owner confirms the preceding geometry/chrome defects
+are corrected; interactive acceptance of the hit-target/boundary correction is still pending;
 high/mixed DPI, cross-monitor and other OS runtime are not accepted from pure geometry tests.
+
+### Resize hit targets and boundary ownership
+
+The visible border remains 1 DIP. Floating edge tolerance is 6 DIP inward and 6 DIP outward from the
+actual rendered rectangle (12 DIP total); corner regions extend 12 DIP inward and 6 DIP outward on
+both axes (18x18 DIP). Corners take precedence over ordinary edges of the same pane. The workspace
+clips outward tolerance at its perimeter; controls and visible neighbours can reduce the available
+region. No extra workspace padding or larger permanent grips are introduced.
+
+`WorkspaceHost` resolves hover and pointer-down through one bounded resolver using actual arranged
+pane rectangles in workspace DIPs, visible state, back-to-front order and the operations available
+for the placement. It does not derive boundaries from retained floating geometry for docked panes.
+Selection rules, in order:
+
+1. Buttons, text/edit controls, selecting/range controls, scroll thumbs, menu items and other focusable
+   control sources/ancestors retain input ownership. Their normal cursor/action wins over resize.
+2. Hidden/collapsed panes and coordinates outside the usable workspace are unavailable.
+3. If the pointer is on a visible pane rectangle, only the topmost rectangle at that point may supply
+   a boundary. Another pane's outward tolerance never reaches through that working surface.
+4. A candidate whose corresponding edge/corner point is covered by the interior of a higher pane is
+   unavailable even when its expanded tolerance reaches an otherwise empty gap. Merely touching
+   rectangle boundaries does not obscure either pane's inward target.
+5. In empty workspace where tolerances compete, choose the nearest available edge/corner point (Euclidean distance); an
+   exact tie chooses the frontmost pane. The current visible front order
+   resolves coincident seams too. Active identity itself is not a hit-test input.
+
+Hover shows the chosen direction cursor and accents only the intended edges at the existing 1-DIP
+boundary. This cue stays below higher panes; it neither activates/reorders a pane nor changes focus,
+document selection or command targets. Layout/front-order changes refresh it with the pointer stationary.
+Pointer-down resolves before activation, freezes instance identity and edges in one gesture, then
+activates/brings forward and captures immediately. An inactive pane resizes on that first press.
+Activation/reordering and crossing another boundary cannot retarget capture. Original anchors,
+blocked-travel reversal, focus already inside the pane, exact placement rollback and layout commit
+on release are preserved. Escape cancels resize without moving focus out of the pane; capture loss,
+deactivation, reflow and competing operations retain the same cancellation rules.
+
+### Independent, aligned and shared boundaries
+
+**Independent floating panes:** nearby, touching or aligned edges establish no shared ownership or
+size constraint. Each visible side retains its own inward region. At an exact touching seam the front
+pane wins; in an empty gap the distance/front-order rule applies. Hover identifies the intended pane
+and edges before capture; only that pane resizes.
+
+**Magnetic alignment (future):** visual edge snapping would be an alignment convenience. It must not
+automatically establish a persistent dock relationship or shared size constraint. Magnetic snapping
+is not implemented by this correction.
+
+**Explicit linked/docked boundaries (future):** when a supported layout declares one structural boundary
+between two panes, it should own one workspace splitter rather than competing local resize handles.
+Such a splitter may resize both adjacent panes within their declared minimum sizes. Its ownership and
+hit testing must be independent of activation; pointer-down freezes splitter identity. No arbitrary
+dock groups, docking trees or coupled floating resize are implemented here.
+
+**Current limited left/right docks:** the two widths remain independent, each at most half the usable
+workspace. Each exposes only its horizontal inner edge. When the inner edges meet, the left/right
+visible sides select their respective panes; the exact seam selects the front pane. Nearby dividers
+with competing tolerance in the gap use distance, then front order. A gesture changes only its chosen
+dock width, preserving its workspace anchor and the neighbour's width. Shrinking opens a gap; expansion
+at the half-width limit saturates normally. This is deterministic independent-boundary resizing, not
+an implemented shared splitter or coupled divider.
 
 ## One main application window
 

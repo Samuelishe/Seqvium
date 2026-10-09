@@ -13,8 +13,9 @@ R2-F1/F2/F3/F4 are accepted working subdivisions, not new numbered stages.
 The [F4 complete R2 audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit) finds no missing
 R2 prerequisite for scoping R3. **R3 is in progress / partial**: separately authorized R3-F1 implements
 the accepted desktop/presentation foundation. R3-F2 implements bounded internal panes and independent
-user layout persistence. The focused geometry/chrome correction is locally verified; F2 interactive
-acceptance remains incomplete until the owner repeats the previously failing interactions successfully.
+user layout persistence. The owner confirms the preceding geometry/chrome defects are corrected.
+Expanded resize targets and workspace boundary arbitration are implemented; F2 interactive acceptance
+of this usability correction remains pending owner review.
 SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / narrow** under its
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 The initial bounded C# scheduler/DSP keeps execution and device ownership replaceable.
@@ -30,6 +31,9 @@ preferences and workspace layout separately from music/media. Windows custom chr
 movement/resize; other desktops retain native chrome until evidenced. No editor, file-dialog lifecycle,
 audio startup or reset UI is implemented. Optional internal Project Inspector and Appearance panes support
 floating, activation/front order, captured drag/resize, collapse/hide/reopen and explicit left/right docking.
+Thin borders have expanded DIP targets with workspace-owned hover/resize arbitration and frozen gesture
+identity; floating panes and the current two docks retain independent widths, without magnetic snapping
+or shared splitters.
 [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns
 behavior; [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage)
 owns the versioned bounded user file and failure safety. [F1 report](experiments/SEQ-R3-F1_REPORT.md)
@@ -64,8 +68,8 @@ Endpoint selections/facts remain absent from canonical music/settings/Undo and p
 
 ## Current focus
 
-R3-F2 is implemented with corrected anchored edge/corner resizing and close chrome; R3 remains partial.
-Owner repetition of the resize/chrome interactions is still required before correction acceptance.
+R3-F2 is implemented with usable edge/corner targets and deterministic boundary arbitration; R3 remains partial.
+Owner interactive acceptance of the resize usability correction is still required.
 Later shell/editor integration needs separate bounded authorization.
 Do not infer authorization for further stages. Preserve portable canonical intent and narrow adapters. MIDI/capture
 buffers, clocks,
@@ -76,7 +80,7 @@ The ordered First Track scenario in [ROADMAP](ROADMAP.md) is unchanged.
 ## Validation baseline
 
 Local Windows x64, SDK 10.0.401 / runtime 10.0.12: locked restore and full Release solution build, **zero
-warnings/errors; 396 passing tests, zero failures/skips**, preserving all 346 pre-correction cases.
+warnings/errors; 428 passing tests, zero failures/skips**, preserving all 396 baseline cases.
 34 host cases cover RU/EN fallback, complete Dark/Light roles, compact metrics/version, canonical/pending import
 preservation,
 preference roundtrip/corruption/write failure and pure host lifecycle without a display. Another 38 F2
@@ -84,11 +88,16 @@ cases cover pane transitions, bounded geometry/order, docking conflicts, user-fi
 pending-write shutdown and independence from actual project Save/prepared WAV work.
 50 correction cases verify exact anchors/reversal/saturation/cancellation, compact hit-region rules,
 button-source exclusion, localized close semantics and backward-compatible independent dock-width storage.
+32 boundary cases add tolerance/corner precedence, visible-side and gap arbitration in both front orders,
+obscured/invisible boundaries, control exclusion, inactive direct resize/frozen identity and independent dock seams.
 Actual Windows 11 x64 desktop smoke verifies chrome movement/resize/minimize/maximize/restore,
 Tab/Enter/Space, Alt+Space, Win+Up/Down and Alt+F4, live language/theme and focus retention at 96 DPI.
-[F2 correction evidence](experiments/SEQ-R3-F2_REPORT.md#geometry-and-chrome-correction) adds 359 actual
-Windows pointer/control/cursor checks at 1100x750 and 640x511 across RU/EN and Dark/Light. The original
-58-check smoke missed owner-reproduced resize/cursor defects and is insufficient for interactive acceptance.
+[F2 boundary evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records 525
+completed
+Windows pointer/control/cursor checks at 1100x750 and 640x511 across RU/EN, Dark/Light and both initial
+front orders. Tolerance, touching/overlapping surfaces, meeting/nearby dock edges, anchored reversal,
+focus, cancellation and release-time persistence are exercised. Failed intermediate runs and automation
+limits are recorded separately; this does not replace owner interactive acceptance.
 Generated screenshots remain ignored local review artifacts. No Windows audio adapter loads in
 the desktop process; no playback/capture/DeviceCheck launch is requested.
 RID-independent desktop build without apphost also passes locally; this is not hosted OS evidence.

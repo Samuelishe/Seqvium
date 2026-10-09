@@ -15,8 +15,8 @@ internal enum PaneEdges
 /// <summary>Resize clamps the selected edge, never translates its opposite anchor.</summary>
 internal static class PaneGeometry
 {
-    public const double EdgeThickness = 5;
-    public const double CornerSize = 10;
+    public const double EdgeThickness = 6;
+    public const double CornerSize = 12;
 
     public static PaneBounds Resize(PaneBounds start, PaneEdges edges, double dx, double dy,
         double width, double height, PaneDefinition definition, PaneDock dock)
@@ -54,7 +54,11 @@ internal static class PaneGeometry
     public static PaneEdges HitTest(double x, double y, double width, double height, PaneDock dock,
         bool control = false)
     {
-        if (control || x < 0 || y < 0 || x > width || y > height) return PaneEdges.None;
+        // Six DIPs on either side of the visual boundary; corners extend twelve inward, six outward.
+        if (control || !double.IsFinite(x) || !double.IsFinite(y) ||
+            x < -EdgeThickness || y < -EdgeThickness ||
+            x > width + EdgeThickness || y > height + EdgeThickness) return PaneEdges.None;
+        if (dock != PaneDock.Floating && (y < 0 || y > height)) return PaneEdges.None;
         if (dock == PaneDock.Left) return x >= width - EdgeThickness ? PaneEdges.Right : PaneEdges.None;
         if (dock == PaneDock.Right) return x <= EdgeThickness ? PaneEdges.Left : PaneEdges.None;
         var horizontal = x <= EdgeThickness ? PaneEdges.Left :

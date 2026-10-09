@@ -3,6 +3,7 @@
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -26,9 +27,10 @@ internal sealed class WorkspacePane : Border, IDisposable
     private readonly Button _collapse;
     private readonly Button _hide;
     private readonly Border _header;
+    private readonly Cursor _moveCursor = new(StandardCursorType.SizeAll);
+    private readonly Cursor _arrowCursor = new(StandardCursorType.Arrow);
     private readonly Grid _surface = new();
-    private readonly List<Border> _resizeHandles = [];
-    private readonly Border _dockGrip;
+    private readonly Border _corner;
     private readonly FirstPartyPaneContent _content;
     private readonly ContextMenu _menu = new();
     private readonly List<(MenuItem Item, string Key)> _items = [];
@@ -85,32 +87,14 @@ internal sealed class WorkspacePane : Border, IDisposable
         _content = new(session, definition, language, theme);
         Grid.SetRow(_content, 1);
         body.Children.Add(_content);
-        AddResizeHandle(HorizontalAlignment.Left, VerticalAlignment.Stretch, PaneGeometry.EdgeThickness, double.NaN,
-            StandardCursorType.SizeWestEast);
-        AddResizeHandle(HorizontalAlignment.Right, VerticalAlignment.Stretch, PaneGeometry.EdgeThickness, double.NaN,
-            StandardCursorType.SizeWestEast);
-        AddResizeHandle(HorizontalAlignment.Stretch, VerticalAlignment.Top, double.NaN, PaneGeometry.EdgeThickness,
-            StandardCursorType.SizeNorthSouth);
-        AddResizeHandle(HorizontalAlignment.Stretch, VerticalAlignment.Bottom, double.NaN, PaneGeometry.EdgeThickness,
-            StandardCursorType.SizeNorthSouth);
-        AddResizeHandle(HorizontalAlignment.Left, VerticalAlignment.Top, 10, 10, StandardCursorType.TopLeftCorner);
-        AddResizeHandle(HorizontalAlignment.Right, VerticalAlignment.Top, 10, 10, StandardCursorType.TopRightCorner);
-        AddResizeHandle(HorizontalAlignment.Left, VerticalAlignment.Bottom, 10, 10,
-            StandardCursorType.BottomLeftCorner);
-        var corner = AddResizeHandle(HorizontalAlignment.Right, VerticalAlignment.Bottom, 10, 10,
-            StandardCursorType.BottomRightCorner);
-        corner.Child = new TextBlock
+        _corner = new Border
         {
-            Text = "◢", FontSize = 10, Classes = { "caption" }, IsHitTestVisible = false
+            HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom,
+            Width = 10, Height = 10, IsHitTestVisible = false,
+            Child = new TextBlock { Text = "◢", FontSize = 10, Classes = { "caption" } }
         };
-        _dockGrip = new Border
-        {
-            Width = PaneGeometry.EdgeThickness, Background = Avalonia.Media.Brushes.Transparent,
-            Cursor = new(StandardCursorType.SizeWestEast)
-        };
-        _surface.Children.Add(_dockGrip);
-        _dockGrip.PointerPressed += (_, args) => Begin(args, true);
-        _header.PointerPressed += (_, args) => Begin(args, false);
+        _surface.Children.Add(_corner);
+        _header.PointerPressed += (_, args) => Begin(args);
         AddHandler(PointerPressedEvent, (_, _) => host.Activate(Id), RoutingStrategies.Tunnel);
         AddHandler(GotFocusEvent, (_, _) => host.Activate(Id));
         PointerMoved += Move;
@@ -118,20 +102,6 @@ internal sealed class WorkspacePane : Border, IDisposable
         PointerCaptureLost += (_, _) => CancelGesture();
         // Consume local geometry chords before standard Shift+Arrow focus navigation.
         AddHandler(KeyDownEvent, PaneKeyDown, RoutingStrategies.Tunnel);
-    }
-
-    private Border AddResizeHandle(HorizontalAlignment horizontal, VerticalAlignment vertical,
-        double width, double height, StandardCursorType cursor)
-    {
-        var handle = new Border
-        {
-            HorizontalAlignment = horizontal, VerticalAlignment = vertical, Width = width, Height = height,
-            Background = Avalonia.Media.Brushes.Transparent, Cursor = new(cursor)
-        };
-        handle.PointerPressed += (_, args) => Begin(args, true);
-        _resizeHandles.Add(handle);
-        _surface.Children.Add(handle);
-        return handle;
     }
 
     private Button ChromeButton(string glyph, string action, Grid header, int column)
@@ -175,11 +145,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         NameAction(_hide, "Pane.Close");
         _left.IsEnabled = _right.IsEnabled = pane.AllowDocking;
         _permission.IsChecked = pane.AllowDocking;
-        foreach (var handle in _resizeHandles) handle.IsVisible = pane.Dock == PaneDock.Floating;
-        _dockGrip.IsVisible = pane.Dock != PaneDock.Floating;
-        _dockGrip.HorizontalAlignment =
-            pane.Dock == PaneDock.Right ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-        _header.Cursor = new(pane.Dock == PaneDock.Floating ? StandardCursorType.SizeAll : StandardCursorType.Arrow);
+        _corner.IsVisible = pane.Dock == PaneDock.Floating;
         _content.Refresh();
     }
 
@@ -196,28 +162,30 @@ internal sealed class WorkspacePane : Border, IDisposable
         if (!_disposed && IsVisible && TopLevel.GetTopLevel(this) is not null) _actions.Focus();
     }
 
-    private void Begin(PointerPressedEventArgs args, bool resize)
+    internal void SetResizeCursor(Cursor? cursor)
     {
-        if (_disposed || !args.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        Cursor = cursor;
+        _header.Cursor = cursor ?? (_host.State.Get(Id).Dock == PaneDock.Floating ? _moveCursor : _arrowCursor);
+    }
+
+    private void Begin(PointerPressedEventArgs args)
+    {
+        if (_disposed || args.Handled || !args.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
         if (args.Source is Visual source && IsActionSource(source)) return;
-        if (!resize && _host.State.Get(Id).Dock != PaneDock.Floating) return;
-        var position = args.GetPosition(_surface);
-        var edges = resize
-            ? PaneGeometry.HitTest(position.X, position.Y, _surface.Bounds.Width,
-                _surface.Bounds.Height, _host.State.Get(Id).Dock)
-            : PaneEdges.None;
-        if (resize && edges == PaneEdges.None) return;
+        if (_host.State.Get(Id).Dock != PaneDock.Floating) return;
         _host.CancelGestures();
         _pointer = args.Pointer;
         var origin = args.GetPosition(_host);
-        _gesture = new(_host.State, Id, edges, origin.X, origin.Y);
+        _gesture = new(_host.State, Id, PaneEdges.None, origin.X, origin.Y);
         args.Pointer.Capture(this);
         if (!IsKeyboardFocusWithin) FocusContext();
         args.Handled = true;
     }
 
     internal static bool IsActionSource(Visual source) =>
-        source.GetVisualAncestors().Prepend(source).Any(item => item is Button);
+        source.GetVisualAncestors().Prepend(source).TakeWhile(item => item is not WorkspacePane)
+            .Any(item => item is Button or TextBox or SelectingItemsControl or RangeBase or Thumb or MenuItem ||
+                         item is Control { Focusable: true });
 
     private void Move(object? sender, PointerEventArgs args)
     {

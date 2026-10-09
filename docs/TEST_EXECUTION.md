@@ -113,7 +113,8 @@ acceptance; high/mixed DPI, screen readers and Linux/macOS runtime remain missin
 ## R3-F2 workspace verification
 
 `Desktop/WorkspaceStateTests` and `WorkspaceLayoutTests` initially added 38 deterministic cases.
-The geometry/chrome correction adds 50 cases, for **396 total**, retaining all 346 pre-correction cases.
+The geometry/chrome correction adds 50 cases (396 at that checkpoint). The resize-target/boundary
+correction adds 32 `WorkspaceBoundaryTests` cases, for **428 total**, retaining all 396 baseline cases.
 The initial tests cover stable identity/localization, bounded front order, overlap
 activation, floating/docked geometry and reflow, collapse/hide/reopen, traversal/disposal, per-pane docking
 permission/conflicts, restored dock intent, early-close snapshots, bounded/partial/corrupt/future files,
@@ -125,11 +126,17 @@ boundary/minimum saturation, dock width limits and retained floating bounds, rol
 regions. `PaneChromeTests` checks actual Button/nested-visual source exclusion before capture, without
 platform initialization. Additional layout tests verify independent dock width and legacy version-1 reads.
 Localized close labels and keyboard hints are checked separately from actual control accessibility.
+`WorkspaceBoundaryTests` exercises inward/outward tolerance, corner priority, distance/front-order ties,
+touching visible sides, covered/invisible boundary exclusion, control sources, inactive direct resizing,
+gesture stability after reordering and current independent dock seams. These display-independent cases
+do not initialize Avalonia's platform or claim native cursor/capture correctness.
 Use the same locked restore/full Release commands.
 The [F2 correction](experiments/SEQ-R3-F2_REPORT.md#geometry-and-chrome-correction)
 records 359 actual Windows input/cursor checks, retained content identity/focus and inspected local captures.
 The original 58 checks missed the owner's reproducible resize/cursor defects; they do not establish
 interactive acceptance. Pure tests do not establish control focus, pointer capture, visual or OS acceptance.
+[Boundary correction evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration)
+records real Windows Release tolerance, overlapping/meeting boundary, source-route cursor and focus checks.
 High/mixed DPI, screen-reader certification, Linux/macOS and crash/power-loss guarantees remain untested.
 
 ## Intended test topology
