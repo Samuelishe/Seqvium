@@ -255,6 +255,69 @@ revision with safe atomic publication/retirement and coalescing of obsolete prep
 execution may continue in-session while invalid edits remain canonical and savable; show the divergence.
 Publication/compiler/cancellation/failure strategy remains open; no manual Apply workflow is required.
 
+### Proposed R4 delivery packages
+
+**Planning only; no package is authorized or started by SEQ-R4-PRE.** These are subdivisions of R4,
+not numbered roadmap stages. The [readiness recommendation](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
+owns the audited source boundaries, proposed representation and open choices. The preferred sequence
+is F1 -> F2 -> F3: settle savable intent before derived execution, then expose real editing over proven
+audio. F1 alone is not R4 acceptance; F2's independent-source and F3's actual user workflows are mandatory.
+
+**R4-F1 — canonical executable intent.** Extend Core `Domain/ProjectModel.cs` or a cohesive graph model
+file, `Domain/ProjectValidation.cs`, `Documents/ProjectEdit.cs`, `Documents/ProjectDocument.cs` and
+`Persistence/ProjectPersistence.cs`. Add graph/node/port/connection/attachment IDs, parameters/source
+bindings, graph coordinates, separated structural/executable diagnostics and atomic editing/Undo.
+Implement the decided version defaults/required-reader gate. No DSP, GUI or device opens in this package.
+Tests belong in the existing Tests project: exact Source/Gain/Mix/Output topology, typed ports/cardinality,
+fan-out, invalid/missing/unsupported dependencies and cycles; R1 reopen plus graph round-trip/opaque
+preservation; coherent deletion, variation binding remapping, Undo/Redo, net-zero edits and failed Save.
+Acceptance requires stable identities/relationships, invalid edits savable but nonexecutable, older R1
+documents preserved and no silent graph-ignoring older-reader compatibility. Main risk is confusing
+structural validity with audio validity or making newly required fields break 1.0 files. Update graph,
+format and architecture owners only for the concrete choices actually adopted.
+
+**R4-F2 — independent contributions and audible prepared graph.** Extend Core `Audio/OfflineSampler.cs`
+and `Audio/RealtimeSampler.cs`, adding cohesive graph preparation/execution and a serialized application
+coordinator where their ownership justifies it. Adapt `Audio/AudioEndpoints.cs` and the narrow Windows
+output seam only as necessary; extend `tools/Seqvium.DeviceCheck` for graph evidence. New canonical
+capabilities beyond F1 should be unnecessary. Execute the bounded item-local occurrence with independent
+part streams, Gain, explicit Mix and Output offline and realtime; add automatic convergence/retry,
+revision observations, parameter versus topology transitions and bounded cancellation/retirement.
+No editor, containing/global routing, opaque sources, modulation or stateful FX is implied.
+
+Deterministic acceptance requires an independent `m*(k*K+S)` PCM oracle, upstream contribution checks,
+single-source Gain, fan-out without duplicate performance, same-resource independent uses/releases,
+placement-qualified identity, 44.1/48 kHz mono/stereo and variable packet/repeat boundaries. Verify
+offline/realtime parity, zero-delay parallel alignment, complete capacity refusal, warmed processing
+allocation, all authority/Undo/Redo/cancellation/invalid-edit cases, latest-request convergence under
+occupied pending/retired slots, actual Stop/Panic acknowledgment and joined close/fault lifetimes.
+Use synchronization gates rather than timing sleeps. Real-device acceptance must declare topology,
+voice/node/buffer/memory workload, actual endpoint format/period/capacity, allocation/deadline/GC pressure,
+PCM capture versus both oracles, audible playback, transition behavior and joined failures. Existing R2
+measurements do not certify graph processing cost. Settle finite transition/shutdown policy before closing
+F2; no seamless transfer or acoustic latency claim follows from numerical parity. Main risks are premature
+mixing, per-source scheduler forks, parameter-driven voice resets, memory growth and retry starvation.
+
+**R4-F3 — actual workspace graph editing and closure.** Extend Desktop `Workspace/WorkspaceState.cs`,
+`WorkspaceHost.cs`, `WorkspacePane.cs`/first-party content creation, a cohesive graph canvas/presenter,
+`Presentation/ShellSession.cs`, `HostLocalizer.cs`, semantic resources, `MainWindow` and application
+lifecycle. Add the concrete audio-adapter composition needed for explicit preview, without device types
+in graph/domain/control objects. New canonical capabilities should be limited to justified F1 corrections.
+Deliver free node positioning, create/select/delete/connect/disconnect, typed compatibility feedback,
+Gain editing, persistent blockers and canonical/executing status, all through canonical Undo/Save.
+Provide bounded actual WAV import/use and an identified Pattern-placement source target without building
+R5, plus explicit preview/Stop/Panic, Save/Save As/Open and safe unsaved-document replacement/close.
+
+Acceptance requires a user-created single-source chain and Kick/Snare pre-mix graph, audible parameter
+changes, invalid edit with identified last-valid playback, Save/reopen of invalid work with no resurrected
+runtime, repair and automatic convergence, Undo/Redo and source/reference independence. Pure tests cover
+gesture grouping/cancel, target lifetime, coordinate/order independence, status and lifecycle logic.
+Actual GUI/device evidence covers pointer/keyboard, retained pane/target/focus across collapse/docking,
+RU/EN and Dark/Light, sparse/dense graphs and ordinary/reduced sizes; professional DAW owner review
+remains required. Keep screenshots local under evidence policy. Full Release build/ordinary suite and
+relevant F2 regressions precede closure. No fake editor, graph framework, Browser, Arrangement, Mixer,
+EQ/compressor/reverb, export UI, universal routing engine, plugin ABI or native-engine decision.
+
 ## SEQ-R5 — Pattern Workspace
 
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,

@@ -1007,3 +1007,20 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   documentation target/anchor/ownership/status/scope checks and git diff --check pass. Production code,
   test sources and package locks unchanged; compacted current state and corrected stale README/F2
   review wording without deleting unique technical evidence. No commit/push or index mutation.
+
+## 2026-10-09 — SEQ-R4-PRE node graph implementation readiness
+
+- Inspected the clean expected master baseline, actual R1 model/edit/validation/JSON, R2 preparation,
+  per-voice PCM sum, publication/device lifetimes and R3 retained workspace boundaries. PRE is not a
+  numbered stage; R4 remains pending / not started and R0/R1/R2/R3 acceptance is unchanged.
+- Recommended extending the existing sampler before irreversible mixing: mixed-Pattern-only processing
+  cannot demonstrate independent Kick/Snare paths, while a separate graph renderer would duplicate
+  scheduling/DSP/lifetime obligations without a current capability need. Retained the proposed canonical
+  attachments/typed ports, execution ownership and unresolved choices in the [graph owner](../NODE_GRAPH.md#r4-implementation-readiness-recommendation),
+  with dependent F1/F2/F3 scope and acceptance gates in [Roadmap](../ROADMAP.md#proposed-r4-delivery-packages).
+- Identified missing automatic convergence/capacity retry, graph-aware JSON validation/versioning and
+  Desktop source/Save/audio lifecycle integration. No question is falsely closed or schema accepted by
+  inspection; future packages need separate authorization. All 264 relative links/heading anchors in the
+  four changed documents resolve; ownership/status/scope review and git diff --check pass. This is separate
+  from prior 428-test evidence; no code/tests, build/test/device/GUI exercise, screenshots/raw artifacts,
+  commit/push or staging-index mutation in PRE. Pre-existing ignored IDE/build outputs remain untouched.

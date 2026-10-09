@@ -51,6 +51,8 @@ Input discovery/selection opens no capture stream. [Audio](AUDIO_ENGINE.md) and
 
 The bounded workspace foundation is accepted. Later graph/editor integration needs separate stage
 authorization under [ROADMAP](ROADMAP.md); closure does not start R4 or select a permanent engine.
+SEQ-R4-PRE supplies a source-audited [readiness recommendation](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
+and proposed F1/F2/F3 gates; concrete schema/runtime choices remain recommendations. R4 is still pending.
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
 Full Browser/Personal Library, graph/plugins/Mixer/export/recovery and MIDI/capture/recording remain later work.
 
