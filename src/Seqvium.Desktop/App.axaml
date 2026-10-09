@@ -57,5 +57,6 @@
             <Setter Property="Background" Value="{DynamicResource Surface.Background}" />
             <Setter Property="BorderBrush" Value="{DynamicResource Accent.Action}" />
         </Style>
+        <StyleInclude Source="avares://Seqvium.Desktop/Styles/HostControls.axaml" />
     </Application.Styles>
 </Application>

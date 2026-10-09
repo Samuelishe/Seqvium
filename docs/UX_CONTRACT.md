@@ -6,8 +6,22 @@ Authoritative for: Progressive complexity, input/command and focus semantics, ba
 feedback, discoverability, general workflow semantics.
 Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or current implementation.
 
-These are intended requirements except the explicitly implemented bounded R3-F1/F2 host below; musical UI remains future
-work.
+These are intended requirements except the explicitly implemented bounded R3 host and F3-A workflow
+below; broader musical editors remain future work.
+
+## Implemented R4-F3-A bounded workflow
+
+Users explicitly import a supported WAV, select its real occurrence, edit canonical Gain, Play/Stop/
+Panic and Save/Save As/Open. Empty launch adds no musical content or playback. Reopen restores durable
+intent/media with no inherited execution and requires another explicit Play. Native pickers and
+Save/Discard/Cancel guard dirty replacement/close; cancellation and failed Save retain current work.
+Persistent blockers, degraded media, physical output faults and last-valid divergence remain visible
+in compact status with deliberate details. Icon actions have localized tooltips/names and shortcuts;
+read-only BPM/meter show actual settings without pretending to edit them. Narrow overflow and retained
+Inspector preserve access. The owned unsaved modal starts with safe Cancel focus and returns focus.
+[Workspace](WORKSPACE.md#r4-f3-a-commands-and-owned-modal-lifecycle) owns lifecycle/keys;
+[UI design](UI_DESIGN.md#first-party-visual-design-rules) owns presentation. This is not graph canvas,
+Pattern/Piano Roll, Arrangement, Mixer or Browser acceptance.
 
 ## Mouse-first creation and complementary input
 

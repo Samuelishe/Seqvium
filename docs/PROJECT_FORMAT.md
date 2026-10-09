@@ -10,6 +10,19 @@ SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated ma
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
 
+## R4-F3-A desktop persistence lifecycle
+
+Desktop Save/Save As/Open use ProjectPersistence and the existing managed media layout unchanged.
+There is no new schema, runtime serialization, endpoint identity or UI-owned copy of music. One import
+accepts resource/sound/use/graph atomically through the existing document Edit; history and saved
+snapshots retain media. Dirty replacement/close requires Save/Discard/Cancel; failed Save retains the
+document, and Open validates its candidate before old-session retirement. Replacement joins prepared
+and physical borrowers before closing the old document. Invalid/unknown graph intent and damaged media
+remain recoverable/savable with honest degraded/blocking status; no valid graph/audio is invented.
+Reopen restores canonical IDs, notes, graph and verified media only, with fresh runtime lifecycle and
+explicit Play required. This adds a normal-process UI lifecycle, not crash recovery or media-GC guarantees.
+[Architecture](ARCHITECTURE.md#r4-f3-a-integrated-documentaudio-owner) owns composition/joins.
+
 ## R1 canonical JSON format
 
 UTF-8 JSON has `format: "seqvium-project"`, integer `major: 1`, integer `minor: 0`,

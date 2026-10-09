@@ -75,7 +75,7 @@ internal sealed class FirstPartyPaneContent : ScrollViewer, IDisposable
         if (IsDisposed || _session.IsClosed) return;
         if (_inspector)
         {
-            var state = _session.Document.Current.State;
+            var state = _session.Snapshot.State;
             foreach (var (label, value, key) in _rows)
             {
                 label.Text = _session[key];

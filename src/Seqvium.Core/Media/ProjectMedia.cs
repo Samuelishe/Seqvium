@@ -89,6 +89,12 @@ public sealed class WavImport : IDisposable
 
     /// <summary>Conservative generation gate rejects even unrelated intervening edits/Undo/Redo. No implicit rebase.</summary>
     public MediaAcceptance Accept(CancellationToken cancellationToken = default)
+        => Accept(null, cancellationToken);
+
+    /// <summary>Optional musical use is validated in the same owning transaction as resource acceptance.
+    /// A failed callback accepts neither descriptors nor use; the request still owns the unaccepted file.</summary>
+    public MediaAcceptance Accept(Action<ProjectEdit, MediaAcceptance>? createUse,
+        CancellationToken cancellationToken = default)
     {
         if (_finished || _locator is null) throw new InvalidOperationException("Import is not prepared or has ended.");
         CheckCancellation(cancellationToken);
@@ -111,6 +117,7 @@ public sealed class WavImport : IDisposable
             resource = edit.AddResource(_name, _locator, "Imported WAV");
             sound = _target ?? edit.AddSound(_name, PcmSampler.Algorithm, [resource]);
             edit.ConfigurePcmSampler(sound, resource, _rootPitch, _releaseMilliseconds);
+            createUse?.Invoke(edit, new(resource, sound));
             CheckCancellation(cancellationToken);
         });
         _accepted = true;

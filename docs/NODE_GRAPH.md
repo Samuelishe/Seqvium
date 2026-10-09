@@ -11,7 +11,8 @@ The node graph engine is core Seqvium platform functionality, not an optional ed
 users place nodes, connect compatible inputs/outputs, and explore audio/control processing. Useful
 ideas may come from SunVox, LabVIEW, or Unity graph workflows; they are references, not specifications.
 R4-F1 implements canonical graph intent, editing and diagnostics below. R4-F2 executes the bounded
-item-local graph through the PCM sampler. The F3 editor remains unimplemented.
+item-local graph through the PCM sampler. F3-A adds a bounded desktop import/use/parameter workflow;
+the F3-B graphical editor remains unimplemented.
 
 The signal graph describes sources, processors, mixing/splitting, effects, and buses/output where
 applicable. It is separate from the musical timeline and user organization. It does not replace
@@ -468,12 +469,16 @@ boundary without resetting voices, releases or transport. Other changes restart 
 The independent upstream and final PCM oracle, maximum topology, realtime/lifecycle tests and actual
 bounded Windows output evidence are owned by [verification](TEST_EXECUTION.md#r4-f2-execution-verification)
 and the [compact report](experiments/SEQ-R4-F2_REPORT.md). This is bounded Core readiness for F3;
-there is no graph editor, Desktop audio composition, Browser, Pattern Workspace, Mixer or export.
+F3-A now supplies bounded Desktop audio composition and canonical Gain controls, with exact new Source
+bindings created during atomic import/use. Its compact chain/details view is not a graphical editor.
+There is still no graph canvas, Browser, Pattern Workspace, Mixer or export.
 
 ## R4 implementation readiness recommendation
 
 **F1/F2 foundations are implemented above; full F2 acceptance remains blocked by mixed physical pressure evidence.**
-F3 remains proposed, unstarted and separately authorized.
+F3-A's bounded desktop workflow is separately authorized and implemented, with revised visual owner
+review pending. The F3-B canvas remains proposed/unstarted and requires separate authorization;
+[ROADMAP](ROADMAP.md#seq-r4--node-graph-foundation) retains the complete editor/closure scope.
 R4 stays in progress / partial; PRE is not an engine ABI or permission to implement later stages.
 The existing immutable model/history, graph-aware reader 1.1, PCM scheduler/leases, realtime ownership
 and narrow device session are the reuse boundary. F3 must compose them, rather than create an editor

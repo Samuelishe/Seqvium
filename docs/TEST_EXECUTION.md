@@ -216,6 +216,25 @@ evidence supplements tests where needed. If the suite becomes materially expensi
 and fast/full separation from measured cost, preserving full acceptance scope. A single route registry
 is retained as deferred [I-002](IDEAS.md#i-002--named-test-routes); no filters/route infrastructure exists now.
 
+## R4-F3-A desktop workflow verification
+
+`Desktop/DesktopWorkflowTests` adds 28 deterministic cases over real R2 import/persistence and R4
+preparation/coordinator/sampler. Only the physical borrower is substituted; no mock document, PCM or
+independent preview Gain exists. Explicit owner barriers and worker completion gates cover exact
+Source binding, full-source duration, canonical coefficient PCM/identity/provenance, atomic Undo/Redo,
+durable Save/Save As/reopen, cancellation/rejection, dirty Cancel/failed Save, invalid/missing media,
+pending preparation replacement/shutdown, sticky Stop/Panic, fault/join retention and final release.
+`WorkflowPresentationTests` adds nine compact status/human label and immutable GUI observation cases,
+including non-default real tempo/meter. Existing 609 cases remain intact. No GUI platform or physical
+device is initialized by the ordinary suite. Actual totals belong to PROJECT_STATE.
+
+Run the existing locked restore, full Release build and full MTP solution command. Actual Windows
+review separately exercises native pickers, owned unsaved modal, retained panes, narrow overflow,
+RU/EN, Dark/Light, Gain endpoints, focus/shortcuts and failed Save. Quiet explicit physical playback is
+a bounded smoke only. [F3-A evidence](experiments/SEQ-R4-F3-A_REPORT.md) distinguishes deterministic,
+rendered GUI, device and pending owner/listening evidence; passing tests alone do not accept visuals
+or supersede F2 pressure failures.
+
 ## R4-F1 graph verification
 
 `Graphs/GraphEditingTests`, `GraphDiagnosticTests`, `GraphPersistenceTests` and the synthetic

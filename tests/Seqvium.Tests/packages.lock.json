@@ -299,6 +299,12 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
+      "seqvium.audio.windows": {
+        "type": "Project",
+        "dependencies": {
+          "Seqvium.Core": "[1.0.0, )"
+        }
+      },
       "seqvium.core": {
         "type": "Project"
       },
@@ -307,6 +313,7 @@
         "dependencies": {
           "Avalonia.Desktop": "[12.1.3, )",
           "Avalonia.Themes.Fluent": "[12.1.3, )",
+          "Seqvium.Audio.Windows": "[1.0.0, )",
           "Seqvium.Core": "[1.0.0, )"
         }
       }

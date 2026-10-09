@@ -62,9 +62,9 @@ internal sealed class WorkspacePane : Border, IDisposable
         _header.Child = header;
         body.Children.Add(_header);
         header.Children.Add(_title);
-        _actions = ChromeButton("⋯", "Actions", header, 1);
-        _collapse = ChromeButton("−", "Collapse", header, 2);
-        _hide = ChromeButton("×", "Hide", header, 3);
+        _actions = ChromeButton("More", "Actions", header, 1);
+        _collapse = ChromeButton("Minimize", "Collapse", header, 2);
+        _hide = ChromeButton("Close", "Hide", header, 3);
         _collapse.Click += (_, _) => host.Action(Id, () => host.State.Collapse(Id));
         _hide.Click += (_, _) => host.Action(Id, () => host.State.Hide(Id));
         _left = AddAction("Pane.DockLeft", () => host.State.Dock(Id, PaneDock.Left));
@@ -91,7 +91,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         {
             HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom,
             Width = 10, Height = 10, IsHitTestVisible = false,
-            Child = new TextBlock { Text = "◢", FontSize = 10, Classes = { "caption" } }
+            Child = HostIcons.Create("Resize", _actions, 10)
         };
         _surface.Children.Add(_corner);
         _header.PointerPressed += (_, args) => Begin(args);
@@ -108,8 +108,9 @@ internal sealed class WorkspacePane : Border, IDisposable
     {
         var button = new Button
         {
-            Content = glyph, Width = 24, Cursor = new(StandardCursorType.Arrow), Classes = { "shell", "paneChrome" }
+            Width = 24, Cursor = new(StandardCursorType.Arrow), Classes = { "shell", "paneChrome" }
         };
+        button.Content = HostIcons.Create(glyph, button, 16);
         AutomationProperties.SetAutomationId(button, Id + "." + action.ToLowerInvariant());
         Grid.SetColumn(button, column);
         header.Children.Add(button);

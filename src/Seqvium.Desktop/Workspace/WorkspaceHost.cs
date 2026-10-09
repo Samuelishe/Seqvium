@@ -300,7 +300,11 @@ public sealed class WorkspaceHost : Grid, IDisposable
             var definition = WorkspaceState.Definition(pane.InstanceId);
             var tab = _tabs[pane.InstanceId];
             tab.IsVisible = pane.Visibility != PaneVisibility.Hidden;
-            tab.Content = (pane.Visibility == PaneVisibility.Collapsed ? "▴ " : "") + _session[definition.TitleKey];
+            var tabContent = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
+            if (pane.Visibility == PaneVisibility.Collapsed)
+                tabContent.Children.Add(HostIcons.Create("Up", tab, 16));
+            tabContent.Children.Add(new TextBlock { Text = _session[definition.TitleKey] });
+            tab.Content = tabContent;
             AutomationProperties.SetName(tab,
                 _session[pane.Visibility == PaneVisibility.Collapsed ? "Pane.Restore" : "Pane.Activate"] +
                 ": " + _session[definition.TitleKey]);

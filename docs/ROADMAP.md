@@ -239,14 +239,15 @@ the [complete acceptance audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requ
 R3's bounded workspace shell is also **complete / local accepted-ready** after its completion audit
 and owner acceptance of F1/F2. Completed scope/rationale is retained in the cold archive; current
 capability and evidence limits belong to [PROJECT_STATE](PROJECT_STATE.md) and canonical owners.
-The current numbered stage is R4, **in progress / partial** after separately authorized F1/F2. F3 requires
-separate authorization. No extra
+The current numbered stage is R4, **in progress / partial** after separately authorized F1/F2/F3-A.
+F3-B still requires separate authorization. No extra
 milestone, permanent backend, musical editor or recording prerequisite is introduced by closure.
 
 ## SEQ-R4 — Node Graph Foundation
 
 Status: **in progress / partial**. F1 canonical intent is complete / local accepted-ready;
-F2 prepared audible execution is implemented; actual F3 workspace editing remains pending.
+F2 prepared audible execution and bounded F3-A desktop workflow are implemented; owner visual review
+of the revised F3-A presentation and actual F3-B graph editing remain pending.
 F2 remains partial pending resolution of mixed physical pressure/deadline evidence in
 [PROJECT_STATE](PROJECT_STATE.md). Functional implementation alone does not complete this package.
 The completed foundations alone cannot close R4.
@@ -265,7 +266,8 @@ processing remains open. No manual Apply workflow is required.
 
 ### Proposed R4 delivery packages
 
-**F1 is complete; F2 is implemented but partial; F3 remains proposed and requires separate authorization.** These are subdivisions of
+**F1 is complete; F2 is implemented but partial; F3-A is implemented with owner visual review pending;
+F3-B remains proposed and requires separate authorization.** These are subdivisions of
 R4, not numbered roadmap stages. The [readiness recommendation](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
 owns remaining source boundaries and execution/editor choices. The sequence remains F1 -> F2 -> F3;
 F2's independent-source and F3's actual user workflows are mandatory for R4 acceptance.
@@ -281,15 +283,23 @@ F2's implemented independent-source execution/convergence contracts belong to
 [Node graph](NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution); current validation/readiness
 belongs to [PROJECT_STATE](PROJECT_STATE.md). F3 must use those foundations within their evidenced limits.
 
-**R4-F3 — actual workspace graph editing and closure.** Extend Desktop `Workspace/WorkspaceState.cs`,
+**R4-F3-A — first usable desktop audio workflow: implemented, visual owner review pending.** Real
+native WAV import/use creates one canonical Source → Gain → Output occurrence; selected Gain edits,
+explicit physical Play/Stop/Panic, Undo/Redo, Save/Save As/Open and safe dirty/session lifetime are
+integrated in the retained R3 host. One icon command row, semantic Dark/Light, read-only BPM/meter,
+compact owned modal and contextual diagnostics follow [UI design](UI_DESIGN.md#first-party-visual-design-rules).
+[Evidence](experiments/SEQ-R4-F3-A_REPORT.md) separates deterministic, GUI/device and acceptance limits.
+This bounded slice neither closes all F3 nor reclassifies F2's pressure failures.
+
+**R4-F3-B — actual workspace graph editing and closure: proposed, not authorized here.** Extend Desktop `Workspace/WorkspaceState.cs`,
 `WorkspaceHost.cs`, `WorkspacePane.cs`/first-party content creation, a cohesive graph canvas/presenter,
 `Presentation/ShellSession.cs`, `HostLocalizer.cs`, semantic resources, `MainWindow` and application
-lifecycle. Add the concrete audio-adapter composition needed for explicit preview, without device types
-in graph/domain/control objects. New canonical capabilities should be limited to justified F1 corrections.
+lifecycle. Reuse F3-A's concrete audio composition, keeping device types outside graph/domain/control
+objects. New canonical capabilities should be limited to justified F1 corrections.
 Deliver free node positioning, create/select/delete/connect/disconnect, typed compatibility feedback,
 Gain editing, persistent blockers and canonical/executing status, all through canonical Undo/Save.
-Provide bounded actual WAV import/use and an identified Pattern-placement source target without building
-R5, plus explicit preview/Stop/Panic, Save/Save As/Open and safe unsaved-document replacement/close.
+Preserve F3-A's actual import/use, identified Pattern-placement source target, explicit transport,
+persistence and joined replacement/close while adding graph interaction; do not build R5.
 
 Acceptance requires a user-created single-source chain and Kick/Snare pre-mix graph, audible parameter
 changes, invalid edit with identified last-valid playback, Save/reopen of invalid work with no resurrected

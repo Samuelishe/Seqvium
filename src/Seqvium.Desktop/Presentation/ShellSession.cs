@@ -7,30 +7,54 @@ using Seqvium.Core;
 
 namespace Seqvium.Desktop.Presentation;
 
-/// <summary>Owner-thread shell state. Owns one document lifetime, never an audio/device session or pane layout.</summary>
+/// <summary>GUI projection and preferences. Standalone shells own their document;
+/// the integrated workflow owns mutations/lifetime. Never owns audio/device sessions or pane layout.</summary>
 public sealed class ShellSession : INotifyPropertyChanged, IDisposable
 {
     private readonly HostLocalizer _localizer;
     private readonly PreferenceStore _store;
     private string? _noticeKey;
     private string? _layoutNoticeKey;
+    private string _audioStatusKey = "Audio.Idle";
+    public string AudioStatus => this[_audioStatusKey];
+    internal void ObserveAudio(string key)
+    {
+        if (_audioStatusKey == key) return;
+        _audioStatusKey = key; Refresh();
+    }
 
-    public ProjectDocument Document { get; }
+    public ProjectDocument Document { get; private set; }
+    internal bool HasWorkflowOwner { get; set; }
+    private ProjectSnapshot? _observedSnapshot;
+    private string? _observedSavedPath;
+    private bool _observedDirty, _observedHasSaved;
+    internal ProjectSnapshot Snapshot => _observedSnapshot ?? Document.Current;
+    private string? SavedPath => _observedSnapshot is null ? Document.SavedPath : _observedSavedPath;
+    internal void ObserveDocument(ProjectDocument document, ProjectSnapshot snapshot, string? savedPath,
+        bool dirty, bool hasSaved)
+    {
+        Document = document;
+        _observedSnapshot = snapshot; _observedSavedPath = savedPath;
+        _observedDirty = dirty; _observedHasSaved = hasSaved;
+        Refresh();
+    }
     public HostPreferences Preferences { get; private set; }
     public bool IsClosed { get; private set; }
     public event PropertyChangedEventHandler? PropertyChanged;
     public string this[string key] => _localizer.Get(key, Preferences.Language);
-    public string ProjectName => Document.Current.State.Name ?? this["Project.Unnamed"];
+    public string ProjectName => Snapshot.State.Name ??
+        (SavedPath is { } path ? Path.GetFileNameWithoutExtension(path) : this["Project.Unnamed"]);
 
     public string ProjectStatus =>
-        this[Document.IsDirty ? "Project.Modified" : Document.Saved is null ? "Project.Pristine" : "Project.Saved"];
+        this[(_observedSnapshot is null ? Document.IsDirty : _observedDirty) ? "Project.Modified" :
+            (_observedSnapshot is null ? Document.Saved is not null : _observedHasSaved) ? "Project.Saved" : "Project.Pristine"];
 
     public string Tempo =>
-        Document.Current.State.Settings.Tempo.BeatsPerMinute.ToString("0.######", CultureInfo.InvariantCulture);
+        Snapshot.State.Settings.Tempo.BeatsPerMinute.ToString("0.######", CultureInfo.InvariantCulture);
 
     public string Meter =>
         FormattableString.Invariant(
-            $"{Document.Current.State.Settings.Meter.Numerator}/{Document.Current.State.Settings.Meter.Denominator}");
+            $"{Snapshot.State.Settings.Meter.Numerator}/{Snapshot.State.Settings.Meter.Denominator}");
 
     public string LanguageLabel =>
         $"{this["Preference.Language"]}: {(Preferences.Language == HostLanguage.Russian ? "Русский" : "English")}";
@@ -95,6 +119,6 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
     {
         if (IsClosed) return;
         IsClosed = true;
-        Document.Close();
+        if (!HasWorkflowOwner) Document.Close();
     }
 }

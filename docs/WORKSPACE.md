@@ -27,6 +27,23 @@ single-monitor
 96 DPI, not mixed/high-DPI acceptance. Tab reaches window and preference actions; Enter/Space execute them.
 [F1 report](experiments/SEQ-R3-F1_REPORT.md) records bounded real-window evidence and remaining checks.
 
+## R4-F3-A commands and owned modal lifecycle
+
+The accepted 30/30/22-DIP chrome/toolbar/status frame remains. One command row groups project,
+transport and history icons with a real occurrence selector/Gain, read-only canonical BPM/meter and
+existing preference/pane actions. Reduced width moves secondary commands/selection/parameters into
+explicit overflow/details; Inspector retains musical parameters. No new editor pane or toolbar row
+is added. Project replacement updates retained Inspector content without changing layout/pane identity.
+Technical details require deliberate disclosure; the existing status strip carries persistent blockers.
+
+Native storage pickers remain OS-owned modals. The unsaved first-party confirmation is an owned,
+content-sized Avalonia modal with no system decorations, centered on its owner; initial focus is Cancel,
+Tab cycles, Esc/Alt+F4 cancel, and focus returns safely. Main window remains alive on Cancel/failed Save.
+Shutdown waits outstanding import/action and joined document/audio cleanup before workspace/preference
+shutdown. Ctrl+I/O/S/Shift+S, Ctrl+Z/Y, F5/Shift+F5 and Ctrl+Esc complement existing R3 pane/window keys.
+[UI design rules](UI_DESIGN.md#first-party-visual-design-rules) apply to all future first-party dialogs;
+external editor windows and native file pickers retain their explicit exceptions.
+
 ## Implemented R3-F2 internal panes
 
 The toolbar's Panes action deliberately opens Project Inspector or Appearance. Both are optional and

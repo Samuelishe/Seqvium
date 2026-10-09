@@ -21,7 +21,8 @@ The shell uses compact flat chrome with project title/unsaved state, one narrow 
 and preference toolbar, a quiet full-width workspace and a narrow audio-inactive/status strip. Dashboard
 cards, hero headings and introductory/future-feature paragraphs are absent. Version and bounded
 capability information appear only in the functional About flyout, not in the ordinary workspace.
-System-default font/fallback and simple textual window glyphs require no borrowed assets.
+System-default font/fallback requires no borrowed assets. R4-F3-A replaces action/window glyphs with
+the project-authored vector family described below, retaining the accepted frame.
 
 `HostPalette` provides identical Dark/Light keys: `Surface.Background/Raised/Workspace`,
 `Text.Primary/Secondary`, `Border.Default`, `Focus.Active`, `Accent.Action`, `State.Unavailable`,
@@ -70,6 +71,61 @@ pixel-perfect design system. It complements [project vision](PROJECT_VISION.md),
 remain intact. Owner-supplied FL Studio, Cubase, SunVox and modern FL Studio images were inspected as
 complementary references. They are research context only: no reference images or proprietary assets
 are copied into the repository, and no application's palette, icons or exact layout is adopted.
+
+## First-party Visual Design Rules
+
+These rules apply to all subsequent Seqvium first-party surfaces unless an explicit, justified UX
+contract requires an exception. They extend the accepted R3 frame and pane behavior; they do not
+authorize future editors or choose their layouts.
+
+- **Workspace first:** every persistent field, row and action must justify its space. Keep musical
+  working regions dominant; no decorative cards, welcome dashboards or future-editor placeholders.
+- **One main command row:** group Project, Transport, History and Selection/parameter actions with
+  restrained separators. Horizontal shortage uses explicit overflow/menu and contextual disclosure;
+  never automatically multiply permanent toolbar rows or shrink fonts. Import, Play/Stop and access
+  to Save must remain reachable at 640x480 DIP. Undo/Redo remain compact icon-only actions.
+- **Global musical parameters:** show actual tempo and meter compactly near transport when space
+  permits; read-only values must look like values, not editing affordances. Overflow/Inspector retains
+  them at reduced width. When editing arrives, preserve their familiar location rather than moving
+  these global parameters to an unrelated surface.
+- **Icons:** use icon-only for recognizable actions, with localized accessible names, tooltips and
+  shortcut hints; explain disabled reasons. Ambiguous commands may have short menu labels. Reusable
+  first-party vectors share geometry, stroke weight, rounded joins, 16–20 DIP readability and platform
+  DPI scaling. No emoji, font-dependent action glyphs, mixed icon families or borrowed application assets.
+- **Semantic hierarchy:** Dark uses graphite surfaces and readable light text; Light uses cool neutral
+  backgrounds and readable dark text. Central resources distinguish selection, keyboard focus, hover,
+  pressed, unavailable, active transport, warning and critical actions. Restrained blue-violet action
+  accents, green transport, amber warning and moderate red critical feedback have distinct purposes.
+  Color supplements shape/text/state; no fake meters, heavy shadows/glows or decorative gradients.
+- **First-party dialog chrome:** compact internal confirmations, errors, properties and tools follow
+  Seqvium typography, semantic surfaces, borders, control states and spacing. Compact owned modals
+  have no ordinary Windows titlebar and no duplicate decorative header. Size height from content,
+  center on owner, preserve true modality, cyclic Tab, safe initial focus, Esc/Alt+F4 and focus return.
+  Save/Discard/Cancel are visibly distinct; initial focus/default must be safe. Native system file
+  pickers are the explicit exception. External independently rendered plugin editors retain the
+  [workspace exception](WORKSPACE.md#one-main-application-window).
+- **Human labels:** ordinary surfaces show musical/source names and concise actual chain labels.
+  UUIDs, internal capability keys, execution provenance and technical device details require explicit
+  details/Inspector/diagnostic disclosure. Persistent blockers and canonical/last-valid divergence
+  remain visible and meaningful; diagnostics must not dominate the music workspace.
+- **Status economy:** use one compact source in the existing status bar. Normal state needs little
+  text; failures say what is blocked/retained and expose useful details on request. Avoid duplicate
+  opened/ready/inactive explanations in permanent rows.
+- **Keyboard/accessibility:** preserve shortcuts, automation identity, legible focus and useful hit
+  targets. Overflow preserves actions and focus return; visual density never removes functional access.
+- **Real GUI review:** inspect rendered windows at 1100x750, 640x480 and maximized/1920x1080 with
+  RU/EN, Dark/Light, normal/blocked actions, tooltips, focus, native picker return and owned modals.
+  Exercise pane collapse/restore/dock/hide/reopen and real document actions. Unit tests alone are not
+  visual acceptance; retain review screenshots locally under the existing evidence policy.
+
+R4-F3-A implements `Presentation/HostIcons`, `Styles/HostControls.axaml` and shared palette roles
+`Surface.Hover/Pressed/Selected/Playing/Critical/Accent`, `Status.Playing/Critical`, extending existing
+Dark/Light resources. A single retained row presents real project/transport/history actions, selection
+and linear Gain (0–1); BPM/meter are read-only and move into overflow on narrow windows. Save As lives
+in overflow; selection moves into details when space is limited. The content-sized owned unsaved modal
+uses the same resources. The details flyout is a compact view of canonical intent, **not a node canvas**.
+Owner review of this revised F3-A presentation remains pending; see the
+[integration evidence](experiments/SEQ-R4-F3-A_REPORT.md).
 
 ### Transferable reference principles
 

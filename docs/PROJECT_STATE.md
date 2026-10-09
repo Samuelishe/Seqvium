@@ -14,7 +14,8 @@ R3-F1 and R3-F2's current bounded workspace usability/interaction behavior. SEQ-
 missing R3 prerequisite; no additional UI polishing package is required for this acceptance.
 **R4 is in progress / partial; R4-F1 is complete / local accepted-ready.** R4-F2's functional execution
 is implemented; full acceptance is blocked by mixed physical pressure evidence (two observed starvations).
-F2 remains **partial**. F3 is not started and requires separate authorization.
+F2 remains **partial**. Separately authorized **R4-F3-A is functionally implemented, with revised
+visual acceptance pending owner review**. F3 as a whole remains incomplete; F3-B is not authorized here.
 SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / narrow** under its
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 Completed rationale is cold history; current contracts stay in canonical owners.
@@ -35,7 +36,7 @@ owns exact bounds; [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-sto
 corruption preservation, write failure and joined shutdown. RU/EN fallback and Dark/Light resources
 apply without replacing controls or editing music. The compact 30/30/22-DIP frame, 28-DIP pane chrome/
 conditional strip and local content scrolling follow [UI design](UI_DESIGN.md).
-No musical editor, general docking hierarchy, snapping, audio startup, file-dialog lifecycle or reset UI exists.
+No graphical musical editor, general docking hierarchy, snapping, automatic audio startup or reset UI exists.
 
 R1 provides immutable canonical documents, typed stable identities, shared multi-instrument Patterns,
 pitch-aware notes, variations, independent sound/resource/organization/processing intent, validated
@@ -61,11 +62,20 @@ capacity and preserves voices for Gain-only updates. Geometry provenance, atomic
 Stop/Panic, finite topology transition and preparation/device joined shutdown are implemented under
 [Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence). No graph editor exists.
 
+R4-F3-A connects these foundations in the actual Desktop: native durable WAV import creates an atomic
+Sound/Pattern/Part/Note/Placement and exactly bound Source → Gain → Output graph. Selected Gain edits
+canonical intent; explicit Play/Stop/Panic, Undo/Redo and Save/Save As/Open use existing Core APIs.
+Dirty Save/Discard/Cancel, preparation/output joins and fresh silent reopen protect document/PCM lifetime.
+A non-GUI host owner supplies immutable observations to the retained R3 shell/panes. One vector command
+row, read-only BPM/meter, narrow overflow, compact status/details and owned content-sized modal follow
+[permanent visual rules](UI_DESIGN.md#first-party-visual-design-rules). No canvas or sample content is added.
+
 ## Current focus
 
 The bounded workspace and canonical intent foundations are locally ready. F2's functional execution
 passes verification, but its repeated physical pressure result is not uniformly successful.
-F3 actual editor/source/Save flows remain proposed and unstarted under [ROADMAP](ROADMAP.md).
+F3-A's revised desktop controls require owner visual review. F3-B's actual canvas/editor interaction
+and multi-source GUI acceptance remain proposed under [ROADMAP](ROADMAP.md).
 Remaining [readiness recommendations](NODE_GRAPH.md#r4-implementation-readiness-recommendation) grant
 no further authorization. R4 remains partial; F2 alone cannot deliver a workstation or select an engine ABI.
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
@@ -74,19 +84,19 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 609 tests pass, zero failures/skips**.
-All 600 previous tests are preserved; nine execution-identity/rejected-handoff cases are added to the
-original 42 F2 execution/lifecycle cases. [Test execution](TEST_EXECUTION.md#r4-f1-graph-verification)
+solution build pass with **zero warnings/errors; all 646 tests pass, zero failures/skips**.
+All 609 previous tests and the first 20 F3-A cases are preserved; F3-A now adds 28 workflow and nine
+presentation/observation cases. [Test execution](TEST_EXECUTION.md#r4-f3-a-desktop-workflow-verification)
 owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
 [F1 evidence](experiments/SEQ-R3-F1_REPORT.md) records actual chrome/OS keyboard/preference behavior.
 [F2 evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records 525
 completed boundary/cursor/control checks at normal/reduced sizes across RU/EN, Dark/Light and both
 front orders, with failed intermediate runs and automation limits separately retained.
-The completion audit additionally passes 29 physical GUI checks at 1100x750/96 DPI for restored
-geometry, capture/anchors/cancellation, retained instances/focus, keyboard, independent docks,
-preference changes and joined shutdown. Four existing user configuration files are restored byte-for-byte.
-The R3 audit retained no screenshots/raw logs. F2 raw device JSON remains ignored locally for measurement
-review; its durable conclusions are in the compact report below. Desktop loads no Windows audio adapter.
+The completed R3 audit remains separate from current F3-A evidence. Desktop now composes the existing
+Windows audio adapter only on explicit Play. [F3-A evidence](experiments/SEQ-R4-F3-A_REPORT.md) records
+real RU/EN, Dark/Light, 1100x750, reduced 640-DIP width, maximized, owned modal, native picker,
+parameter/failure and retained pane checks, plus a quiet Samsung USB C Earphones 48 kHz stereo smoke.
+Screenshots stay ignored locally for owner review; no subjective listening or pressure acceptance follows.
 RID-independent local build feasibility is not hosted or Linux/macOS runtime evidence.
 [R2-F2](experiments/SEQ-R2-F2_REPORT.md), [F3](experiments/SEQ-R2-F3_REPORT.md) and
 [F4](experiments/SEQ-R2-F4_REPORT.md) retain distinct workload/source/device evidence, including physical
@@ -96,6 +106,10 @@ High Definition Audio output at 48 kHz stereo, baseline/CPU-GC-control pressure,
 fault lifetimes. No acoustic perception, DAC latency, multi-hour/all-device or additional platform claim follows.
 
 ## Active blockers / evidence gaps
+
+F3-A visual acceptance is pending owner review. The inherited nominal 640x480 client minimum produced
+640x511-pixel visible Windows captures; exact 480-pixel outer-frame review remains unevidenced. No
+full F3/R4 acceptance, high/mixed DPI, other-OS runtime or acoustic listening claim follows.
 
 F2 pressure acceptance is unresolved. The original starvations at 22.86 and 39.57 seconds remain failures;
 new isolated diagnostics also fail with natural GC and graph-free legacy on the same 48 kHz stereo

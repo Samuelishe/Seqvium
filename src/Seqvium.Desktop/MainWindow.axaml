@@ -24,13 +24,13 @@
                                ToolTip.Tip="{Binding ProjectStatus}" />
                 </Grid>
                 <StackPanel x:Name="WindowActions" Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="MinimizeAction" Classes="shell chrome" Content="−" Click="MinimizeClicked"
+                    <Button x:Name="MinimizeAction" Classes="shell chrome" Click="MinimizeClicked"
                             AutomationProperties.AutomationId="Window.Minimize"
                             AutomationProperties.Name="{Binding [Window.Minimize]}"
                             ToolTip.Tip="{Binding [Window.Minimize]}" />
-                    <Button x:Name="MaximizeAction" Classes="shell chrome" Content="□" Click="MaximizeClicked"
+                    <Button x:Name="MaximizeAction" Classes="shell chrome" Click="MaximizeClicked"
                             AutomationProperties.AutomationId="Window.Maximize" />
-                    <Button Classes="shell chrome" Content="×" Click="CloseClicked"
+                    <Button x:Name="CloseAction" Classes="shell chrome" Click="CloseClicked"
                             AutomationProperties.AutomationId="Window.Close"
                             AutomationProperties.Name="{Binding [Window.Close]}" ToolTip.Tip="{Binding [Window.Close]}" />
                 </StackPanel>
@@ -38,18 +38,11 @@
         </Border>
         <Border Grid.Row="1" Height="{DynamicResource Toolbar.Height}" Background="{DynamicResource Surface.Raised}"
                 BorderBrush="{DynamicResource Border.Default}" BorderThickness="0,0,0,1" Padding="6,0">
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space.Gap}" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding [Project.Tempo]}" Classes="caption" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Tempo}" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding [Project.Bpm]}" Classes="caption" VerticalAlignment="Center" />
-                    <Border Width="1" Height="16" Background="{DynamicResource Border.Default}" Margin="4,0" />
-                    <TextBlock Text="{Binding [Project.Meter]}" Classes="caption" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Meter}" VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{DynamicResource Space.Gap}"
+            <Grid ColumnDefinitions="*,Auto">
+                <Border x:Name="WorkflowRegion" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Space.Gap}"
                             VerticalAlignment="Center">
-                    <Button x:Name="PaneMenuAction" Classes="shell" Content="{Binding [Workspace.Panes]}"
+                    <Button x:Name="PaneMenuAction" Classes="shell command"
                             AutomationProperties.AutomationId="Workspace.Panes"
                             AutomationProperties.Name="{Binding [Workspace.Panes]}"
                             ToolTip.Tip="{Binding [Workspace.KeyboardHint]}">
@@ -70,10 +63,10 @@
                     <Button Classes="shell" Content="{Binding LanguageCode}" Click="LanguageClicked"
                             AutomationProperties.AutomationId="Preference.Language"
                             AutomationProperties.Name="{Binding LanguageLabel}" ToolTip.Tip="{Binding LanguageLabel}" />
-                    <Button Classes="shell" Content="{Binding ThemeName}" Click="ThemeClicked"
+                    <Button x:Name="ThemeAction" Classes="shell command" Click="ThemeClicked"
                             AutomationProperties.AutomationId="Preference.Theme"
                             AutomationProperties.Name="{Binding ThemeLabel}" ToolTip.Tip="{Binding ThemeLabel}" />
-                    <Button Classes="shell" Content="?" Width="24"
+                    <Button x:Name="AboutAction" Classes="shell command"
                             AutomationProperties.AutomationId="Host.About"
                             AutomationProperties.Name="{Binding [Host.About]}" ToolTip.Tip="{Binding [Host.About]}">
                         <Button.Flyout>
@@ -81,7 +74,7 @@
                                 <StackPanel Width="280" Spacing="8">
                                     <TextBlock Text="Seqvium" FontWeight="SemiBold" />
                                     <TextBlock Text="{Binding Version}" />
-                                    <TextBlock Text="SEQ-R3-F2" Classes="caption" />
+                                    <TextBlock Text="SEQ-R4-F3-A" Classes="caption" />
                                     <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
                                 </StackPanel>
                             </Flyout>
@@ -93,8 +86,8 @@
         <Border Grid.Row="2" x:Name="WorkspaceRegion" Background="{DynamicResource Surface.Workspace}" />
         <Border Grid.Row="3" Height="{DynamicResource Status.Height}" BorderBrush="{DynamicResource Border.Default}"
                 BorderThickness="0,1,0,0" Padding="6,0">
-            <Grid ColumnDefinitions="Auto,*">
-                <TextBlock Text="{Binding [Audio.Idle]}" Classes="caption" VerticalAlignment="Center" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Border x:Name="WorkflowStatusRegion" />
                 <TextBlock Grid.Column="1" Text="{Binding Notice}" IsVisible="{Binding HasNotice}" Margin="12,0,0,0"
                            FontSize="{DynamicResource Type.Caption}" VerticalAlignment="Center"
                            Foreground="{DynamicResource Status.Warning}" TextTrimming="CharacterEllipsis"

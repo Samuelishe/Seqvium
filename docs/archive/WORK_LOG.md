@@ -1110,3 +1110,20 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   The existing [report](../experiments/SEQ-R4-F2_REPORT.md#elevated-bounded-scheduler-evidence-2026-10-09)
   owns precise timings, tooling/clock limits and local retention. No repeat to seek success, installation,
   production code change, commit/push/index mutation or F3 work. F2 remains partial; 609-test baseline unchanged.
+
+## 2026-10-09 — SEQ-R4-F3-A bounded desktop workflow and visual correction
+
+- Integrated native durable WAV import and atomic musical use/graph, canonical Gain, explicit F2
+  playback, Undo/Redo, Save/Save As/Open and joined dirty replacement/close in the retained R3 host.
+  Added only the R2 optional atomic-use acceptance callback in Core; no parallel document/audio/Undo.
+- Replaced multi-row/text command presentation with one grouped vector row, real read-only tempo/meter,
+  contextual selection/details, semantic Dark/Light and content-sized owned unsaved modal. Added durable
+  first-party visual rules without implementing a node canvas or later editors.
+- Preserved 609 tests; 28 workflow and nine presentation cases pass (646 total). A real cross-rate
+  final-frame truncation was reproduced and fixed with a bounded duration guard and PCM regression
+  oracle. Locked restore/full
+  Release build pass with zero warnings/errors. Real Windows GUI and explicit quiet Samsung USB C
+  Earphones output/Stop/Panic/close were exercised; the [report](../experiments/SEQ-R4-F3-A_REPORT.md)
+  records actual dimensions, failed intermediate automation and evidence/retention limits.
+- Functional F3-A implementation is complete; revised owner visual review remains pending. F3-B is
+  unimplemented/not authorized, all F3 remains incomplete and F2 remains partial. No commit/push/index change.

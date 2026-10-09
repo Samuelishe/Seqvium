@@ -158,7 +158,8 @@ attachment/placement from current canonical intent. [Node graph](NODE_GRAPH.md#i
 owns Source/Gain/Mix/Output arithmetic and placement/part separation. `PreparedSampler` and `OfflineSampler`
 remain the sole musical plan/kernel for graph-free Patterns, transient audition and graph execution;
 `RealtimeSampler` retains R2 authority, borrowing, packet handoff, retirement and sticky commands.
-There is no parallel graph engine or Windows-owned topology, no changed project schema and no F3 UI.
+There is no parallel graph engine or Windows-owned topology and no changed project schema. The
+bounded F3-A desktop integration below uses this execution; the graphical editor remains pending.
 
 ### Preparation and bounded workload
 
@@ -259,6 +260,25 @@ CPU competition, versus 1.64 ms of actual Gen0 collection and 8.5/11.3 µs audio
 This identifies scheduler interference inside that runtime suspension; historical attribution, a scheduler
 defect and driver fault remain unproved. The service-start interval is not OS dispatch latency.
 Confirmed fault termination/join releases resources, but does not establish deadline stability.
+
+## R4-F3-A desktop execution composition
+
+Desktop explicitly plays the selected canonical item graph through GraphExecutionCoordinator,
+RealtimeSampler and the existing Windows output adapter. A non-GUI host owner serializes document
+Edit/notifications, preparation completion and transport; views consume status, never PCM ownership.
+Gain editing uses ProjectEdit.SetGraphGain and F2's coefficient path, preserving voices, prepared
+execution identity, attachment and origin/equivalent provenance. Stop/Panic invalidates pending Start
+intent and stays sticky through automatic preparation. Import/new selection stops previous playback;
+Open/reopen never inherits runtime or starts automatically.
+
+Physical discovery resolves the default Console output only on explicit Play and opens that exact
+endpoint without unrelated fallback. Format/open/runtime failures remain visible; cleanup joins
+preparation and output before terminating/releasing sampler resources. Failed join retains resources
+for retry; there is no automatic restart. No input/capture stream is opened. Host polling is bounded
+control observation, not callback work. GC mode, backend, buffer capacity and scheduler priorities are
+unchanged. F2 pressure acceptance remains partial; a short desktop output smoke proves neither deadline
+acceptance nor subjective listening. [Architecture](ARCHITECTURE.md#r4-f3-a-integrated-documentaudio-owner)
+owns composition; [integration evidence](experiments/SEQ-R4-F3-A_REPORT.md) separates verification tiers.
 
 ## R2-F3 transient one-shot execution
 

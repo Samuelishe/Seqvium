@@ -9,6 +9,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Seqvium.Desktop.Presentation;
 using Seqvium.Desktop.Workspace;
+using Seqvium.Desktop.Workflow;
 
 namespace Seqvium.Desktop;
 
@@ -30,6 +31,7 @@ internal sealed partial class MainWindow : Window
         _app = app;
         InitializeComponent();
         DataContext = session;
+        InitializeWorkflow();
         _layoutFallback = layout.UsedFallback;
         _layoutPersistence = new(layoutStore.SaveAsync);
         _workspace = new(session, new(layout.Layout), ToggleLanguageAsync, ToggleThemeAsync);
@@ -94,7 +96,7 @@ internal sealed partial class MainWindow : Window
         BrandName.Foreground = _app.Resources[IsActive ? "Text.Primary" : "Text.Secondary"] as Avalonia.Media.IBrush;
         Chrome.BorderBrush = _app.Resources[IsActive ? "Focus.Active" : "Border.Default"] as Avalonia.Media.IBrush;
         var label = _session[WindowState == WindowState.Maximized ? "Window.Restore" : "Window.Maximize"];
-        MaximizeAction.Content = WindowState == WindowState.Maximized ? "❐" : "□";
+        MaximizeAction.Content = HostIcons.Create(WindowState == WindowState.Maximized ? "Restore" : "Maximize", MaximizeAction, 16);
         AutomationProperties.SetName(MaximizeAction, label);
         ToolTip.SetTip(MaximizeAction, label);
     }
@@ -177,6 +179,18 @@ internal sealed partial class MainWindow : Window
         args.Cancel = true;
         if (_closing) return;
         _closing = true;
+        _importCancellation?.Cancel();
+        _workflowControls.Refresh(true);
+        await _workflowWork;
+        var decision = await ReplacementDecisionAsync();
+        if (!await _workflow.CloseAsync(decision.Decision, decision.SavePath))
+        {
+            _closing = false;
+            _workflowControls.Refresh();
+            return;
+        }
+        _workflow.Changed -= WorkflowChanged;
+        await _workflow.DisposeAsync();
         _workspace.PrepareShutdown();
         _layoutPersistence.Request(_workspace.State.Capture());
         await _layoutPersistence.ShutdownAsync();

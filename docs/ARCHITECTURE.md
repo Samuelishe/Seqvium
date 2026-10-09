@@ -16,12 +16,14 @@ output adapter; graph, presentation and permanent engine choices remain separate
 
 `src/Seqvium.Desktop` is the one framework-dependent `net10.0` desktop executable. It explicitly adopts
 Avalonia Desktop with Fluent base controls; its manifest/lock own versions. Core remains BCL-only and
-does not reference presentation. Desktop references Core only, not `Seqvium.Audio.Windows`, DeviceCheck
-or the R0 experiment. Launch creates no audio/device/capture session and calls no playback service.
+does not reference presentation. Desktop references Core and, since R4-F3-A, the existing narrow
+`Seqvium.Audio.Windows` adapter; never DeviceCheck or the R0 experiment. Launch creates no audio/device/
+capture session and calls no playback service.
 
 `App` owns framework startup and semantic resources; `MainWindow` owns bounded visual/chrome events.
-The display-independent `Presentation/ShellSession` owns one `ProjectDocument.Create`/Close lifetime,
-localized projection and preference commands; it does not edit the document. `HostLocalizer` owns frozen
+The display-independent `Presentation/ShellSession` owns localized projection and preference commands;
+its standalone document lifetime transfers to the integrated workflow below. It does not edit music.
+`HostLocalizer` owns frozen
 first-party stable dotted-key EN/RU catalogs and per-entry fallback. `HostPalette` owns Dark/Light roles;
 `PreferenceStore` owns the independent versioned user JSON. No culture change, canonical discriminator,
 document generation/history or media authority depends on translated strings or UI preference changes.
@@ -35,9 +37,30 @@ pointer capture and local focus), and `FirstPartyPaneContent` (read-only documen
 preference actions). `WorkspaceLayoutStore` owns a separate user file and `WorkspaceLayoutPersistence`
 joins/coalesces requested snapshots; `MainWindow` coordinates their shutdown with preference writes.
 Pane instance/type, active pane, focused control, canonical selection and semantic edit target are
-distinct. No document selection/target, native pane window, extension hierarchy or audio owner is added.
+distinct. R3 panes add no native pane window, extension hierarchy or audio owner.
 [Workspace](WORKSPACE.md), [settings](SETTINGS.md) and [UI design](UI_DESIGN.md) own exact behavior/resources;
 [F1 report](experiments/SEQ-R3-F1_REPORT.md) owns observed bounds.
+
+### R4-F3-A integrated document/audio owner
+
+`Workflow/DesktopWorkflow` is the narrow host application/session boundary over the same canonical
+document, R2 media/persistence and R4 coordinator/sampler. `WorkflowOwner` serializes mutations,
+notifications, preparation completion and transport on one non-GUI synchronization context. Disk I/O,
+decode/preparation and blocking physical joins stay off the UI thread. Immutable observations feed
+ShellSession, retained workspace content and `WorkflowControls`; views own no PCM leases or devices.
+`DesktopOutput` alone composes Windows endpoint discovery and WASAPI: an explicit Play resolves the
+current default output, opens that exact endpoint and validates its negotiated format without fallback.
+Only coordinator Start plays. Canonical state contains no endpoint/runtime/UI data.
+
+`MainWindow.Workflow` owns native pickers, action/focus gating and unsaved decisions. Imported resource,
+sound, musical use and item graph are accepted in one existing ProjectDocument Edit through R2's
+optional acceptance callback. No second document, Undo, preview Gain or audio engine exists.
+Open validates a candidate before touching the current session; Cancel/failed Save retain current work.
+Replacement/close stops intent, cancels/joins preparation, joins physical consumers, retires/releases
+prepared PCM through AudioDeviceSession, then closes/replaces the old document. Failed join retains
+ownership for retry. Reopened documents have fresh lifecycle and no execution; explicit Play is required.
+[Sample workflow](SAMPLE_WORKFLOW.md#r4-f3-a-desktop-import-and-musical-use) owns initial musical policy;
+[audio](AUDIO_ENGINE.md#r4-f3-a-desktop-execution-composition) owns the execution limits.
 
 ## R1 canonical foundation
 
@@ -118,7 +141,7 @@ Variation remapping, owned placement/context deletion and incident node-use remo
 unrelated safely unresolved dependencies retain intended identity. Graph deep content equality
 includes immutable collections and opaque JSON, so net-zero reconstruction publishes no revision.
 Coordinates are canonical graph presentation; workspace geometry and transient gestures remain
-separate. F2 derives execution/resources from a frozen eligible revision; F3 will supply the canvas.
+separate. F2 derives execution/resources from a frozen eligible revision; F3-B will supply the canvas.
 
 ## R4-F2 execution and application coordination ownership
 
@@ -139,7 +162,7 @@ Geometry/Gain equivalence is conservative across canonical content/roots, not a 
 `AudioDeviceSession` can own an attached coordinator for one output. Its asynchronous shutdown joins
 preparation before stopping/joining the device and releasing the borrowed sampler. The existing lifetime
 interface and concrete WASAPI sampler seam remain sufficient. Failed join retains ownership; callers
-must keep the owner context alive and retry. Desktop composition is explicitly F3 work and is not added.
+must keep the owner context alive and retry. The bounded F3-A desktop composition is described above.
 [Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence) and
 [Node graph](NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution) own exact limits/semantics.
 

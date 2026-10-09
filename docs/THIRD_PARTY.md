@@ -128,6 +128,12 @@ ignored locally for pending review under [evidence retention](experiments/README
 They depict original Seqvium output, not third-party DAW references. Pane chrome/content remain
 Seqvium-authored Apache-2.0 code; intentional future runtime assets still require normal provenance.
 
+R4-F3-A adds no NuGet package or external icon library. Desktop composes the existing Windows adapter;
+`Presentation/HostIcons.cs` is an original Seqvium-authored vector family under the repository license,
+without copied reference application assets or font glyph dependencies. Shared host styles are original
+code. Quiet synthetic GUI/device test WAVs and screenshots are ignored local evidence, not shipped
+musical content or runtime assets. Existing dependency/distribution notice obligations remain unchanged.
+
 ## Planned / under evaluation
 
 These are candidates or product directions, not dependencies, adoption decisions, or promises.

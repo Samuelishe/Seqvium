@@ -26,6 +26,28 @@ No Browser, live audition UI/device, library publication, generator, object resa
 implemented by this path. [Audio](AUDIO_ENGINE.md#r2-f1-offline-sampler-foundation) owns the offline
 pitched source and supported execution configurations. Personal Library ownership remains separate.
 
+## R4-F3-A desktop import and musical use
+
+The native WAV picker imports supported bounded PCM16/float32 mono/stereo material using the existing
+R2 durable protocol. `WavImport.Accept(createUse, cancellation)` invokes optional musical creation
+inside the same validated owner Edit as resource/sound acceptance. Failure/cancellation accepts no
+false occurrence; Dispose removes an unaccepted candidate. Resource retention, history and Save remain R2-owned.
+
+One accepted import creates a named Pattern, Part, native-pitch note (pitch/root 60, intensity 1),
+Placement at tick zero and an item-local Source → Gain → Output graph, initial Gain 0.25. Source binds
+the exact new PlacementId/PartId. Pattern/note duration is
+`ceil((sourceFrames / sourceRate + 1 / 44100) * ticksPerQuarter * BPM / 60) + 1` ticks at current constant tempo.
+The one-frame guard at the lowest supported output rate protects 44.1/48 kHz rounded note/clip ends
+against ceiling source EOF; one tick alone can still truncate the last resampled frame. The guard
+does not prolong source PCM. Decimal arithmetic is used; checked overflow/refusal precedes acceptance.
+Release is explicitly zero; the initial note/local clip
+boundary is at or beyond source natural EOF, so no release envelope truncates the imported sample and
+no additional tail is requested. Later canonical changes still obey the existing note/release/clip
+policy; loaded durations are never silently rewritten.
+Long supported samples are not truncated to a bar or hidden preview limit. No preset song/content is
+created on launch. Accepted bytes survive deletion of the external WAV, Undo/Redo and Save As/reopen.
+This is one-shot occurrence preview, not Pattern/Arrangement editing, Browser or Sample Lab.
+
 ## R2-F3 bounded source access, raw preview and reuse
 
 `SourceAccess.DiscoverDirectoryAsync` inspects one explicitly selected directory without opening a
