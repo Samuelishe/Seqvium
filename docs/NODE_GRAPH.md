@@ -10,7 +10,7 @@ Not authoritative for: Arrangement, group identity, final port ABI/compiler, DSP
 The node graph engine is core Seqvium platform functionality, not an optional editor plugin. It lets
 users place nodes, connect compatible inputs/outputs, and explore audio/control processing. Useful
 ideas may come from SunVox, LabVIEW, or Unity graph workflows; they are references, not specifications.
-No graph engine or editor is implemented yet.
+R4-F1 implements canonical graph intent, editing and diagnostics below. No graph DSP or editor exists yet.
 
 The signal graph describes sources, processors, mixing/splitting, effects, and buses/output where
 applicable. It is separate from the musical timeline and user organization. It does not replace
@@ -52,8 +52,9 @@ For an acyclic path `Input -> EQ -> Compressor -> Delay -> Output`, that connect
 branches such as parallel Distortion/Delay feeding Mix express their dependency relationship.
 
 Ordinary processing must not rely on hidden numeric effect priorities. The realtime engine may derive
-an execution schedule from a validated graph, but no scheduling/validation algorithm is selected.
-Arbitrary cycles are not accepted. Feedback remains an audit/research question: explicit feedback
+an execution schedule from a validated graph; scheduling and compilation remain F2 work.
+R4-F1 uses bounded iterative dependency/cycle checks; it does not compile a schedule. Arbitrary cycles
+block eligibility for preparation. Feedback remains an audit/research question: explicit feedback
 semantics, delay/state, or specialized nodes are possible future approaches, not accepted solutions
 or permission for zero-delay cycles.
 
@@ -66,8 +67,9 @@ responsibilities versus sound definitions and global routes. A scope can preserv
 it does not imply one mixed output. R1's [canonical foundation](ARCHITECTURE.md#r1-canonical-foundation)
 implements identified item/containing contexts, per-placement/per-part route intent and atomic edits;
 it validates the two levels and explicit aggregate versus divergent-route contradiction. No graph
-nodes, attachment/topology compiler, ports, DSP or final public container terminology are implemented.
-Those remaining mechanisms stay Q-019 and later graph stages.
+DSP, attachment/topology compiler or final public container terminology is implemented. R4-F1 adds
+canonical definitions, attachments, typed ports and eligibility diagnostics below; preparation and
+expanded scopes stay Q-019 and later packages.
 
 Arrangement, Mixer and graph surfaces may expose the same canonical context under
 [ARCHITECTURE](ARCHITECTURE.md#arrangement-context-and-mixer-presentation). Connections determine
@@ -345,124 +347,123 @@ or effects as node types. They consume host services and cannot own or replace t
 
 ## Open design questions
 
-Concrete graph-scope references/edit ownership, cycle/feedback handling, validation/preparation, port/channel rules,
-latency propagation/compensation, and live-edit publication remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
+Expanded graph scopes, feedback handling, preparation, channel negotiation, latency compensation and
+live-edit publication remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). F1's bounded intent rules follow.
 Live / Low-Latency operating behavior must preserve the intended project graph and full offline render
 path under [AUDIO_ENGINE](AUDIO_ENGINE.md#live--low-latency-direction); its mechanics are not selected.
 Compact-chain representation, node settings, optional parameter/control exposure, and multiple graph
 pane behavior also need later design. Do not invent all scopes or freeze a compiler to fill these gaps.
 
+## Implemented R4-F1 canonical graph intent
+
+[GraphModel](../src/Seqvium.Core/Domain/GraphModel.cs) extends the immutable `ProjectState`, without a
+second document or musical ownership system. Definitions contain identified nodes and connections;
+attachments address one existing context and one independent definition. At most one attachment owns
+each context/definition. Unattached definitions remain savable with an unsupported-scope blocker.
+Graph, attachment, node, port, connection and source-binding UUIDs are typed and globally distinct.
+Built-in type keys `core.source`, `core.gain`, `core.mix`, `core.output` use state version 1. Saved port
+declarations do not confer capability: built-in descriptors validate their exact supported shape.
+
+| Node | Version 1 ports |
+| --- | --- |
+| Source/Input | One `out`, no input; one identified source binding |
+| Gain | One required `in`, one `out` |
+| Mix | 2–8 individually identified required `slot` inputs, one `out` |
+| Output | One required `in`, no output; exactly one designated Output per supported attachment |
+
+Directions are `input`/`output`; cardinality is `single` for input and `fanOut` for output. Output ports
+cannot be required. Connections identify both endpoint node and port UUIDs. Each input accepts one
+connection; a compatible output may feed several inputs without another source binding/performance.
+Audible audio uses signal class `audio`, use `audible`, rate policy `host`, and explicit `mono` or
+`stereo-lr` layout. Connected layouts must match. No conversion or automatic Mix is inserted.
+Signal class/use/layout/rate/role are extensible semantic strings: future `musical-event`,
+`control-modulation`, audio `detector` and unknown keys survive persistence with blockers. Essential
+direction/cardinality metadata remains closed and structurally checked.
+
+Gain's only understood parameter is `linearAmplitude`: decimal linear amplitude ratio, default `1`,
+range `[0,1]` for state version 1. Values outside that range remain savable invalid intent. This is the
+first attenuation capability, not a permanent ceiling; later amplification needs an explicit versioned
+capability/compatibility decision. JSON parameter maps retain future structured values without adding
+automation/modulation composition or a second generic parameter framework.
+
+Supported scope is one item-local context owned by one PatternPlacement. Each Source binding addresses
+`(placementId, partId, boundary: "part.pre-item")`; names, SoundDefinition and ResourceId never select
+the occurrence. Exactly one Source covers each placement part, including silent parts, and each reaches
+the designated Output. The currently understood source declaration is R2's configured PCM sampler;
+actual media, rate, workload and resource preparation remain F2 gates. Mix presence must agree with
+`IntentionalMix`; multiple parts require explicit Mix. Separate part routes, shared-performance keys,
+containing processing, opaque context state and external/cross-context references block this capability
+without being erased. Output denotes the local result, not Master or an OS endpoint.
+
+[ProjectEdit.Graph](../src/Seqvium.Core/Documents/ProjectEdit.Graph.cs) supplies context/graph creation,
+node creation, Gain updates, source binding/removal, output designation, connect/disconnect, node/graph
+deletion and movement through the existing `ProjectDocument.Edit`. Creation can adopt an existing item
+context and its requested aggregate flag while retaining opaque state. Variation remaps only that
+placement's known part IDs in the same edit; pre-existing unresolved IDs remain unchanged. Placement
+deletion removes its context/attachment/definition; independent resources and other graphs remain.
+Node deletion removes known incident connections/bindings and its output designation. `DeleteContext`
+retains R1's referenced-owner refusal: explicitly detach musical owners in the same edit to delete it
+and its graph. Referenced Pattern/Sound deletion still refuses without unrelated content removal.
+
+[GraphStructure](../src/Seqvium.Core/Domain/GraphStructure.cs) checks safe shape/ownership and global
+identity bounds. Missing graph/context owners refuse; nonempty unresolved node/port/placement/part
+processing references remain representable. Distinct connection IDs with identical endpoints are
+execution errors; duplicate entity IDs are structural errors. Graph positions are finite X/Y values
+within +/-1,000,000 graph units, canonical and undoable; they do not affect dependency order. A completed
+F3 drag will be one edit; transient gestures and workspace preferences stay outside this model.
+
+[GraphDiagnostics](../src/Seqvium.Core/Domain/GraphDiagnostics.cs) returns stable `GraphReasons` keys and
+affected graph/attachment/node/port/connection/binding identities, without localized strings. All F1
+diagnostics block the selected attachment, including disconnected inputs, unknown capability/state,
+invalid Gain, incompatible/unsupported ports, missing/unresolved Source/Output, coverage/aggregation
+errors and every directed cycle. Unknown processing fields block conservatively while retaining data;
+graph presentation fields remain outside signal dependencies. Iterative bounded checks identify actual cycle members, including
+self-loops and disconnected cycles; array/coordinate order cannot change results. Eligibility means
+eligibility for later preparation only, never an executable state. Intent limits are 32 nodes,
+64 connections, 8 sources and 8 Mix inputs; document bounds are larger and separate. Over-limit or
+incomplete safe intent can still Save. No compiler, buffers, DSP, realtime publication or editor exists.
+
+Deep graph value comparison includes JSON maps/payloads and additional fields: collection reconstruction
+or composed net-zero edits create no revision/history entry; real edits create one. Undo/Redo restores
+all identities, wiring, parameters, bindings and coordinates under existing lifecycle/history rules.
+[Format](PROJECT_FORMAT.md#r4-f1-graph-aware-json-format) owns the exact reader gate and serialized shape.
+
 ## R4 implementation readiness recommendation
 
-**Status: SEQ-R4-PRE recommendation, not an accepted schema or implemented capability.** R4 remains
-pending / not started. The next separately authorized package should settle the concrete representation
-below before coding it. Existing contracts above remain accepted; PRE neither closes their broader
-Q-questions nor selects an engine ABI. [Roadmap](ROADMAP.md#proposed-r4-delivery-packages) owns delivery
-scope/gates. This section retains actionable current recommendations, rather than a second project model.
+**Status: F1 intent is implemented above; F2/F3 recommendations remain proposed and separately authorized.**
+R4 is in progress / partial. PRE does not close broader Q-questions or select an engine ABI.
+[Roadmap](ROADMAP.md#proposed-r4-delivery-packages) owns remaining delivery scope/gates; this section
+retains actionable execution/editor recommendations rather than a second project model.
 
 ### Foundation audit and reuse boundary
 
 | Actual foundation | Reuse / necessary extension |
 | --- | --- |
-| [ProjectModel](../src/Seqvium.Core/Domain/ProjectModel.cs) | Immutable `ProjectState`, globally distinct typed `Id<T>`, separate sounds/resources/parts/Patterns/placements/contexts/routes. Extend this state with graph definitions and attachments; never replace it with a graph document or generic Track/Layer. |
-| [ProjectDocument](../src/Seqvium.Core/Documents/ProjectDocument.cs), [ProjectEdit](../src/Seqvium.Core/Documents/ProjectEdit.cs) | Isolated atomic edits, bounded coherent history, persistent revision versus advancing transition generation and fresh lifecycle. Extend graph edit/copy/delete operations and deep content equality; otherwise net-zero graph edits can invent history. There is no document-change notification driving audio convergence today. |
-| [ProjectValidation](../src/Seqvium.Core/Domain/ProjectValidation.cs) | Keep existing musical/reference/context invariants. Its current single throwing validation gate cannot also reject every disconnected/cyclic graph if such work must remain canonical/savable; add separate execution diagnostics. |
-| [ProjectPersistence](../src/Seqvium.Core/Persistence/ProjectPersistence.cs) | Bounded JSON, unknown-field cloning/preservation, opaque extension payloads, flushed replacement and saved revision. Reader currently supports required minor 0, and constructor parameters are required. Graph defaults/version gates and graph dependency diagnostics need explicit extension. |
+| [ProjectModel](../src/Seqvium.Core/Domain/ProjectModel.cs) | Immutable musical ownership and typed UUIDs now include the F1 graph intent above. Reuse it; no graph document or generic Track/Layer. |
+| [ProjectDocument](../src/Seqvium.Core/Documents/ProjectDocument.cs), [ProjectEdit](../src/Seqvium.Core/Documents/ProjectEdit.cs) | Atomic graph edits/deletion/remapping and deep equality reuse bounded history, revision/generation/lifecycle. A document-change notification driving audio convergence is still absent. |
+| [ProjectValidation](../src/Seqvium.Core/Domain/ProjectValidation.cs) | Musical invariants and graph structural acceptance are separate from F1 graph eligibility diagnostics. F2 adds actual preparation/resource gates. |
+| [ProjectPersistence](../src/Seqvium.Core/Persistence/ProjectPersistence.cs) | Graph-aware reader 1.1, historical empty defaults, load/save graph reports, unknown/opaque preservation and normal-process replacement. Reuse current intent for execution capture. |
 | [OfflineSampler](../src/Seqvium.Core/Audio/OfflineSampler.cs) | Absolute tick scheduling, deterministic Stop/Off/On order, source-rate/pitch interpolation, intensity/release, occurrence-owned voices and PCM leases. `Process` currently adds **every voice into the same interleaved output**. `PreparePattern` refuses processing/routes/shared-performance and relevant unknown dependencies; it does not execute placements. |
 | [RealtimeSampler](../src/Seqvium.Core/Audio/RealtimeSampler.cs) | Frozen preparation inputs, authority/generation/lifecycle checks, one candidate plus active/pending/retired ownership, callback handoff, control retirement, sticky Stop/Panic and actual acknowledgment. Publication currently restarts at prepared start; capacity rejection is terminal for that request, with no automatic retry/convergence coordinator. |
 | [AudioEndpoints](../src/Seqvium.Core/Audio/AudioEndpoints.cs), [WasapiOutput](../src/Seqvium.Audio.Windows/WasapiOutput.cs) | Independent nonmusical device intent, explicit format refusal, packet/clock fault termination and confirmed join before release. Both session/output currently name `RealtimeSampler` concretely. Extend only their portable execution seam where needed; put no graph ownership in Windows types. |
 | [ShellSession](../src/Seqvium.Desktop/Presentation/ShellSession.cs), [WorkspaceHost](../src/Seqvium.Desktop/Workspace/WorkspaceHost.cs), [WorkspacePane](../src/Seqvium.Desktop/Workspace/WorkspacePane.cs) | One document lifecycle, retained controls, activation/collapse/docking, RU/EN and semantic themes. Pane definitions/content are currently fixed to Inspector/Appearance; content construction needs a small first-party extension. Desktop currently references Core only and has no import, Save/Open, transport or audio-session integration. |
 
-Source inspection also checked existing document/integrity/persistence, offline/realtime and workspace
-tests and the explicit device harness. Existing tests contain independent numerical oracles and lifetime
-cases; PRE did not run them. The current 428-test baseline is prior evidence, not a PRE result.
+Existing sampler tests supply numerical and lifetime oracles, but cannot certify independent graph
+contributions or automatic convergence. F1 tests cover intent only under [Test execution](TEST_EXECUTION.md#r4-f1-graph-verification).
 
-### Bounded canonical representation and attachment
+### F1 boundary and remaining execution choices
 
-Recommend project-owned `GraphDefinition` and `GraphAttachment` arrays with empty defaults for older
-documents, using the existing `CanonicalData` preservation boundary. Stable typed UUIDs identify graphs,
-nodes, ports, connections and attachments. A node retains a namespaced type key, state/schema version,
-named parameter values, declared ports and optional opaque provider state. Core type descriptors verify
-capabilities; saved claims do not authorize execution. Unknown type/version/capability retains the same
-node, ports, relationships and payload with an explicit blocker, not a substituted Gain or bypass.
+The [implemented intent](#implemented-r4-f1-canonical-graph-intent) adopts the independent item graph,
+placement/part source boundary, descriptor authority, typed audio ports, savable blockers and canonical
+coordinates recommended by PRE. Three gates remain separate: structural acceptance, intent eligibility,
+and F2 preparation with available media and bounded owned execution resources. F1 settles only the first
+two; no eligible report authorizes audio output.
 
-Parameters need stable semantic keys and validated units/ranges. Initially only Gain's decimal linear
-amplitude value in [0,1] is executable. Retained JSON parameter values permit later structured/control
-intent without changing R1 sound parameters or promising automation composition. A port has its own
-UUID, stable role key, direction and semantic descriptor; connection endpoints address node/port IDs,
-never labels, array indices or coordinates. Persist conceptual signal class/use as extensible keys with
-retained descriptor data: an unknown key must be savable but nonexecutable, rather than rejected by a
-closed enum deserializer. This does not define an event payload, control-rate ABI or plugin SDK.
-
-An attachment separately addresses `GraphId` and `ProcessingContextId` and binds Source/Input nodes to
-identified contribution boundaries. First execution supports **one item-local context owned by one
-PatternPlacement**, previewed as that occurrence. Each source binding identifies `(PlacementId, PartId,
-pre-item boundary)`; Pattern and SoundDefinition follow existing references. This prevents a source
-named Kick or a shared ResourceId from accidentally selecting every use. Keep one attachment per
-context, and initially create an independent graph definition per attachment; intentional shared graph
-editing/detachment is later Q-029 work, not sharing inferred from identical settings.
-`MakePatternVariation` must remap that placement's graph bindings with its fresh part IDs in the same
-transaction. Moving a placement retains its item graph; deleting it removes owned attachment/context
-use without deleting reusable sounds/resources. Undo restores coherent identities and relationships.
-
-Within this scope, several notes of one part with the same required path can contribute to one Source
-boundary. Different parts retain separate streams until explicit Mix. Require unambiguous coverage of
-every part in the selected placement, including currently silent/zero-frame parts; no omitted required
-source becomes intentional silence. Allow one binding per part initially. One graph does not exist per
-note. Creating/attaching the graph and updating aggregate intent is one logical edit.
-
-The first multi-source graph has an explicit Mix and one aggregate Output; require coherent
-`ProcessingContext.IntentionalMix` and existing no-post-aggregate-part-route validation. For one source,
-Source -> Gain -> Output needs no Mix. Output returns the **local context result**; it is not a saved
-device endpoint or an invented Mixer/Master. Preview sends that chosen result to the session output.
-It is neither a whole Arrangement playback nor an implicit Pattern-definition bus.
-
-Containing contexts, separate part routes, a non-null shared-performance key, opaque context processing,
-multiple outputs, global route attachments and external send/detector/control dependencies remain
-explicit execution blockers in this initial slice. Preserve their R1 intent. A future containing
-attachment consumes identified item results and explicitly mixes them at that second local level;
-it must not reread source definitions and duplicate item DSP. No containing membership is inferred from
-Pattern/group identity. Existing placement/part/context/route IDs suffice for the bounded item case;
-prepared occurrence identity must additionally include PlacementId. Future containing membership/output
-taps and cross-context target roles need extension; do not implement all of Q-066 now.
-
-Node coordinates in graph-local units and deliberate project graph presentation belong to canonical
-content, persist and participate in Undo. Finite coordinates never affect audio order. Recommend
-keeping selection, hover, pan/zoom and gesture proposals transient initially. Pane bounds/docks/order/
-visibility and language/theme remain user preferences under [Workspace](WORKSPACE.md#layout-ownership-and-restoration)
-and [format](PROJECT_FORMAT.md#musical-content-and-workspace-state), not graph attachment data.
-
-### Initial ports, nodes and execution validity
-
-Recommend Source/Input boundary, Gain, explicit Mix and Output only. Source uses the existing managed
-WAV sampler and musical events; it is not a decoder node per cable. Output fan-out already permits
-branches, so a separate Split processor is unnecessary for the first scenario.
-
-| Rule | First executable contract to settle in F1 |
-| --- | --- |
-| Signal | Audible float PCM at the common execution rate (44.1/48 kHz); explicitly declared mono or stereo L/R layout. No graph-edge resampling/channel coercion. |
-| Source adaptation | The named core source boundary explicitly applies R2 source-to-execution rate/pitch and mono duplication or `(L+R)/2` downmix. This accepted sampler behavior is distinct from an implicit graph connection converter. |
-| Direction/cardinality | Source: one audio output, no cabled musical input. Gain: one required input/one output. Mix: at least two individually identified input slots, one output. Output: exactly one required input and one Output node per initial attachment. Each input slot has at most one edge; convergence occurs only inside Mix. |
-| Fan-out | A producing audio port may feed several compatible inputs within edge/buffer budgets. Execute source/processor once and retain its result for all consumers; do not trigger another performance. Duplicate identical edges are an error. |
-| Mix arithmetic | Sum inputs in stable port-UUID order with float headroom, without normalization, clipping or limiting. Preserve producer buffers until all consumers finish; initially use separate bounded buffers rather than an aliasing optimizer. |
-| Compatibility | Equal audible role, execution rate policy and explicit layout on connected ports. Musical/event, control/modulation and audio detector use stay distinct representable classes/roles but are not executable cables. Audio sends/cross-context taps are unsupported too. |
-| Topology | Derive a deterministic topological schedule; all directed cycles, including self/zero-delay feedback, block execution. No inserted delay, implicit sum, guessed endpoint or automatic bypass. Canvas/array order cannot change dependency order. |
-| Coverage | Every required bound contribution must reach the chosen Output through understood dependencies. Missing node/port/binding/resource and required disconnected inputs block that attachment, even with zero intensity or a silent interval. |
-
-Separate three gates: (1) bounded structurally interpretable canonical data, (2) resolved executable
-intent/capability/dependency diagnostics, (3) successful bounded preparation of immutable plan and owned
-runtime resources. Duplicate/empty entity IDs, malformed essential shape and unsafe bounds still fail
-canonical acceptance. Incomplete wiring, missing logical graph endpoints, unsupported node state,
-incompatible edges, parameter-range errors and cycles can remain canonical and savable with execution
-diagnostics. Explicit node deletion removes known incident cables/bindings coherently for Undo; loaded
-unresolved references retain their former typed endpoint intent rather than binding by name.
-
-Diagnostics should carry stable reason key, graph/attachment/node/connection/port IDs and affected
-output scope, separately localized for display. Initially reject the whole selected attachment on
-connection/topology errors instead of guessing a playable subgraph. An unused disconnected supported
-node can be a visible warning; unavailable state can be harmless only when demonstrably outside every
-required dependency. Unclear dependency scope blocks conservatively. Other unrelated project editing
-remains available; PRE promises no general partially executable graph engine.
+F2 should use the common execution rate (44.1/48 kHz) and explicit mono/stereo layout. Source adaptation
+reuses R2 pitch/rate and mono duplication or `(L+R)/2` downmix; edges remain conversion-free. Recommended
+Mix arithmetic sums in stable port-UUID order with float headroom, without clipping/normalization.
+Fan-out should retain one producer result for all consumers, initially through separate bounded buffers
+rather than an aliasing optimizer. These are execution recommendations awaiting F2 evidence, not F1 DSP.
 
 ### Independent contributions: alternatives and recommendation
 
@@ -544,14 +545,9 @@ not the playing plan. Reopen has no previous-session last-valid snapshot; block 
 repair. Offline preparation always freezes/validates current canonical intent and refuses required blockers.
 Extend format/load diagnostics to graph capabilities as well as existing sound/context extensions.
 
-For [version evolution](PROJECT_FORMAT.md#r1-canonical-json-format), recommend reader minor 1 and raising
-`minimumReaderMinor` to 1 whenever graph intent is saved, including an invalid graph. A 1.0 reader would
-otherwise preserve new optional fields yet could execute old sampler intent while ignoring essential
-processing. Older graph-free R1 files must load without new required constructor fields, empty graph
-defaults must not change sound, and graph-free Save need not upgrade their envelope. Preserve a loaded
-higher compatible minor and unknown data; never lower its requirements automatically. Exact codec
-normalization and promotion of formerly unknown graph fields need compatibility fixtures in F1. This
-version recommendation needs adoption in the format owner during implementation, not a PRE format change.
+F1 adopted graph-aware reader minor 1 and empty historical graph defaults under the
+[format owner](PROJECT_FORMAT.md#r4-f1-graph-aware-json-format). F2 must use current canonical intent,
+never treat an older playing plan as Save authority or revive previous-session playback on reopen.
 
 ### First-party editor and remaining decisions
 
@@ -574,11 +570,11 @@ Mixer, export UI or automatic playback at startup is implied.
 
 | Decision window | Questions / bounded disposition |
 | --- | --- |
-| Before F1 implementation | Q-017: precise core port/layout/role/cardinality schema; Q-019: attachment/binding and aggregate agreement; Q-029: ownership/copy/delete/variation behavior; Q-020: acyclic-only refusal; Q-063: structural versus execution validation and transaction scope. Adopt format defaults/required-minor policy with Q-009. |
+| F1 dependency for F2 | Consume the implemented port/attachment/binding, ownership/remapping, cycle-blocker, transaction and reader-1.1 rules above; revalidate only justified corrections with preservation/compatibility tests. |
 | Within R4, before F2 acceptance | Q-018/Q-063: coordinator convergence, cancellation, generation, publication/status and bounded teardown; Q-047: pre-mix source separation and resource scaling; Q-005: placement-qualified timing and restart/transport bounds; Q-057: Gain updates/transition/Stop evidence; Q-021: verify zero-latency parallel alignment. Set actual budgets from workload evidence. |
 | Within R4, before F3 acceptance | Target retention/focus, minimal real source creation/import, document replacement/Save lifecycle, compact node/port/parameter/diagnostic interaction and real RU/EN Dark/Light GUI/audio evidence. |
 | Preserve for later stages | Q-005: tempo maps, seek/drift/recovery; Q-017: event/control execution/converters; Q-019/Q-029: containing/global outputs and intentional shared graphs; Q-020: explicit delayed feedback; Q-021: latency-bearing compensation; Q-047: mono/legato/opaque domains; Q-057: state/tails/de-click beyond declared core; Q-063: dependency-specific rebase/large history; Q-066: sends/detectors/modulation, cross-context taps and combined causality. |
 
-None of these broad questions is closed by PRE. Readiness means a credible bounded route to editable,
-persistent and independently sourced audible graphs, conditional on the package gates; it is not unit,
-device, GUI or physical audio acceptance.
+These broad questions remain open beyond F1's bounded intent. Remaining recommendations describe a
+route to independently sourced audible graphs conditional on F2/F3 gates; F1's deterministic intent
+evidence establishes neither graph DSP nor device/GUI acceptance.

@@ -116,6 +116,7 @@ public static class ProjectValidation
         }
         Require(state.Contexts.Where(item => item.Level == LocalProcessingLevel.Item).All(item => itemOwners.Contains(item.Id)),
             "An item-local context must have exactly one placement owner.");
+        GraphStructure.Validate(state, value => Identity(new Id<GraphDefinition>(value)));
 
         void CheckContext(Id<ProcessingContext>? id, LocalProcessingLevel level)
         {

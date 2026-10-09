@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 namespace Seqvium.Core;
 
 /// <summary>An isolated logical edit. Intermediate states are never published or placed in document history.</summary>
-public sealed class ProjectEdit
+public sealed partial class ProjectEdit
 {
     private bool _sealed;
     internal ProjectState State { get; private set; }
@@ -191,6 +191,11 @@ public sealed class ProjectEdit
             PatternId = variation.Id,
             PartRelationships = [.. item.PartRelationships.Select(part => part with { PartId = partIds[part.PartId] })]
         });
+        State = State with { GraphAttachments = [.. State.GraphAttachments.Select(attachment => attachment with
+        {
+            Sources = [.. attachment.Sources.Select(binding => binding.PlacementId == placementId &&
+                partIds.TryGetValue(binding.PartId, out var newPart) ? binding with { PartId = newPart } : binding)]
+        })] };
         return variation.Id;
     }
 
@@ -212,7 +217,10 @@ public sealed class ProjectEdit
         var placement = Find(State.Placements, item => item.Id == placementId);
         State = State with { Placements = Remove(State.Placements, item => item.Id == placementId) };
         if (placement.ItemContextId is { } contextId)
+        {
+            RemoveContextGraphs(contextId);
             State = State with { Contexts = Remove(State.Contexts, item => item.Id == contextId) };
+        }
     }
 
     // Definition/resource removal never cascades into unrelated musical content. Commit validates remaining uses.
@@ -220,7 +228,14 @@ public sealed class ProjectEdit
     public void DeleteSound(Id<SoundDefinition> id) { CheckActive(); State = State with { Sounds = Remove(State.Sounds, item => item.Id == id) }; }
     public void DeleteResource(Id<ResourceDescriptor> id) { CheckActive(); State = State with { Resources = Remove(State.Resources, item => item.Id == id) }; }
     public void DeleteGroup(Id<InstrumentGroup> id) { CheckActive(); State = State with { Groups = Remove(State.Groups, item => item.Id == id) }; }
-    public void DeleteContext(Id<ProcessingContext> id) { CheckActive(); State = State with { Contexts = Remove(State.Contexts, item => item.Id == id) }; }
+    public void DeleteContext(Id<ProcessingContext> id)
+    {
+        CheckActive();
+        _ = Find(State.Contexts, item => item.Id == id);
+        RemoveContextGraphs(id);
+        // Existing R1 callers must explicitly detach musical owners in this same edit.
+        State = State with { Contexts = Remove(State.Contexts, item => item.Id == id) };
+    }
     public void DeleteRoute(Id<RouteIntent> id) { CheckActive(); State = State with { Routes = Remove(State.Routes, item => item.Id == id) }; }
 
     private void ChangePattern(Id<Pattern> id, Func<Pattern, Pattern> change) =>

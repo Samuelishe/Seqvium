@@ -62,8 +62,9 @@ context and a downstream route. Per-part placement relationships can retain dist
 and explicit performance-interaction UUIDs independently of sound definitions. Route identities are
 intent only, not Mixer channels, executable graphs or automatically instantiated DSP. Organization
 never assigns processing. An explicit aggregate cannot also claim divergent post-mix part routes;
-validation rejects that contradiction. Full graph attachment/topology, execution-domain derivation,
-capability negotiation and Arrangement/Mixer assignment remain Q-019/Q-030/Q-047.
+validation rejects that contradiction. R4-F1 adds the bounded canonical graph boundary below;
+expanded scope, preparation/publication, execution-domain derivation, capability negotiation and
+Arrangement/Mixer assignment remain Q-019/Q-030/Q-047.
 
 Musical positions/durations use nonnegative/positive Int64 ticks, **960,000 ticks per quarter note**.
 This exactly covers conventional binary subdivisions, triplets and quintuplets with fine edit precision;
@@ -96,6 +97,28 @@ execution/device boundary. F1 implements backend-independent resources/offline e
 bounded realtime and platform ownership below.
 Q-001–Q-007 remain open; intended-workload realtime, period/device, clock-recovery and distribution
 evidence must inform subsequent choices. No permanent engine/native ABI follows from F1.
+
+## R4-F1 canonical graph responsibility
+
+Core extends the existing immutable `ProjectState` with graph definitions and separate context
+attachments. Graph topology does not own music: sources address one placement/part pre-item boundary;
+Pattern, sound, resource and processing context identities retain their R1 roles. Initial supported
+attachments use independent definitions, one per item-local context. Output is the local processing
+result, not a new routing owner or device destination. Containing/global/shared attachment execution
+and cross-context dependencies remain later capabilities.
+
+Safe structural validation belongs to canonical acceptance/persistence; graph intent diagnostics
+separately establish eligibility for later preparation. Neither descriptors nor a clean report create
+DSP/executable state. Source/Gain/Mix/Output and port/cardinality/coordinate rules are owned by
+[Node graph](NODE_GRAPH.md#implemented-r4-f1-canonical-graph-intent); reader 1.1 and unknown preservation
+by [Project format](PROJECT_FORMAT.md#r4-f1-graph-aware-json-format). No public plugin ABI is introduced.
+
+All graph operations use `ProjectDocument.Edit` and existing bounded history/lifecycle ownership.
+Variation remapping, owned placement/context deletion and incident node-use removal are atomic;
+unrelated safely unresolved dependencies retain intended identity. Graph deep content equality
+includes immutable collections and opaque JSON, so net-zero reconstruction publishes no revision.
+Coordinates are canonical graph presentation; workspace geometry and transient gestures remain
+separate. F2 must derive execution/resources from a frozen eligible revision; F3 will supply the canvas.
 
 ## R2-F1 managed media and offline execution
 

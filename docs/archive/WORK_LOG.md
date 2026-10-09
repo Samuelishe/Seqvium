@@ -1024,3 +1024,29 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   four changed documents resolve; ownership/status/scope review and git diff --check pass. This is separate
   from prior 428-test evidence; no code/tests, build/test/device/GUI exercise, screenshots/raw artifacts,
   commit/push or staging-index mutation in PRE. Pre-existing ignored IDE/build outputs remain untouched.
+
+## 2026-10-09 — SEQ-R4-F1 canonical graph intent
+
+- Started from clean master at c7b056f401408a0a620a225f5e6304e1dab8f58a. Implemented independent
+  graph definitions/context attachments, typed identities, placement/part pre-item Source bindings,
+  descriptor-validated Source/Gain/Mix/Output, canonical coordinates and Core editing through the
+  existing document lifecycle. R4 is in progress / partial; F2/F3 remain separately authorized.
+- Adopted Gain v1 decimal attenuation [0,1] as a bounded capability, not a permanent amplification
+  restriction. Split unsafe structure from savable eligibility blockers, with deterministic iterative
+  topology/cycle diagnostics and independent processing/document bounds. Preserved unresolved foreign
+  dependencies, R1 referenced-owner refusal, atomic variation/removal and deep graph net-zero history.
+- Adopted reader 1.1 because a 1.0 reader would otherwise retain unknown graph fields while ignoring
+  their processing meaning. Nonempty graph intent raises minimum reader minor even when invalid;
+  graph-free 1.0 shape, higher compatible requirements and unknown object boundaries remain preserved.
+- Added 128 deterministic graph cases in the existing Tests assembly. Locked restore and full Release
+  build pass with zero warnings/errors; all 556 tests pass, zero failures/skips. The 428-case baseline
+  remains, with the version-refusal fixture deliberately targeting required minor 2. A preliminary
+  regression exposed the existing DeleteContext refusal contract; final code preserves it. Historical
+  reader evidence freezes the baseline envelope predicate, without compiling an old binary.
+- One intermediate full run recorded 5,736 bytes in the unchanged preview allocation test. Its focused
+  rerun and the final sequential full suite passed; the cause of this single variance was not established.
+  Audio implementation/assertions were not changed or weakened.
+- Current graph/format/architecture owners document adopted contracts; roadmap/state retain F2/F3
+  dependencies and broad questions remain open. No NuGet packages/assemblies, DSP, runtime publication,
+  device/GUI execution, screenshots/logs, commit/push or index mutation are introduced. New untracked
+  source/tests are permanent product/verification material; task outputs are not retained.

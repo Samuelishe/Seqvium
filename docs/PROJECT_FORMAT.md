@@ -7,6 +7,7 @@ opening/migration, versioned persistence and unknown-data preservation.
 Not authoritative for: A final container/schema, runtime domain classes, extension API, or recovery implementation.
 
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
+R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
 
 ## R1 canonical JSON format
@@ -49,7 +50,8 @@ identified sound uses without defining runtime instances. `additionalData` is a 
 name, never emitted as a format field. Extension payloads and optional unknown values are opaque JSON.
 
 Only major 1 is understood. Higher compatible minor documents are retained at their original minor
-when `minimumReaderMinor <= 0`; unsupported major/required minor is refused. No legacy migration is
+when `minimumReaderMinor <= 1`; unsupported major/required minor is refused. Graph-free 1.0 remains
+supported; the graph-aware gate below applies to meaningful graph intent. No legacy migration is
 claimed. Unknown JSON properties at envelope, state, settings and every entity/nested part/note are
 preserved semantically at the same object boundary, including through edits/Undo/Save. Reserved known
 fields cannot be overwritten by extension data. Unknown properties are optional by version contract;
@@ -66,6 +68,61 @@ identifiers/locators. These initial bounds can evolve deliberately; they are not
 Resource descriptors carry an optional portable relative managed locator and provenance only; R1
 alone neither imports bytes nor validates codec/media integrity; F1 supplies those boundaries below.
 No external-reference import is adopted.
+
+## R4-F1 graph-aware JSON format
+
+The reader supports major 1, minor 1. `state.graphs` and `state.graphAttachments` are optional on read,
+defaulting to empty arrays for historical R1 files; explicit null/invalid collections refuse. Current
+writers emit both arrays. A graph-free legacy document keeps its 1.0 envelope and musical meaning.
+Any nonempty graph/attachment array, including unsupported, unattached, incomplete or cyclic intent,
+requires `minor >= 1` and `minimumReaderMinor >= 1`. Encode raises both as needed; Read refuses
+underdeclared graph semantics. The actual baseline 1.0 envelope gate refuses minimum reader minor 1
+before silently ignoring the new fields. Compatible higher minor/unknown fields remain preserved.
+Loaded requirements never decrease; successful graph Save retains the promoted requirement in-session,
+even after graph removal. Encode/failed Save cannot mutate compatibility, current or saved state.
+
+Graph records follow [GraphModel](../src/Seqvium.Core/Domain/GraphModel.cs); constructor fields below are
+required, including nullable `extension` and `outputNodeId`. All entity/reference identities are typed
+UUID strings and entity IDs join the existing globally distinct identity set.
+
+| Object | Known fields |
+| --- | --- |
+| Graph definition | `id`, `nodes`, `connections` |
+| Graph node | `id`, `type`, `stateVersion`, `parameters`, `ports`, `position`, `extension` |
+| Graph port | `id`, `role`, `direction`, `signalClass`, `use`, `layout`, `ratePolicy`, `cardinality`, `required` |
+| Graph connection | `id`, `fromNodeId`, `fromPortId`, `toNodeId`, `toPortId` |
+| Graph attachment | `id`, `graphId`, `contextId`, `outputNodeId`, `sources` |
+| Source binding | `id`, `nodeId`, `placementId`, `partId`, `boundary` |
+| Graph position | `x`, `y` |
+
+`parameters` maps stable keys to retained JSON values. Gain v1's `linearAmplitude` is a decimal linear
+amplitude ratio with default 1 and eligibility range `[0,1]`; future amplification is a versioned
+capability decision, not prohibited. Positions are finite double values within +/-1,000,000 graph
+units. `type`, role/signal/use/layout/rate/boundary are extensible strings; `direction` is `input`/`output`,
+`cardinality` is `single`/`fanOut`. Supported capability/port/source rules belong to
+[Node graph](NODE_GRAPH.md#implemented-r4-f1-canonical-graph-intent), not the saved declarations.
+
+Unknown properties survive at definition/node/port/connection/attachment/binding/position and extension
+boundaries, including known-field edits and Undo/Redo. Parameter values and extension payloads stay opaque
+without reinterpretation; domain nodes own cloned JSON lifetimes. The codec recognizes formerly unknown
+graph fields directly on read, avoiding a shadow unknown copy. Reserved known/unknown collisions refuse
+encoding rather than emitting duplicate properties. Meaningful new essential semantics still require
+a suitable minimum reader/major decision; unknown fields do not confer executable capability.
+
+Duplicate entity IDs, missing required fields, malformed/empty UUIDs, unsafe ownership/cardinality,
+invalid coordinates and excessive shape refuse structural acceptance. Attachments require existing
+context and independent graph owners, at most one attachment per context/definition. Nonempty unresolved
+processing endpoint/source/output references are retained with execution blockers. Distinct-ID duplicate
+edges, incompatible ports, bad Gain, disconnected inputs, cycles and unavailable capabilities remain
+savable. Load and Save reports supply machine-readable `GraphReports`; `IsDegraded` includes their blockers separately
+from resource/extension diagnostics. Reports establish intent eligibility only; media availability and
+actual execution preparation remain separate gates. Save persists current invalid intent, never a plan.
+
+Existing 16 MiB/depth-64/text/global-100,000-entity limits remain; graphs, nodes, ports, edges, attachments
+and bindings count as entities. A node may declare at most 256 ports. F1 processing eligibility limits
+(32 nodes, 64 edges, 8 sources, 8 Mix inputs) are smaller than document limits and do not refuse Save.
+Int64 musical time, media-reference semantics and normal-process file replacement guarantees remain
+unchanged; no DSP state, buffers, device endpoints, workspace preferences or history are added to JSON.
 Caller-supplied sets of validated available resource/extension identities can suppress the corresponding
 load diagnostics; that is not executable compatibility negotiation or proof of playable audio.
 

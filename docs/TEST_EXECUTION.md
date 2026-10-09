@@ -216,6 +216,32 @@ evidence supplements tests where needed. If the suite becomes materially expensi
 and fast/full separation from measured cost, preserving full acceptance scope. A single route registry
 is retained as deferred [I-002](IDEAS.md#i-002--named-test-routes); no filters/route infrastructure exists now.
 
+## R4-F1 graph verification
+
+`Graphs/GraphEditingTests`, `GraphDiagnosticTests`, `GraphPersistenceTests` and the synthetic
+`Support/GraphFixture` exercise canonical Core APIs in the existing Tests assembly. Cases cover typed
+global identity collisions, atomic context/graph creation, Source coverage including silent parts,
+same-name/sound/resource independence, item placement identity, supported ports/cardinality/fan-out,
+deterministic topology diagnostics, all directed cycle classes and incompatible/unknown declarations.
+Variation remapping, explicit ownership deletion, retained unresolved foreign dependencies and R1
+referenced-owner refusal are checked together with Undo/Redo, net-zero collection/JSON reconstruction,
+ended/reentrant/deleted-target operations and failure immutability.
+
+Persistence cases remove graph fields to reproduce graph-free 1.0 shape, retain precise Int64 ticks,
+round-trip every graph boundary/coordinate and unknown/opaque state, and Save incomplete/cyclic graphs.
+Compatibility fixtures freeze the actual baseline 1.0 envelope refusal predicate, verify graph-required
+minor 1 and underdeclared refusal, higher compatible minor retention and nondecreasing requirements.
+This is an envelope contract fixture, not a separately built historical reader. Existing version-refusal
+cases now target required minor 2; all baseline test cases remain. Malformed identities/fields/ownership,
+document/port/processing bounds, JSON depth/lifetime and failed Save retaining prior file/state/history
+are deterministic and use owned temporary directories.
+
+Run the unchanged locked restore, Release build and full solution test commands above. Optional focused
+run: `dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*Graph*Tests"`.
+These tests open no GUI, audio device or network and establish intent eligibility only. Media decode,
+prepared graph resources, PCM separation/oracles, realtime budgets/publication and actual canvas/device
+behavior require separately authorized F2/F3 evidence. Current totals belong to PROJECT_STATE.
+
 ## Evidence tiers
 
 These are complementary evidence classes, not a ranking in which a higher-looking tier replaces lower

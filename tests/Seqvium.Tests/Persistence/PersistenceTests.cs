@@ -58,7 +58,7 @@ public sealed class PersistenceTests
     [Theory]
     [InlineData(2, 0, 0)]
     [InlineData(0, 0, 0)]
-    [InlineData(1, 2, 1)]
+    [InlineData(1, 2, 2)]
     [InlineData(1, -1, 0)]
     [InlineData(1, 0, -1)]
     [InlineData(1, 0, 1)]
@@ -68,7 +68,7 @@ public sealed class PersistenceTests
         node["major"] = major; node["minor"] = minor; node["minimumReaderMinor"] = minimum;
         var error = Assert.Throws<ProjectFormatException>(() => Read(node));
         Assert.Contains("Unsupported document version", error.Message);
-        Assert.Contains("Reader supports 1.0", error.Message);
+        Assert.Contains("Reader supports 1.1", error.Message);
     }
 
     [Fact]

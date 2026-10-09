@@ -11,8 +11,8 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 **SEQ-R1, SEQ-R2 and SEQ-R3 are complete / local accepted-ready** within their bounded foundations.
 R2-F1/F2/F3/F4 and R3-F1/F2 are working subdivisions, not new numbered stages. The owner accepts
 R3-F1 and R3-F2's current bounded workspace usability/interaction behavior. SEQ-R3-CLOSE finds no
-missing R3 prerequisite; no additional UI polishing package is required for this acceptance. **R4 is pending / not
-started**, requiring separate authorization.
+missing R3 prerequisite; no additional UI polishing package is required for this acceptance.
+**R4 is in progress / partial; R4-F1 is complete / local accepted-ready.** F2/F3 require separate authorization.
 SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / narrow** under its
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 Completed rationale is cold history; current contracts stay in canonical owners.
@@ -47,20 +47,26 @@ explicit opaque IDs, availability without silent fallback and confirmed join bef
 Input discovery/selection opens no capture stream. [Audio](AUDIO_ENGINE.md) and
 [Sample workflow](SAMPLE_WORKFLOW.md) own exact resource/execution/device contracts.
 
+R4-F1 adds canonical item graph definitions/attachments, placement/part source bindings, version-1
+Source/Gain/Mix/Output descriptors, typed ports, graph coordinates, structural versus intent diagnostics,
+atomic editing/remapping/deletion and deep Undo/net-zero equality. Reader 1.1 preserves invalid/unknown
+graph intent and requires minor 1 for nonempty graphs. [Node graph](NODE_GRAPH.md#implemented-r4-f1-canonical-graph-intent)
+and [Project format](PROJECT_FORMAT.md#r4-f1-graph-aware-json-format) own exact contracts; no graph DSP/editor exists.
+
 ## Current focus
 
-The bounded workspace foundation is accepted. Later graph/editor integration needs separate stage
-authorization under [ROADMAP](ROADMAP.md); closure does not start R4 or select a permanent engine.
-SEQ-R4-PRE supplies a source-audited [readiness recommendation](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
-and proposed F1/F2/F3 gates; concrete schema/runtime choices remain recommendations. R4 is still pending.
+The bounded workspace and canonical graph intent foundations are accepted locally. Next proposed work
+is F2 independent contributions/preparation/publication, followed by F3 actual editor/source/Save flows
+under [ROADMAP](ROADMAP.md). Remaining [readiness recommendations](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
+are not execution contracts or authorization. F1 alone cannot close R4 or select a permanent engine.
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
-Full Browser/Personal Library, graph/plugins/Mixer/export/recovery and MIDI/capture/recording remain later work.
+Full Browser/Personal Library, graph execution/editor/plugins/Mixer/export/recovery and MIDI/capture/recording remain later work.
 
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 428 tests pass, zero failures/skips**.
-All existing tests are preserved. [Test execution](TEST_EXECUTION.md#r3-f2-workspace-verification)
+solution build pass with **zero warnings/errors; all 556 tests pass, zero failures/skips**.
+All 428 baseline tests are preserved; 128 graph cases are added. [Test execution](TEST_EXECUTION.md#r4-f1-graph-verification)
 owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
 [F1 evidence](experiments/SEQ-R3-F1_REPORT.md) records actual chrome/OS keyboard/preference behavior.
 [F2 evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records 525
@@ -73,7 +79,7 @@ No screenshots/raw logs or new task artifacts are retained. Desktop loads no Win
 RID-independent local build feasibility is not hosted or Linux/macOS runtime evidence.
 [R2-F2](experiments/SEQ-R2-F2_REPORT.md), [F3](experiments/SEQ-R2-F3_REPORT.md) and
 [F4](experiments/SEQ-R2-F4_REPORT.md) retain distinct workload/source/device evidence, including physical
-UR12 44.1 kHz stereo float32 output/join checks; no audio-device exercise is added by R3 closure.
+UR12 44.1 kHz stereo float32 output/join checks; F1 adds no device/GUI/graph-DSP evidence.
 
 ## Active blockers / evidence gaps
 

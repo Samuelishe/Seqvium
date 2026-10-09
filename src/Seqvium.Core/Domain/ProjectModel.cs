@@ -91,7 +91,12 @@ public sealed record ProjectState(Id<ProjectState> Id, string? Name, ProjectSett
     ImmutableArray<Pattern> Patterns, ImmutableArray<SoundDefinition> Sounds,
     ImmutableArray<PatternPlacement> Placements, ImmutableArray<InstrumentGroup> Groups,
     ImmutableArray<ResourceDescriptor> Resources, ImmutableArray<ProcessingContext> Contexts,
-    ImmutableArray<RouteIntent> Routes) : CanonicalData;
+    ImmutableArray<RouteIntent> Routes) : CanonicalData
+{
+    // Optional properties keep historical graph-free constructor contracts intact.
+    public ImmutableArray<GraphDefinition> Graphs { get; init; } = [];
+    public ImmutableArray<GraphAttachment> GraphAttachments { get; init; } = [];
+}
 
 public sealed record ProjectSnapshot(ProjectState State, Guid Revision);
 

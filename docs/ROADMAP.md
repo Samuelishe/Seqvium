@@ -239,10 +239,14 @@ the [complete acceptance audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requ
 R3's bounded workspace shell is also **complete / local accepted-ready** after its completion audit
 and owner acceptance of F1/F2. Completed scope/rationale is retained in the cold archive; current
 capability and evidence limits belong to [PROJECT_STATE](PROJECT_STATE.md) and canonical owners.
-The next numbered stage is R4, **pending / not started**, requiring separate authorization. No extra
+The current numbered stage is R4, **in progress / partial** after separately authorized F1. F2/F3 require
+separate authorization. No extra
 milestone, permanent backend, musical editor or recording prerequisite is introduced by closure.
 
 ## SEQ-R4 — Node Graph Foundation
+
+Status: **in progress / partial**. F1 canonical intent is complete / local accepted-ready;
+prepared audible execution and actual workspace editing remain pending. F1 alone cannot close R4.
 
 Establish core node/connection concepts, semantic port validation, a bounded editable/prepared
 execution boundary, and minimal graph interaction/structural nodes over the shell. Basic source/output,
@@ -257,24 +261,16 @@ Publication/compiler/cancellation/failure strategy remains open; no manual Apply
 
 ### Proposed R4 delivery packages
 
-**Planning only; no package is authorized or started by SEQ-R4-PRE.** These are subdivisions of R4,
-not numbered roadmap stages. The [readiness recommendation](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
-owns the audited source boundaries, proposed representation and open choices. The preferred sequence
-is F1 -> F2 -> F3: settle savable intent before derived execution, then expose real editing over proven
-audio. F1 alone is not R4 acceptance; F2's independent-source and F3's actual user workflows are mandatory.
+**F1 is implemented; F2/F3 are proposals requiring separate authorization.** These are subdivisions of
+R4, not numbered roadmap stages. The [readiness recommendation](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
+owns remaining source boundaries and execution/editor choices. The sequence remains F1 -> F2 -> F3;
+F2's independent-source and F3's actual user workflows are mandatory for R4 acceptance.
 
-**R4-F1 — canonical executable intent.** Extend Core `Domain/ProjectModel.cs` or a cohesive graph model
-file, `Domain/ProjectValidation.cs`, `Documents/ProjectEdit.cs`, `Documents/ProjectDocument.cs` and
-`Persistence/ProjectPersistence.cs`. Add graph/node/port/connection/attachment IDs, parameters/source
-bindings, graph coordinates, separated structural/executable diagnostics and atomic editing/Undo.
-Implement the decided version defaults/required-reader gate. No DSP, GUI or device opens in this package.
-Tests belong in the existing Tests project: exact Source/Gain/Mix/Output topology, typed ports/cardinality,
-fan-out, invalid/missing/unsupported dependencies and cycles; R1 reopen plus graph round-trip/opaque
-preservation; coherent deletion, variation binding remapping, Undo/Redo, net-zero edits and failed Save.
-Acceptance requires stable identities/relationships, invalid edits savable but nonexecutable, older R1
-documents preserved and no silent graph-ignoring older-reader compatibility. Main risk is confusing
-structural validity with audio validity or making newly required fields break 1.0 files. Update graph,
-format and architecture owners only for the concrete choices actually adopted.
+**R4-F1 — canonical executable intent: complete / local accepted-ready.** Current contracts belong to
+[Node graph](NODE_GRAPH.md#implemented-r4-f1-canonical-graph-intent) and
+[Project format](PROJECT_FORMAT.md#r4-f1-graph-aware-json-format). F2 consumes these canonical APIs and
+eligibility reports, then proves real source separation, preparation/resource limits and publication;
+an F1 report is not executable audio state.
 
 **R4-F2 — independent contributions and audible prepared graph.** Extend Core `Audio/OfflineSampler.cs`
 and `Audio/RealtimeSampler.cs`, adding cohesive graph preparation/execution and a serialized application

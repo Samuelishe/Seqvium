@@ -13,11 +13,13 @@ internal sealed record ProjectFile(string Format, int Major, int Minor, int Mini
 public sealed class ProjectFormatException(string message, Exception? innerException = null) : Exception(message, innerException);
 public sealed record ProjectLoadResult(ProjectDocument Document, ImmutableArray<string> Diagnostics)
 {
-    public bool IsDegraded => !Diagnostics.IsEmpty;
+    public ImmutableArray<GraphIntentReport> GraphReports { get; init; } = [];
+    public bool IsDegraded => !Diagnostics.IsEmpty || GraphReports.Any(report => !report.IsEligibleForPreparation);
 }
 public sealed record ProjectSaveResult(ProjectSnapshot Snapshot, string Path, ImmutableArray<string> Diagnostics)
 {
-    public bool IsDegraded => !Diagnostics.IsEmpty;
+    public ImmutableArray<GraphIntentReport> GraphReports { get; init; } = [];
+    public bool IsDegraded => !Diagnostics.IsEmpty || GraphReports.Any(report => !report.IsEligibleForPreparation);
 }
 
 /// <summary>Canonical encoding and bounded file/media publication; no crash-recovery guarantee.</summary>
@@ -25,6 +27,7 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
+    public const int ReaderMinor = 1;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     public static byte[] Encode(ProjectDocument document)
@@ -36,7 +39,9 @@ public static class ProjectPersistence
     private static byte[] Encode(ProjectSnapshot snapshot, ProjectCompatibility compatibility)
     {
         ProjectValidation.Validate(snapshot.State);
-        var file = new ProjectFile("seqvium-project", 1, compatibility.Minor, compatibility.MinimumReaderMinor,
+        bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
+        var file = new ProjectFile("seqvium-project", 1, Math.Max(compatibility.Minor, hasGraphs ? ReaderMinor : 0),
+            Math.Max(compatibility.MinimumReaderMinor, hasGraphs ? ReaderMinor : 0),
             WriterVersion, snapshot.Revision, snapshot.State) { AdditionalData = compatibility.AdditionalData };
         var node = JsonSerializer.SerializeToNode(file, Options)?.AsObject()
             ?? throw new ProjectFormatException("Unable to encode project structure.");
@@ -75,6 +80,8 @@ public static class ProjectPersistence
             TransformAdditionalData(node, typeof(ProjectFile), loading: true);
             var file = node.Deserialize<ProjectFile>(Options) ?? throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if ((!file.State.Graphs.IsEmpty || !file.State.GraphAttachments.IsEmpty) && file.MinimumReaderMinor < ReaderMinor)
+                throw new ProjectFormatException("Graph intent requires minimumReaderMinor >= 1.");
             ProjectValidation.Require(file.Revision != Guid.Empty, "Revision cannot be empty.");
             ProjectValidation.Require(!string.IsNullOrWhiteSpace(file.WriterVersion) && file.WriterVersion.Length <= ProjectValidation.MaximumTextLength,
                 "Writer version is required.");
@@ -89,7 +96,7 @@ public static class ProjectPersistence
             foreach (var extension in extensions.DistinctBy(item => item.ExtensionId))
                 if (availableExtensions?.Contains(extension.ExtensionId) != true)
                     diagnostics.Add($"Extension '{extension.ExtensionId}' is unavailable; opaque state is retained.");
-            return new(document, diagnostics.ToImmutable());
+            return new(document, diagnostics.ToImmutable()) { GraphReports = GraphDiagnostics.Inspect(file.State) };
         }
         catch (Exception error) when (error is JsonException or ArgumentException or OverflowException or ProjectValidationException)
         {
@@ -128,6 +135,7 @@ public static class ProjectPersistence
         document.CheckAvailable();
         var snapshot = document.Current;
         var bytes = Encode(snapshot, document.Compatibility);
+        var graphReports = GraphDiagnostics.Inspect(snapshot.State);
         var destination = Path.GetFullPath(path);
         var directory = Path.GetDirectoryName(destination) ?? throw new ArgumentException("A destination directory is required.", nameof(path));
         var temporary = Path.Combine(directory, $".seqvium-{Guid.NewGuid():N}.tmp");
@@ -144,9 +152,15 @@ public static class ProjectPersistence
             File.Move(temporary, destination, overwrite: true);
             ownsTemporary = false;
             document.MarkSaved(snapshot, destination);
+            if (!snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty)
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(document.Compatibility.Minor, ReaderMinor),
+                    MinimumReaderMinor = Math.Max(document.Compatibility.MinimumReaderMinor, ReaderMinor)
+                };
             document.SavedMediaDiagnostics = diagnostics;
             if (!document.MediaRoots.Contains(destination + ".media")) document.MediaRoots.Add(destination + ".media");
-            return new(snapshot, destination, diagnostics);
+            return new(snapshot, destination, diagnostics) { GraphReports = graphReports };
         }
         finally
         {
@@ -167,8 +181,8 @@ public static class ProjectPersistence
         var major = Integer("major");
         var minor = Integer("minor");
         var minimum = Integer("minimumReaderMinor");
-        if (major != 1 || minor < 0 || minimum < 0 || minimum > minor || minimum > 0)
-            throw new ProjectFormatException($"Unsupported document version {major}.{minor} (minimum reader minor {minimum}). Reader supports 1.0.");
+        if (major != 1 || minor < 0 || minimum < 0 || minimum > minor || minimum > ReaderMinor)
+            throw new ProjectFormatException($"Unsupported document version {major}.{minor} (minimum reader minor {minimum}). Reader supports 1.{ReaderMinor}.");
     }
 
     private static void RejectDuplicateProperties(JsonElement element)

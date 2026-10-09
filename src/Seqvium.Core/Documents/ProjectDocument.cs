@@ -148,7 +148,8 @@ public sealed class ProjectDocument
         return left with
                {
                    Patterns = right.Patterns, Sounds = right.Sounds, Placements = right.Placements,
-                   Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes
+                   Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes,
+                   Graphs = right.Graphs, GraphAttachments = right.GraphAttachments
                } == right
                && SameSequence(left.Patterns, right.Patterns, (a, b) =>
                    a with { Parts = b.Parts } == b && SameSequence(a.Parts, b.Parts, (partA, partB) =>
@@ -163,7 +164,8 @@ public sealed class ProjectDocument
                && SameSequence(left.Groups, right.Groups, (a, b) =>
                    a with { SoundIds = b.SoundIds } == b && a.SoundIds.SequenceEqual(b.SoundIds))
                && left.Resources.SequenceEqual(right.Resources) && left.Contexts.SequenceEqual(right.Contexts)
-               && left.Routes.SequenceEqual(right.Routes);
+               && left.Routes.SequenceEqual(right.Routes)
+               && GraphContent.Same(left.Graphs, right.Graphs) && GraphContent.Same(left.GraphAttachments, right.GraphAttachments);
     }
 
     private static bool SameSequence<T>(System.Collections.Immutable.ImmutableArray<T> left,

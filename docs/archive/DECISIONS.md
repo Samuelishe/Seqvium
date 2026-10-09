@@ -1470,3 +1470,23 @@ is implemented by this decision.
 Current owner: [Workspace boundary ownership](../WORKSPACE.md#resize-hit-targets-and-boundary-ownership).
 [Usability evidence](../experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records
 pure tests, actual Windows Release checks and the exact-seam framework cursor-route correction.
+
+## D-084 — R4-F1 canonical graph intent and reader protection
+
+Status: accepted bounded implementation choice within separately authorized R4-F1; R4 remains partial.
+
+Adopt PRE's independent item-local definition/attachment and placement/part pre-item source identity
+inside the existing document, preserving musical ownership and explicit Mix semantics. Saved declarations
+cannot authorize execution. Structural safety refuses unsafe ownership/identity/shape, while incomplete,
+unknown, unresolved and cyclic processing intent remains savable with machine-readable blockers.
+Gain v1 [0,1] is initial attenuation; amplification and broader port/execution capabilities need explicit
+versioned decisions. Canonical positions and deep value equality reuse the existing Undo lifecycle.
+
+Adopt reader minor 1 and require minimum reader minor 1 for every nonempty graph intent. Otherwise the
+baseline reader could ignore processing while retaining its JSON, producing the wrong musical result.
+Historical graph-free constructor defaults and higher compatible requirements remain intact. F1 settles
+canonical data and diagnostics only; preparation, media/resources, DSP/publication and editor require F2/F3.
+
+Current owners: [Node graph](../NODE_GRAPH.md#implemented-r4-f1-canonical-graph-intent),
+[Project format](../PROJECT_FORMAT.md#r4-f1-graph-aware-json-format),
+[Architecture](../ARCHITECTURE.md#r4-f1-canonical-graph-responsibility).
