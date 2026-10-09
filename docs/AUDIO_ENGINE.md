@@ -213,6 +213,14 @@ requires the current validated publication authority. Stop/Panic remain sticky t
 `RealtimeSampler.ReadStatus` returns a value snapshot protected by a single-consumer sequence counter;
 it distinguishes origin prepared revision, executing audio revision, equivalent canonical revision,
 executing attachment, transport/epoch/position/voices, real Stop acknowledgment and termination.
+`PreparedExecutionId` is the sampler-local monotonic publication authority of that particular prepared
+state, retained independently of later invalidation/update authority. It is derived and never serialized.
+Coordinator equivalence, update publication and consumer acceptance require this identity and the exact
+attachment. Document revision alone cannot identify an execution: two attachments, or repeated preparation
+after Undo ABA, can share it. Origin prepared revision remains frozen while audio/equivalent provenance
+advance. Pending publication is not consumer handoff; a rejected target requires normal preparation and
+publication before it can execute. Automatic convergence never issues Start and cannot undo sticky Stop.
+Deliberate Start refuses a prepared publication already observed as rejected by the consumer.
 `GraphExecutionCoordinator.ReadStatus` adds canonical revision/target, preparation pending, stable
 blockers, last-valid playing and closed state through an atomic immutable observation. UI must use
 these APIs, not the legacy unsynchronized Guid property. Snapshots retain no UI, mutable graph or Undo.
@@ -243,8 +251,10 @@ The [verification owner](TEST_EXECUTION.md#r4-f2-execution-verification) and
 [report](experiments/SEQ-R4-F2_REPORT.md) declare numerical, maximum-workload and actual device limits.
 Normal tests open no physical output. Evidence does not establish acoustic perception, DAC latency,
 multi-hour/all-device stability, other platforms, cross-context routing or stateful processor behavior.
-Full F2 acceptance remains partial: repeated 60-second pressure runs include two non-injected
-padding-exhaustion starvations; the latest measured service-wake interval exceeds device capacity.
+Full F2 acceptance remains partial: the original two pressure starvations remain failures and new
+same-endpoint diagnostics also fail with natural GC and graph-free legacy. Native runtime suspension
+aligned with a collection exceeds device capacity in specific new windows; neither all historical
+failures nor scheduler/driver causality is established. The service-start interval is not OS dispatch latency.
 Confirmed fault termination/join releases resources, but does not establish deadline stability.
 
 ## R2-F3 transient one-shot execution

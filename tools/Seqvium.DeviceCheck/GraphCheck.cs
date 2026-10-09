@@ -11,6 +11,43 @@ using Seqvium.Core;
 [SupportedOSPlatform("windows")]
 internal static class GraphCheck
 {
+    private sealed record Load(string Name, bool Cpu, bool Allocations, bool Edits, bool Forced,
+        bool Legacy = false, bool Trace = false, string? Endpoint = null);
+    private readonly record struct CollectionInterval(long Begin, long End, int Cycle);
+
+    internal static async Task<int> Diagnose(string[] args)
+    {
+        if (args.Length is < 4 or > 6) throw new ArgumentException(
+            "graph-diagnose full|natural|forced|legacy|cpu|allocations|edits <1..120 seconds> <1..3 repeats> [endpoint ID] [gc-trace]");
+        int seconds = int.Parse(args[2], System.Globalization.CultureInfo.InvariantCulture);
+        int repeats = int.Parse(args[3], System.Globalization.CultureInfo.InvariantCulture);
+        if (seconds is < 1 or > 120 || repeats is < 1 or > 3) throw new ArgumentOutOfRangeException(nameof(seconds));
+        bool trace = args[^1] == "gc-trace";
+        string? endpoint = args.Length > 4 && args[4] != "gc-trace" ? args[4] : null;
+        var load = args[1] switch
+        {
+            "full" => new Load("full", true, true, true, true),
+            "natural" => new Load("natural", true, true, true, false),
+            "forced" => new Load("forced", false, false, false, true),
+            "legacy" => new Load("legacy", true, true, true, true, Legacy: true),
+            "cpu" => new Load("cpu", true, false, false, false),
+            "allocations" => new Load("allocations", false, true, false, false),
+            "edits" => new Load("edits", false, false, true, false),
+            _ => throw new ArgumentException("Unknown diagnostic variant.")
+        };
+        load = load with { Trace = trace, Endpoint = endpoint };
+        Console.WriteLine(JsonSerializer.Serialize(new { Mode = "graph-diagnose", seconds, repeats, load,
+            Environment = RuntimeInformation.OSDescription, Runtime = RuntimeInformation.FrameworkDescription,
+            Stopwatch.Frequency, GCSettings.IsServerGC, GcLatency = GCSettings.LatencyMode.ToString(),
+            Environment.ProcessorCount, ProcessId = Environment.ProcessId }));
+        bool accepted = true;
+        for (int repeat = 1; repeat <= repeats; repeat++)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(new { Repeat = repeat, Begin = Stopwatch.GetTimestamp() }));
+            accepted &= await Configuration(seconds, true, load);
+        }
+        return accepted ? 0 : 1;
+    }
     private sealed class Owner : SynchronizationContext
     {
         private readonly ConcurrentQueue<Action> _queue = new();
@@ -142,7 +179,8 @@ internal static class GraphCheck
         if (seconds is < 1 or > 120) throw new ArgumentOutOfRangeException(nameof(seconds));
         Console.WriteLine(JsonSerializer.Serialize(new { Mode = "graph-measure", seconds,
             Environment = RuntimeInformation.OSDescription, Runtime = RuntimeInformation.FrameworkDescription,
-            Stopwatch.Frequency, GCSettings.IsServerGC, Topology = "8 Source, 22 Gain, 8-input Mix, Output; 32 nodes, 31 connections" }));
+            Stopwatch.Frequency, GCSettings.IsServerGC, GcLatency = GCSettings.LatencyMode.ToString(),
+            Topology = "8 Source, 22 Gain, 8-input Mix, Output; 32 nodes, 31 connections" }));
         bool accepted = await Configuration(seconds, false);
         accepted &= await Configuration(seconds, true);
         for (int index = 0; index < 3; index++) accepted &= await Fault(index == 2, index);
@@ -151,9 +189,10 @@ internal static class GraphCheck
         return accepted ? 0 : 1;
     }
 
-    private static async Task<bool> Configuration(int seconds, bool pressure)
+    private static async Task<bool> Configuration(int seconds, bool pressure, Load? diagnostic = null)
     {
-        using var output = new WasapiOutput(176400, diagnostics: true);
+        var load = diagnostic ?? new Load(pressure ? "graph-pressure" : "graph-baseline", pressure, pressure, pressure, pressure);
+        using var output = new WasapiOutput(176400, load.Endpoint, diagnostics: true);
         if (output.Facts is not { } facts)
         {
             output.Close(); Console.WriteLine(JsonSerializer.Serialize(new { Run = "graph-open", output.Failure, output.HResult }));
@@ -161,8 +200,20 @@ internal static class GraphCheck
         }
         using var fixture = new Fixture();
         await fixture.Initialize(facts.Channels == 1 ? GraphBuiltIns.Mono : GraphBuiltIns.Stereo);
-        using var plan = GraphPreparation.Prepare(fixture.Document, fixture.Attachment.Id, facts.Rate, facts.Channels,
-            facts.CapacityFrames, repeats: 1024);
+        ProjectDocument? legacy = null;
+        if (load.Legacy)
+        {
+            string path = Path.Combine(fixture.Root, "legacy.seqvium");
+            ProjectPersistence.Save(fixture.Document, path);
+            legacy = ProjectPersistence.Open(path).Document;
+            legacy.Edit("Graph-free diagnostic projection", edit =>
+            {
+                foreach (var placement in legacy.Current.State.Placements) edit.DeletePlacement(placement.Id);
+            });
+        }
+        using var plan = legacy is null ? GraphPreparation.Prepare(fixture.Document, fixture.Attachment.Id, facts.Rate,
+            facts.Channels, facts.CapacityFrames, repeats: 1024) :
+            SamplerPreparation.PreparePattern(legacy, fixture.Pattern, facts.Rate, facts.Channels, repeats: 1024);
         float[] warmPacket = new float[256 * facts.Channels];
         using (var warm = plan.CreateExecution()) for (int iteration = 0; iteration < 3000; iteration++) warm.Process(warmPacket);
         var sampler = new RealtimeSampler(facts.Rate, facts.Channels, facts.CapacityFrames);
@@ -172,56 +223,88 @@ internal static class GraphCheck
         Task cpu = Task.CompletedTask;
         try
         {
-            owner.Invoke(() => coordinator = new(fixture.Document, sampler, fixture.Attachment.Id, owner, repeats: 1024));
+            if (legacy is null)
+                owner.Invoke(() => coordinator = new(fixture.Document, sampler, fixture.Attachment.Id, owner, repeats: 1024));
+            else
+            {
+                using var initial = sampler.BeginPreparation(legacy, fixture.Pattern, repeats: 1024);
+                await initial.PrepareAsync();
+                if (initial.Publish() != SamplerPublication.Accepted) throw new InvalidOperationException("Legacy preparation refused.");
+            }
             var waiting = Stopwatch.StartNew();
             while (!sampler.HasPending && waiting.Elapsed.TotalSeconds < 5) { owner.Pump(); await Task.Delay(1); }
             bool started = false;
-            owner.Invoke(() => started = coordinator.Start());
+            if (legacy is null) owner.Invoke(() => started = coordinator.Start());
+            else { sampler.Start(); started = true; sampler.SetGain(0.1f); }
             if (!started) throw new InvalidOperationException("Graph did not prepare current target.");
             var ring = new byte[128][];
-            cpu = pressure ? Task.Run(() =>
+            cpu = load.Cpu ? Task.Run(() =>
             {
                 double value = 0.1;
                 while (!loadCancellation.IsCancellationRequested)
                     for (int index = 0; index < 10000; index++) value = Math.Sin(value + 0.001);
                 GC.KeepAlive(value);
             }) : Task.CompletedTask;
-            int cycles = 0, edits = 0, ringIndex = 0;
+            int cycles = 0, edits = 0, ringIndex = 0, sourceEdits = 0, allocations = 0, forcedCount = 0;
+            var forced = new CollectionInterval[128];
+            using var trace = load.Trace ? new GcTrace() : null;
             int[] beforeGc = [GC.CollectionCount(0), GC.CollectionCount(1), GC.CollectionCount(2)];
             long beforeAllocated = GC.GetTotalAllocatedBytes(true);
             TimeSpan beforePause = GC.GetTotalPauseDuration();
+            long measurementBegin = Stopwatch.GetTimestamp();
             output.Start(sampler);
             var elapsed = Stopwatch.StartNew();
             while (elapsed.Elapsed.TotalSeconds < seconds && output.Failure == OutputFailure.None)
             {
                 owner.Pump(); await Task.Delay(10); cycles++;
-                if (!pressure) continue;
-                for (int index = 0; index < 16; index++) ring[ringIndex++ % ring.Length] = new byte[32768];
-                if (cycles % 10 == 0) owner.Invoke(() =>
+                if (load.Allocations)
+                    for (int index = 0; index < 16; index++) { ring[ringIndex++ % ring.Length] = new byte[32768]; allocations++; }
+                if (load.Edits && cycles % 10 == 0) owner.Invoke(() =>
                 {
                     fixture.Document.Edit("Live branch coefficient", edit => edit.SetGraphGain(fixture.Attachment.GraphId,
                         fixture.Gains[0].Id, cycles % 20 == 0 ? 0.25m : 0.4m)); edits++;
                 });
-                if (cycles % 50 == 0) owner.Invoke(() =>
+                if (load.Edits && cycles % 50 == 0) owner.Invoke(() =>
                 {
                     fixture.Document.Edit("Source revision replacement", edit => edit.ConfigurePcmSampler(fixture.Sound,
-                        fixture.Resource, cycles % 100 == 0 ? 60 : 60.05m, 20)); edits++;
+                        fixture.Resource, cycles % 100 == 0 ? 60 : 60.05m, 20)); edits++; sourceEdits++;
                 });
-                if (cycles % 100 == 0) GC.Collect(2, GCCollectionMode.Forced, true, true);
+                if (load.Legacy && load.Edits && cycles % 50 == 0 && output.Failure == OutputFailure.None)
+                {
+                    legacy!.Edit("Equivalent legacy source revision", edit => edit.ConfigurePcmSampler(fixture.Sound,
+                        fixture.Resource, cycles % 100 == 0 ? 60 : 60.05m, 20));
+                    sampler.InvalidatePreparation(); sampler.RetireCompleted();
+                    using var replacement = sampler.BeginPreparation(legacy, fixture.Pattern, repeats: 1024);
+                    await replacement.PrepareAsync();
+                    if (replacement.Publish() != SamplerPublication.Accepted && output.Failure == OutputFailure.None)
+                        throw new InvalidOperationException("Legacy replacement refused.");
+                }
+                if (load.Forced && cycles % 100 == 0)
+                {
+                    long begin = Stopwatch.GetTimestamp();
+                    GC.Collect(2, GCCollectionMode.Forced, true, true);
+                    forced[forcedCount++] = new(begin, Stopwatch.GetTimestamp(), cycles);
+                }
             }
+            long measurementEnd = Stopwatch.GetTimestamp();
+            long processAllocated = GC.GetTotalAllocatedBytes(true) - beforeAllocated;
+            int[] collections = beforeGc.Select((count, index) => GC.CollectionCount(index) - count).ToArray();
+            double pauseMilliseconds = (GC.GetTotalPauseDuration() - beforePause).TotalMilliseconds;
             loadCancellation.Cancel(); await cpu;
             long stop = sampler.Stop();
             bool stopAck = await Acknowledge(sampler, stop, owner);
             int stopVoices = sampler.ActiveVoices;
             long panic = sampler.Panic();
             bool panicAck = await Acknowledge(sampler, panic, owner);
-            var status = coordinator.ReadStatus();
+            var status = coordinator?.ReadStatus();
             long retainedBytes = sampler.RetainedPcmAndScratchBytes;
-            await owner.Complete(coordinator.CloseAsync);
+            if (coordinator is not null) await owner.Complete(coordinator.CloseAsync);
             output.Close(); sampler.RetireCompleted(); sampler.Dispose();
-            await owner.Complete(async () => await coordinator.DisposeAsync());
-            long processAllocated = GC.GetTotalAllocatedBytes(true) - beforeAllocated;
-            var observations = output.Observations.ToArray();
+            if (coordinator is not null) await owner.Complete(async () => await coordinator.DisposeAsync());
+            // The workload counters end before Stop/Panic, joined cleanup, JSON and offline/oracle work.
+            var observations = output.Observations.ToArray().Where(item => item.ServiceStart <= measurementEnd).ToArray();
+            if (trace is not null) await Task.Delay(250); // Drain asynchronous runtime delivery after consumer join.
+            var gcEvents = trace?.Snapshot(measurementBegin, measurementEnd);
             double? oracle = pressure ? null : fixture.OracleError(output.Capture, facts.Rate, facts.Channels);
             double? parity = null;
             if (!pressure)
@@ -243,24 +326,31 @@ internal static class GraphCheck
                 (pressure || oracle <= 0.000002 && parity <= 0.000002);
             Console.WriteLine(JsonSerializer.Serialize(new
             {
-                Run = pressure ? "graph-pressure" : "graph-baseline", Accepted = accepted, facts, output.DiagnosticsEnabled,
+                Run = load.Name, Accepted = accepted, facts, output.DiagnosticsEnabled, load,
                 output.ElapsedSeconds, output.CallbackCount, output.Failure, output.HResult, output.UnexpectedError,
                 ProcessorMicroseconds = Quantiles(observations.Select(item => item.ProcessorTicks)),
                 ServiceMicroseconds = Quantiles(observations.Select(item => item.ServiceTicks)),
                 WakeMicroseconds = Quantiles(observations.Select(item => item.WakeTicks)),
-                GcPauseMilliseconds = (GC.GetTotalPauseDuration() - beforePause).TotalMilliseconds,
+                GcPauseMilliseconds = pauseMilliseconds,
                 PacketMinimum = observations.Length == 0 ? (int?)null : observations.Min(item => item.Frames),
                 PacketMaximum = observations.Length == 0 ? (int?)null : observations.Max(item => item.Frames),
                 output.ProcessorMisses, output.ServiceMisses, output.PacketMisses, output.PaddingExhaustions,
                 output.ProcessorAllocatedBytes, output.ServiceAllocatedBytes, output.WorkerAllocatedBytes, processAllocated,
-                Collections = beforeGc.Select((count, index) => GC.CollectionCount(index) - count).ToArray(),
+                Collections = collections,
                 output.MaximumObservedVoices, output.NonFiniteSamples, output.SilentPacketsAfterStop,
                 output.MaximumSampleMagnitude, output.MaximumAdjacentSampleDelta, output.MaximumPacketBoundaryDelta,
                 CaptureSamples = output.Capture.Length, OracleError = oracle, OfflineParityError = parity,
                 plan.DecodedBytes, plan.ScratchBytes, plan.PacketWork, plan.MaximumPacketEvents,
                 GraphPreparation.MaximumPacketWork, retainedBytes, RealtimeSampler.MaximumRetainedPcmAndScratchBytes,
                 RealtimeSampler.MaximumPreparedTableAllowanceBytes, output.DiagnosticStorageBytes,
-                cycles, edits, status, stopAck, panicAck, stopVoices, output.Joined,
+                cycles, edits, sourceEdits, allocations, AllocatedPayloadBytes = (long)allocations * 32768,
+                ForcedCollections = forced.Take(forcedCount).ToArray(), CpuWorkers = load.Cpu ? 1 : 0,
+                measurementBegin, measurementEnd, output.PlaybackStart, output.PlaybackEnd, output.WorkerThreadId,
+                MeasurementSeconds = (measurementEnd - measurementBegin) / (double)Stopwatch.Frequency,
+                CounterScope = "Process/GC/load: workload boundary; output/lifetime: playback through Stop/Panic and join",
+                Trace = gcEvents,
+                ProblemWindow = ProblemWindow(observations),
+                status, stopAck, panicAck, stopVoices, output.Joined,
                 sampler.PreparedStatesCreated, sampler.PreparedStatesReleased, sampler.Retirements, sampler.LivePreparedStates
             }));
             GC.KeepAlive(ring);
@@ -276,7 +366,17 @@ internal static class GraphCheck
                 sampler.Dispose();
                 if (coordinator is not null) await owner.Complete(async () => await coordinator.DisposeAsync());
             }
+            legacy?.Close();
         }
+    }
+
+    private static ServiceObservation[] ProblemWindow(ServiceObservation[] observations)
+    {
+        if (observations.Length == 0) return [];
+        int worst = 0;
+        for (int index = 1; index < observations.Length; index++)
+            if (observations[index].Padding == 0 || observations[index].WakeTicks > observations[worst].WakeTicks) worst = index;
+        return observations.Skip(Math.Max(0, worst - 5)).Take(11).ToArray();
     }
 
     private static async Task<bool> Acknowledge(RealtimeSampler sampler, long command, Owner owner)

@@ -27,7 +27,9 @@ public readonly record struct ServiceObservation(
     int Padding,
     ulong ClockPosition,
     ulong ClockQpc100Nanoseconds,
-    long SubmittedFrames);
+    long SubmittedFrames,
+    long WaitEnter = 0, long WaitExit = 0, long ServiceStart = 0, long DeviceQueryEnd = 0,
+    long PcmStart = 0, long PcmEnd = 0, long SubmissionEnd = 0, long Sequence = 0);
 
 public enum OutputFailure
 {
@@ -85,6 +87,9 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
     public int NonFiniteSamples { get; private set; }
     public int MaximumObservedVoices { get; private set; }
     public double ElapsedSeconds { get; private set; }
+    public long PlaybackStart { get; private set; }
+    public long PlaybackEnd { get; private set; }
+    public int WorkerThreadId { get; private set; }
     public int CallbackCount => Volatile.Read(ref _count);
     public ReadOnlySpan<ServiceObservation> Observations => _observations.AsSpan(0, _diagnostics ? _count : 0);
     public ReadOnlySpan<float> Capture => _capture.AsSpan(0, _captureCount);
@@ -183,6 +188,7 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
 
     private void Run(AudioEndpointIntent selection)
     {
+        WorkerThreadId = (int)GetCurrentThreadId();
         nint enumerator = 0,
             device = 0,
             client = 0,
@@ -314,6 +320,7 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
             if (!Check(Simple(client, 10))) return;
             streaming = true;
             first = Stopwatch.GetTimestamp();
+            PlaybackStart = first;
             long previous = first;
             if (_diagnostics) workerAllocation = GC.GetAllocatedBytesForCurrentThread();
             _started.Set();
@@ -324,7 +331,9 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
             double periodTicks = period / 10000000.0 * Stopwatch.Frequency;
             while (true)
             {
+                long waitEnter = _diagnostics ? Stopwatch.GetTimestamp() : 0;
                 wait = WaitForMultipleObjects(2, waits, 0, 2000);
+                long waitExit = _diagnostics ? Stopwatch.GetTimestamp() : 0;
                 if (wait == 0) break;
                 if (wait != 1)
                 {
@@ -349,6 +358,7 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
                 uint padding = 0;
                 ulong position = 0, qpc = 0;
                 if (!Check(Padding(client, &padding)) || !Check(Position(clock, &position, &qpc))) break;
+                long queryEnd = _diagnostics ? Stopwatch.GetTimestamp() : 0;
                 if (position < previousClock || Stopwatch.GetTimestamp() - lastClockAdvance > periodTicks * 5 &&
                     position == previousClock)
                 {
@@ -365,7 +375,7 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
                 }
 
                 int frames = (int)(capacity - padding);
-                long processorTicks = 0;
+                long processorTicks = 0, processorStart = 0, processorEnd = 0, submissionEnd = 0;
                 if (padding == 0)
                 {
                     PaddingExhaustions++;
@@ -376,18 +386,20 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
                 {
                     if (!Check(GetBuffer(render, (uint)frames, &buffer))) break;
                     var output = new Span<float>((void*)buffer, frames * channels);
-                    long processorStart = _diagnostics ? Stopwatch.GetTimestamp() : 0,
-                        allocated = _diagnostics ? GC.GetAllocatedBytesForCurrentThread() : 0;
+                    processorStart = _diagnostics ? Stopwatch.GetTimestamp() : 0;
+                    long allocated = _diagnostics ? GC.GetAllocatedBytesForCurrentThread() : 0;
                     bool valid = sampler.Process(output);
+                    processorEnd = _diagnostics ? Stopwatch.GetTimestamp() : 0;
                     if (_diagnostics)
                     {
                         ProcessorAllocatedBytes += GC.GetAllocatedBytesForCurrentThread() - allocated;
-                        processorTicks = Stopwatch.GetTimestamp() - processorStart;
+                        processorTicks = processorEnd - processorStart;
                     }
 
                     CapturePacket(output, frames);
                     if (_diagnostics) ObservePacket(output, sampler);
                     if (!Check(ReleaseBuffer(render, (uint)frames, valid ? 0u : 2u))) break;
+                    submissionEnd = _diagnostics ? Stopwatch.GetTimestamp() : 0;
                     if (!valid)
                     {
                         Failure = OutputFailure.InvalidPacket;
@@ -413,7 +425,8 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
 
                     _observations[index] = new(processorTicks, serviceTicks, serviceStart - previous, frames,
                         (int)padding,
-                        position, qpc, submitted);
+                        position, qpc, submitted, waitEnter, waitExit, serviceStart, queryEnd,
+                        processorStart, processorEnd, submissionEnd, index + 1L);
                 }
 
                 Volatile.Write(ref _count, index == int.MaxValue ? index : index + 1);
@@ -432,7 +445,8 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
         }
         finally
         {
-            if (first != 0) ElapsedSeconds = (Stopwatch.GetTimestamp() - first) / (double)Stopwatch.Frequency;
+            PlaybackEnd = Stopwatch.GetTimestamp();
+            if (first != 0) ElapsedSeconds = (PlaybackEnd - first) / (double)Stopwatch.Frequency;
             // Never invent a packet acknowledgment during shutdown or fault cleanup.
             Volatile.Read(ref _sampler)?.TerminateExecution();
             if (streaming)

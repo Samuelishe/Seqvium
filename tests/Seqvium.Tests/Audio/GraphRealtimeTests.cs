@@ -33,6 +33,217 @@ internal sealed class AudioOwnerContext : SynchronizationContext
 public sealed class GraphRealtimeTests
 {
     [Theory]
+    [InlineData(1, false)]
+    [InlineData(2, false)]
+    [InlineData(3, false)]
+    [InlineData(1, true)]
+    [InlineData(2, true)]
+    [InlineData(3, true)]
+    public async Task RejectedTargetWithSharedRevisionCannotUpdateOtherExecution(int gainCount, bool stop)
+    {
+        using var fixture = await AudioGraphFixture.Create();
+        GraphAttachment target = null!;
+        GraphNode targetGain = null!;
+        fixture.Document.Edit("Second valid attachment before execution", edit =>
+        {
+            var placement = edit.AddPlacement(fixture.Pattern, new(137));
+            target = edit.CreateItemGraph(placement, true);
+            var source = edit.AddGraphNode(target.GraphId, GraphBuiltIns.Source, new(0, 0));
+            edit.BindGraphSource(target.Id, source.Id, placement, fixture.KickPart);
+            var other = edit.AddGraphNode(target.GraphId, GraphBuiltIns.Source, new(0, 0));
+            edit.BindGraphSource(target.Id, other.Id, placement, fixture.SnarePart);
+            var mix = edit.AddGraphNode(target.GraphId, GraphBuiltIns.Mix, new(0, 0));
+            GraphFixture.Connect(edit, target.GraphId, source, mix);
+            GraphFixture.Connect(edit, target.GraphId, other, mix, 1);
+            var previous = mix;
+            for (int index = 0; index < gainCount; index++)
+            {
+                var gain = edit.AddGraphNode(target.GraphId, GraphBuiltIns.Gain, new(0, 0));
+                edit.SetGraphGain(target.GraphId, gain.Id, 0.8m);
+                GraphFixture.Connect(edit, target.GraphId, previous, gain);
+                previous = gain;
+                targetGain = gain;
+            }
+            var output = edit.AddGraphNode(target.GraphId, GraphBuiltIns.Output, new(0, 0));
+            GraphFixture.Connect(edit, target.GraphId, previous, output);
+            edit.SetGraphOutput(target.Id, output.Id);
+        });
+        Guid sharedRevision = fixture.Document.Current.Revision;
+        using var planA = fixture.Prepare(packet: 8, repeats: 1024);
+        using var referenceA = planA.CreateExecution();
+        using var sampler = new RealtimeSampler(48000, 2, 8);
+        var owner = new AudioOwnerContext();
+        GraphExecutionCoordinator coordinator = null!;
+        owner.Run(() => coordinator = new(fixture.Document, sampler, fixture.Attachment.Id, owner, 8, 1024, null, false));
+        try
+        {
+            await owner.Until(() => sampler.HasPending);
+            owner.Run(() => Assert.True(coordinator.Start()));
+            float[] actual = new float[16], expected = new float[16];
+            void CheckA()
+            {
+                Assert.True(sampler.Process(actual)); referenceA.Process(expected);
+                Assert.Equal(expected, actual);
+                var status = sampler.ReadStatus();
+                Assert.Equal(fixture.Attachment.Id, status.AttachmentId);
+                Assert.Equal(sharedRevision, status.OriginPreparedRevision);
+                Assert.Equal(sharedRevision, status.ExecutingRevision);
+                Assert.Equal(sharedRevision, status.EquivalentCanonicalRevision);
+            }
+            CheckA();
+            owner.Run(() => coordinator.SelectTarget(target.Id));
+            await owner.Until(() => sampler.HasPending);
+            Assert.Equal(sharedRevision, fixture.Document.Current.Revision);
+            owner.Run(() => fixture.Document.Edit("Invalidate pending B", edit => edit.SetGraphGain(target.GraphId, targetGain.Id, 2)));
+            CheckA();
+            Assert.Equal(1, sampler.ConsumerStaleRejections);
+            owner.Run(coordinator.Progress);
+            Assert.Equal(1, sampler.PreparedStatesReleased);
+            owner.Run(() => fixture.Document.Edit("Repair B coefficient", edit => edit.SetGraphGain(target.GraphId, targetGain.Id, 0.6m)));
+            // The worker completion stays queued on the owner: this boundary must still execute A.
+            CheckA();
+            await owner.Until(() => sampler.HasPending);
+            long stopCommand = stop ? sampler.Stop() : 0;
+            using var planB = GraphPreparation.Prepare(fixture.Document, target.Id, 48000, 2, 8, repeats: 1024,
+                cancellationToken: TestContext.Current.CancellationToken);
+            using var referenceB = planB.CreateExecution();
+            Assert.True(sampler.Process(actual)); referenceB.Process(expected);
+            for (int frame = 0; frame < 8; frame++)
+                for (int channel = 0; channel < 2; channel++)
+                    GraphExecutionTests.Near(stop ? 0 : expected[frame * 2 + channel] * (frame + 1f) / 48, actual[frame * 2 + channel]);
+            if (stop)
+            {
+                Assert.Equal(stopCommand, sampler.StopAcknowledgment);
+                Assert.False(sampler.ReadStatus().Playing);
+            }
+            Assert.Equal(target.Id, sampler.ReadStatus().AttachmentId);
+            Assert.Equal(planB.Revision, sampler.ReadStatus().OriginPreparedRevision);
+            Assert.Equal(planB.Revision, sampler.ReadStatus().ExecutingRevision);
+            Assert.Equal(planB.Revision, sampler.ReadStatus().EquivalentCanonicalRevision);
+            Assert.Equal(3, coordinator.ReadStatus().Preparations);
+            owner.Run(coordinator.Progress);
+            for (int attempt = 0; attempt < 20; attempt++) owner.Run(coordinator.Progress);
+            Assert.Equal(3, coordinator.ReadStatus().Preparations);
+        }
+        finally { await owner.Join(coordinator.DisposeAsync); }
+    }
+
+    [Fact]
+    public async Task RejectedSameAttachmentUndoAbaAndPendingTargetChangePrepareNewIdentity()
+    {
+        using var fixture = await AudioGraphFixture.Create();
+        using var sampler = new RealtimeSampler(48000, 2, 8);
+        var owner = new AudioOwnerContext();
+        GraphExecutionCoordinator coordinator = null!;
+        owner.Run(() => coordinator = new(fixture.Document, sampler, fixture.Attachment.Id, owner, 8, 1024, null, false));
+        try
+        {
+            await owner.Until(() => sampler.HasPending);
+            Guid revision = fixture.Document.Current.Revision;
+            owner.Run(() => Assert.True(coordinator.Start()));
+            sampler.Process(new float[16]);
+            long firstIdentity = sampler.ReadStatus().PreparedExecutionId;
+            owner.Run(() => coordinator.SelectTarget(Id<GraphAttachment>.New()));
+            owner.Run(() => coordinator.SelectTarget(fixture.Attachment.Id));
+            await owner.Until(() => sampler.HasPending);
+            owner.Run(() => fixture.Document.Edit("Invalidate same-revision reprepare", edit =>
+                edit.SetGraphGain(fixture.Attachment.GraphId, fixture.KickGain.Id, 2)));
+            sampler.Process(new float[16]);
+            Assert.Equal(firstIdentity, sampler.ReadStatus().PreparedExecutionId);
+            owner.Run(() => Assert.True(fixture.Document.Undo())); // ABA returns exactly the original UUID.
+            Assert.Equal(revision, fixture.Document.Current.Revision);
+            await owner.Until(() => sampler.HasPending);
+            sampler.Process(new float[16]);
+            long secondIdentity = sampler.ReadStatus().PreparedExecutionId;
+            Assert.NotEqual(firstIdentity, secondIdentity);
+            Assert.Equal(revision, sampler.ReadStatus().OriginPreparedRevision);
+            owner.Run(() => Assert.True(fixture.Document.Redo()));
+            sampler.Process(new float[16]);
+            Assert.Equal(secondIdentity, sampler.ReadStatus().PreparedExecutionId);
+            Assert.True(coordinator.ReadStatus().InvalidCanonical);
+            owner.Run(() => Assert.True(fixture.Document.Undo()));
+            sampler.Process(new float[16]);
+            Assert.Equal(secondIdentity, sampler.ReadStatus().PreparedExecutionId);
+            Assert.Equal(revision, sampler.ReadStatus().EquivalentCanonicalRevision);
+            owner.Run(coordinator.Progress);
+            Assert.Equal(3, coordinator.ReadStatus().Preparations);
+            Assert.False(coordinator.ReadStatus().PreparationPending);
+        }
+        finally { await owner.Join(coordinator.DisposeAsync); }
+    }
+
+    [Fact]
+    public async Task ObservedRejectedHandoffRetriesOnceWithoutCanonicalEditOrPlaybackResurrection()
+    {
+        using var fixture = await AudioGraphFixture.Create();
+        using var sampler = new RealtimeSampler(48000, 2, 8);
+        var owner = new AudioOwnerContext();
+        GraphExecutionCoordinator coordinator = null!;
+        owner.Run(() => coordinator = new(fixture.Document, sampler, fixture.Attachment.Id, owner, 8, 1024, null, false));
+        try
+        {
+            await owner.Until(() => sampler.HasPending);
+            owner.Run(() => Assert.True(coordinator.Start()));
+            float[] block = new float[16]; sampler.Process(block);
+            var initial = sampler.ReadStatus();
+            owner.Run(() => coordinator.SelectTarget(Id<GraphAttachment>.New()));
+            owner.Run(() => coordinator.SelectTarget(fixture.Attachment.Id));
+            await owner.Until(() => sampler.HasPending);
+            long stop = sampler.Stop();
+            owner.Run(() => sampler.InvalidatePreparation());
+            sampler.Process(block);
+            Assert.Equal(1, sampler.ConsumerStaleRejections);
+            Assert.Equal(initial.PreparedExecutionId, sampler.ReadStatus().PreparedExecutionId);
+            owner.Run(() => Assert.False(coordinator.Start()));
+            owner.Run(coordinator.Progress);
+            await owner.Until(() => sampler.HasPending);
+            sampler.Process(block);
+            Assert.NotEqual(initial.PreparedExecutionId, sampler.ReadStatus().PreparedExecutionId);
+            Assert.Equal(initial.OriginPreparedRevision, sampler.ReadStatus().OriginPreparedRevision);
+            Assert.Equal(initial.AttachmentId, sampler.ReadStatus().AttachmentId);
+            Assert.Equal(stop, sampler.StopAcknowledgment);
+            Assert.False(sampler.ReadStatus().Playing);
+            Assert.All(block, value => Assert.Equal(0, value));
+            for (int attempt = 0; attempt < 20; attempt++) owner.Run(coordinator.Progress);
+            Assert.Equal(3, coordinator.ReadStatus().Preparations);
+            Assert.False(coordinator.ReadStatus().PreparationPending);
+        }
+        finally { await owner.Join(coordinator.DisposeAsync); }
+    }
+
+    [Fact]
+    public async Task GraphUpdatePublicationAndConsumerRequireExactPreparedExecutionAndAttachment()
+    {
+        using var fixture = await AudioGraphFixture.Create();
+        using var sampler = new RealtimeSampler(48000, 2, 8);
+        using (var request = sampler.BeginGraphPreparation(fixture.Document, fixture.Attachment.Id, repeats: 1024))
+        {
+            await request.PrepareAsync(TestContext.Current.CancellationToken);
+            Assert.Equal(SamplerPublication.Accepted, request.Publish(TestContext.Current.CancellationToken));
+        }
+        sampler.Start(); sampler.Process(new float[16]);
+        var initial = sampler.ReadStatus();
+        long authority = sampler.InvalidatePreparation();
+        Assert.False(sampler.PublishGraphUpdate(initial.PreparedExecutionId + 1, fixture.Attachment.Id,
+            Guid.NewGuid(), Guid.NewGuid(), [0.9f, 0.9f], authority));
+        Assert.False(sampler.PublishGraphUpdate(initial.PreparedExecutionId, Id<GraphAttachment>.New(),
+            Guid.NewGuid(), Guid.NewGuid(), [0.9f, 0.9f], authority));
+        Assert.True(sampler.PublishGraphUpdate(initial.PreparedExecutionId, fixture.Attachment.Id,
+            Guid.NewGuid(), Guid.NewGuid(), [0.9f, 0.9f], authority));
+        // A same-authority handoff between publication and consumption must not borrow the old update.
+        using var replacement = fixture.Prepare(packet: 8, repeats: 1024);
+        Assert.Equal(SamplerPublication.Accepted, sampler.Publish(replacement, authority, true, false,
+            lifetimeCancellation: TestContext.Current.CancellationToken));
+        sampler.Process(new float[16]);
+        var current = sampler.ReadStatus();
+        Assert.NotEqual(initial.PreparedExecutionId, current.PreparedExecutionId);
+        // Authority identifies a publication within this sampler; use a distinct authority for each state.
+        Assert.Equal(replacement.Revision, current.ExecutingRevision);
+        Assert.Equal(replacement.Revision, current.OriginPreparedRevision);
+        sampler.RetireCompleted();
+    }
+
+    [Theory]
     [InlineData(44100, 1)]
     [InlineData(44100, 2)]
     [InlineData(48000, 1)]

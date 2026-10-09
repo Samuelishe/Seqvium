@@ -93,6 +93,7 @@ internal static class DeviceCheck
             "WARNING: explicit physical verification plays sound on the selected output. No system volume/settings are changed.");
         if (mode == "audition-smoke") return await AuditionCheck.Run();
         if (mode == "graph-measure") return await GraphCheck.Run(args);
+        if (mode == "graph-diagnose") return await GraphCheck.Diagnose(args);
         int seconds = args.Length > 1 ? int.Parse(args[1], System.Globalization.CultureInfo.InvariantCulture) :
             mode == "measure" ? 60 : 2;
         if (mode is not ("smoke" or "measure" or "pressure" or "lifetimes" or "faults") || seconds is < 1 or > 120)

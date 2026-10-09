@@ -8,7 +8,10 @@ Owners: [Audio](../AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-
 
 ## Outcome and scope
 
-Functional execution is ready: all 600 tests pass, preserving 558 prior cases; locked restore and full
+The execution-identity continuation below passes 609 tests and retains further physical failures;
+F2 remains partial. The original checkpoint and measurements in the following sections are preserved.
+
+The original functional checkpoint passed all 600 tests, preserving 558 prior cases; locked restore and full
 Release build have zero warnings/errors. F2 remains **partial**, because successful repeated Windows
 pressure runs coexist with two non-injected starvations. R4 remains in progress / partial; F3 is not started.
 No project schema/F1 identity, dependency/package/assembly, GUI or permanent backend selection changed.
@@ -168,3 +171,261 @@ the submitted PCM path, not that the owner heard speakers, microphone loopback o
 Only this endpoint's 48 kHz stereo format was physically measured; mono/44.1 kHz are deterministic
 execution evidence. No multi-hour stability, all graph distributions, native engine, other platform,
 cross-context, plugin/tail, normal GUI transport or F3 readiness acceptance is claimed.
+
+## Execution identity correction and starvation attribution (2026-10-09)
+
+This bounded continuation started from clean `master` at
+`e6e258dbc0709d59b6a15e4769dd68d704eaad55`. No existing work, staging or history was changed.
+The two published failures above remain unsuccessful acceptance results. F2 stays **partial** and
+F3 stays unstarted. This section extends the same report; raw logs/traces stay ignored locally.
+
+### Deterministic production error and correction
+
+Before changing production, all 600 existing tests passed. A real coordinator regression creates both
+valid item-local attachments before execution, so A and pending B share canonical revision R. It starts
+A, selects/publishes B without consumer handoff, invalidates B's Gain, rejects/retirements B at a consumer
+boundary, then repairs B with different valid coefficients. With A's two Gain and B's 1/2/3 Gain,
+all three cases fail in the original code: B=1 throws `IndexOutOfRangeException` from graph PCM processing;
+B=2/3 change A's PCM using B coefficients. Publication authority invalidates pending B correctly, but
+revision-only recognition incorrectly treats active A as the accepted B basis. Equal array lengths do
+not protect against it. An initial fixture omitted a required second source and was corrected before
+these production failures; that setup timeout is not evidence of the execution collision.
+
+The minimal identity reuses each prepared state's existing monotonic publication authority, scoped to
+one sampler, plus its attachment. This is `PreparedExecutionId` in coherent status, never canonical JSON.
+Coordinator fast path, update publication and consumer validation all require it. The plan's original
+prepared revision remains frozen, independently of current audio/equivalent provenance. Explicit rejected
+handoff observation identifies the rejected prepared execution and clears that basis before normal retry.
+It does not infer rejection from a status that may still precede an in-progress handoff. This avoids
+repeated preparation while waiting for consumer observation. Retry never issues Start, and deliberate
+Start refuses an already observed rejected publication.
+
+Nine new deterministic cases cover B=1/2/3 both playing and stopped, PCM/provenance, automatic convergence,
+same-attachment reprepare, Undo/Redo/ABA at the original UUID, pending target changes, retry after explicit
+rejection without a new canonical edit, finite progress, and both publication/consumer identity gates.
+They use owner completion gates and actual sampler packets, no device or timing sleeps. Locked restore,
+full Release solution build and the exact requested full test command pass: **609/609**, no failures/skips,
+zero warnings/errors. All 600 old cases/assertions remain intact.
+
+### Measurement protocol and limits
+
+Environment remains Windows 10.0.26300 x64, SDK 10.0.401/runtime 10.0.12, Ryzen 3 5400U (4 cores/8 logical),
+16,541,458,432 bytes RAM, workstation GC / Interactive, QPC 10 MHz. Silent discovery confirms the same
+High Definition Audio speakers ID printed above; diagnostic variants select that exact ID. Every open
+reports 48 kHz stereo float32, 1056-frame/22 ms capacity, 10 ms period, clock frequency 384000, MMCSS on.
+No system volume/defaults, GC mode, priorities or device sizing changed. Acoustic review remains separate.
+
+Before the series, the local protocol declares three requested 60-second runs for each of full, natural,
+fixed forced and legacy, with all results retained. `graph-diagnose` uses the existing GraphCheck fixture,
+load cadence and sampler/output path; its guide documents exact commands and factor switches. Full uses
+the original CPU worker, allocation ring, Gain/source edits and blocking compacting Gen2 every 100 cycles.
+Natural removes only the explicit collection. Fixed forced keeps the graph unchanged, removes the other
+external loads and retains the same collection cadence. Legacy uses identical WAV bytes/events/voices/
+tempo/rate/packets and external load; it directly sums voices without graph DSP/fade/scratch, with uniform
+gain 0.1 rather than branch Gains and final 0.2. A separate mirrored source edit publishes legacy replacements.
+This is a controlled current-device comparison with a declared DSP/control difference, not historical UR12.
+
+All twelve initial diagnostic runs enable the same bounded native runtime listener. Audio observations
+use preallocated arrays and QPC timestamps for wait entry/return, service/query, PCM and submission,
+packet sequence/frames/padding/device clock. At exhaustion PCM/submission timestamps stay zero, and
+submitted frames stop increasing: no backlog processing occurs. `WakeTicks` is still service-start
+interval, not an OS event-to-dispatch measurement.
+Wait entry/exit bracket the managed P/Invoke wrapper, including runtime transitions/resumption; they
+do not isolate time inside the kernel wait. Process/GC/load counters end before Stop/Panic,
+joined cleanup, JSON and offline/oracle calculations; output/lifetime totals explicitly include Stop/Panic
+and joined shutdown. Workload timing records are filtered by the declared end. Fault detection can lag
+the last audio observation, so workload duration and precise audio failure timestamp remain separate.
+
+Available tools were checked before tracing: no global dotnet-trace/PerfView; built-in WPR/tracerpt are
+available. Harness-only BCL EventListener records runtime GCStart/End, SuspendBegin/End and RestartBegin/End
+at Informational GC keyword 1, up to 20,000 records. [Runtime event definitions](https://learn.microsoft.com/en-us/dotnet/fundamentals/diagnostics/runtime-garbage-collection-events)
+distinguish suspension preparation, completed suspension and restart; collection call duration is not
+automatically suspension duration. Event timestamps, asynchronous receipt timestamps and bracketed
+UTC/QPC start/end anchors are retained separately. No listener, file output, allocation or control wait
+is added to the audio path. Collector overflow is zero in the initial series. Native timestamp conversion
+and clock mapping have uncertainty; comparisons below use millisecond resolution, not microsecond OS
+dispatch claims. Listener delivery has overhead and may change collection timing; untraced follow-ups
+therefore retain the original acceptance workload too. Nothing is installed globally or added as a dependency.
+
+The initial full series overlaps one failed test-project build during development; all its runs remain
+recorded with that confound. The initial matrix also precedes the final exact-rejection retry refinement;
+natural's first run includes three extra prepared states. These observations are diagnostic evidence,
+not a selected final acceptance series. Final original-workload runs are declared separately below.
+
+### Initial complete diagnostic matrix
+
+Every requested run is 60 seconds. Durations below are the control workload boundary; failed audio
+timestamps are specified separately. GC is Gen0/1/2; allocations count authored 32 KiB arrays; edits include
+source edits (shown after slash). Quantities exclude JSON/oracle/cleanup process work.
+
+| Variant / repeat | Result / seconds | Worst service-start interval ms | GC 0/1/2 | Explicit GC | Allocations | Edits / source |
+| --- | --- | ---: | --- | ---: | ---: | --- |
+| full 1 | pass / 60.0185 | 18.7780 | 525/375/112 | 37 | 60032 | 450/75 |
+| full 2 | pass / 60.0128 | 21.4880 | 567/403/120 | 40 | 64832 | 486/81 |
+| full 3 | pass / 60.0082 | 23.4095 | 560/399/119 | 40 | 64096 | 480/80 |
+| natural 1 | pass / 60.0102 | 19.7007 | 560/396/80 | 0 | 64416 | 482/80 |
+| natural 2 | starvation / 41.0876 | 52.1069 | 376/268/54 | 0 | 43216 | 324/54 |
+| natural 3 | starvation / 8.3000 | 35.2587 | 71/50/11 | 0 | 8352 | 62/10 |
+| fixed forced 1 | pass / 60.0133 | 14.6483 | 38/38/38 | 38 | 0 | 0/0 |
+| fixed forced 2 | pass / 60.0048 | 17.2718 | 38/38/38 | 38 | 0 | 0/0 |
+| fixed forced 3 | pass / 60.0024 | 12.8141 | 37/37/37 | 37 | 0 | 0/0 |
+| legacy 1 | pass / 60.0488 | 24.3297 | 457/305/77 | 37 | 60768 | 454/75 |
+| legacy 2 | pass / 60.0096 | 20.7894 | 454/303/76 | 37 | 60400 | 452/75 |
+| legacy 3 | starvation / 40.3169 | 48.4835 | 302/202/52 | 25 | 40016 | 300/50 |
+
+All twelve runs have zero processor/service/packet deadline counters and zero measured processor/service/
+worker allocations. Every run joins and releases all prepared states. Failures terminate before Stop/Panic
+acknowledgment; shutdown does not fabricate acknowledgment. Initial graph/legacy/fixed states created and
+released are respectively 76/82/81, 84/54/11, 1/1/1, 76/76/51. Passing intervals above 22 ms can still have
+nonzero padding because preceding zero-work/partial packets change buffer phase; interval alone is not
+the starvation assertion. Padding exhaustion remains the guard.
+
+### One established runtime interval and two additional windows
+
+Natural repeat 2 has no explicit collection. Relative to WASAPI PlaybackStart:
+
+| Time ms | Observation |
+| ---: | --- |
+| 41000.1334 | Audio sequence 4101 begins; padding 576, packet 480 frames |
+| 41000.2093 | Submission complete; 1,969,536 total frames submitted; PCM took 58.4 µs |
+| 41000.2096 | Audio enters next native wait |
+| 41008.1159 | Runtime SuspendBegin for GC |
+| 41008.1931 | Runtime SuspendEnd: execution engine suspended |
+| 41008.2504 | GCStart 945, Gen1, allocation trigger (reason 0), blocking type 0 |
+| 41051.8303 | GCEnd 945 |
+| 41051.8330 | RestartBegin |
+| 41051.8587 | RestartEnd |
+| 41052.2401 | Audio wait returns after 52.0305 ms |
+| 41052.2403 | Sequence 4102 begins; padding zero, 1056 frames available, submitted count unchanged |
+
+Completed suspension to RestartBegin is **43.6399 ms**, exceeding 22 ms device capacity; including
+restart through RestartEnd gives 43.6656 ms. The SuspendBegin-to-RestartEnd envelope is 43.7428 ms.
+Audio resumes about 0.38 ms after RestartEnd.
+No PCM is processed/submitted at sequence 4102; clock advances from 15,739,936 to 15,756,288 units while
+submission stays frozen. This establishes a runtime suspension aligned with an allocation-triggered
+collection that is sufficient to exhaust this buffer. It does not establish whether the collecting
+thread spent 43 ms computing GC or was itself descheduled, nor does it retrospectively explain the two
+historical failures. Event receipt is delayed by up to about 60 ms here; receipt time is not suspension time.
+
+Natural repeat 3 faults at audio time **8.294468 s**, with a 35.1512 ms wait. Background Gen2 starts at
+8.25318 s, an inner blocking Gen1 ends at 8.25786 s, then GC-preparation SuspendBegin (reason 6) occurs at
+8.25951 s. SuspendEnd is only at 8.29399 s; restart completes at 8.29579 s. Most of this envelope is
+suspension preparation, not proven time when the whole runtime was suspended. That distinction remains
+an attribution limit and a reason to examine scheduling if finer diagnosis is required.
+
+Legacy repeat 3 faults at audio time **40.2686628 s**. An explicit compacting Gen2 call at cycle 2500 spans
+40.22571–40.26867 s (about 42.96 ms); native SuspendBegin-to-RestartEnd spans about 42.94 ms, with completed
+suspension near 40.24669 s and Gen2 GCStart/GCEnd at 40.24676/40.26789 s, reason 10 (induced compacting).
+The mapped native start precedes the harness call bracket by about 0.74 ms: these independently converted
+timestamps cannot support finer absolute alignment without calibration. Audio's native wait spans
+48.4114 ms, padding becomes zero and submitted frames stay 1,932,096. It proves the same failure exists
+without graph DSP and aligns with runtime GC; it does not claim equivalent DSP cost or a driver fault.
+
+Initial comparisons localize individual failures to runtime suspension on the shared managed path:
+explicit GC removal is insufficient, fixed-graph collections pass this series, and legacy also fails.
+CPU-only/edits-only switches are available but are not expanded into a redundant matrix after this
+localization. An allocations-only switch also isolates the ring without CPU, edits or explicit GC.
+They remain useful for the narrower question of which allocation/control/CPU combination
+creates the longest runtime intervals. Scheduler/driver causality is unproven. WPR CPU profiles were
+inspected (CSwitch/ReadyThread exist); their default 788 × 1 MiB system buffers would materially perturb
+this workstation's memory load, so no broad system recording is added merely to explain an already
+identified fully suspended interval. A smaller bounded scheduling trace is the next attribution step.
+
+### Final-code original-workload series and natural follow-up
+
+After exact-rejection retry refinement, the entire solution passes locked restore/zero-warning Release
+build/609 tests. Before further playback, the follow-up protocol declares three complete `graph-measure 60`
+invocations (each baseline + original pressure + three injected fault lifetimes), then three `natural 60`
+runs with GC tracing. No builds/tests run during these configurations. Each opened endpoint/fact matches
+the initial matrix. No pressure criterion, forced collection, guard or system setting is changed.
+
+| Final-code configuration / repeat | Result / workload seconds | Worst service-start interval ms | GC 0/1/2 | Explicit GC | Allocations | Edits / source |
+| --- | --- | ---: | --- | ---: | ---: | --- |
+| original baseline 1 | pass / 60.0104 | 10.8599 | 0/0/0 | 0 | 0 | 0/0 |
+| original baseline 2 | pass / 60.0058 | 10.7431 | 0/0/0 | 0 | 0 | 0/0 |
+| original baseline 3 | pass / 60.0161 | 15.2930 | 0/0/0 | 0 | 0 | 0/0 |
+| original full pressure 1 | pass / 60.0029 | 19.3997 | 531/378/112 | 38 | 60912 | 456/76 |
+| original full pressure 2 | starvation / 53.5031 | 30.5289 | 471/336/99 | 33 | 53920 | 404/67 |
+| original full pressure 3 | starvation / 24.9010 | 44.6614 | 222/158/46 | 16 | 25600 | 192/32 |
+| natural traced 1 | pass / 60.0190 | 21.1851 | 531/378/77 | 0 | 61120 | 458/76 |
+| natural traced 2 | pass / 60.0033 | 18.7852 | 518/368/76 | 0 | 59824 | 447/74 |
+| natural traced 3 | pass / 60.0070 | 17.8604 | 517/367/74 | 0 | 60160 | 451/75 |
+
+The original pressure series has no runtime listener, so its two individual pauses remain unattributed;
+they establish that listener overhead is not required for starvation. Their aggregate process GC pause
+totals are 1418.352/734.273 ms, not proof of the specific missed intervals. Output observations exist
+in fixed storage during these runs, but this harness revision serialized problem windows only for explicit
+diagnostic variants. That reporting omission is corrected for subsequent `graph-measure` calls; it does
+not reconstruct unavailable raw windows or change playback/acceptance behavior.
+
+All nine final-code configurations have zero processor/service/packet deadline and processor/service/
+worker allocation counters, confirmed join, no live prepared states and finite PCM. Original baselines
+have zero offline PCM difference and independent oracle error within 2e-6. Prepared states created/released
+are 1/1/1 for baselines, 77/68/32 for pressure and 77/75/76 for natural. All nine injected fault lifetimes
+pass joined termination/zero-state-release checks without fabricated Stop acknowledgment. Two-second full
+and legacy startup/trace smoke runs also pass; they are retained separately and do not replace long runs.
+
+Natural's final 3/3 does not erase its initial 1/3 or change acceptance policy. Original forced-GC workload
+is still 1/3 in this final series, in addition to the two historical failures. The initial full traced 3/3
+is retained with its build overlap and interim retry limit; none of these successes is selected as proof
+of uniform stability. Across the two declared long series, all 21 configurations remain recorded (16 pass,
+five starvation failures), alongside every prior published result.
+
+Raw evidence is retained in the exclusively created ignored
+`.artifacts/SEQ-R4-F2/identity-starvation-bc354f8025ba4716b647907181f1c59e/` directory: declared plans,
+all smoke/series JSON, native GC records and compact derived summaries. Five pre-existing JSON logs in
+the parent directory remain untouched. Evidence is kept for owner review of failed intervals and
+reproducibility; no WAV, GUI capture, profiler installation or new permanent report collection is retained.
+
+### Interpretation and minimal next step
+
+- **Established production error:** revision collisions admit wrong-attachment coefficients; execution/
+  attachment identity fixes it, with PCM/provenance, finite retry and Stop regression evidence.
+- **Established specific runtime delay:** one allocation-triggered blocking Gen1 has a 43.64 ms
+  completed-suspension-to-restart interval overlapping starvation. Other native windows identify induced
+  compaction and a long suspension-preparation envelope; they are distinguished from collection-call duration.
+- **Not established:** driver/OS signal-to-dispatch latency, whether a collecting/suspending thread is
+  descheduled inside the longest runtime intervals, causal attribution of the historical/untraced failures,
+  all-device guarantees, acoustic perception or an accepted replacement engine/workload policy.
+
+The next narrow diagnostic is a 60-second same-endpoint collection with a smaller WPR profile enabling
+CSwitch/ReadyThread/process-thread events and bounded buffers, correlated with the retained audio/GC
+identities. It should distinguish collecting-thread computation from scheduler delay and the long GC-prep
+handshake. Avoid the inspected default 788 MiB profile and declare observer cost before recording.
+This does not select another buffer, GC mode or native renderer. A separately approved buffer experiment
+would need margin above the observed 52.03 ms wait (for example around 60 ms), repeat the unchanged original
+workload and quantify latency; it cannot promise safety from these finite measurements or silently redefine
+supported behavior. F2 remains **partial**, F3 remains unstarted and owner listening remains separate.
+
+The final reporting-only correction is checked by one additional declared two-second `graph-measure`
+smoke, with no repeat to seek a pass: baseline passes (2.0092 s), but full pressure starves at the workload
+boundary 1.7049 s / audio lifetime 1.7020 s. Its worst service-start interval is 43.0000 ms and wait wrapper
+is 42.8913 ms; sequence 168 sees zero padding, unchanged 81,216 submitted frames and no PCM/submission.
+There are 107 cycles, 1712 authored allocations, 12 edits, 16/9/3 collections and one explicit collection
+at cycle 100 lasting 4.5982 ms. That explicit call precedes the fault interval and cannot be assigned as
+its cause; no native runtime trace was enabled for this smoke. Callback deadline/allocation counters
+remain zero, all three states are released after join, and all three injected fault checks pass.
+This short failure is additional retained evidence outside the 21 long configurations, and confirms
+that `graph-measure` now serializes its bounded failure window. In total the continuation retains six
+new non-injected starvations, alongside the original two; successful short full/legacy smoke is not
+selected instead of this result.
+
+The current process token is not elevated (`WindowsPrincipal.IsInRole(Administrator)` is false).
+WPR status confirms no recording. Microsoft's [WPR recording guide](https://learn.microsoft.com/en-us/windows/win32/tracelogging/tracelogging-record-and-display-tracelogging-events)
+uses an elevated command prompt; only read-only WPR availability/profile/status inspection was done here.
+No system trace, token elevation or system permission change is attempted in this session. The bounded
+scheduling follow-up therefore requires an appropriately permitted context; GC listener evidence needs
+no such elevation. This is an explicit evidence/permission limit, not an automatic approval rejection.
+
+Final verification repeats the exact requested locked restore/full Release build/test commands after
+the last Start rejection guard, reporting correction and optional allocations-only switch: zero warnings/
+errors and 609/609 tests pass. These refinements add no DSP, device or existing-load change to the measured
+paths; allocations-only is an available, unrun follow-up. MSBuild Compile items include all affected Core,
+Windows, test and harness sources, including the new GcTrace. All 1129 relative links/anchors checked
+across 40 Markdown files pass (cold archive excluded except changed WORK_LOG); `git diff --check` passes.
+Final Git is the original `master`/HEAD with empty staging, 14 modified tracked files and one new permanent
+harness source, GcTrace.cs. No user work existed at entry or was removed. Task-only analysis/check scripts
+and path-pointer files are removed after verification; all 16 raw/protocol/derived-evidence files are kept
+in the UUID evidence directory (4,848,904 bytes) for review, alongside the untouched five prior logs.
+The quoted natural failure's clock-anchor brackets are 1.3/1.4 µs, with final-versus-initial drift -0.35 µs;
+this bounds anchor sampling/drift, not the separately observed native timestamp-conversion bias.

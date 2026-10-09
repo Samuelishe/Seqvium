@@ -69,6 +69,64 @@ assessment, DAC latency or microphone capture. Timing percentiles exclude the pr
 The [R4-F2 report](../../docs/experiments/SEQ-R4-F2_REPORT.md) owns actual endpoints/durations/workload,
 earlier runs, measurements and limits; ordinary tests initialize no physical audio.
 
+## R4-F2 starvation attribution variants
+
+These commands **play quiet authored sound** and warn on stderr. They change no system volume, endpoint
+defaults, period/capacity, MMCSS policy or GC mode. After the Release build:
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll graph-diagnose full 60 3 "<output ID>" gc-trace
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll graph-diagnose natural 60 3 "<output ID>" gc-trace
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll graph-diagnose forced 60 3 "<output ID>" gc-trace
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll graph-diagnose legacy 60 3 "<output ID>" gc-trace
+```
+
+Duration is 1–120 seconds; repeat count is 1–3. The optional endpoint ID selects that exact output,
+without fallback. Omit `gc-trace` for a comparison without native runtime event delivery. Declare the
+series before running, retain every failure, and avoid concurrent builds/tests or other injected loads.
+
+| Variant | CPU worker | 16 × 32 KiB allocations / cycle | Canonical edits | Forced compacting Gen2 / 100 cycles | PCM path |
+| --- | --- | --- | --- | --- | --- |
+| full | 1 | yes | Gain / 10, source / 50 cycles | yes | original 32-node graph |
+| natural | 1 | yes | same | no | same graph |
+| forced | 0 | no | no | yes | fixed same graph |
+| legacy | 1 | yes | same external graph/source edits | yes | graph-free existing sampler |
+| cpu | 1 | no | no | no | fixed graph |
+| allocations | 0 | yes | no | no | fixed graph |
+| edits | 0 | no | same | no | graph |
+
+The original `graph-measure` baseline/pressure/fault workload and acceptance requirements remain in
+force. `natural` removes only explicit collections; natural GC still runs. `cpu` and `edits` are secondary
+diagnostics if the first four variants do not localize the problem. Successful diagnostics do not replace
+the original forced-GC acceptance result. `allocations` additionally isolates the allocation ring without
+the CPU worker, edits or explicit collections; it is available for narrower follow-up rather than run by default.
+
+Legacy uses the identical WAV bytes, eight parts/voices, note offsets/pitches/intensities/releases,
+tempo/repeats, endpoint/rate/layout/capacity and `RealtimeSampler`/WASAPI path. A fixture-local saved/reopened
+projection removes placements/graphs for Pattern preparation. External canonical graph Gain edits still
+occur; mirrored source edits publish legacy replacements. DSP differs: legacy sums voices directly,
+has no 22 Gain operations/Mix/scratch or graph transition fade, and uses uniform output gain 0.1 instead
+of branch gains 0.25–0.60 followed by 0.2. Its extra mirrored source transaction is reported as a control
+comparison limit, not equivalent DSP or a historical UR12 measurement.
+
+All audio observations stay in fixed preallocated storage. `ProblemWindow` retains up to eleven service
+records around exhaustion or the largest service-start interval: wait entry/return, service/query,
+PCM start/end, submission end, sequence, padding, clock and submitted frames on Stopwatch/QPC time.
+`WakeTicks` continues to mean service-start interval; no OS signal timestamp is measured.
+Wait timestamps bracket the P/Invoke on the managed worker; they include managed/native transitions
+and possible runtime suspension, rather than isolating time spent inside the OS wait.
+The control harness brackets each explicit `GC.Collect`. This call duration includes more than proven
+runtime suspension. Optional harness-only BCL `EventListener` enables runtime GC keyword 1 at Informational
+level, retaining at most 20,000 GCStart/End, SuspendBegin/End and RestartBegin/End records. Native event
+UTC timestamps map to QPC using bracketed initial/final clock anchors; asynchronous receipt time is
+retained separately. Check anchor drift, dropped events and observer overhead before attributing a gap.
+No file output, listener call, allocation or control-thread wait is added to PCM processing.
+
+Process/GC/load counters end at the declared workload boundary, before Stop/Panic, cleanup, oracle and
+JSON reporting. Output/lifetime totals explicitly cover playback through Stop/Panic and joined shutdown;
+timing records used for workload quantiles are limited by the workload end timestamp. Raw JSON/traces
+belong only in ignored `.artifacts/SEQ-R4-F2/`; conclusions extend the existing R4-F2 report.
+
 ## Transient preview smoke and diagnostic mode
 
 Audible commands warn on stderr that sound **will play**. `audition-smoke` authors an external one-second

@@ -286,8 +286,19 @@ and joined injected fault lifetimes. The [report](experiments/SEQ-R4-F2_REPORT.m
 endpoint, packet distribution, limits and retained measurements. Pressure's dynamically edited capture
 is not relabeled as steady-state oracle evidence; its oracle/parity fields are null. Diagnostic zeros
 are evidence only when the corresponding diagnostics mode was enabled.
-Full F2 pressure acceptance remains partial: passing runs coexist with two non-injected starvation
-failures. Callback allocation/deadline counters alone do not cover missed service wakes.
+Full F2 pressure acceptance remains partial: passing runs coexist with the original two non-injected
+starvation failures and further failures in the diagnostic continuation below. Callback allocation/
+deadline counters alone do not cover missed service wakes.
+
+Execution-identity correction adds nine deterministic cases while preserving all 600 existing tests:
+two valid attachments prepared from one document revision, rejected pending target, repair and PCM/
+provenance/convergence with 1/2/3 Gain versus A's two Gain, both playing and sticky stopped. Same-attachment
+reprepare/Undo/Redo/ABA, pending target changes, explicit rejected-handoff retry without a canonical edit,
+finite retry and both publication/consumer identity gates are covered. None uses a device or timing sleeps.
+The [diagnostic variants](../tools/Seqvium.DeviceCheck/README.md#r4-f2-starvation-attribution-variants)
+separate CPU, allocations, canonical edits, forced collections and graph-free legacy execution on the
+same physical path. Their native GC/Suspend/Restart observations and bounded service windows explain
+individual intervals; aggregate wake/GC totals alone remain insufficient for causal attribution.
 
 ## Evidence tiers
 

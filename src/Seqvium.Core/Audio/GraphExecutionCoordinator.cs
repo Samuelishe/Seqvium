@@ -25,7 +25,6 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     private Task _work = Task.CompletedTask;
     private ProjectSnapshot? _basis;
     private string[] _basisRoots = [], _desiredRoots = [];
-    private Guid _origin;
     private Guid _executionRevision;
     private Id<GraphNode>[] _gainNodes = [];
     private Id<GraphNode>[] _candidateGainNodes = [];
@@ -80,7 +79,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     {
         CheckOwner();
         if (_closed || _blocker is not null || _dirty || _busy || _candidate is not null || _basis is null ||
-            _basis.Revision != _document.Current.Revision || _sampler.IsTerminated) return false;
+            _basis.Revision != _document.Current.Revision || _sampler.IsTerminated ||
+            _sampler.RejectedPreparedExecutionId == _startAuthority) return false;
         _sampler.StartPrepared(_startAuthority);
         return true;
     }
@@ -136,6 +136,17 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             candidate.Dispose(); _candidate = null;
             if (result != SamplerPublication.Accepted) _dirty = true;
         }
+        var execution = _sampler.ReadStatus();
+        bool ownsExecution = _basis is not null && execution.PreparedExecutionId == _startAuthority &&
+            execution.AttachmentId == _target;
+        // Publication reserves a pending slot, not an accepted consumer handoff. A rejected target
+        // must be prepared again even when its document revision equals the last-valid active plan.
+        if (_basis is not null && _sampler.RejectedPreparedExecutionId == _startAuthority &&
+            !_sampler.HasPending && _blocker is null)
+        {
+            _basis = null;
+            _dirty = true;
+        }
         if (_dirty)
         {
             _dirty = false;
@@ -146,7 +157,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 _blocker = report?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
             else if (_basis is not null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
                 SameExecution(_basis.State, snapshot.State, ignoreGain: true) &&
-                _sampler.ReadStatus().OriginPreparedRevision == _origin && !_sampler.HasPending)
+                ownsExecution && !_sampler.HasPending)
             {
                 bool geometry = SameExecution(_basis.State, snapshot.State, ignoreGain: false);
                 var graph = snapshot.State.Graphs.Single(item => item.Id == attachment!.GraphId);
@@ -155,7 +166,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                     (float)graph.Nodes.Single(node => node.Id == id).Parameters[GraphBuiltIns.GainAmplitude].GetDecimal()).ToArray();
                 long authority = _sampler.InvalidatePreparation();
                 Guid executingRevision = geometry ? _executionRevision : snapshot.Revision;
-                if (_sampler.PublishGraphUpdate(_origin, executingRevision, snapshot.Revision, coefficients, authority))
+                if (_sampler.PublishGraphUpdate(_startAuthority, _target, executingRevision, snapshot.Revision, coefficients, authority))
                 {
                     _basis = snapshot;
                     _executionRevision = executingRevision;
@@ -223,7 +234,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     {
         _basis = snapshot; _basisRoots = [.. _document.MediaRoots];
         _gainNodes = _candidateGainNodes;
-        _origin = _executionRevision = snapshot.Revision; _startAuthority = request.Authority; _blocker = null;
+        _executionRevision = snapshot.Revision; _startAuthority = request.Authority; _blocker = null;
     }
 
     private static bool SameExecution(ProjectState left, ProjectState right, bool ignoreGain)

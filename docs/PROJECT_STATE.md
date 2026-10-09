@@ -74,8 +74,9 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 600 tests pass, zero failures/skips**.
-All 558 pre-F2 tests are preserved; 42 focused execution/lifecycle cases are added. [Test execution](TEST_EXECUTION.md#r4-f1-graph-verification)
+solution build pass with **zero warnings/errors; all 609 tests pass, zero failures/skips**.
+All 600 previous tests are preserved; nine execution-identity/rejected-handoff cases are added to the
+original 42 F2 execution/lifecycle cases. [Test execution](TEST_EXECUTION.md#r4-f1-graph-verification)
 owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
 [F1 evidence](experiments/SEQ-R3-F1_REPORT.md) records actual chrome/OS keyboard/preference behavior.
 [F2 evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records 525
@@ -96,10 +97,15 @@ fault lifetimes. No acoustic perception, DAC latency, multi-hour/all-device or a
 
 ## Active blockers / evidence gaps
 
-F2 pressure acceptance is unresolved: successful 60-second runs coexist with padding-exhaustion
-starvations at 22.86 and 39.57 seconds under CPU/allocation/forced-GC/control load. The final audit
-measured a 30.18 ms service wake interval against 22 ms capacity, with zero callback allocation/deadline
-counters; the exact GC/OS attribution remains unresolved. Execution fault-stop/join and lease release worked.
+F2 pressure acceptance is unresolved. The original starvations at 22.86 and 39.57 seconds remain failures;
+new isolated diagnostics also fail with natural GC and graph-free legacy on the same 48 kHz stereo
+High Definition Audio/22 ms-capacity path. Native runtime events align one natural Gen1 stopped-runtime
+interval of 43.64 ms with a 52.03 ms audio wait and zero padding; legacy also fails near an induced compacting
+Gen2 collection. This identifies runtime suspension in specific new failures, not retrospective attribution
+of the original two or proof of scheduler/driver fault. Callback allocation/deadline counters remain zero
+at those failures; fault-stop, join and lease release work. Buffer/GC/support policy is unchanged.
+Fast coefficient/provenance updates now require sampler-local prepared execution identity plus attachment;
+revision collisions, rejected handoff, reprepare/ABA and sticky Stop are covered deterministically.
 [R4-F2 evidence](experiments/SEQ-R4-F2_REPORT.md) preserves both outcomes and limits. Do not infer
 uniform device deadline stability or full F2 acceptance from the passing runs.
 

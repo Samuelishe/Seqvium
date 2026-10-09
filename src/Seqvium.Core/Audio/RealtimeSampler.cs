@@ -14,9 +14,11 @@ public enum SamplerTransportState { Unprepared, Ready, Playing, Stopped, Ended, 
 
 public readonly record struct SamplerExecutionStatus(Guid ExecutingRevision, Guid OriginPreparedRevision,
     Guid EquivalentCanonicalRevision, long Epoch, long Position, int Voices, bool Playing, bool Terminated,
-    long StopAcknowledgment, SamplerTransportState Transport, Id<GraphAttachment>? AttachmentId);
+    long StopAcknowledgment, SamplerTransportState Transport, Id<GraphAttachment>? AttachmentId,
+    long PreparedExecutionId);
 
-internal sealed record GraphRevisionUpdate(Guid Origin, Guid Revision, Guid EquivalentRevision,
+internal sealed record GraphRevisionUpdate(long PreparedExecutionId, Id<GraphAttachment> Attachment,
+    Guid Revision, Guid EquivalentRevision,
     float[] Coefficients, long Authority);
 
 /// <summary>One serialized control owner, one sequential consumer. Dispose only after the consumer has joined.
@@ -60,6 +62,7 @@ public sealed class RealtimeSampler : IDisposable
     private bool _stopBoundary;
     private int _transitionRemaining;
     private long _acknowledgedStop, _epoch, _position;
+    private long _rejectedPreparedExecutionId;
     private int _voices;
     private Guid _revision;
     private GraphRevisionUpdate? _update;
@@ -96,6 +99,7 @@ public sealed class RealtimeSampler : IDisposable
     public long ReservedPcmAndScratchBytes => RetainedPcmAndScratchBytes + (Volatile.Read(ref _preparing) == 0 ? 0 :
         (long)SamplerPreparation.MaximumDecodedBytes + GraphPreparation.MaximumScratchBytes);
     public bool HasPending => Volatile.Read(ref _pending) is not null;
+    internal long RejectedPreparedExecutionId => Volatile.Read(ref _rejectedPreparedExecutionId);
     private static long StateBytes(State? state) => state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes;
 
     /// <summary>Thread-safe value observation. The reader may retry while the single consumer finishes its short status write.</summary>
@@ -124,7 +128,7 @@ public sealed class RealtimeSampler : IDisposable
                 _stopBoundary ? SamplerTransportState.Stopped : _playing ? SamplerTransportState.Playing :
                     _active is null ? SamplerTransportState.Unprepared :
                         _active.Execution.Position == _active.Plan.EndFrame ? SamplerTransportState.Ended : SamplerTransportState.Ready,
-            _active?.Plan.GraphAttachmentId);
+            _active?.Plan.GraphAttachmentId, _active?.Authority ?? 0);
         Interlocked.Increment(ref _statusSequence);
     }
 
@@ -159,13 +163,15 @@ public sealed class RealtimeSampler : IDisposable
         return new(this, document, default, voiceCapacity, repeats, default, InvalidatePreparation(), target);
     }
 
-    internal bool PublishGraphUpdate(Guid origin, Guid revision, Guid equivalentRevision, float[] coefficients,
+    internal bool PublishGraphUpdate(long preparedExecutionId, Id<GraphAttachment> attachment,
+        Guid revision, Guid equivalentRevision, float[] coefficients,
         long authority)
     {
         if (_disposed || IsTerminated || authority != Volatile.Read(ref _authority) || HasPending) return false;
         var active = Volatile.Read(ref _active);
-        if (active?.Plan.Revision != origin || active.Plan.Graph is null) return false;
-        Volatile.Write(ref _update, new(origin, revision, equivalentRevision, coefficients, authority));
+        if (active is null || active.Authority != preparedExecutionId ||
+            active.Plan.GraphAttachmentId != attachment || active.Plan.Graph is null) return false;
+        Volatile.Write(ref _update, new(preparedExecutionId, attachment, revision, equivalentRevision, coefficients, authority));
         return true;
     }
 
@@ -253,6 +259,7 @@ public sealed class RealtimeSampler : IDisposable
                 if (pending.Authority != Volatile.Read(ref _authority) || pending.Cancellation.IsCancellationRequested)
                 {
                     ConsumerStaleRejections++;
+                    Volatile.Write(ref _rejectedPreparedExecutionId, pending.Authority);
                     Volatile.Write(ref _retired, pending);
                 }
                 else
@@ -270,7 +277,8 @@ public sealed class RealtimeSampler : IDisposable
 
         var update = Interlocked.Exchange(ref _update, null);
         if (update is not null && update.Authority == Volatile.Read(ref _authority) &&
-            _active?.Plan.Revision == update.Origin)
+            _active is { } updated && updated.Authority == update.PreparedExecutionId &&
+            updated.Plan.GraphAttachmentId == update.Attachment)
         {
             _active.Execution.UpdateCoefficients(update.Coefficients);
             _active.Revision = update.Revision;

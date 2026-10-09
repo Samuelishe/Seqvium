@@ -9,6 +9,9 @@ namespace Seqvium.Audio.Windows;
 [SupportedOSPlatform("windows")]
 internal static unsafe class WasapiNative
 {
+    [DllImport("kernel32.dll")]
+    internal static extern uint GetCurrentThreadId();
+
     internal static readonly Guid EnumeratorClass = new("bcde0395-e52f-467c-8e3d-c4579291692e");
     internal static readonly Guid EnumeratorInterface = new("a95664d2-9614-4f35-a746-de8db63617e6");
     internal static readonly Guid ClientInterface = new("1cb9ad4c-dbfa-4c32-b178-c2f568a703b2");

@@ -1079,3 +1079,18 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   successes and two later starvations are retained in the compact [report](../experiments/SEQ-R4-F2_REPORT.md);
   fault-stop/join/resource release pass, while full F2 pressure acceptance remains partial.
   R4 remains partial; F3 is not started. No commit/push/index mutation or GUI work.
+
+## 2026-10-09 — SEQ-R4-F2 execution identity and starvation attribution
+
+- Reproduced wrong-attachment coefficient application through the actual coordinator: a rejected
+  pending graph shares active origin revision, then repair changes active PCM or throws on short coefficients.
+  Guarded fast path/publication/consumer with existing prepared publication identity and attachment,
+  preserving origin revision and retrying only explicitly identified rejected handoff without Start.
+- Preserved all 600 tests and added nine deterministic identity/PCM/provenance/ABA/Stop/retry cases;
+  locked restore/full Release build pass with zero warnings/errors and 609 passing tests.
+- Added bounded workload variants and wait/service/PCM/submission/runtime-GC observations to existing
+  DeviceCheck, retaining original acceptance workload, two published failures and every new result.
+  New natural-GC and same-endpoint legacy failures align with runtime suspension; original-workload
+  repeated failures remain. Individual runtime intervals are established, not general driver/scheduler
+  attribution or full acceptance. The existing [report](../experiments/SEQ-R4-F2_REPORT.md#execution-identity-correction-and-starvation-attribution-2026-10-09)
+  retains the complete matrix, methods and limits. F2 remains partial, F3 unstarted; no commit/push/index change.
