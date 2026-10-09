@@ -236,33 +236,11 @@ execution boundary. No graph editor, full plugin host, ASIO, or recording worksp
 R2's bounded resource/device foundation is complete / local accepted-ready under
 [PROJECT_STATE](PROJECT_STATE.md) and
 the [complete acceptance audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requirement-audit).
-Its completed scope/rationale is retained in the cold archive. The next numbered stage is R3, which
-is in progress within separately authorized R3-F1/F2; no extra milestone, permanent backend or recording
-prerequisite is introduced. Current audio/source/device contracts remain in their canonical owners.
-
-## SEQ-R3 — Workspace Shell Foundation
-
-Status: **in progress / partial**. R3-F1 delivers the actual main desktop window, bounded Windows chrome,
-canonical project summary, first-party RU/EN fallback, Dark/Light semantic resources and safe independent
-preference storage; see [current state](PROJECT_STATE.md) and [observed report](experiments/SEQ-R3-F1_REPORT.md).
-F1 is the accepted desktop/presentation foundation. F2 adds two optional real first-party internal panes,
-bounded activation/front order, captured drag/resize, collapse/hide/reopen, explicit reversible edge docking,
-keyboard paths and independent user layout persistence; see [F2 evidence](experiments/SEQ-R3-F2_REPORT.md).
-F1/F2 are bounded packages within R3, not numbered roadmap stages. F2 is locally verified and awaits owner
-visual review; R3 is not complete without a separate full-stage audit and remaining evidence/integration.
-No R4/music editor/audio-preview work is included. Future pane/editor semantic targets, broader platform/
-DPI/accessibility evidence and delivered-shell validation remain distinct work, not implicit F2 authority.
-
-Establish one main window and internal workspace-pane infrastructure: activation/front behavior,
-movement/resizing, internal floating, bounded collapse/restore, user-controlled docking where justified,
-and safe application/user layout persistence. Start with limited surfaces; no full visual system or
-aggressive IDE docking framework. Follow [WORKSPACE](WORKSPACE.md) and [UX_CONTRACT](UX_CONTRACT.md).
-Apply [the DAW workspace visual target](UI_DESIGN.md#professional-daw-workspace-design-target) with real
-sparse/dense surface evidence as functionality arrives; the references authorize no stage acceleration.
-Respect custom unobtrusive main chrome, non-intrusive foreground behavior, and responsive layout with
-usable minimums; platform/accessibility mechanics and concrete sizes still require bounded design.
-Introduce the minimum host localization/semantic theme and preference rails assigned in
-[foundation ownership](#localization-and-theme-foundation-ownership); extension hosting is not a shell prerequisite.
+R3's bounded workspace shell is also **complete / local accepted-ready** after its completion audit
+and owner acceptance of F1/F2. Completed scope/rationale is retained in the cold archive; current
+capability and evidence limits belong to [PROJECT_STATE](PROJECT_STATE.md) and canonical owners.
+The next numbered stage is R4, **pending / not started**, requiring separate authorization. No extra
+milestone, permanent backend, musical editor or recording prerequisite is introduced by closure.
 
 ## SEQ-R4 — Node Graph Foundation
 

@@ -1,8 +1,12 @@
 # SEQ-R3-F2 — Internal workspace panes and layout persistence
 
-Date: 2026-10-09. Status: preceding geometry/chrome defects confirmed corrected by the owner;
-resize-target/boundary usability correction pending owner interactive acceptance.
-F2 is a bounded package within **R3 in progress / partial**, not another stage or R4 authority.
+Date: 2026-10-09. Current disposition: the owner accepts F1 and F2's current bounded usability and
+interaction behavior. **R3 is complete / local accepted-ready** after SEQ-R3-CLOSE; see
+[current state](../PROJECT_STATE.md) and
+the [completion audit](../archive/AUDITS.md#seq-r3-close--workspace-shell-completion-audit).
+F1/F2 are packages within R3, not numbered stages or R4 authority. The checkpoint sections below
+retain original measurements, failures and then-pending acceptance statements for reconstruction;
+those statements do not supersede this disposition or require another UI polishing cycle.
 Original implementation baseline: clean `master`, HEAD `88f53891c3308c5ba5f956064213420fcbf7391f`, 308 passing tests;
 R1/R2 complete / local accepted-ready, R3-F1 accepted desktop/presentation foundation.
 

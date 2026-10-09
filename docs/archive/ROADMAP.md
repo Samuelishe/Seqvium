@@ -303,3 +303,41 @@ runtime, DAC/low-latency guarantee or permanent backend follows. Q-001–Q-007/Q
 remain open for their wider mechanisms/evidence. Current truth stays in [PROJECT_STATE](../PROJECT_STATE.md)
 and owners, rationale
 in [D-078](DECISIONS.md#d-078--independent-logical-audio-endpoint-intent-and-bounded-r2-acceptance).
+
+## SEQ-R3 — Workspace Shell Foundation
+
+Completed 2026-10-09, **complete / local accepted-ready** after SEQ-R3-CLOSE at baseline
+`master`, HEAD `6eafa71b65248c048723fb4017f7334c566515eb`, initially clean worktree/index.
+The owner accepts R3-F1 and F2's current bounded workspace usability/interaction level.
+F1/F2 are work packages within R3, not new numbered stages. The
+[completion audit](AUDITS.md#seq-r3-close--workspace-shell-completion-audit) finds no missing prerequisite.
+
+### Accepted stage requirements retained at closure
+
+Establish one main window and internal workspace-pane infrastructure: activation/front behavior,
+movement/resizing, internal floating, bounded collapse/restore, user-controlled docking where justified,
+and safe application/user layout persistence. Start with limited surfaces; no full visual system or
+aggressive IDE docking framework. Follow [Workspace](../WORKSPACE.md) and [UX](../UX_CONTRACT.md).
+Apply [the DAW workspace visual target](../UI_DESIGN.md#professional-daw-workspace-design-target) with real
+sparse/dense surface evidence as functionality arrives; the references authorize no stage acceleration.
+Respect custom unobtrusive main chrome, non-intrusive foreground behavior, and responsive layout with
+usable minimums; platform/accessibility mechanics and concrete sizes still require bounded design.
+Introduce the minimum host localization/semantic theme and preference rails assigned in
+[foundation ownership](../ROADMAP.md#localization-and-theme-foundation-ownership); extension hosting is not a shell
+prerequisite.
+
+### Completed scope and evidence boundary
+
+One silent main window, two optional retained first-party panes, bounded activation/front order,
+captured floating movement/anchored resizing, collapse/restore/close/reopen, explicit left/right docks
+and individual permission, expanded boundary targets with independent ownership, keyboard/focus paths,
+separate corruption-safe user layout, RU/EN fallback and Dark/Light preference rails satisfy this scope.
+The compact DAW-oriented presentation is owner-accepted for these real non-musical surfaces.
+Locked restore/full Release build pass with zero warnings/errors; all 428 tests pass, none skipped.
+Existing F1/F2 physical Windows evidence and 29 additional 96-DPI completion checks supplement pure tests.
+
+The prior pending F2 owner-review condition is satisfied by explicit owner acceptance. Wider future
+editor targets, magnetic/shared/group docking, high/mixed DPI, screen readers, Linux/macOS runtime and
+delivered-distribution evidence remain scoped questions; closure neither implements nor certifies them.
+No stage requirement is weakened, no production code or test changes, no R4 start, commit/push or
+staging-index mutation. Current truth remains in [PROJECT_STATE](../PROJECT_STATE.md) and active owners.

@@ -93,8 +93,8 @@ bounds and edge widths; it does not shrink typography or introduce whole-window 
 geometry is separate from a docked rectangle. Storage/failure/shutdown semantics are owned once in
 [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage).
 [F2 correction evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records actual
-Windows interaction/cursors and screenshots. The owner confirms the preceding geometry/chrome defects
-are corrected; interactive acceptance of the hit-target/boundary correction is still pending;
+Windows interaction/cursors and recorded visual observations. The owner accepts F1 and the current
+bounded F2 workspace usability/interaction behavior. R3's completion audit finds no missing foundation prerequisite;
 high/mixed DPI, cross-monitor and other OS runtime are not accepted from pure geometry tests.
 
 ### Resize hit targets and boundary ownership

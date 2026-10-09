@@ -62,6 +62,9 @@ six inspected pane screenshots on one 1920x1080 display at 96 DPI: 1100x750, red
 native input automation is a local evidence method, not production pane code. Changed scaling, mixed DPI,
 cross-monitor, screen-reader certification and Linux/macOS desktop/configuration runtime are untested.
 No new OS support or packaged-distribution claim follows from F2.
+SEQ-R3-CLOSE accepts this bounded foundation locally after owner F1/F2 acceptance and a further 29
+physical Windows 11 x64/96-DPI checks at 1100x750. This closes no wider DPI/accessibility, Linux/macOS
+runtime or delivered-distribution question. Windows local acceptance does not declare release support.
 
 ## Platform evidence and support scope
 

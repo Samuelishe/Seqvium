@@ -42,9 +42,11 @@ preparation/offline sampling; R2-F2 has locally accepted-ready bounded realtime 
 Windows WASAPI output adapter. R2-F3 adds bounded source discovery, transient raw WAV preview and
 explicit reuse of accepted media without copying WAV bytes. R2-F4 adds independent logical input/output
 endpoint discovery/selection and joined output replacement. **Overall R2 is complete / local accepted-ready**
-for this bounded foundation. **R3 is in progress / partial**: R3-F1 adds one Avalonia window, actual
-unnamed project summary, RU/EN and Dark/Light preferences. Internal panes/docking and later workflows
-are unimplemented. Opening the desktop never starts audio. Input streaming/recording is absent.
+for this bounded foundation. **R3 is complete / local accepted-ready**: one Avalonia main window,
+actual unnamed project summary, RU/EN and Dark/Light preferences, two retained internal panes,
+bounded floating/docking, keyboard access and independent user layout persistence. The owner accepts
+F1/F2 within this scope; wider platform/accessibility and delivered-release evidence remain open.
+Opening the desktop never starts audio. Musical editors and input streaming/recording are absent.
 See the [F2 device/performance evidence](docs/experiments/SEQ-R2-F2_REPORT.md) for its measured scope.
 The [F4 endpoint evidence and R2 audit](docs/experiments/SEQ-R2-F4_REPORT.md) records the selection boundary.
 The [roadmap](docs/ROADMAP.md) describes intended stages, not available features or release promises.

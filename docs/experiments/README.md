@@ -39,9 +39,11 @@ from the current tracked tree once their essential observations were recorded in
 not product resources or the owner's third-party design references.
 
 SEQ-R3-F2's [workspace report](SEQ-R3-F2_REPORT.md) records bounded pane/state/persistence verification,
-actual Windows overlap/dock/collapse/focus/restart observations. The six generated screenshots remain
-only in ignored local `.artifacts/seq-r3-f2/` for pending owner review and may be deleted afterward.
-The report does not depend on those files. This is local evidence, not a full R3 or platform release audit.
+actual Windows overlap/dock/collapse/focus/restart observations. Earlier generated screenshots remain
+only in ignored local artifact directories; the report does not depend on those files. The owner now
+accepts the bounded F2 interaction level. SEQ-R3-CLOSE records the completed foundation audit in cold
+history, preserves useful F1/F2 evidence and generates no screenshots or raw logs. Local acceptance
+is distinct from wider platform and delivered-release evidence.
 
 ## Evidence retention
 

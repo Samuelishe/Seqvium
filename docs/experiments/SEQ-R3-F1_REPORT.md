@@ -7,6 +7,10 @@ Not authoritative for: Future editor layout, roadmap completion, distribution su
 
 ## Scope and baseline
 
+This report preserves the F1 checkpoint and its verification limits. F1 is subsequently owner-accepted;
+the completed R3 disposition is in [current state](../PROJECT_STATE.md). Historical pending/unimplemented
+wording below describes that checkpoint, not the current F2 host or another completion prerequisite.
+
 On 2026-10-09 local Windows 11 x64 (10.0.26300), branch `master`, HEAD
 `95888aeac61aff5c3a4909d7abbfa62ae89db5a4`, initially clean tracked/untracked/index state.
 R1/R2 remain complete / local accepted-ready within their declared bounds. R0 remains partially evidenced /

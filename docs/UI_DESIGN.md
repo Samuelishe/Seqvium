@@ -58,7 +58,9 @@ Pane-local scrolling preserves readable content at minimum size. RU titles use e
 needed. No palette, font scaling scheme or full control framework is introduced. The
 [F2 visual observations](experiments/SEQ-R3-F2_REPORT.md#visual-observations-and-local-review-artifacts)
 record actual overlap, dock/floating, collapse, small geometry and Light. Generated captures are local
-review artifacts, not committed assets; the professional DAW target below remains the review direction.
+review artifacts, not committed assets. The owner accepts F1 and the current bounded F2 presentation/
+interaction level; the professional DAW target below guides later real editor work, without another
+R3 polishing prerequisite. This acceptance does not establish dense musical-editor usability.
 
 ## Professional DAW Workspace Design Target
 
