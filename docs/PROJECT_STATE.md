@@ -65,8 +65,8 @@ Full Browser/Personal Library, graph execution/editor/plugins/Mixer/export/recov
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 556 tests pass, zero failures/skips**.
-All 428 baseline tests are preserved; 128 graph cases are added. [Test execution](TEST_EXECUTION.md#r4-f1-graph-verification)
+solution build pass with **zero warnings/errors; all 558 tests pass, zero failures/skips**.
+All 428 baseline tests are preserved; 130 graph cases are added. [Test execution](TEST_EXECUTION.md#r4-f1-graph-verification)
 owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
 [F1 evidence](experiments/SEQ-R3-F1_REPORT.md) records actual chrome/OS keyboard/preference behavior.
 [F2 evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records 525

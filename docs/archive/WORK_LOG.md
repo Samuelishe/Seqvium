@@ -1050,3 +1050,18 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   dependencies and broad questions remain open. No NuGet packages/assemblies, DSP, runtime publication,
   device/GUI execution, screenshots/logs, commit/push or index mutation are introduced. New untracked
   source/tests are permanent product/verification material; task outputs are not retained.
+
+## 2026-10-09 — SEQ-R4-F1 placement routing eligibility correction
+
+- From clean master at 5b34d5b3d2273d81c0b0c0bd185d5172d6f8f55b, confirmed that graph diagnostics
+  checked part routes but omitted the owning placement's downstream route. Added that dependency to
+  `graph.unsupported-dependency`; structurally valid routing/graph intent remains savable. Existing part,
+  containing-context and shared-performance guards and the sampler's route guards already block their
+  unsupported dependencies; no additional implementation omission was found.
+- Two new cases first failed against the original guard, then passed for single-part and mixed graphs.
+  Real Edit, Save/reopen and Undo/Redo preserve distinct same-name route identities and graph intent;
+  an unrouted graph remains eligible even when another placement is routed.
+- Locked restore and Release build pass with zero warnings/errors; 130 graph cases and all 558 tests
+  pass with zero failures/skips, preserving all 556 existing cases. The documented focused filter's
+  interior wildcard was rejected by xUnit; the corrected `Seqvium.Tests.Graph*` filter passes.
+  No routing execution, DSP, F2, GUI/device access, new abstraction, commit/push or index mutation.

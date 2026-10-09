@@ -176,7 +176,7 @@ public static class GraphDiagnostics
         ProjectValidation.Require(context is not null, "Attachment context is required.");
         if (context.Level != LocalProcessingLevel.Item || placement is null)
             Add(GraphReasons.UnsupportedScope);
-        if (context.Extension is not null || placement?.ContainingContextId is not null ||
+        if (context.Extension is not null || placement?.ContainingContextId is not null || placement?.RouteId is not null ||
             placement?.PartRelationships.Any(item => item.RouteId is not null || item.SharedPerformanceKey is not null || !item.AdditionalData.IsEmpty) == true ||
             !context.AdditionalData.IsEmpty || !graph.AdditionalData.IsEmpty || !attachment.AdditionalData.IsEmpty ||
             placement?.AdditionalData.IsEmpty == false || pattern?.AdditionalData.IsEmpty == false)

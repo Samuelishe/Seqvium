@@ -227,6 +227,10 @@ Variation remapping, explicit ownership deletion, retained unresolved foreign de
 referenced-owner refusal are checked together with Undo/Redo, net-zero collection/JSON reconstruction,
 ended/reentrant/deleted-target operations and failure immutability.
 
+Placement-level downstream routing blocks preparation for otherwise eligible single-part and mixed
+item graphs. Real edits, Save/reopen and Undo/Redo preserve same-name distinct route identities;
+the graph without its own downstream route remains eligible even when another placement is routed.
+
 Persistence cases remove graph fields to reproduce graph-free 1.0 shape, retain precise Int64 ticks,
 round-trip every graph boundary/coordinate and unknown/opaque state, and Save incomplete/cyclic graphs.
 Compatibility fixtures freeze the actual baseline 1.0 envelope refusal predicate, verify graph-required
@@ -237,7 +241,7 @@ document/port/processing bounds, JSON depth/lifetime and failed Save retaining p
 are deterministic and use owned temporary directories.
 
 Run the unchanged locked restore, Release build and full solution test commands above. Optional focused
-run: `dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*Graph*Tests"`.
+run: `dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "Seqvium.Tests.Graph*"`.
 These tests open no GUI, audio device or network and establish intent eligibility only. Media decode,
 prepared graph resources, PCM separation/oracles, realtime budgets/publication and actual canvas/device
 behavior require separately authorized F2/F3 evidence. Current totals belong to PROJECT_STATE.

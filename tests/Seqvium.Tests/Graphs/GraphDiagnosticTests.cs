@@ -230,6 +230,67 @@ public sealed class GraphDiagnosticTests
     }
 
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void PlacementRouteBlocksPreparationWithoutChangingIntentThroughSaveAndHistory(bool twoParts)
+    {
+        var f = new GraphFixture(twoParts);
+        Assert.True(f.Report.IsEligibleForPreparation);
+        Id<RouteIntent> routeId = default;
+        Id<RouteIntent> otherRouteId = default;
+        f.Document.Edit("Existing downstream routes", edit =>
+        {
+            routeId = edit.AddRoute("Downstream");
+            otherRouteId = edit.AddRoute("Downstream");
+            edit.SetPlacementRelationships(f.OtherPlacement, null, null, otherRouteId, []);
+        });
+        var beforeRouting = f.Document.Current;
+        AssertIntent(f.Document, false);
+        Assert.True(f.Document.Edit("Route local result", edit =>
+            edit.SetPlacementRelationships(f.Placement, f.Attachment.ContextId, null, routeId, [])));
+        var routed = f.Document.Current;
+        AssertIntent(f.Document, true);
+        Assert.Equal(beforeRouting.State.Graphs, routed.State.Graphs);
+        Assert.Equal(beforeRouting.State.GraphAttachments, routed.State.GraphAttachments);
+
+        using var directory = new TemporaryDirectory();
+        var path = directory.File("placement-route.json");
+        var json = GraphFixture.Json(f.Document);
+        ProjectPersistence.Save(f.Document, path);
+        var reopened = ProjectPersistence.Open(path);
+        AssertIntent(reopened.Document, true);
+        Assert.Equal(f.Report.Diagnostics.ToArray(), reopened.GraphReports.Single().Diagnostics.ToArray());
+        Assert.True(System.Text.Json.Nodes.JsonNode.DeepEquals(json, GraphFixture.Json(reopened.Document)));
+
+        Assert.True(f.Document.Undo());
+        Assert.Equal(beforeRouting, f.Document.Current);
+        AssertIntent(f.Document, false);
+        Assert.True(f.Document.Redo());
+        Assert.Equal(routed, f.Document.Current);
+        AssertIntent(f.Document, true);
+        Assert.False(f.Document.IsDirty);
+        Assert.True(System.Text.Json.Nodes.JsonNode.DeepEquals(json, GraphFixture.Json(f.Document)));
+
+        void AssertIntent(ProjectDocument document, bool routedPlacement)
+        {
+            var state = document.Current.State;
+            ProjectValidation.Validate(state);
+            Assert.Equal(new RouteIntent(routeId, "Downstream"), state.Routes.Single(route => route.Id == routeId));
+            Assert.Equal(new RouteIntent(otherRouteId, "Downstream"), state.Routes.Single(route => route.Id == otherRouteId));
+            Assert.Equal(2, state.Routes.Length);
+            Assert.Equal(routedPlacement ? routeId : (Id<RouteIntent>?)null,
+                state.Placements.Single(placement => placement.Id == f.Placement).RouteId);
+            Assert.Equal(otherRouteId, state.Placements.Single(placement => placement.Id == f.OtherPlacement).RouteId);
+            var report = GraphDiagnostics.Inspect(state).Single();
+            Assert.Equal(!routedPlacement, report.IsEligibleForPreparation);
+            if (routedPlacement)
+                Assert.Equal(new GraphDiagnostic(GraphReasons.UnsupportedDependency, f.Attachment.GraphId, f.Attachment.Id),
+                    Assert.Single(report.Diagnostics));
+            else Assert.Empty(report.Diagnostics);
+        }
+    }
+
+    [Theory]
     [InlineData("containing")]
     [InlineData("shared-performance")]
     [InlineData("part-route")]

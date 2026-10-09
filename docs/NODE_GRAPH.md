@@ -391,9 +391,11 @@ Supported scope is one item-local context owned by one PatternPlacement. Each So
 the occurrence. Exactly one Source covers each placement part, including silent parts, and each reaches
 the designated Output. The currently understood source declaration is R2's configured PCM sampler;
 actual media, rate, workload and resource preparation remain F2 gates. Mix presence must agree with
-`IntentionalMix`; multiple parts require explicit Mix. Separate part routes, shared-performance keys,
-containing processing, opaque context state and external/cross-context references block this capability
-without being erased. Output denotes the local result, not Master or an OS endpoint.
+`IntentionalMix`; multiple parts require explicit Mix. Placement-level downstream routes, separate part
+routes, shared-performance keys, containing processing, opaque context state and external/cross-context
+references block this capability without being erased. Both placement and part routes report
+`graph.unsupported-dependency` while retaining their canonical route identities. Output denotes the local
+result, not Master or an OS endpoint.
 
 [ProjectEdit.Graph](../src/Seqvium.Core/Documents/ProjectEdit.Graph.cs) supplies context/graph creation,
 node creation, Gain updates, source binding/removal, output designation, connect/disconnect, node/graph
