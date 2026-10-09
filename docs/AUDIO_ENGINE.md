@@ -62,7 +62,7 @@ duration, release, EOF and stop; an over-capacity plan is rejected wholly before
 including zero-frame note dependencies, must be understood and available. Unsupported algorithms,
 opaque sound state, extra sound parameters, relevant unknown Pattern/part/note/sound data and required
 placement processing/route/shared-performance relationships are refused, rather than silently omitted.
-Full execution domains, separate contribution outputs and plugins remain Q-047.
+R4-F2 adds independent item-local contributions below; wider execution domains and plugins remain Q-047.
 
 ### Timing, processing ranges and determinism
 
@@ -150,6 +150,102 @@ Prepared numerical/voice/lifetime tests remain in the ordinary hardware-independ
 does not establish measured DAC/acoustic latency, physical dropout counts, lower hardware periods,
 multi-hour stability, all endpoints, platform parity or clean distribution. F2's hard Stop preserves F1;
 the broader user-facing settling/de-click and stateful seek/tail mechanisms remain Q-057.
+
+## R4-F2 independent contributions and realtime convergence
+
+[GraphPreparation](../src/Seqvium.Core/Audio/GraphPreparation.cs) prepares one identified item-local
+attachment/placement from current canonical intent. [Node graph](NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution)
+owns Source/Gain/Mix/Output arithmetic and placement/part separation. `PreparedSampler` and `OfflineSampler`
+remain the sole musical plan/kernel for graph-free Patterns, transient audition and graph execution;
+`RealtimeSampler` retains R2 authority, borrowing, packet handoff, retirement and sticky commands.
+There is no parallel graph engine or Windows-owned topology, no changed project schema and no F3 UI.
+
+### Preparation and bounded workload
+
+Require eligible F1 intent, actual validated managed WAV/PCM, source configuration and exact negotiated
+execution layout/rate. Source adaptation is explicit; cables never resample or convert channels.
+Unknown/dependency/routing/media/format failures refuse the entire current request with a stable blocker.
+Captured lifecycle, generation, revision, target and media roots are rechecked at publication. Cancellation
+is checked between source decodes and note scheduling units, around worker execution and at publication;
+one synchronous decode/hash is bounded by the existing 16 MiB WAV limit and is not instantly interruptible.
+
+Retain 1–8 voices, 100,001 events, 128 MiB decoded PCM per plan, 64 events per frame, 1–1024 repeats,
+1–65,536 maximum packet frames, 44.1/48 kHz and mono/stereo. F1 caps remain 32 nodes, 64 connections,
+8 bound sources and 8 Mix inputs. Checked scratch accounting is producer buffers
+`bufferCount * maximumPacketFrames * channels * 4`, plus conservative node/edge/voice storage
+`nodes*256 + edges*16 + voices*128`; cap 16 MiB per state. Output aliases its input, so 32 nodes require
+at most 31 producer buffers. The verified maximum stereo packet/topology needs 16,262,640 bytes,
+below 16,777,216. This accounting includes table/voice allowance, not an exact managed heap/RSS claim.
+
+Preflight computes the largest event window spanning a maximum packet, in addition to per-frame density.
+Conservative work units are `frames*channels*voices*16`, plus
+`frames*channels*sum(1 + 4*max(1, inputCount))`, plus `maximumWindowEvents*voices`; cap 67,108,864.
+Units bound sample/read/compute/write and event-slot work; they are not CPU instructions or a universal
+device deadline guarantee. All unsupported plans refuse before output; the callback never drops notes.
+
+One candidate plus active/pending/retired ownership bounds total retained PCM/scratch to 576 MiB.
+`ReservedPcmAndScratchBytes` includes the sole in-flight candidate's conservative 144 MiB reservation;
+`RetainedPcmAndScratchBytes` observes the published slots. Prepared event/note/index objects have a
+separate conservative four-plan allowance of 102,401,024 bytes. A worker may temporarily hold one
+bounded source-read/decode buffer beyond retained PCM. Canonical history, caller output, diagnostics,
+GC heap retention and OS/native memory are separate; the envelope is not a process working-set limit.
+Plans/executions lease the same immutable PCM; a branch never decodes that resource again within a plan.
+
+### Application convergence and revision observation
+
+[GraphExecutionCoordinator](../src/Seqvium.Core/Audio/GraphExecutionCoordinator.cs) uses one supplied
+serialized owner SynchronizationContext. `ProjectDocument.Changed` fires after an accepted Edit, Undo
+or Redo finishes; rejected/net-zero work and Save do not emit edits. The coordinator immediately
+invalidates authority, cancels obsolete work and retains only the latest desired request. At most one
+worker or completed candidate is admitted. A coalesced 20 ms owner progress notification reclaims retired
+state and retries occupied capacity; a completed graph candidate is retained rather than decoded again.
+The owner context/event loop must remain alive through awaited shutdown. There is no manual Apply,
+runtime history or merging of independent canonical Undo transactions. Generation prevents Undo ABA.
+
+Gain-only changes on equivalent topology/schedule/media publish an immutable latest coefficient vector
+at a packet boundary, preserving voice cursors, release and transport. Geometry-only changes need no
+decode, topology construction or scratch rebuild; equivalent provenance advances separately. Coalesced
+Gain then geometry carries the full current coefficients, so supersession cannot lose an unapplied Gain.
+Topology/source/schedule replacement restarts the prepared absolute range in a new epoch, with no
+live state-transfer claim. Preparation/convergence never issues Start; deliberate coordinator Start
+requires the current validated publication authority. Stop/Panic remain sticky through completion/retry.
+
+`RealtimeSampler.ReadStatus` returns a value snapshot protected by a single-consumer sequence counter;
+it distinguishes origin prepared revision, executing audio revision, equivalent canonical revision,
+executing attachment, transport/epoch/position/voices, real Stop acknowledgment and termination.
+`GraphExecutionCoordinator.ReadStatus` adds canonical revision/target, preparation pending, stable
+blockers, last-valid playing and closed state through an atomic immutable observation. UI must use
+these APIs, not the legacy unsynchronized Guid property. Snapshots retain no UI, mutable graph or Undo.
+Invalid current edits stay canonical/savable; current offline preparation refuses them. A fresh reopen
+inherits no previous last-valid plan.
+
+### Finite transitions and joined shutdown
+
+An abrupt graph replacement while playing applies a new-state linear fade-in over `round(rate/1000)`
+frames: 44 at 44.1 kHz, 48 at 48 kHz, gain `(frame+1)/N`, then unity. It is partition invariant,
+finite even at in-packet EOF and isolated from steady-state/offline arithmetic. No old tail crosses the
+boundary; no seamless handoff or acoustically click-free guarantee is claimed. Gain edits are immediate
+at their boundary. Core Stop/Panic retain R2's immediate hard cut, with zero voices/output at the next
+processed boundary; they do not emit a settling tail or reinterpret an explicit hard range. Future
+user-facing ordinary transport settling remains Q-057, separate from these technical hard commands.
+Gain/Mix have zero algorithmic latency/tails; sampler release retains R2 behavior.
+
+Document Close/output replacement first prohibits new preparation and invalidates/cancels work.
+Await `GraphExecutionCoordinator.CloseAsync`/`DisposeAsync` before joining the device borrower.
+`AudioDeviceSession.AttachCoordinator` transfers that coordination lifetime; `CloseOutputAsync` and
+`DisposeAsync` await preparation, Stop/join output, then release prepared/execution leases. Synchronous
+session close refuses an attached coordinator until the asynchronous path completes. Failed/unconfirmed
+join retains borrowed sampler/output ownership for retry. Fault termination remains distinct from a
+processed Stop acknowledgment. The Windows adapter remains only the device worker; new amplitude/
+adjacent/packet-boundary delta observations run exclusively in bounded opt-in diagnostics.
+
+The [verification owner](TEST_EXECUTION.md#r4-f2-execution-verification) and
+[report](experiments/SEQ-R4-F2_REPORT.md) declare numerical, maximum-workload and actual device limits.
+Normal tests open no physical output. Evidence does not establish acoustic perception, DAC latency,
+multi-hour/all-device stability, other platforms, cross-context routing or stateful processor behavior.
+Full F2 acceptance remains partial: repeated 60-second pressure runs include two non-injected
+padding-exhaustion starvations; the latest measured service-wake interval exceeds device capacity.
+Confirmed fault termination/join releases resources, but does not establish deadline stability.
 
 ## R2-F3 transient one-shot execution
 
@@ -272,8 +368,8 @@ requires the probe to solve the full musical scheduler.
 
 [NODE_GRAPH](NODE_GRAPH.md) owns editable graph definitions and semantic connections. The application
 may edit rich project/visual objects; the host must validate/prepare a bounded execution representation
-before realtime use. The callback must not traverse UI nodes or mutable graph-editor state. No graph
-compiler, traversal strategy, publication mechanism, or final execution layout is selected.
+before realtime use. The callback must not traverse UI nodes or mutable graph-editor state. R4-F2's
+bounded preparation/publication is implemented above; wider capabilities and a final ABI remain open.
 
 Execution snapshots derive from the single canonical editable project graph and identify its revision.
 Last-valid execution may continue in the current session while canonical edits are invalid or preparing;
@@ -282,7 +378,7 @@ execution atomically with safe retirement; no manual Apply is required. Obsolete
 cancelled/coalesced safely, separately from undo history. Save/reopen preserves canonical edits under
 [PROJECT_FORMAT](PROJECT_FORMAT.md#save-and-reopen), not a persistent last-valid runtime graph.
 [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution) owns this graph rule and the required
-visible distinction between editable and executing state; publication/resource retirement remains open.
+visible distinction between editable and executing state; broader stateful publication remains open.
 
 The [semantic execution domains](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains) in
 ARCHITECTURE distinguish shared durable sound intent from performance-state interaction and required
@@ -320,7 +416,8 @@ still exists; required signal/history availability follows the selected boundary
 Correct required audio has priority over hidden resource shortcuts. Never silently merge independent
 performance domains/contributions, collapse required routes, replace requested sound with stale/wrong
 audio or omit required processing to save CPU/RAM. Bounded execution/preparation/resource use and useful
-diagnostics are legitimate requirements; there is no unlimited-duplication guarantee or numerical limit.
+diagnostics are legitimate requirements. These principles imply neither unlimited duplication nor
+universal numerical limits; each implemented slice declares its own bounds.
 
 If the requested configuration cannot be realized within available resources/capabilities, fail its
 preparation or make affected execution explicitly unavailable/degraded, preserving canonical intent.
@@ -337,7 +434,7 @@ owns observable blocker feedback; final overload UX, thresholds and resource pol
 Q-047 requires bounded comparisons of compatible sharing versus independent domains, voice interaction,
 separable source outputs, opaque-source instancing, shared-definition parameter synchronization and
 CPU/RAM scaling, including pressure/failure and lifetime cases. Concrete grouping, allocation, pooling,
-instance counts, limits and realtime publication remain open. Q-019/Q-029 own canonical references/edit
+instance counts, limits and realtime publication beyond bounded R4-F2 remain open. Q-019/Q-029 own canonical references/edit
 relationships; Q-063 owns undo/async commit, and Q-066 retains concrete cross-context control/sidechain
 execution mechanisms under the [graph semantics](NODE_GRAPH.md#cross-context-signal-and-control-relationships).
 These questions are coordinated, not fully resolved here.

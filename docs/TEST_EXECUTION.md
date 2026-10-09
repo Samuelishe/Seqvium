@@ -246,6 +246,49 @@ These tests open no GUI, audio device or network and establish intent eligibilit
 prepared graph resources, PCM separation/oracles, realtime budgets/publication and actual canvas/device
 behavior require separately authorized F2/F3 evidence. Current totals belong to PROJECT_STATE.
 
+## R4-F2 execution verification
+
+`GraphExecutionTests`, `GraphRealtimeTests` and `GraphLifecycleTests` add 42 cases without modifying
+the 558 prior assertions. Focused execution after a Release build:
+
+```text
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*GraphExecutionTests" --filter-class "*GraphRealtimeTests" --filter-class "*GraphLifecycleTests"
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*WavAuditionTests" --filter-method "*WarmPreviewProcessorAllocatesNothingAcrossVariablePackets*"
+```
+
+The authored WAV oracle reads canonical note intervals, absolute rational frame times and original PCM;
+it calls neither prepared events nor production execution to derive expected samples. Tests compare
+independent Kick/Snare, branch Gain, Mix and Output, release/EOF/hard Stop/repeats and stereo asymmetry
+across rates/layouts/packet partitions. Branch swap, fan-out, same-resource independence, silent-source
+media, unity Gain and geometry/node order are covered. A nonassociative three-input example asserts
+exact port-UUID accumulation rather than toleranced/commutative equality. The largest numerical workload
+uses 32 nodes, 8 sources/voices, 22 Gain, 8-input Mix and a 65,536-frame stereo packet. Five unique large
+PCM16 silent dependencies verify actual decoded-budget refusal before execution.
+
+An injected serialized owner context and explicit completion/cancellation gates exercise latest Edit/
+Undo/Redo, ABA, target/Close, retained capacity retry without reprepare, invalid canonical/repair,
+no last-valid resurrection after Save/reopen, Gain/release cursor continuity, finite topology ramp
+including in-packet EOF, Stop/Panic, failed join retention and eventual PCM collection. Normal tests
+open no physical output and use no timing sleeps. Warm allocation measures Process/status entry only,
+after separate warm-up, with harness arrays/fixture setup outside the measurement. The existing preview
+allocation case passes five isolated consecutive runs as well as full-suite runs; assertions are unchanged.
+
+Explicit Windows evidence extends the existing DeviceCheck:
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll graph-measure 60
+```
+
+It warns before quiet authored output, uses the actual 32-node/8-source attachment and negotiated
+format/capacity, bounded diagnostics/capture, independent arithmetic versus captured PCM and offline
+packet parity, deadline/allocation/GC observations, owner convergence under pressure, hard Stop/Panic
+and joined injected fault lifetimes. The [report](experiments/SEQ-R4-F2_REPORT.md) owns actual duration,
+endpoint, packet distribution, limits and retained measurements. Pressure's dynamically edited capture
+is not relabeled as steady-state oracle evidence; its oracle/parity fields are null. Diagnostic zeros
+are evidence only when the corresponding diagnostics mode was enabled.
+Full F2 pressure acceptance remains partial: passing runs coexist with two non-injected starvation
+failures. Callback allocation/deadline counters alone do not cover missed service wakes.
+
 ## Evidence tiers
 
 These are complementary evidence classes, not a ranking in which a higher-looking tier replaces lower

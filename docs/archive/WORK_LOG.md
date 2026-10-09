@@ -1065,3 +1065,17 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   pass with zero failures/skips, preserving all 556 existing cases. The documented focused filter's
   interior wildcard was rejected by xUnit; the corrected `Seqvium.Tests.Graph*` filter passes.
   No routing execution, DSP, F2, GUI/device access, new abstraction, commit/push or index mutation.
+
+## 2026-10-09 — SEQ-R4-F2 independent graph execution
+
+- Extended the existing PCM scheduler/kernel with placement-qualified part contributions and deterministic
+  Source/Gain/Mix/Output tables; decoded resource identity remains separate from musical ownership.
+  Legacy graph-free Pattern and transient audition guards remain. No schema/F1 identity or assembly change.
+- Added revisioned coefficient/provenance updates, atomic execution observation, post-transaction
+  notifications and one serialized convergence coordinator with cancellation/ABA/capacity retry.
+  Preparation joins before device join and borrowed resource release; failed join retains ownership.
+- Preserved all 558 tests; added independent PCM/upstream, maximum workload, convergence/lifetime and
+  allocation verification. Locked restore/full Release gates pass. Physical graph baseline/pressure
+  successes and two later starvations are retained in the compact [report](../experiments/SEQ-R4-F2_REPORT.md);
+  fault-stop/join/resource release pass, while full F2 pressure acceptance remains partial.
+  R4 remains partial; F3 is not started. No commit/push/index mutation or GUI work.

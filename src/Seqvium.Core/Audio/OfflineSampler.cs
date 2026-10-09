@@ -29,7 +29,8 @@ public readonly record struct ExecutionOccurrence(
     Id<Pattern> PatternId,
     Id<MusicalPart> PartId,
     Id<NoteEvent> NoteId,
-    int Iteration);
+    int Iteration,
+    Id<PatternPlacement>? PlacementId = null);
 
 public enum ExecutionEventKind
 {
@@ -52,7 +53,8 @@ internal sealed record PreparedNote(
     float Gain,
     long StartFrame,
     long EndFrame,
-    int ReleaseFrames);
+    int ReleaseFrames,
+    int ContributionIndex = 0);
 
 /// <summary>Frozen single-Pattern execution, bounded repeats and source leases. Derived state, never persistent musical truth.</summary>
 public sealed class PreparedSampler : IDisposable
@@ -67,9 +69,17 @@ public sealed class PreparedSampler : IDisposable
     public int ZeroFrameNotes { get; }
     public long StartFrame { get; }
     public long EndFrame { get; }
+    internal PreparedGraph? Graph { get; }
+    public int DecodedBytes { get; }
+    public int ScratchBytes => Graph?.ScratchBytes ?? 0;
+    public ImmutableArray<AudioContribution> Contributions => Graph?.Contributions ?? [];
+    public Id<GraphAttachment>? GraphAttachmentId => Graph?.AttachmentId;
+    public long PacketWork { get; internal set; }
+    public int MaximumPacketEvents { get; internal set; }
 
     internal PreparedSampler(Guid revision, int rate, int channels, int capacity, long start, long end, int zero,
-        ImmutableArray<PreparedNote> notes, ImmutableArray<PreparedEvent> events, PcmLease[] sources)
+        ImmutableArray<PreparedNote> notes, ImmutableArray<PreparedEvent> events, PcmLease[] sources,
+        PreparedGraph? graph = null)
     {
         Revision = revision;
         SampleRate = rate;
@@ -81,6 +91,8 @@ public sealed class PreparedSampler : IDisposable
         Notes = notes;
         Events = events;
         _sources = sources;
+        Graph = graph;
+        DecodedBytes = sources.Sum(source => source.Bytes);
     }
 
     internal PcmLease[] LeaseSources() => (_sources ?? throw new ObjectDisposedException(nameof(PreparedSampler)))
@@ -123,7 +135,12 @@ public static class SamplerPreparation
     /// <summary>Loop occurrences use absolute tick endpoints; no rounded loop-length accumulation. Stop is a hard transport boundary.</summary>
     public static PreparedSampler PreparePattern(ProjectDocument document, Id<Pattern> patternId, int sampleRate,
         int channels = 2, int voiceCapacity = 8, MusicalPosition start = default, int repeats = 1,
-        MusicalPosition? stop = null)
+        MusicalPosition? stop = null) =>
+        PreparePatternCore(document, patternId, sampleRate, channels, voiceCapacity, start, repeats, stop);
+
+    internal static PreparedSampler PreparePatternCore(ProjectDocument document, Id<Pattern> patternId, int sampleRate,
+        int channels, int voiceCapacity, MusicalPosition start, int repeats, MusicalPosition? stop,
+        PreparedGraph? graph = null, CancellationToken cancellationToken = default)
     {
         document.CheckAvailable();
         if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || voiceCapacity is < 1 or > 8 ||
@@ -148,6 +165,7 @@ public static class SamplerPreparation
         {
             foreach (var part in pattern.Parts)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var sound = state.Sounds.Single(item => item.Id == part.SoundId);
                 if (sound.Algorithm != PcmSampler.Algorithm || sound.Extension is not null ||
                     sound.ResourceIds.Length != 1 ||
@@ -175,7 +193,7 @@ public static class SamplerPreparation
                 }
             }
 
-            if (!pattern.AdditionalData.IsEmpty || state.Placements.Any(placement => placement.PatternId == patternId &&
+            if (!pattern.AdditionalData.IsEmpty || graph is null && state.Placements.Any(placement => placement.PatternId == patternId &&
                     (placement.ItemContextId is not null || placement.ContainingContextId is not null ||
                      placement.RouteId is not null ||
                      placement.PartRelationships.Any(relation =>
@@ -185,6 +203,7 @@ public static class SamplerPreparation
             for (int iteration = 0; iteration < repeats; iteration++)
                 foreach (var item in ordered)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     var part = pattern.Parts.Single(part => part.Id == item.PartId);
                     var sound = state.Sounds.Single(sound => sound.Id == part.SoundId);
                     var note = item.Note;
@@ -209,9 +228,10 @@ public static class SamplerPreparation
                         sound.Parameters["releaseMilliseconds"] * sampleRate / 1000m, 0,
                         MidpointRounding.AwayFromZero));
                     maximumRelease = Math.Max(maximumRelease, release);
-                    var occurrence = new ExecutionOccurrence(patternId, part.Id, note.Id, iteration);
+                    var occurrence = new ExecutionOccurrence(patternId, part.Id, note.Id, iteration, graph?.PlacementId);
                     int index = notes.Count;
-                    notes.Add(new(occurrence, sourceIndex, step, (float)note.Intensity, on, off, release));
+                    notes.Add(new(occurrence, sourceIndex, step, (float)note.Intensity, on, off, release,
+                        graph?.SourceBuffer(part.Id) ?? 0));
                     events.Add(new(on, position, ExecutionEventKind.NoteOn, occurrence, index));
                     events.Add(new(off, end, ExecutionEventKind.NoteOff, occurrence, index));
                 }
@@ -229,7 +249,7 @@ public static class SamplerPreparation
                 .ThenBy(item => item.Occurrence?.Iteration).ToImmutableArray();
             ValidateCapacity(sorted, notes, sources, voiceCapacity, last);
             return new(snapshot.Revision, sampleRate, channels, voiceCapacity, first, last, zero, notes.ToImmutable(),
-                sorted, [.. sources]);
+                sorted, [.. sources], graph);
         }
         catch
         {
@@ -272,6 +292,9 @@ public sealed class OfflineSampler : IDisposable
     private PcmLease[]? _sources;
     private int _eventIndex;
     private bool _stopped;
+    private readonly float[][]? _signals;
+    private float[]? _coefficients;
+    private int _lastSamples;
     public long Position { get; private set; }
 
     public int ActiveVoices
@@ -288,10 +311,16 @@ public sealed class OfflineSampler : IDisposable
 
     internal OfflineSampler(PreparedSampler plan)
     {
-        _sources = plan.LeaseSources();
         _plan = plan;
         _voices = Enumerable.Range(0, plan.VoiceCapacity).Select(_ => new Voice()).ToArray();
         Position = plan.StartFrame;
+        if (plan.Graph is { } graph)
+        {
+            _signals = Enumerable.Range(0, graph.BufferCount)
+                .Select(_ => new float[checked(graph.MaximumPacketFrames * plan.Channels)]).ToArray();
+            _coefficients = graph.Coefficients;
+        }
+        _sources = plan.LeaseSources();
     }
 
     public void Restart()
@@ -316,10 +345,15 @@ public sealed class OfflineSampler : IDisposable
         if (interleavedOutput.Length % _plan.Channels != 0)
             throw new ArgumentException("Output must contain complete frames.");
         int frames = interleavedOutput.Length / _plan.Channels;
+        if (_plan.Graph is { } prepared && frames > prepared.MaximumPacketFrames)
+            throw new ArgumentOutOfRangeException(nameof(interleavedOutput), "Graph packet exceeds prepared capacity.");
         if (frames > _plan.EndFrame - Position)
             throw new ArgumentOutOfRangeException(nameof(interleavedOutput),
                 "Block exceeds the prepared end boundary.");
         interleavedOutput.Clear();
+        _lastSamples = interleavedOutput.Length;
+        if (_signals is not null)
+            foreach (var signal in _signals) signal.AsSpan(0, _lastSamples).Clear();
         for (int frame = 0; frame < frames; frame++)
         {
             ApplyEvents();
@@ -338,11 +372,12 @@ public sealed class OfflineSampler : IDisposable
                               (voice.ReleaseAge < 0 ? 1 : 1 - (double)voice.ReleaseAge / note.ReleaseFrames);
                 double left = Interpolate(source, cursor, 0);
                 double right = source.Channels == 1 ? left : Interpolate(source, cursor, 1);
-                if (_plan.Channels == 1) interleavedOutput[frame] += (float)((left + right) * 0.5 * gain);
+                Span<float> contribution = _signals is null ? interleavedOutput : _signals[note.ContributionIndex];
+                if (_plan.Channels == 1) contribution[frame] += (float)((left + right) * 0.5 * gain);
                 else
                 {
-                    interleavedOutput[frame * 2] += (float)(left * gain);
-                    interleavedOutput[frame * 2 + 1] += (float)(right * gain);
+                    contribution[frame * 2] += (float)(left * gain);
+                    contribution[frame * 2 + 1] += (float)(right * gain);
                 }
 
                 voice.Age++;
@@ -354,9 +389,38 @@ public sealed class OfflineSampler : IDisposable
             Position++;
         }
 
+        if (_plan.Graph is { } graph)
+        {
+            foreach (var operation in graph.Operations)
+            {
+                if (operation.Kind == GraphOperationKind.Source) continue;
+                var destination = _signals![operation.Buffer].AsSpan(0, _lastSamples);
+                if (operation.Kind == GraphOperationKind.Gain)
+                {
+                    var input = _signals[operation.Inputs[0]];
+                    float amplitude = _coefficients![operation.Coefficient];
+                    for (int index = 0; index < destination.Length; index++) destination[index] = input[index] * amplitude;
+                }
+                else
+                    foreach (int input in operation.Inputs)
+                        for (int index = 0; index < destination.Length; index++) destination[index] += _signals[input][index];
+            }
+            _signals![graph.OutputBuffer].AsSpan(0, _lastSamples).CopyTo(interleavedOutput);
+        }
+
         // Events at block end belong to the following block, except final retirement is immediate.
         if (Position == _plan.EndFrame) Stop();
     }
+
+    /// <summary>Single-owner bounded diagnostics for the most recently processed packet, before or after Mix.</summary>
+    public ReadOnlySpan<float> Signal(Id<GraphNode> nodeId)
+    {
+        CheckAvailable();
+        var graph = _plan.Graph ?? throw new InvalidOperationException("Execution has no graph.");
+        return _signals![graph.NodeBuffers[nodeId]].AsSpan(0, _lastSamples);
+    }
+
+    internal void UpdateCoefficients(float[] coefficients) => _coefficients = coefficients;
 
     private void ApplyEvents()
     {

@@ -41,6 +41,34 @@ identified old active revision can continue. Reclaim retired state on the contro
 Close the output and successfully join before disposing its sampler; a join timeout retains ownership.
 Transport Stop/Start restarts within the stream; fault recovery uses a fresh output session and new epoch.
 
+## R4-F2 prepared graph verification
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll graph-measure 60
+```
+
+This extends the same harness with an actual canonical item graph: 8 independently bound parts/Source,
+8 branch Gain, one 8-input Mix, 14 downstream Gain and Output (32 nodes, 31 connections). One quiet
+authored mono 44.1 kHz WAV backs eight independent pitched/timed/released occurrences; their output
+uses the exact negotiated host layout/rate. Source coefficients are 0.25–0.60; final gain is 0.20.
+Output warns before playing and changes no system settings. Duration is bounded to 1–120 seconds
+per configuration; the declared long-run command uses 60 baseline plus 60 pressure seconds.
+
+Both configurations use bounded opt-in diagnostics. Baseline's 176,400 captured interleaved samples
+are compared to independent source/schedule/envelope/port-ordered Mix arithmetic and offline execution
+at the actual captured partitions. Pressure exercises the production coordinator through its serialized
+owner event loop, accepted branch edits/source replacements, a CPU worker, a 4 MiB allocation ring and
+forced collections. Its dynamically changed capture is not compared to the initial steady-state oracle;
+those fields are null. Deadline/finite/allocation/retirement/Stop/Panic/join requirements still apply.
+
+Three additional fresh fault lifetimes inject two native invalidations and one worker stall. These are
+bounded device-worker tests, not actual hardware unplugging. Preparation joins before device Close;
+borrowed resources are released only after confirmed worker join, including exceptional cleanup.
+Amplitude, adjacent-sample and packet-boundary deltas are diagnostic observations, not subjective click
+assessment, DAC latency or microphone capture. Timing percentiles exclude the prefill/cold setup.
+The [R4-F2 report](../../docs/experiments/SEQ-R4-F2_REPORT.md) owns actual endpoints/durations/workload,
+earlier runs, measurements and limits; ordinary tests initialize no physical audio.
+
 ## Transient preview smoke and diagnostic mode
 
 Audible commands warn on stderr that sound **will play**. `audition-smoke` authors an external one-second

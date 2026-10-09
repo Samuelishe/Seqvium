@@ -239,14 +239,17 @@ the [complete acceptance audit](experiments/SEQ-R2-F4_REPORT.md#complete-r2-requ
 R3's bounded workspace shell is also **complete / local accepted-ready** after its completion audit
 and owner acceptance of F1/F2. Completed scope/rationale is retained in the cold archive; current
 capability and evidence limits belong to [PROJECT_STATE](PROJECT_STATE.md) and canonical owners.
-The current numbered stage is R4, **in progress / partial** after separately authorized F1. F2/F3 require
+The current numbered stage is R4, **in progress / partial** after separately authorized F1/F2. F3 requires
 separate authorization. No extra
 milestone, permanent backend, musical editor or recording prerequisite is introduced by closure.
 
 ## SEQ-R4 — Node Graph Foundation
 
 Status: **in progress / partial**. F1 canonical intent is complete / local accepted-ready;
-prepared audible execution and actual workspace editing remain pending. F1 alone cannot close R4.
+F2 prepared audible execution is implemented; actual F3 workspace editing remains pending.
+F2 remains partial pending resolution of mixed physical pressure/deadline evidence in
+[PROJECT_STATE](PROJECT_STATE.md). Functional implementation alone does not complete this package.
+The completed foundations alone cannot close R4.
 
 Establish core node/connection concepts, semantic port validation, a bounded editable/prepared
 execution boundary, and minimal graph interaction/structural nodes over the shell. Basic source/output,
@@ -257,11 +260,12 @@ spatial placement, and topology-defined dependencies without presuming a final "
 Derive revisioned execution from the single canonical graph; converge automatically to the latest valid
 revision with safe atomic publication/retirement and coalescing of obsolete preparation. Last-valid
 execution may continue in-session while invalid edits remain canonical and savable; show the divergence.
-Publication/compiler/cancellation/failure strategy remains open; no manual Apply workflow is required.
+The bounded F2 publication/preparation strategy belongs to the audio/graph owners; broader stateful
+processing remains open. No manual Apply workflow is required.
 
 ### Proposed R4 delivery packages
 
-**F1 is implemented; F2/F3 are proposals requiring separate authorization.** These are subdivisions of
+**F1 is complete; F2 is implemented but partial; F3 remains proposed and requires separate authorization.** These are subdivisions of
 R4, not numbered roadmap stages. The [readiness recommendation](NODE_GRAPH.md#r4-implementation-readiness-recommendation)
 owns remaining source boundaries and execution/editor choices. The sequence remains F1 -> F2 -> F3;
 F2's independent-source and F3's actual user workflows are mandatory for R4 acceptance.
@@ -272,27 +276,10 @@ F2's independent-source and F3's actual user workflows are mandatory for R4 acce
 eligibility reports, then proves real source separation, preparation/resource limits and publication;
 an F1 report is not executable audio state.
 
-**R4-F2 — independent contributions and audible prepared graph.** Extend Core `Audio/OfflineSampler.cs`
-and `Audio/RealtimeSampler.cs`, adding cohesive graph preparation/execution and a serialized application
-coordinator where their ownership justifies it. Adapt `Audio/AudioEndpoints.cs` and the narrow Windows
-output seam only as necessary; extend `tools/Seqvium.DeviceCheck` for graph evidence. New canonical
-capabilities beyond F1 should be unnecessary. Execute the bounded item-local occurrence with independent
-part streams, Gain, explicit Mix and Output offline and realtime; add automatic convergence/retry,
-revision observations, parameter versus topology transitions and bounded cancellation/retirement.
-No editor, containing/global routing, opaque sources, modulation or stateful FX is implied.
-
-Deterministic acceptance requires an independent `m*(k*K+S)` PCM oracle, upstream contribution checks,
-single-source Gain, fan-out without duplicate performance, same-resource independent uses/releases,
-placement-qualified identity, 44.1/48 kHz mono/stereo and variable packet/repeat boundaries. Verify
-offline/realtime parity, zero-delay parallel alignment, complete capacity refusal, warmed processing
-allocation, all authority/Undo/Redo/cancellation/invalid-edit cases, latest-request convergence under
-occupied pending/retired slots, actual Stop/Panic acknowledgment and joined close/fault lifetimes.
-Use synchronization gates rather than timing sleeps. Real-device acceptance must declare topology,
-voice/node/buffer/memory workload, actual endpoint format/period/capacity, allocation/deadline/GC pressure,
-PCM capture versus both oracles, audible playback, transition behavior and joined failures. Existing R2
-measurements do not certify graph processing cost. Settle finite transition/shutdown policy before closing
-F2; no seamless transfer or acoustic latency claim follows from numerical parity. Main risks are premature
-mixing, per-source scheduler forks, parameter-driven voice resets, memory growth and retry starvation.
+F2's implemented independent-source execution/convergence contracts belong to
+[Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence) and
+[Node graph](NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution); current validation/readiness
+belongs to [PROJECT_STATE](PROJECT_STATE.md). F3 must use those foundations within their evidenced limits.
 
 **R4-F3 — actual workspace graph editing and closure.** Extend Desktop `Workspace/WorkspaceState.cs`,
 `WorkspaceHost.cs`, `WorkspacePane.cs`/first-party content creation, a cohesive graph canvas/presenter,

@@ -118,7 +118,30 @@ Variation remapping, owned placement/context deletion and incident node-use remo
 unrelated safely unresolved dependencies retain intended identity. Graph deep content equality
 includes immutable collections and opaque JSON, so net-zero reconstruction publishes no revision.
 Coordinates are canonical graph presentation; workspace geometry and transient gestures remain
-separate. F2 must derive execution/resources from a frozen eligible revision; F3 will supply the canvas.
+separate. F2 derives execution/resources from a frozen eligible revision; F3 will supply the canvas.
+
+## R4-F2 execution and application coordination ownership
+
+[GraphPreparation](../src/Seqvium.Core/Audio/GraphPreparation.cs) derives bounded immutable operation,
+contribution and coefficient tables from canonical attachment intent plus verified PCM. The existing
+`PreparedSampler`/`OfflineSampler` hold plan/leases and one mutable consumer's voice/scratch state;
+graph-free Pattern and transient audition retain their explicit guarded preparation paths. R2's
+`RealtimeSampler` owns graph publication, revisions, borrowing and retirement too. There is no second
+engine, graph document, runtime history, package/assembly or Windows-owned musical processing.
+
+[GraphExecutionCoordinator](../src/Seqvium.Core/Audio/GraphExecutionCoordinator.cs) is the minimal
+application owner: post-transaction document notifications, latest desired target, one worker/candidate,
+supersession/cancellation, capacity retry and thread-safe divergence/status. Its supplied serialized
+owner context must continue servicing completion/progress through shutdown. Preparation workers see
+frozen snapshots/media roots only; callbacks see prepared arrays/voices and atomic control values only.
+Geometry/Gain equivalence is conservative across canonical content/roots, not a general async rebase.
+
+`AudioDeviceSession` can own an attached coordinator for one output. Its asynchronous shutdown joins
+preparation before stopping/joining the device and releasing the borrowed sampler. The existing lifetime
+interface and concrete WASAPI sampler seam remain sufficient. Failed join retains ownership; callers
+must keep the owner context alive and retry. Desktop composition is explicitly F3 work and is not added.
+[Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence) and
+[Node graph](NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution) own exact limits/semantics.
 
 ## R2-F1 managed media and offline execution
 

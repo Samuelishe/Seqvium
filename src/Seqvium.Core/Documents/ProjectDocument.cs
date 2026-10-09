@@ -18,6 +18,8 @@ public sealed class ProjectDocument
 
     // Owner-thread lifetime notification, never called from execution or preparation workers.
     internal event Action? Closed;
+    /// <summary>Owner-thread notification after an accepted logical transaction; Save and net-zero edits do not notify.</summary>
+    public event Action? Changed;
 
     public Guid LifecycleId { get; } = Guid.NewGuid();
     public long Generation { get; private set; }
@@ -61,6 +63,7 @@ public sealed class ProjectDocument
         ArgumentNullException.ThrowIfNull(operation);
         var edit = new ProjectEdit(Current.State);
         _editing = true;
+        bool accepted = false;
         try
         {
             operation(edit);
@@ -75,12 +78,14 @@ public sealed class ProjectDocument
             _redo.Clear();
             Current = next;
             Generation = nextGeneration;
+            accepted = true;
             return true;
         }
         finally
         {
             edit.Seal();
             _editing = false;
+            if (accepted) Changed?.Invoke();
         }
     }
 
@@ -94,6 +99,7 @@ public sealed class ProjectDocument
         _redo.Push(entry);
         Current = entry.Before;
         Generation = nextGeneration;
+        Changed?.Invoke();
         return true;
     }
 
@@ -106,6 +112,7 @@ public sealed class ProjectDocument
         _undo.Add(entry);
         Current = entry.After;
         Generation = nextGeneration;
+        Changed?.Invoke();
         return true;
     }
 
@@ -142,7 +149,7 @@ public sealed class ProjectDocument
 
     // ImmutableArray/Dictionary use reference equality. A composed edit can return to identical
     // canonical values through different collection instances; that must not invent accepted history.
-    private static bool HasSameContent(ProjectState left, ProjectState right)
+    internal static bool HasSameContent(ProjectState left, ProjectState right)
     {
         if (left == right) return true;
         return left with

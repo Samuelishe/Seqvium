@@ -72,6 +72,10 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
     public long ProcessorAllocatedBytes { get; private set; }
     public long ServiceAllocatedBytes { get; private set; }
     public long WorkerAllocatedBytes { get; private set; }
+    public float MaximumSampleMagnitude { get; private set; }
+    public float MaximumAdjacentSampleDelta { get; private set; }
+    public float MaximumPacketBoundaryDelta { get; private set; }
+    private float _previousLeft, _previousRight;
     public int ProcessorMisses { get; private set; }
     public int ServiceMisses { get; private set; }
     public int PacketMisses { get; private set; }
@@ -457,10 +461,17 @@ public sealed unsafe class WasapiOutput : IAudioOutputLifetime
     private void ObservePacket(ReadOnlySpan<float> output, RealtimeSampler sampler)
     {
         bool silent = true;
-        foreach (float sample in output)
+        for (int index = 0; index < output.Length; index++)
         {
+            float sample = output[index];
             silent &= sample == 0;
             if (!float.IsFinite(sample)) NonFiniteSamples++;
+            bool left = sampler.Channels == 1 || index % 2 == 0;
+            float difference = Math.Abs(sample - (left ? _previousLeft : _previousRight));
+            MaximumSampleMagnitude = Math.Max(MaximumSampleMagnitude, Math.Abs(sample));
+            MaximumAdjacentSampleDelta = Math.Max(MaximumAdjacentSampleDelta, difference);
+            if (index < sampler.Channels) MaximumPacketBoundaryDelta = Math.Max(MaximumPacketBoundaryDelta, difference);
+            if (left) _previousLeft = sample; else _previousRight = sample;
         }
 
         MaximumObservedVoices = Math.Max(MaximumObservedVoices, sampler.ActiveVoices);

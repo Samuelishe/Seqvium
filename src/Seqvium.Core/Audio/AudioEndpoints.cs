@@ -157,9 +157,10 @@ public interface IAudioOutputLifetime : IDisposable
 /// <summary>One serialized control owner. Holds independent nonpersistent input/output intent and owns
 /// an attached output plus its sampler. Await outstanding preparation before changing/closing output.
 /// Input selection opens no stream. Same output intent is a no-op; reopening is always deliberate.</summary>
-public sealed class AudioDeviceSession : IDisposable
+public sealed class AudioDeviceSession : IDisposable, IAsyncDisposable
 {
     private IAudioOutputLifetime? _output;
+    private GraphExecutionCoordinator? _coordinator;
     private bool _disposed;
     public AudioEndpointIntent OutputIntent { get; private set; } = AudioEndpointIntent.Default();
     public AudioEndpointIntent InputIntent { get; private set; } = AudioEndpointIntent.Default();
@@ -207,6 +208,30 @@ public sealed class AudioDeviceSession : IDisposable
 
     public void CloseOutput()
     {
+        if (_coordinator is not null)
+            throw new InvalidOperationException("Graph output requires awaited CloseOutputAsync before replacement/disposal.");
+        CloseOutputCore();
+    }
+
+    /// <summary>Transfers application coordination ownership for this output. Closing first joins preparation, then the device borrower.</summary>
+    public void AttachCoordinator(GraphExecutionCoordinator coordinator)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_output is null || _coordinator is not null || coordinator.Sampler != OutputSampler)
+            throw new InvalidOperationException("Coordinator must belong to the attached output sampler.");
+        _coordinator = coordinator;
+    }
+
+    public async Task CloseOutputAsync()
+    {
+        if (_coordinator is { } coordinator) await coordinator.CloseAsync();
+        CloseOutputCore(); // A failed join retains sampler/output ownership and the closed coordinator for retry.
+        if (_coordinator is { } completed) await completed.DisposeAsync();
+        _coordinator = null;
+    }
+
+    private void CloseOutputCore()
+    {
         if (_output is null) return;
         var sampler = OutputSampler!;
         sampler.Stop();
@@ -225,6 +250,13 @@ public sealed class AudioDeviceSession : IDisposable
     {
         if (_disposed) return;
         CloseOutput();
+        _disposed = true;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) return;
+        await CloseOutputAsync();
         _disposed = true;
     }
 }

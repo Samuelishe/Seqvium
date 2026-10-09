@@ -1490,3 +1490,20 @@ canonical data and diagnostics only; preparation, media/resources, DSP/publicati
 Current owners: [Node graph](../NODE_GRAPH.md#implemented-r4-f1-canonical-graph-intent),
 [Project format](../PROJECT_FORMAT.md#r4-f1-graph-aware-json-format),
 [Architecture](../ARCHITECTURE.md#r4-f1-canonical-graph-responsibility).
+
+## 2026-10-09 — SEQ-R4-F2 shared PCM execution and bounded convergence
+
+Extend the existing sampler before its aggregate, because a graph applied after premixing cannot
+honor independent branch Gain and a second source renderer would duplicate scheduler/lease semantics.
+Retain one placement/part producer result for compatible fan-out, with explicit source adaptation and
+port-UUID-ordered Mix. F1 canonical intent/schema and refusal of unsupported routes/scopes remain intact.
+
+Reuse R2 publication/retirement rather than introduce a graph engine. One owner coordinator coalesces
+desired work while canonical Undo edits remain independent; one completed candidate survives capacity
+pressure. Coefficient/provenance updates preserve voices; topology/source/schedule uses restart/new epoch
+and a finite 1 ms new-state fade-in. Technical Stop/Panic remain hard boundaries without a tail;
+acoustic assessment and future user-facing settling remain separate open work.
+
+Current owners: [Audio](../AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence),
+[Node graph](../NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution),
+[Architecture](../ARCHITECTURE.md#r4-f2-execution-and-application-coordination-ownership).
