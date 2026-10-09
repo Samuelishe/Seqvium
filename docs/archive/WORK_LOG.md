@@ -1094,3 +1094,19 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   repeated failures remain. Individual runtime intervals are established, not general driver/scheduler
   attribution or full acceptance. The existing [report](../experiments/SEQ-R4-F2_REPORT.md#execution-identity-correction-and-starvation-attribution-2026-10-09)
   retains the complete matrix, methods and limits. F2 remains partial, F3 unstarted; no commit/push/index change.
+
+## 2026-10-09 — SEQ-R4-F2 bounded elevated scheduler investigation
+
+- Verified the effective ACP terminal's elevated/High-integrity token after the owner's Rider restart.
+  Audited the prepared smoke script; corrected Full starts/saves/stops with zero losses. The previous
+  empty-provider error does not recur; its exact original cause remains unisolated.
+- Ran one declared original `graph-diagnose full 60 1` with exact previous endpoint, unchanged graph/load
+  and 128 MiB WPR buffers. Starvation occurs at 48.40 s; retained 89.25 MiB ETL covers the complete workload
+  and failed window, with zero lost events/buffers and confirmed named-only stop/resource release.
+- Locally decoded raw-QPC CSwitch/ReadyThread/runtime events using installed Windows facilities.
+  The suspension initiator spends 62.45 of 67.38 ms Ready, including a 61.22 ms interval dominated by
+  higher-priority Rider threads; the actual natural Gen0 takes 1.64 ms on CPU. Audio Ready-to-running
+  is 8.5/11.3 µs, distinguishing scheduler interference inside runtime suspension from audio dispatch.
+  The existing [report](../experiments/SEQ-R4-F2_REPORT.md#elevated-bounded-scheduler-evidence-2026-10-09)
+  owns precise timings, tooling/clock limits and local retention. No repeat to seek success, installation,
+  production code change, commit/push/index mutation or F3 work. F2 remains partial; 609-test baseline unchanged.

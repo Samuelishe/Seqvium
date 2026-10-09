@@ -101,8 +101,10 @@ F2 pressure acceptance is unresolved. The original starvations at 22.86 and 39.5
 new isolated diagnostics also fail with natural GC and graph-free legacy on the same 48 kHz stereo
 High Definition Audio/22 ms-capacity path. Native runtime events align one natural Gen1 stopped-runtime
 interval of 43.64 ms with a 52.03 ms audio wait and zero padding; legacy also fails near an induced compacting
-Gen2 collection. This identifies runtime suspension in specific new failures, not retrospective attribution
-of the original two or proof of scheduler/driver fault. Callback allocation/deadline counters remain zero
+Gen2 collection. A bounded elevated WPR full-workload failure at 48.40 s now confirms a 67.38 ms suspension
+handshake: its initiator spends 62.45 ms Ready while higher-priority Rider threads dominate the CPUs;
+the natural Gen0 collection itself takes 1.64 ms, and audio dispatch after Ready is only 8.5/11.3 µs.
+This attributes that new failure, not the original two, a scheduler defect or driver fault. Callback allocation/deadline counters remain zero
 at those failures; fault-stop, join and lease release work. Buffer/GC/support policy is unchanged.
 Fast coefficient/provenance updates now require sampler-local prepared execution identity plus attachment;
 revision collisions, rejected handoff, reprepare/ABA and sticky Stop are covered deterministically.

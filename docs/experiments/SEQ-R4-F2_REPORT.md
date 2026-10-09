@@ -410,7 +410,7 @@ that `graph-measure` now serializes its bounded failure window. In total the con
 new non-injected starvations, alongside the original two; successful short full/legacy smoke is not
 selected instead of this result.
 
-The current process token is not elevated (`WindowsPrincipal.IsInRole(Administrator)` is false).
+That attribution session's process token was not elevated (`WindowsPrincipal.IsInRole(Administrator)` was false).
 WPR status confirms no recording. Microsoft's [WPR recording guide](https://learn.microsoft.com/en-us/windows/win32/tracelogging/tracelogging-record-and-display-tracelogging-events)
 uses an elevated command prompt; only read-only WPR availability/profile/status inspection was done here.
 No system trace, token elevation or system permission change is attempted in this session. The bounded
@@ -429,3 +429,138 @@ and path-pointer files are removed after verification; all 16 raw/protocol/deriv
 in the UUID evidence directory (4,848,904 bytes) for review, alongside the untouched five prior logs.
 The quoted natural failure's clock-anchor brackets are 1.3/1.4 µs, with final-versus-initial drift -0.35 µs;
 this bounds anchor sampling/drift, not the separately observed native timestamp-conversion bias.
+
+## Elevated bounded scheduler evidence (2026-10-09)
+
+Baseline is clean `master` at `5dcd10bc61ab7c7ebf921d7cc6e95142e0086b80`. The owner explicitly
+authorized one autonomous bounded WPR investigation after restarting Rider as administrator.
+The ACP terminal's `WindowsPrincipal.IsInRole(Administrator)` returned **true** and its integrity
+label was High (`S-1-16-12288`). The observed launch chain is Rider → node → cmd → Codex → PowerShell;
+no UAC bypass or security/system configuration change was used. WPR is the existing System32 binary,
+file version **10.0.26100.9549**, banner 10.0.26100 CoreSystem. Default and task-owned WPR instances
+were idle before recording; unrelated system ETW sessions were preserved.
+
+### Profile startup and retained trace
+
+The prepared smoke script was read before execution. It only checks elevation/status, creates unique
+local logs, starts its own named profile, holds about two seconds and saves/stops that instance.
+Corrected `Full` starts and saves successfully: start/stop/final-status exits **0/0/0**, ETL
+**11,534,336 bytes (11 MiB)**, 107,100 events and zero lost events/buffers. Both expected collectors
+are active. KernelMinimal/Kernel fallbacks were unnecessary and were not run.
+
+The earlier owner-reported `0xc5580612` describes an event session without providers, corresponding
+to the runtime event-collector side of this profile. It did not recur with executable scoping removed
+and strict runtime enablement. The corrected combination's success is established; isolating the
+original failure to `ProcessExeFilter` rather than another simultaneous repair is **not** established.
+No attempt to recreate the failing configuration was needed.
+
+The sole hardware trace uses `SeqviumF2Scheduler.Verbose.Memory`, named instance
+`SeqviumF2Diag89fed0a9`, with ProcessThread/CSwitch/ReadyThread/Loader/DPC/Interrupt and runtime
+provider `e13c0d23-ccbc-4e12-931b-d9cc2eee27e4`, level 4, keyword 0x10001 and the prepared event-ID filter.
+Active status reports **496 × 256 KiB kernel + 32 × 128 KiB runtime = 128 MiB** of buffer capacity.
+This is observed active buffer storage, not measured total OS/process memory or tracing overhead.
+The saved ETL is **93,585,408 bytes (89.25 MiB)**. Both live collector loss counters and the merged
+ETL header's EventsLost/BuffersLost are **zero**. Offline ProcessTrace succeeds, reads all **357**
+buffers and **2,121,229** events, and reports no callback or scheduler-state continuity errors.
+
+ETL header UTC range is **10:42:33.9395505–10:43:25.0016843**. Actual raw-QPC event span is
+**51.0612068 s**; CSwitch coverage is **50.7025563 s**, QPC 201045281682–201552307245.
+It includes process/thread starts, the entire measurement (201060029432–201544150933), and the failure
+window, rather than only final rundown. Zero-loss counters alone would not prove absence of circular
+overwrite; the retained earliest/latest scheduler and target runtime events establish this coverage.
+
+### Sole declared hardware workload
+
+Silent discovery exit 0 confirms the exact previous active High Definition Audio speakers ID
+`{0.0.0.00000000}.{e2359e23-53eb-42ca-a231-510fbf25ee3f}`. The current default is Samsung USB C Earphones;
+the command uses the explicit original ID, with no fallback or default change:
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll graph-diagnose full 60 1 "{0.0.0.00000000}.{e2359e23-53eb-42ca-a231-510fbf25ee3f}" gc-trace
+```
+
+Opened facts remain 48 kHz stereo float32, 1056-frame/22 ms capacity, 10 ms period and MMCSS enabled.
+The unchanged real 32-node/eight-source graph, one CPU worker, allocation ring, canonical Gain/source
+edits and forced compacting collections run once; no concurrent build/test or added local load runs.
+It **fails with Starvation**, exit 1, at **48.4046957 s** of playback / **48.4121501 s** of measurement.
+Before failure: 3008 load cycles, 48,128 payload allocations, 360 edits including 60 source edits,
+30 explicit collections, and generation collection counters 420/299/89. Process allocation is
+2,349,278,872 bytes; this is cumulative allocation, not retained or peak RAM.
+
+Sequence 4835 discovers zero padding and unchanged 2,321,376 submitted frames. Its wait wrapper is
+**74.3001 ms**, service-start interval **74.3841 ms**; no PCM or submission occurs for the failed packet.
+Processor/service/packet misses and processor/service/worker allocated-byte counters remain zero.
+Failure evidence is captured in existing fixed storage, serialized after joined cleanup/listener drain,
+and copied at process exit; the controller enters WPR stop about **0.713 s** after measurement end.
+This failure was retained without another workload run.
+
+### Monotonic scheduler/runtime attribution
+
+PID **16548**, audio TID **11052** (`Seqvium WASAPI output`), collecting/suspending TID **11120**
+(`.NET TP Worker`) are confirmed by harness output, kernel lifecycle/name events and runtime emitters.
+The separate background GC TID **2752** (`.NET BGC`) remains waiting throughout the relevant interval.
+Analysis uses native ETL QPC directly at 10 MHz, via installed Windows OpenTrace/ProcessTrace with
+[raw timestamps](https://learn.microsoft.com/en-us/windows/win32/api/evntrace/ns-evntrace-event_trace_logfilew).
+It does not substitute asynchronous BCL receipt times. All 2520 workload BCL GC records have nearby
+matching native ID/TID/count events; native-minus-BCL timestamp differences range +63.9 to +386.0 µs,
+and initial/final BCL clock-anchor drift is 88.15 µs. Native ETL owns the phase durations below.
+
+| Phase | Native QPC interval | Duration | Observed execution |
+| --- | --- | --- | --- |
+| SuspendBegin → SuspendEnd | 201543459659–201544133480 | 67.3821 ms | Initiator: 4.9249 ms scheduled, 62.4504 ms Ready, 0.0068 ms Standby, no Waiting |
+| Longest initiator Ready interval | 201543465254–201544077449 | 61.2195 ms | CSwitch out with OldThreadState=Ready, priority 8; next switch in after the interval |
+| SuspendEnd → RestartBegin | 201544133480–201544150537 | 1.7057 ms | Audio waiting; initiator scheduled throughout |
+| GCStart → GCEnd | 201544134095–201544150493 | 1.6398 ms | Collection 425, natural Gen0, reason 0/type 0; initiator scheduled throughout |
+| RestartBegin → RestartEnd | 201544150537–201544150705 | 0.0168 ms | Audio becomes Ready near the end |
+
+The failing suspension is a **natural Gen0 inside the original full forced-GC workload**, not the
+last explicitly induced Gen2. The initiator's scheduled handshake time includes only 13.5 µs of
+overlapping ISR/DPC; no ISR/DPC overlaps its GCStart–GCEnd scheduled interval. Scheduled time minus
+ISR/DPC is not an assertion that every remaining instruction belongs to a particular GC algorithm.
+
+Audio enters its native WASAPI wait at QPC 201543407771, switches out at 201543407830, becomes Ready
+at 201543506851 and runs at 201543506936: **8.5 µs** Ready-to-running. It immediately switches out
+again at 201543507065, remains waiting for **64.3540 ms**, then becomes Ready at 201544150605 and runs
+at 201544150718: **11.3 µs** Ready-to-running. WaitExit is 201544150772; padding query ends at
+201544150866. Maximum reconstructed audio Ready-to-running in the whole workload is 239.9 µs.
+The long worker wait lies inside the runtime suspension envelope; interpretation as a blocked
+managed return during suspension is supported by these events and the existing native-wait source.
+No wait stack or hardware-event signal timestamp was captured, so the wait's exact internal function
+cannot be proved from the generic Windows UserRequest wait reason alone.
+
+During the initiator's 61.2195 ms Ready interval, all eight CPU timelines are retained (489.756 summed
+scheduled ms). Kernel lifecycle/process events identify **rider64.exe PID 13832** occupying
+**460.773 scheduled ms / 94.082%** across those CPUs, largely eight threads at priorities **10–11**,
+against the initiator's priority 8. The first preempting thread is Rider TID 19328, priority 11.
+Other processes occupy the remainder; idle time is only 9.9 µs summed across CPUs. These are scheduled
+occupancy totals, including interrupt overlap, not stack-attributed useful application computation.
+The responsible Rider operation (for example indexing or JVM GC) is not identified by this profile.
+
+**Established for this failure:** external CPU competition and a Ready-but-not-running suspension
+initiator materially extend the runtime suspension handshake while the managed audio worker waits.
+This is scheduler evidence inside runtime suspension, not a 74 ms audio dispatch delay or 67 ms
+of GC computation. It does not establish a Windows scheduler defect, driver fault, the causes of
+historical failures, or an accepted permanent native/backend/buffer/GC/priority policy.
+
+### Tools, cleanup and next engineering scope
+
+Installed tracerpt decodes the smoke trace but lacks a CSwitch v5 schema. A task-local BCL/PInvoke
+reader uses installed SDK layouts and Windows APIs to decode the relevant payload prefixes and raw
+QPC; its smoke event counts exactly match tracerpt (20,372 CSwitch, 11,874 ReadyThread, 107,100 total).
+No WPA/xperf/TraceEvent binary was found in the inspected PATH, standard WPT locations or NuGet cache;
+no global or local third-party software was installed. Existing facilities suffice for the reported
+intervals; stacks/function attribution would require a separately scoped capture, not merely an ETL viewer.
+
+Minimal follow-up is to identify the competing Rider background activity from local IDE/JVM evidence,
+then, if needed, declare one unchanged 60-second workload with the IDE idle to test that environment
+hypothesis. Do not change system priorities/services/security, audio sizing, GC mode or acceptance rules.
+The successful startup and one fully attributed failure leave **R4-F2 partial; R4-F3 not started**.
+
+WPR stop exit 0, default/named final status idle, no task WPR collectors remain; DeviceCheck exited.
+Output joins; **61 created / 61 released / zero live prepared states**; the owned temporary fixture is
+absent. Stop/Panic acknowledgments are false after fault termination, as expected for that distinct
+lifetime path. Retain ETL/JSON/logs and the bounded local decoding/controller scripts in ignored
+`.artifacts/SEQ-R4-F2/elevated-20261009-89fed0a9637942c98c45e9af8a885f81/`, plus the smoke capture under
+the previous scheduler preparation directory, for offline owner review and reproducibility. No upload,
+commit/push/index mutation or production/harness code change. The 609-case test baseline is inherited;
+tests/build were not rerun for these documentation-only permanent changes.

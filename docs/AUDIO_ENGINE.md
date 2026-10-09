@@ -253,8 +253,11 @@ Normal tests open no physical output. Evidence does not establish acoustic perce
 multi-hour/all-device stability, other platforms, cross-context routing or stateful processor behavior.
 Full F2 acceptance remains partial: the original two pressure starvations remain failures and new
 same-endpoint diagnostics also fail with natural GC and graph-free legacy. Native runtime suspension
-aligned with a collection exceeds device capacity in specific new windows; neither all historical
-failures nor scheduler/driver causality is established. The service-start interval is not OS dispatch latency.
+aligned with a collection exceeds device capacity in specific new windows. A bounded full-workload WPR
+failure additionally confirms 62.45 ms Ready time of the suspension initiator under higher-priority Rider
+CPU competition, versus 1.64 ms of actual Gen0 collection and 8.5/11.3 µs audio dispatch after Ready.
+This identifies scheduler interference inside that runtime suspension; historical attribution, a scheduler
+defect and driver fault remain unproved. The service-start interval is not OS dispatch latency.
 Confirmed fault termination/join releases resources, but does not establish deadline stability.
 
 ## R2-F3 transient one-shot execution
