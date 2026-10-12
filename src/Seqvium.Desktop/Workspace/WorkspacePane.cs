@@ -21,7 +21,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     private readonly PaneDefinition _definition;
 
     private readonly TextBlock _title = new()
-        { VerticalAlignment = VerticalAlignment.Center, TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis };
+        { Classes = { "paneTitle" }, VerticalAlignment = VerticalAlignment.Center, TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis };
 
     private readonly Button _actions;
     private readonly Button _collapse;
@@ -49,15 +49,13 @@ internal sealed class WorkspacePane : Border, IDisposable
         _host = host;
         _session = session;
         _definition = definition;
-        BorderThickness = new(1);
-        CornerRadius = new(1);
         Classes.Add("workspacePane");
         this.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Background"));
         AutomationProperties.SetAutomationId(this, Id);
-        var body = new Grid { RowDefinitions = new("28,*"), Margin = new(5, 10, 5, 10) };
+        var body = new Grid { RowDefinitions = new("Auto,*"), Margin = new(5, 10, 5, 10) };
         Child = _surface;
         _surface.Children.Add(body);
-        _header = new() { Padding = new(6, 0, 2, 0) };
+        _header = new() { Classes = { "paneHeader" } };
         _header.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Raised"));
         var header = new Grid { ColumnDefinitions = new("*,Auto,Auto,Auto") };
         _header.Child = header;
@@ -116,7 +114,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     {
         var button = new Button
         {
-            Width = 24, Cursor = new(StandardCursorType.Arrow), Classes = { "shell", "paneChrome" }
+            Cursor = new(StandardCursorType.Arrow), Classes = { "shell", "paneChrome" }
         };
         button.Content = HostIcons.Create(glyph, button, 16);
         AutomationProperties.SetAutomationId(button, Id + "." + action.ToLowerInvariant());

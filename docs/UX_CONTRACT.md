@@ -25,6 +25,14 @@ Pattern/Piano Roll, Arrangement, Mixer or Browser acceptance.
 
 ## Implemented R4-F3-B graph interaction
 
+The main Workspace's background click deactivates pane chrome and moves keyboard focus to its canvas;
+it does not clear musical/graph selection or explicit editor/playback targets. GraphCanvas's own empty
+click clears Node/Connection selection while retaining the explicitly opened Node Editor. Background
+drag pans; middle-button and Space+drag retain pan semantics. Node movement and pan begin only beyond
+the screen-DIP threshold in [GraphDragThreshold](../src/Seqvium.Desktop/Workspace/GraphDragThreshold.cs),
+independent of viewport zoom. Micro movement remains a click, preserves double-click recognition and
+creates no canonical edit/Undo. Capture loss/Escape cancel; exact keyboard movement retains its own steps.
+
 Users explicitly open the selected item's graph and manipulate real Source/Gain/Mix/Output, including
 independent WAV branches in one unshared item. The retained target is visible and does not follow
 unrelated selection. Missing targets cancel proposals and cannot redirect destructive commands.

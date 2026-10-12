@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seqvium.Desktop", "src\Seqv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seqvium.Tools.ProjectStats", "tools\Seqvium.Tools.ProjectStats\Seqvium.Tools.ProjectStats.csproj", "{44A3B0A7-4BB8-4C64-BD90-4526C25E5FDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seqvium.VisualCheck", "tools\Seqvium.VisualCheck\Seqvium.VisualCheck.csproj", "{056E17A2-9125-4C87-AE86-6C86683FC281}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Debug|x64.Build.0 = Debug|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Debug|x86.Build.0 = Debug|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Release|Any CPU.Build.0 = Release|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Release|x64.ActiveCfg = Release|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Release|x64.Build.0 = Release|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Release|x86.ActiveCfg = Release|Any CPU
+		{056E17A2-9125-4C87-AE86-6C86683FC281}.Release|x86.Build.0 = Release|Any CPU
 		{44A3B0A7-4BB8-4C64-BD90-4526C25E5FDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44A3B0A7-4BB8-4C64-BD90-4526C25E5FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44A3B0A7-4BB8-4C64-BD90-4526C25E5FDB}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -105,6 +119,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{056E17A2-9125-4C87-AE86-6C86683FC281} = {81BC9FB0-C8F1-4CAB-93DC-151A15F8A232}
 		{44A3B0A7-4BB8-4C64-BD90-4526C25E5FDB} = {81BC9FB0-C8F1-4CAB-93DC-151A15F8A232}
 		{91BC9FB0-C8F1-4CAB-93DC-151A15F8A232} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{EDF05D49-69B6-44B4-896E-47EE144BACA5} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}

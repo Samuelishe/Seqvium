@@ -27,9 +27,9 @@ internal sealed class GraphPaneContent : Grid, IDisposable
     private readonly TextBlock _status = new() { Classes = { "caption" }, TextTrimming = TextTrimming.CharacterEllipsis };
     private readonly Border _statusBorder;
     private readonly TextBlock _parameterName = new() { VerticalAlignment = VerticalAlignment.Center };
-    private readonly TextBox _value = new() { Width = 74, MinHeight = 24, Padding = new(4, 2), FontSize = 12 };
+    private readonly TextBox _value = new() { Width = 74, Classes = { "numeric" } };
     private readonly Button _commit;
-    private readonly StackPanel _parameter = new() { Orientation = Orientation.Horizontal, Spacing = 6, Margin = new(6, 2) };
+    private readonly StackPanel _parameter = new() { Orientation = Orientation.Horizontal, Classes = { "parameterRow" } };
     private readonly Dictionary<string, Button> _buttons = [];
     private readonly ContextMenu _menu = new()
     {
@@ -59,11 +59,15 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         Func<GraphEditBasis, GraphPosition, Task> import)
     {
         _shell = shell; _workflow = workflow; _editor = editor; _import = import;
+        _parameter.Bind(StackPanel.SpacingProperty, this.GetResourceObservable("Space.Gap"));
+        _parameter.Bind(MarginProperty, this.GetResourceObservable("Padding.Parameter"));
         _menuSession = new(editor, workflow);
         RowDefinitions = new("Auto,*,Auto,Auto");
-        var toolbar = new Grid { ColumnDefinitions = new("*,Auto"), Margin = new(4, 2), MinHeight = 28 };
+        var toolbar = new Grid { ColumnDefinitions = new("*,Auto") };
+        toolbar.Bind(MarginProperty, this.GetResourceObservable("Padding.Input"));
+        toolbar.Bind(MinHeightProperty, this.GetResourceObservable("Pane.HeaderHeight"));
         toolbar.Children.Add(_target);
-        var commands = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2, Margin = new(4, 0, 0, 0) };
+        var commands = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "tight" }, Margin = new(4, 0, 0, 0) };
         Grid.SetColumn(commands, 1); toolbar.Children.Add(commands); Children.Add(toolbar);
         Button Action(string key, string icon, Action operation)
         {
@@ -111,7 +115,9 @@ internal sealed class GraphPaneContent : Grid, IDisposable
             if (e.Key == Key.Escape) { _parameterNode = null; Refresh(); _canvas.Focus(); e.Handled = true; }
         };
         _parameter.Children.Add(_commit); Grid.SetRow(_parameter, 2); Children.Add(_parameter);
-        _statusBorder = new Border { Padding = new(6, 3), Child = _status, BorderThickness = new(0, 1, 0, 0) };
+        _statusBorder = new Border { Child = _status };
+        _statusBorder.Bind(Border.PaddingProperty, this.GetResourceObservable("Padding.Parameter"));
+        _statusBorder.Bind(Border.BorderThicknessProperty, this.GetResourceObservable("Border.Top"));
         _statusBorder.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Border.Default"));
         Grid.SetRow(_statusBorder, 3); Children.Add(_statusBorder);
         _target.SelectionChanged += async (_, _) =>
@@ -217,7 +223,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         string selectedText = selectedCable is null ? "" : _shell["Graph.Selected"] + ": " + selection;
         _status.Text = string.Join(" · ", new[] { selectedText, text }.Where(s => s.Length > 0));
         _statusBorder.IsVisible = _status.Text.Length > 0;
-        _status.Foreground = new SolidColorBrush(Color.Parse(HostPalette.For(_shell.Preferences.Theme)[role]));
+        _status.Bind(TextBlock.ForegroundProperty, this.GetResourceObservable(role));
         ToolTip.SetTip(_status, _status.Text + (_canvas.Diagnostics.Count == 0 ? "" : "\n" +
             string.Join("\n", _canvas.Diagnostics.Select(d => _shell[d.Reason]).Distinct())));
         // Machine-readable identity for bounded GUI verification; UUIDs stay off the visible surface.

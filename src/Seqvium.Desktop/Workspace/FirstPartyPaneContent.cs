@@ -23,7 +23,9 @@ internal sealed class FirstPartyPaneContent : ScrollViewer, IDisposable
     {
         _session = session;
         _inspector = definition.InstanceId == WorkspaceState.InspectorId;
-        var body = new StackPanel { Spacing = 10, Margin = new(10) };
+        var body = new StackPanel();
+        body.Bind(StackPanel.SpacingProperty, body.GetResourceObservable("Space.Medium"));
+        body.Bind(MarginProperty, body.GetResourceObservable("Padding.Content"));
         Content = body;
         HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled;
         if (_inspector)

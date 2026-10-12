@@ -1283,3 +1283,15 @@ its acknowledged Start packet before inspecting playback. Core schema/DSP/coordi
 One BUILD checkpoint, 0.1.0.0001 → 0.1.0.0002, recognizes the bounded architecture/interface extension
 within existing attenuation/routing. Q-032 stays open, F2 partial and F3-B pending owner review.
 Detailed current evidence: [report](../experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md).
+
+## SEQ-DESKTOP-FOUNDATIONS-F1 — 2026-10-12
+
+Implemented independent Workspace activation/focus and thresholded graph input, Design System v1
+with shared Fluent/drawing resources and parameter-row alignment, user-wide Desktop Single Instance,
+and an isolated reusable VisualCheck host. One BUILD checkpoint advances 0.1.0.0002 to 0.1.0.0003;
+no new musical capability/PATCH is claimed. Locked restore, zero-warning Release build, 922 tests,
+actual both-theme/localized GUI renders and independent-process activation/crash/timeout checks pass.
+Forty guarded Windows screen captures and five native mouse checks pass; broader native input remains partial after earlier refusals. F2 partial, F3-B/visual owner acceptance
+and Q-032/Q-055 remain unchanged. No Git history/index/publication operations. Current contracts are
+in DESIGN_SYSTEM, WORKSPACE, UX_CONTRACT and ARCHITECTURE; detailed evidence is in
+[the foundation report](../experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md).

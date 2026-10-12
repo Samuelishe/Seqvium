@@ -13,9 +13,9 @@
     </Window.Resources>
     <Grid RowDefinitions="Auto,Auto,*,Auto">
         <Border x:Name="Chrome" Height="{DynamicResource Chrome.Height}" Background="{DynamicResource Surface.Raised}"
-                BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Border.Default}">
+                BorderThickness="{DynamicResource Border.Bottom}" BorderBrush="{DynamicResource Border.Default}">
             <Grid ColumnDefinitions="*,Auto">
-                <Grid x:Name="TitleRegion" ColumnDefinitions="Auto,*,Auto" Background="Transparent" Margin="6,0">
+                <Grid x:Name="TitleRegion" ColumnDefinitions="Auto,*,Auto" Background="Transparent" Margin="{DynamicResource Padding.Control}">
                     <TextBlock x:Name="BrandName" Text="Seqvium" FontWeight="SemiBold" VerticalAlignment="Center" />
                     <TextBlock Grid.Column="1" Text="{Binding ProjectName}" TextTrimming="CharacterEllipsis"
                                Margin="12,0,6,0" VerticalAlignment="Center" ToolTip.Tip="{Binding ProjectName}" />
@@ -23,7 +23,7 @@
                                VerticalAlignment="Center" MaxWidth="190" TextTrimming="CharacterEllipsis"
                                ToolTip.Tip="{Binding ProjectStatus}" />
                 </Grid>
-                <StackPanel x:Name="WindowActions" Grid.Column="1" Orientation="Horizontal">
+                <StackPanel x:Name="WindowActions" Grid.Column="1" Orientation="Horizontal" Classes="joined">
                     <Button x:Name="MinimizeAction" Classes="shell chrome" Click="MinimizeClicked"
                             AutomationProperties.AutomationId="Window.Minimize"
                             AutomationProperties.Name="{Binding [Window.Minimize]}"
@@ -37,7 +37,7 @@
             </Grid>
         </Border>
         <Border Grid.Row="1" Height="{DynamicResource Toolbar.Height}" Background="{DynamicResource Surface.Raised}"
-                BorderBrush="{DynamicResource Border.Default}" BorderThickness="0,0,0,1" Padding="6,0">
+                BorderBrush="{DynamicResource Border.Default}" BorderThickness="{DynamicResource Border.Bottom}" Padding="{DynamicResource Padding.Control}">
             <Grid ColumnDefinitions="*,Auto">
                 <Border x:Name="WorkflowRegion" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Space.Gap}"
@@ -48,7 +48,7 @@
                             ToolTip.Tip="{Binding [Workspace.KeyboardHint]}">
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight">
-                                <StackPanel Spacing="4">
+                                <StackPanel Spacing="{DynamicResource Space.Small}">
                                     <Button Classes="shell" Content="{Binding [Pane.Inspector]}"
                                             Click="InspectorClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenInspector" />
@@ -77,8 +77,8 @@
                             AutomationProperties.Name="{Binding [Host.About]}" ToolTip.Tip="{Binding [Host.About]}">
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight">
-                                <StackPanel Width="280" Spacing="8">
-                                    <TextBlock Text="Seqvium" FontWeight="SemiBold" />
+                                <StackPanel Width="280" Spacing="{DynamicResource Space.Medium}">
+                                    <TextBlock Text="Seqvium" Classes="section" />
                                     <TextBlock Text="{Binding Version}" />
                                     <TextBlock Text="SEQ-R4-F3-B" Classes="caption" />
                                     <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
@@ -91,7 +91,7 @@
         </Border>
         <Border Grid.Row="2" x:Name="WorkspaceRegion" Background="{DynamicResource Surface.Workspace}" />
         <Border Grid.Row="3" Height="{DynamicResource Status.Height}" BorderBrush="{DynamicResource Border.Default}"
-                BorderThickness="0,1,0,0" Padding="6,0">
+                BorderThickness="{DynamicResource Border.Top}" Padding="{DynamicResource Padding.Control}">
             <Grid ColumnDefinitions="*,Auto">
                 <Border x:Name="WorkflowStatusRegion" />
                 <TextBlock Grid.Column="1" Text="{Binding Notice}" IsVisible="{Binding HasNotice}" Margin="12,0,0,0"

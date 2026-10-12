@@ -105,6 +105,11 @@ Other documents may summarize and link but must not create competing contracts. 
 - [UI_DESIGN](UI_DESIGN.md) owns evolving visual principles, hierarchy, pane chrome, density, processing
   indicators, and restrained feedback. Route visual-system/design tasks there with UX and the affected
   behavior owner. It does not select final visuals or redefine workflow, pane, or graph semantics.
+- [DESIGN_SYSTEM](DESIGN_SYSTEM.md) owns use of the implemented visual API: tokens, component variants,
+  parameter-row alignment, drawing resources and exceptions. HostPalette/HostMetrics/HostControls
+  own actual values/templates; the catalog links source rather than duplicating numeric/color tables.
+  Every first-party UI task routes here. A visual-contract change must update its implementation
+  in the same change; a common style propagates through common resources, not copied local fixes.
 - Architecture owns cross-boundary responsibilities and intended musical relationships; audio owns
   execution/control/render constraints; extensions own optional-capability lifecycle; project format
   owns serialization and unknown-data preservation.

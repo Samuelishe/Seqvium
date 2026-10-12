@@ -8,6 +8,11 @@ Not authoritative for: Pane-specific editing, final visuals/gestures, framework 
 
 ## Implemented R3-F1 host boundary
 
+The Desktop entry point obtains user-wide exclusive ownership before creating Avalonia, preferences,
+document or audio state. A second launch requests ordinary activation of the existing window and exits;
+unresponsive IPC gives a bounded diagnostic instead of another workspace. See
+[application lifecycle](ARCHITECTURE.md#desktop-process-ownership).
+
 One actual main OS window hosts identity, compact canonical project summary, preference actions and
 `WorkspaceRegion`. R3-F2 adds the bounded internal host below while retaining the accepted F1 frame.
 
@@ -145,6 +150,12 @@ support one instance each; this is not a policy for all future editors or a plug
 overlap, docking and preference refresh do not replace them. The content owner projects its document
 or holds its own controls/scroll context; geometry operations never select or edit musical material.
 Keyboard focus and semantic command targets are not fields of the layout model.
+
+A left click on free main Workspace background deactivates the active pane and focuses the workspace
+canvas. Geometry, front order, graph selection, explicit Node Editor target and playback target remain
+independent and unchanged. The nullable active identity survives layout save/restore and hiding another
+pane; the next pane interaction activates it normally. Resize-boundary arbitration retains priority
+over free-space clicks. No inactive/empty-selection status is added.
 
 Interaction with exposed content/header activates and brings that pane forward. Front order is a
 permutation of the bounded existing entries, rendered with compact indices; repeated activation never

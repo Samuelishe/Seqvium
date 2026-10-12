@@ -85,7 +85,7 @@ public sealed class HostPresentationTests
     [Fact]
     public void SharedMetricsKeepCompactReadableShellAndDevelopmentVersionIndependent()
     {
-        Assert.All(HostMetrics.Values.Values, value => Assert.InRange(value, 2, 32));
+        Assert.All(HostMetrics.Values.Values, value => Assert.InRange(value, 1, 36));
         Assert.InRange(HostMetrics.Values["Type.Body"], 12, 14);
         Assert.Equal(30, HostMetrics.Values["Chrome.Height"]);
         Assert.Equal(30, HostMetrics.Values["Toolbar.Height"]);

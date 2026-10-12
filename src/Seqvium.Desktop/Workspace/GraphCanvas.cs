@@ -24,13 +24,12 @@ internal sealed class GraphCanvas : Control
     private readonly ShellSession _shell;
     private readonly GraphEditorSession _editor;
     private readonly DesktopWorkflow _workflow;
-    private readonly Dictionary<string, IBrush> _brushes = [];
-    private HostTheme? _theme;
     private IPointer? _pointer;
     private GraphPoint _origin, _last, _wireEnd;
     private GraphHit? _wire;
     private GraphEditBasis? _wireBasis;
-    private bool _pan, _space;
+    private bool _pan, _space, _backgroundClick;
+    private readonly GraphDragThreshold _drag = new();
     private readonly NodeBodyClick _bodyClick = new();
     private Task _command = Task.CompletedTask;
     public IReadOnlyList<GraphDiagnostic> Diagnostics { get; set; } = [];
@@ -58,6 +57,7 @@ internal sealed class GraphCanvas : Control
         KeyDown += Keys; KeyUp += (_, e) => { if (e.Key == Key.Space) _space = false; };
         GotFocus += (_, _) => InvalidateVisual();
         LostFocus += (_, _) => { _space = false; InvalidateVisual(); };
+        ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
         PointerWheelChanged += (_, e) =>
         {
             if (_pointer is not null) return;
@@ -82,22 +82,16 @@ internal sealed class GraphCanvas : Control
         CancelGesture();
         if (target is not null) EditorRequested?.Invoke(target);
     }
-    private IBrush Brush(string role)
-    {
-        if (_theme != _shell.Preferences.Theme) { _brushes.Clear(); _theme = _shell.Preferences.Theme; }
-        if (!_brushes.TryGetValue(role, out var brush))
-            _brushes.Add(role, brush = new SolidColorBrush(Color.Parse(HostPalette.For(_shell.Preferences.Theme)[role])));
-        return brush;
-    }
+    private IBrush Brush(string role) => HostVisual.Brush(this, _shell.Preferences.Theme, role);
     private string Label(GraphNode node) => _shell[node.Type switch
     {
         GraphBuiltIns.Source => "Graph.Source", GraphBuiltIns.Gain => "Graph.Gain", GraphBuiltIns.Mix => "Graph.Mix",
         GraphBuiltIns.Output => "Graph.Output", _ => "Graph.Unsupported"
     }];
-    private void Text(DrawingContext context, string value, GraphPoint at, string role = "Text.Primary", double size = 12)
+    private void Text(DrawingContext context, string value, GraphPoint at, string role = "Text.Primary", double size = 0)
     {
         var text = new FormattedText(value, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-            new Typeface("Segoe UI"), size, Brush(role));
+            HostVisual.Typeface(this), size == 0 ? HostVisual.Metric(this, "Type.Body") : size, Brush(role));
         context.DrawText(text, Point(at));
     }
     private void Cable(DrawingContext context, GraphPoint from, GraphPoint to, string role, double width)
@@ -152,8 +146,9 @@ internal sealed class GraphCanvas : Control
             var body = GraphGeometry.Body(node, Preview(node));
             bool selected = node.Id == _editor.SelectedNode, error = Diagnostics.Any(d => d.NodeId == node.Id);
             var rectangle = new Rect(body.X, body.Y, body.Width, body.Height);
+            double corner = HostVisual.Metric(this, "Control.Corner");
             context.DrawRectangle(Brush(selected ? "Surface.Selected" : "Graph.Node"),
-                new Pen(Brush(selected ? "Accent.Action" : error ? "Status.Critical" : "Graph.NodeBorder"), selected ? 2 : 1), rectangle, 3, 3);
+                new Pen(Brush(selected ? "Accent.Action" : error ? "Status.Critical" : "Graph.NodeBorder"), HostVisual.Metric(this, selected ? "Focus.Width" : "Border.Width")), rectangle, corner, corner);
             string accent = node.Type switch { GraphBuiltIns.Source => "Status.Playing", GraphBuiltIns.Mix => "Status.Warning",
                 GraphBuiltIns.Gain => "Accent.Action", _ => "Text.Secondary" };
             context.DrawRectangle(Brush(accent), null, new Rect(body.X + 1, body.Y + 8, 3, 16));
@@ -172,7 +167,7 @@ internal sealed class GraphCanvas : Control
                 int slot = node.Ports.Where(p => p.Direction == port.Direction).ToList().FindIndex(p => p.Id == port.Id) + 1;
                 string portLabel = port.Direction == GraphPortDirection.Output ? _shell["Graph.Out"] :
                     _shell["Graph.In"] + (node.Type == GraphBuiltIns.Mix ? " " + slot : "");
-                Text(context, portLabel, new(port.Direction == GraphPortDirection.Input ? at.X + 10 : at.X - 39, at.Y - 8), "Text.Secondary", 11);
+                Text(context, portLabel, new(port.Direction == GraphPortDirection.Input ? at.X + 10 : at.X - 39, at.Y - 8), "Text.Secondary", HostVisual.Metric(this, "Type.Caption"));
             }
             string value;
             if (node.Type == GraphBuiltIns.Gain)
@@ -186,9 +181,9 @@ internal sealed class GraphCanvas : Control
             }
             else value = node.Ports.FirstOrDefault()?.Layout == GraphBuiltIns.Mono ? "Mono" : "Stereo L/R";
             if (value.Length > 20) value = value[..18] + "…";
-            Text(context, value, new(body.X + 10, body.Y + body.Height - 23), "Text.Secondary", 11);
+            Text(context, value, new(body.X + 10, body.Y + body.Height - 23), "Text.Secondary", HostVisual.Metric(this, "Type.Caption"));
             if (selected && IsFocused)
-                context.DrawRectangle(null, new Pen(Brush("Focus.Active"), 1, new DashStyle([2, 2], 0)), rectangle.Inflate(4), 3, 3);
+                context.DrawRectangle(null, new Pen(Brush("Focus.Active"), HostVisual.Metric(this, "Border.Width"), new DashStyle([2, 2], 0)), rectangle.Inflate(4), corner, corner);
         }
         if (_wire is { Node: { } originNode, Port: { } originPort })
         {
@@ -217,8 +212,10 @@ internal sealed class GraphCanvas : Control
         // Preserve the previous completed body click across ordinary presses only.
         CancelGesture(resetClick: false); Feedback?.Invoke(null);
         _origin = _last = point;
+        _drag.Reset(point);
         var hit = Hit(GraphPointAt(e));
         _pan = properties.IsMiddleButtonPressed || _space || hit.Kind == GraphHitKind.Background;
+        _backgroundClick = hit.Kind == GraphHitKind.Background && properties.IsLeftButtonPressed && !_space;
         _bodyClick.Press(!_pan && properties.IsLeftButtonPressed && e.KeyModifiers == KeyModifiers.None
             ? BodyTarget(hit) : null, e.ClickCount, _workflow.State.Generation);
         if (!_pan)
@@ -227,7 +224,6 @@ internal sealed class GraphCanvas : Control
             if (hit.Kind == GraphHitKind.Node && hit.Node is { } node) _editor.BeginMove(node);
             if (hit.Kind == GraphHitKind.Port) { _wire = hit; _wireBasis = _editor.Basis; _wireEnd = GraphPointAt(e); }
         }
-        else if (!properties.IsMiddleButtonPressed && !_space) { _editor.Select(hit); SelectionChanged?.Invoke(); }
         _pointer = e.Pointer; e.Pointer.Capture(this); InvalidateVisual(); e.Handled = true;
     }
     private void Moved(object? sender, PointerEventArgs e)
@@ -242,8 +238,10 @@ internal sealed class GraphCanvas : Control
             return;
         }
         var point = Point(e.GetPosition(this));
-        if (point != _origin) _bodyClick.Move();
-        if (_pan) _editor.Viewport.Pan(point - _last);
+        bool wasDragging = _drag.Started;
+        if (!_drag.Update(point)) { e.Handled = true; return; }
+        _bodyClick.Move();
+        if (_pan) _editor.Viewport.Pan(point - (wasDragging ? _last : _origin));
         else if (_editor.Move is not null) _editor.UpdateMove((point - _origin) * (1 / _editor.Viewport.Zoom));
         else if (_wire is { Node: { } n, Port: { } p } && _editor.Graph is { } graph)
         {
@@ -256,9 +254,11 @@ internal sealed class GraphCanvas : Control
     private async void Released(object? sender, PointerReleasedEventArgs e)
     {
         if (_pointer != e.Pointer) return;
-        var move = _editor.CompleteMove(); var wire = _wire; var basis = _wireBasis; var hit = Hit(GraphPointAt(e));
+        if (_backgroundClick && !_drag.Started)
+        { _editor.Select(new(GraphHitKind.Background)); SelectionChanged?.Invoke(); }
+        var move = _editor.CompleteMove(); var wire = _drag.Started ? _wire : null; var basis = _wireBasis; var hit = Hit(GraphPointAt(e));
         var open = _bodyClick.Release(BodyTarget(hit), _workflow.State.Generation);
-        _pointer = null; _pan = false; _wire = null; _wireBasis = null; e.Pointer.Capture(null);
+        _pointer = null; _pan = false; _backgroundClick = false; _wire = null; _wireBasis = null; e.Pointer.Capture(null);
         e.Handled = true; InvalidateVisual();
         if (move is not null) await Execute(_workflow.MoveGraphNodeAsync(move));
         else if (wire is { Node: { } n, Port: { } p } && basis is not null && hit is { Node: { } to, Port: { } port })
@@ -269,7 +269,7 @@ internal sealed class GraphCanvas : Control
     public void CancelGesture(bool resetClick = true)
     {
         if (resetClick) _bodyClick.Cancel();
-        var pointer = _pointer; _pointer = null; _pan = false; _wire = null; _wireBasis = null;
+        var pointer = _pointer; _pointer = null; _pan = false; _backgroundClick = false; _wire = null; _wireBasis = null;
         _editor.Cancel(); pointer?.Capture(null); Feedback?.Invoke(null); InvalidateVisual();
     }
     private async Task Execute(Task<bool> operation)

@@ -209,6 +209,14 @@ with applicable failure/race evidence; Q-009/Q-058/Q-059 retain formats, protoco
 
 ## Portable architecture rules
 
+Desktop Single Instance uses .NET current-user named synchronization and current-user local Named
+Pipes behind a Desktop-only lifecycle boundary. The lease is user-wide because configuration is
+user-wide, rather than tied to a Unix shell's session. The entry point preserves synchronous mutex
+thread ownership; async IPC cancellation/teardown remains separate. Activation uses ordinary Avalonia
+window APIs; Windows-only pre-GUI diagnostics and verification capture/input stay guarded adapters.
+Independent-process ownership/activation/crash/timeout evidence is Windows 11 only. Runtime behavior
+on Linux/macOS, different user sessions, elevation combinations and delivered packages remains unverified.
+
 - Keep platform-specific APIs behind narrow platform/device adapters. Domain/project/plugin contracts
   must not expose Windows-specific types; audio plugin contracts must not expose WASAPI/ASIO or other
   backend implementation types. [ARCHITECTURE](ARCHITECTURE.md) and [AUDIO_ENGINE](AUDIO_ENGINE.md)

@@ -17,7 +17,9 @@ public static class HostPalette
         ["Surface.Hover"] = "#2D3340", ["Surface.Pressed"] = "#353C4B", ["Surface.Selected"] = "#343650",
         ["Surface.Playing"] = "#263E38", ["Surface.Critical"] = "#4B3035", ["Surface.Accent"] = "#3C3C62",
         ["Graph.Cable"] = "#93ABC9", ["Graph.Grid"] = "#282D35",
-        ["Graph.Node"] = "#292D35", ["Graph.NodeBorder"] = "#50596B"
+        ["Graph.Node"] = "#292D35", ["Graph.NodeBorder"] = "#68778D",
+        ["Control.Track"] = "#50596B", ["Control.Fill"] = "#AAA8FF",
+        ["Control.Thumb"] = "#F0F1F5"
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     private static readonly FrozenDictionary<string, string> Light = new Dictionary<string, string>
@@ -29,6 +31,8 @@ public static class HostPalette
         ["Surface.Hover"] = "#E7EBF3", ["Surface.Pressed"] = "#DBE1ED", ["Surface.Selected"] = "#E4E2F6",
         ["Surface.Playing"] = "#DCEFE7", ["Surface.Critical"] = "#F8E3E6", ["Surface.Accent"] = "#E5E3F8",
         ["Graph.Cable"] = "#48617A", ["Graph.Grid"] = "#DFE5EE",
-        ["Graph.Node"] = "#FFFFFF", ["Graph.NodeBorder"] = "#A8B3C6"
+        ["Graph.Node"] = "#FFFFFF", ["Graph.NodeBorder"] = "#7A879D",
+        ["Control.Track"] = "#A8B3C6", ["Control.Fill"] = "#514AA7",
+        ["Control.Thumb"] = "#FAFBFD"
     }.ToFrozenDictionary(StringComparer.Ordinal);
 }

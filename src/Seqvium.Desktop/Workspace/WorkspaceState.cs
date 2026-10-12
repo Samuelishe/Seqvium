@@ -121,7 +121,7 @@ public sealed class WorkspaceState : IDisposable
                 ? layout.ActivePaneId
                 : null;
             if (ActivePaneId is not null) BringForward(ActivePaneId);
-            SelectAvailable();
+            if (layout.ActivePaneId is not null) SelectAvailable();
         }
 
         for (var index = 0; index < _panes.Count; index++)
@@ -183,6 +183,14 @@ public sealed class WorkspaceState : IDisposable
         Changed?.Invoke();
     }
 
+    public void Deactivate()
+    {
+        CheckAvailable();
+        if (ActivePaneId is null) return;
+        ActivePaneId = null;
+        Changed?.Invoke();
+    }
+
     public string? SwitchPane(bool backwards = false)
     {
         CheckAvailable();
@@ -203,7 +211,7 @@ public sealed class WorkspaceState : IDisposable
     {
         CheckAvailable();
         Replace(Get(id) with { Visibility = visibility });
-        SelectAvailable();
+        if (ActivePaneId == id) SelectAvailable();
         Changed?.Invoke();
     }
 

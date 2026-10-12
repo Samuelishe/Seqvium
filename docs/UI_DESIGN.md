@@ -4,13 +4,14 @@ Role: Evolving visual and interaction design guide.
 Read when: Designing visual hierarchy, pane chrome, controls, indicators, or graph presentation.
 Authoritative for: Durable visual principles, usable responsive layout, interaction density, consistency, progressive
 visual complexity, semantic theme/style resources.
-Not authoritative for: Workflow semantics, pane lifecycle, graph execution, or a final design system.
+Not authoritative for: Workflow semantics, pane lifecycle, graph execution, or implemented token values/component API.
 
 ## Design intent and scope
 
 Seqvium should feel like a creative instrument. Pleasant manipulation, tactile interaction, spatial
 clarity, and visual quality are product requirements under [PROJECT_VISION](PROJECT_VISION.md).
-This is a small evolving guide, not a complete design system. Deliberate later UI design stages must
+This is the evolving principles owner. [DESIGN_SYSTEM](DESIGN_SYSTEM.md) catalogs implemented v1;
+resources remain the actual-value source. Deliberate later UI design stages must
 establish final colors, typography, pixel dimensions, icons, theme details, control library, and window mockups.
 Dark/Light baseline direction is accepted below; R3-F1 implements a restrained initial shell, not the final visual
 system.
@@ -24,12 +25,10 @@ capability information appear only in the functional About flyout, not in the or
 System-default font/fallback requires no borrowed assets. R4-F3-A replaces action/window glyphs with
 the project-authored vector family described below, retaining the accepted frame.
 
-`HostPalette` provides identical Dark/Light keys: `Surface.Background/Raised/Workspace`,
-`Text.Primary/Secondary`, `Border.Default`, `Focus.Active`, `Accent.Action`, `State.Unavailable`,
-`Status.Warning`. No speculative error/pending indicator is displayed. Shared `HostMetrics` supplies
-`Type.Body/Caption` (12/11 DIP), `Chrome.Height` (30), `Toolbar.Height` (30), `Status.Height` (22),
-`Control.Height` (24), `Control.Corner` (2) and `Space.Gap` (6). These are bounded initial shell metrics,
-not a final pane API or a mandate to shrink future editor content to this density.
+`HostPalette` provides identical Dark/Light semantic roles; `HostMetrics` supplies shared shell,
+control, typography and spacing resources. Their current names/use are cataloged once in
+[DESIGN_SYSTEM](DESIGN_SYSTEM.md#token-catalog); actual values remain in source. These are implemented
+defaults and usable variants, not a mandate to shrink specialized future editor compositions.
 XAML consumes semantic brushes rather than per-control theme colors. Fluent supplies base control state
 behavior, while host styles supply shell surface/accent/focus. Color is accompanied by text/shape/state.
 Tests verify complete roles and text contrast; actual Dark/Light screenshots and small-window reachability
@@ -116,6 +115,10 @@ authorize future editors or choose their layouts.
   opened/ready/inactive explanations in permanent rows.
 - **Keyboard/accessibility:** preserve shortcuts, automation identity, legible focus and useful hit
   targets. Overflow preserves actions and focus return; visual density never removes functional access.
+- **Field alignment:** parameter labels, editable text, units and actions share one vertical center
+  line and coherent typography. Verify the actual inner template/text presenter, rather than adding
+  compensating top margins. Parent controls must forward the intended content alignment; new rows use
+  the [common row rules and check](DESIGN_SYSTEM.md#field-and-row-alignment).
 - **Real GUI review:** inspect rendered windows at 1100x750, 640x480 and maximized/1920x1080 with
   RU/EN, Dark/Light, normal/blocked actions, tooltips, focus, native picker return and owned modals.
   Exercise pane collapse/restore/dock/hide/reopen and real document actions. Unit tests alone are not

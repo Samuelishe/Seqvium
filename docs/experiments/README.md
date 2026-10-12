@@ -47,6 +47,11 @@ is distinct from wider platform and delivered-release evidence.
 
 ## Evidence retention
 
+[Desktop foundation verification](SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md) records Design System v1,
+rendered field alignment, Workspace gestures and Single Instance process evidence. Its reusable host
+belongs in tools; renders/synthetic projects/raw JSON stay ignored locally. Native foreground refusal
+is separate from actual-window render/routed evidence and does not establish visual owner acceptance.
+
 Git is product source of truth, not an experiment-output warehouse. By default temporary screenshots,
 raw captures, logs and one-off probe outputs remain local and ignored under `.artifacts/` or `.scratch/`.
 Do not commit GUI screenshots/raw test output or create a permanent report for every minor iteration.

@@ -28,6 +28,14 @@ internal sealed partial class MainWindow : Window
     private bool _closing;
     private bool _shutdownComplete;
 
+    internal void ActivateExisting()
+    {
+        if (_closing) return;
+        if (!IsVisible) Show();
+        if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+        Activate(); // One ordinary OS request; foreground restrictions remain authoritative.
+    }
+
     public MainWindow(ShellSession session, App app, WorkspaceLayoutStore layoutStore, WorkspaceLayoutLoad layout)
     {
         _session = session;
@@ -101,8 +109,8 @@ internal sealed partial class MainWindow : Window
     {
         Title = $"{_session.ProjectName} — Seqvium";
         ToolTip.SetTip(TitleRegion, _session[IsActive ? "Window.Active" : "Window.Inactive"]);
-        BrandName.Foreground = _app.Resources[IsActive ? "Text.Primary" : "Text.Secondary"] as Avalonia.Media.IBrush;
-        Chrome.BorderBrush = _app.Resources[IsActive ? "Focus.Active" : "Border.Default"] as Avalonia.Media.IBrush;
+        BrandName.Bind(TextBlock.ForegroundProperty, BrandName.GetResourceObservable(IsActive ? "Text.Primary" : "Text.Secondary"));
+        Chrome.Bind(Border.BorderBrushProperty, Chrome.GetResourceObservable(IsActive ? "Focus.Active" : "Border.Default"));
         var label = _session[WindowState == WindowState.Maximized ? "Window.Restore" : "Window.Maximize"];
         MaximizeAction.Content = HostIcons.Create(WindowState == WindowState.Maximized ? "Restore" : "Maximize", MaximizeAction, 16);
         AutomationProperties.SetName(MaximizeAction, label);

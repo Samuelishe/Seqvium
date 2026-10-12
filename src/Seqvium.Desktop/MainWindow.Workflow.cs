@@ -26,7 +26,7 @@ internal sealed partial class MainWindow
     private void InitializeWorkflow()
     {
         _session.HasWorkflowOwner = true;
-        _workflow = new(_session.Document);
+        _workflow = new(_session.Document, mediaDirectory: _app.IsolatedMediaDirectory);
         _workflowControls = new(_session, _workflow, WorkflowActionAsync);
         WorkflowRegion.Child = _workflowControls;
         WorkflowStatusRegion.Child = _workflowControls.StatusControl;

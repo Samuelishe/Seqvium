@@ -43,7 +43,7 @@ All routes start with current state; add these owners as needed:
 | Task                                                      | Read                                                                                                              |
 |-----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
 | Product / feature / UX                                    | [PROJECT_VISION](docs/PROJECT_VISION.md), [UX_CONTRACT](docs/UX_CONTRACT.md)                                      |
-| Visual system / interaction design quality                | [UI_DESIGN](docs/UI_DESIGN.md), UX contract; workspace or graph owner for affected behavior                       |
+| Visual system / interaction design quality                | [UI_DESIGN](docs/UI_DESIGN.md), [DESIGN_SYSTEM](docs/DESIGN_SYSTEM.md), UX contract; workspace or graph owner for affected behavior |
 | Architecture                                              | [ARCHITECTURE](docs/ARCHITECTURE.md)                                                                              |
 | Audio / realtime                                          | [AUDIO_ENGINE](docs/AUDIO_ENGINE.md), architecture                                                                |
 | Node / processing graph, ports, node execution            | [NODE_GRAPH](docs/NODE_GRAPH.md) + affected audio/architecture owner                                              |
@@ -81,6 +81,9 @@ current source/ledger, classify the completed checkpoint once, and record any bu
 Documentation changes require relative-link, ownership, decision-status, scope, and diff checks.
 Code changes later require focused builds/tests and relevant runtime evidence; inspect the actual
 test platform before choosing commands. Do not create tests or CI merely for appearance.
+Every first-party UI task must read DESIGN_SYSTEM and use its shared tokens/components, including
+DrawingContext code. Shared-style changes require the component catalog and rendered field-alignment
+checks; update the implementation when the visual contract changes.
 Update owners when contracts change and current state when its facts change. Move resolved questions
 and completed roadmap stages out of active registers; append decision rationale and meaningful
 completed work directly to the archive. Preserve current truth in active owners, not only in history.

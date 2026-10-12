@@ -16,11 +16,11 @@ namespace Seqvium.Desktop.Workspace;
 public sealed class WorkspaceHost : Grid, IDisposable
 {
     private readonly ShellSession _session;
-    private readonly Canvas _canvas = new() { ClipToBounds = true, Background = Avalonia.Media.Brushes.Transparent };
+    private readonly Canvas _canvas = new() { Focusable = true, ClipToBounds = true, Background = Avalonia.Media.Brushes.Transparent };
     private readonly Border _boundaryCue = new() { IsHitTestVisible = false };
 
     private readonly StackPanel _strip = new()
-        { Orientation = Orientation.Horizontal, Spacing = 4, Margin = new(4, 2) };
+        { Orientation = Orientation.Horizontal, Classes = { "compact" }, Margin = new(4, 2) };
 
     private readonly Border _shelf;
     private readonly Dictionary<string, WorkspacePane> _views = [];
@@ -54,7 +54,10 @@ public sealed class WorkspaceHost : Grid, IDisposable
         Children.Add(_canvas);
         _boundaryCue.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Accent.Action"));
         _canvas.Children.Add(_boundaryCue);
-        _shelf = new() { Child = _strip, Height = 28, BorderThickness = new(0, 1, 0, 0) };
+        _shelf = new() { Child = _strip };
+        _shelf.Bind(Border.BorderThicknessProperty, this.GetResourceObservable("Border.Top"));
+        _shelf.Bind(HeightProperty, this.GetResourceObservable("Pane.HeaderHeight"));
+        _strip.Bind(MarginProperty, this.GetResourceObservable("Padding.Input"));
         _shelf.Bind(Border.BackgroundProperty, this.GetResourceObservable("Surface.Raised"));
         _shelf.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Border.Default"));
         SetRow(_shelf, 1);
@@ -92,6 +95,16 @@ public sealed class WorkspaceHost : Grid, IDisposable
         AddHandler(KeyDownEvent, PaneKeyDown);
         _canvas.AddHandler(PointerMovedEvent, BoundaryMoved, RoutingStrategies.Tunnel, handledEventsToo: true);
         _canvas.AddHandler(PointerPressedEvent, BoundaryPressed, RoutingStrategies.Tunnel);
+        _canvas.PointerPressed += (_, args) =>
+        {
+            if (_disposed || _stopping || args.Handled || args.Source != _canvas ||
+                !args.GetCurrentPoint(_canvas).Properties.IsLeftButtonPressed) return;
+            CancelGestures();
+            State.Deactivate();
+            _canvas.Focus();
+            Commit();
+            args.Handled = true;
+        };
         _canvas.AddHandler(PointerReleasedEvent, BoundaryReleased, RoutingStrategies.Tunnel);
         _canvas.PointerCaptureLost += (_, _) => CancelResize();
         _canvas.PointerExited += (_, _) =>
@@ -226,10 +239,10 @@ public sealed class WorkspaceHost : Grid, IDisposable
         _boundaryCue.Width = paneView.Bounds.Width;
         _boundaryCue.Height = paneView.Bounds.Height;
         _boundaryCue.BorderThickness = new(
-            selected.Edges.HasFlag(PaneEdges.Left) ? 1 : 0,
-            selected.Edges.HasFlag(PaneEdges.Top) ? 1 : 0,
-            selected.Edges.HasFlag(PaneEdges.Right) ? 1 : 0,
-            selected.Edges.HasFlag(PaneEdges.Bottom) ? 1 : 0);
+            selected.Edges.HasFlag(PaneEdges.Left) ? HostVisual.Metric(this, "Border.Width") : 0,
+            selected.Edges.HasFlag(PaneEdges.Top) ? HostVisual.Metric(this, "Border.Width") : 0,
+            selected.Edges.HasFlag(PaneEdges.Right) ? HostVisual.Metric(this, "Border.Width") : 0,
+            selected.Edges.HasFlag(PaneEdges.Bottom) ? HostVisual.Metric(this, "Border.Width") : 0);
     }
 
     private void BoundaryMoved(object? sender, PointerEventArgs args)
@@ -311,7 +324,7 @@ public sealed class WorkspaceHost : Grid, IDisposable
             var definition = WorkspaceState.Definition(pane.InstanceId);
             var tab = _tabs[pane.InstanceId];
             tab.IsVisible = pane.Visibility != PaneVisibility.Hidden;
-            var tabContent = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
+            var tabContent = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "compact" } };
             if (pane.Visibility == PaneVisibility.Collapsed)
                 tabContent.Children.Add(HostIcons.Create("Up", tab, 16));
             tabContent.Children.Add(new TextBlock { Text = _session[definition.TitleKey] });

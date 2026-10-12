@@ -18,18 +18,21 @@ internal sealed class UnsavedProjectDialog : Window
         CanResize = false; ShowInTaskbar = false; Width = 410; SizeToContent = SizeToContent.Height;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         this.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Raised"));
-        var frame = new Border { BorderThickness = new(1), Padding = new(16) };
+        var frame = new Border();
+        frame.Bind(Border.BorderThicknessProperty, frame.GetResourceObservable("Border.Control"));
+        frame.Bind(Border.PaddingProperty, frame.GetResourceObservable("Padding.Dialog"));
         frame.Bind(Border.BorderBrushProperty, frame.GetResourceObservable("Border.Default"));
-        var content = new StackPanel { Spacing = 16 };
+        var content = new StackPanel();
+        content.Bind(StackPanel.SpacingProperty, content.GetResourceObservable("Space.Section"));
         KeyboardNavigation.SetTabNavigation(content, KeyboardNavigationMode.Cycle);
         content.Children.Add(new TextBlock { Text = shell["Workflow.UnsavedPrompt"],
             TextWrapping = Avalonia.Media.TextWrapping.Wrap });
-        var buttons = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 8,
+        var buttons = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Classes = { "spaced" },
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right };
         Button? cancel = null;
         foreach (var choice in new[] { UnsavedDecision.Save, UnsavedDecision.Discard, UnsavedDecision.Cancel })
         {
-            var button = new Button { Content = shell["Workflow." + choice], Classes = { "shell" }, MinHeight = 28, Height = 28 };
+            var button = new Button { Content = shell["Workflow." + choice], Classes = { "shell", "comfortable" } };
             button.Classes.Add(choice == UnsavedDecision.Save ? "primary" : choice == UnsavedDecision.Discard ? "critical" : "secondary");
             AutomationProperties.SetAutomationId(button, "Unsaved." + choice);
             button.Click += (_, _) => Close(choice);

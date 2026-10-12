@@ -67,6 +67,13 @@ Neither layout failure nor future configuration reset may delete musical work/me
 
 ## User configuration and project state
 
+Ordinary Desktop launches now obtain user-wide [process ownership](ARCHITECTURE.md#desktop-process-ownership)
+before reading/writing preferences/layout. A secondary forwards activation and exits, including bounded
+safe refusal on IPC failure. This reduces accidental competing Desktop writers; it does not establish
+project-file exclusion against external tools, recovery or crash/power-loss storage guarantees.
+VisualCheck's internal composition gives preferences/layout and unnamed media an isolated directory;
+no production environment/command-line bypass or setting is added.
+
 The implemented file policies above cover only language/theme and the four first-party pane placements.
 Other application/plugin settings remain future work.
 

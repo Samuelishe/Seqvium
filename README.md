@@ -55,6 +55,8 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 
 The application opens an empty project and stays silent until you press Play.
 Import your own WAV to begin; no sample library is bundled. Save projects you want to keep.
+Launching it again brings the existing window forward where the OS allows, instead of opening
+another workspace. If the running application does not respond, the new launch reports this and exits.
 
 The [development guide](docs/DEVELOPMENT.md#current-environment-and-entry-points) covers the SDK,
 project layout and local tools. The [documentation guide](docs/README.md) provides a first-use

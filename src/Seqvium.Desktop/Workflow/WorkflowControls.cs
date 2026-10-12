@@ -16,11 +16,11 @@ internal sealed class WorkflowControls : Grid
     private readonly Func<string, Task> _action;
     private readonly Dictionary<string, Button> _buttons = [];
     private readonly List<(TextBlock Text, string Key)> _menuLabels = [];
-    private readonly StackPanel _project = new() { Orientation = Orientation.Horizontal };
-    private readonly StackPanel _overflowBody = new() { Spacing = 2, MinWidth = 180 };
+    private readonly StackPanel _project = new() { Orientation = Orientation.Horizontal, Classes = { "joined" } };
+    private readonly StackPanel _overflowBody = new() { Classes = { "tight" }, MinWidth = 180 };
     private readonly StackPanel _selectionPopup = new() { Spacing = 6 };
     private readonly StackPanel _musicalParameters = new() { Orientation = Orientation.Horizontal,
-        VerticalAlignment = VerticalAlignment.Center, Spacing = 4, Margin = new(4, 0) };
+        VerticalAlignment = VerticalAlignment.Center, Classes = { "compact" }, Margin = new(4, 0) };
     private readonly TextBlock _tempo = new() { FontWeight = FontWeight.SemiBold };
     private readonly TextBlock _meter = new() { FontWeight = FontWeight.SemiBold, Margin = new(8, 0, 4, 0) };
     private readonly TextBlock _overflowParameters = new() { Margin = new(6), Classes = { "secondary" } };
@@ -52,8 +52,8 @@ internal sealed class WorkflowControls : Grid
     internal WorkflowControls(ShellSession shell, DesktopWorkflow workflow, Func<string, Task> action)
     {
         _shell = shell; _workflow = workflow; _action = action;
-        Height = 30; ColumnDefinitions = new("Auto,*,Auto");
-        var commands = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+        this.Bind(HeightProperty, this.GetResourceObservable("Toolbar.Height")); ColumnDefinitions = new("Auto,*,Auto");
+        var commands = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Classes = { "joined" } };
         foreach (var key in new[] { "Import", "Open", "Save" }) _project.Children.Add(Command(key));
         commands.Children.Add(_project); commands.Children.Add(Separator());
         foreach (var key in new[] { "Play", "Stop", "Panic" }) commands.Children.Add(Command(key));
@@ -66,7 +66,7 @@ internal sealed class WorkflowControls : Grid
         commands.Children.Add(Command("Undo")); commands.Children.Add(Command("Redo")); commands.Children.Add(Separator());
         Children.Add(commands);
         _selectionSlot.Child = _occurrences;
-        var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+        var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Classes = { "parameterRow" } };
         right.Children.Add(_selectionSlot);
         right.Children.Add(_gainLabel); right.Children.Add(_gain); right.Children.Add(_information); right.Children.Add(_overflow);
         Grid.SetColumn(right, 1); Children.Add(right);
@@ -78,7 +78,7 @@ internal sealed class WorkflowControls : Grid
         AddOverflow("SaveAs"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
         _overflowBody.Children.Add(_overflowParameters);
         _overflow.Flyout = new Flyout { Content = _overflowBody };
-        var body = new StackPanel { Width = 330, Spacing = 8 };
+        var body = new StackPanel { Width = 330, Classes = { "spaced" } };
         body.Children.Add(_selectionPopup); body.Children.Add(_source); body.Children.Add(_chain);
         body.Children.Add(_detail); body.Children.Add(_device);
         _technicalExpander.Content = _technical; body.Children.Add(_technicalExpander);
@@ -130,7 +130,7 @@ internal sealed class WorkflowControls : Grid
     {
         button.Classes.Remove("command"); button.Width = double.NaN;
         button.HorizontalAlignment = HorizontalAlignment.Stretch; button.HorizontalContentAlignment = HorizontalAlignment.Left;
-        var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        var row = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "spaced" } };
         row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key, button, 16));
         var text = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
         _menuLabels.RemoveAll(item => item.Key == key);
@@ -155,7 +155,7 @@ internal sealed class WorkflowControls : Grid
             if (moveOpen) { _project.Children.Remove(button); FormatMenuButton(button, "Open"); _overflowBody.Children.Insert(0, button); }
             else
             {
-                _overflowBody.Children.Remove(button); button.Classes.Add("command"); button.Width = 26;
+                _overflowBody.Children.Remove(button); button.Classes.Add("command"); button.ClearValue(WidthProperty);
                 button.Content = HostIcons.Create("Open", button); _project.Children.Insert(1, button);
             }
             _openInOverflow = moveOpen;

@@ -27,6 +27,8 @@ The application uses C#/.NET 10 and Avalonia. [Seqvium.sln](../Seqvium.sln) cont
   physical-device checks; it is not required to launch the desktop.
 - [ProjectStats](../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj): independent
   repository diagnostics for developers.
+- [VisualCheck](../tools/Seqvium.VisualCheck/README.md): isolated component/window/field-alignment and
+  Desktop process verification using existing Avalonia dependencies; no production developer tab.
 
 [Architecture](ARCHITECTURE.md) explains dependency and lifetime boundaries. The separate
 [realtime probe](../experiments/seq-r0/README.md) is an experiment outside the solution, not the

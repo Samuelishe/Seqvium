@@ -41,6 +41,28 @@ distinct. R3 panes add no native pane window, extension hierarchy or audio owner
 [Workspace](WORKSPACE.md), [settings](SETTINGS.md) and [UI design](UI_DESIGN.md) own exact behavior/resources;
 [F1 report](experiments/SEQ-R3-F1_REPORT.md) owns observed bounds.
 
+### Desktop process ownership
+
+Desktop's [Lifecycle](../src/Seqvium.Desktop/Lifecycle/DesktopInstance.cs) boundary owns a user-scoped
+named Mutex and local activation-only Named Pipe before framework/document initialization. The
+entry-point thread holds/releases the lease; cancellation and joined listener teardown own IPC.
+The user-specific identity and .NET current-user access controls isolate different users. Scope is
+user-wide across logon/shell sessions because preferences/layout are user-wide; do not allow a separate
+ordinary process in another session to write the same configuration independently.
+
+Activation waits for the primary MainWindow and dispatches one ordinary Show/restore/Activate request
+on the GUI thread. OS foreground restrictions remain authoritative. A bounded failure exits without
+another GUI/document/audio owner. Kernel lease release/abandonment permits startup after a crash,
+without lock-file cleanup. Protocol v1 accepts only activation, never project replacement or playback.
+Future project-opening IPC must retain the existing Save/Discard/Cancel application lifecycle.
+Single Instance provides no exclusion for external writers of project files.
+
+Only the separate friend [VisualCheck](../tools/Seqvium.VisualCheck/README.md) host composes an
+isolated identity and preferences/layout/media directory. The production entry point accepts no
+environment/command-line bypass. Tests, DeviceCheck, ProjectStats and experiments do not invoke
+Desktop ownership by referencing the assembly. Linux/macOS remain runtime-unevidenced under
+[portability](PORTABILITY.md).
+
 ### R4-F3-A integrated document/audio owner
 
 `Workflow/DesktopWorkflow` is the narrow host application/session boundary over the same canonical

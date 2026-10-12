@@ -40,6 +40,8 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> English { get; } = new Dictionary<string, string>
     {
+        ["Desktop.Instance.Unresponsive"] = "Seqvium is already running but did not respond. Close this message and try again after the existing application is ready. A second workspace was not opened.",
+        ["Desktop.Instance.Unavailable"] = "Seqvium could not establish exclusive desktop ownership. No workspace was opened.",
         ["Pane.Graph"] = "Node Graph",
         ["Pane.NodeEditor"] = "Node Editor",
         ["NodeEditor.Open"] = "Open Editor",
@@ -224,6 +226,8 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> Russian { get; } = new Dictionary<string, string>
     {
+        ["Desktop.Instance.Unresponsive"] = "Seqvium уже запущен, но не ответил. Закройте сообщение и повторите запуск, когда приложение будет готово. Второй Workspace не открыт.",
+        ["Desktop.Instance.Unavailable"] = "Не удалось установить единственный экземпляр Seqvium. Workspace не открыт.",
         ["Pane.Graph"] = "Граф узлов",
         ["Pane.NodeEditor"] = "Редактор ноды",
         ["NodeEditor.Open"] = "Открыть редактор",

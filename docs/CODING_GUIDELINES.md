@@ -104,6 +104,13 @@ than intentional host failure. Preserve unknown/missing plugin state during seri
 
 ## UI code
 
+Read [DESIGN_SYSTEM](DESIGN_SYSTEM.md) for every first-party UI change. Standard controls inherit
+the common styles; use semantic DynamicResource/observable bindings and the shared drawing resolver.
+Do not create independent palette, corner, focus, padding or field-height values in each editor.
+Parameter rows align the actual text presenter, label, units and action on a common center line;
+set forwarded template alignment on the parent control, and verify rendered minimums with VisualCheck.
+Exceptions need a concrete interaction/composition reason and both-theme evidence.
+
 Avalonia is adopted for the bounded R3-F1 desktop host. Regardless of
 framework, domain/business/audio logic must not live in pane/control code for convenience. UI owns
 neither realtime execution nor project integrity; workspace panes host presentation/editing surfaces,

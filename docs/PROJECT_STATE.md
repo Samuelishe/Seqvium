@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.0.0002`**, a verified bounded Desktop editor BUILD checkpoint on the
+The current product alpha is **`0.1.0.0003`**, a verified Desktop foundation BUILD checkpoint on the
 owner-selected `0.1.0` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -27,6 +27,12 @@ SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / nar
 Completed rationale is cold history; current contracts stay in canonical owners.
 
 ## Implemented capability
+
+Desktop now has user-wide Single Instance activation before document/audio initialization, independent
+workspace deactivation and thresholded graph gestures. [Design System v1](DESIGN_SYSTEM.md) supplies
+implicit standard controls, semantic template/drawing resources and verified parameter-row alignment.
+The separate [VisualCheck](../tools/Seqvium.VisualCheck/README.md) host provides isolated component,
+window, routed-input and process verification without a production developer surface.
 
 The .NET 10 solution contains portable Core, one Tests project, a narrow Windows audio adapter,
 an explicit physical-device harness and one Avalonia `Seqvium.Desktop` executable.
@@ -125,7 +131,10 @@ acceptance remains with the owner; the earlier presentation was explicitly rejec
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 908 tests pass, zero failures/skips**.
+solution build pass with **zero warnings/errors; all 922 tests pass, zero failures/skips**.
+All 908 baseline cases and 14 foundation cases pass. The [foundation report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md)
+records actual RU/EN × Dark/Light renders/field alignment and process activation/crash/timeout checks;
+40 guarded Windows screen captures and five native mouse checks pass; broader native input remains partial.
 All 867 prior cases remain; 41 node editor regressions cover identity/drafts/commands/persistence,
 empty-state economy and actual deterministic F2 PCM/identity/Stop convergence without a device.
 The [editor report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md) records actual Windows RU/EN ×

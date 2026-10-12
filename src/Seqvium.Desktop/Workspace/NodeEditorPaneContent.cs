@@ -26,10 +26,10 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     private readonly TextBlock _status = new() { Classes = { "caption" }, TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _details = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _linear = new() { Classes = { "caption" } };
-    private readonly TextBox _value = new() { Width = 80, MinHeight = 26, Padding = new(4, 2), FontSize = 12 };
+    private readonly TextBox _value = new() { Width = 80, Classes = { "numeric" } };
     private readonly GainLevelControl _level;
     private readonly GainTransferPlot _plot;
-    private readonly Grid _gain = new() { RowDefinitions = new("Auto,Auto,Auto,Auto"), RowSpacing = 4 };
+    private readonly Grid _gain = new() { RowDefinitions = new("Auto,Auto,Auto,Auto"), Classes = { "parameterRow" } };
     private readonly Expander _curve;
     private readonly DispatcherTimer _changeNotice = new() { Interval = TimeSpan.FromSeconds(3) };
     private readonly ScrollViewer _gainScroll, _detailsScroll;
@@ -52,14 +52,16 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     {
         _shell = shell; _workflow = workflow; _editor = editor;
         Title = shell["Pane.NodeEditor"];
-        RowDefinitions = new("Auto,*,Auto"); RowSpacing = 6; Margin = new(8, 5);
+        RowDefinitions = new("Auto,*,Auto");
+        this.Bind(RowSpacingProperty, this.GetResourceObservable("Space.Gap"));
+        this.Bind(MarginProperty, this.GetResourceObservable("Padding.Content"));
         Children.Add(_scope);
-        _level = new(shell) { MinHeight = 30, Focusable = true };
+        _level = new(shell) { Focusable = true };
         _plot = new(shell) { Height = 116 };
         SetRow(_level, 1); _gain.Children.Add(_level);
-        var exact = new Grid { ColumnDefinitions = new("*,Auto,Auto,Auto"), ColumnSpacing = 4 };
+        var exact = new Grid { ColumnDefinitions = new("*,Auto,Auto,Auto"), Classes = { "parameterRow" } };
         _commit = Button("Commit", async () => await CommitTextAsync());
-        _commit.Width = 26; _commit.Classes.Add("command");
+        _commit.Classes.Add("command");
         _commit.AttachedToVisualTree += (_, _) => _commit.Content = HostIcons.Create("Check", _commit, 16);
         _unity = Button("Unity", async () => await SetAmplitudeAsync(1));
         _silence = Button("Silence", async () => await SetAmplitudeAsync(0));
@@ -126,7 +128,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     }
     private Button Button(string key, Func<Task> action)
     {
-        var button = new Button { Classes = { "shell" }, Margin = new(2, 0), MinHeight = 26 };
+        var button = new Button { Classes = { "shell" }, Margin = new(2, 0) };
         AutomationProperties.SetAutomationId(button, "NodeEditor." + key);
         button.Click += async (_, _) => { if (_command.IsCompleted && !_disposed) await action(); };
         return button;
@@ -181,8 +183,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             if (!_editor.HasDraft)
                 _value.Text = node?.Parameters.TryGetValue(GraphBuiltIns.GainAmplitude, out var value) == true ? value.ToString() : "";
             if (!gain) _details.Text = Details();
-            _details.Foreground = new SolidColorBrush(Color.Parse(HostPalette.For(_shell.Preferences.Theme)[
-                node is null ? _editor.Target is null ? "Text.Secondary" : "Status.Warning" : "Text.Primary"]));
+            _details.Classes.Set("secondary", node is null && _editor.Target is null);
+            _details.Classes.Set("warning", node is null && _editor.Target is not null);
             RefreshPreview();
             if (node is { Type: GraphBuiltIns.Source } && GraphConnectionRules.Supported(node) && IsEffectivelyVisible &&
                 target is not null && _sourceBasis != (target, _workflow.State.Generation))
@@ -220,8 +222,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         }
         _status.Text = status;
         _status.IsVisible = status.Length > 0;
-        _status.Foreground = new SolidColorBrush(Color.Parse(HostPalette.For(_shell.Preferences.Theme)[
-            warning ? "Status.Warning" : "Text.Secondary"]));
+        _status.Classes.Set("warning", warning);
+        _value.Classes.Set("invalid", !valid);
     }
     private string NodeName(GraphNode node) => _shell[node.Type switch
     {

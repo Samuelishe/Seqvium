@@ -45,6 +45,26 @@ resolve F2 physical realtime evidence. No audio session or production release wa
 
 ## Current and future execution
 
+### Desktop foundation verification
+
+`DesktopFoundationGestureTests` covers nullable pane activation/layout restoration, screen-DIP click
+tolerance/double clicks and one canonical move. `DesignSystemTests` checks required both-theme roles,
+contrast, live resource/Fluent alias propagation, typed resources and the first-party literal-color/
+AXAML resource guard. `DesktopInstanceTests` covers exclusive ownership, readiness, activation,
+invalid/cancelled clients, timeout and joined shutdown without GUI/device initialization.
+
+```text
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*DesktopFoundationGestureTests" --filter-class "*DesignSystemTests" --filter-class "*DesktopInstanceTests"
+```
+
+The separate [VisualCheck](../tools/Seqvium.VisualCheck/README.md) exercises actual window templates,
+rendered parameter-row alignment, controlled central-style changes, RU/EN × Dark/Light geometry and
+independent-process activation/crash/timeout. Routed gestures/fixture states remain labelled synthetic;
+native screen/pointer attempts stop at foreground loss. Its isolated settings/layout/media preserve
+ordinary user work, and it does not open a physical audio device. The
+[foundation report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md) records the completed checkpoint's
+specific results and limits. These checks do not close F2/F3-B acceptance, Q-032/Q-055 or broader platforms.
+
 The R1 [Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj) project uses xUnit v3 3.2.2 with
 explicit MTP v1 support; its lock file resolves Microsoft.Testing.Platform 1.9.1. This suitable setup
 was available in the installed package cache and verified against SDK 10.0.401 / runtime 10.0.12;
