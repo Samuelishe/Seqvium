@@ -252,6 +252,23 @@ lock, stale, pending or unavailable meaning. Temporary history must not look per
 host localization and semantic theme foundation; no final layout, control inventory, icons or gestures
 are selected.
 
+### Full node editor visual proposal
+
+**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** A detailed first-party editor
+should have a compact scope/identity row, a task-specific working region and restrained applicable
+status. A real EQ curve, instrument controls or analyzer can occupy substantial space; generic cards
+or identical generated forms must not limit those workflows. Tabs/presets belong only when functional
+for the supported node. [Graph](NODE_GRAPH.md#full-node-editors-proposal) owns capability and the useful
+Gain attenuation/transfer-graph slice; [Workspace](WORKSPACE.md#node-editor-placement-proposal) owns
+placement and retained sizing.
+
+Gain starts compact with reachable level/input actions and a labelled analytical transfer graph,
+which remains distinct from live signal metering. Preserve semantic RU/EN and Dark/Light resources,
+usable controls, independent focus/selection/target cues and local reflow/scrolling at reduced sizes.
+Do not enlarge a single value into an empty major surface or show future-feature placeholders. Final
+default/minimum dimensions require rendered layout and interaction evidence; an analytical graph is
+not evidence for a live analyzer or a future EQ's usability.
+
 ## Responsive layout and usable minimums
 
 First-party Seqvium UI uses responsive/reflowing layout, not uniform graphical scaling of the

@@ -31,6 +31,11 @@ External-repository research is working context, not automatic public documentat
 [public research boundary](docs/DOCUMENTATION_GOVERNANCE.md#external-repository-research-and-public-documentation);
 record actual distributed third-party provenance separately in THIRD_PARTY.
 
+Before changing documentation, identify its audience and follow the
+[audience and editorial policy](docs/DOCUMENTATION_GOVERNANCE.md#audiences-and-document-purpose).
+Keep human product pages separate from agent handoff/routing, preserve canonical owners, and check
+affected public descriptions whenever behavior or setup changes.
+
 ## Context routing
 
 All routes start with current state; add these owners as needed:

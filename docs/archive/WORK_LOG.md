@@ -1219,3 +1219,41 @@ keyboard checks pass; actual-window collapse/hide/reopen and stale/replacement c
 Recorded one BUILD increment to `0.1.0.0001`, no PATCH. F3-B owner acceptance remains pending and F2
 partial; no R5, DSP/backend/schema/media/geometry/color change or commit/push/tag. Detailed findings and
 limits remain in the [F3-B report](../experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair).
+
+## 2026-10-12 — SEQ-NODE-EDITOR-DESIGN-R1
+
+Inspected clean `master` at `f1af515`, active contracts, graph canvas/pane/session, static Workspace
+registration/layout and document/workflow lifecycle plus existing target/history tests. Documented
+the owner's every-node body-double-click requirement and a reusable internal editor/Gain v1 proposal,
+with independent-pane/native-window alternatives, stable target versus commit generation, external
+parameter synchronization and native callback/resource retirement responsibilities. Current owners
+retain the design as **proposal pending owner acceptance**; Q-032/Q-035/Q-067 remain open.
+
+The [bounded next task](../ROADMAP.md#proposed-first-full-node-editor-slice) separates current Desktop
+work from actual R6 contributor lifecycle and later external hosting. Documentation relative-link/
+anchor, owner/status/scope and diff checks pass. No production/test/configuration change, runtime
+validation, version bump, stage acceptance or Git history/index mutation is included.
+
+## 2026-10-12 — SEQ-PUBLIC-DOCS-R1
+
+After completing Node Editor design, rechecked `master`/`f1af515` and the ten unstaged documentation
+changes, with no staged/untracked work. Preserved that proposal and its open questions. Rewrote root
+README for new visitors: actual sample/graph/workspace features, explicit alpha/missing-feature and
+Windows limits, source build/run, planned direction, contribution and license routes; removed stale
+version/process narration. Added a substantive reader guide and CONTRIBUTING, clarified INDEX's
+engineering purpose and established audience/editorial/update/retrieval policy in governance with
+a short mandatory AGENTS route.
+
+Read the directly linked setup/contract/license sources and checked implementation labels, command
+paths, WAV limits, Gain, default-output playback and companion media storage. Corrected DEVELOPMENT's
+obsolete Desktop-only-Core dependency claim and its setup/launch introduction, plus one pre-existing
+ProjectStats anchor in IDEAS. Studied primary Diátaxis, Docs as Code, progressive disclosure and
+section-aware retrieval guidance; adopted useful practices without new frameworks, tools or CI.
+Local screenshots remain verification/review artifacts, not accepted public presentation; none was
+published or generated. Broad owner-document restructuring and richer user tutorials remain future
+work tied to real reader needs and shipped workflows.
+
+Markdown relative links/anchors, audience/owner/status/scope, source facts and diff checks pass;
+the locally selected SDK is 10.0.401. No build/test/GUI/audio run was needed for this documentation
+change. No production/test/configuration, product version, roadmap order, acceptance or Git index/
+history change; new reader/contribution pages are intentional reusable documentation.

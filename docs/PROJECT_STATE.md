@@ -104,6 +104,11 @@ no further authorization. R4 remains partial; F2 alone cannot deliver a workstat
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
 Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recovery and MIDI/capture/recording remain later work.
 
+The [full node editor design](NODE_GRAPH.md#full-node-editors-proposal) is **proposal pending owner
+acceptance**: detailed body-double-click access, a recommended reusable Workspace pane and bounded
+Gain lifecycle slice. Placement remains Q-032; no editor implementation, plugin host, stage acceptance
+or version change follows. [Roadmap](ROADMAP.md#proposed-first-full-node-editor-slice) owns the next task.
+
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release

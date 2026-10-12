@@ -157,6 +157,85 @@ music and graph binding atomically, with shared-Pattern refusal under [sample wo
 The only new Core edit is validated Pattern length adjustment for a longer accepted source; no new
 graph model/history, DSP, assembly, plugin registry or docking framework is introduced.
 
+## Node editor state and lifetime proposal
+
+**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** These are internal Desktop
+responsibilities, not implemented types or public extension interfaces. The
+[graph proposal](NODE_GRAPH.md#full-node-editors-proposal) owns editor capability and
+[Workspace](WORKSPACE.md#node-editor-placement-proposal) owns placement alternatives.
+
+Recommend a small editor session separate from `GraphEditorSession`: the graph session keeps graph
+selection/viewport/move intent; the node session holds an explicit target, immutable observation,
+local view context and at most one transient edit proposal. A first-party presenter resolves actual
+supported type/state-version UI or host-owned details. A narrow Desktop open/activate owner connects
+the invoking graph to that session/surface. Start with explicit built-in dispatch, not a universal
+parameter UI schema, plugin registry, new assembly or public editor factory ABI.
+
+### Identity and observation
+
+Use logical target `(document LifecycleId, attachmentId, graphDefinitionId, nodeId)` for the current
+bounded graph. Resolve all IDs and attachment-to-definition ownership from one coherent immutable
+`WorkflowState.Snapshot`; verify supported type/state version and parameter meaning before editing.
+Names, array indices, coordinates, object references, selected occurrence, saved path and prepared
+execution IDs cannot replace this identity. Graph ID detects attachment reassignment. Generation is
+a **commit precondition**, not part of the stable editor target; Undo/Redo can retain the target while
+advancing generation even when the same snapshot revision returns.
+
+At draft start capture this target, current generation, supported capability and starting parameter
+value. Submit a frozen command to the existing serialized `DesktopWorkflow` owner, which revalidates
+before `ProjectDocument.Edit`. Initially use the conservative whole-generation gate already employed
+by graph edits; any intervening canonical Edit/Undo/Redo invalidates a draft, including unrelated
+changes. Dependency-specific reconciliation can come later with evidence; identity alone is not a
+commit gate. Own command progress/acknowledgement separately from draft cancellation, so a Busy
+observation or delayed GUI callback cannot resubmit or redirect an already captured command.
+
+| Event | Proposed session behavior |
+| --- | --- |
+| Parameter edit, Undo or Redo while target exists | Re-resolve current node and refresh controls; cancel stale drafts/gestures. Stable target survives replacement immutable records; old commands remain invalid even after Undo/Redo ABA |
+| Node/graph/attachment/owning placement deletion | Keep target key as unavailable in the same lifecycle for possible Undo; disable mutation, cancel drafts and release node-specific active resources. Do not follow workflow's fallback playback selection |
+| Undo restores the exact target | Re-resolve ownership/capability and recreate presentation as needed; restore current values, never cancelled input, native handles or old pending commands. Redo deletion returns to unavailable |
+| Graph pane target/global selection/playback changes | Keep node target. Opening a different node explicitly cancels the old draft and replaces target; repeated same-target open only activates |
+| Attachment points to another definition, node type/state version becomes incompatible | Show unavailable/unsupported details; never redirect to a different same-name/type node or reinterpret old parameter input. Revalidate exact restoration normally |
+| Save or Save As | Preserve logical target; save canonical state only. No target/draft/native handle is serialized |
+| Open cancelled, candidate load/Save fails | Keep current document/session target; any cancelled draft stays cancelled. Existing dirty-decision and join behavior remains authoritative |
+| Successful document replacement or close | Withdraw commit authority, cancel proposals/open requests, detach subscriptions and release old observations/node presentation. Clear target even when reopened IDs/path match; new lifecycle needs explicit opening |
+| Hide/collapse or host shutdown | Cancel transient editing, retain only safe session view/target on hide; dispose subscriptions/content on shutdown. A queued GUI refresh checks disposal/current lifecycle before access |
+
+Retained chrome may outlive node-specific content. Do not retain a deleted node or old document just
+to preserve an editor; retain the key and safe presentation context. Deletion Undo may restore the
+same key but cannot revive invalidated asynchronous work. These rules extend the existing coherent
+refresh discipline, rather than reading mutable `ProjectDocument` fields across threads.
+
+### Parameters, history and prepared execution
+
+```text
+Quick controls / detailed editor / future supported plugin input
+    -> captured edit intention -> DesktopWorkflow owner -> ProjectDocument.Edit
+    -> one canonical snapshot -> immutable observations -> all editor projections
+                             -> existing validation/preparation -> prepared DSP
+```
+
+Canonical node parameters/project-owned state remain the only durable editable truth. UI drafts,
+derived display units, analytical curves and tab/scroll state are presentation; existing document
+history and Save remain authoritative. Reuse `SetGraphGainAsync` and Core validation for Gain. One
+changed completed gesture/text commit produces one logical edit, with no-op/cancel/stale producing
+none. Opening/closing/resize/focus creates no musical history. No editor-specific Undo or DSP copy.
+
+Use observations for every accepted change, including quick controls and Undo/Redo. Refresh idle
+controls without invoking their user-change commands; guard against notification feedback loops.
+Conflicting external changes cancel draft input and refresh canonical values with feedback. Status
+updates without a new generation need not cancel it. Do not display an editor's target as executing
+merely because another attachment is playing; show execution divergence only for matching scope.
+
+Future automation/modulation must distinguish canonical base value, accepted automation intent and
+derived effective runtime value. Runtime feedback can update a separate labelled read-only overlay
+at a bounded UI rate; it must not write sampled effective values into the base parameter, Save or
+Undo. Native user gestures eventually need explicit begin/end intention and owner validation, whereas
+host-to-plugin echoes/runtime notifications are not new edits. This reserves responsibilities, not
+automation composition/rates, smoothing, state exchange or an ABI. Q-033/Q-034/Q-063 remain open.
+Editor views own neither prepared execution nor PCM/device lifetimes; all publication and retirement
+remain under [Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence).
+
 ## R4-F2 execution and application coordination ownership
 
 [GraphPreparation](../src/Seqvium.Core/Audio/GraphPreparation.cs) derives bounded immutable operation,

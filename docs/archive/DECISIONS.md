@@ -1523,3 +1523,22 @@ About reuses its assembly reader; no second runtime constant, packaging or relea
 Project format compatibility remains independent. This supersedes the temporary identity guidance
 formerly summarized in DEVELOPMENT, not roadmap/ABI/physical acceptance: F2 remains partial and F3-B
 visual owner acceptance remains pending.
+
+## 2026-10-12 — SEQ-PUBLIC-DOCS-R1 audience and knowledge separation
+
+Under the owner's explicit documentation task, make root README the product introduction for people
+and retain AGENTS/PROJECT_STATE/INDEX as startup, technical handoff and engineering owner lookup.
+Add one reader guide with a real sample-processing walkthrough and task navigation, plus contribution
+guidance. These explain/link current owners; they create no independent capability or decision ledger.
+
+The previous README mixed work-package/evidence statuses with product presentation and carried stale
+alpha identity. Reader descriptions now distinguish working sample/graph tools from planned musical
+editors and report practical alpha/platform limits without reproducing internal process chronology.
+Audience-aware authoring, public-summary update checks and readable engineering knowledge are durable
+policy in [governance](../DOCUMENTATION_GOVERNANCE.md#audiences-and-document-purpose).
+
+Use Diátaxis and Docs as Code selectively, with reader task routes and canonical technical authority.
+Keep current knowledge, evidence and historical retrieval distinct; no physical migration or RAG/CI
+infrastructure is warranted by this editorial change. This policy updates how documentation is
+presented and maintained, without changing musical contracts, roadmap order, version or acceptance.
+The earlier Node Editor recommendation remains a proposal pending owner acceptance.

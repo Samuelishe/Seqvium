@@ -83,6 +83,49 @@ separates native input from deterministic commands and controlled actual-window 
 Old two-pane version-1 layouts remain readable; missing graph entries start hidden.
 [Node graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor) owns editing and DSP semantics.
 
+## Node editor placement proposal
+
+**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** No placement or instance policy
+is selected by this document update. The [graph owner](NODE_GRAPH.md#full-node-editors-proposal)
+states editor scope; [Architecture](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal) owns target
+identity and lifecycle independently of the chosen surface.
+
+| Alternative | UX and architectural consequence | Recommendation |
+| --- | --- | --- |
+| One reusable internal Node Editor pane | Clear explicit target, little window clutter, existing resize/dock/collapse/focus behavior; one node at a time makes comparison sequential. One additional static pane can use the current host without a dynamic registry | Preferred first slice, pending owner choice; opening another node deliberately replaces the target |
+| Independent internal panes for different nodes | Simultaneous EQ/instrument comparisons and independently retained tabs/views; demands distinguishable target titles, duplicate-open activation, bounded creation/retirement, reachable overflow and resource ownership | Keep as a later option; do not emulate instances by preallocating arbitrary static slots |
+| External OS editor windows | Appropriate native-editor integration when embedding is unsafe/impractical; platform-specific parent/focus/resize/close behavior and more window-management overhead | Preserve the accepted third-party exception; do not make it the default first-party mechanism |
+
+The current registry is static in more than content creation: `WorkspaceState.Definitions`, definition
+lookup, restore/reflow and stable keyboard traversal; `WorkspaceHost` constructs fixed strip actions;
+`WorkspaceLayoutStore` recognizes only registered IDs/types and bounds saves by definition count.
+Unknown saved entries mark fallback and preserve the original file. `WorkspacePane` also specializes
+refresh, focus and cancellation by content type. Multiple node instances therefore require coherent
+instance registration/removal, host/strip reconciliation and a layout compatibility decision, not
+just a control factory. Do not introduce these costs or a public surface API for the first singleton.
+
+For the recommended first slice, add one fixed Node Editor identity and use the current retained
+pane machinery with narrow content refresh/focus/cancel integration. Show a human node/processing
+scope breadcrumb in content and accessibility labels; fixed pane identity is distinct from target
+identity. Use a compact content-led default for Gain/details and a useful resizable region for later
+specialized editors. Do not constrain future content to the bottom inspector. Docking remains explicit;
+existing half-workspace dock limits and conflict behavior apply, so rich editors may need to float.
+
+Repeated Open Editor for the same logical target restores/activates the existing surface and retains
+view state. Another explicit node request cancels transient input and binds the new target; no
+selection-follow mode is proposed. Changing the Graph pane target or playback selection alone leaves
+the Node Editor attached to its original target, with a clear scope label and no playback retargeting.
+Close pane means Hidden as today, not node deletion; collapse/hide cancels drafts/gestures but retains
+the session target and safe view context. Reopen resolves the current observation. Return focus to
+the live invoking graph when useful, otherwise to a reachable host action; never retain a disposed
+control as authority. Escape first cancels local editing before workspace escape handles it.
+
+Save only geometry/visibility/docking in the user layout; node target, draft, tab/scroll context and
+document lifecycle remain session-local in this slice. Existing layouts missing the new entry start
+it hidden; a restored visible editor has no target until explicitly opened. An older binary reading
+the new entry can enter its existing preserve-original fallback; forward downgrade behavior must be
+verified and documented, not called lossless. Dynamic per-node layout persistence is deferred.
+
 ## Implemented R3-F2 internal panes
 
 The toolbar's Panes action deliberately opens Project Inspector or Appearance. Both are optional and

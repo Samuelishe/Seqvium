@@ -2,14 +2,101 @@
 
 Role: Policy for a compact, coherent repository knowledge base.
 Read when: Changing ownership/routing, adding documents, or resolving documentation conflicts.
-Authoritative for: Ownership rules, update triggers, selective reading, conflicts, history, and RAG evolution.
+Authoritative for: Audience/editorial policy, ownership rules, update triggers, selective reading, conflicts, history, and RAG evolution.
 Not authoritative for: Product/technical contracts, current state, or future product-stage scope.
+
+## Audiences and document purpose
+
+Before editing a page, identify its readers and the question it should answer. Seqvium has two
+documentation purposes: guides for people using or contributing to the project, and structured
+engineering knowledge for precise work and selective agent retrieval. This is an editorial boundary,
+not a privacy boundary. Every tracked Markdown page is public and must remain readable by a developer.
+Machine-oriented structure never excuses opaque prose.
+
+| Entry or document class | Readers and purpose | Authority |
+| --- | --- | --- |
+| Root [README](../README.md) | New visitors and musicians: product, available features, practical limits, source launch and next steps | Explains current product facts; does not define engineering status, release policy or contracts |
+| [Reader guide](README.md) and [Contributing](../CONTRIBUTING.md) | People trying the desktop or entering development: task routes, first-use steps and contribution guidance | Summarize and link the relevant canonical sources; no parallel feature/status/decision ledger |
+| [DEVELOPMENT](DEVELOPMENT.md), [TEST_EXECUTION](TEST_EXECUTION.md) and subsystem owners | Developers and agents: reproducible instructions, reference and technical explanation | Retain their existing subject ownership and explicit implemented/accepted/proposed/open distinctions |
+| [AGENTS](../AGENTS.md), [PROJECT_STATE](PROJECT_STATE.md), [INDEX](INDEX.md) | Agent startup, technical handoff and engineering owner lookup | Operational routing, current implementation/evidence status and discovery respectively; not the public product introduction |
+| Experiment reports and [archive](archive/INDEX.md) | Readers seeking declared evidence or historical rationale | Reports own observations; archive is historical and loses conflicts with current owners |
+
+Root README is the human front door. `docs/README.md` supplies a compact task-based route because the
+engineering INDEX's owner table and startup instructions do not serve a first listening session.
+INDEX remains the engineering subject map, useful to people as well as agents. No physical relocation
+is needed: purpose, links, owner metadata and section status provide the separation without breaking
+existing routes. A future directory migration requires its own rationale, link/anchor migration plan
+and review; do not move the corpus merely to resemble a documentation framework.
+
+### Apply methods where they help
+
+Use [Diátaxis](https://diataxis.fr/) to distinguish learning walkthroughs, task instructions, technical
+reference and explanation. The reader guide's first session is a small learning walkthrough;
+Development's build path is a how-to; owners retain reference and explanation appropriate to their
+subjects. Create another page only for a real reader need, not to populate all four categories.
+
+Apply [Docs as Code](https://www.writethedocs.org/guide/docs-as-code/) through Markdown in the same
+repository, reviewable diffs and behavior-related updates. Validate facts, commands and links in
+proportion to the change. This does not require a static-site framework, a documentation build or
+new CI. Existing ownership implements a single source of truth: source/manifests/tests establish
+implemented facts, canonical owners state contracts, PROJECT_STATE summarizes engineering readiness
+and ROADMAP defines the current plan. A reader page may explain a fact differently; it cannot
+independently choose its value or turn a proposal into an available feature.
+
+Use [progressive disclosure](https://www.nngroup.com/articles/progressive-disclosure/) in navigation:
+give visitors product meaning and practical next steps first, then link to setup, tasks, explanation
+and detailed reference. Group reader routes by what people want to do, not the order of work packages.
+Keep important alpha/platform/feature limits visible rather than hiding them behind technical links.
+
+### Editorial rules for every documentation change
+
+- Write human-facing pages for their readers; write engineering knowledge for exact understanding
+  and retrieval. Use natural English, concrete behavior and connected explanations in both.
+- Do not put agent startup instructions, task IDs, work-package chronology, test totals, version
+  ledger detail or acceptance statuses into README automatically. Include an engineering detail on
+  a reader page only when it helps the reader act or understand a limitation. Explain necessary terms.
+- Keep implemented features separate from planned direction. An accepted design, green test suite
+  or completed internal package does not establish a usable feature or supported platform.
+- Summarize contracts and link their owner; do not copy long contract passages into reader guides,
+  create another status register or weaken a technical owner into a superficial overview.
+- Update the owner when architecture or behavior changes. Check affected public descriptions,
+  examples and setup paths in the same change; correct them if that change makes them stale.
+  Editorial work does not change product contracts, roadmap order or acceptance by implication.
+- Read README as a new visitor: can they understand the product, what works, what is missing and
+  how to try it without knowing the development conversation? Check every direct Markdown
+  destination and the pages needed to complete that path.
+- Avoid vague promises, repeated generalities, inflated comparisons, process-centered sentences
+  and lists of technical achievements without practical meaning. Prefer a shorter useful page
+  over boilerplate, ornamental badges or unavailable-feature placeholders.
+- Use a real current application screenshot only when it is suitable for public presentation and
+  its content/provenance is understood. Local review captures are not automatically public assets;
+  omit an image when no suitable accepted one is available. Never fabricate screenshots or downloads.
+
+Owner documents retain `Role`, `Read when`, `Authoritative for` and `Not authoritative for` metadata.
+Human entry pages and task guides state purpose through a clear title/introduction and audience-aware
+navigation; they do not need an agent metadata block. Their linked sources retain technical authority.
+
+### Retrieval and future growth
+
+Keep current owner titles, scope metadata, descriptive headings, exact relative links and explicit
+section status. A future retrieval result must retain its source path/heading, authority and decision
+status so a proposed or historical passage cannot masquerade as current implemented behavior. Public
+summaries are useful for product questions; they must not outrank canonical owners for contract work
+or be indexed as independent competing specifications. Reports remain evidence, not contracts.
+
+Structure can support later section-aware retrieval; Microsoft documents
+[heading-based and contextual chunking](https://learn.microsoft.com/en-us/azure/search/vector-search-how-to-chunk-documents).
+That is a useful consideration, not a choice of Azure, chunk sizes, embeddings or an index schema.
+Current knowledge and `docs/archive/**` remain separate retrieval classes under the existing
+[history policy](#rolling-current-knowledge-and-cold-history), with explicit historical opt-in.
+Do not add an indexer, vector database, embedding pipeline, generated map or empty guide collection
+without an observed need and a separate task. Ordinary selective reading remains sufficient now.
 
 ## One owner per durable subject
 
 [INDEX](INDEX.md) is the subject-to-owner map; each owner's opening metadata defines its boundary.
 Use `Role`, `Read when`, `Authoritative for`, and `Not authoritative for` in new owner documents.
-The public README may be a concise introduction without that metadata.
+Human entry pages follow the [audience policy](#audiences-and-document-purpose) instead of that metadata.
 
 Other documents may summarize and link but must not create competing contracts. In particular:
 
@@ -200,6 +287,7 @@ override Seqvium owners.
 | Component/service/asset evaluated/introduced/upgraded or current obligation changed | THIRD_PARTY retains current obligations and manifest version authority                                                                                                                                                                   |
 | Component removed/replaced                                                          | Current THIRD_PARTY reflects remaining obligations; archive history when legally safe                                                                                                                                                    |
 | Owner added/moved or route changed                                                  | INDEX; AGENTS if operational routing changes                                                                                                                                                                                             |
+| User-visible capability, limitation, platform claim or setup path changes           | Check README, reader guide and Contributing for affected descriptions/examples; update actual stale summaries while preserving canonical source authority                                                                                |
 | Experiment completed                                                                | Preserve meaningful conclusions in current owners and existing archive history; retain a compact report only when technically useful under [evidence retention](experiments/README.md#evidence-retention), not for every minor iteration |
 | Audit/checkpoint becomes historical                                                 | Preserve ranking/narrative/checkpoint in archive AUDITS; retain still-open findings as ordinary current questions                                                                                                                        |
 
@@ -229,8 +317,10 @@ passive and future enforcement points.
 
 ## Documentation integrity
 
-Before completion, inspect repository-relative Markdown targets and anchors, metadata/ownership,
-status terminology, and all new/changed content. Confirm that future work is not advertised as
+Before completion, inspect repository-relative Markdown targets and anchors, audience/purpose,
+metadata/ownership, status terminology, and all new/changed content. For reader entry pages, check
+every direct Markdown destination, practical task path and current feature/platform claims against
+owners and source. Confirm that future work is not advertised as
 implemented, proposals are not accepted by implication, current state stays compact, roadmap contains
 only current/forward scope, archive work log contains completed facts, IDEAS stays speculative-active,
 known problems contain only unresolved issues, debt contains only existing unresolved compromises,

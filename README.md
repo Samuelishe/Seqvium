@@ -1,86 +1,85 @@
 # Seqvium
 
-Seqvium is a planned free and open-source desktop music workstation with its own creative workflow,
-focused on turning musical ideas and sound discoveries into tracks.
+Seqvium is a free and open-source desktop music workstation in early alpha development.
+It aims to make it easy to start with a sound or a musical idea, then discover deeper editing,
+processing and sound design as the music takes shape.
 
-> Easy to start, deep enough to grow.
+The workflow takes inspiration from FL Studio: direct manipulation, reusable musical ideas and
+flexible working surfaces. Seqvium is developing its own approach, with sample exploration and
+node-based sound processing at its center. See the [project vision](docs/PROJECT_VISION.md) for
+the wider direction.
 
-## What is Seqvium?
+## What you can do today
 
-The intention is an approachable music-making environment that grows with the user: start with a
-rhythm or melody, then explore deeper editing, arrangement, processing, and sound design as needed.
-Seqvium is intended for music across genres, with pointer editing complemented by future MIDI input
-and audio recording.
+The current desktop provides a small working environment for playing and processing samples. You can:
 
-## Creative direction
+- Import WAV samples and play the selected sample item.
+- Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
+  and pan or zoom the canvas.
+- Adjust sample levels and mix independent WAV sources within the same graph.
+- Undo and redo edits, save a project with its imported audio, and reopen it.
+- Arrange internal workspace panes by moving, resizing, docking or collapsing them.
+- Use the interface in English or Russian, with dark and light themes.
 
-Sound and music should lead the experience. The design emphasizes quick feedback, experimentation,
-and a short path from exploring a sound to hearing it in musical context and reusing it as new material.
-FL Studio is the nearest workflow reference; Seqvium aims to develop its own identity.
-See the [project vision](docs/PROJECT_VISION.md) for the product direction.
+The graph makes signal flow visible: a sample can pass through Gain to Output, or several sources
+can meet at a Mix node. These are basic level and routing tools; richer effects are still ahead.
 
-## Key ideas
+For a first listening session, follow the [sample processing guide](docs/README.md#try-sample-processing).
 
-These are planned capabilities and design directions:
+## Current state and limitations
 
-- **Mouse-first creation:** edit notes, steps, clips, and sounds directly with the pointer.
-- **Named reusable multi-instrument patterns:** choose the size of an idea, from one part to a full groove.
-- **Sound and sample exploration:** use a contextual Sample Lab to audition variations in the music
-  before accepting them.
-- **What-you-hear resampling:** turn the audible result of a selected source or context into reusable material.
-- **Progressive processing depth:** open node-based processing when deeper sound design is useful.
-- **A flexible in-window workspace:** arrange working panes and organize instruments/channels under user control.
-- **Semi-free Arrangement:** arrange compatible musical material in user-named containers, with flexible organization.
+Seqvium is an **early alpha**, not yet a ready replacement for FL Studio or Ableton Live.
+It is useful for trying sample playback and graph editing, but it does not yet offer a practical
+workflow for composing complete tracks.
 
-## Current status
+There is no step sequencer, Piano Roll, Arrangement or Mixer editor yet. Full node editors,
+EQ and other effects, third-party plugin hosting, MIDI input, audio recording, export and crash
+recovery are also still missing. Playback can glitch under heavy system load.
 
-The owner-selected initial product alpha is **`0.1.0.0000`**; About displays the running assembly's
-version. [Versioning](docs/VERSIONING.md) owns identity and checkpoint policy. This is not a production
-release or a declaration of completed R4.
+Windows 11 is the current development and tested desktop platform. Linux and macOS are intended
+targets, but their application UI and audio operation have not been validated. Build instructions
+below are for trying the application from source on Windows.
 
-**A runnable desktop and bounded visual Node Graph editor now exist.** SEQ-R1 provides a .NET 10 canonical
-musical
-model, document edits/Undo/Redo and versioned JSON Save/reopen, with a managed test suite.
-SEQ-R0 remains **partially evidenced** and selects no permanent backend. R2-F1 provides managed WAV
-preparation/offline sampling; R2-F2 has locally accepted-ready bounded realtime playback through a
-Windows WASAPI output adapter. R2-F3 adds bounded source discovery, transient raw WAV preview and
-explicit reuse of accepted media without copying WAV bytes. R2-F4 adds independent logical input/output
-endpoint discovery/selection and joined output replacement. **Overall R2 is complete / local accepted-ready**
-for this bounded foundation. **R3 is complete / local accepted-ready**: one Avalonia main window,
-actual unnamed project summary, RU/EN and Dark/Light preferences, two retained internal panes,
-bounded floating/docking, keyboard access and independent user layout persistence. The owner accepts
-F1/F2 within this scope; wider platform/accessibility and delivered-release evidence remain open.
-R4-F1/F2 add canonical Source/Gain/Mix/Output and prepared independent PCM execution. F3-A/F3-B
-connect native durable WAV import, transport/Save/reopen and one retained editable graph canvas, including
-real independent WAV branches before Mix. F3-B awaits owner canvas/interaction review; F2 remains
-partial with unresolved physical pressure evidence. [Current state](docs/PROJECT_STATE.md) and
-[F3-B evidence](docs/experiments/SEQ-R4-F3-B_REPORT.md) define the bounds.
-Opening the desktop never starts audio. Pattern/Piano Roll/Arrangement editors and input streaming/recording are absent.
-See the [F2 device/performance evidence](docs/experiments/SEQ-R2-F2_REPORT.md) for its measured scope.
-The [F4 endpoint evidence and R2 audit](docs/experiments/SEQ-R2-F4_REPORT.md) records the selection boundary.
-The [roadmap](docs/ROADMAP.md) describes intended stages, not available features or release promises.
+## Getting started
 
-## Platforms
-
-Windows, Linux, and macOS are the intended targets. Windows is the primary early development environment;
-The managed solution has local Windows build/test evidence; F2 physically validates one Windows 11
-44.1 kHz stereo float32 output endpoint. Other endpoint/platform and supported-distribution acceptance
-is not claimed.
-
-## Development
-
-Start with the [documentation index](docs/INDEX.md). Repository agents should read [AGENTS.md](AGENTS.md).
-See [development](docs/DEVELOPMENT.md) and [test execution](docs/TEST_EXECUTION.md) for reproducible
-CLI commands. `Seqvium.sln` contains portable `Seqvium.Core`, `Seqvium.Tests`, narrow
-`Seqvium.Audio.Windows`, the explicit physical `Seqvium.DeviceCheck` harness and `Seqvium.Desktop`.
-After building, launch the silent desktop with:
+Install a .NET 10 SDK that matches [global.json](global.json), then open a terminal at the root
+of your local checkout:
 
 ```text
+dotnet restore Seqvium.sln --locked-mode
+dotnet build Seqvium.sln -c Release --no-restore
 dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-build --no-restore
 ```
 
+The application opens an empty project and stays silent until you press Play.
+Import your own WAV to begin; no sample library is bundled. Save projects you want to keep.
+
+The [development guide](docs/DEVELOPMENT.md#current-environment-and-entry-points) covers the SDK,
+project layout and local tools. The [documentation guide](docs/README.md) provides a first-use
+walkthrough and routes to more detailed material.
+
+## Where the project is heading
+
+The next musical editing work focuses on reusable patterns and step sequencing. The longer-term
+direction includes Piano Roll, Arrangement, mixing, sample generation and resampling, detailed
+effect and instrument editors, and optional extensions. Recording and external plugin hosting
+are later goals.
+
+These are planned capabilities, not features in the current build. The
+[engineering roadmap](docs/ROADMAP.md) describes their scope and dependencies; it is not a release
+schedule.
+
+## Contributing
+
+Bug reports, usability feedback, documentation improvements and focused code contributions are
+welcome. Reports about sample playback or graph editing are especially useful while those workflows
+are taking shape.
+
+Read [Contributing](CONTRIBUTING.md) for reporting and development guidance, or use the
+[documentation guide](docs/README.md#understand-the-design) to explore the architecture.
+
 ## License
 
-Seqvium-authored work is licensed under the [Apache License 2.0](LICENSE) (`Apache-2.0`).
-Third-party components and assets retain their respective licenses and terms; see
-[third-party provenance and evaluation](docs/THIRD_PARTY.md).
+Seqvium is licensed under the [Apache License 2.0](LICENSE).
+Third-party components and assets retain their own licenses; see the
+[third-party notices and provenance](docs/THIRD_PARTY.md).

@@ -40,6 +40,36 @@ contains no previous runtime fallback. Repair converges automatically through th
 and [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item) own exact bounds. Actual owner
 canvas/interaction review remains required independently of pure tests and a quiet physical smoke.
 
+## Detailed node editor access
+
+**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance for the interaction details below.**
+The owner requires every node to admit a detailed editor through body double-click, preserving
+single-click selection/movement and optional quick controls. This access is not implemented yet.
+Placement remains proposed in [Workspace](WORKSPACE.md#node-editor-placement-proposal).
+
+Propose one semantic Open Node Editor action, also reachable through the selected node's context
+menu and Enter while the graph canvas owns focus. Double-click resolves the actual body hit with
+existing port precedence; ports, wires, background, pan modifiers and compact child controls retain
+their own actions. Recognize a completed body double-click only when neither click became a drag,
+both address the same logical target, and lifecycle/basis remains valid. Release any canvas capture
+before opening. Use platform click timing/spatial tolerance rather than inventing a fixed interval.
+Do not delay ordinary single-click selection or change existing movement semantics.
+Double-click opening itself changes no document state/Undo/dirty flag and never starts audio.
+
+The editor visibly identifies its node and processing scope independently of graph selection,
+active pane and playback target. Opening the same target activates its surface; choosing another
+requires explicit opening, not hover/selection-following. Missing nodes/capabilities show understandable
+host-owned details with unavailable editing and no silent replacement. Every node has an opening
+path, including structural nodes with read-only details.
+
+For the first Gain slice, label amplitude and derived dB clearly; zero is silence. Keep the canonical
+value distinct from temporary gesture/text input and any identified last-valid audible state. An
+external accepted edit updates idle controls; if it invalidates a local draft, cancel that draft and
+show concise changed-elsewhere feedback rather than overwrite it or silently commit stale input.
+Programmatic refresh is not a user edit. Local text Undo/input takes precedence over project commands;
+Enter in a numeric field commits it rather than opening another editor. Keyboard and pointer access
+share the same target and document transactions.
+
 ## Mouse-first creation and complementary input
 
 **Mouse-first, keyboard-efficient** means direct pointer manipulation is a first-class, polished path
@@ -592,7 +622,8 @@ When requested, the graph opens as a free-form spatial canvas with compact nodes
 on demand. Coordinates do not define processing order; connections express dependencies. Ordinary
 creation must not require learning graph internals; advanced branches/merges remain discoverable.
 [NODE_GRAPH](NODE_GRAPH.md) owns graph semantics, ports, and the editing/execution boundary.
-Compact-chain editing and node-settings presentation remain proposals/open UX questions.
+Compact-chain editing remains open; full node-editor presentation is a
+[proposal pending owner acceptance](NODE_GRAPH.md#full-node-editors-proposal).
 
 ## Essential accessibility feedback
 

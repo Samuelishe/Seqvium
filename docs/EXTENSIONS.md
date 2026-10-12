@@ -232,6 +232,45 @@ to the plugin developer. Do not require excessive heuristic validation of arbitr
 [WORKSPACE](WORKSPACE.md#one-main-application-window) owns the accepted workspace exception; normal
 major Seqvium-authored surfaces continue to follow the internal Workspace Pane model where appropriate.
 
+### Native node editor lifecycle proposal
+
+**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** This identifies future host
+responsibilities only; it does not select CLAP/VST3, embedding, process isolation, platform handles,
+public ABI or a realtime extension contract. The initial Desktop editor proposal uses built-ins only.
+
+Keep logical project node/sound target, materialized processing instance, editor-open session and OS
+window identity separate. A shared sound definition can require several execution instances under
+[execution domains](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains); which instance's
+editor may expose which shared state needs capability-specific resolution. Do not create an extra
+processor merely to open a window, or bind an editor to whichever instance happens to be playing.
+
+Propose one ordinary native editor-open session per resolved target/instance relationship: repeated
+open activates an existing window; pending open is deduplicated and can be invalidated. Opening checks
+live document target, compatible available provider and editor support. Materialization/activation
+may be needed for a plugin UI but does not authorize transport or opening an audio device. Editor
+absence/failure uses host details and explanation; independently safe processing may continue.
+
+Window close retires editor callbacks/UI resources without deleting project state or implicitly
+disposing a still-used processor. Target deletion/provider loss/document retirement withdraws editor
+mutation authority, invalidates delayed open/parameter results and closes/detaches the window before
+releasing its instance/provider references. Undo may permit a fresh open, never resurrection of an
+old native handle. Cancelled/failed project replacement retains valid current-session ownership;
+successful replacement must retire old editor use before document/provider disposal. Exact UI-thread,
+owner-thread and audio join ordering needs bridge-specific evidence; do not block either indefinitely
+or unload when a recoverable close fails. Retain ownership and report the failure for safe retry.
+
+Closing the host must account for editor/native callbacks as well as existing prepared/audio joins.
+Native focus/input belongs to that editor; return to a still-live host context without foreground
+forcing. Package disable/uninstall follows known-active-use refusal/defer, including open editors and
+presentation resources. Safe callback drainage, late notification rejection and resource detachment
+remain Q-010/Q-024/Q-067 obligations; an OS window itself provides no crash containment.
+
+Contributor-scoped editor lookup/availability, host resources/fallback and resource contract evolution
+must wait for actual R6 modules and [UI contribution lifecycle](#ui-resource-contribution-lifecycle).
+External-native hosting is **later than, and not a required deliverable of, R6 Extension Foundation**.
+Its state exchange must use the [single canonical state boundary](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal),
+not an independent plugin/editor Save or Undo model.
+
 ## Security boundary
 
 Process separation, if adopted, is not automatically a security sandbox. Seqvium does not currently

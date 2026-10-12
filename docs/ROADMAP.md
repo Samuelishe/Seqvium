@@ -311,6 +311,44 @@ remains required. Keep screenshots local under evidence policy. Full Release bui
 relevant F2 regressions precede closure. No fake editor, graph framework, Browser, Arrangement, Mixer,
 EQ/compressor/reverb, export UI, universal routing engine, plugin ABI or native-engine decision.
 
+### Proposed first full node editor slice
+
+**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** This is an optional bounded
+Desktop follow-up for agreement, not a new numbered stage, R4 closure prerequisite or authorization
+to implement R5/R6/plugin hosting. [Graph](NODE_GRAPH.md#full-node-editors-proposal),
+[Architecture](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal) and
+[Workspace](WORKSPACE.md#node-editor-placement-proposal) own the design.
+
+Proposed next task: **SEQ-NODE-EDITOR-IMPL-F1 — reusable Workspace editor and Gain v1 lifecycle**.
+Owner agreement must select the reusable-pane scope and proposed target/draft behavior before code.
+
+1. Add body double-click plus context/keyboard Open Editor, retaining single-click, drag, port/wire,
+   pan and menu behavior; validate captured target before activation.
+2. Add one fixed retained Node Editor pane and a small explicit-target session. Reuse workflow
+   observations, canonical command/history/persistence and F2 convergence. Integrate refresh, local
+   focus and gesture cancellation with the existing pane shell without a dynamic/public registry.
+3. Provide actual Gain attenuation/input/analytical transfer-graph UI, and purposeful built-in
+   structural/missing-node details. Keep quick controls synchronized; no audible uncommitted preview,
+   new DSP, meters, automation, presets, schema or native plugin activation.
+4. Verify deterministic target retention, exact deletion/Undo/Redo restoration, changed-generation
+   and ABA refusal, same-ID fresh reopen, close/disposal/late notification safety, external edits,
+   refresh without command echoes, one/no-op/cancelled Undo transactions and canonical Save/reopen.
+   Check old layouts and the existing preserve-original behavior on downgrade/new entries.
+5. Run the appropriate Release build/tests after inspecting the actual test platform; then exercise
+   the real window in RU/EN × Dark/Light at ordinary/reduced sizes, with pointer/keyboard opening,
+   drag/port/menu regressions, retargeting, hide/collapse/dock/restore, focus and document replacement.
+   A bounded explicit-Play Gain smoke checks existing convergence and last-valid feedback, without
+   reclassifying F2 pressure acceptance. Owner reviews actual useful editor layout/interaction.
+
+This slice can be built entirely in current Desktop without extension hosting. Contributor-scoped
+editor discovery/availability, removable providers and safe resource/UI retirement wait for actual
+R6 needs and Q-067 decisions. Multiple internal node panes can be designed separately in Desktop
+with owner authorization, but require registry/strip/layout work and comparison evidence; they are
+not intrinsically an R6 dependency. External-native editors/bridges require later hosting design
+and platform lifecycle evidence; R6's first optional content/generator scope does not require them.
+Full EQ/instruments, live analysis, presets and automation require their own musical/state/runtime
+capabilities and tasks; this proposal reserves editor capacity rather than starting those features.
+
 ## SEQ-R5 — Pattern Workspace
 
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,

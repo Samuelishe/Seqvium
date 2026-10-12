@@ -64,7 +64,7 @@ No analyzer or project is selected or scheduled.
 ## I-004 — Optional ProjectStats trend comparison
 
 Status: Idea.
-Origin / owner: [PROJECT_STATS](PROJECT_STATS.md#reports-output-and-evidence-metadata).
+Origin / owner: [PROJECT_STATS](PROJECT_STATS.md#evidence-metadata).
 Value: Compare deliberately saved reports if historical structural changes later help review.
 Promotion condition: Actual use demonstrates value and defines bounded storage/privacy semantics.
 No historical metrics database, committed snapshot stream, or trend infrastructure is introduced;

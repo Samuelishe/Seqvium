@@ -91,10 +91,74 @@ represent the same canonical graph, not a separate simple-chain DSP system along
 DSP. Branching/custom topologies may show a custom-graph indication instead of pretending to be linear.
 Exact visuals, editing rules, and chain/canvas transitions remain open.
 
-Node-settings UX is also open: side inspector, independent workspace pane, overlay, inline controls,
-or a combination are not selected. A promising direction is selecting a node to expose deeper settings
-without uncontrolled windows, with useful settings/inspectors optionally detachable into workspace
-panes. This is a bounded question rather than an accepted interaction.
+The owner requires detailed editor access for every node through double-click on its body, alongside
+single-click selection/movement and optional compact controls. Placement remains open in Q-032;
+the [full-editor proposal](#full-node-editors-proposal) evaluates it without selecting a mechanism.
+
+## Full node editors proposal
+
+**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** This is design only, based on
+the current Desktop at `f1af515`. It does not implement editors, close Q-032, authorize a plugin host,
+change project schema/product version or complete R4 acceptance.
+
+The owner requirement is a detailed editor for every node, opened primarily by double-click on the
+node body. Single-click retains selection and existing movement. Compact Gain-style parameters may
+coexist. Editor capacity must allow a real EQ, interactive graphs, analyzers, tabs, presets and
+specialized controls independently of node size or the graph's bottom parameter row. First-party
+Workspace integration is preferred; native third-party OS windows are allowed. These requirements
+do not select placement, instance count, DSP algorithms or plugin interoperability.
+
+Recommend a host-owned editor session with a replaceable node-specific first-party presentation,
+initially displayed in **one reusable internal Node Editor pane**. An explicit Open Editor request
+changes its target; selection alone does not. A supported built-in gets its actual controls/details;
+an unknown, missing or incompatible node gets host-owned identity/port/binding/diagnostic details
+without executing contributor code or guessing at opaque parameters. Thus opening remains available
+even for incomplete graphs. A full editor is an editing surface, not a promise that every structural
+node has many editable parameters. [Workspace](WORKSPACE.md#node-editor-placement-proposal) owns the
+alternatives and instance policy; [UX](UX_CONTRACT.md#detailed-node-editor-access) owns input behavior.
+
+Future EQ/instrument/effect presentations can own a substantial resizable working region with
+specialized interaction instead of being forced into a generated form. Editor choice is separate from
+processing capability: UI absence may use host details while independently supported processing
+continues; missing processing remains an execution blocker. Future instrument editors must resolve
+whether controls address node-owned state or a referenced shared SoundDefinition and expose that
+sharing scope. Node identity must not be assumed to identify one physical plugin execution instance
+under [execution domains](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains).
+
+### Gain v1 as a useful first editor
+
+Recommend a compact attenuation workspace: a continuous level control, exact linear `[0,1]` input,
+derived read-only dB attenuation (zero explicitly means silence), and Unity/Silence actions. Include
+a scalable analytical transfer graph `output = linearAmplitude * input`, with labelled axes; a
+proposal during a gesture is visibly temporary. This illustrates attenuation and validates an
+interactive specialized region without adding DSP or claiming a live waveform/analyzer. Do not pad
+one numeric field to a graph-sized window, invent amplification/bypass/presets, or show disabled
+future tabs. Unity and Silence edit the existing parameter; they are not new stored parameters.
+
+One changed slider release or Enter/check creates one existing document transaction; Escape, no-op,
+capture loss or stale basis creates none. Numerical conversions/curve data are derived presentation,
+not additional saved values. No audible gesture preview is proposed in this first slice: canonical
+commit converges through the existing F2 coordinator. Existing quick controls remain available and
+synchronize through the [single-state boundary](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal).
+Persisted invalid Gain intent stays visible with its diagnostic and an explicit legal repair path;
+never silently clamp it to a slider value or portray an unsupported value as valid attenuation.
+
+Source, Mix and Output initially receive purposeful read-only details: Source's actual placement/Part
+binding and resource availability; Mix's identified input slots/connections and intentional aggregate;
+Output's local result/designation and upstream connection. These views use existing metadata and
+diagnostics, with repair in the graph; they do not imply a sampler instrument editor, Mixer/Master,
+device selector or editable unknown JSON.
+
+### Remaining owner decisions and risks
+
+Q-032 retains reusable versus independently retained node panels and eventual placement choices;
+Q-035 still owns multiple **graph** surfaces and cross-project behavior, which this single-node
+proposal does not resolve. Q-067 retains contributed editor/resource registration and retirement.
+Main risks are accidental selection-following, stale drafts after Undo/Redo, misleading canonical
+versus audible feedback and a singleton becoming restrictive for comparisons. Use explicit targets,
+fresh commit bases and scoped execution status; collect real comparison-workflow evidence before
+expanding pane instances. Native editor lifecycle is only a
+[future responsibility proposal](EXTENSIONS.md#native-node-editor-lifecycle-proposal).
 
 ## Contributions and irreversible mixing
 

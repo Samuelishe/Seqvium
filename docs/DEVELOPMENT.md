@@ -3,29 +3,35 @@
 Role: Developer environment, version authority, and local tooling policy.
 Read when: Setting up development or introducing SDKs, local tools, or build/run entry points.
 Authoritative for: Recommended environment, SDK/tool version authority, local versus global tooling, verification-output
-organization, and eventual entry
-points.
+organization, and build/run entry points.
 Not authoritative for: Git safety, implementation style, package locks, test commands, CI triggers, or platform
 acceptance.
 
 ## Current environment and entry points
 
-Windows 11 is the primary development/runtime environment today; Rider is the repository owner's
-primary IDE. Git is standard source control; [AGENTS](../AGENTS.md) owns safety and authorization.
-[PORTABILITY](PORTABILITY.md) owns Windows/Linux/macOS target direction and evidence limits.
+Windows 11 is the current development and tested desktop environment. Rider is used for development,
+but the CLI commands below work independently of an IDE. [PORTABILITY](PORTABILITY.md) distinguishes
+intended Windows/Linux/macOS targets from demonstrated application support. For a first listening
+session, use the [reader guide](README.md#try-sample-processing); for a code contribution, see
+[Contributing](../CONTRIBUTING.md).
 
-C#/.NET 10 is adopted for the R1 canonical foundation in [ARCHITECTURE](ARCHITECTURE.md#r1-canonical-foundation).
-Avalonia is adopted for R3-F1. [Seqvium.sln](../Seqvium.sln) contains the portable
-[Seqvium.Core](../src/Seqvium.Core/Seqvium.Core.csproj) library and one
-[Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj) executable test project.
-R2-F1 adds BCL-only WAV/media and offline sampler files within the same library; the
-[architecture](ARCHITECTURE.md#r2-f1-managed-media-and-offline-execution) lists source responsibilities.
-Default unnamed media ownership is under LocalApplicationData; tests always supply owned directories.
-R2-F2 adds the narrow `Seqvium.Audio.Windows` platform library and explicit `Seqvium.DeviceCheck`
-physical verification executable; [architecture](ARCHITECTURE.md#r2-f2-execution-and-platform-ownership)
-owns their dependency boundary. R3-F1 adds one `Seqvium.Desktop` executable referencing Core only.
-The standalone
-[SEQ-R0 probe](../experiments/seq-r0/README.md) remains independent.
+The application uses C#/.NET 10 and Avalonia. [Seqvium.sln](../Seqvium.sln) contains:
+
+- [Seqvium.Core](../src/Seqvium.Core/Seqvium.Core.csproj): UI-independent musical documents, history,
+  persistence, WAV resources and sampling/graph execution, using the .NET base libraries.
+- [Seqvium.Audio.Windows](../src/Seqvium.Audio.Windows/Seqvium.Audio.Windows.csproj): the Windows audio adapter.
+- [Seqvium.Desktop](../src/Seqvium.Desktop/Seqvium.Desktop.csproj): the Avalonia application, referencing
+  Core and the Windows audio adapter.
+- [Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj): the executable test suite.
+- [Seqvium.DeviceCheck](../tools/Seqvium.DeviceCheck/Seqvium.DeviceCheck.csproj): explicitly invoked
+  physical-device checks; it is not required to launch the desktop.
+- [ProjectStats](../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj): independent
+  repository diagnostics for developers.
+
+[Architecture](ARCHITECTURE.md) explains dependency and lifetime boundaries. The separate
+[realtime probe](../experiments/seq-r0/README.md) is an experiment outside the solution, not the
+production application. Default unnamed media is stored under LocalApplicationData; tests use
+their own directories.
 
 From the repository root with .NET SDK 10.0.401 (or a later patch in the 10.0.4xx band):
 
@@ -46,7 +52,7 @@ an acceptable cross-platform repository scripting environment where a concrete n
 scripts are not introduced by this policy. Native compiler, CMake, Ninja, and native package managers
 are not selected; document setup only when an implementation stage chooses them.
 
-### SEQ-R3-F1 Windows desktop launch
+### Windows desktop launch
 
 After locked restore and Release build, from the repository root:
 
@@ -56,15 +62,16 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 
 Alternatively launch `src/Seqvium.Desktop/bin/Release/net10.0/Seqvium.Desktop.exe` directly.
 Installed .NET 10 is needed; no global Avalonia template/tool/workload, server or browser is needed.
-Opening the host creates a pristine unnamed document and loads user preferences and the bounded user
-workspace layout. It never starts
-WASAPI/capture/DeviceCheck or changes system audio settings. RU/EN and theme changes persist to the
+Launching creates an empty unnamed project and loads user preferences and workspace layout.
+It stays silent until explicit Play and does not run DeviceCheck, open capture or change system
+audio settings. English/Russian and theme changes persist to the
 platform configuration path in [SETTINGS](SETTINGS.md#implemented-r3-f1-host-preferences).
-The Panes toolbar menu deliberately opens Project Inspector/Appearance; a missing layout leaves them
-hidden. [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns local keyboard paths and
+The Panes toolbar menu opens Project Inspector, Appearance and Node Graph. A missing layout leaves
+these panes hidden; importing a WAV and opening Node Graph selects the imported item's graph.
+[Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns local keyboard paths and
 [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage) owns the separate layout file.
-Use the [F1 report](experiments/SEQ-R3-F1_REPORT.md) and [F2 report](experiments/SEQ-R3-F2_REPORT.md)
-for actual GUI evidence/limitations. The executable/launch command is unchanged by F2.
+The [graph workflow report](experiments/SEQ-R4-F3-B_REPORT.md) records actual desktop interaction
+checks and their limitations. See [TEST_EXECUTION](TEST_EXECUTION.md) for verification commands.
 
 ### SEQ-R2-F2 physical output verification
 

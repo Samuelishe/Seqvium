@@ -1,13 +1,15 @@
-# Documentation index
+# Engineering documentation owner index
 
-Role: Navigation map of canonical document owners.
+Role: Engineering navigation map of canonical document owners for developers and agents.
 Read when: Selecting task context or locating a durable subject.
 Authoritative for: Document discovery and subject-to-owner lookup.
 Not authoritative for: The contracts, status, or evidence in linked documents.
 
-Start with [AGENTS](../AGENTS.md) and [PROJECT_STATE](PROJECT_STATE.md), select the relevant owners,
-then inspect affected files. Read other documents only to answer a concrete dependency or evidence
-question. The [README](../README.md) is the public introduction. Active owners contain current
+For product discovery, first-use steps and task-based navigation, start with the [public README](../README.md)
+or [reader guide](README.md). This index locates engineering owners; it is not the main user guide.
+Agents start with [AGENTS](../AGENTS.md) and [PROJECT_STATE](PROJECT_STATE.md), select the relevant
+owners, then inspect affected files. Developers can use the owner table directly. Read other documents
+only to answer a concrete dependency or evidence question. Active owners contain current
 knowledge; `docs/archive/**` is excluded from normal startup/owner context, generated current-context
 maps and future default RAG/index corpora. Current and historical retrieval are separate classes;
 historical retrieval explicitly opts in only for history/provenance/why/supersession/reconstruction.
@@ -38,7 +40,7 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) | Concrete unresolved questions, risks, validation gaps requiring resolution |
 | [IDEAS](IDEAS.md) | Speculative incubator with no acceptance, schedule, or required resolution |
 | [TECH_DEBT](TECH_DEBT.md) | Compromises actually present in implemented work |
-| [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md) | Ownership rules, conflicts, updates, selective reading, RAG evolution |
+| [DOCUMENTATION_GOVERNANCE](DOCUMENTATION_GOVERNANCE.md) | Audience/editorial policy, ownership rules, conflicts, updates, selective reading, RAG evolution |
 | [THIRD_PARTY](THIRD_PARTY.md) | Apache-2.0 project licensing boundary, actual/candidate dependencies and external-resource provenance |
 | [LICENSE](../LICENSE) | Complete authoritative Apache License 2.0 text for Seqvium-authored work |
 | [Experiment guide](experiments/README.md) | Evidence-report conventions and experiment discovery |
