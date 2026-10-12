@@ -115,11 +115,12 @@ the production audio SDK/topology.
 
 ## Version authority
 
-R3-F1 introduces no repository-wide product version scheme. Its desktop manifest owns `0.0.1-dev`;
-About reads the generated assembly informational version, without an automatically appended Git hash.
-This is an early development identity, not a `0.1.0` product milestone or project schema version.
-Core and project serialization versions are unchanged. Work-package IDs belong in About/evidence, not
-the ordinary workspace. Any later product-wide version/release policy remains an explicit decision.
+[VERSIONING](VERSIONING.md) owns product identity and checkpoint authority. Root
+[Directory.Build.props](../Directory.Build.props) derives production display and numeric metadata
+from four components; About reads the running Desktop's informational version without a Git suffix.
+Tests/tools and the independent probe retain their own identity. Product checkpoints do not change
+project serialization gates or imply a release. Work-package IDs belong in About/evidence, not the
+ordinary workspace.
 
 Prefer repository-declared versions/configuration over undocumented machine-global assumptions.
 The R1 SDK pin/roll-forward policy is declared in root `global.json`; evolve it deliberately when

@@ -8,6 +8,10 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
+The owner-selected initial product alpha is **`0.1.0.0000`** under
+[VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
+metadata. This identity does not close R4 acceptance or declare a production release.
+
 **SEQ-R1, SEQ-R2 and SEQ-R3 are complete / local accepted-ready** within their bounded foundations.
 R2-F1/F2/F3/F4 and R3-F1/F2 are working subdivisions, not new numbered stages. The owner accepts
 R3-F1 and R3-F2's current bounded workspace usability/interaction behavior. SEQ-R3-CLOSE finds no
@@ -95,8 +99,11 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 732 tests pass, zero failures/skips**.
-All 704 prior cases are preserved: the original 652 plus 52 F3-B geometry, editing, target and PCM/lifecycle
+solution build pass with **zero warnings/errors; all 763 tests pass, zero failures/skips**.
+All 732 prior cases are preserved; 31 product version/source/metadata/format-boundary cases are added.
+Actual About rendering is verified in RU/EN and Dark/Light under
+[version verification](TEST_EXECUTION.md#product-version-verification), without audio or release acceptance.
+The prior 704 cases comprise the original 652 plus 52 F3-B geometry, editing, target and PCM/lifecycle
 cases. The cable correction adds 28 nearest/tie/tolerance/label/deletion identity regressions.
 The F3-A suite contains 34 workflow and nine
 presentation/observation cases. [Test execution](TEST_EXECUTION.md#r4-f3-a-desktop-workflow-verification)

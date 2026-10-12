@@ -29,6 +29,7 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [PROJECT_FORMAT](PROJECT_FORMAT.md) | Canonical Save/reopen, rolling recovery, failure-safe managed-media durability, degraded resource access, migration and unknown-data preservation |
 | [CODING_GUIDELINES](CODING_GUIDELINES.md) | C# implementation/refactoring, English source language, async/lifetime, warning baseline |
 | [DEVELOPMENT](DEVELOPMENT.md) | Developer environment, local tools, SDK/version authority, eventual entry points, text consistency |
+| [VERSIONING](VERSIONING.md) | Product identity, owner/Codex component authority, checkpoint gates/ledger, canonical MSBuild source and runtime About display |
 | [TEST_EXECUTION](TEST_EXECUTION.md) | Test topology/quality, proportional verification, future commands, Release gates, evidence tiers |
 | [PROJECT_STATS](PROJECT_STATS.md) | Future structural diagnostics contract: metrics/reports, advisory signals, privacy/exclusions, evolution boundary; no tool exists |
 | [PORTABILITY](PORTABILITY.md) | Windows/Linux/macOS architectural targets, evidence-led release/support scope, desktop/device/distribution and WSLg claim limits, portable boundaries and conditional native distribution |

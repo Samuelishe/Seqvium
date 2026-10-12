@@ -7,6 +7,42 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Product version verification
+
+[VERSIONING](VERSIONING.md) owns identity and checkpoint authority.
+`Desktop/ProductVersionTests` adds 31 deterministic cases: actual production assembly/PE metadata,
+four-digit display syntax and numeric equivalence, About's real `ShellSession.Version` accessor in
+RU/EN and Dark/Light, BUILD 0/1/27/9999, invalid/overflow/unpadded-component refusal, independent metadata
+override rejection, canonical source ownership, and production scope by project name plus location.
+Real MSBuild evaluation covers Core, Windows adapter, Desktop, Tests, DeviceCheck, the independent R0
+probe, and an unrelated artifact with a production-like name. It invokes no restore/build or network;
+these tests require the checkout and pinned SDK, but initialize neither GUI nor physical audio.
+Project JSON cases preserve the independent major/minor/minimum-reader gates, codec writer marker,
+round trip and incompatible-reader refusal. Existing persistence/graph compatibility tests remain intact.
+
+The focused command after the normal Release gates is:
+
+```text
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*ProductVersionTests"
+dotnet msbuild src/Seqvium.Desktop/Seqvium.Desktop.csproj -nologo -property:Configuration=Release -target:ValidateSeqviumProductVersion,GetAssemblyVersion,AddSourceRevisionToInformationalVersion -getProperty:SeqviumDisplayVersion,SeqviumNumericVersion,Version,AssemblyVersion,FileVersion,InformationalVersion,IncludeSourceRevisionInInformationalVersion
+```
+
+SEQ-VERSIONING-R1 local verification (Windows 11 x64, SDK 10.0.401 / runtime 10.0.12): locked restore,
+full Release solution build with zero warnings/errors, and **763 passing tests, zero failures/skips**
+(all 732 previous cases plus 31 version cases). Evaluated properties, generated assembly attributes,
+loaded Release assemblies and PE file/product metadata agree: Desktop/Core/Windows adapter display/
+informational `0.1.0.0000`, assembly/file `0.1.0.0`, with no source-revision suffix. Tests and DeviceCheck
+retain numeric assembly/file identity `1.0.0.0`; the independent probe retains its own props/defaults.
+
+A separate real Win32/Avalonia host exercised the existing production MainWindow/About flyout using
+the built Desktop and isolated preferences/layout. All four RU/EN × Dark/Light combinations rendered
+`0.1.0.0000`, with the native window visible, flyout open and document pristine. The actual popup
+rendering was captured and inspected; captures are local/ignored. Foreground screen capture was
+obstructed and refused; no native pointer/foreground acceptance is inferred. Temporary host resource
+ownership/initial theme synchronization defects were corrected before the accepted capture run;
+they required no production UI change. This bounded About smoke does not accept F3-B visuals or
+resolve F2 physical realtime evidence. No audio session or production release was created.
+
 ## Current and future execution
 
 The R1 [Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj) project uses xUnit v3 3.2.2 with

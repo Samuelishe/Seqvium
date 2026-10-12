@@ -79,7 +79,7 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
 
     public string Version =>
         typeof(ShellSession).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            ?.InformationalVersion ?? "Development build";
+            ?.InformationalVersion ?? throw new InvalidOperationException("Desktop informational version metadata is missing.");
 
     public ShellSession(PreferenceStore store, PreferenceLoad load, ProjectDocument? document = null,
         HostLocalizer? localizer = null)

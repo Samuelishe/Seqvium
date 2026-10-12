@@ -36,6 +36,9 @@ Other documents may summarize and link but must not create competing contracts. 
   lifetime/refactoring rules, and warning policy; subsystem owners retain architecture and behavior.
   [DEVELOPMENT](DEVELOPMENT.md) owns environment, SDK/tool version authority, entry points, and tool
   introduction. Actual package versions remain manifest-owned.
+- [VERSIONING](VERSIONING.md) owns product identity, checkpoint authority/gates and the version ledger;
+  its concise initial Git audit is explicitly retained as the basis for the owner-selected alpha.
+  Product version does not supersede roadmap acceptance or project-format compatibility.
 - [TEST_EXECUTION](TEST_EXECUTION.md) owns test topology/quality, verification, future commands, and evidence
   tiers; [PORTABILITY](PORTABILITY.md) owns platform targets, portable boundaries, and claim limits;
   [CI_CD](CI_CD.md) owns hosted automation evolution and trigger policy. None implies installed tools,

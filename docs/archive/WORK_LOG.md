@@ -1166,3 +1166,23 @@ the original unexplained failed native crossing is preserved, without retroactiv
 [The existing report](../experiments/SEQ-R4-F3-B_REPORT.md#cable-selection-and-crossing-correction--2026-10-12)
 owns evidence/limits. Owner F3-B acceptance remains pending, F2 remains partial, and no R5 or commit/push
 work is included.
+
+## 2026-10-12 — SEQ-VERSIONING-R1 canonical product identity
+
+Implemented the owner-selected initial alpha and checkpoint policy in
+[VERSIONING](../VERSIONING.md), with an actual read-only Git development audit and no retrospective
+version numbering. Four root MSBuild components now derive production display/numeric metadata;
+name/location scope preserves test/tool/probe identity. Desktop removes its temporary override and
+About retains its real assembly accessor. Project format/schema/writer gates and R4 acceptance remain
+unchanged. Entry-point/index/development/README/current-state/test owners now route the policy.
+
+Locked restore and full Release build pass with zero warnings/errors; 31 new deterministic cases
+plus all 732 previous cases pass (763 total, no failures/skips). Evaluated SDK properties, generated
+attributes and production Release DLL/PE metadata agree. Actual Win32 About rendering passes all
+RU/EN × Dark/Light combinations using isolated configuration and a pristine document. Temporary
+host-only resource setup defects were corrected; obstructed/refused foreground captures are not
+accepted evidence. Final popup renders were inspected without claiming native pointer acceptance.
+Disposable host/configuration files are removed; final captures/result remain ignored locally for
+owner review. [Test execution](../TEST_EXECUTION.md#product-version-verification) owns reproducible
+checks and evidence limits. F2 stays partial, F3-B visual owner review stays pending, no production
+release is declared, and no Git commit/push/tag/index mutation is performed.

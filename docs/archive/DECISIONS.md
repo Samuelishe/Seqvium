@@ -1507,3 +1507,19 @@ acoustic assessment and future user-facing settling remain separate open work.
 Current owners: [Audio](../AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence),
 [Node graph](../NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution),
 [Architecture](../ARCHITECTURE.md#r4-f2-execution-and-application-coordination-ownership).
+
+## 2026-10-12 — SEQ-VERSIONING-R1 owner-selected product alpha identity
+
+The owner establishes one product identity after the implemented R1–R3 and current functional R4
+foundations, replacing Desktop's temporary development metadata. The explicit initial alpha selection,
+component/reset authority and version ledger belong to [VERSIONING](../VERSIONING.md). Historical
+commits remain source history without retrospective invented versions. Initialization consumes no
+extra BUILD increment. Codex receives justified substantial PATCH authority, while MAJOR/MINOR remain
+owner-only; BUILD is bounded to one verified compiled/product-resource checkpoint.
+
+Four numeric MSBuild components derive padded informational identity and explicit numeric CLR metadata.
+Scope includes the three existing production assemblies by name/location, excluding tests/tools/probe.
+About reuses its assembly reader; no second runtime constant, packaging or release system is needed.
+Project format compatibility remains independent. This supersedes the temporary identity guidance
+formerly summarized in DEVELOPMENT, not roadmap/ABI/physical acceptance: F2 remains partial and F3-B
+visual owner acceptance remains pending.

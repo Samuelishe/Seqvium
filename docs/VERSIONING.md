@@ -1,0 +1,139 @@
+# Product versioning
+
+Role: Canonical product identity and checkpoint policy.
+Read when: Changing production/test/product resource files, choosing a version checkpoint, or displaying runtime identity.
+Authoritative for: Product syntax, component authority, checkpoint gates, MSBuild source, runtime display, and version ledger.
+Not authoritative for: Roadmap acceptance, project format/schema, SDK/dependencies, ABI, devices, packaging, or release publication.
+
+## Syntax and representations
+
+The product version is `MAJOR.MINOR.PATCH.BUILD`. Display BUILD is exactly four ASCII digits,
+`0000..9999`; other components are canonical nonnegative decimal integers without leading zeros.
+Numeric CLR metadata uses the same four components without padding: `0.1.0.0027` maps to `0.1.0.27`.
+MAJOR/MINOR/PATCH must fit CLR metadata (`0..65534`); BUILD has the stricter product limit.
+Overflow requires a separate owner decision, with no automatic rollover/wrapping. Neither prerelease
+labels nor `+SHA` are part of human-readable product identity.
+
+## Authority and change gates
+
+| Component | Authority | Meaning and evidence |
+| --- | --- | --- |
+| MAJOR | Project owner only | A major mature product generation or explicit release milestone. Never automatically assign `1.0`. |
+| MINOR | Project owner only | A major product/roadmap line with a substantially new capability set. Codex may propose, never independently apply. |
+| PATCH | Owner; Codex under the gates below | A completed, verified substantial standalone user capability or major functional block, judged by product capability rather than diff size or commits. |
+| BUILD | Codex under the gates below | One completed, verified checkpoint with substantial changes to compiled production/test files or product resources within the current capability line. |
+
+PATCH requires a serious demonstrated capability change: for example, a first complete user editor,
+a finished Pattern Workspace, or another independently significant music-creation workflow.
+Applicable deterministic and GUI/device checks must be complete. Explicitly record the capability,
+evidence, reset, and decision in this ledger and the closing report. A dialog, button, cosmetic
+improvement, several fixes, or unfinished stage does not qualify. Roadmap stage IDs are independent
+of PATCH. If the scale is debatable, retain the current line and propose the change to the owner.
+Delegated PATCH authority grants neither MAJOR/MINOR authority nor permission to start later stages.
+
+BUILD may cover bug fixes, interface refinements, meaningful technical improvements, and new compiled
+regressions. It is never a compile or Git commit counter. Do not increment for intermediate edits,
+failed/incomplete attempts, ordinary `dotnet build`, pure documentation/research, experiments that do
+not change the product, or report corrections. Classify the final checkpoint, not each file.
+Version edits alone do not create a checkpoint. Commit/tag/release authorization is separate.
+
+One completed checkpoint consumes at most one version change. On MAJOR increase, reset subordinate
+components; on MINOR increase, reset PATCH and BUILD; on PATCH increase, reset BUILD to `0000`.
+Do not add another BUILD bump in that task. Do not reuse an earlier accepted identity.
+Acceptance/evidence gaps cannot be resolved merely by assigning a version.
+
+Future tasks inspect the current source/ledger, classify the completed change, and retain the version
+if no gate applies. Otherwise apply the authorized component/reset once, validate, and append one
+ledger entry with checkpoint ID, previous/new identity, capability or correction, evidence and limits.
+If verification fails, finish the checkpoint before claiming its new identity as accepted.
+
+## Storage and runtime display
+
+Root [Directory.Build.props](../Directory.Build.props) defines exactly four numeric components:
+`SeqviumVersionMajor`, `SeqviumVersionMinor`, `SeqviumVersionPatch`, and `SeqviumVersionBuild`.
+`SeqviumDisplayVersion` pads BUILD automatically; `SeqviumNumericVersion` derives its numeric equivalent.
+Change components only under the gates above. Verification-only MSBuild global-property overrides
+do not change the canonical source or ledger.
+
+Production identity applies explicitly to `src/Seqvium.Core`, `src/Seqvium.Audio.Windows`, and
+`src/Seqvium.Desktop`, matching both project name and location. Tests, DeviceCheck, unrelated artifacts,
+and the independent R0 probe retain their SDK/default identity. Future production assemblies require
+an explicit scope update; a tool does not acquire product identity merely by its project name.
+
+| MSBuild property | Derived value |
+| --- | --- |
+| `SeqviumDisplayVersion`, `InformationalVersion` | Padded display representation |
+| `SeqviumNumericVersion`, `Version`, `AssemblyVersion`, `FileVersion` | Numeric four-component representation |
+| `VersionPrefix` | Numeric MAJOR.MINOR.PATCH |
+| `IncludeSourceRevisionInInformationalVersion` | `false` for production |
+
+SDK/NuGet `Version` uses numeric representation because package tooling may normalize leading zeros.
+CLR attributes are assigned explicitly rather than inferred from `Version`; informational identity
+preserves padding. This convention does not declare SemVer compatibility or introduce a package/
+release system. No versioning dependency, Git-derived counter, bump-on-build automation, packaging,
+or release workflow is added. The validation target rejects invalid components and independent
+metadata overrides before assembly generation/compilation.
+
+The existing About flyout binds to
+[ShellSession.Version](../src/Seqvium.Desktop/Presentation/ShellSession.cs), which reads the running
+Desktop assembly's `AssemblyInformationalVersionAttribute`. It stores no second version and refuses
+missing metadata rather than inventing an identity. RU/EN and Dark/Light do not affect the value.
+Toolbar/dialogs gain no permanent version labels. Future diagnostics/distribution identity must
+derive from this source or runtime metadata rather than independent constants.
+
+## Initial alpha basis and historical audit
+
+The owner explicitly selects **`0.1.0.0000`** as the first alpha baseline. R1–R3 provide a working
+canonical musical model, WAV import, durable project lifecycle, offline/realtime sampler, and
+first-party Avalonia Desktop. Current R4-F1/F2/F3-A/F3-B add real editable Source/Gain/Mix/Output
+graphs, independent two-source Mix, Undo/Redo, Save/reopen, and bounded GUI/audio smoke evidence.
+This is a substantial implemented foundation for musical work, with further roadmap capability ahead.
+
+R4 remains in progress/partial. R4-F2 physical realtime acceptance remains partial with unresolved
+starvation evidence. F3-A is conditionally accepted for continued development; F3-B owner canvas/
+interaction visual acceptance remains pending. Alpha identity claims neither complete R4, stable ABI,
+public/production release, nor resolved starvation. [Current state](PROJECT_STATE.md) owns status.
+
+Read-only Git audit baseline: `master`, `ba4b98808495d19ee520852573484a88ca7ba86e`.
+The following unique Git revisions describe actual development, not retrospectively numbered versions.
+Classification uses changed paths as well as commit subjects. Accompanying tests/evidence do not
+create separate milestones. Bounded local accepted-ready scope differs from full acceptance.
+
+| Exact Git references / period | Development and acceptance distinction |
+| --- | --- |
+| KB-R0–R21: `ccba50f` through `edad470` (2026-10-06–08) | Documentation/KB, architecture/UX contracts, roadmap, governance and repository policy; no compiled production capability or numbered product checkpoint. |
+| R0: `aa8d7dc` | Isolated managed/native realtime experiment and evidence; narrow/partial, no permanent production engine/ABI selection. |
+| R1: `43d613a` | Core canonical music/documents/time/history/persistence, deterministic tests and build foundation; bounded local accepted-ready R1. |
+| R2-PRE: `61d93d5` | Documentation/evidence review of architecture boundaries, not a new product capability. |
+| R2-F1: `0ab5513`; organization `c7b912a`; decode fix `4b709df` | Durable WAV/media and offline Core sampler plus tests; source organization and verified redundant-decode correction remain within that foundation. |
+| R2-F2/F3/F4: `f9c04bb`, `9c48322`, `95888ae` | Core realtime execution, Windows adapter/harness, transient audition/reuse and independent endpoint intent; tests and distinct physical evidence. R2 is bounded local accepted-ready, not universal realtime/platform acceptance. |
+| R3-F1/F2: `88f5389`, `db51a22`; fixes `f20b44f`, `6eafa71`; closure `6d29ebc` | Desktop, RU/EN/themes, workspace/layout and regressions. Documentation-only closure records owner acceptance of bounded R3, not new compiled functionality. |
+| R4-PRE: `c7b056f` | Accepted bounded graph implementation strategy in documentation, not implementation or completed R4. |
+| R4-F1: `5b34d5b`; guard `95cf3b9` | Core graph intent/diagnostics/edits and graph-aware JSON gates with tests; bounded local accepted-ready F1. |
+| R4-F2: `e6e258d`; guard/investigation `5dcd10b`; evidence `021f839` | Core graph PCM/convergence, adapter/tests/harness; final scheduler evidence commit is documentation-only. Functional implementation exists, physical acceptance remains partial. |
+| R4-F3-A: `b4ac44a`; startup fix `836fcfc` | Desktop import/transport/document workflow and tested partial-startup ownership correction; conditional owner acceptance for continued development. |
+| R4-F3-B: `f8ce9bd`; crossing fix `ba4b988` | Editable Desktop graph/two-source workflow, small canonical boundary operation, tests and GUI/audio evidence; nearest-cable correction brings the prior suite to 732. Visual owner acceptance is pending. |
+
+Historical R0–R4 commits do not acquire fictional `0.0.0.0001` and later identities. The former
+Desktop-only `0.0.1-dev` was temporary metadata, not an accepted product version ledger.
+Git owns source history; detailed work/decisions remain in the [cold archive](archive/INDEX.md),
+retrieved only for explicit historical tasks.
+
+## Version ledger
+
+| Version | Checkpoint | Decision, evidence and limits |
+| --- | --- | --- |
+| `0.1.0.0000` | SEQ-VERSIONING-R1 | Explicit owner-selected initial alpha after the implemented foundations audited above; replaces temporary Desktop identity. Canonical/evaluated MSBuild, Release binary, About and regression checks are owned by [test execution](TEST_EXECUTION.md#product-version-verification). Does not close R4/F2/F3-B acceptance or announce a release. |
+
+Initialization stays at BUILD `0000`, including its versioning implementation/tests; it does not
+consume `.0001`. A later separate verified product-polish checkpoint may become `0.1.0.0001`.
+
+## Compatibility boundaries
+
+Product version does not determine `.seqvium` format acceptance, graph schema/node state versions,
+extension ABI, .NET SDK/runtime, dependencies/packages, device IDs, or audio format.
+[Project format](PROJECT_FORMAT.md) retains independent major/minor/minimum-reader gates and unknown
+data preservation. The codec writer marker `0.2.0-r2-f1` identifies its implementation lineage,
+not the current product. This checkpoint leaves writer metadata, JSON shape, reader 1.1 requirements,
+canonical/document identity and persistence semantics unchanged. Future codec changes require an
+independent compatibility decision; product PATCH/BUILD are never reader gates.

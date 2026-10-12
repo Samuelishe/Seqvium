@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Avalonia.Media;
+using System.Reflection;
 using Seqvium.Core;
 using Seqvium.Desktop.Presentation;
 using Xunit;
@@ -88,7 +89,9 @@ public sealed class HostPresentationTests
         Assert.Equal(24, HostMetrics.Values["Control.Height"]);
         using var directory = new TemporaryDirectory();
         using var session = new ShellSession(new(directory.File("prefs.json")), new(new(), false));
-        Assert.Equal("0.0.1-dev", session.Version);
+        Assert.Equal(typeof(ShellSession).Assembly
+            .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()!.InformationalVersion,
+            session.Version);
         Assert.Equal("EN", session.LanguageCode);
     }
 

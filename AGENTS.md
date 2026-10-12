@@ -49,6 +49,7 @@ All routes start with current state; add these owners as needed:
 | Project serialization                                     | [PROJECT_FORMAT](docs/PROJECT_FORMAT.md); extensions for opaque state                                             |
 | C# implementation / refactoring                           | [CODING_GUIDELINES](docs/CODING_GUIDELINES.md), architecture + affected owner                                     |
 | Development environment / local tooling / SDK             | [DEVELOPMENT](docs/DEVELOPMENT.md)                                                                                |
+| Product version / checkpoint classification / About identity | [VERSIONING](docs/VERSIONING.md); test execution for metadata verification                                      |
 | Tests / verification                                      | [TEST_EXECUTION](docs/TEST_EXECUTION.md) + affected owner and actual test setup                                   |
 | ProjectStats / structural repository diagnostics          | [PROJECT_STATS](docs/PROJECT_STATS.md), development and test execution for introduction/verification              |
 | Portability / platform-specific work                      | [PORTABILITY](docs/PORTABILITY.md) + affected architecture owner                                                  |
@@ -67,6 +68,10 @@ All routes start with current state; add these owners as needed:
 Keep proposals distinct from accepted constraints and implemented behavior. Add an abstraction only
 for concrete ownership or testability needs. Foundation documentation is not permission to implement
 future roadmap stages. Experiments provide evidence; they are not production architecture.
+
+For production/test/product resource changes, apply [versioning](docs/VERSIONING.md) checkpoint gates.
+Codex may decide a justified verified PATCH or BUILD; MAJOR/MINOR always require the owner. Read the
+current source/ledger, classify the completed checkpoint once, and record any bump and evidence there.
 
 Documentation changes require relative-link, ownership, decision-status, scope, and diff checks.
 Code changes later require focused builds/tests and relevant runtime evidence; inspect the actual

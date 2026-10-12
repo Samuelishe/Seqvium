@@ -34,6 +34,10 @@ These are planned capabilities and design directions:
 
 ## Current status
 
+The owner-selected initial product alpha is **`0.1.0.0000`**; About displays the running assembly's
+version. [Versioning](docs/VERSIONING.md) owns identity and checkpoint policy. This is not a production
+release or a declaration of completed R4.
+
 **A runnable desktop and bounded visual Node Graph editor now exist.** SEQ-R1 provides a .NET 10 canonical
 musical
 model, document edits/Undo/Redo and versioned JSON Save/reopen, with a managed test suite.
