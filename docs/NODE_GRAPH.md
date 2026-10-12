@@ -502,6 +502,19 @@ nothing. Port preview/refusal checks direction, supported capability/declaration
 single occupied inputs and fan-out. Cycles and disconnected intent may commit and remain diagnosed
 and savable. Eligibility and persistent blockers come from `GraphDiagnostics`, not canvas heuristics.
 
+Node creation is enabled by an available explicit editing target and an idle, open workflow, independently
+of preparation eligibility. The creation menu offers Source/Gain/Mix/Output in Stereo L/R or Mono;
+Mix leaves specify 2–8 inputs. A second Output and the node-count limit have per-action explanations,
+without disabling otherwise available Source/Gain/Mix repair. Empty or unsupported contextual choices
+are disabled with concise reasons. A successful edit that leaves invalid intent is not reported as
+a refused action; canonical diagnostics continue to describe playback blockers.
+
+Menu leaves capture lifecycle/generation/attachment plus a dismissal identity, including Delete's
+selected element IDs. Dismissal, pane cancellation, a changed target, replacement, Close or an
+intervening canonical edit invalidates the retained action. Execution rechecks the captured basis and
+reports a localized refusal; it never redirects an old menu to the current selection/document.
+[Workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane) owns opening, placement and keyboard lifecycle.
+
 A drag retains only a proposed position and lifecycle/generation/attachment basis. Hundreds of moves
 publish nothing; release validates that basis and starting coordinate, then makes one Edit. Escape,
 capture loss, competing pane operations, workspace reflow or changed observation cancel the proposal.

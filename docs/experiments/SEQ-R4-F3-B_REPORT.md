@@ -254,3 +254,122 @@ TRX name-inventory comparison confirms all 704 baseline cases are present among 
 remaining connection records, exact restored topology and unchanged nodes. Documentation checks cover
 all five changed Markdown files and 272 relative links with no file/anchor/duplicate-heading errors;
 ownership, decision status, scope and diff whitespace checks pass.
+
+## Context menu lifecycle and node creation repair
+
+SEQ-R4-F3-B-UX-F1 starts from clean master HEAD
+`25677832b908350c88dc51137034ad55f4982df4`, product `0.1.0.0000`, with 838 tests.
+The owner reported an ordinary Desktop usability blocker, not an intentional musical limitation.
+This working-tree repair is complete and verified locally; F3-B owner acceptance remains pending,
+F2 remains partial, and R5/DSP/WASAPI/schema/media lifetime/geometry/colors are unchanged.
+
+### Reproduction and confirmed event ordering
+
+Windows 11 Pro x64 10.0.26300, 96 DPI, SDK 10.0.401/runtime 10.0.12, Avalonia 12.1.3,
+Release production MainWindow/GraphPaneContent/GraphCanvas and actual workflow ran in a real Win32
+window under a local launcher with isolated preferences/layout. The launcher opened the prior
+project-authored quiet WAV fixture read-only; it implements neither menu routing nor graph commands,
+never requests Play, and never saves over that fixture. It observes routed events/stacks and canonical
+snapshots, while a separate guarded Windows `mouse_event`/`keybd_event` script supplies OS input.
+UI Automation sets language/theme; menu navigation and final creation use native pointer input.
+
+Before production edits, native right press opened the menu (`IsOpen=true`, three nodes, Undo=0).
+Release made it disappear (`IsOpen=false`, same graph/history). The exact observed sequence was:
+
+1. PointerPressed tunnel: right=true, menu=false.
+2. GraphCanvas.Pressed → MenuRequested → GraphPaneContent.OpenMenu → ContextMenu.Open; menu=true.
+3. PointerReleased tunnel, then Control.OnPointerReleased → ContextRequested; menu was already open.
+4. MouseDevice.MouseUp → Pointer.CaptureLost → WorkspacePane's bubbled PointerCaptureLost handler
+   → WorkspacePane.CancelGesture → GraphPaneContent.CancelGesture → ContextMenu.Close.
+
+The stack proves that child implicit capture loss caused the close. It does **not** prove that
+Avalonia's attached ContextRequested handler toggled the menu closed: its Open path saw an already
+open menu. Opening on press nevertheless put one click through two context-opening paths.
+The baseline toolbar failure was not independently traced; its repaired behavior is verified below.
+
+Rider debugger launch was attempted first. Breakpoint binding returned "Didn't find the associated
+module"; a manual pause returned an empty stack. Agent breakpoints/session were removed/stopped;
+user breakpoints were preserved. The fallback collected real event ordering and close stacks in the
+separate GUI host before any production behavior edit.
+
+### Implemented repair and deterministic verification
+
+Right press retains hit selection/focus and opens nothing. A single handled Avalonia ContextRequested
+path opens the menu on right release or Apps/Shift+F10 key release. The canvas attaches its menu once,
+with its own handler consuming requests before the framework handler. Canvas/pane capture-loss
+handlers cancel only their own explicit pointer gestures. Escape closes the whole graph menu and
+returns canvas focus; standard menu interaction handles nested hover, left action and outside dismissal.
+Toolbar Add/Actions use their button as placement target; creation coordinates still use canvas centre.
+No Win32-specific workaround was added to production.
+
+Creation availability uses editing target, Busy and Closed, independently of preparation eligibility.
+Source/Gain/Mix remain available in incomplete intent; Output alone explains the existing single-Output
+refusal. Node limits, empty choices and unsupported connection/binding choices expose reasons.
+Disabled toolbar tooltips remain accessible. Source creation stays unbound; no fake Source, automatic
+Mix or hidden repair is introduced. The captured menu action validates lifecycle/generation/attachment
+and dismissal identity before execution; Delete captures its element IDs instead of using later selection.
+Successful edits retain canonical blockers rather than reporting those playback diagnostics as refusal.
+All commands keep existing ProjectDocument transactions and Undo grouping.
+
+`GraphMenuTests` adds 29 no-GUI/device cases: all 20 type/layout/input-count leaves, exact creation
+and one-edit Undo, RU/EN Output refusal, processing limits, Busy/no-target/Closed and cancelled,
+intervening-edit, same-generation target-switch and document-replacement actions. All prior test source
+files are unchanged. Full MTP results contain 838 prior cases plus these 29, all passing.
+
+An initial test draft instantiated full pane icons without a GUI render service and failed at test
+setup. It was replaced with tests of the same captured command session used by real menu leaves,
+keeping the normal suite's no-platform boundary. Standalone unrooted routed-pointer drafts were also
+removed; they were not native evidence. A subsequent assertion exposed that WorkflowState.Detail
+contains playback diagnostics after a successful incomplete edit; action feedback now distinguishes
+actual workflow failure from those canonical blockers. These intermediate failures are not passing runs.
+
+### Native smoke matrix and lifecycle checks
+
+Every row below completed native right press/release, two levels of hover, left-click
+Create node → Gain → Stereo L/R, visible new Gain, exact Undo restoration, a native click on `+`,
+a menu beside that button, left-click Mono Gain creation, Undo, Apps, Shift+F10, Escape/focus and
+outside-click dismissal. Opening alone leaves canonical graph/history unchanged.
+
+| Language | Theme | Native menu/creation/Undo/toolbar/keyboard result |
+| --- | --- | --- |
+| EN | Dark | Passed |
+| EN | Light | Passed |
+| RU | Dark | Passed |
+| RU | Light | Passed |
+
+Screenshots show the actual created node, nested submenu and toolbar placement; selected Dark/Light
+and RU captures were inspected. No synthetic routed events substitute for this mouse sequence.
+On final `0.1.0.0001` binaries, an additional native node/port/connection right-click check verifies
+correct selected IDs, menu survival and unchanged graph/history. A later optional full-sequence repeat
+stopped before input when foreground belonged to another process; it sent no mouse/key input there.
+The completed four-row matrix and final selection check remain distinct passing evidence.
+
+Controlled actual-window checks additionally invoke real WorkspaceHost collapse/hide/reopen actions:
+menus close, content reopens, target/canonical graph/history survive. A retained real MenuItem invoked
+after an intervening Gain edit or same-ID project reopen changes neither the new snapshot nor Undo.
+These lifecycle checks use controlled host actions/routed MenuItem clicks, not native user gestures;
+the deterministic same-generation target-switch case separately checks target safety.
+All native input checks verify the task process's foreground immediately before each event and stop
+on failure. No audio output is opened, and no user configuration or source project is overwritten.
+
+### Final gates, version and review limits
+
+`dotnet restore Seqvium.sln --locked-mode`, `dotnet build Seqvium.sln -c Release --no-restore` and
+`dotnet test --solution Seqvium.sln -c Release --no-build --no-restore` pass: zero warnings/errors,
+**867 tests, zero failures/skips**. TRX confirms 838 existing and 29 new cases; all 732 earlier crossing
+baseline names also remain. Evaluated and built production metadata use display/informational
+`0.1.0.0001`, CLR/file `0.1.0.1`, without a source-revision suffix. One BUILD checkpoint is justified;
+PATCH remains 0. This is no release or owner acceptance of F3-B/F2/R4.
+
+Owner review: open an existing item's graph, right-click/release, hover Create node → Gain → Stereo
+L/R and left-click; inspect the new node, Undo, then use `+`. Confirm Apps/Shift+F10 and Escape, and
+repeat after collapsing/hiding/reopening or switching documents. Wider DPI/other OS, native crossing
+Delete acceptance and F2 pressure remain outside this bounded menu repair.
+
+Ignored `.artifacts/seq-r4-f3-b-ux-f1/` retains the local host/input/safety sources, event/close stacks,
+compact JSON observations, final/failing TRX and screenshots for reproduction and owner review.
+They are task-local verification material, not product resources or files promised in every clone;
+prior artifacts/user work remain untouched. Automatic permission review rejected deletion of the
+task-local launcher bin directory with `blocked by policy`; bin/obj are retained locally too.
+Required product builds/runtime and permanent tests are retained. No commit/push/tag, staging
+or Git-history mutation occurred.

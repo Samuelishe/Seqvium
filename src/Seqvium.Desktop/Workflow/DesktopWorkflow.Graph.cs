@@ -36,9 +36,7 @@ internal sealed partial class DesktopWorkflow
         string layout = GraphBuiltIns.Stereo, int inputs = 2) => EditGraphAsync(basis, "Create graph node",
         (edit, attachment, graph) =>
         {
-            if (graph.Nodes.Length >= GraphDiagnostics.MaximumNodes) throw new InvalidOperationException(GraphReasons.ProcessingLimit);
-            if (type == GraphBuiltIns.Output && graph.Nodes.Any(n => n.Type == type))
-                throw new InvalidOperationException("Graph.OneOutput");
+            if (GraphCreationRules.Refusal(graph, type) is { } reason) throw new InvalidOperationException(reason);
             var node = edit.AddGraphNode(graph.Id, type, position, layout, inputs);
             if (type == GraphBuiltIns.Output) edit.SetGraphOutput(attachment.Id, node.Id);
             if (type == GraphBuiltIns.Mix) edit.SetContextMix(attachment.ContextId, true);

@@ -64,11 +64,22 @@ Retained content unsubscribes on host disposal and drops old document observatio
 Pane gestures remain header/boundary-owned. Canvas owns middle/Space+left/background pan, wheel zoom
 around pointer (0.35–2), node and port drag, selection and context actions. Home frames; +/- zoom,
 Alt+Tab selects successive nodes, arrows nudge (Shift = ten units), Delete removes selection and
-Shift+F10 opens context actions. Context menus also select nodes/cables and create/bind/connect/
-disconnect for keyboard access. Text fields own local input/Undo; Gain commits with Enter/check.
+Apps/Shift+F10 opens context actions through Avalonia's context request on key release. Context menus
+also select nodes/cables and create/bind/connect/disconnect for keyboard access. Text fields own local
+input/Undo; Gain commits with Enter/check.
 Canvas focus returns after graph actions; pane-actions focus retains R3 geometry chords. Competing
 pane actions, reflow, deactivation, Escape and capture loss cancel canvas proposals. Viewport and
 selection are session presentation, absent from musical history and user layout files.
+Right press focuses/selects the canvas hit without opening a menu. The single handled ContextRequested
+path opens at the pointer after release, or at canvas centre for a keyboard request. The menu stays
+open for pointer movement, nested hover and left-click selection; action, Escape, outside click,
+deactivation or explicit pane/target/document cancellation closes it. Escape closes the whole graph
+menu and returns safe canvas focus. Toolbar Add and Actions anchor their menu below their own button;
+toolbar-created nodes retain the existing canvas-centre creation position. Canvas and pane capture-loss
+handlers cancel only their own captured gestures, not ordinary child/button implicit capture release.
+Opening/dismissing menus changes no canonical state or history; graph commands retain existing Undo
+transactions. The [repair evidence](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair)
+separates native input from deterministic commands and controlled actual-window lifecycle checks.
 Old two-pane version-1 layouts remain readable; missing graph entries start hidden.
 [Node graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor) owns editing and DSP semantics.
 

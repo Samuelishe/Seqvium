@@ -488,6 +488,13 @@ Normal audio preferences select logical input/output devices/endpoints under
 
 ## Graph state and recoverable failures
 
+Contextual node creation must remain usable for repairing incomplete canonical intent. A normal right
+click opens a persistent, navigable menu; users need not hold the button to reach nested actions.
+Toolbar creation opens beside its initiating control. Explain each unavailable action without blocking
+unrelated available creation. [Workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane) owns the implemented
+pointer/keyboard lifecycle; [Node graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor) owns target
+safety and canonical command rules.
+
 The editable graph is canonical; last-valid derived execution may continue in the current session
 during candidate preparation/validation under
 [NODE_GRAPH](NODE_GRAPH.md#editable-graph-and-audio-execution). When editable and executing graphs

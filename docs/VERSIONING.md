@@ -124,9 +124,10 @@ retrieved only for explicit historical tasks.
 | Version | Checkpoint | Decision, evidence and limits |
 | --- | --- | --- |
 | `0.1.0.0000` | SEQ-VERSIONING-R1 | Explicit owner-selected initial alpha after the implemented foundations audited above; replaces temporary Desktop identity. Canonical/evaluated MSBuild, Release binary, About and regression checks are owned by [test execution](TEST_EXECUTION.md#product-version-verification). Does not close R4/F2/F3-B acceptance or announce a release. |
+| `0.1.0.0001` | SEQ-R4-F3-B-UX-F1 | One completed Desktop behavior repair: context-request menu lifecycle, capture ownership, usable button-anchored node creation and stale-action guards. Locked restore, full Release build (zero warnings/errors), 867 passing tests preserving all 838 prior cases, and guarded Windows native RU/EN × Dark/Light menu/creation/Undo/keyboard evidence under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair). BUILD only; PATCH stays 0, no new musical capability, F3-B owner acceptance pending, F2 partial, no release/commit/tag. |
 
-Initialization stays at BUILD `0000`, including its versioning implementation/tests; it does not
-consume `.0001`. A later separate verified product-polish checkpoint may become `0.1.0.0001`.
+Initialization stayed at BUILD `0000`, including its versioning implementation/tests. The separate
+verified Desktop repair above consumes `.0001`; intermediate edits/builds consumed no increments.
 
 ### SEQ-PROJECT-STATS-R1 tooling checkpoint
 

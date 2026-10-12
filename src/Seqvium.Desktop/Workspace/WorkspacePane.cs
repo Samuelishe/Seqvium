@@ -99,7 +99,9 @@ internal sealed class WorkspacePane : Border, IDisposable
         AddHandler(GotFocusEvent, (_, _) => host.Activate(Id));
         PointerMoved += Move;
         PointerReleased += End;
-        PointerCaptureLost += (_, _) => CancelGesture();
+        // Child controls also release Avalonia's implicit mouse capture after ordinary clicks.
+        // Only loss of this pane's own geometry capture cancels its gesture/content.
+        PointerCaptureLost += (_, e) => { if (_pointer == e.Pointer) CancelGesture(); };
         // Consume local geometry chords before standard Shift+Arrow focus navigation.
         AddHandler(KeyDownEvent, PaneKeyDown, RoutingStrategies.Tunnel);
     }

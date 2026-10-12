@@ -44,7 +44,15 @@ internal sealed class GraphCanvas : Control
         Focusable = true; ClipToBounds = true;
         AutomationProperties.SetAutomationId(this, "Graph.Canvas");
         PointerPressed += Pressed; PointerMoved += Moved; PointerReleased += Released;
-        PointerCaptureLost += (_, _) => CancelGesture();
+        PointerCaptureLost += (_, e) => { if (_pointer == e.Pointer) CancelGesture(); };
+        ContextRequested += (_, e) =>
+        {
+            e.Handled = true;
+            if (!_command.IsCompleted) return;
+            Focus();
+            var point = e.TryGetPosition(this, out var position) ? Point(position) : new GraphPoint(Bounds.Width / 2, Bounds.Height / 2);
+            MenuRequested?.Invoke(_editor.Viewport.ToGraph(point));
+        };
         KeyDown += Keys; KeyUp += (_, e) => { if (e.Key == Key.Space) _space = false; };
         GotFocus += (_, _) => InvalidateVisual();
         LostFocus += (_, _) => { _space = false; InvalidateVisual(); };
@@ -190,8 +198,9 @@ internal sealed class GraphCanvas : Control
         Focus(); var point = Point(e.GetPosition(this)); var properties = e.GetCurrentPoint(this).Properties;
         if (properties.IsRightButtonPressed)
         {
+            CancelGesture();
             _editor.Select(Hit(GraphPointAt(e))); SelectionChanged?.Invoke();
-            MenuRequested?.Invoke(GraphPointAt(e)); InvalidateVisual(); e.Handled = true; return;
+            InvalidateVisual(); e.Handled = true; return;
         }
         if (!properties.IsLeftButtonPressed && !properties.IsMiddleButtonPressed) return;
         CancelGesture(); Feedback?.Invoke(null);
@@ -276,8 +285,6 @@ internal sealed class GraphCanvas : Control
             InvalidateVisual(); e.Handled = true; return;
         }
         if (e.Key == Key.Delete) { await DeleteSelectedAsync(); e.Handled = true; return; }
-        if (e.Key == Key.Apps || e.Key == Key.F10 && e.KeyModifiers == KeyModifiers.Shift)
-        { MenuRequested?.Invoke(_editor.Viewport.ToGraph(new(Bounds.Width / 2, Bounds.Height / 2))); e.Handled = true; return; }
         if (e.Key == Key.Tab && e.KeyModifiers == KeyModifiers.Alt && _editor.Graph is { } graph)
         {
             var nodes = graph.Nodes.ToArray(); int index = Array.FindIndex(nodes, n => n.Id == _editor.SelectedNode);

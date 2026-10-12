@@ -1207,3 +1207,15 @@ Product remains `0.1.0.0000`: developer tooling adds no musical capability and c
 code/resources. The compiled-test BUILD ambiguity and minimal proposed policy clarification remain
 explicit in [VERSIONING](../VERSIONING.md#seq-project-stats-r1-tooling-checkpoint). No PATCH, disputed
 BUILD, R5, visual polish, engine change or Git history/index mutation is included.
+
+## 2026-10-12 — SEQ-R4-F3-B-UX-F1
+
+Reproduced premature graph-menu opening and release-time dismissal with guarded native Windows input;
+close stacks identify bubbled child implicit capture loss in WorkspacePane. Repaired context-request
+and capture ownership, button placement, creation availability/refusal feedback and expired menu actions.
+All 838 prior tests are preserved among 867 passing Release cases, with 29 new deterministic regressions;
+locked restore/build have zero warnings/errors. RU/EN × Dark/Light native hover/creation/Undo/toolbar/
+keyboard checks pass; actual-window collapse/hide/reopen and stale/replacement checks pass separately.
+Recorded one BUILD increment to `0.1.0.0001`, no PATCH. F3-B owner acceptance remains pending and F2
+partial; no R5, DSP/backend/schema/media/geometry/color change or commit/push/tag. Detailed findings and
+limits remain in the [F3-B report](../experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair).

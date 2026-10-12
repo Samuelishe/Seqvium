@@ -8,7 +8,8 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The owner-selected initial product alpha is **`0.1.0.0000`** under
+The current product alpha is **`0.1.0.0001`**, one verified BUILD repair checkpoint on the
+owner-selected `0.1.0` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
 
@@ -88,6 +89,9 @@ item, with shared-Pattern refusal and atomic boundary extension. Canonical topol
 Save/reopen; persistent element/status diagnostics distinguish invalid intent and last-valid playback.
 F2 coordinator/DSP/backend remain unchanged. [Graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor),
 [workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane) and [evidence](experiments/SEQ-R4-F3-B_REPORT.md) own details.
+Graph context menus open on Avalonia context requests, survive right-button release and support nested
+pointer/keyboard actions. Toolbar creation opens beside its button; incomplete intent remains editable,
+with per-action refusal explanations and dismissal/basis guards for retained menu actions.
 
 ## Current focus
 
@@ -103,7 +107,11 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 838 tests pass, zero failures/skips**.
+solution build pass with **zero warnings/errors; all 867 tests pass, zero failures/skips**.
+All 838 prior cases remain; 29 menu command/creation/target regressions run without a GUI or device.
+The [menu repair evidence](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair)
+records native right press/release, nested hover/creation, Undo, toolbar creation and keyboard checks
+in RU/EN × Dark/Light, plus actual-window retained-pane and stale-action checks.
 All 763 prior cases are preserved; 75 synthetic repository/CLI/format/privacy cases cover ProjectStats.
 The focused tooling cases and actual CLI also run under Ubuntu 24.04 / WSL2 Linux x64, runtime 10.0.12;
 [tool verification](TEST_EXECUTION.md#projectstats-verification) owns scope and SDK/build limits.

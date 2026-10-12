@@ -148,6 +148,22 @@ acceptance; high/mixed DPI, screen readers and Linux/macOS runtime remain missin
 
 ## R4-F3-B graph editor verification
 
+`Desktop/GraphMenuTests` adds 29 deterministic regressions for the actual captured menu command path:
+all 20 Source/Gain/Mix/Output layout/input-count choices in incomplete intent, exact node/position/ports,
+unbound Source and designated Output, one-edit Undo restoration, per-type Output refusal with RU/EN
+labels, processing limits, cancellation/generation/target/replacement/Closed safety and Busy/no-target
+availability. Tests initialize no GUI platform or output device. Existing 838 cases are preserved.
+Run after Release build with `--filter-class "*GraphMenuTests"` on the existing MTP/xUnit command.
+
+SEQ-R4-F3-B-UX-F1 additionally reproduces the defect with guarded Windows mouse input and records
+right press/release, nested hover, Stereo Gain creation, exact Undo, button-anchored Mono Gain creation,
+Apps/Shift+F10, Escape/focus and outside dismissal in RU/EN × Dark/Light. The
+[report](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair) distinguishes
+this native sequence from controlled actual-window pane/replacement checks and no-platform regressions.
+Locked restore, full Release build and all 867 tests pass with zero warnings/errors/failures/skips.
+Final production metadata displays `0.1.0.0001` (CLR/file `0.1.0.1`); this repair does not accept F3-B
+for the owner or resolve F2 starvation. Routed synthetic events alone are not native mouse evidence.
+
 `Desktop/GraphCanvasGeometryTests`, `GraphEditorSessionTests` and `GraphEditorWorkflowTests` add
 52 deterministic cases over the existing 652-test baseline. They cover transform/anchor/zoom/pan/frame,
 node/port/parameter/cable hit precedence and preview geometry, Mix positions, typed refusal/fan-out,

@@ -40,11 +40,14 @@ internal sealed class GraphPaneContent : Grid, IDisposable
     private Id<GraphNode>? _parameterNode;
     private GraphEditBasis? _parameterBasis;
     private long _generation = -1;
+    private readonly GraphMenuSession _menuSession;
+    internal Task PendingMenuCommand { get; private set; } = Task.CompletedTask;
 
     public GraphPaneContent(ShellSession shell, DesktopWorkflow workflow, GraphEditorSession editor,
         Func<GraphEditBasis, GraphPosition, Task> import)
     {
         _shell = shell; _workflow = workflow; _editor = editor; _import = import;
+        _menuSession = new(editor, workflow);
         RowDefinitions = new("Auto,*,Auto,Auto");
         var toolbar = new Grid { ColumnDefinitions = new("*,Auto"), Margin = new(4, 2), MinHeight = 28 };
         toolbar.Children.Add(_target);
@@ -53,11 +56,12 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         Button Action(string key, string icon, Action operation)
         {
             var button = new Button { Classes = { "shell", "command" } };
+            ToolTip.SetShowOnDisabled(button, true);
             button.Content = HostIcons.Create(icon, button, 16); button.Click += (_, _) => operation();
             AutomationProperties.SetAutomationId(button, "Graph." + key); _buttons.Add(key, button);
             commands.Children.Add(button); return button;
         }
-        Action("Add", "Add", () => OpenMenu(Center(), additionsOnly: true));
+        Action("Add", "Add", () => OpenMenu(Center(), additionsOnly: true, anchor: _buttons["Add"]));
         Action("AddWav", "Import", async () =>
         {
             CancelGesture();
@@ -65,12 +69,21 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         });
         Action("Fit", "Fit", () => _canvas!.Fit());
         Action("Delete", "Delete", async () => await _canvas!.DeleteSelectedAsync());
-        Action("Actions", "More", () => OpenMenu(Center()));
+        Action("Actions", "More", () => OpenMenu(Center(), anchor: _buttons["Actions"]));
         _canvas = new(shell, editor, workflow);
         ToolTip.SetTip(_canvas, shell["Graph.KeyboardHint"]);
         Grid.SetRow(_canvas, 1); Children.Add(_canvas);
         _canvas.SelectionChanged += Refresh;
         _canvas.MenuRequested += point => OpenMenu(point);
+        // Our ContextRequested handler consumes the request before Avalonia's attached-menu handler.
+        // Attachment is stable; PointerPressed and KeyDown never open this menu.
+        _canvas.ContextMenu = _menu;
+        _menu.Closed += (_, _) => _menuSession.Cancel();
+        _menu.AddHandler(KeyDownEvent, (_, e) =>
+        {
+            if (e.Key != Key.Escape) return;
+            e.Handled = true; CancelGesture(); FocusCanvas();
+        }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
         _canvas.Feedback += reason => { _feedback = reason; RefreshStatus(); };
         _parameter.Children.Add(_parameterName); _parameter.Children.Add(_value);
         _commit = new Button { Classes = { "shell", "command" }, Content = null };
@@ -103,7 +116,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
     private void WorkflowChanged(WorkflowState _) => Dispatcher.UIThread.Post(() =>
     {
         if (_disposed) return;
-        if (_editor.Observe(_workflow.State)) { _canvas.CancelGesture(); _feedback = null; }
+        if (_editor.Observe(_workflow.State)) { CancelGesture(); _feedback = null; }
         Refresh();
     });
     private void PreferencesChanged(object? sender, PropertyChangedEventArgs _) => Refresh();
@@ -113,7 +126,8 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         var state = _workflow.State;
         // Shell preference/document notifications can arrive before this pane's queued workflow callback.
         // Adopt this exact immutable observation before resolving its graph or diagnostics.
-        if (_editor.Observe(state)) { _canvas.CancelGesture(); _feedback = null; }
+        if (_editor.Observe(state)) { CancelGesture(); _feedback = null; }
+        if (state.Busy || state.IsClosed) CancelGesture();
         _refreshing = true;
         try
         {
@@ -126,10 +140,13 @@ internal sealed class GraphPaneContent : Grid, IDisposable
             _canvas.IsEnabled = !state.Busy && !state.IsClosed;
             foreach (var (key, button) in _buttons)
             {
-                var label = _shell["Graph." + key]; AutomationProperties.SetName(button, label); ToolTip.SetTip(button, label);
-                button.IsEnabled = _editor.Graph is not null && !state.Busy && !state.IsClosed;
+                var label = _shell["Graph." + key]; AutomationProperties.SetName(button, label);
+                var refusal = _editor.EditRefusal(state);
+                if (key == "Delete" && refusal is null && _editor.SelectedNode is null && _editor.SelectedConnection is null)
+                    refusal = "Graph.NoSelection";
+                ToolTip.SetTip(button, refusal is null ? label : label + " · " + _shell[refusal]);
+                button.IsEnabled = refusal is null;
             }
-            _buttons["Delete"].IsEnabled &= _editor.SelectedNode is not null || _editor.SelectedConnection is not null;
             var report = _editor.Report;
             _canvas.Diagnostics = report?.Diagnostics.ToArray() ?? [];
             var selected = _editor.Graph?.Nodes.SingleOrDefault(n => n.Id == _editor.SelectedNode);
@@ -214,16 +231,54 @@ internal sealed class GraphPaneContent : Grid, IDisposable
     private MenuItem Menu(string text, Func<Task>? action = null)
     {
         var item = new MenuItem { Header = text };
-        if (action is not null) item.Click += async (_, _) => { _menu.Close(); await action(); if (!_disposed) _canvas.Focus(); };
+        var command = action is null ? null : _menuSession.Capture(async () => { _menu.Close(); await action(); });
+        if (action is not null) item.Click += async (_, e) =>
+        {
+            e.Handled = true;
+            if (!item.IsEnabled) return;
+            PendingMenuCommand = RunMenuActionAsync(command!);
+            await PendingMenuCommand;
+        };
         return item;
+    }
+    private async Task RunMenuActionAsync(Func<Task<string?>> command)
+    {
+        if (_disposed) return;
+        _feedback = null;
+        var refusal = await command();
+        _menu.Close();
+        if (_disposed) return;
+        Refresh();
+        _feedback = refusal; RefreshStatus(); FocusCanvas();
+    }
+    private MenuItem CreationMenu(GraphNodeCreation choice, GraphPoint point, string text)
+    {
+        var command = _menuSession.CreateNode(choice, point, _menu.Close);
+        var item = new MenuItem { Header = text };
+        item.Click += async (_, e) =>
+        {
+            e.Handled = true;
+            if (!item.IsEnabled) return;
+            PendingMenuCommand = RunMenuActionAsync(command); await PendingMenuCommand;
+        };
+        return item;
+    }
+    private void Unavailable(MenuItem item, string? reason)
+    {
+        item.IsEnabled = reason is null;
+        if (reason is null) return;
+        // Keep the reason visible even when a disabled MenuItem cannot receive hover/focus.
+        item.Header += " · " + _shell[reason]; ToolTip.SetTip(item, _shell[reason]);
     }
     private string ConnectionLabel(GraphDefinition graph, GraphConnection edge) =>
         GraphConnectionLabels.Label(graph, edge, NodeLabel, _shell["Graph.In"], _shell["Graph.Out"]);
-    private void OpenMenu(GraphPoint point, bool additionsOnly = false)
+    private ContextMenu BuildMenu(GraphPoint point, bool additionsOnly = false)
     {
         Refresh();
         CancelGesture(); _menu.Items.Clear();
-        if (_editor.Basis is not { } basis || _editor.Graph is not { } graph) return;
+        if (_menuSession.Begin() is { } refusal)
+        { _feedback = refusal; RefreshStatus(); return _menu; }
+        if (_editor.Basis is not { } basis || _editor.Graph is not { } graph) return _menu;
         var add = Menu(_shell["Graph.Add"]);
         foreach (var type in new[] { GraphBuiltIns.Source, GraphBuiltIns.Gain, GraphBuiltIns.Mix, GraphBuiltIns.Output })
         {
@@ -231,17 +286,19 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                 GraphBuiltIns.Mix => "Graph.Mix", _ => "Graph.Output" }]);
             foreach (var layout in new[] { GraphBuiltIns.Stereo, GraphBuiltIns.Mono })
             {
-                var layoutMenu = Menu(layout == GraphBuiltIns.Stereo ? "Stereo L/R" : "Mono", type == GraphBuiltIns.Mix ? null :
-                    async () => await _workflow.AddGraphNodeAsync(basis, type, new(point.X, point.Y), layout));
+                string label = layout == GraphBuiltIns.Stereo ? "Stereo L/R" : "Mono";
+                var layoutMenu = type == GraphBuiltIns.Mix ? Menu(label) :
+                    CreationMenu(GraphNodeCreation.Choices.Single(c => c.Type == type && c.Layout == layout), point, label);
                 if (type == GraphBuiltIns.Mix)
                     for (int count = 2; count <= 8; count++)
                     {
                         int inputs = count;
-                        layoutMenu.Items.Add(Menu(count + " " + _shell["Graph.Inputs"], async () =>
-                            await _workflow.AddGraphNodeAsync(basis, type, new(point.X, point.Y), layout, inputs)));
+                        layoutMenu.Items.Add(CreationMenu(GraphNodeCreation.Choices.Single(c => c.Type == type &&
+                            c.Layout == layout && c.Inputs == inputs), point, count + " " + _shell["Graph.Inputs"]));
                     }
                 typeMenu.Items.Add(layoutMenu);
             }
+            Unavailable(typeMenu, GraphCreationRules.Refusal(graph, type));
             add.Items.Add(typeMenu);
         }
         _menu.Items.Add(add);
@@ -251,6 +308,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
             var select = Menu(_shell["Graph.SelectNode"]);
             foreach (var node in graph.Nodes) select.Items.Add(Menu(NodeLabel(node), () =>
             { _editor.Select(new(GraphHitKind.Node, node.Id)); Refresh(); return Task.CompletedTask; }));
+            if (select.Items.Count == 0) Unavailable(select, "Graph.NoChoices");
             _menu.Items.Add(select);
             var connections = Menu(_shell["Graph.SelectConnection"]);
             foreach (var edge in graph.Connections)
@@ -261,6 +319,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                 connections.Items.Add(Menu(ConnectionLabel(graph, edge), () =>
                 { _editor.Select(new(GraphHitKind.Connection, Connection: edge.Id)); Refresh(); return Task.CompletedTask; }));
             }
+            if (connections.Items.Count == 0) Unavailable(connections, "Graph.NoChoices");
             _menu.Items.Add(connections);
             if (graph.Nodes.SingleOrDefault(n => n.Id == _editor.SelectedNode) is { } selected)
             {
@@ -271,6 +330,8 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                     var parts = _workflow.State.Snapshot.State.Patterns.SingleOrDefault(p => p.Id == placement?.PatternId)?.Parts ?? [];
                     foreach (var part in parts.Where(p => !attachment.Sources.Any(s => s.PartId == p.Id)))
                         bind.Items.Add(Menu(part.Name, async () => await _workflow.BindGraphSourceAsync(basis, selected.Id, part.Id)));
+                    if (!GraphConnectionRules.Supported(selected)) Unavailable(bind, GraphReasons.MissingCapability);
+                    else if (bind.Items.Count == 0) Unavailable(bind, "Graph.NoChoices");
                     _menu.Items.Add(bind);
                 }
                 var connect = Menu(_shell["Graph.Connect"]);
@@ -282,28 +343,41 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                             var item = Menu(NodeLabel(target) + " · " + _shell["Graph.In"] + " " + slot,
                                 async () => await _workflow.ConnectGraphAsync(basis, selected.Id, output.Id, target.Id, input.Id));
                             var reason = GraphConnectionRules.Refusal(graph, selected.Id, output.Id, target.Id, input.Id);
-                            item.IsEnabled = reason is null; if (reason is not null) ToolTip.SetTip(item, _shell[reason]);
+                            Unavailable(item, reason);
                             connect.Items.Add(item);
                         }
+                if (connect.Items.Count == 0) Unavailable(connect, "Graph.NoChoices");
                 _menu.Items.Add(connect);
                 var disconnect = Menu(_shell["Graph.Disconnect"]);
                 foreach (var edge in graph.Connections.Where(c => c.FromNodeId == selected.Id || c.ToNodeId == selected.Id))
                     disconnect.Items.Add(Menu(ConnectionLabel(graph, edge), async () =>
                         await _workflow.DeleteGraphElementAsync(basis, null, edge.Id)));
+                if (disconnect.Items.Count == 0) Unavailable(disconnect, "Graph.NoChoices");
                 _menu.Items.Add(disconnect);
             }
             if (_editor.SelectedNode is not null || _editor.SelectedConnection is not null)
-                _menu.Items.Add(Menu(_shell["Graph.Delete"], _canvas.DeleteSelectedAsync));
+            {
+                var node = _editor.SelectedNode; var cable = _editor.SelectedConnection;
+                _menu.Items.Add(Menu(_shell["Graph.Delete"], async () =>
+                    await _workflow.DeleteGraphElementAsync(basis, node, cable)));
+            }
             _menu.Items.Add(Menu(_shell["Graph.Fit"], () => { _canvas.Fit(); return Task.CompletedTask; }));
         }
-        var anchor = _editor.Viewport.ToScreen(point);
-        _menu.PlacementRect = new Rect(Math.Clamp(anchor.X, 0, _canvas.Bounds.Width),
-            Math.Clamp(anchor.Y, 0, _canvas.Bounds.Height), 1, 1);
-        _canvas.ContextMenu = _menu; _menu.Open(_canvas);
+        return _menu;
     }
-    public void FocusCanvas() { if (!_disposed) _canvas.Focus(); }
+    private void OpenMenu(GraphPoint point, bool additionsOnly = false, Control? anchor = null)
+    {
+        if (BuildMenu(point, additionsOnly).Items.Count == 0) return;
+        var at = _editor.Viewport.ToScreen(point);
+        _menu.PlacementTarget = anchor ?? _canvas;
+        _menu.PlacementRect = anchor is null
+            ? new Rect(Math.Clamp(at.X, 0, _canvas.Bounds.Width), Math.Clamp(at.Y, 0, _canvas.Bounds.Height), 1, 1)
+            : new Rect(0, anchor.Bounds.Height, anchor.Bounds.Width, 1);
+        _menu.Open(_canvas);
+    }
+    public void FocusCanvas() { if (!_disposed && _canvas.IsEffectivelyVisible && _canvas.IsEnabled) _canvas.Focus(); }
     public void Frame() => _canvas.Fit();
-    public void CancelGesture() { _canvas.CancelGesture(); _menu.Close(); }
+    public void CancelGesture() { _menuSession.Cancel(); _canvas.CancelGesture(); _menu.Close(); }
     public void Dispose()
     {
         if (_disposed) return;

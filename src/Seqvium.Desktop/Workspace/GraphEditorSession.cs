@@ -26,6 +26,17 @@ internal sealed class GraphEditorSession
     public GraphDefinition? Graph => _observation?.Snapshot.State.Graphs.SingleOrDefault(g => g.Id == Attachment?.GraphId);
     public GraphEditBasis? Basis => Attachment is { } attachment && _observation is { } state
         ? new(state.Document.LifecycleId, state.Generation, attachment.Id) : null;
+    public string? EditRefusal(WorkflowState state, GraphEditBasis? expected = null)
+    {
+        if (state.IsClosed) return "Graph.Closed";
+        if (state.Busy) return "Workflow.Busy";
+        if (expected is not null && (expected != Basis || expected.Lifecycle != state.Document.LifecycleId ||
+            expected.Generation != state.Generation)) return "Graph.Stale";
+        if (Target is null) return "Graph.NoTarget";
+        if (_lifecycle != state.Document.LifecycleId ||
+            !state.Snapshot.State.GraphAttachments.Any(a => a.Id == Target)) return "Graph.TargetMissing";
+        return null; // Incomplete canonical intent must remain editable for repair.
+    }
     public bool Observe(WorkflowState state)
     {
         bool changed = _observation?.Document.LifecycleId != state.Document.LifecycleId ||
@@ -68,6 +79,13 @@ internal sealed class GraphEditorSession
         return result is not null && result.Before != result.After && result.Basis == Basis ? result : null;
     }
     public void Cancel() => Move = null;
+}
+
+internal static class GraphCreationRules
+{
+    public static string? Refusal(GraphDefinition graph, string type) =>
+        graph.Nodes.Length >= GraphDiagnostics.MaximumNodes ? GraphReasons.ProcessingLimit :
+        type == GraphBuiltIns.Output && graph.Nodes.Any(n => n.Type == type) ? "Graph.OneOutput" : null;
 }
 
 internal static class GraphConnectionRules
