@@ -145,15 +145,139 @@ public sealed class GraphCanvasGeometryTests
     [Fact]
     public void CrossingCableHitMatchesSelectedCableDrawingPriority()
     {
+        var graph = CrossingGraph();
+        var first = graph.Connections[0]; var last = graph.Connections[1];
+        var crossing = CablePoint(graph, first, 0.5);
+        Assert.Equal(last.Id, GraphGeometry.HitTest(graph, crossing, 1).Connection);
+        Assert.Equal(first.Id, GraphGeometry.HitTest(graph, crossing, 1, selectedCable: first.Id).Connection);
+    }
+
+    [Theory]
+    [InlineData(0.35, false)]
+    [InlineData(1, false)]
+    [InlineData(2, false)]
+    [InlineData(0.35, true)]
+    [InlineData(1, true)]
+    [InlineData(2, true)]
+    public void NearCrossingSelectsNearestCableEvenWhenFartherCableIsOnTop(double zoom, bool fartherSelected)
+    {
+        var graph = CrossingGraph();
+        var first = graph.Connections[0]; var last = graph.Connections[1];
+        var point = CablePoint(graph, first, 0.5 + 0.015 / Math.Max(1, zoom));
+        Assert.InRange(Distance(graph, first, point), 0, 0.01);
+        Assert.InRange(Distance(graph, last, point) * zoom, 0.1, 6);
+        Assert.Equal(first.Id, GraphGeometry.HitTest(graph, point, zoom,
+            selectedCable: fartherSelected ? last.Id : null).Connection);
+    }
+
+    private static GraphPoint CablePoint(GraphDefinition graph, GraphConnection edge, double t)
+    {
+        var from = graph.Nodes.Single(n => n.Id == edge.FromNodeId);
+        var to = graph.Nodes.Single(n => n.Id == edge.ToNodeId);
+        return GraphGeometry.Bezier(GraphGeometry.Port(from, from.Ports.Single(p => p.Id == edge.FromPortId)),
+            GraphGeometry.Port(to, to.Ports.Single(p => p.Id == edge.ToPortId)), t);
+    }
+
+    [Theory]
+    [InlineData(0.35)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void ExactCrossingTieUsesSelectionThenVisualOrder(double zoom)
+    {
+        var graph = CrossingGraph();
+        var first = graph.Connections[0]; var last = graph.Connections[1];
+        var point = CablePoint(graph, first, 0.5);
+        Assert.InRange(Distance(graph, first, point) * zoom, 0, 0.01);
+        Assert.InRange(Distance(graph, last, point) * zoom, 0, 0.01);
+        Assert.Equal(last.Id, GraphGeometry.HitTest(graph, point, zoom).Connection);
+        Assert.Equal(first.Id, GraphGeometry.HitTest(graph, point, zoom, selectedCable: first.Id).Connection);
+        Assert.Equal(last.Id, GraphGeometry.HitTest(graph, point, zoom, selectedCable: last.Id).Connection);
+        graph = graph with { Connections = [last, first] };
+        Assert.Equal(first.Id, GraphGeometry.HitTest(graph, point, zoom).Connection);
+    }
+
+    [Theory]
+    [InlineData(0.35, false)]
+    [InlineData(1, false)]
+    [InlineData(2, false)]
+    [InlineData(0.35, true)]
+    [InlineData(1, true)]
+    [InlineData(2, true)]
+    public void NearlyCoincidentCableTieIsMeasuredInScreenPixels(double zoom, bool fartherSelected)
+    {
+        var graph = ParallelGraph(0.08);
+        var first = graph.Connections[0]; var last = graph.Connections[1];
+        var point = CablePoint(graph, first, 0.5);
+        Assert.InRange(Distance(graph, last, point), 0.079, 0.081);
+        Assert.Equal(zoom == 2 ? first.Id : last.Id, GraphGeometry.HitTest(graph, point, zoom,
+            selectedCable: fartherSelected ? last.Id : null).Connection);
+        Assert.Equal(first.Id, GraphGeometry.HitTest(graph, point, zoom, selectedCable: first.Id).Connection);
+    }
+
+    [Fact]
+    public void CableTieCandidatesAreRelativeToGlobalMinimum()
+    {
+        var graph = ParallelGraph(0.08, 0.16);
+        var point = CablePoint(graph, graph.Connections[0], 0.5);
+        Assert.Equal(graph.Connections[1].Id, GraphGeometry.HitTest(graph, point, 1,
+            selectedCable: graph.Connections[2].Id).Connection);
+    }
+
+    [Theory]
+    [InlineData(0.35)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void CableToleranceRemainsSixScreenPixels(double zoom)
+    {
+        var graph = ParallelGraph();
+        var middle = CablePoint(graph, graph.Connections[0], 0.5);
+        Assert.Equal(graph.Connections[0].Id, GraphGeometry.HitTest(graph, middle + new GraphPoint(0, 5.99 / zoom), zoom).Connection);
+        Assert.Equal(GraphHitKind.Background, GraphGeometry.HitTest(graph, middle + new GraphPoint(0, 6.01 / zoom), zoom).Kind);
+    }
+
+    [Fact]
+    public void NodeAndPortStillPrecedeOverlappingCables()
+    {
+        var graph = ParallelGraph(); var edge = graph.Connections[0];
+        var source = graph.Nodes[0];
+        var middle = CablePoint(graph, edge, 0.5);
+        var cover = GraphBuiltIns.Create(GraphBuiltIns.Gain, new(middle.X - 40, middle.Y - 15));
+        graph = graph with { Nodes = graph.Nodes.Add(cover) };
+        Assert.Equal(cover.Id, GraphGeometry.HitTest(graph, middle, 1, selectedCable: edge.Id).Node);
+        Assert.Equal(source.Ports[0].Id, GraphGeometry.HitTest(graph,
+            GraphGeometry.Port(source, source.Ports[0]), 1, selectedCable: edge.Id).Port);
+    }
+
+    private static GraphDefinition ParallelGraph(params double[] offsets)
+    {
+        var nodes = ImmutableArray.CreateBuilder<GraphNode>();
+        var edges = ImmutableArray.CreateBuilder<GraphConnection>();
+        foreach (double offset in new[] { 0d }.Concat(offsets))
+        {
+            var from = GraphBuiltIns.Create(GraphBuiltIns.Source, new(0, offset));
+            var to = GraphBuiltIns.Create(GraphBuiltIns.Output, new(400, offset));
+            nodes.Add(from); nodes.Add(to);
+            edges.Add(new(Id<GraphConnection>.New(), from.Id, from.Ports[0].Id, to.Id, to.Ports[0].Id));
+        }
+        return new(Id<GraphDefinition>.New(), nodes.ToImmutable(), edges.ToImmutable());
+    }
+
+    private static double Distance(GraphDefinition graph, GraphConnection edge, GraphPoint point)
+    {
+        var from = graph.Nodes.Single(n => n.Id == edge.FromNodeId);
+        var to = graph.Nodes.Single(n => n.Id == edge.ToNodeId);
+        return GraphGeometry.CableDistance(point, GraphGeometry.Port(from, from.Ports.Single(p => p.Id == edge.FromPortId)),
+            GraphGeometry.Port(to, to.Ports.Single(p => p.Id == edge.ToPortId)));
+    }
+
+    private static GraphDefinition CrossingGraph()
+    {
         var a = GraphBuiltIns.Create(GraphBuiltIns.Source, new(0, 0));
         var b = GraphBuiltIns.Create(GraphBuiltIns.Output, new(400, 150));
         var c = GraphBuiltIns.Create(GraphBuiltIns.Source, new(0, 150));
         var d = GraphBuiltIns.Create(GraphBuiltIns.Output, new(400, 0));
         var first = new GraphConnection(Id<GraphConnection>.New(), a.Id, a.Ports[0].Id, b.Id, b.Ports[0].Id);
         var last = new GraphConnection(Id<GraphConnection>.New(), c.Id, c.Ports[0].Id, d.Id, d.Ports[0].Id);
-        var graph = new GraphDefinition(Id<GraphDefinition>.New(), [a, b, c, d], [first, last]);
-        var crossing = GraphGeometry.Bezier(GraphGeometry.Port(a, a.Ports[0]), GraphGeometry.Port(b, b.Ports[0]), 0.5);
-        Assert.Equal(last.Id, GraphGeometry.HitTest(graph, crossing, 1).Connection);
-        Assert.Equal(first.Id, GraphGeometry.HitTest(graph, crossing, 1, selectedCable: first.Id).Connection);
+        return new GraphDefinition(Id<GraphDefinition>.New(), [a, b, c, d], [first, last]);
     }
 }

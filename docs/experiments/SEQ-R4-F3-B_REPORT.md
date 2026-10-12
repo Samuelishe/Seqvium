@@ -38,7 +38,7 @@ Owners: [graph](../NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor),
 ## Deterministic and build evidence
 
 Windows 11 x64 10.0.26300, .NET SDK 10.0.401/runtime 10.0.12, Avalonia 12.1.3, Release.
-Locked restore and full solution Release build pass with zero warnings/errors. All 704 tests pass,
+Original editor verification: locked restore and full solution Release build pass with zero warnings/errors. All 704 tests pass,
 zero failures/skips: 652 original cases plus 52 new editor cases. Existing workspace assertions were
 adapted to the third hidden capability; no baseline case was deleted or weakened.
 [Test execution](../TEST_EXECUTION.md#r4-f3-b-graph-editor-verification) owns commands and test inventory.
@@ -137,7 +137,7 @@ claim follows. Exact minimum-height 480-pixel outer-frame evidence remains an in
 640-DIP-width windows with usable height. Shared Pattern source expansion intentionally refuses;
 general Pattern/Arrangement/Mixer/plugin/editor capabilities remain outside F3-B.
 
-## Final repository state and retention
+## Original implementation repository state and retention
 
 Branch master and HEAD remain the requested baseline. The initial tree was clean. All current changes
 belong to this task: 28 modified tracked files and nine new product/test/document files; staging is
@@ -158,3 +158,99 @@ quiet WAVs, managed project/media fixtures, TRX/raw observations and task-specif
 They can be removed after owner review; accepted media/build/runtime material and prior task/user
 artifacts were not cleaned. Relative file/anchor and duplicate-heading checks cover 14 changed Markdown
 files and 653 links without errors; diff whitespace and ownership/status/scope checks pass.
+
+## Cable selection and crossing correction — 2026-10-12
+
+The owner authorized this correction from clean master at
+`f8ce9bd4ea5fbf10bf53f36dd113de5ade1ea5b2`, preserving the 704-test baseline and current cable appearance.
+F3-B implementation remains complete with owner acceptance pending; F2 remains partial. No Core DSP,
+graph schema, audio backend, GC, workspace layout implementation or R5 change is included.
+
+### Reproduction and minimal correction
+
+Before changing production code, six nearest-selection cases failed on the existing crossing fixture
+specifically at the final connection-ID assertion. At normal zoom, the point on the first Bezier at
+`t=0.515` is within 0.01 graph unit of that cable; the second cable is about 4.2592 screen pixels away,
+inside the unchanged six-pixel tolerance. Reverse draw order chooses the second cable, including when
+it is already selected. Minimum zoom uses the same point; maximum zoom uses `t=0.5075` so both cables
+remain inside tolerance. The initial maximum-zoom draft used `t=0.515` and failed its fixture premise
+(second distance 8.5184 pixels); the corrected red run is the identity-only evidence.
+
+`GraphGeometry.HitTest` now measures every drawable candidate in screen units, determines the global
+minimum and resolves only candidates within 0.1 screen pixel of that minimum in renderer order:
+selected cable first, then upper visual cable. Pairwise near-tie chaining cannot include a farther
+candidate. Ports/bodies retain priority. No Bezier, under-stroke, color, port shape, crossing rendering
+or six-pixel hit tolerance changed. Screen units are Avalonia DIPs, consistent with the renderer and
+existing viewport; no high-DPI/native physical-pixel equivalence is inferred.
+
+Selection feedback, Select Connection and contextual Disconnect share real endpoint/port labels.
+Two same-node-pair cables identify `In 1` versus `In 2`; multi-output/unknown roles remain identifiable,
+and missing retained endpoints do not crash disconnect labeling. The visible status begins with the
+selected human endpoint label so long incomplete diagnostics do not precede deletion identity.
+The canvas automation help text exposes the selected connection ID for verification; visible controls
+and menus show no UUID. Delete continues through the existing workflow's selected ID to
+`ProjectEdit.DisconnectGraphPorts`; Core editing/history was not changed.
+
+### Verification and actual-window evidence
+
+Locked restore and full Release solution build pass with zero warnings/errors; **all 732 tests pass,
+zero failures/skips**. All 704 previous cases remain; 28 new cases cover nearest selection (including
+a farther selected wire), exact-crossing ties, near-coincident curves at three zooms, global-minimum
+ties, tolerance, node/port precedence, port-role labels and selected/deleted/saved/Undo identity.
+Four workflow cases call the actual canvas delete command, compare every remaining connection record
+and saved ID, and restore the same pre-delete snapshot, original connection IDs/topology and nodes.
+Commands use the repository's MTP/xUnit setup, including `--report-xunit-trx`; an initial unsupported
+generic TRX flag and a combined class/method filter that selected no tests are not passing evidence.
+Temporary test attempts to instantiate full pane rendering without a GUI platform were discarded;
+the permanent suite retains its no-platform/device boundary.
+
+A single bounded native-input crossing attempt opened the graph in a real Windows window. Before
+the crossing click, foreground belonged to the owner's browser; the guard stopped input. One focus
+recovery attempt failed and native automation stopped. No crossing click, Delete or browser input
+occurred, so this is not a passing native pointer result. The task window was closed normally.
+
+A separate bounded actual-window check used the production Release MainWindow, GraphPaneContent,
+GraphCanvas and workflow under a local launcher with isolated preference/layout stores. It opens a
+task-authored canonical fixture derived from the prior quiet WAV project, with four connections and
+the same crossing geometry; its deliberate unbound/mix incompleteness remains visible and no Play
+is requested. Rooted Avalonia pointer-press/release and Delete key events exercise the actual handlers
+on the GUI thread, without OS mouse/key injection. This is real-window routed-event evidence, not
+native-input or subjective visual acceptance. The launcher has no selection/disconnect implementation.
+An initial launcher event used canvas coordinates where a top-level coordinate was required; that
+test-harness error was corrected before the passing run and is not attributed to product hit testing.
+
+- Before Delete, editor selection, automation identity and visible status identify connection
+  `b3ad9574-87e1-4212-876e-82ee7a9d8b1f`: `Source · Kick → Gain 1 · In 1`.
+- Delete invokes the actual keyboard/canvas/workflow path. Saving and reading the canonical project
+  leaves exactly `6d03a1a5-8940-4c13-b424-2c48803ca370`,
+  `d4566491-6b3f-4e7f-a9ea-88e593934d4f` and `08d75795-22c2-4e4c-8c63-d5ede5ae8f59`.
+  All remaining connection records retain their original endpoints.
+- Undo and Save restore all four original IDs, complete original connection records and node positions.
+- Actual Select Connection and Disconnect items distinguish `Source 2 → Mix 1 · In 1` and `In 2`.
+  Invoking both selection items verifies their exact selected IDs and UI automation indications.
+  The `In 2` contextual disconnect removes only its identified cable; Undo restores original topology.
+  The final window closes normally with empty stderr and no active output/device session.
+
+The deterministic reproduction confirms the proposed draw-order-versus-distance defect and the
+actual-window routed check confirms deletion of the indicated nearest connection. **It does not
+prove the cause of the original unsuccessful native GUI run**, whose pre-click selection was never
+recorded. That original case remains intact above; native crossing interaction and owner acceptance
+remain outstanding. F2's physical starvation evidence and acceptance status are unchanged.
+
+### Correction repository state and retention
+
+Master and HEAD remain the correction baseline; initial worktree/index were clean. Changes are limited
+to Desktop geometry/connection presentation, permanent regression tests, graph/test/current-state
+owners, this existing report and a concise archived work entry: nine modified tracked files and two
+new files. The two new files are permanent Desktop
+label code and its tests; staging is unchanged. No commit/push/history/index mutation occurred.
+Ignored `.artifacts/seq-r4-f3-b-crossing/` retains red/final TRX, isolated fixtures/media, launcher/input
+scripts and pre-Delete/after-Delete/after-Undo canonical observations for bounded reproduction/review.
+These are local verification evidence, not runtime assets or files promised in other clones. Original
+`.artifacts/seq-r4-f3-b/` evidence and user material remain untouched. Disposable intermediate launcher
+build outputs can be removed after review; no required product build/runtime/test material was removed.
+TRX name-inventory comparison confirms all 704 baseline cases are present among the final 732, with
+28 additions and none missing. Independent reads of the saved GUI canonical files confirm the expected
+remaining connection records, exact restored topology and unchanged nodes. Documentation checks cover
+all five changed Markdown files and 272 relative links with no file/anchor/duplicate-heading errors;
+ownership, decision status, scope and diff whitespace checks pass.

@@ -123,6 +123,17 @@ contribution/NoteOn. Live tests verify prepared identity/position/epoch on Gain 
 and repair convergence, invalid Save/reopen, pending preparation replacement and Stop/Panic/joined release.
 Pattern length checks reject note truncation and placement overflow atomically.
 
+The F3-B cable correction preserves all 704 prior cases and adds 28 regressions. The crossing fixture
+reproduces the original wrong connection ID at `t=0.515` before the fix, with both distances inside
+tolerance. Geometry cases cover nearest selection despite a farther selected/top cable, exact ties,
+near-coincident curves at minimum/normal/maximum zoom, global-minimum tie grouping, unchanged six-screen
+pixel tolerance and node/port precedence. `GraphConnectionLabelTests` checks real input order, RU/EN
+roles, multiple outputs and retained missing endpoints. Workflow cases exercise geometry → selected ID
+→ shared indication label → actual `GraphCanvas.DeleteSelectedAsync` → existing disconnect edit →
+saved canonical IDs → Undo, preserving neighbours and original topology. No GUI platform/device is
+initialized by the deterministic suite. The report separately records routed pointer/key events in
+an actual Windows window and the unsuccessful bounded native-input attempt.
+
 Tests initialize no GUI platform/device and use owner barriers, completion gates and sequential PCM
 packets, with no sleeps as timing oracles. The seven initial R3 test failures assumed exactly two panes;
 their count/conflict assertions now include the added hidden graph pane without removing baseline cases.

@@ -481,6 +481,17 @@ geometry; graph coordinates remain canonical and Save/Undo-owned. A local viewpo
 no music or history. Rendering/hit testing share `Workspace/GraphGeometry`; curves follow canonical
 or transient proposed node positions. [Workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane) owns lifetime.
 
+Ports and node bodies precede cables in hit testing. Cable selection compares every drawable candidate
+within the unchanged six-screen-unit tolerance using `CableDistance * zoom`. Candidates within 0.1
+screen unit of the global minimum are tied: the currently selected cable wins, then the upper cable
+in visual order. These are the canvas's logical screen pixels (Avalonia DIPs); zoom does not change
+the screen tolerance or tie threshold. A selected farther cable cannot override a distinct nearest
+one. Bezier geometry, under-strokes, colors, port shapes and crossing rendering remain unchanged.
+Selection feedback and connection/disconnect menus share human endpoint labels with actual port
+roles and direction-local indices, such as `Source → Mix · In 2`; UUIDs stay off the visible surface.
+Delete sends the selected connection ID through the existing disconnect edit, and Undo restores
+canonical connection identities/topology without affecting neighbours.
+
 Create/delete/move/connect/disconnect, Gain and source binding commands go through the existing
 `DesktopWorkflow` owner and `ProjectDocument.Edit` / `ProjectEdit.Graph`. Source creation may remain
 unbound until an existing unbound Part is explicitly chosen; deleting Source removes its binding and

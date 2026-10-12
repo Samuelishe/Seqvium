@@ -72,7 +72,8 @@ row, read-only BPM/meter, narrow overflow, compact status/details and owned cont
 [permanent visual rules](UI_DESIGN.md#first-party-visual-design-rules). No bundled sample content is added.
 
 R4-F3-B supplies one explicitly targeted retained Node Graph pane with real Source/Gain/Mix/Output,
-typed cables, node/cable selection, free drag, pan/zoom/frame, context/keyboard editing and compact
+typed cables, nearest-cable selection with deterministic crossing ties and port-specific connection
+menus/selection feedback, free drag, pan/zoom/frame, context/keyboard editing and compact
 committed Gain. Node preview commits once through the existing owner/Undo; stale/cancel/no-op gestures
 publish nothing. A durable second WAV adds an independent Part/Note/Source binding in the same unshared
 item, with shared-Pattern refusal and atomic boundary extension. Canonical topology/coordinates survive
@@ -94,8 +95,9 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 704 tests pass, zero failures/skips**.
-All 652 baseline cases are preserved; 52 F3-B geometry, editing, target and PCM/lifecycle cases are added.
+solution build pass with **zero warnings/errors; all 732 tests pass, zero failures/skips**.
+All 704 prior cases are preserved: the original 652 plus 52 F3-B geometry, editing, target and PCM/lifecycle
+cases. The cable correction adds 28 nearest/tie/tolerance/label/deletion identity regressions.
 The F3-A suite contains 34 workflow and nine
 presentation/observation cases. [Test execution](TEST_EXECUTION.md#r4-f3-a-desktop-workflow-verification)
 owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
@@ -126,8 +128,10 @@ F3-B canvas/manipulation acceptance is pending owner review; tests and recorded 
 constitute owner acceptance. The inherited nominal 640x480 client minimum produced
 640x511-pixel visible Windows captures; exact 480-pixel outer-frame review remains unevidenced. No
 full F3/R4 acceptance, high/mixed DPI, other-OS runtime or acoustic listening claim follows.
-Dense crossing selection has an inconclusive native pointer check; exact interaction review remains
-open under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md), separately from passing pure hit tests.
+The cable correction reproduces and fixes draw-order selection of a farther cable. An actual Windows
+window verifies routed pointer/key events, pre-Delete UI identity, saved remaining IDs, Undo topology
+and port-specific menus. Its bounded native-input attempt stopped on foreground loss; native crossing
+interaction and owner acceptance remain open under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md).
 
 F2 pressure acceptance is unresolved. The original starvations at 22.86 and 39.57 seconds remain failures;
 new isolated diagnostics also fail with natural GC and graph-free legacy on the same 48 kHz stereo

@@ -52,6 +52,7 @@ internal sealed record GraphHit(GraphHitKind Kind, Id<GraphNode>? Node = null,
 internal static class GraphGeometry
 {
     internal const double NodeWidth = 156, PortStep = 22;
+    private const double CableHitTolerance = 6, CableTieTolerance = 0.1;
     public static GraphRect Body(GraphNode node, GraphPosition? preview = null)
     {
         var position = preview ?? node.Position;
@@ -112,6 +113,7 @@ internal static class GraphGeometry
             return new(node.Type == GraphBuiltIns.Gain && Parameter(node, proposed).Contains(point)
                 ? GraphHitKind.Parameter : GraphHitKind.Node, node.Id);
         }
+        var candidates = new List<(Id<GraphConnection> Id, double Distance)>();
         foreach (var edge in graph.Connections.OrderBy(c => c.Id == selectedCable ? 1 : 0).Reverse())
         {
             var from = graph.Nodes.SingleOrDefault(n => n.Id == edge.FromNodeId);
@@ -119,9 +121,17 @@ internal static class GraphGeometry
             var fromPort = from?.Ports.SingleOrDefault(p => p.Id == edge.FromPortId);
             var toPort = to?.Ports.SingleOrDefault(p => p.Id == edge.ToPortId);
             if (from is null || to is null || fromPort is null || toPort is null) continue;
-            if (CableDistance(point, Port(from, fromPort, from.Id == moving ? preview : null),
-                    Port(to, toPort, to.Id == moving ? preview : null)) <= 6 / zoom)
-                return new(GraphHitKind.Connection, Connection: edge.Id);
+            double distance = CableDistance(point, Port(from, fromPort, from.Id == moving ? preview : null),
+                Port(to, toPort, to.Id == moving ? preview : null)) * zoom;
+            if (distance <= CableHitTolerance) candidates.Add((edge.Id, distance));
+        }
+        if (candidates.Count > 0)
+        {
+            // Compare in screen units. Ties are relative to the true minimum, never a chain of pairwise ties.
+            // Candidate order matches the renderer: selected first, then topmost canonical draw order.
+            double nearest = candidates.Min(c => c.Distance);
+            return new(GraphHitKind.Connection,
+                Connection: candidates.First(c => c.Distance <= nearest + CableTieTolerance).Id);
         }
         return new(GraphHitKind.Background);
     }

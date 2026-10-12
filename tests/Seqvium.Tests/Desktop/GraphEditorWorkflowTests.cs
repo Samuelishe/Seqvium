@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 using Seqvium.Core;
+using Seqvium.Desktop.Presentation;
 using Seqvium.Desktop.Workspace;
 using Seqvium.Desktop.Workflow;
 using Xunit;
@@ -79,6 +80,55 @@ public sealed class GraphEditorWorkflowTests
         var current = f.Graph.Nodes.Single(n => n.Id == gain.Id).Position;
         Assert.False(await f.Workflow.MoveGraphNodeAsync(new(f.Basis, gain.Id, current, current)));
         Assert.Same(after, f.State.Snapshot); Assert.Equal(history + 1, f.State.UndoCount);
+    }
+
+    [Theory]
+    [InlineData(0.515, false)]
+    [InlineData(0.515, true)]
+    [InlineData(0.5, false)]
+    [InlineData(0.5, true)]
+    public async Task CrossingSelectionDeletesOnlyIndicatedConnectionAndUndoRestoresIdsAndTopology(double t, bool firstSelected)
+    {
+        await using var f = new Fixture(); await f.Import();
+        var source = f.Graph.Nodes.Single(n => n.Type == GraphBuiltIns.Source);
+        var gain = f.Graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
+        var mix = await f.Add(GraphBuiltIns.Mix, new(400, -22));
+        var second = await f.Add(GraphBuiltIns.Source, new(0, 150));
+        Assert.True(await f.Workflow.EditGraphAsync(f.Basis, "Crossing fixture", (edit, _, graph) =>
+        {
+            edit.MoveGraphNode(graph.Id, source.Id, new(0, 0));
+            edit.MoveGraphNode(graph.Id, gain.Id, new(400, 150));
+            GraphFixture.Connect(edit, graph.Id, second, mix, 1);
+        }));
+        source = f.Graph.Nodes.Single(n => n.Id == source.Id); gain = f.Graph.Nodes.Single(n => n.Id == gain.Id);
+        var firstEdge = f.Graph.Connections.Single(c => c.FromNodeId == source.Id);
+        var secondEdge = f.Graph.Connections.Single(c => c.FromNodeId == second.Id);
+        var editor = new GraphEditorSession(); editor.Open(f.State, f.Attachment.Id);
+        if (firstSelected) editor.Select(new(GraphHitKind.Connection, Connection: firstEdge.Id));
+        using var shell = new ShellSession(new(f.Directory.File("prefs.json")), new(new(), false), f.State.Document)
+            { HasWorkflowOwner = true };
+        var canvas = new GraphCanvas(shell, editor, f.Workflow);
+        var point = GraphGeometry.Bezier(GraphGeometry.Port(source, source.Ports[0]), GraphGeometry.Port(gain, gain.Ports[0]), t);
+        editor.Select(GraphGeometry.HitTest(editor.Graph!, point, editor.Viewport.Zoom, selectedCable: editor.SelectedConnection));
+        var expected = t == 0.5 && !firstSelected ? secondEdge : firstEdge;
+        Assert.Equal(expected.Id, editor.SelectedConnection); Assert.Null(editor.SelectedNode);
+        string indication = GraphConnectionLabels.Label(f.Graph, expected, n => n.Type, shell["Graph.In"], shell["Graph.Out"]);
+        Assert.EndsWith(expected == firstEdge ? "core.gain · In 1" : "core.mix · In 2", indication);
+        var before = f.State.Snapshot; var topology = f.Graph.Connections.ToArray(); int history = f.State.UndoCount;
+        await canvas.DeleteSelectedAsync();
+        Assert.Equal(history + 1, f.State.UndoCount);
+        Assert.Equal(topology.Where(c => c.Id != expected.Id), f.Graph.Connections);
+        Assert.Equal(before.State.Graphs.Single().Nodes, f.Graph.Nodes);
+        string path = f.Directory.File("crossing.seqvium"); Assert.True(await f.Workflow.SaveAsync(path));
+        await using (var stream = File.OpenRead(path))
+        {
+            var reopened = ProjectPersistence.Read(stream).Document;
+            Assert.Equal(f.Graph.Connections.ToArray(), reopened.Current.State.Graphs.Single().Connections.ToArray());
+            reopened.Close();
+        }
+        editor.Observe(f.State); Assert.Null(editor.SelectedConnection);
+        Assert.True(await f.Workflow.UndoAsync()); editor.Observe(f.State);
+        Assert.Same(before, f.State.Snapshot); Assert.Equal(topology, f.Graph.Connections);
     }
 
     [Fact]

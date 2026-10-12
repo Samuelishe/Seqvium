@@ -1152,3 +1152,17 @@ keyboard/pointer/picker/Save/reopen/workspace and quiet Samsung USB C Earphones 
 [the focused report](../experiments/SEQ-R4-F3-B_REPORT.md). Owner canvas/manipulation review remains
 pending; F3-A is conditionally accepted for continued development, F2 remains partial and its original
 physical starvation evidence is unresolved. No commit/push or later-stage authorization follows.
+
+## 2026-10-12 — SEQ-R4-F3-B cable selection and crossing correction
+
+Six red crossing cases demonstrate selection of a farther cable inside the existing tolerance.
+Desktop now selects the global nearest cable, with a 0.1-screen-unit tie resolved by selected identity
+then visual order; drawing geometry/appearance and Core remain unchanged. Shared real-port labels
+distinguish connection/disconnect actions and visible selection before Delete. All 704 previous tests
+are preserved; 28 regressions pass (732 total), with locked restore and zero-warning Release build.
+An actual Windows window verifies rooted pointer/key handlers, pre-Delete ID/UI indication, canonical
+remaining IDs, exact Undo topology and menu action identities. Native input stops on lost foreground;
+the original unexplained failed native crossing is preserved, without retroactive causal attribution.
+[The existing report](../experiments/SEQ-R4-F3-B_REPORT.md#cable-selection-and-crossing-correction--2026-10-12)
+owns evidence/limits. Owner F3-B acceptance remains pending, F2 remains partial, and no R5 or commit/push
+work is included.

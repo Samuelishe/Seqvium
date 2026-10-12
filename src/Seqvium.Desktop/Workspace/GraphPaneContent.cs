@@ -170,10 +170,8 @@ internal sealed class GraphPaneContent : Grid, IDisposable
             if (execution.Blocker is not null) role = "Status.Critical";
         }
         else text = _shell["Graph.Canonical"];
-        _status.Text = text; _status.Foreground = new SolidColorBrush(Color.Parse(HostPalette.For(_shell.Preferences.Theme)[role]));
-        ToolTip.SetTip(_status, text + (_canvas.Diagnostics.Count == 0 ? "" : "\n" +
-            string.Join("\n", _canvas.Diagnostics.Select(d => _shell[d.Reason]).Distinct())));
         string? selection = null;
+        Id<GraphConnection>? selectedCable = null;
         if (_editor.Graph is { } graph)
         {
             var node = graph.Nodes.SingleOrDefault(n => n.Id == _editor.SelectedNode);
@@ -181,8 +179,17 @@ internal sealed class GraphPaneContent : Grid, IDisposable
             if (node is not null) selection = NodeLabel(node);
             else if (edge is not null && graph.Nodes.SingleOrDefault(n => n.Id == edge.FromNodeId) is { } from &&
                 graph.Nodes.SingleOrDefault(n => n.Id == edge.ToNodeId) is { } to)
-                selection = NodeLabel(from) + " → " + NodeLabel(to);
+            {
+                selection = ConnectionLabel(graph, edge); selectedCable = edge.Id;
+            }
         }
+        string selectedText = selection is null ? "" : _shell["Graph.Selected"] + ": " + selection;
+        _status.Text = selectedText.Length == 0 ? text : selectedText + " · " + text;
+        _status.Foreground = new SolidColorBrush(Color.Parse(HostPalette.For(_shell.Preferences.Theme)[role]));
+        ToolTip.SetTip(_status, _status.Text + (_canvas.Diagnostics.Count == 0 ? "" : "\n" +
+            string.Join("\n", _canvas.Diagnostics.Select(d => _shell[d.Reason]).Distinct())));
+        // Machine-readable identity for bounded GUI verification; UUIDs stay off the visible surface.
+        AutomationProperties.SetHelpText(_canvas, selectedCable?.ToString() ?? "");
         AutomationProperties.SetName(_canvas, _shell["Pane.Graph"] + ". " + text +
             (selection is null ? "" : ". " + _shell["Graph.Selected"] + ": " + selection));
     }
@@ -210,6 +217,8 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         if (action is not null) item.Click += async (_, _) => { _menu.Close(); await action(); if (!_disposed) _canvas.Focus(); };
         return item;
     }
+    private string ConnectionLabel(GraphDefinition graph, GraphConnection edge) =>
+        GraphConnectionLabels.Label(graph, edge, NodeLabel, _shell["Graph.In"], _shell["Graph.Out"]);
     private void OpenMenu(GraphPoint point, bool additionsOnly = false)
     {
         Refresh();
@@ -249,7 +258,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                 var from = graph.Nodes.SingleOrDefault(n => n.Id == edge.FromNodeId);
                 var to = graph.Nodes.SingleOrDefault(n => n.Id == edge.ToNodeId);
                 if (from is null || to is null) continue;
-                connections.Items.Add(Menu(NodeLabel(from) + " → " + NodeLabel(to), () =>
+                connections.Items.Add(Menu(ConnectionLabel(graph, edge), () =>
                 { _editor.Select(new(GraphHitKind.Connection, Connection: edge.Id)); Refresh(); return Task.CompletedTask; }));
             }
             _menu.Items.Add(connections);
@@ -279,8 +288,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                 _menu.Items.Add(connect);
                 var disconnect = Menu(_shell["Graph.Disconnect"]);
                 foreach (var edge in graph.Connections.Where(c => c.FromNodeId == selected.Id || c.ToNodeId == selected.Id))
-                    disconnect.Items.Add(Menu(_shell["Graph.Disconnect"] + " " +
-                        (edge.FromNodeId == selected.Id ? _shell["Graph.Out"] : _shell["Graph.In"]), async () =>
+                    disconnect.Items.Add(Menu(ConnectionLabel(graph, edge), async () =>
                         await _workflow.DeleteGraphElementAsync(basis, null, edge.Id)));
                 _menu.Items.Add(disconnect);
             }
