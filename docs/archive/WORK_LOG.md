@@ -1127,3 +1127,15 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   records actual dimensions, failed intermediate automation and evidence/retention limits.
 - Functional F3-A implementation is complete; revised owner visual review remains pending. F3-B is
   unimplemented/not authorized, all F3 remains incomplete and F2 remains partial. No commit/push/index change.
+
+## 2026-10-12 — SEQ-R4-F3-A audio session startup rollback correction
+
+- Reproduced missing startup rollback in six deterministic cases at baseline: terminated sampler
+  rejects AttachOutput; coordinator factory throws after successful output attachment.
+- Retained ownership across partial composition, joined unattached borrowers explicitly and kept
+  failed/unconfirmed joins retryable. Confirmed cleanup precedes PCM release and fresh explicit Play;
+  startup/rollback errors stay visible without canonical edits or automatic playback.
+- Preserved all 646 previous tests; six new PCM/ownership/Stop/Panic/retry cases pass (652 total).
+  Locked restore and full Release build pass with zero warnings/errors; full tests pass without skips.
+- F3-A visual owner review remains pending, F2 remains partial and F3-B is not started. No physical
+  device/GUI acceptance is inferred from these deterministic tests. No commit/push/index change.

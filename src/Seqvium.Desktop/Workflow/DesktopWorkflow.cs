@@ -39,7 +39,7 @@ internal sealed class DesktopWorkflow : IAsyncDisposable
     private Id<GraphAttachment>? _selected;
     private string _status = "Workflow.Empty";
     private string? _detail;
-    private bool _busy, _closed, _disposed;
+    private bool _busy, _closed, _disposed, _audioReady;
     private long _playGeneration;
     private int _pollQueued;
     private WorkflowState _state;
@@ -214,15 +214,30 @@ internal sealed class DesktopWorkflow : IAsyncDisposable
             _status = "Workflow.Blocked"; _detail = string.Join(" · ", report.Diagnostics.Select(item => item.Reason));
             return false;
         }
+        // A failed rollback still owns its borrower. Confirm cleanup before opening any replacement.
+        if (_output is not null && !_audioReady) await CloseAudioAsync();
         long generation = ++_playGeneration;
         if (_output is null)
         {
-            // Adapter performs all COM on its own worker. Blocking open/start is on this non-GUI control owner.
-            _output = _openOutput();
-            _deviceSession = new();
-            _deviceSession.AttachOutput(_output.Lifetime, _output.Sampler);
-            _coordinator = _createCoordinator(_document, _output.Sampler, attachment.Id, _owner);
-            _deviceSession.AttachCoordinator(_coordinator);
+            try
+            {
+                // Retain each acquired owner even if the next composition step fails.
+                // Adapter performs all COM on its own worker; open/start stays off the GUI thread.
+                _output = _openOutput();
+                var session = new AudioDeviceSession();
+                session.AttachOutput(_output.Lifetime, _output.Sampler);
+                _deviceSession = session;
+                _coordinator = _createCoordinator(_document, _output.Sampler, attachment.Id, _owner);
+                _deviceSession.AttachCoordinator(_coordinator);
+                _audioReady = true;
+            }
+            catch (Exception startup)
+            {
+                try { await CloseAudioAsync(); }
+                catch (Exception rollback)
+                { throw new AggregateException("Audio session startup and rollback failed.", startup, rollback); }
+                throw;
+            }
         }
         _status = "Workflow.Preparing"; Publish();
         for (int wait = 0; wait < 1500 && generation == _playGeneration; wait++)
@@ -252,7 +267,22 @@ internal sealed class DesktopWorkflow : IAsyncDisposable
     private async Task CloseAudioAsync()
     {
         _playGeneration++;
+        _audioReady = false;
+        // Also join preparation if AttachCoordinator did not transfer ownership.
+        if (_coordinator is not null) await _coordinator.CloseAsync();
         if (_deviceSession is not null) await _deviceSession.DisposeAsync();
+        else if (_output is { } output)
+        {
+            // AttachOutput failed without taking ownership. The workflow must still join its borrower.
+            output.Sampler.Stop();
+            output.Lifetime.Close();
+            if (!output.Lifetime.Joined)
+                throw new InvalidOperationException("Output did not join; borrowed resources remain owned.");
+            output.Sampler.TerminateExecution();
+            output.Lifetime.Dispose();
+            output.Sampler.Dispose();
+        }
+        if (_coordinator is not null) await _coordinator.DisposeAsync();
         _deviceSession = null; _coordinator = null; _output = null;
     }
 

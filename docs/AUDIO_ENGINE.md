@@ -274,7 +274,11 @@ Open/reopen never inherits runtime or starts automatically.
 Physical discovery resolves the default Console output only on explicit Play and opens that exact
 endpoint without unrelated fallback. Format/open/runtime failures remain visible; cleanup joins
 preparation and output before terminating/releasing sampler resources. Failed join retains resources
-for retry; there is no automatic restart. No input/capture stream is opened. Host polling is bounded
+for retry, including partial startup before output/coordinator attachment completes. Failed attachment
+transfers no ownership: the workflow retains and joins the unattached borrower itself. Ordinary startup
+rollback clears the failed composition; a later explicit Play can create a fresh session. An unconfirmed
+join retains output/sampler ownership and refuses replacement until cleanup succeeds; startup and
+rollback errors remain visible. There is no automatic restart. No input/capture stream is opened. Host polling is bounded
 control observation, not callback work. GC mode, backend, buffer capacity and scheduler priorities are
 unchanged. F2 pressure acceptance remains partial; a short desktop output smoke proves neither deadline
 acceptance nor subjective listening. [Architecture](ARCHITECTURE.md#r4-f3-a-integrated-documentaudio-owner)

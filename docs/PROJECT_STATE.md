@@ -84,8 +84,8 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 646 tests pass, zero failures/skips**.
-All 609 previous tests and the first 20 F3-A cases are preserved; F3-A now adds 28 workflow and nine
+solution build pass with **zero warnings/errors; all 652 tests pass, zero failures/skips**.
+All 646 previous tests are preserved; the F3-A suite now contains 34 workflow and nine
 presentation/observation cases. [Test execution](TEST_EXECUTION.md#r4-f3-a-desktop-workflow-verification)
 owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
 [F1 evidence](experiments/SEQ-R3-F1_REPORT.md) records actual chrome/OS keyboard/preference behavior.

@@ -14,14 +14,19 @@ public sealed class DesktopWorkflowTests
     {
         public bool Joined { get; private set; }
         public bool FailJoin;
+        public bool UnconfirmedJoin;
+        public bool Disposed;
+        public int CloseAttempts;
         public Action BeforeJoin = () => { };
         public void Close()
         {
+            CloseAttempts++;
             BeforeJoin();
             if (FailJoin) throw new IOException("Injected join failure");
+            if (UnconfirmedJoin) return;
             Joined = true;
         }
-        public void Dispose() => Assert.True(Joined);
+        public void Dispose() { Assert.True(Joined); Disposed = true; }
     }
 
     private sealed class Fixture : IAsyncDisposable
@@ -33,6 +38,8 @@ public sealed class DesktopWorkflowTests
         internal Borrower? Output;
         internal string? Fault;
         internal int Opens;
+        internal Action<RealtimeSampler, Borrower>? Opened;
+        internal bool FailNextCoordinator;
         internal Fixture(ProjectDocument? document = null,
             Func<CancellationToken, Task>? gate = null)
         {
@@ -40,9 +47,17 @@ public sealed class DesktopWorkflowTests
             Workflow = new(Document, () =>
             {
                 Opens++; Sampler = new(48000, 2, 32); Output = new();
+                Opened?.Invoke(Sampler, Output);
                 return new(Output, Sampler, "Deterministic borrower", () => Fault);
-            }, Directory.File("owned"), gate is null ? null :
-                (doc, sampler, target, owner) => new(doc, sampler, target, owner, 8, 1, gate, true));
+            }, Directory.File("owned"), (doc, sampler, target, owner) =>
+            {
+                if (FailNextCoordinator)
+                {
+                    FailNextCoordinator = false;
+                    throw new IOException("Injected coordinator factory failure");
+                }
+                return new(doc, sampler, target, owner, 8, 1, gate, true);
+            });
         }
         internal async Task<string> Source(float[]? samples = null, int rate = 48000, bool floating = true)
         {
@@ -65,10 +80,128 @@ public sealed class DesktopWorkflowTests
         }
         public async ValueTask DisposeAsync()
         {
-            if (Output is not null) Output.FailJoin = false;
+            if (Output is not null) { Output.FailJoin = false; Output.UnconfirmedJoin = false; }
             await Workflow.DisposeAsync();
+            // Also release a borrower leaked by the unfixed startup path when reproducing regressions.
+            if (Output is { Joined: false })
+            {
+                Output.Close(); Sampler!.TerminateExecution(); Output.Dispose(); Sampler.Dispose();
+            }
             Directory.Dispose();
         }
+    }
+
+    private static void SeedStartupPcm(Fixture fixture, RealtimeSampler sampler)
+    {
+        var target = fixture.Document.Current.State.GraphAttachments.Single().Id;
+        var plan = GraphPreparation.Prepare(fixture.Document, target, 48000, 2, 32);
+        Assert.Equal(SamplerPublication.Accepted, sampler.Publish(plan, sampler.InvalidatePreparation(), true, false));
+        Assert.True(sampler.Process(new float[64]));
+        Assert.Equal(1, sampler.LivePreparedStates);
+        Assert.True(sampler.RetainedPcmAndScratchBytes > 0);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task PartialStartupFailureJoinsBeforeReleaseAndAllowsFreshExplicitPlay(bool failAttachment)
+    {
+        await using var fixture = new Fixture(); await fixture.Import();
+        var snapshot = fixture.Document.Current;
+        int history = fixture.Document.UndoCount;
+        fixture.FailNextCoordinator = !failAttachment;
+        fixture.Opened = (sampler, output) =>
+        {
+            fixture.Opened = null;
+            SeedStartupPcm(fixture, sampler);
+            if (failAttachment) sampler.TerminateExecution();
+            output.BeforeJoin = () =>
+            {
+                Assert.Equal(1, sampler.LivePreparedStates);
+                Assert.True(sampler.RetainedPcmAndScratchBytes > 0);
+                Assert.False(output.Disposed);
+            };
+        };
+        Assert.False(await fixture.Workflow.PlayAsync());
+        var oldSampler = fixture.Sampler!; var oldOutput = fixture.Output!;
+        Assert.Equal("Workflow.DeviceFault", fixture.Workflow.State.StatusKey);
+        Assert.Contains(failAttachment ? "fresh unborrowed lifetime" : "coordinator factory failure", fixture.Workflow.State.Detail!);
+        Assert.True(oldOutput.Joined); Assert.True(oldOutput.Disposed);
+        Assert.Equal(1, oldOutput.CloseAttempts);
+        Assert.Equal(0, oldSampler.LivePreparedStates); Assert.Equal(0, oldSampler.ReservedPcmAndScratchBytes);
+        Assert.Equal(0, oldSampler.StopAcknowledgment);
+        var observation = await fixture.Workflow.ObserveAsync();
+        Assert.Null(observation.Device); Assert.Null(observation.Execution); Assert.True(observation.CanPlay);
+        Assert.Equal(1, fixture.Opens); Assert.Same(snapshot, fixture.Document.Current);
+        Assert.Equal(history, fixture.Document.UndoCount); Assert.False(fixture.Document.IsClosed);
+
+        await fixture.Drive(fixture.Workflow.PlayAsync());
+        Assert.Equal(2, fixture.Opens); Assert.NotSame(oldSampler, fixture.Sampler);
+        Assert.False(fixture.Output!.Joined); Assert.True(fixture.Sampler!.ReadStatus().Playing);
+        Assert.Equal(snapshot.Revision, fixture.Sampler.ReadStatus().OriginPreparedRevision);
+        Assert.Equal(fixture.Workflow.State.Selected, fixture.Sampler.ReadStatus().AttachmentId);
+        Assert.True(fixture.Sampler.ReadStatus().PreparedExecutionId > 0);
+    }
+
+    [Theory]
+    [InlineData(true, true)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async Task PartialStartupFailedJoinRetainsPcmAndOwnershipUntilConfirmedRetry(bool failAttachment, bool throwOnJoin)
+    {
+        await using var fixture = new Fixture(); await fixture.Import();
+        var snapshot = fixture.Document.Current;
+        fixture.FailNextCoordinator = !failAttachment;
+        fixture.Opened = (sampler, output) =>
+        {
+            fixture.Opened = null;
+            SeedStartupPcm(fixture, sampler);
+            if (failAttachment) sampler.TerminateExecution();
+            output.FailJoin = throwOnJoin; output.UnconfirmedJoin = !throwOnJoin;
+            output.BeforeJoin = () => Assert.Equal(1, sampler.LivePreparedStates);
+        };
+        Assert.False(await fixture.Workflow.PlayAsync());
+        var sampler = fixture.Sampler!; var output = fixture.Output!;
+        Assert.Equal("Workflow.DeviceFault", fixture.Workflow.State.StatusKey);
+        Assert.Contains(failAttachment ? "fresh unborrowed lifetime" : "coordinator factory failure", fixture.Workflow.State.Detail!);
+        Assert.Contains(throwOnJoin ? "Injected join failure" : "Output did not join", fixture.Workflow.State.Detail!);
+        Assert.False(output.Joined); Assert.False(output.Disposed); Assert.Equal(1, output.CloseAttempts);
+        Assert.Equal(1, sampler.LivePreparedStates); Assert.True(sampler.ReservedPcmAndScratchBytes > 0);
+        Assert.NotNull(fixture.Workflow.State.Device); Assert.False(fixture.Document.IsClosed);
+        Assert.Same(snapshot, fixture.Document.Current);
+        long identity = sampler.ReadStatus().PreparedExecutionId;
+        Assert.True(identity > 0);
+
+        Assert.True(await fixture.Workflow.StopAsync()); Assert.True(await fixture.Workflow.StopAsync(true));
+        Assert.False(await fixture.Workflow.PlayAsync());
+        Assert.False(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
+        Assert.Equal(3, output.CloseAttempts); Assert.Equal(1, fixture.Opens);
+        Assert.False(output.Joined); Assert.False(output.Disposed); Assert.False(fixture.Document.IsClosed);
+        Assert.Equal(1, sampler.LivePreparedStates); Assert.Equal(identity, sampler.ReadStatus().PreparedExecutionId);
+        if (!failAttachment)
+        {
+            var pcm = new float[64]; Assert.True(sampler.Process(pcm));
+            Assert.All(pcm, value => Assert.Equal(0f, value)); Assert.False(sampler.ReadStatus().Playing);
+            Assert.False(sampler.IsTerminated);
+        }
+        long acknowledgment = sampler.StopAcknowledgment;
+        output.FailJoin = false; output.UnconfirmedJoin = false;
+        if (throwOnJoin)
+        {
+            await fixture.Drive(fixture.Workflow.PlayAsync());
+            Assert.Equal(2, fixture.Opens); Assert.Same(snapshot, fixture.Document.Current);
+            Assert.True(fixture.Sampler!.ReadStatus().Playing);
+        }
+        else
+        {
+            Assert.True(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
+            Assert.Equal(1, fixture.Opens); Assert.True(fixture.Document.IsClosed);
+            Assert.Null(fixture.Workflow.State.Device); Assert.Null(fixture.Workflow.State.Execution);
+        }
+        Assert.True(output.Joined); Assert.True(output.Disposed);
+        Assert.Equal(4, output.CloseAttempts); Assert.Equal(0, sampler.LivePreparedStates);
+        Assert.Equal(0, sampler.ReservedPcmAndScratchBytes); Assert.Equal(acknowledgment, sampler.StopAcknowledgment);
     }
 
     [Theory]

@@ -218,12 +218,16 @@ is retained as deferred [I-002](IDEAS.md#i-002--named-test-routes); no filters/r
 
 ## R4-F3-A desktop workflow verification
 
-`Desktop/DesktopWorkflowTests` adds 28 deterministic cases over real R2 import/persistence and R4
+`Desktop/DesktopWorkflowTests` adds 34 deterministic cases over real R2 import/persistence and R4
 preparation/coordinator/sampler. Only the physical borrower is substituted; no mock document, PCM or
 independent preview Gain exists. Explicit owner barriers and worker completion gates cover exact
 Source binding, full-source duration, canonical coefficient PCM/identity/provenance, atomic Undo/Redo,
 durable Save/Save As/reopen, cancellation/rejection, dirty Cancel/failed Save, invalid/missing media,
 pending preparation replacement/shutdown, sticky Stop/Panic, fault/join retention and final release.
+Six startup cases reproduce rejected output attachment with a terminated sampler and coordinator
+factory failure after successful attachment. Real prepared PCM survives until confirmed consumer join;
+throwing/unconfirmed joins retain ownership, refuse replacement and allow explicit Play/close cleanup
+retry. Successful rollback permits a fresh explicit Play without canonical edits or automatic playback.
 `WorkflowPresentationTests` adds nine compact status/human label and immutable GUI observation cases,
 including non-default real tempo/meter. Existing 609 cases remain intact. No GUI platform or physical
 device is initialized by the ordinary suite. Actual totals belong to PROJECT_STATE.
