@@ -1542,3 +1542,25 @@ Keep current knowledge, evidence and historical retrieval distinct; no physical 
 infrastructure is warranted by this editorial change. This policy updates how documentation is
 presented and maintained, without changing musical contracts, roadmap order, version or acceptance.
 The earlier Node Editor recommendation remains a proposal pending owner acceptance.
+
+## SEQ-NODE-EDITOR-IMPL-F1 — bounded acceptance of DESIGN-R1 (2026-10-12)
+
+The owner selects one reusable internal Node Editor for the first implementation, accepting the
+explicit four-part logical target and whole-generation draft gate. A singleton reuses existing
+workspace retention/docking/focus and avoids an unjustified dynamic registry; it does not settle
+independent node comparisons or wider Workspace composition in Q-032. The analytical Gain region
+validates a specialized resizable editing surface while keeping ProjectDocument/Undo/Save and F2
+as the single canonical state/execution boundary. Native plugin editor hosting remains proposed.
+
+Owner-directed visual refinement keeps Gain's musical controls primary, makes the analytical curve
+optional disclosure and hides duplicate quick controls only for an identical full canonical target.
+Different selection scopes remain independent. This changes composition from the first proposal,
+without dropping the graph or introducing parameters, schema/DSP state or a second history. Background
+separation and usable minimum-size composition are development requirements in both themes; visual
+acceptance is not inferred from deterministic or controlled GUI checks.
+
+The verified checkpoint uses BUILD 0.1.0.0002 within the existing processing line. It claims neither
+a new independent musical/DSP block for PATCH nor broader R4/native/platform acceptance.
+Current contracts remain in [architecture](../ARCHITECTURE.md#node-editor-state-and-lifetime-proposal),
+[graph](../NODE_GRAPH.md#full-node-editors-proposal) and
+[workspace](../WORKSPACE.md#node-editor-placement-proposal).

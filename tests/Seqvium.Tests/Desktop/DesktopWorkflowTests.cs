@@ -77,6 +77,9 @@ public sealed class DesktopWorkflowTests
                 await Task.Yield();
             }
             Assert.True(await task.WaitAsync(TestContext.Current.CancellationToken));
+            // Play acknowledges the owner command; its Start still needs a consumer packet.
+            // The loop may observe completion before consuming that final publication.
+            Sampler?.Process(new float[64]);
         }
         public async ValueTask DisposeAsync()
         {

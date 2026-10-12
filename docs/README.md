@@ -7,15 +7,19 @@ workflow and points to the detailed sources for each subject.
 ## Try sample processing
 
 First [build and launch the desktop](../README.md#getting-started) on Windows. Start with a short
-mono or stereo WAV: 16-bit PCM or 32-bit floating point, up to 16 MiB. No samples are bundled.
+mono or stereo WAV at **44.1 or 48 kHz**: 16-bit PCM or 32-bit floating point, up to 16 MiB.
+No samples are bundled.
 
 1. Choose **Import WAV** in the toolbar, or press Ctrl+I, and select your file. Toolbar icons have
    tooltips; secondary actions may move into the overflow menu in a narrow window.
 2. Open **Node Graph**, or press Ctrl+G. The imported item starts with Source → Gain → Output.
    Source supplies the sample, Gain adjusts its level, and Output receives the result.
-3. Select Gain and enter a linear amplitude between 0 and 1 in the graph's parameter row; press
-   Enter or the check button to commit. `1` preserves the level and `0` silences it. The desktop's
-   current numeric input uses a decimal point, for example `0.5`, in either interface language.
+3. Double-click the body of Gain to open **Node Editor**. Drag the level control and release to
+   apply, or enter an exact linear amplitude between 0 and 1 and press Enter or **Apply**.
+   `1` preserves the level and `0` silences it; the editor also shows dB attenuation. Expand **Curve**
+   to see the input/output relationship. Escape cancels unfinished input. When the editor is hidden
+   or collapsed, the graph's quick Gain input is available; it uses a decimal point, for example
+   `0.5`, in either interface language.
 4. Press **Play** to hear the selected item through the Windows default output. Press **Stop** to
    stop it. Moving nodes changes the drawing; connections determine the processing path.
 5. Use **Save As** to keep the project. If you move or copy `Song.seqvium`, keep its associated
@@ -31,6 +35,12 @@ so read the status before assuming that an unfinished connection is being heard.
 The [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item) explains import and mixing
 boundaries; the [project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout) explains audio
 storage. These are detailed engineering documents, not additional steps required for a first listen.
+
+You can also open a node through **Open Editor** in its context menu, or press Enter when the node
+is selected and the graph canvas has focus. Source, Mix and Output show their bindings and signal
+paths. Selecting another node leaves the editor on its current target until you explicitly open
+the new node. Resize, dock, collapse or hide the editor like the other internal panes; use the panes
+menu to reopen it. The transfer graph is analytical: it shows the setting, without measuring audio.
 
 ## Build and contribute
 

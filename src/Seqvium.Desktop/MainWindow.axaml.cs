@@ -23,6 +23,8 @@ internal sealed partial class MainWindow : Window
     private readonly WorkspaceLayoutPersistence _layoutPersistence;
     private readonly bool _layoutFallback;
     private readonly GraphEditorSession _graphEditor = new();
+    private readonly NodeEditorSession _nodeEditor = new();
+    private GraphPaneContent? _graphPane;
     private bool _closing;
     private bool _shutdownComplete;
 
@@ -36,10 +38,10 @@ internal sealed partial class MainWindow : Window
         _layoutFallback = layout.UsedFallback;
         _layoutPersistence = new(layoutStore.SaveAsync);
         _workspace = new(session, new(layout.Layout), ToggleLanguageAsync, ToggleThemeAsync,
-            definition => definition.InstanceId == WorkspaceState.GraphId
-                ? new GraphPaneContent(session, _workflow, _graphEditor, ImportGraphWavAsync)
-                : new FirstPartyPaneContent(session, definition, ToggleLanguageAsync, ToggleThemeAsync));
+            CreatePaneContent);
         WorkspaceRegion.Child = _workspace;
+        _workspace.State.Changed += RefreshGainHierarchy;
+        RefreshGainHierarchy();
         _workspace.LeaveRequested += () => PaneMenuAction.Focus();
         _workspace.LayoutCommitted += () => _layoutPersistence.Request(_workspace.State.Capture());
         _layoutPersistence.Completed += () => session.SetLayoutNotice(_layoutFallback ? "Workspace.LoadFallback" :
@@ -74,7 +76,9 @@ internal sealed partial class MainWindow : Window
         Closed += (_, _) =>
         {
             session.PropertyChanged -= SessionChanged;
+            _workspace.State.Changed -= RefreshGainHierarchy;
             _workspace.Dispose();
+            _nodeEditor.Dispose();
             session.Dispose();
         };
     }
@@ -170,6 +174,36 @@ internal sealed partial class MainWindow : Window
     private void InspectorClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.InspectorId);
     private void AppearanceClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.AppearanceId);
     private void GraphClicked(object? sender, RoutedEventArgs args) => OpenGraph();
+    private void NodeEditorClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.NodeEditorId);
+
+    private Control CreatePaneContent(PaneDefinition definition)
+    {
+        if (definition.InstanceId == WorkspaceState.GraphId)
+        {
+            var content = new GraphPaneContent(_session, _workflow, _graphEditor, ImportGraphWavAsync);
+            _graphPane = content;
+            content.EditorRequested += OpenNodeEditor;
+            content.SelectionChanged += RefreshGainHierarchy;
+            return content;
+        }
+        return definition.InstanceId == WorkspaceState.NodeEditorId
+            ? new NodeEditorPaneContent(_session, _workflow, _nodeEditor)
+            : new FirstPartyPaneContent(_session, definition, ToggleLanguageAsync, ToggleThemeAsync);
+    }
+    private void OpenNodeEditor(NodeEditorTarget target)
+    {
+        if (_closing || !_nodeEditor.Open(_workflow.State, target)) return;
+        _workspace.Open(WorkspaceState.NodeEditorId);
+    }
+    private void RefreshGainHierarchy()
+    {
+        if (_shutdownComplete || _workspace is null) return;
+        var visibility = GainSurfacePresentation.Resolve(_workflow.State, _graphEditor, _nodeEditor.Target, _workspace.State);
+        _workflowControls.GainShownElsewhere = visibility.HideToolbarGain;
+        _workflowControls.Refresh(_closing || _workflowActionBusy);
+        if (_graphPane is { } graph && graph.GainShownInEditor != visibility.HideGraphGain)
+        { graph.GainShownInEditor = visibility.HideGraphGain; graph.Refresh(); }
+    }
 
     private void OpenGraph()
     {

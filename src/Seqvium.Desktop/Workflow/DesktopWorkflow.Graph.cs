@@ -74,6 +74,38 @@ internal sealed partial class DesktopWorkflow
             edit.SetGraphGain(attachment.GraphId, node, amplitude);
         });
 
+    internal Task<bool> SetGraphGainAsync(NodeGainProposal proposal) =>
+        EditGraphAsync(new(proposal.Target.LifecycleId, proposal.Generation, proposal.Target.AttachmentId),
+            "Change graph Gain", (edit, attachment, graph) =>
+            {
+                var node = graph.Nodes.SingleOrDefault(n => n.Id == proposal.Target.NodeId);
+                if (attachment.GraphId != proposal.Target.GraphDefinitionId || node is null ||
+                    node.Type != GraphBuiltIns.Gain || !GraphConnectionRules.Supported(node) ||
+                    node.Parameters.Keys.Any(k => k != GraphBuiltIns.GainAmplitude) ||
+                    NodeEditorSession.ReadAmplitude(node) != proposal.Before)
+                    throw new InvalidOperationException("Graph.Stale");
+                if (proposal.After is < 0m or > 1m) throw new InvalidOperationException(GraphReasons.InvalidGain);
+                edit.SetGraphGain(graph.Id, node.Id, proposal.After);
+            });
+
+    // Existing discovery freezes document/storage ownership before its bounded worker reads.
+    internal async Task<SourceDiscovery?> InspectNodeSourcesAsync(NodeEditorTarget target, long generation,
+        CancellationToken cancellation)
+    {
+        var pending = await _owner.Run(() =>
+        {
+            if (_closed || _document.LifecycleId != target.LifecycleId || _document.Generation != generation)
+                return Task.FromResult<Task<SourceDiscovery>?>(null);
+            var attachment = _document.Current.State.GraphAttachments.SingleOrDefault(a => a.Id == target.AttachmentId);
+            var node = _document.Current.State.Graphs.SingleOrDefault(g => g.Id == attachment?.GraphId)?.Nodes
+                .SingleOrDefault(n => n.Id == target.NodeId);
+            return Task.FromResult(attachment?.GraphId != target.GraphDefinitionId || node is not { Type: GraphBuiltIns.Source } ||
+                !GraphConnectionRules.Supported(node) ? null :
+                SourceAccess.DiscoverProjectAsync(_document, SourceAccess.MaximumEntries, cancellation));
+        });
+        return pending is null ? null : await pending.ConfigureAwait(false);
+    }
+
     internal Task<bool> BindGraphSourceAsync(GraphEditBasis basis, Id<GraphNode> node, Id<MusicalPart> part)
         => EditGraphAsync(basis, "Bind graph source", (edit, attachment, _) =>
         {

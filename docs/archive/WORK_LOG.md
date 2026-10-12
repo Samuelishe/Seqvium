@@ -1257,3 +1257,29 @@ Markdown relative links/anchors, audience/owner/status/scope, source facts and d
 the locally selected SDK is 10.0.401. No build/test/GUI/audio run was needed for this documentation
 change. No production/test/configuration, product version, roadmap order, acceptance or Git index/
 history change; new reader/contribution pages are intentional reusable documentation.
+
+## SEQ-NODE-EDITOR-IMPL-F1 — reusable internal node editor (2026-10-12)
+
+Implemented the owner-authorized first slice of DESIGN-R1: one retained Workspace pane, explicit
+lifecycle/attachment/definition/node target, generation-gated canonical Gain gestures and structural
+Source/Mix/Output information. Body double-click/context/Enter access preserves graph gestures and
+ContextRequested behavior. Empty-state duplication was removed from both panes and absent toolbar
+controls; real diagnostics and last-valid feedback remain.
+
+Subsequent owner review required a compact active Gain composition: one pane title/source/scope,
+grouped level/value/dB, optional full-width Curve, exact-parameter quick-control hierarchy and transient
+real-draft feedback. Rendered minimum-size review exposed template-height, invalid-label and draft-axis
+clipping; corrections preserve the parameter, graph/history ownership and supported controls.
+Unselected nodes gained modest surface/boundary separation in both themes; UI_DESIGN and coding
+guidelines now require background visibility and actual minimum-size review. Owner visual acceptance
+is still separate from these implementation/check results.
+
+Locked Release verification passes with zero warnings/errors and 908 tests, retaining all 867 prior
+cases. Actual Windows language/theme/size, lifecycle and empty-state checks are separate from guarded
+native opening and controlled routed Gain events. Native Gain stopped on foreground loss; no physical
+playback, pressure or complete native matrix is claimed. The prior fresh-Play test helper now consumes
+its acknowledged Start packet before inspecting playback. Core schema/DSP/coordinator/backend are unchanged.
+
+One BUILD checkpoint, 0.1.0.0001 → 0.1.0.0002, recognizes the bounded architecture/interface extension
+within existing attenuation/routing. Q-032 stays open, F2 partial and F3-B pending owner review.
+Detailed current evidence: [report](../experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md).

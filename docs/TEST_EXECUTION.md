@@ -148,6 +148,26 @@ acceptance; high/mixed DPI, screen readers and Linux/macOS runtime remain missin
 
 ## R4-F3-B graph editor verification
 
+### Reusable node editor verification
+
+`NodeEditorTests` adds 41 cases without GUI/device initialization: stable four-part target identity,
+draft/generation/ABA gates, deletion/Undo/restoration, unsupported/opaque states, lifecycle replacement,
+owner commits/one edit/no-op, numerical dB oracle, canonical Save/reopen, deferred text-echo refusal,
+menu view-action expiry and single empty-state content hints. A deterministic production F2
+coordinator/PCM case verifies coefficient convergence, preserved execution identity/epoch, sticky
+Stop and joined release through the editor's captured command. Exact-parameter visual priority and
+true intervening-draft notices have independent cases; shared palette checks also cover unselected
+node surfaces/boundaries and readable text in both themes. The full baseline is **908 passing
+tests**, retaining all 867 earlier cases. The existing fresh-Play helper consumes a final packet
+after owner acknowledgment before asserting actual playback; no physical output is substituted as
+GUI/audio evidence.
+
+Use the full locked Release commands above, or select `--filter-class "*NodeEditorTests"` after the
+build. The [editor report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md) separately records native
+Windows opening/menu/drag, actual-window RU/EN × Dark/Light ordinary/reduced and empty-state smoke,
+controlled routed Gain/capture interactions, previous failures and foreground refusal. Routed events
+are not native input; no new physical audio/pressure acceptance is claimed.
+
 `Desktop/GraphMenuTests` adds 29 deterministic regressions for the actual captured menu command path:
 all 20 Source/Gain/Mix/Output layout/input-count choices in incomplete intent, exact node/position/ports,
 unbound Source and designated Output, one-edit Undo restoration, per-type Output refusal with RU/EN

@@ -25,6 +25,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         HorizontalAlignment = HorizontalAlignment.Stretch };
     private readonly GraphCanvas _canvas;
     private readonly TextBlock _status = new() { Classes = { "caption" }, TextTrimming = TextTrimming.CharacterEllipsis };
+    private readonly Border _statusBorder;
     private readonly TextBlock _parameterName = new() { VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBox _value = new() { Width = 74, MinHeight = 24, Padding = new(4, 2), FontSize = 12 };
     private readonly Button _commit;
@@ -42,6 +43,17 @@ internal sealed class GraphPaneContent : Grid, IDisposable
     private long _generation = -1;
     private readonly GraphMenuSession _menuSession;
     internal Task PendingMenuCommand { get; private set; } = Task.CompletedTask;
+    public event Action<NodeEditorTarget>? EditorRequested;
+    public event Action? SelectionChanged;
+    public bool GainShownInEditor
+    {
+        get;
+        set
+        {
+            if (field == value) return;
+            field = value; _parameterNode = null; _parameterBasis = null;
+        }
+    }
 
     public GraphPaneContent(ShellSession shell, DesktopWorkflow workflow, GraphEditorSession editor,
         Func<GraphEditBasis, GraphPosition, Task> import)
@@ -73,7 +85,8 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         _canvas = new(shell, editor, workflow);
         ToolTip.SetTip(_canvas, shell["Graph.KeyboardHint"]);
         Grid.SetRow(_canvas, 1); Children.Add(_canvas);
-        _canvas.SelectionChanged += Refresh;
+        _canvas.SelectionChanged += () => { Refresh(); SelectionChanged?.Invoke(); };
+        _canvas.EditorRequested += target => EditorRequested?.Invoke(target);
         _canvas.MenuRequested += point => OpenMenu(point);
         // Our ContextRequested handler consumes the request before Avalonia's attached-menu handler.
         // Attachment is stable; PointerPressed and KeyDown never open this menu.
@@ -98,15 +111,15 @@ internal sealed class GraphPaneContent : Grid, IDisposable
             if (e.Key == Key.Escape) { _parameterNode = null; Refresh(); _canvas.Focus(); e.Handled = true; }
         };
         _parameter.Children.Add(_commit); Grid.SetRow(_parameter, 2); Children.Add(_parameter);
-        var status = new Border { Padding = new(6, 3), Child = _status, BorderThickness = new(0, 1, 0, 0) };
-        status.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Border.Default"));
-        Grid.SetRow(status, 3); Children.Add(status);
+        _statusBorder = new Border { Padding = new(6, 3), Child = _status, BorderThickness = new(0, 1, 0, 0) };
+        _statusBorder.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Border.Default"));
+        Grid.SetRow(_statusBorder, 3); Children.Add(_statusBorder);
         _target.SelectionChanged += async (_, _) =>
         {
             if (_refreshing || _target.SelectedItem is not OccurrenceChoice choice) return;
             CancelGesture();
             if (_editor.Open(_workflow.State, choice.Id))
-            { await workflow.SelectAsync(choice.Id); Refresh(); _canvas.Fit(); _canvas.Focus(); }
+            { await workflow.SelectAsync(choice.Id); Refresh(); SelectionChanged?.Invoke(); _canvas.Fit(); _canvas.Focus(); }
         };
         AutomationProperties.SetAutomationId(_target, "Graph.Target");
         workflow.Changed += WorkflowChanged; shell.PropertyChanged += PreferencesChanged;
@@ -133,7 +146,8 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         {
             if (!_target.Items.OfType<OccurrenceChoice>().SequenceEqual(state.Occurrences)) _target.ItemsSource = state.Occurrences;
             _target.SelectedItem = state.Occurrences.SingleOrDefault(c => c.Id == _editor.Target);
-            _target.PlaceholderText = _shell[_editor.Target is null ? "Graph.NoTarget" : "Graph.TargetMissing"];
+            _target.PlaceholderText = _shell["Graph.Target"];
+            _target.IsVisible = state.Occurrences.Length > 0;
             ToolTip.SetTip(_canvas, _shell["Graph.KeyboardHint"]);
             AutomationProperties.SetName(_target, _shell["Graph.Target"]);
             _target.IsEnabled = !state.Busy && !state.IsClosed;
@@ -150,7 +164,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
             var report = _editor.Report;
             _canvas.Diagnostics = report?.Diagnostics.ToArray() ?? [];
             var selected = _editor.Graph?.Nodes.SingleOrDefault(n => n.Id == _editor.SelectedNode);
-            _parameter.IsVisible = selected?.Type == GraphBuiltIns.Gain;
+            _parameter.IsVisible = selected?.Type == GraphBuiltIns.Gain && !GainShownInEditor;
             _parameterName.Text = _shell["Graph.Gain"] + " · " + _shell["Graph.Linear"];
             ToolTip.SetTip(_value, _shell["Workflow.GainUnit"]); AutomationProperties.SetName(_value, _shell["Workflow.Gain"]);
             ToolTip.SetTip(_commit, _shell["Graph.CommitGain"]); AutomationProperties.SetName(_commit, _shell["Graph.CommitGain"]);
@@ -172,7 +186,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         var state = _workflow.State;
         string text; string role = "Text.Secondary";
         if (_feedback is not null) { text = _shell[_feedback]; role = "Status.Warning"; }
-        else if (_editor.Attachment is null) text = _shell[_editor.Target is null ? "Graph.NoTarget" : "Graph.TargetMissing"];
+        else if (_editor.Attachment is null) text = ""; // Canvas owns the single empty/unavailable message.
         else if (_canvas.Diagnostics.Count > 0)
         {
             text = _shell["Graph.Incomplete"] + " · " + _shell[_canvas.Diagnostics[0].Reason]; role = "Status.Warning";
@@ -181,12 +195,12 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         }
         else if (state.Execution is { } execution && execution.Target == _editor.Target)
         {
-            text = _shell[execution.Blocker is not null ? execution.Blocker : execution.PreparationPending ? "Status.Preparing" :
-                execution.Execution.Playing ? "Graph.Executing" : "Graph.Canonical"];
+            text = execution.Blocker is not null ? _shell[execution.Blocker] : execution.PreparationPending ? _shell["Status.Preparing"] :
+                execution.Execution.Playing ? _shell["Graph.Executing"] : "";
             if (execution.PreparationPending && execution.Execution.Playing) text += " · " + _shell["Status.LastValid"];
             if (execution.Blocker is not null) role = "Status.Critical";
         }
-        else text = _shell["Graph.Canonical"];
+        else text = "";
         string? selection = null;
         Id<GraphConnection>? selectedCable = null;
         if (_editor.Graph is { } graph)
@@ -200,14 +214,17 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                 selection = ConnectionLabel(graph, edge); selectedCable = edge.Id;
             }
         }
-        string selectedText = selection is null ? "" : _shell["Graph.Selected"] + ": " + selection;
-        _status.Text = selectedText.Length == 0 ? text : selectedText + " · " + text;
+        string selectedText = selectedCable is null ? "" : _shell["Graph.Selected"] + ": " + selection;
+        _status.Text = string.Join(" · ", new[] { selectedText, text }.Where(s => s.Length > 0));
+        _statusBorder.IsVisible = _status.Text.Length > 0;
         _status.Foreground = new SolidColorBrush(Color.Parse(HostPalette.For(_shell.Preferences.Theme)[role]));
         ToolTip.SetTip(_status, _status.Text + (_canvas.Diagnostics.Count == 0 ? "" : "\n" +
             string.Join("\n", _canvas.Diagnostics.Select(d => _shell[d.Reason]).Distinct())));
         // Machine-readable identity for bounded GUI verification; UUIDs stay off the visible surface.
         AutomationProperties.SetHelpText(_canvas, selectedCable?.ToString() ?? "");
-        AutomationProperties.SetName(_canvas, _shell["Pane.Graph"] + ". " + text +
+        var accessibleStatus = text.Length > 0 ? text : _shell[_editor.Graph is not null ? "Graph.Canonical" :
+            _editor.Target is null ? "Graph.NoTarget" : "Graph.TargetMissing"];
+        AutomationProperties.SetName(_canvas, _shell["Pane.Graph"] + ". " + accessibleStatus +
             (selection is null ? "" : ". " + _shell["Graph.Selected"] + ": " + selection));
     }
     private async Task CommitGainAsync()
@@ -228,20 +245,21 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         return part is not null ? type + " · " + part.Name : type + " " +
             (_editor.Graph!.Nodes.Where(n => n.Type == node.Type).ToList().FindIndex(n => n.Id == node.Id) + 1);
     }
-    private MenuItem Menu(string text, Func<Task>? action = null)
+    private MenuItem Menu(string text, Func<Task>? action = null, bool returnFocus = true)
     {
         var item = new MenuItem { Header = text };
-        var command = action is null ? null : _menuSession.Capture(async () => { _menu.Close(); await action(); });
+        Func<Task>? invoke = action is null ? null : async () => { _menu.Close(); await action(); };
+        var command = invoke is null ? null : returnFocus ? _menuSession.Capture(invoke) : _menuSession.CaptureView(invoke);
         if (action is not null) item.Click += async (_, e) =>
         {
             e.Handled = true;
             if (!item.IsEnabled) return;
-            PendingMenuCommand = RunMenuActionAsync(command!);
+            PendingMenuCommand = RunMenuActionAsync(command!, returnFocus);
             await PendingMenuCommand;
         };
         return item;
     }
-    private async Task RunMenuActionAsync(Func<Task<string?>> command)
+    private async Task RunMenuActionAsync(Func<Task<string?>> command, bool returnFocus = true)
     {
         if (_disposed) return;
         _feedback = null;
@@ -249,7 +267,8 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         _menu.Close();
         if (_disposed) return;
         Refresh();
-        _feedback = refusal; RefreshStatus(); FocusCanvas();
+        _feedback = refusal; RefreshStatus();
+        if (returnFocus || refusal is not null) FocusCanvas();
     }
     private MenuItem CreationMenu(GraphNodeCreation choice, GraphPoint point, string text)
     {
@@ -307,7 +326,7 @@ internal sealed class GraphPaneContent : Grid, IDisposable
         {
             var select = Menu(_shell["Graph.SelectNode"]);
             foreach (var node in graph.Nodes) select.Items.Add(Menu(NodeLabel(node), () =>
-            { _editor.Select(new(GraphHitKind.Node, node.Id)); Refresh(); return Task.CompletedTask; }));
+            { _editor.Select(new(GraphHitKind.Node, node.Id)); Refresh(); SelectionChanged?.Invoke(); return Task.CompletedTask; }));
             if (select.Items.Count == 0) Unavailable(select, "Graph.NoChoices");
             _menu.Items.Add(select);
             var connections = Menu(_shell["Graph.SelectConnection"]);
@@ -317,12 +336,15 @@ internal sealed class GraphPaneContent : Grid, IDisposable
                 var to = graph.Nodes.SingleOrDefault(n => n.Id == edge.ToNodeId);
                 if (from is null || to is null) continue;
                 connections.Items.Add(Menu(ConnectionLabel(graph, edge), () =>
-                { _editor.Select(new(GraphHitKind.Connection, Connection: edge.Id)); Refresh(); return Task.CompletedTask; }));
+                { _editor.Select(new(GraphHitKind.Connection, Connection: edge.Id)); Refresh(); SelectionChanged?.Invoke(); return Task.CompletedTask; }));
             }
             if (connections.Items.Count == 0) Unavailable(connections, "Graph.NoChoices");
             _menu.Items.Add(connections);
             if (graph.Nodes.SingleOrDefault(n => n.Id == _editor.SelectedNode) is { } selected)
             {
+                var editorTarget = new NodeEditorTarget(basis.Lifecycle, basis.Attachment, graph.Id, selected.Id);
+                _menu.Items.Add(Menu(_shell["NodeEditor.Open"], () =>
+                { EditorRequested?.Invoke(editorTarget); return Task.CompletedTask; }, returnFocus: false));
                 if (selected.Type == GraphBuiltIns.Source && _editor.Attachment is { } attachment)
                 {
                     var bind = Menu(_shell["Graph.BindSource"]);

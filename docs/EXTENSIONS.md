@@ -234,9 +234,10 @@ major Seqvium-authored surfaces continue to follow the internal Workspace Pane m
 
 ### Native node editor lifecycle proposal
 
-**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** This identifies future host
+**SEQ-NODE-EDITOR-DESIGN-R1 — native hosting remains proposal pending owner acceptance.** This identifies future host
 responsibilities only; it does not select CLAP/VST3, embedding, process isolation, platform handles,
-public ABI or a realtime extension contract. The initial Desktop editor proposal uses built-ins only.
+public ABI or a realtime extension contract. SEQ-NODE-EDITOR-IMPL-F1 implements only the accepted
+built-in Desktop slice in one internal Workspace pane; this grants no native-hosting authorization.
 
 Keep logical project node/sound target, materialized processing instance, editor-open session and OS
 window identity separate. A shared sound definition can require several execution instances under

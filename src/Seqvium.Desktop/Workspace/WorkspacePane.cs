@@ -40,6 +40,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     private IPointer? _pointer;
     private PaneGesture? _gesture;
     private bool _disposed;
+    private double? _curveCollapsedHeight, _curveExpandedHeight;
     private string Id => _definition.InstanceId;
 
     public WorkspacePane(WorkspaceHost host, ShellSession session, PaneDefinition definition,
@@ -85,6 +86,11 @@ internal sealed class WorkspacePane : Border, IDisposable
         };
         _actions.ContextMenu = _menu;
         _content = host.CreateContent(definition);
+        if (_content is NodeEditorPaneContent editor)
+        {
+            editor.TitleChanged += RefreshTitle;
+            editor.CurveExpansionChanged += CurveChanged;
+        }
         Grid.SetRow(_content, 1);
         body.Children.Add(_content);
         _corner = new Border
@@ -132,9 +138,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     public void Refresh(PanePlacement pane, bool active)
     {
         if (_disposed) return;
-        _title.Text = _session[_definition.TitleKey];
-        ToolTip.SetTip(_title, _title.Text);
-        AutomationProperties.SetName(this, _title.Text);
+        RefreshTitle();
         Classes.Set("active", active);
         _title.FontWeight = active ? Avalonia.Media.FontWeight.SemiBold : Avalonia.Media.FontWeight.Normal;
         foreach (var (item, key) in _items)
@@ -151,11 +155,42 @@ internal sealed class WorkspacePane : Border, IDisposable
         _corner.IsVisible = pane.Dock == PaneDock.Floating;
         if (_content is FirstPartyPaneContent firstParty) firstParty.Refresh();
         if (_content is GraphPaneContent graph) graph.Refresh();
+        if (_content is NodeEditorPaneContent editor)
+        {
+            if (pane.Visibility != PaneVisibility.Visible) editor.CancelGesture();
+            else editor.Refresh();
+        }
+        RefreshTitle();
+    }
+
+    private void RefreshTitle()
+    {
+        if (_disposed) return;
+        _title.Text = _content is NodeEditorPaneContent editor ? editor.Title : _session[_definition.TitleKey];
+        ToolTip.SetTip(_title, _title.Text); AutomationProperties.SetName(this, _title.Text);
+    }
+    private void CurveChanged(bool expanded)
+    {
+        if (_disposed || _host.State.Get(Id) is not { Visibility: PaneVisibility.Visible, Dock: PaneDock.Floating }) return;
+        var bounds = _host.State.Bounds(Id);
+        if (expanded)
+        {
+            _curveCollapsedHeight = bounds.Height; _curveExpandedHeight = Math.Max(bounds.Height, 350);
+            _host.State.SetBounds(Id, bounds with { Height = _curveExpandedHeight.Value });
+        }
+        else
+        {
+            // Preserve a manual resize made while the optional curve was open.
+            if (_curveCollapsedHeight is { } previous && bounds.Height == _curveExpandedHeight)
+                _host.State.SetBounds(Id, bounds with { Height = previous });
+            _curveCollapsedHeight = _curveExpandedHeight = null;
+        }
+        _host.Commit();
     }
 
     private void NameAction(Button button, string key)
     {
-        var label = _session[key] + ": " + _session[_definition.TitleKey];
+        var label = _session[key] + ": " + _title.Text;
         AutomationProperties.SetName(button, label);
         if (button == _hide) AutomationProperties.SetAcceleratorKey(button, "Ctrl+W");
         ToolTip.SetTip(button, label + (_actions == button ? " · " + _session["Pane.MoveHint"] : ""));
@@ -164,7 +199,9 @@ internal sealed class WorkspacePane : Border, IDisposable
     public void FocusContext()
     {
         if (_disposed || !IsVisible || TopLevel.GetTopLevel(this) is null) return;
-        if (_content is GraphPaneContent graph) graph.FocusCanvas(); else _actions.Focus();
+        if (_content is GraphPaneContent graph) graph.FocusCanvas();
+        else if (_content is NodeEditorPaneContent editor) editor.FocusEditor();
+        else _actions.Focus();
     }
 
     internal void FrameGraph() { if (_content is GraphPaneContent graph) graph.Frame(); }
@@ -216,6 +253,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     public void CancelGesture()
     {
         if (_content is GraphPaneContent graph) graph.CancelGesture();
+        if (_content is NodeEditorPaneContent editor) editor.CancelGesture();
         if (_pointer is not { } pointer) return;
         _pointer = null;
         _gesture?.Cancel();

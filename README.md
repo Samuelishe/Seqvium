@@ -17,6 +17,8 @@ The current desktop provides a small working environment for playing and process
 - Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
   and pan or zoom the canvas.
 - Adjust sample levels and mix independent WAV sources within the same graph.
+- Double-click a node to open its reusable editor: adjust Gain with a level control, exact amplitude
+  and dB display, or inspect Source, Mix and Output details.
 - Undo and redo edits, save a project with its imported audio, and reopen it.
 - Arrange internal workspace panes by moving, resizing, docking or collapsing them.
 - Use the interface in English or Russian, with dark and light themes.
@@ -32,7 +34,7 @@ Seqvium is an **early alpha**, not yet a ready replacement for FL Studio or Able
 It is useful for trying sample playback and graph editing, but it does not yet offer a practical
 workflow for composing complete tracks.
 
-There is no step sequencer, Piano Roll, Arrangement or Mixer editor yet. Full node editors,
+There is no step sequencer, Piano Roll, Arrangement or Mixer editor yet. Richer node editors,
 EQ and other effects, third-party plugin hosting, MIDI input, audio recording, export and crash
 recovery are also still missing. Playback can glitch under heavy system load.
 

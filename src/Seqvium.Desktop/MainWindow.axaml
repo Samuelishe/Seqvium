@@ -58,6 +58,9 @@
                                     <Button Classes="shell" Content="{Binding [Pane.Graph]}"
                                             Click="GraphClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenGraph" />
+                                    <Button Classes="shell" Content="{Binding [Pane.NodeEditor]}"
+                                            Click="NodeEditorClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenNodeEditor" />
                                     <TextBlock Classes="caption" Text="{Binding [Workspace.KeyboardHint]}" />
                                 </StackPanel>
                             </Flyout>

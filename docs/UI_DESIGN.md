@@ -97,6 +97,9 @@ authorize future editors or choose their layouts.
   pressed, unavailable, active transport, warning and critical actions. Restrained blue-violet action
   accents, green transport, amber warning and moderate red critical feedback have distinct purposes.
   Color supplements shape/text/state; no fake meters, heavy shadows/glows or decorative gradients.
+  Unselected working elements must remain distinguishable from their surrounding surface in both
+  themes. Use modest surface separation and readable boundaries; selection/focus is additional
+  emphasis, not the only way to locate a node or control. Review the actual canvas composition.
 - **First-party dialog chrome:** compact internal confirmations, errors, properties and tools follow
   Seqvium typography, semantic surfaces, borders, control states and spacing. Compact owned modals
   have no ordinary Windows titlebar and no duplicate decorative header. Size height from content,
@@ -254,20 +257,40 @@ are selected.
 
 ### Full node editor visual proposal
 
-**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** A detailed first-party editor
-should have a compact scope/identity row, a task-specific working region and restrained applicable
+**SEQ-NODE-EDITOR-IMPL-F1 — bounded implementation of the accepted first slice.** The first-party editor
+has a compact scope/identity row, a task-specific working region and restrained applicable
 status. A real EQ curve, instrument controls or analyzer can occupy substantial space; generic cards
 or identical generated forms must not limit those workflows. Tabs/presets belong only when functional
 for the supported node. [Graph](NODE_GRAPH.md#full-node-editors-proposal) owns capability and the useful
 Gain attenuation/transfer-graph slice; [Workspace](WORKSPACE.md#node-editor-placement-proposal) owns
 placement and retained sizing.
 
-Gain starts compact with reachable level/input actions and a labelled analytical transfer graph,
-which remains distinct from live signal metering. Preserve semantic RU/EN and Dark/Light resources,
+Gain uses its node name once in the pane title, a short source/scope line, and Level with adjacent
+linear value and derived dB. Unity/Silence sit below the level control. The labelled analytical
+transfer graph is a compact, initially collapsed Curve disclosure; its formula is available on
+request. This deliberately refines DESIGN-R1 following owner review: primary musical controls take
+precedence over permanently displayed teaching text and a large graph. The graph remains distinct
+from live signal metering. Preserve semantic RU/EN and Dark/Light resources,
 usable controls, independent focus/selection/target cues and local reflow/scrolling at reduced sizes.
 Do not enlarge a single value into an empty major surface or show future-feature placeholders. Final
 default/minimum dimensions require rendered layout and interaction evidence; an analytical graph is
 not evidence for a live analyzer or a future EQ's usability.
+
+Each empty/unavailable pane has at most one useful content hint. GraphCanvas owns its empty graph
+message; an empty selector and footer are hidden. Node Editor hides absent identity/scope/status rows
+and keeps one short content hint, with a distinct warning for a deleted target. Healthy Gain needs no
+idle explanatory footer: reserve that region for drafts, changed-elsewhere feedback, diagnostics and
+matching-scope last-valid state. The main toolbar hides occurrence/Gain controls when their data is
+absent; an explicit compact selection in Details does not repeat a static selection heading.
+Invalid amplitude remains visible in the exact input with a warning and repair path. Hide the
+undefined dB/curve instead of repeating an invalid-value label in every control. A draft uses a short
+label and a dashed curve; explanatory release/commit text need not occupy the working area.
+Changed-elsewhere feedback appears only when an intervening accepted edit cancels a real draft,
+and expires after three seconds. Initial loading, idle refresh and own commits do not create it.
+For the same four-part target and parameter, the visible expanded Node Editor takes priority over
+Graph quick Gain and the toolbar. Otherwise the visible Graph's selected Gain takes priority over
+the toolbar's same Gain. Different processing targets retain their controls; hiding/collapsing the
+editor restores quick access. Healthy canonical readiness and selected-node facts need no footer.
 
 ## Responsive layout and usable minimums
 
@@ -282,6 +305,13 @@ breakpoints remain future visual-design work. Correct platform DPI scaling is st
 distinct from shrinking the UI to fit a window. Independently rendered third-party editors are outside
 this visual contract; [WORKSPACE](WORKSPACE.md) owns main-window and pane behavior.
 
+Validate content at its supported pane minimum as well as the main-window minimum in both languages
+and themes. Check long/zero/invalid values and disclosed content, not only nominal values. Measure
+actual template minimums and scroll extents: a compact idle tool must not acquire a scrollbar or
+clip an action because invisible template space remains. Disclosures must stretch their working
+content to usable width. Preserve deliberate manual resizing and provide scrolling when expanded
+content exceeds a user-selected size, without shrinking labels or input targets.
+
 ## Processing and node-canvas presentation
 
 F3-B implements a compact first-party canvas using 156-unit nodes, 22-unit port rows, bounded curved
@@ -289,8 +319,9 @@ cables with surface under-strokes at crossings and restrained 3-unit body roundi
 Mix and Output have human type labels, directed input/output labels and source/parameter/layout detail.
 Selection, keyboard focus, previews and invalid elements have distinct outlines/text/semantic colors;
 an exclamation mark supplements error color. Hover/context feedback explains affected diagnostics.
-`Graph.Cable` and `Graph.Grid` extend HostPalette equally for Dark/Light; remaining colors reuse host
-roles. The pane-local row contains explicit target, create/import/frame/delete/context actions;
+`Graph.Cable`, `Graph.Grid`, `Graph.Node` and `Graph.NodeBorder` extend HostPalette equally for Dark/Light.
+Unselected nodes use a slightly lighter Dark fill, white Light fill and defined boundaries so they
+remain visible against the grid. The pane-local row contains explicit target, create/import/frame/delete/context actions;
 the main command row remains unchanged. Gain exposes one compact invariant text input on selection,
 with linear ratio semantics, retained invalid intent and explicit commit. Technical IDs stay in the
 existing requested details only. Pan/zoom affect canvas content, never global typography or document

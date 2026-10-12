@@ -45,6 +45,7 @@ internal sealed class WorkflowControls : Grid
     private bool _refreshing, _compact, _openInOverflow, _blocked;
     private Seqvium.Core.Id<Seqvium.Core.GraphAttachment>? _selection;
     internal bool CanCancelImport { get; set; }
+    internal bool GainShownElsewhere { get; set; }
     internal Button StatusControl { get; } = new() { Classes = { "shell", "status" },
         HorizontalAlignment = HorizontalAlignment.Stretch };
 
@@ -195,6 +196,9 @@ internal sealed class WorkflowControls : Grid
             if (!_occurrences.Items.OfType<OccurrenceChoice>().SequenceEqual(state.Occurrences)) _occurrences.ItemsSource = state.Occurrences;
             _selection = state.Selected; _occurrences.SelectedItem = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected);
             _occurrences.PlaceholderText = _shell["Workflow.NoSelection"];
+            _occurrences.IsVisible = state.Occurrences.Length > 0;
+            _selectionSlot.IsVisible = !_compact && state.Occurrences.Length > 0;
+            _selectionPopup.IsVisible = _compact && state.Occurrences.Length > 0;
             _occurrences.IsEnabled = !interactionBlocked && !state.Busy && state.Occurrences.Length > 0;
             AutomationProperties.SetName(_occurrences, _shell["Workflow.Occurrence"]);
             ToolTip.SetTip(_occurrences, state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ?? _shell["Workflow.NoSelection"]);
@@ -202,19 +206,27 @@ internal sealed class WorkflowControls : Grid
             ToolTip.SetTip(_gain, _shell["Workflow.GainUnit"]);
             _gain.Minimum = Math.Min(0m, state.Gain ?? 0m); _gain.Maximum = Math.Max(1m, state.Gain ?? 1m);
             _gain.Value = state.Gain; _gain.IsEnabled = !interactionBlocked && !state.Busy && state.Gain.HasValue;
+            _gain.IsVisible = state.Gain.HasValue && !GainShownElsewhere;
+            _gainLabel.IsVisible = _gain.IsVisible && Bounds.Width >= 440;
             _source.Text = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ?? _shell["Workflow.NoSelection"];
+            _source.IsVisible = state.Selected is not null && !_compact;
             _chain.Text = state.Chain;
+            _chain.IsVisible = _chain.Text.Length > 0;
             var detail = string.Join(" · ", (state.Detail ?? "").Split(" · ").Select(reason =>
                 HostLocalizer.English.ContainsKey(reason) ? _shell[reason] : reason));
             _detail.Text = _shell[state.StatusKey] + (detail.Length == 0 ? "" : "\n" + detail);
             _device.Text = state.Device ?? _shell["Workflow.DeviceInactive"];
+            _device.IsVisible = state.Selected is not null || state.Device is not null;
             _technicalExpander.Header = _shell["Workflow.Technical"];
             _technical.Text = state.Source + "\n" + (state.Detail ?? "");
             if (state.Execution is { } execution)
                 _technical.Text += $"\nCanonical: {execution.CanonicalRevision}\nExecuting: {execution.Execution.ExecutingRevision}\n" +
                     $"Origin: {execution.Execution.OriginPreparedRevision}\nEquivalent: {execution.Execution.EquivalentCanonicalRevision}\n" +
                     $"Execution: {execution.Execution.PreparedExecutionId}\nAttachment: {execution.Execution.AttachmentId}";
-            var status = _shell[WorkflowPresentation.CompactStatus(state)];
+            _technicalExpander.IsVisible = !string.IsNullOrWhiteSpace(_technical.Text);
+            var statusKey = WorkflowPresentation.CompactStatus(state);
+            var status = _shell[statusKey];
+            StatusControl.IsVisible = statusKey != "Status.Ready" || state.Execution?.LastValidPlaying == true;
             if (state.Execution?.LastValidPlaying == true) status += " · " + _shell["Status.LastValid"];
             _statusText.Text = status; AutomationProperties.SetName(StatusControl, status);
             ToolTip.SetTip(StatusControl, _detail.Text + "\n" + _shell["Workflow.Details"]);

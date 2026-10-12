@@ -125,9 +125,11 @@ retrieved only for explicit historical tasks.
 | --- | --- | --- |
 | `0.1.0.0000` | SEQ-VERSIONING-R1 | Explicit owner-selected initial alpha after the implemented foundations audited above; replaces temporary Desktop identity. Canonical/evaluated MSBuild, Release binary, About and regression checks are owned by [test execution](TEST_EXECUTION.md#product-version-verification). Does not close R4/F2/F3-B acceptance or announce a release. |
 | `0.1.0.0001` | SEQ-R4-F3-B-UX-F1 | One completed Desktop behavior repair: context-request menu lifecycle, capture ownership, usable button-anchored node creation and stale-action guards. Locked restore, full Release build (zero warnings/errors), 867 passing tests preserving all 838 prior cases, and guarded Windows native RU/EN × Dark/Light menu/creation/Undo/keyboard evidence under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair). BUILD only; PATCH stays 0, no new musical capability, F3-B owner acceptance pending, F2 partial, no release/commit/tag. |
+| `0.1.0.0002` | SEQ-NODE-EDITOR-IMPL-F1 | One verified Desktop interface/architecture checkpoint within the existing Source/Gain/Mix/Output capability line: reusable retained node editor, canonical Gain gestures, lifecycle guards, structural details and status economy. BUILD is selected for this bounded extension of existing attenuation/routing, rather than claiming a completed independent musical editor/processing capability for PATCH. Locked restore, zero-warning Release build and 908 passing tests preserve all 867 baseline cases. Actual Windows RU/EN × Dark/Light ordinary/reduced render/lifecycle and empty-state checks, guarded native opening/menu/drag checks, and separately labelled routed Gain/capture tests are recorded in the [report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md). Final native Gain input was refused on foreground loss; physical audio, full native matrix and broader platform acceptance are not claimed. PATCH remains 0; F2 partial, F3-B pending owner review, Q-032 open. No release/commit/tag. |
 
 Initialization stayed at BUILD `0000`, including its versioning implementation/tests. The separate
-verified Desktop repair above consumes `.0001`; intermediate edits/builds consumed no increments.
+verified Desktop repair consumes `.0001` and the bounded editor checkpoint consumes `.0002`;
+intermediate edits/builds consume no increments.
 
 ### SEQ-PROJECT-STATS-R1 tooling checkpoint
 

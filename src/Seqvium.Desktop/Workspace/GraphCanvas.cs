@@ -31,11 +31,13 @@ internal sealed class GraphCanvas : Control
     private GraphHit? _wire;
     private GraphEditBasis? _wireBasis;
     private bool _pan, _space;
+    private readonly NodeBodyClick _bodyClick = new();
     private Task _command = Task.CompletedTask;
     public IReadOnlyList<GraphDiagnostic> Diagnostics { get; set; } = [];
     public event Action? SelectionChanged;
     public event Action<GraphPoint>? MenuRequested;
     public event Action<string?>? Feedback;
+    public event Action<NodeEditorTarget>? EditorRequested;
     public Task PendingCommand => _command;
 
     public GraphCanvas(ShellSession shell, GraphEditorSession editor, DesktopWorkflow workflow)
@@ -71,6 +73,15 @@ internal sealed class GraphCanvas : Control
         ? GraphGeometry.HitTest(graph, point, _editor.Viewport.Zoom, _editor.SelectedNode, _editor.Move?.Node,
             _editor.Move?.After, _editor.SelectedConnection)
         : new(GraphHitKind.Background);
+    private NodeEditorTarget? BodyTarget(GraphHit hit) => hit is { Kind: GraphHitKind.Node, Node: { } node } &&
+        _editor.Basis is { } basis && _editor.Graph is { } graph
+        ? new(basis.Lifecycle, basis.Attachment, graph.Id, node) : null;
+    public void OpenSelectedEditor()
+    {
+        var target = _editor.SelectedNode is { } node ? BodyTarget(new(GraphHitKind.Node, node)) : null;
+        CancelGesture();
+        if (target is not null) EditorRequested?.Invoke(target);
+    }
     private IBrush Brush(string role)
     {
         if (_theme != _shell.Preferences.Theme) { _brushes.Clear(); _theme = _shell.Preferences.Theme; }
@@ -141,8 +152,8 @@ internal sealed class GraphCanvas : Control
             var body = GraphGeometry.Body(node, Preview(node));
             bool selected = node.Id == _editor.SelectedNode, error = Diagnostics.Any(d => d.NodeId == node.Id);
             var rectangle = new Rect(body.X, body.Y, body.Width, body.Height);
-            context.DrawRectangle(Brush(selected ? "Surface.Selected" : "Surface.Raised"),
-                new Pen(Brush(selected ? "Accent.Action" : error ? "Status.Critical" : "Border.Default"), selected ? 2 : 1), rectangle, 3, 3);
+            context.DrawRectangle(Brush(selected ? "Surface.Selected" : "Graph.Node"),
+                new Pen(Brush(selected ? "Accent.Action" : error ? "Status.Critical" : "Graph.NodeBorder"), selected ? 2 : 1), rectangle, 3, 3);
             string accent = node.Type switch { GraphBuiltIns.Source => "Status.Playing", GraphBuiltIns.Mix => "Status.Warning",
                 GraphBuiltIns.Gain => "Accent.Action", _ => "Text.Secondary" };
             context.DrawRectangle(Brush(accent), null, new Rect(body.X + 1, body.Y + 8, 3, 16));
@@ -203,10 +214,13 @@ internal sealed class GraphCanvas : Control
             InvalidateVisual(); e.Handled = true; return;
         }
         if (!properties.IsLeftButtonPressed && !properties.IsMiddleButtonPressed) return;
-        CancelGesture(); Feedback?.Invoke(null);
+        // Preserve the previous completed body click across ordinary presses only.
+        CancelGesture(resetClick: false); Feedback?.Invoke(null);
         _origin = _last = point;
         var hit = Hit(GraphPointAt(e));
         _pan = properties.IsMiddleButtonPressed || _space || hit.Kind == GraphHitKind.Background;
+        _bodyClick.Press(!_pan && properties.IsLeftButtonPressed && e.KeyModifiers == KeyModifiers.None
+            ? BodyTarget(hit) : null, e.ClickCount, _workflow.State.Generation);
         if (!_pan)
         {
             _editor.Select(hit); SelectionChanged?.Invoke();
@@ -228,6 +242,7 @@ internal sealed class GraphCanvas : Control
             return;
         }
         var point = Point(e.GetPosition(this));
+        if (point != _origin) _bodyClick.Move();
         if (_pan) _editor.Viewport.Pan(point - _last);
         else if (_editor.Move is not null) _editor.UpdateMove((point - _origin) * (1 / _editor.Viewport.Zoom));
         else if (_wire is { Node: { } n, Port: { } p } && _editor.Graph is { } graph)
@@ -242,15 +257,18 @@ internal sealed class GraphCanvas : Control
     {
         if (_pointer != e.Pointer) return;
         var move = _editor.CompleteMove(); var wire = _wire; var basis = _wireBasis; var hit = Hit(GraphPointAt(e));
+        var open = _bodyClick.Release(BodyTarget(hit), _workflow.State.Generation);
         _pointer = null; _pan = false; _wire = null; _wireBasis = null; e.Pointer.Capture(null);
         e.Handled = true; InvalidateVisual();
         if (move is not null) await Execute(_workflow.MoveGraphNodeAsync(move));
         else if (wire is { Node: { } n, Port: { } p } && basis is not null && hit is { Node: { } to, Port: { } port })
             await Execute(_workflow.ConnectGraphAsync(basis, n, p, to, port));
         else Feedback?.Invoke(null);
+        if (move is null && wire is null && open is not null) EditorRequested?.Invoke(open);
     }
-    public void CancelGesture()
+    public void CancelGesture(bool resetClick = true)
     {
+        if (resetClick) _bodyClick.Cancel();
         var pointer = _pointer; _pointer = null; _pan = false; _wire = null; _wireBasis = null;
         _editor.Cancel(); pointer?.Capture(null); Feedback?.Invoke(null); InvalidateVisual();
     }
@@ -278,6 +296,8 @@ internal sealed class GraphCanvas : Control
         { CancelGesture(); e.Handled = true; return; }
         if (e.Key == Key.Space) { _space = true; e.Handled = true; return; }
         if (!_command.IsCompleted) return;
+        if (e.Key == Key.Enter && e.KeyModifiers == KeyModifiers.None && IsFocused)
+        { OpenSelectedEditor(); e.Handled = true; return; }
         if (e.Key == Key.Home) { Fit(); e.Handled = true; return; }
         if (e.Key is Key.Add or Key.OemPlus or Key.Subtract or Key.OemMinus)
         {

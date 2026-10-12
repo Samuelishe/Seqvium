@@ -24,8 +24,8 @@ public sealed class WorkspaceStateTests
     {
         using var workspace = Create();
         var localizer = new HostLocalizer();
-        Assert.Equal(3, workspace.Panes.Select(pane => pane.InstanceId).Distinct().Count());
-        Assert.Equal(3, workspace.Panes.Select(pane => pane.TypeId).Distinct().Count());
+        Assert.Equal(4, workspace.Panes.Select(pane => pane.InstanceId).Distinct().Count());
+        Assert.Equal(4, workspace.Panes.Select(pane => pane.TypeId).Distinct().Count());
         foreach (var definition in WorkspaceState.Definitions)
         {
             Assert.NotEqual(localizer.Get(definition.TitleKey, HostLanguage.English), definition.InstanceId);
@@ -49,7 +49,7 @@ public sealed class WorkspaceStateTests
         workspace.Activate(Inspector);
         Assert.Equal(Inspector, workspace.ActivePaneId);
         Assert.Equal(Inspector, workspace.Panes[^1].InstanceId);
-        Assert.Equal(3, workspace.Panes.Length);
+        Assert.Equal(4, workspace.Panes.Length);
         Assert.All(workspace.Panes, pane => Assert.Equal(before[pane.InstanceId], pane.FloatingBounds));
         var events = 0;
         workspace.Changed += () => events++;
@@ -112,7 +112,7 @@ public sealed class WorkspaceStateTests
         Assert.Equal(PaneVisibility.Hidden, workspace.Get(Inspector).Visibility);
         workspace.Open(Inspector);
         Assert.Equal(before, workspace.Get(Inspector));
-        Assert.Equal(3, workspace.Panes.Length);
+        Assert.Equal(4, workspace.Panes.Length);
     }
 
     [Fact]

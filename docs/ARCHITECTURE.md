@@ -159,17 +159,16 @@ graph model/history, DSP, assembly, plugin registry or docking framework is intr
 
 ## Node editor state and lifetime proposal
 
-**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance.** These are internal Desktop
-responsibilities, not implemented types or public extension interfaces. The
-[graph proposal](NODE_GRAPH.md#full-node-editors-proposal) owns editor capability and
-[Workspace](WORKSPACE.md#node-editor-placement-proposal) owns placement alternatives.
+**SEQ-NODE-EDITOR-IMPL-F1 — implemented internal Desktop boundary accepted for the first slice.**
+[Graph](NODE_GRAPH.md#full-node-editors-proposal) owns editor capability and
+[Workspace](WORKSPACE.md#node-editor-placement-proposal) owns the reusable pane and future alternatives.
 
-Recommend a small editor session separate from `GraphEditorSession`: the graph session keeps graph
+`NodeEditorSession` is separate from `GraphEditorSession`: the graph session keeps graph
 selection/viewport/move intent; the node session holds an explicit target, immutable observation,
-local view context and at most one transient edit proposal. A first-party presenter resolves actual
-supported type/state-version UI or host-owned details. A narrow Desktop open/activate owner connects
-the invoking graph to that session/surface. Start with explicit built-in dispatch, not a universal
-parameter UI schema, plugin registry, new assembly or public editor factory ABI.
+local view context and at most one transient edit proposal. `NodeEditorPaneContent` resolves actual
+supported type/state-version UI or host-owned details; `MainWindow` owns open/activate requests.
+Dispatch is explicit and built-in, without a universal parameter schema, registry, new assembly or
+public factory ABI. The controls own pointer/text presentation; the workflow owns commits.
 
 ### Identity and observation
 
@@ -189,7 +188,7 @@ changes. Dependency-specific reconciliation can come later with evidence; identi
 commit gate. Own command progress/acknowledgement separately from draft cancellation, so a Busy
 observation or delayed GUI callback cannot resubmit or redirect an already captured command.
 
-| Event | Proposed session behavior |
+| Event | Implemented session behavior |
 | --- | --- |
 | Parameter edit, Undo or Redo while target exists | Re-resolve current node and refresh controls; cancel stale drafts/gestures. Stable target survives replacement immutable records; old commands remain invalid even after Undo/Redo ABA |
 | Node/graph/attachment/owning placement deletion | Keep target key as unavailable in the same lifecycle for possible Undo; disable mutation, cancel drafts and release node-specific active resources. Do not follow workflow's fallback playback selection |
@@ -220,6 +219,21 @@ derived display units, analytical curves and tab/scroll state are presentation; 
 history and Save remain authoritative. Reuse `SetGraphGainAsync` and Core validation for Gain. One
 changed completed gesture/text commit produces one logical edit, with no-op/cancel/stale producing
 none. Opening/closing/resize/focus creates no musical history. No editor-specific Undo or DSP copy.
+
+The frozen `NodeGainProposal` includes the full logical target, captured generation and starting
+amplitude. The `SetGraphGainAsync` overload checks definition ownership, supported Gain v1 semantics,
+starting value and legal `[0,1]` result on the same workflow owner before the existing edit. The
+level control captures its own pointer; release commits once, while loss/Escape cancels. Text uses
+synchronous `TextProperty` notifications under the refresh guard: Avalonia's deferred `TextChanged`
+event must not turn a canonical refresh into another draft.
+
+Source details use existing bounded `SourceAccess` discovery: storage is captured on the workflow
+owner, inspected off the GUI, and published only while lifecycle/target/generation/cancellation still
+match. Hiding or retiring content cancels publication. The worker owns only frozen read context and
+temporary decoded buffers, not live document authority, a processor or an editor-local mutable graph.
+
+The shell's document observation also compares lifecycle, not only snapshot revision/path/dirty state:
+reopening the identical saved snapshot must adopt the new document rather than retain its retired owner.
 
 Use observations for every accepted change, including quick controls and Undo/Redo. Refresh idle
 controls without invoking their user-change commands; guard against notification feedback loops.

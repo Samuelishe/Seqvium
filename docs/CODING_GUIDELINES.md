@@ -115,6 +115,14 @@ visual behavior may live in focused control/code-behind logic. Do not create a G
 avoid all code-behind. [UI_DESIGN](UI_DESIGN.md), [UX_CONTRACT](UX_CONTRACT.md), and
 [WORKSPACE](WORKSPACE.md) remain the visual and behavior owners.
 
+Apply the [visual hierarchy](UI_DESIGN.md#first-party-visual-design-rules) and
+[responsive minimums](UI_DESIGN.md#responsive-layout-and-usable-minimums) in rendered UI verification.
+Working elements must remain visible against their background before selection in Dark and Light.
+Check supported minimum pane/window sizes, localization, zero/invalid values and disclosures for
+clipping, accidental scrolling and loss of usable input targets. Inspect actual control-template
+measurements rather than assuming declared dimensions are the rendered dimensions. Keep detailed
+rules in UI_DESIGN; do not substitute a passing build or unit test for visual review.
+
 ## Mechanical versus behavioral change
 
 A mechanical refactor preserves processing/statement order, timing, cancellation, ownership,

@@ -147,7 +147,7 @@ public sealed class WorkspaceLayoutTests
         Assert.NotNull(load.Layout);
         using var workspace = new WorkspaceState(load.Layout);
         workspace.Reflow(640, 390);
-        Assert.Equal(3, workspace.Panes.Length);
+        Assert.Equal(4, workspace.Panes.Length);
         var appearance = workspace.Get(WorkspaceState.AppearanceId);
         Assert.Equal(PaneVisibility.Visible, appearance.Visibility);
         Assert.False(appearance.AllowDocking);
@@ -177,9 +177,10 @@ public sealed class WorkspaceLayoutTests
         reopened.Reflow(640, 390);
         Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Left));
         Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Floating && pane.Visibility == PaneVisibility.Visible));
-        Assert.All(reopened.Panes.Where(pane => pane.InstanceId != WorkspaceState.GraphId),
+        Assert.All(reopened.Panes.Where(pane => pane.InstanceId is WorkspaceState.InspectorId or WorkspaceState.AppearanceId),
             pane => Assert.Equal(PaneVisibility.Visible, pane.Visibility));
         Assert.Equal(PaneVisibility.Hidden, reopened.Get(WorkspaceState.GraphId).Visibility);
+        Assert.Equal(PaneVisibility.Hidden, reopened.Get(WorkspaceState.NodeEditorId).Visibility);
     }
 
     [Fact]

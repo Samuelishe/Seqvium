@@ -7,6 +7,14 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
     </Style>
+    <Style Selector="Expander.nodeCurve /template/ ToggleButton">
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="Height" Value="26" />
+        <Setter Property="Padding" Value="6,0" />
+        <Setter Property="Background" Value="{DynamicResource Surface.Background}" />
+        <Setter Property="Foreground" Value="{DynamicResource Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Border.Default}" />
+    </Style>
     <Style Selector="FlyoutPresenter">
         <Setter Property="Background" Value="{DynamicResource Surface.Raised}" />
         <Setter Property="Foreground" Value="{DynamicResource Text.Primary}" />

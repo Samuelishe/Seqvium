@@ -19,6 +19,7 @@ internal sealed partial class MainWindow
     private bool _workflowActionBusy;
     private CancellationTokenSource? _importCancellation;
     private Guid _observedRevision;
+    private Guid _observedLifecycle;
     private string? _observedPath;
     private bool _observedDirty;
 
@@ -45,14 +46,16 @@ internal sealed partial class MainWindow
         // Read latest observation; do not replay stale queued states after a document replacement.
         var latest = _workflow.State;
         _session.ObserveAudio(WorkflowPresentation.CompactStatus(latest));
-        if (_observedRevision != latest.Snapshot.Revision || _observedPath != latest.SavedPath ||
+        if (_observedLifecycle != latest.Document.LifecycleId || _observedRevision != latest.Snapshot.Revision || _observedPath != latest.SavedPath ||
             _observedDirty != latest.IsDirty)
         {
+            _observedLifecycle = latest.Document.LifecycleId;
             _observedRevision = latest.Snapshot.Revision; _observedPath = latest.SavedPath;
             _observedDirty = latest.IsDirty;
             _session.ObserveDocument(latest.Document, latest.Snapshot, latest.SavedPath, latest.IsDirty, latest.HasSaved);
         }
         _workflowControls.Refresh(_closing || _workflowActionBusy);
+        RefreshGainHierarchy();
     });
 
     private Task WorkflowActionAsync(string action)

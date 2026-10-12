@@ -30,6 +30,18 @@ internal sealed class GraphMenuSession(GraphEditorSession editor, DesktopWorkflo
             return WorkflowPresentation.IsError(workflow.State) ? workflow.State.Detail : null;
         };
     }
+    public Func<Task<string?>> CaptureView(Func<Task> action)
+    {
+        long epoch = _epoch; var basis = _basis;
+        return async () =>
+        {
+            var refusal = epoch != _epoch || basis is null ? "Graph.Stale" : editor.EditRefusal(workflow.State, basis);
+            if (refusal is not null) return refusal;
+            await action();
+            // Opening a view is not a workflow command; an earlier Save/Open failure is unrelated.
+            return null;
+        };
+    }
     public Func<Task<string?>> CreateNode(GraphNodeCreation choice, GraphPoint point, Action? beforeExecute = null)
     {
         var basis = _basis;

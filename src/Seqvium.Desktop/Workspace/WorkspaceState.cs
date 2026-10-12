@@ -55,12 +55,14 @@ public sealed class WorkspaceState : IDisposable
     public const string InspectorId = "project-inspector.main";
     public const string AppearanceId = "appearance.main";
     public const string GraphId = "node-graph.main";
+    public const string NodeEditorId = "node-editor.main";
 
     public static ImmutableArray<PaneDefinition> Definitions { get; } =
     [
         new(InspectorId, "project-inspector", "Pane.Inspector", 280, 210, new(34, 30, 340, 280)),
         new(AppearanceId, "appearance", "Pane.Appearance", 280, 170, new(270, 145, 320, 220)),
-        new(GraphId, "node-graph", "Pane.Graph", 300, 260, new(48, 36, 960, 520))
+        new(GraphId, "node-graph", "Pane.Graph", 300, 260, new(48, 36, 960, 520)),
+        new(NodeEditorId, "node-editor", "Pane.NodeEditor", 300, 210, new(280, 64, 360, 220))
     ];
 
     private readonly List<PanePlacement> _panes = Definitions.Select(definition =>

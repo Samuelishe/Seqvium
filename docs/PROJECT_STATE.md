@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.0.0001`**, one verified BUILD repair checkpoint on the
+The current product alpha is **`0.1.0.0002`**, a verified bounded Desktop editor BUILD checkpoint on the
 owner-selected `0.1.0` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -104,16 +104,35 @@ no further authorization. R4 remains partial; F2 alone cannot deliver a workstat
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
 Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recovery and MIDI/capture/recording remain later work.
 
-The [full node editor design](NODE_GRAPH.md#full-node-editors-proposal) is **proposal pending owner
-acceptance**: detailed body-double-click access, a recommended reusable Workspace pane and bounded
-Gain lifecycle slice. Placement remains Q-032; no editor implementation, plugin host, stage acceptance
-or version change follows. [Roadmap](ROADMAP.md#proposed-first-full-node-editor-slice) owns the next task.
+The owner accepts DESIGN-R1 for the bounded **SEQ-NODE-EDITOR-IMPL-F1** slice, now implemented:
+one retained Node Editor with explicit lifecycle/attachment/definition/node identity, body double-click,
+Open Editor and canvas Enter access. Gain provides one-transaction level gestures, exact amplitude,
+derived dB/silence, Unity/Silence and a scalable analytical transfer graph behind Curve disclosure.
+The compact composition uses one node title, short source/scope and grouped Level/value/dB. Identical
+Gain parameters yield to the visible Node Editor, then Graph quick Gain, then toolbar; different
+targets remain accessible. Real cancelled drafts get transient feedback, without own-commit echoes.
+Minimum-size template/curve issues and unselected-node background contrast were corrected in both
+themes; rendered review of draft/invalid/zero states complements state assertions. Source/Mix/Output provide
+actual host information; unknown states are preserved without interpreting opaque parameters.
+Drafts expire on any intervening generation, including ABA; exact deletion Undo restores the target,
+whereas successful project replacement clears it even with identical saved IDs. Quick controls and
+the editor use the same workflow/document/F2 boundary. Empty panes show one content hint; absent
+selectors/headers/footer placeholders and empty toolbar Gain are hidden. Pristine startup leaves
+the editor hidden; explicit/restored panes may have no target. Q-032 retains independent editors and
+future composition. R4-F2 remains partial and F3-B remains pending owner review. Active Gain visual
+acceptance remains with the owner; the earlier presentation was explicitly rejected.
 
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 867 tests pass, zero failures/skips**.
-All 838 prior cases remain; 29 menu command/creation/target regressions run without a GUI or device.
+solution build pass with **zero warnings/errors; all 908 tests pass, zero failures/skips**.
+All 867 prior cases remain; 41 node editor regressions cover identity/drafts/commands/persistence,
+empty-state economy and actual deterministic F2 PCM/identity/Stop convergence without a device.
+The [editor report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md) records actual Windows RU/EN ×
+Dark/Light normal/reduced content, lifecycle and empty-state smoke, guarded native opening/menu/drag,
+separately labelled routed Gain/capture checks, failed intermediate checks and foreground refusal.
+No physical audio or complete native matrix is inferred. The inherited fresh-Play test helper now
+consumes the final Start packet before asserting playback; production audio is unchanged.
 The [menu repair evidence](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair)
 records native right press/release, nested hover/creation, Undo, toolbar creation and keyboard checks
 in RU/EN × Dark/Light, plus actual-window retained-pane and stale-action checks.

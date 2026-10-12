@@ -74,6 +74,10 @@ public sealed class HostPresentationTests
         Assert.True(Contrast(palette["Text.Primary"], palette["Surface.Raised"]) >= 7);
         Assert.True(Contrast(palette["Text.Secondary"], palette["Surface.Workspace"]) >= 4.5);
         Assert.True(Contrast(palette["Status.Warning"], palette["Surface.Background"]) >= 4.5);
+        Assert.True(Contrast(palette["Text.Primary"], palette["Graph.Node"]) >= 7);
+        // Unselected nodes need their own visible surface/boundary before focus or selection.
+        Assert.True(Contrast(palette["Graph.Node"], palette["Surface.Workspace"]) >= 1.05);
+        Assert.True(Contrast(palette["Graph.NodeBorder"], palette["Surface.Workspace"]) >= 1.8);
         Assert.NotEqual(palette["Surface.Background"], palette["Focus.Active"]);
         Assert.Equal(HostPalette.For(HostTheme.Dark).Keys.Order(), HostPalette.For(HostTheme.Light).Keys.Order());
     }

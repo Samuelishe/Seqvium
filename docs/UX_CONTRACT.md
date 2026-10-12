@@ -42,12 +42,12 @@ canvas/interaction review remains required independently of pure tests and a qui
 
 ## Detailed node editor access
 
-**SEQ-NODE-EDITOR-DESIGN-R1 — proposal pending owner acceptance for the interaction details below.**
-The owner requires every node to admit a detailed editor through body double-click, preserving
-single-click selection/movement and optional quick controls. This access is not implemented yet.
-Placement remains proposed in [Workspace](WORKSPACE.md#node-editor-placement-proposal).
+**SEQ-NODE-EDITOR-IMPL-F1 — implemented bounded access accepted for the first slice.**
+Every node admits an editor through body double-click, preserving single-click selection/movement
+and quick controls. One reusable internal pane follows
+[Workspace](WORKSPACE.md#node-editor-placement-proposal); independent editors remain Q-032.
 
-Propose one semantic Open Node Editor action, also reachable through the selected node's context
+One semantic Open Node Editor action is also reachable through the selected node's context
 menu and Enter while the graph canvas owns focus. Double-click resolves the actual body hit with
 existing port precedence; ports, wires, background, pan modifiers and compact child controls retain
 their own actions. Recognize a completed body double-click only when neither click became a drag,
@@ -69,6 +69,23 @@ show concise changed-elsewhere feedback rather than overwrite it or silently com
 Programmatic refresh is not a user edit. Local text Undo/input takes precedence over project commands;
 Enter in a numeric field commits it rather than opening another editor. Keyboard and pointer access
 share the same target and document transactions.
+
+The node name belongs in the pane title; source and processing scope appear once below it. Gain's
+short Level label groups exact amplitude and derived dB with the control. Curve is optional disclosure,
+initially collapsed. Opening/closing it preserves a valid draft and creates no musical transaction.
+The changed-elsewhere notice is transient and requires a real cancelled draft; ordinary refresh and
+own commits never produce it. Errors, blockers and last-valid divergence remain available.
+
+Quick Gain surfaces have different selection owners: toolbar follows the playback-selected attachment,
+Graph follows its retained attachment and selected node, Node Editor follows its explicitly opened
+target. Suppress duplicate controls only when their complete target and canonical parameter match:
+visible expanded Node Editor, then visible Graph quick Gain, then toolbar. Hiding/collapsing a pane
+restores the corresponding quick control; a different scope stays independently accessible.
+
+Empty Graph and Node Editor surfaces show one useful hint in content. Empty selectors and redundant
+headers/footers are hidden. An unavailable node keeps its logical key and one warning for exact Undo
+restoration; diagnostics and last-valid feedback remain visible where applicable. Node Editor starts
+hidden in a pristine layout and appears only on explicit open or restoration of a previously visible pane.
 
 ## Mouse-first creation and complementary input
 
@@ -623,7 +640,7 @@ on demand. Coordinates do not define processing order; connections express depen
 creation must not require learning graph internals; advanced branches/merges remain discoverable.
 [NODE_GRAPH](NODE_GRAPH.md) owns graph semantics, ports, and the editing/execution boundary.
 Compact-chain editing remains open; full node-editor presentation is a
-[proposal pending owner acceptance](NODE_GRAPH.md#full-node-editors-proposal).
+[bounded implemented slice](NODE_GRAPH.md#full-node-editors-proposal).
 
 ## Essential accessibility feedback
 

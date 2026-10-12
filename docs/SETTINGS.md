@@ -35,8 +35,8 @@ accepted WAV, user-created content or recovery. The `.previous` file is preferen
 
 `WorkspaceLayoutStore` owns `workspace-layout.json` alongside `preferences.json` in the same
 platform user configuration directory. It does not change the preference schema, project JSON, Undo,
-Save, device intent, media roots or recovery. Missing layout means three optional hidden panes,
-including F3-B's retained Node Graph. Older two-pane layouts initialize that new pane hidden.
+Save, device intent, media roots or recovery. Missing layout means four optional hidden panes,
+including Node Graph and Node Editor. Older layouts initialize each missing pane hidden.
 Version 1 stores usable workspace `width`/`height`, `activePaneId`, and a back-to-front `panes` array.
 Each entry contains `instanceId`, `typeId`, `visibility` (`hidden`/`visible`/`collapsed`), floating
 `x`/`y`/`width`/`height`, `dock` (`floating`/`left`/`right`) and `allowDocking`. The optional version-1
@@ -48,7 +48,7 @@ tokens, not localized titles. Controls, focus references, project targets and ru
 [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns placement/interaction invariants.
 
 Reads cap actual bytes at 32 KiB plus one sentinel, JSON depth at 16, and input entries at 16; only
-the three known independent instances can enter state. Unknown/duplicate entries are skipped, malformed
+the four known independent instances can enter state. Unknown/duplicate entries are skipped, malformed
 fields fall back independently, invalid geometry is adapted/clamped and dock conflicts remain reachable.
 Unsupported/stale versions, malformed/oversize/unreadable data leave the app usable. No read repairs
 the original file. If any read used fallback, this store refuses every write for the session and shows
@@ -67,8 +67,13 @@ Neither layout failure nor future configuration reset may delete musical work/me
 
 ## User configuration and project state
 
-The implemented file policies above cover only language/theme and the three first-party pane placements.
+The implemented file policies above cover only language/theme and the four first-party pane placements.
 Other application/plugin settings remain future work.
+
+Node Editor adds the fixed `node-editor.main` / `node-editor` entry under the same version-1 layout.
+Older layouts omit it and start it hidden. Only pane placement/visibility/docking is persisted; target,
+draft and document lifecycle remain session-local. Older binaries treat the added entry as unknown
+and use the existing preserve-original fallback, rather than losslessly saving a downgraded layout.
 
 Per-user/application configuration belongs in the platform-appropriate user configuration area:
 `AppData` conceptually on Windows, with platform equivalents elsewhere. This includes application
