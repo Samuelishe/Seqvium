@@ -147,7 +147,7 @@ public sealed class WorkspaceLayoutTests
         Assert.NotNull(load.Layout);
         using var workspace = new WorkspaceState(load.Layout);
         workspace.Reflow(640, 390);
-        Assert.Equal(2, workspace.Panes.Length);
+        Assert.Equal(3, workspace.Panes.Length);
         var appearance = workspace.Get(WorkspaceState.AppearanceId);
         Assert.Equal(PaneVisibility.Visible, appearance.Visibility);
         Assert.False(appearance.AllowDocking);
@@ -168,15 +168,18 @@ public sealed class WorkspaceLayoutTests
         workspace.Open(WorkspaceState.InspectorId);
         workspace.Open(WorkspaceState.AppearanceId);
         var layout = workspace.Capture();
-        layout = layout with { Panes = [.. layout.Panes.Select(pane => pane with { Dock = PaneDock.Left })] };
+        layout = layout with { Panes = [.. layout.Panes.Select(pane => pane.Visibility == PaneVisibility.Visible
+            ? pane with { Dock = PaneDock.Left } : pane)] };
         var store = new WorkspaceLayoutStore(directory.File("layout.json"));
         Assert.True(await store.SaveAsync(layout));
         var load = await store.LoadAsync();
         using var reopened = new WorkspaceState(load.Layout);
         reopened.Reflow(640, 390);
         Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Left));
-        Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Floating));
-        Assert.All(reopened.Panes, pane => Assert.Equal(PaneVisibility.Visible, pane.Visibility));
+        Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Floating && pane.Visibility == PaneVisibility.Visible));
+        Assert.All(reopened.Panes.Where(pane => pane.InstanceId != WorkspaceState.GraphId),
+            pane => Assert.Equal(PaneVisibility.Visible, pane.Visibility));
+        Assert.Equal(PaneVisibility.Hidden, reopened.Get(WorkspaceState.GraphId).Visibility);
     }
 
     [Fact]

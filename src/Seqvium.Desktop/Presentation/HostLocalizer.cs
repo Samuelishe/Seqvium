@@ -40,6 +40,31 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> English { get; } = new Dictionary<string, string>
     {
+        ["Pane.Graph"] = "Node Graph",
+        ["Workflow.Graph"] = "Open Node Graph · Ctrl+G",
+        ["Graph.Target"] = "Editing musical occurrence",
+        ["Graph.NoTarget"] = "Choose an item to edit its graph",
+        ["Graph.TargetMissing"] = "Editing target is unavailable · choose an item",
+        ["Graph.Stale"] = "Context changed; repeat the action on the current graph.",
+        ["Graph.SharedPattern"] = "Cannot add a source: this Pattern has multiple placements.",
+        ["Graph.OneOutput"] = "Delete the existing Output before creating another.",
+        ["Graph.Source"] = "Source", ["Graph.Gain"] = "Gain", ["Graph.Mix"] = "Mix", ["Graph.Output"] = "Output",
+        ["Graph.Unsupported"] = "Unavailable node", ["Graph.Unbound"] = "Source not bound",
+        ["Graph.In"] = "In", ["Graph.Out"] = "Out", ["Graph.Inputs"] = "inputs",
+        ["Graph.Add"] = "Create node", ["Graph.AddWav"] = "Add WAV source to current item",
+        ["Graph.Fit"] = "Frame graph · Home", ["Graph.Delete"] = "Delete selection · Delete",
+        ["Graph.Actions"] = "Graph actions", ["Graph.BindSource"] = "Bind an existing musical part",
+        ["Graph.SelectNode"] = "Select node", ["Graph.SelectConnection"] = "Select connection",
+        ["Graph.Selected"] = "Selected",
+        ["Graph.Connect"] = "Connect output to input", ["Graph.Disconnect"] = "Disconnect",
+        ["Graph.Compatible"] = "Compatible ports · release to connect",
+        ["Graph.ChoosePort"] = "Choose a compatible port · Esc cancels",
+        ["Graph.Linear"] = "linear amplitude", ["Graph.InvalidValue"] = "Invalid amplitude",
+        ["Graph.CommitGain"] = "Set Gain · Enter",
+        ["Graph.Incomplete"] = "Canonical graph incomplete",
+        ["Graph.Canonical"] = "Canonical graph ready",
+        ["Graph.Executing"] = "Current graph playing",
+        ["Graph.KeyboardHint"] = "Space+drag / middle: pan · wheel: zoom · Alt+Tab: select node · Home: frame",
         ["Workflow.ReadOnly"] = "Read-only",
         ["Workflow.Details"] = "Source and execution details",
         ["Workflow.More"] = "Project actions",
@@ -156,11 +181,36 @@ public sealed class HostLocalizer
             "Layout read incompletely; safe entries restored. Original file preserved; layout saving disabled this session.",
         ["Workspace.SaveFailed"] = "Workspace layout could not be saved; this session remains usable.",
         ["Host.Scope"] =
-            "Import WAV, edit occurrence Gain, Play / Stop / Panic and Save / Open are available. The graphical node canvas and musical editors are deferred."
+            "Import WAV, edit Source / Gain / Mix / Output in Node Graph, Play / Stop / Panic and Save / Open are available."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     public static IReadOnlyDictionary<string, string> Russian { get; } = new Dictionary<string, string>
     {
+        ["Pane.Graph"] = "Граф узлов",
+        ["Workflow.Graph"] = "Открыть граф узлов · Ctrl+G",
+        ["Graph.Target"] = "Редактируемое музыкальное использование",
+        ["Graph.NoTarget"] = "Выберите объект для редактирования графа",
+        ["Graph.TargetMissing"] = "Объект недоступен · выберите музыкальное использование",
+        ["Graph.Stale"] = "Контекст изменился; повторите действие в актуальном графе.",
+        ["Graph.SharedPattern"] = "Нельзя добавить источник: Pattern используется несколькими placements.",
+        ["Graph.OneOutput"] = "Перед созданием нового выхода удалите существующий.",
+        ["Graph.Source"] = "Источник", ["Graph.Gain"] = "Усиление", ["Graph.Mix"] = "Сумма", ["Graph.Output"] = "Выход",
+        ["Graph.Unsupported"] = "Недоступный узел", ["Graph.Unbound"] = "Источник не назначен",
+        ["Graph.In"] = "Вход", ["Graph.Out"] = "Выход", ["Graph.Inputs"] = "входов",
+        ["Graph.Add"] = "Создать узел", ["Graph.AddWav"] = "Добавить WAV в текущий объект",
+        ["Graph.Fit"] = "Показать весь граф · Home", ["Graph.Delete"] = "Удалить выделение · Delete",
+        ["Graph.Actions"] = "Действия графа", ["Graph.BindSource"] = "Назначить существующую партию",
+        ["Graph.SelectNode"] = "Выбрать узел", ["Graph.SelectConnection"] = "Выбрать соединение",
+        ["Graph.Selected"] = "Выделено",
+        ["Graph.Connect"] = "Соединить выход со входом", ["Graph.Disconnect"] = "Разъединить",
+        ["Graph.Compatible"] = "Порты совместимы · отпустите для соединения",
+        ["Graph.ChoosePort"] = "Выберите совместимый порт · Esc отменяет",
+        ["Graph.Linear"] = "линейная амплитуда", ["Graph.InvalidValue"] = "Неверная амплитуда",
+        ["Graph.CommitGain"] = "Применить усиление · Enter",
+        ["Graph.Incomplete"] = "Канонический граф не завершён",
+        ["Graph.Canonical"] = "Канонический граф готов",
+        ["Graph.Executing"] = "Текущий граф воспроизводится",
+        ["Graph.KeyboardHint"] = "Пробел+drag / средняя: pan · колесо: zoom · Alt+Tab: узел · Home: весь граф",
         ["Workflow.ReadOnly"] = "Только чтение",
         ["Workflow.Details"] = "Источник и исполнение",
         ["Workflow.More"] = "Действия проекта",
@@ -280,6 +330,6 @@ public sealed class HostLocalizer
             "Макет прочитан не полностью; допустимые панели восстановлены. Исходный файл сохранён; запись макета отключена в этом сеансе.",
         ["Workspace.SaveFailed"] = "Сохранить макет не удалось; панели доступны в текущем сеансе.",
         ["Host.Scope"] =
-            "Доступны импорт WAV, Gain выбранного употребления, воспроизведение / Стоп / Panic и сохранение / открытие. Графический редактор узлов и музыкальные редакторы отложены."
+            "Доступны импорт WAV, редактор источников / усиления / суммы / выхода, воспроизведение / Стоп / Panic и сохранение / открытие."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 }

@@ -25,6 +25,11 @@ explicit Play required. This adds a normal-process UI lifecycle, not crash recov
 
 ## R1 canonical JSON format
 
+F3-B changes no schema: node coordinates/topology, source bindings, parameters and the second source's
+music/media use the existing graph-aware reader 1.1 and managed layout. Canonical incomplete/cyclic
+or invalid numeric intent remains savable; viewport, editor selection/target and last-valid execution
+are not serialized. Old user workspace layouts are separate under [Settings](SETTINGS.md).
+
 UTF-8 JSON has `format: "seqvium-project"`, integer `major: 1`, integer `minor: 0`,
 `minimumReaderMinor: 0`, `writerVersion`, `revision` UUID and `state`. State contains project identity,
 nullable name (unnamed), tempo/meter settings and explicit entity arrays. IDs are UUID strings; positions

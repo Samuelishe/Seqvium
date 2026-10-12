@@ -34,7 +34,11 @@ internal static class HostIcons
         ["Warning"] = "M12 3L22 21H2Z M12 9V14 M12 18V18.1",
         ["Check"] = "M5 12L10 17L20 7",
         ["Theme"] = "M12 3A9 9 0 1 1 12 21A9 9 0 1 1 12 3 M12 3V21",
-        ["Panes"] = "M3 4H21V20H3Z M10 4V20 M3 9H10"
+        ["Panes"] = "M3 4H21V20H3Z M10 4V20 M3 9H10",
+        ["Graph"] = "M3 4H9V10H3Z M15 14H21V20H15Z M9 7H15V17 M3 17H15",
+        ["Add"] = "M12 4V20 M4 12H20",
+        ["Delete"] = "M4 6H20 M9 6V3H15V6 M6 6L7 21H17L18 6 M10 10V17 M14 10V17",
+        ["Fit"] = "M3 9V3H9 M15 3H21V9 M21 15V21H15 M9 21H3V15 M8 8H16V16H8Z"
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     internal static Control Create(string name, TemplatedControl owner, double size = 18)

@@ -141,7 +141,21 @@ Variation remapping, owned placement/context deletion and incident node-use remo
 unrelated safely unresolved dependencies retain intended identity. Graph deep content equality
 includes immutable collections and opaque JSON, so net-zero reconstruction publishes no revision.
 Coordinates are canonical graph presentation; workspace geometry and transient gestures remain
-separate. F2 derives execution/resources from a frozen eligible revision; F3-B will supply the canvas.
+separate. F2 derives execution/resources from a frozen eligible revision; F3-B supplies the canvas.
+
+### R4-F3-B graph presentation and commands
+
+Desktop's retained `Workspace/GraphPaneContent` and `GraphCanvas` draw/handle input on the GUI thread;
+the pure `GraphEditorSession` owns explicit target, selection and move proposal, while `GraphGeometry`
+owns common draw/hit geometry and viewport transforms. They project an immutable workflow observation,
+never an independently editable graph. Refresh adopts one coherent document observation before resolving
+graph/diagnostics, including shell-triggered refreshes arriving before queued pane notifications.
+`DesktopWorkflow.Graph` validates lifecycle/generation/attachment on the existing owner and calls
+existing ProjectEdit operations. All audio preparation/publication/resource lifetime remains F2-owned.
+Native pickers/cancellation remain MainWindow-owned. Second-source durable acceptance creates independent
+music and graph binding atomically, with shared-Pattern refusal under [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item).
+The only new Core edit is validated Pattern length adjustment for a longer accepted source; no new
+graph model/history, DSP, assembly, plugin registry or docking framework is introduced.
 
 ## R4-F2 execution and application coordination ownership
 

@@ -74,7 +74,7 @@ internal sealed class WorkflowControls : Grid
         _overflow.Content = HostIcons.Create("More", _overflow);
         AutomationProperties.SetAutomationId(_information, "Workflow.SourceInfo");
         AutomationProperties.SetAutomationId(_overflow, "Workflow.More");
-        AddOverflow("SaveAs"); AddOverflow("CancelImport", "Close");
+        AddOverflow("SaveAs"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
         _overflowBody.Children.Add(_overflowParameters);
         _overflow.Flyout = new Flyout { Content = _overflowBody };
         var body = new StackPanel { Width = 330, Spacing = 8 };

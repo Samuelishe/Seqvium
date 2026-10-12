@@ -34,7 +34,7 @@ These are planned capabilities and design directions:
 
 ## Current status
 
-**A runnable desktop foundation now exists; music editors are not implemented.** SEQ-R1 provides a .NET 10 canonical
+**A runnable desktop and bounded visual Node Graph editor now exist.** SEQ-R1 provides a .NET 10 canonical
 musical
 model, document edits/Undo/Redo and versioned JSON Save/reopen, with a managed test suite.
 SEQ-R0 remains **partially evidenced** and selects no permanent backend. R2-F1 provides managed WAV
@@ -46,7 +46,12 @@ for this bounded foundation. **R3 is complete / local accepted-ready**: one Aval
 actual unnamed project summary, RU/EN and Dark/Light preferences, two retained internal panes,
 bounded floating/docking, keyboard access and independent user layout persistence. The owner accepts
 F1/F2 within this scope; wider platform/accessibility and delivered-release evidence remain open.
-Opening the desktop never starts audio. Musical editors and input streaming/recording are absent.
+R4-F1/F2 add canonical Source/Gain/Mix/Output and prepared independent PCM execution. F3-A/F3-B
+connect native durable WAV import, transport/Save/reopen and one retained editable graph canvas, including
+real independent WAV branches before Mix. F3-B awaits owner canvas/interaction review; F2 remains
+partial with unresolved physical pressure evidence. [Current state](docs/PROJECT_STATE.md) and
+[F3-B evidence](docs/experiments/SEQ-R4-F3-B_REPORT.md) define the bounds.
+Opening the desktop never starts audio. Pattern/Piano Roll/Arrangement editors and input streaming/recording are absent.
 See the [F2 device/performance evidence](docs/experiments/SEQ-R2-F2_REPORT.md) for its measured scope.
 The [F4 endpoint evidence and R2 audit](docs/experiments/SEQ-R2-F4_REPORT.md) records the selection boundary.
 The [roadmap](docs/ROADMAP.md) describes intended stages, not available features or release promises.

@@ -6,7 +6,8 @@ internal static class WorkflowPresentation
     internal static string Shortcut(string action) => action switch
     {
         "Import" => "Ctrl+I", "Open" => "Ctrl+O", "Save" => "Ctrl+S", "SaveAs" => "Ctrl+Shift+S",
-        "Undo" => "Ctrl+Z", "Redo" => "Ctrl+Y", "Panic" => "Ctrl+Esc", "Play" => "F5", "Stop" => "Shift+F5", _ => ""
+        "Undo" => "Ctrl+Z", "Redo" => "Ctrl+Y", "Panic" => "Ctrl+Esc", "Play" => "F5", "Stop" => "Shift+F5",
+        "Graph" => "Ctrl+G", _ => ""
     };
     internal static bool IsError(WorkflowState state) => state.StatusKey.EndsWith("Failed", StringComparison.Ordinal) ||
         state.StatusKey == "Workflow.DeviceFault";

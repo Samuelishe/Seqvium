@@ -27,6 +27,7 @@ public sealed class WorkspaceHost : Grid, IDisposable
     private readonly Dictionary<string, Button> _tabs = [];
     private readonly Func<Task> _language;
     private readonly Func<Task> _theme;
+    private readonly Func<PaneDefinition, Control>? _contentFactory;
     private readonly DispatcherTimer _resizeSave;
     private bool _disposed;
     private bool _stopping;
@@ -41,12 +42,14 @@ public sealed class WorkspaceHost : Grid, IDisposable
     public event Action? LayoutCommitted;
     public event Action? LeaveRequested;
 
-    public WorkspaceHost(ShellSession session, WorkspaceState state, Func<Task> language, Func<Task> theme)
+    public WorkspaceHost(ShellSession session, WorkspaceState state, Func<Task> language, Func<Task> theme,
+        Func<PaneDefinition, Control>? contentFactory = null)
     {
         _session = session;
         State = state;
         _language = language;
         _theme = theme;
+        _contentFactory = contentFactory;
         RowDefinitions = new("*,Auto");
         Children.Add(_canvas);
         _boundaryCue.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Accent.Action"));
@@ -160,6 +163,14 @@ public sealed class WorkspaceHost : Grid, IDisposable
     {
         CancelResize();
         foreach (var view in _views.Values) view.CancelGesture();
+    }
+
+    internal Control CreateContent(PaneDefinition definition) => _contentFactory?.Invoke(definition) ??
+        new FirstPartyPaneContent(_session, definition, _language, _theme);
+
+    internal void FrameGraph()
+    {
+        if (_views.TryGetValue(WorkspaceState.GraphId, out var pane)) pane.FrameGraph();
     }
 
     private ResizeBoundary? ResolveBoundary(PointerEventArgs args)

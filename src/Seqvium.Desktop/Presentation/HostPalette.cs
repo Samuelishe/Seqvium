@@ -15,7 +15,8 @@ public static class HostPalette
         ["Focus.Active"] = "#9C9AFF", ["Accent.Action"] = "#AAA8FF", ["State.Unavailable"] = "#737C8C",
         ["Status.Warning"] = "#EAC17B", ["Status.Critical"] = "#EF9A9A", ["Status.Playing"] = "#7DCEB5",
         ["Surface.Hover"] = "#2D3340", ["Surface.Pressed"] = "#353C4B", ["Surface.Selected"] = "#343650",
-        ["Surface.Playing"] = "#263E38", ["Surface.Critical"] = "#4B3035", ["Surface.Accent"] = "#3C3C62"
+        ["Surface.Playing"] = "#263E38", ["Surface.Critical"] = "#4B3035", ["Surface.Accent"] = "#3C3C62",
+        ["Graph.Cable"] = "#93ABC9", ["Graph.Grid"] = "#282D35"
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     private static readonly FrozenDictionary<string, string> Light = new Dictionary<string, string>
@@ -25,6 +26,7 @@ public static class HostPalette
         ["Focus.Active"] = "#5E5AC6", ["Accent.Action"] = "#514AA7", ["State.Unavailable"] = "#778293",
         ["Status.Warning"] = "#805300", ["Status.Critical"] = "#AC3947", ["Status.Playing"] = "#17634F",
         ["Surface.Hover"] = "#E7EBF3", ["Surface.Pressed"] = "#DBE1ED", ["Surface.Selected"] = "#E4E2F6",
-        ["Surface.Playing"] = "#DCEFE7", ["Surface.Critical"] = "#F8E3E6", ["Surface.Accent"] = "#E5E3F8"
+        ["Surface.Playing"] = "#DCEFE7", ["Surface.Critical"] = "#F8E3E6", ["Surface.Accent"] = "#E5E3F8",
+        ["Graph.Cable"] = "#48617A", ["Graph.Grid"] = "#DFE5EE"
     }.ToFrozenDictionary(StringComparer.Ordinal);
 }

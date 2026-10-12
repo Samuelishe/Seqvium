@@ -55,6 +55,9 @@
                                     <Button Classes="shell" Content="{Binding [Pane.Appearance]}"
                                             Click="AppearanceClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenAppearance" />
+                                    <Button Classes="shell" Content="{Binding [Pane.Graph]}"
+                                            Click="GraphClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenGraph" />
                                     <TextBlock Classes="caption" Text="{Binding [Workspace.KeyboardHint]}" />
                                 </StackPanel>
                             </Flyout>
@@ -74,7 +77,7 @@
                                 <StackPanel Width="280" Spacing="8">
                                     <TextBlock Text="Seqvium" FontWeight="SemiBold" />
                                     <TextBlock Text="{Binding Version}" />
-                                    <TextBlock Text="SEQ-R4-F3-A" Classes="caption" />
+                                    <TextBlock Text="SEQ-R4-F3-B" Classes="caption" />
                                     <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
                                 </StackPanel>
                             </Flyout>

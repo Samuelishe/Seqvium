@@ -98,6 +98,13 @@ public sealed partial class ProjectEdit
         return part.Id;
     }
 
+    /// <summary>Changes the shared Pattern boundary; full transaction validation protects notes and placement ends.</summary>
+    public void SetPatternLength(Id<Pattern> patternId, MusicalDuration length)
+    {
+        CheckActive();
+        ChangePattern(patternId, pattern => pattern with { Length = length });
+    }
+
     public Id<NoteEvent> AddNote(Id<Pattern> patternId, Id<MusicalPart> partId, MusicalPosition position,
         MusicalDuration duration, decimal pitch, decimal intensity)
     {

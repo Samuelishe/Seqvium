@@ -1139,3 +1139,16 @@ HEAD `61d93d57991b2f67a8d3d6ca54aaf2b423a4cf46`; R2 remains in progress / partia
   Locked restore and full Release build pass with zero warnings/errors; full tests pass without skips.
 - F3-A visual owner review remains pending, F2 remains partial and F3-B is not started. No physical
   device/GUI acceptance is inferred from these deterministic tests. No commit/push/index change.
+
+## 2026-10-12 — SEQ-R4-F3-B visual graph editor implementation
+
+Explicitly authorized F3-B adds one retained targeted first-party canvas, canonical Source/Gain/Mix/
+Output editing, grouped/cancelled node gestures and real durable second-source acceptance in an unshared
+item. Existing model/history/F2 DSP/coordinator/backend are retained. The only new Core operation is
+validated Pattern boundary adjustment for a longer accepted WAV. A real cross-document observation
+refresh crash was diagnosed, corrected and replacement rerun. Locked Release verification preserves
+652 baseline tests and adds 52 cases (704 total); actual Windows sparse/dense RU/EN Dark/Light,
+keyboard/pointer/picker/Save/reopen/workspace and quiet Samsung USB C Earphones output evidence is in
+[the focused report](../experiments/SEQ-R4-F3-B_REPORT.md). Owner canvas/manipulation review remains
+pending; F3-A is conditionally accepted for continued development, F2 remains partial and its original
+physical starvation evidence is unresolved. No commit/push or later-stage authorization follows.

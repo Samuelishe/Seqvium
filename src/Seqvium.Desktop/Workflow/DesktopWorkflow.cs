@@ -19,11 +19,13 @@ internal sealed record WorkflowState(ProjectDocument Document, OccurrenceChoice[
     internal bool HasSaved { get; } = Document.Saved is not null;
     internal int UndoCount { get; } = Document.UndoCount;
     internal int RedoCount { get; } = Document.RedoCount;
+    internal long Generation { get; } = Document.Generation;
+    internal bool IsClosed { get; } = Document.IsClosed;
 }
 
 /// <summary>Host application/session owner over the existing document, import, persistence and F2 engine.
 /// GUI consumes immutable observations. All document mutations and coordinator operations share one context.</summary>
-internal sealed class DesktopWorkflow : IAsyncDisposable
+internal sealed partial class DesktopWorkflow : IAsyncDisposable
 {
     private readonly WorkflowOwner _owner = new();
     private readonly SemaphoreSlim _commands = new(1);

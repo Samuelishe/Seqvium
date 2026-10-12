@@ -22,6 +22,7 @@ internal sealed partial class MainWindow : Window
     private readonly WorkspaceHost _workspace;
     private readonly WorkspaceLayoutPersistence _layoutPersistence;
     private readonly bool _layoutFallback;
+    private readonly GraphEditorSession _graphEditor = new();
     private bool _closing;
     private bool _shutdownComplete;
 
@@ -34,7 +35,10 @@ internal sealed partial class MainWindow : Window
         InitializeWorkflow();
         _layoutFallback = layout.UsedFallback;
         _layoutPersistence = new(layoutStore.SaveAsync);
-        _workspace = new(session, new(layout.Layout), ToggleLanguageAsync, ToggleThemeAsync);
+        _workspace = new(session, new(layout.Layout), ToggleLanguageAsync, ToggleThemeAsync,
+            definition => definition.InstanceId == WorkspaceState.GraphId
+                ? new GraphPaneContent(session, _workflow, _graphEditor, ImportGraphWavAsync)
+                : new FirstPartyPaneContent(session, definition, ToggleLanguageAsync, ToggleThemeAsync));
         WorkspaceRegion.Child = _workspace;
         _workspace.LeaveRequested += () => PaneMenuAction.Focus();
         _workspace.LayoutCommitted += () => _layoutPersistence.Request(_workspace.State.Capture());
@@ -165,6 +169,18 @@ internal sealed partial class MainWindow : Window
 
     private void InspectorClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.InspectorId);
     private void AppearanceClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.AppearanceId);
+    private void GraphClicked(object? sender, RoutedEventArgs args) => OpenGraph();
+
+    private void OpenGraph()
+    {
+        if (_closing) return;
+        bool same = _graphEditor.Target == _workflow.State.Selected &&
+            _graphEditor.Basis?.Lifecycle == _workflow.State.Document.LifecycleId;
+        if (_workflow.State.Selected is { } target) _graphEditor.Open(_workflow.State, target);
+        OpenPane(WorkspaceState.GraphId);
+        if (!same) Avalonia.Threading.Dispatcher.UIThread.Post(_workspace.FrameGraph,
+            Avalonia.Threading.DispatcherPriority.Loaded);
+    }
 
     private void OpenPane(string id)
     {

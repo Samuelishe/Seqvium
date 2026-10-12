@@ -48,6 +48,25 @@ Long supported samples are not truncated to a bar or hidden preview limit. No pr
 created on launch. Accepted bytes survive deletion of the external WAV, Undo/Redo and Save As/reopen.
 This is one-shot occurrence preview, not Pattern/Arrangement editing, Browser or Sample Lab.
 
+## R4-F3-B add WAV to current item
+
+The graph pane explicitly imports a supported WAV into its identified item-local attachment. It
+requires exactly one placement of the owning Pattern and refuses shared/unsupported contexts before
+media preparation; no selection-following, hidden variation or Pattern Workspace is created. The
+existing durable `WavImport.Accept` groups resource, independent Sound, Part, native-pitch Note and
+fresh Source binding `(PlacementId, PartId)` in one validated Edit/Undo step. The new note uses F3-A's
+full-source/EOF guard and zero release. A longer source extends this unshared Pattern's length through
+`SetPatternLength` in the same transaction; existing notes and identities remain intact.
+
+The owning context marks intentional mix. Source is deliberately unconnected, so persistent diagnostics
+remain until the user constructs an explicit Mix and connects all mandatory inputs. Independent Gain
+branches precede that sum; fan-out of an existing Source is a signal relationship, not another performance.
+Cancelled/failed/stale preparation accepts no partial musical state and disposes unaccepted media;
+accepted audio remains durable through Undo/Redo and Save/reopen even if the original WAV disappears.
+The conservative lifecycle/generation gate applies across picker and preparation; rejected work does
+not silently attach to a changed graph. Cancel import remains available in existing project overflow.
+[Graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor) owns canvas/binding operations.
+
 ## R2-F3 bounded source access, raw preview and reuse
 
 `SourceAccess.DiscoverDirectoryAsync` inspects one explicitly selected directory without opening a

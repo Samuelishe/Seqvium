@@ -110,6 +110,28 @@ presentation cases when needed. The [F1 report](experiments/SEQ-R3-F1_REPORT.md)
 Windows UI Automation/pointer/keyboard smoke and visual inspection. Compilation/pure tests are not GUI
 acceptance; high/mixed DPI, screen readers and Linux/macOS runtime remain missing evidence.
 
+## R4-F3-B graph editor verification
+
+`Desktop/GraphCanvasGeometryTests`, `GraphEditorSessionTests` and `GraphEditorWorkflowTests` add
+52 deterministic cases over the existing 652-test baseline. They cover transform/anchor/zoom/pan/frame,
+node/port/parameter/cable hit precedence and preview geometry, Mix positions, typed refusal/fan-out,
+explicit retained targets and coherent replacement observations, cancellation/no-op/one-drag history,
+Undo/Redo ABA, source/Output creation/deletion/binding, atomic Mix intent and second-source acceptance,
+shared-Pattern refusal/failure/cancellation, durable topology/coordinate roundtrip and numeric repair.
+Independent two-source PCM checks verify pre-mix branch gains and natural EOF; fan-out retains one
+contribution/NoteOn. Live tests verify prepared identity/position/epoch on Gain updates, invalid last-valid
+and repair convergence, invalid Save/reopen, pending preparation replacement and Stop/Panic/joined release.
+Pattern length checks reject note truncation and placement overflow atomically.
+
+Tests initialize no GUI platform/device and use owner barriers, completion gates and sequential PCM
+packets, with no sleeps as timing oracles. The seven initial R3 test failures assumed exactly two panes;
+their count/conflict assertions now include the added hidden graph pane without removing baseline cases.
+Use the existing locked restore, full Release build and full solution commands above. For focused work:
+`dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --filter-class "*GraphEditor*"`.
+Actual Windows canvas/picker/workspace/focus checks and quiet physical output are separate evidence in
+[the focused report](experiments/SEQ-R4-F3-B_REPORT.md). Owner review remains mandatory; green tests
+do not accept canvas usability or reclassify the inherited F2 starvation evidence.
+
 ## R3-F2 workspace verification
 
 `Desktop/WorkspaceStateTests` and `WorkspaceLayoutTests` initially added 38 deterministic cases.

@@ -4,7 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Seqvium.Desktop.Workflow;
+using Seqvium.Desktop.Workspace;
+using Seqvium.Core;
 
 namespace Seqvium.Desktop;
 
@@ -55,11 +58,38 @@ internal sealed partial class MainWindow
     private Task WorkflowActionAsync(string action)
     {
         if (_closing) return Task.CompletedTask;
+        if (action == "Graph") { OpenGraph(); return Task.CompletedTask; }
         if (action is "Stop" or "Panic") return _workflow.StopAsync(action == "Panic");
         if (action == "CancelImport") { _importCancellation?.Cancel(); return Task.CompletedTask; }
         if (_workflowActionBusy) return Task.CompletedTask;
         _workflowWork = RunWorkflowActionAsync(action);
         return _workflowWork;
+    }
+
+    private Task ImportGraphWavAsync(GraphEditBasis basis, GraphPosition position)
+    {
+        if (_closing || _workflowActionBusy) return Task.CompletedTask;
+        _workflowWork = RunGraphImportAsync(basis, position);
+        return _workflowWork;
+    }
+
+    private async Task RunGraphImportAsync(GraphEditBasis basis, GraphPosition position)
+    {
+        _workflowActionBusy = true; _workflowControls.Refresh(true);
+        try
+        {
+            var path = await PickOpenAsync(true);
+            if (path is null || _closing) return;
+            _importCancellation = new(); _workflowControls.CanCancelImport = true; _workflowControls.Refresh(true);
+            await _workflow.AddGraphWavAsync(basis, path, position, _importCancellation.Token);
+        }
+        catch (Exception error) { await _workflow.ReportFailureAsync(error.Message); }
+        finally
+        {
+            _importCancellation?.Dispose(); _importCancellation = null; _workflowControls.CanCancelImport = false;
+            _workflowActionBusy = false; _workflowControls.Refresh(_closing);
+            if (!_closing) _workspace.FocusPane(WorkspaceState.GraphId);
+        }
     }
 
     private async Task RunWorkflowActionAsync(string action)
@@ -144,12 +174,16 @@ internal sealed partial class MainWindow
     private async void WorkflowKeyDown(object? sender, KeyEventArgs args)
     {
         if (_closing || args.Handled) return;
+        // A text editing session owns its local Undo until the value is explicitly committed.
+        if (args.Key is Key.Z or Key.Y && args.KeyModifiers == KeyModifiers.Control &&
+            args.Source is Visual source && source.GetVisualAncestors().Prepend(source).Any(v => v is TextBox)) return;
         string? action = (args.Key, args.KeyModifiers) switch
         {
             (Key.O, KeyModifiers.Control) => "Open", (Key.I, KeyModifiers.Control) => "Import",
             (Key.S, KeyModifiers.Control) => "Save",
             (Key.S, KeyModifiers.Control | KeyModifiers.Shift) => "SaveAs",
             (Key.Z, KeyModifiers.Control) => "Undo", (Key.Y, KeyModifiers.Control) => "Redo",
+            (Key.G, KeyModifiers.Control) => "Graph",
             (Key.Escape, KeyModifiers.Control) => "Panic", _ => null
         };
         if (args.Key == Key.F5 && args.KeyModifiers is KeyModifiers.None or KeyModifiers.Shift)

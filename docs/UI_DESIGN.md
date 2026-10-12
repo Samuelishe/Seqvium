@@ -124,7 +124,8 @@ Dark/Light resources. A single retained row presents real project/transport/hist
 and linear Gain (0–1); BPM/meter are read-only and move into overflow on narrow windows. Save As lives
 in overflow; selection moves into details when space is limited. The content-sized owned unsaved modal
 uses the same resources. The details flyout is a compact view of canonical intent, **not a node canvas**.
-Owner review of this revised F3-A presentation remains pending; see the
+The owner conditionally accepts F3-A for continued development; final canvas/interaction acceptance
+of F3-B remains pending. See the
 [integration evidence](experiments/SEQ-R4-F3-A_REPORT.md).
 
 ### Transferable reference principles
@@ -265,6 +266,20 @@ distinct from shrinking the UI to fit a window. Independently rendered third-par
 this visual contract; [WORKSPACE](WORKSPACE.md) owns main-window and pane behavior.
 
 ## Processing and node-canvas presentation
+
+F3-B implements a compact first-party canvas using 156-unit nodes, 22-unit port rows, bounded curved
+cables with surface under-strokes at crossings and restrained 3-unit body rounding. Source, Gain,
+Mix and Output have human type labels, directed input/output labels and source/parameter/layout detail.
+Selection, keyboard focus, previews and invalid elements have distinct outlines/text/semantic colors;
+an exclamation mark supplements error color. Hover/context feedback explains affected diagnostics.
+`Graph.Cable` and `Graph.Grid` extend HostPalette equally for Dark/Light; remaining colors reuse host
+roles. The pane-local row contains explicit target, create/import/frame/delete/context actions;
+the main command row remains unchanged. Gain exposes one compact invariant text input on selection,
+with linear ratio semantics, retained invalid intent and explicit commit. Technical IDs stay in the
+existing requested details only. Pan/zoom affect canvas content, never global typography or document
+coordinates; framing a dense graph is an overview, and ordinary zoom/pan retains access at narrow width.
+[F3-B GUI evidence](experiments/SEQ-R4-F3-B_REPORT.md) records actual sparse/dense RU/EN Dark/Light
+review, input and window-size bounds. Owner visual/manipulation acceptance remains pending.
 
 Processing presence should have a compact, clearly interactive indicator on relevant musical items
 and containers. Its exact icon, badge/count, color, label, typography, and motion remain unselected.

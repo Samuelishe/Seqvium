@@ -6,7 +6,7 @@ Authoritative for: Progressive complexity, input/command and focus semantics, ba
 feedback, discoverability, general workflow semantics.
 Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or current implementation.
 
-These are intended requirements except the explicitly implemented bounded R3 host and F3-A workflow
+These are intended requirements except the explicitly implemented bounded R3 host and F3-A/F3-B workflows
 below; broader musical editors remain future work.
 
 ## Implemented R4-F3-A bounded workflow
@@ -22,6 +22,23 @@ Inspector preserve access. The owned unsaved modal starts with safe Cancel focus
 [Workspace](WORKSPACE.md#r4-f3-a-commands-and-owned-modal-lifecycle) owns lifecycle/keys;
 [UI design](UI_DESIGN.md#first-party-visual-design-rules) owns presentation. This is not graph canvas,
 Pattern/Piano Roll, Arrangement, Mixer or Browser acceptance.
+
+## Implemented R4-F3-B graph interaction
+
+Users explicitly open the selected item's graph and manipulate real Source/Gain/Mix/Output, including
+independent WAV branches in one unshared item. The retained target is visible and does not follow
+unrelated selection. Missing targets cancel proposals and cannot redirect destructive commands.
+Node drag previews commit once; cancellation/no-op leave canonical history untouched. Port preview
+explains compatibility/refusal before acceptance; incomplete/cyclic intent is savable with persistent
+element diagnostics. Gain text is one committed input session and can repair saved invalid amplitude.
+Menus and local keyboard actions complement pointer creation, wiring, selection and navigation.
+
+The compact pane distinguishes canonical readiness/incompleteness, preparation, currently playing
+intent and retained previous-valid playback. Save preserves canonical invalid edits; fresh reopen
+contains no previous runtime fallback. Repair converges automatically through the existing F2 owner.
+[Workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane), [graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor)
+and [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item) own exact bounds. Actual owner
+canvas/interaction review remains required independently of pure tests and a quiet physical smoke.
 
 ## Mouse-first creation and complementary input
 

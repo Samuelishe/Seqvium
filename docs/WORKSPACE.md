@@ -44,6 +44,34 @@ shutdown. Ctrl+I/O/S/Shift+S, Ctrl+Z/Y, F5/Shift+F5 and Ctrl+Esc complement exis
 [UI design rules](UI_DESIGN.md#first-party-visual-design-rules) apply to all future first-party dialogs;
 external editor windows and native file pickers retain their explicit exceptions.
 
+## R4-F3-B retained graph pane
+
+The bounded host additionally contains `node-graph.main` / `node-graph`, titled Node Graph (RU: Граф
+узлов), with a 960x520-DIP default floating rectangle and 300x260 minimum. It uses the same retained
+move/resize/collapse/hide/reopen/dock/activation machinery; there is no extra Windows pane window or
+general surface registry. Panes, project overflow and Ctrl+G explicitly open the selected occurrence's
+attachment; requesting the same target focuses the retained canvas without resetting its viewport.
+The pane's own target selector explicitly changes editing target and playback selection. Other global
+selection changes do not redirect graph editing. A layout-restored pane without a target asks for one.
+
+Editing identity is lifecycle plus attachment, resolved against a coherent immutable workflow observation.
+Deletion retains the unavailable attachment identity for possible Undo, with no eligible editing commands;
+Undo may restore that target but never revives a cancelled gesture. Project replacement clears target
+and selection even when saved IDs match. Every pane refresh first adopts one complete observation,
+including refreshes triggered by shell notifications before the pane's queued workflow callback.
+Retained content unsubscribes on host disposal and drops old document observations on replacement.
+
+Pane gestures remain header/boundary-owned. Canvas owns middle/Space+left/background pan, wheel zoom
+around pointer (0.35–2), node and port drag, selection and context actions. Home frames; +/- zoom,
+Alt+Tab selects successive nodes, arrows nudge (Shift = ten units), Delete removes selection and
+Shift+F10 opens context actions. Context menus also select nodes/cables and create/bind/connect/
+disconnect for keyboard access. Text fields own local input/Undo; Gain commits with Enter/check.
+Canvas focus returns after graph actions; pane-actions focus retains R3 geometry chords. Competing
+pane actions, reflow, deactivation, Escape and capture loss cancel canvas proposals. Viewport and
+selection are session presentation, absent from musical history and user layout files.
+Old two-pane version-1 layouts remain readable; missing graph entries start hidden.
+[Node graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor) owns editing and DSP semantics.
+
 ## Implemented R3-F2 internal panes
 
 The toolbar's Panes action deliberately opens Project Inspector or Appearance. Both are optional and

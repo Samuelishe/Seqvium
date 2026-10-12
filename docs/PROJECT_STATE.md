@@ -14,8 +14,9 @@ R3-F1 and R3-F2's current bounded workspace usability/interaction behavior. SEQ-
 missing R3 prerequisite; no additional UI polishing package is required for this acceptance.
 **R4 is in progress / partial; R4-F1 is complete / local accepted-ready.** R4-F2's functional execution
 is implemented; full acceptance is blocked by mixed physical pressure evidence (two observed starvations).
-F2 remains **partial**. Separately authorized **R4-F3-A is functionally implemented, with revised
-visual acceptance pending owner review**. F3 as a whole remains incomplete; F3-B is not authorized here.
+F2 remains **partial**. **R4-F3-A is functionally implemented and conditionally accepted by the owner
+for continued development. R4-F3-B is explicitly authorized and implemented, with actual canvas/
+interaction acceptance pending owner review.** F3/R4 full acceptance remains incomplete.
 SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / narrow** under its
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 Completed rationale is cold history; current contracts stay in canonical owners.
@@ -36,7 +37,7 @@ owns exact bounds; [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-sto
 corruption preservation, write failure and joined shutdown. RU/EN fallback and Dark/Light resources
 apply without replacing controls or editing music. The compact 30/30/22-DIP frame, 28-DIP pane chrome/
 conditional strip and local content scrolling follow [UI design](UI_DESIGN.md).
-No graphical musical editor, general docking hierarchy, snapping, automatic audio startup or reset UI exists.
+F3-B adds the bounded graph editor below. No general docking hierarchy, snapping, automatic audio startup or reset UI exists.
 
 R1 provides immutable canonical documents, typed stable identities, shared multi-instrument Patterns,
 pitch-aware notes, variations, independent sound/resource/organization/processing intent, validated
@@ -60,7 +61,7 @@ fixed scratch and shared R2 offline/realtime scheduling/leases. One owner coordi
 converges after Edit/Undo/Redo/target changes, retains last-valid in-session audio on blockers, retries
 capacity and preserves voices for Gain-only updates. Geometry provenance, atomic status, sticky hard
 Stop/Panic, finite topology transition and preparation/device joined shutdown are implemented under
-[Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence). No graph editor exists.
+[Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence). F3-B supplies its graph editor.
 
 R4-F3-A connects these foundations in the actual Desktop: native durable WAV import creates an atomic
 Sound/Pattern/Part/Note/Placement and exactly bound Source → Gain → Output graph. Selected Gain edits
@@ -68,14 +69,23 @@ canonical intent; explicit Play/Stop/Panic, Undo/Redo and Save/Save As/Open use 
 Dirty Save/Discard/Cancel, preparation/output joins and fresh silent reopen protect document/PCM lifetime.
 A non-GUI host owner supplies immutable observations to the retained R3 shell/panes. One vector command
 row, read-only BPM/meter, narrow overflow, compact status/details and owned content-sized modal follow
-[permanent visual rules](UI_DESIGN.md#first-party-visual-design-rules). No canvas or sample content is added.
+[permanent visual rules](UI_DESIGN.md#first-party-visual-design-rules). No bundled sample content is added.
+
+R4-F3-B supplies one explicitly targeted retained Node Graph pane with real Source/Gain/Mix/Output,
+typed cables, node/cable selection, free drag, pan/zoom/frame, context/keyboard editing and compact
+committed Gain. Node preview commits once through the existing owner/Undo; stale/cancel/no-op gestures
+publish nothing. A durable second WAV adds an independent Part/Note/Source binding in the same unshared
+item, with shared-Pattern refusal and atomic boundary extension. Canonical topology/coordinates survive
+Save/reopen; persistent element/status diagnostics distinguish invalid intent and last-valid playback.
+F2 coordinator/DSP/backend remain unchanged. [Graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor),
+[workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane) and [evidence](experiments/SEQ-R4-F3-B_REPORT.md) own details.
 
 ## Current focus
 
 The bounded workspace and canonical intent foundations are locally ready. F2's functional execution
 passes verification, but its repeated physical pressure result is not uniformly successful.
-F3-A's revised desktop controls require owner visual review. F3-B's actual canvas/editor interaction
-and multi-source GUI acceptance remain proposed under [ROADMAP](ROADMAP.md).
+F3-A is conditionally accepted for continued development. F3-B's implemented canvas/editor interaction
+and multi-source workflow require owner inspection under [ROADMAP](ROADMAP.md).
 Remaining [readiness recommendations](NODE_GRAPH.md#r4-implementation-readiness-recommendation) grant
 no further authorization. R4 remains partial; F2 alone cannot deliver a workstation or select an engine ABI.
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
@@ -84,8 +94,9 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 652 tests pass, zero failures/skips**.
-All 646 previous tests are preserved; the F3-A suite now contains 34 workflow and nine
+solution build pass with **zero warnings/errors; all 704 tests pass, zero failures/skips**.
+All 652 baseline cases are preserved; 52 F3-B geometry, editing, target and PCM/lifecycle cases are added.
+The F3-A suite contains 34 workflow and nine
 presentation/observation cases. [Test execution](TEST_EXECUTION.md#r4-f3-a-desktop-workflow-verification)
 owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
 [F1 evidence](experiments/SEQ-R3-F1_REPORT.md) records actual chrome/OS keyboard/preference behavior.
@@ -97,6 +108,10 @@ Windows audio adapter only on explicit Play. [F3-A evidence](experiments/SEQ-R4-
 real RU/EN, Dark/Light, 1100x750, reduced 640-DIP width, maximized, owned modal, native picker,
 parameter/failure and retained pane checks, plus a quiet Samsung USB C Earphones 48 kHz stereo smoke.
 Screenshots stay ignored locally for owner review; no subjective listening or pressure acceptance follows.
+F3-B's [focused report](experiments/SEQ-R4-F3-B_REPORT.md) records real sparse/dense canvas/pointer/
+keyboard, RU/EN Dark/Light, reduced/maximized, native picker/Save/reopen, retained target and joined
+replacement checks plus a quiet user-edited Kick/Snare Play/invalid/repair/Stop smoke on Samsung USB C
+Earphones at 48 kHz stereo. A discovered observation-order crash was fixed and replacement rerun.
 RID-independent local build feasibility is not hosted or Linux/macOS runtime evidence.
 [R2-F2](experiments/SEQ-R2-F2_REPORT.md), [F3](experiments/SEQ-R2-F3_REPORT.md) and
 [F4](experiments/SEQ-R2-F4_REPORT.md) retain distinct workload/source/device evidence, including physical
@@ -107,9 +122,12 @@ fault lifetimes. No acoustic perception, DAC latency, multi-hour/all-device or a
 
 ## Active blockers / evidence gaps
 
-F3-A visual acceptance is pending owner review. The inherited nominal 640x480 client minimum produced
+F3-B canvas/manipulation acceptance is pending owner review; tests and recorded GUI/audio smoke do not
+constitute owner acceptance. The inherited nominal 640x480 client minimum produced
 640x511-pixel visible Windows captures; exact 480-pixel outer-frame review remains unevidenced. No
 full F3/R4 acceptance, high/mixed DPI, other-OS runtime or acoustic listening claim follows.
+Dense crossing selection has an inconclusive native pointer check; exact interaction review remains
+open under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md), separately from passing pure hit tests.
 
 F2 pressure acceptance is unresolved. The original starvations at 22.86 and 39.57 seconds remain failures;
 new isolated diagnostics also fail with natural GC and graph-free legacy on the same 48 kHz stereo

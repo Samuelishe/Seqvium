@@ -31,7 +31,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     private readonly Cursor _arrowCursor = new(StandardCursorType.Arrow);
     private readonly Grid _surface = new();
     private readonly Border _corner;
-    private readonly FirstPartyPaneContent _content;
+    private readonly Control _content;
     private readonly ContextMenu _menu = new();
     private readonly List<(MenuItem Item, string Key)> _items = [];
     private readonly MenuItem _left;
@@ -84,7 +84,7 @@ internal sealed class WorkspacePane : Border, IDisposable
             if (!_disposed && host.State.Get(Id).Visibility == PaneVisibility.Visible) FocusContext();
         };
         _actions.ContextMenu = _menu;
-        _content = new(session, definition, language, theme);
+        _content = host.CreateContent(definition);
         Grid.SetRow(_content, 1);
         body.Children.Add(_content);
         _corner = new Border
@@ -147,7 +147,8 @@ internal sealed class WorkspacePane : Border, IDisposable
         _left.IsEnabled = _right.IsEnabled = pane.AllowDocking;
         _permission.IsChecked = pane.AllowDocking;
         _corner.IsVisible = pane.Dock == PaneDock.Floating;
-        _content.Refresh();
+        if (_content is FirstPartyPaneContent firstParty) firstParty.Refresh();
+        if (_content is GraphPaneContent graph) graph.Refresh();
     }
 
     private void NameAction(Button button, string key)
@@ -160,8 +161,11 @@ internal sealed class WorkspacePane : Border, IDisposable
 
     public void FocusContext()
     {
-        if (!_disposed && IsVisible && TopLevel.GetTopLevel(this) is not null) _actions.Focus();
+        if (_disposed || !IsVisible || TopLevel.GetTopLevel(this) is null) return;
+        if (_content is GraphPaneContent graph) graph.FocusCanvas(); else _actions.Focus();
     }
+
+    internal void FrameGraph() { if (_content is GraphPaneContent graph) graph.Frame(); }
 
     internal void SetResizeCursor(Cursor? cursor)
     {
@@ -209,6 +213,7 @@ internal sealed class WorkspacePane : Border, IDisposable
 
     public void CancelGesture()
     {
+        if (_content is GraphPaneContent graph) graph.CancelGesture();
         if (_pointer is not { } pointer) return;
         _pointer = null;
         _gesture?.Cancel();
@@ -251,6 +256,6 @@ internal sealed class WorkspacePane : Border, IDisposable
         CancelGesture();
         _disposed = true;
         _menu.Close();
-        _content.Dispose();
+        if (_content is IDisposable disposable) disposable.Dispose();
     }
 }

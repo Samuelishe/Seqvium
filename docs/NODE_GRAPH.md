@@ -12,7 +12,7 @@ users place nodes, connect compatible inputs/outputs, and explore audio/control 
 ideas may come from SunVox, LabVIEW, or Unity graph workflows; they are references, not specifications.
 R4-F1 implements canonical graph intent, editing and diagnostics below. R4-F2 executes the bounded
 item-local graph through the PCM sampler. F3-A adds a bounded desktop import/use/parameter workflow;
-the F3-B graphical editor remains unimplemented.
+F3-B supplies the first-party editable canvas below; owner visual/interaction acceptance remains pending.
 
 The signal graph describes sources, processors, mixing/splitting, effects, and buses/output where
 applicable. It is separate from the musical timeline and user organization. It does not replace
@@ -471,37 +471,62 @@ bounded Windows output evidence are owned by [verification](TEST_EXECUTION.md#r4
 and the [compact report](experiments/SEQ-R4-F2_REPORT.md). This is bounded Core readiness for F3;
 F3-A now supplies bounded Desktop audio composition and canonical Gain controls, with exact new Source
 bindings created during atomic import/use. Its compact chain/details view is not a graphical editor.
-There is still no graph canvas, Browser, Pattern Workspace, Mixer or export.
+F3-B adds the canvas below. Browser, Pattern Workspace, Mixer and export remain absent.
+
+## Implemented R4-F3-B first-party editor
+
+One retained Desktop graph pane projects canonical Source/Gain v1/Mix/Output nodes and real typed ports.
+Its explicitly chosen attachment is independent of unrelated musical selection. Workspace owns pane
+geometry; graph coordinates remain canonical and Save/Undo-owned. A local viewport and selection own
+no music or history. Rendering/hit testing share `Workspace/GraphGeometry`; curves follow canonical
+or transient proposed node positions. [Workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane) owns lifetime.
+
+Create/delete/move/connect/disconnect, Gain and source binding commands go through the existing
+`DesktopWorkflow` owner and `ProjectDocument.Edit` / `ProjectEdit.Graph`. Source creation may remain
+unbound until an existing unbound Part is explicitly chosen; deleting Source removes its binding and
+incident edges, retaining independent music. Creating Output designates it; another Output requires
+deleting the existing one. Creating/deleting the last Mix updates the owning context's mixing intent
+in the same transaction. Mix creation supports 2–8 inputs and mono/stereo declarations; wires convert
+nothing. Port preview/refusal checks direction, supported capability/declaration, signal/use/rate/layout,
+single occupied inputs and fan-out. Cycles and disconnected intent may commit and remain diagnosed
+and savable. Eligibility and persistent blockers come from `GraphDiagnostics`, not canvas heuristics.
+
+A drag retains only a proposed position and lifecycle/generation/attachment basis. Hundreds of moves
+publish nothing; release validates that basis and starting coordinate, then makes one Edit. Escape,
+capture loss, competing pane operations, workspace reflow or changed observation cancel the proposal.
+No-op release records nothing; each keyboard nudge is a separate Edit. The conservative generation
+gate also rejects Undo/Redo ABA and unrelated intervening edits rather than overwriting newer work.
+Gain's invariant text field displays retained numeric/invalid intent; Enter/check commits one amplitude
+in `[0,1]`, and Escape discards input. There is no independent multiplier or slider history.
+
+`Add WAV source to current item` supplies a real second Part/Note, Sound/resource and uniquely bound
+Source under the existing atomic durable acceptance. It refuses shared Patterns before preparation,
+never creates a hidden variation or extra performance on fan-out. Pattern boundary extension uses the
+validated `SetPatternLength` operation in that same Edit. [Sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item)
+owns this narrow musical policy. The user manually builds independent branches into explicit Mix.
+
+Canonical, pending, executing and invalid/last-valid states have concise localized pane feedback and
+element markers/context explanation. F2's coordinator remains unchanged: repair converges automatically,
+Gain-only updates retain prepared identity/voices, and reopening restores only canonical intent/media.
+The [F3-B evidence report](experiments/SEQ-R4-F3-B_REPORT.md) separates pure PCM, actual GUI, physical
+output and missing owner acceptance; it does not close F2 pressure acceptance or all R4.
 
 ## R4 implementation readiness recommendation
 
 **F1/F2 foundations are implemented above; full F2 acceptance remains blocked by mixed physical pressure evidence.**
-F3-A's bounded desktop workflow is separately authorized and implemented, with revised visual owner
-review pending. The F3-B canvas remains proposed/unstarted and requires separate authorization;
+F3-A is conditionally accepted by the owner for continued development. F3-B was explicitly authorized
+and is implemented above, with owner visual/interaction review pending;
 [ROADMAP](ROADMAP.md#seq-r4--node-graph-foundation) retains the complete editor/closure scope.
 R4 stays in progress / partial; PRE is not an engine ABI or permission to implement later stages.
 The existing immutable model/history, graph-aware reader 1.1, PCM scheduler/leases, realtime ownership
 and narrow device session are the reuse boundary. F3 must compose them, rather than create an editor
-model, second sampler, runtime Undo stack or Windows-owned graph. Remaining editor recommendations follow.
+model, second sampler, runtime Undo stack or Windows-owned graph. Remaining acceptance boundaries follow.
 
 ### First-party editor and remaining decisions
 
-Recommend one retained first-party graph pane with an explicit attachment target initially, focusing
-that surface when its target is requested. Do not silently follow unrelated selection or duplicate panes.
-Use the existing workspace geometry/focus/localization/theme services; extend concrete content creation,
-not a graph UI framework/plugin registry. A local canvas owns rendering/hit testing, free placement,
-typed cable compatibility previews and selection. A small presenter requests `ProjectEdit`; DSP and
-validation live in Core/application owners. Show compact parameters, canonical versus executing/pending/
-blocked status and persistent element diagnostics under the professional DAW design target.
-
-Commit node drag/parameter gestures once through canonical Undo; Escape discards transient proposals.
-Create/delete/connect/disconnect and Undo/Redo must affect actual processing and persistence. F3 also
-needs minimal real WAV import/use, selected-occurrence preview/Stop/Panic and Save/Save As/Open/close
-integration because R3 supplies none. An imported sound can create a bounded Pattern/part/note/placement
-source use in one explicit logical action; this is not R5's Pattern editor. Prefer an existing usable
-Pattern/placement when opened; never populate fake musical content. Require joined audio/preparation
-shutdown and an actual unsaved-work decision before document replacement. No Browser, Arrangement,
-Mixer, export UI or automatic playback at startup is implied.
+The bounded first-party editor is implemented above and uses the existing retained workspace, canonical
+history, media and execution owners. Owner review must inspect actual sparse/dense canvas interaction,
+not only green tests. No Browser, Arrangement, Mixer, export UI, R5 or automatic startup playback is implied.
 
 | Decision window | Questions / bounded disposition |
 | --- | --- |
@@ -510,4 +535,4 @@ Mixer, export UI or automatic playback at startup is implied.
 | Preserve for later stages | Q-005: tempo maps, seek/drift/recovery; Q-017: event/control execution/converters; Q-019/Q-029: containing/global outputs and intentional shared graphs; Q-020: explicit delayed feedback; Q-021: latency-bearing compensation; Q-047: mono/legato/opaque domains; Q-057: state/tails/de-click beyond declared core; Q-063: dependency-specific rebase/large history; Q-066: sends/detectors/modulation, cross-context taps and combined causality. |
 
 These broad questions remain open beyond bounded F1/F2. F2's numerical/device evidence establishes
-its declared execution path, without GUI acceptance or permission to start F3.
+its declared execution path, without full R4 acceptance or permission to start later stages.
