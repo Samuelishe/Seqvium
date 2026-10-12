@@ -43,9 +43,9 @@ Other documents may summarize and link but must not create competing contracts. 
   tiers; [PORTABILITY](PORTABILITY.md) owns platform targets, portable boundaries, and claim limits;
   [CI_CD](CI_CD.md) owns hosted automation evolution and trigger policy. None implies installed tools,
   executable commands, workflows, or validated platform parity.
-- [PROJECT_STATS](PROJECT_STATS.md) owns the future structural diagnostics contract, including metrics,
-  reports, advisory diagnostics, privacy/exclusions, and evolution limits. Development owns actual tool
-  introduction/setup; test execution owns suite topology/evidence. This contract does not authorize code.
+- [PROJECT_STATS](PROJECT_STATS.md) owns implemented structural diagnostics, including count semantics,
+  corpus, reports, advisory diagnostics, privacy/exclusions, and evolution limits. Development owns tool
+  setup; test execution owns suite topology/evidence. Diagnostics grant no product-stage authorization.
 - Current state is a compact present-tense handoff; work log records completed facts. The planning
   registers below represent distinct states rather than interchangeable task lists.
 
@@ -214,7 +214,7 @@ The ownership model stays stable while retrieval mechanisms evolve:
 1. **Established current baseline:** AGENTS, compact current state, INDEX, selected canonical owners,
    affected files and ordinary search. Engineering owners and passive text policies exist before source;
    no generated context infrastructure. FILE_INDEX remains deferred until meaningful topology exists.
-   ProjectStats has a separate future diagnostics contract; executable tooling requires authorization.
+   ProjectStats has a separate implemented diagnostics contract; it adds no context-retrieval infrastructure.
 2. **Observed context-selection cost:** consider a disposable generated repository map/bounded planner,
    with archive excluded from generated current-context maps. Do not introduce manifests/budgets now.
 3. **Exact routing/search demonstrably insufficient:** consider local semantic index, hybrid RAG and

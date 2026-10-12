@@ -17,6 +17,10 @@ riderModule.iml
 /.artifacts/
 /.scratch/
 
+# Local generated repository diagnostics; docs/PROJECT_STATS.md remains canonical.
+/PROJECT_STATS.md
+/PROJECT_STATS.json
+
 # Generated experiment screenshots, not product assets
 /docs/experiments/**/*.png
 /docs/experiments/**/*.jpg

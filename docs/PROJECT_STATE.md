@@ -29,7 +29,11 @@ Completed rationale is cold history; current contracts stay in canonical owners.
 
 The .NET 10 solution contains portable Core, one Tests project, a narrow Windows audio adapter,
 an explicit physical-device harness and one Avalonia `Seqvium.Desktop` executable.
-[Architecture](ARCHITECTURE.md) owns topology. The silent desktop opens one pristine unnamed
+[Architecture](ARCHITECTURE.md) owns product topology.
+[ProjectStats](PROJECT_STATS.md) is an independent BCL-only .NET 10 developer CLI in the solution,
+with console/Markdown/JSON structural reports, explicit local output and privacy/advisory boundaries.
+It adds no musical capability, device/GUI access or later-stage authorization.
+The silent desktop opens one pristine unnamed
 `ProjectDocument.Create` (120 BPM, 4/4); language/theme and layout persist as independent user files.
 Windows custom chrome retains OS movement/resize/window actions; other desktops retain native chrome.
 Optional Project Inspector and Appearance panes support activation/front order, floating, captured
@@ -99,8 +103,11 @@ Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recove
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 763 tests pass, zero failures/skips**.
-All 732 prior cases are preserved; 31 product version/source/metadata/format-boundary cases are added.
+solution build pass with **zero warnings/errors; all 838 tests pass, zero failures/skips**.
+All 763 prior cases are preserved; 75 synthetic repository/CLI/format/privacy cases cover ProjectStats.
+The focused tooling cases and actual CLI also run under Ubuntu 24.04 / WSL2 Linux x64, runtime 10.0.12;
+[tool verification](TEST_EXECUTION.md#projectstats-verification) owns scope and SDK/build limits.
+This does not establish Linux musical/GUI/audio or distributed-product acceptance.
 Actual About rendering is verified in RU/EN and Dark/Light under
 [version verification](TEST_EXECUTION.md#product-version-verification), without audio or release acceptance.
 The prior 704 cases comprise the original 652 plus 52 F3-B geometry, editing, target and PCM/lifecycle

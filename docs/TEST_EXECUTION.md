@@ -221,9 +221,40 @@ different execution contract: native runtime/materialization, another target fra
 integration host, out-of-process plugin isolation, or materially different dependencies/lifecycle.
 An architecture folder alone does not justify a project. This starting preference may evolve with evidence.
 
-Future [ProjectStats](PROJECT_STATS.md#test-strategy-and-placement) tests initially belong in
-`Seqvium.Tests/ProjectStats/`, using synthetic temporary repositories. `InternalsVisibleTo` may be used
-if justified. A standalone tooling project does not itself justify a standalone tooling test project.
+[ProjectStats](PROJECT_STATS.md#test-strategy-and-placement) tests belong in
+`Seqvium.Tests/ProjectStats/`, using synthetic temporary repositories. Tool internals are visible to
+the main Tests assembly for scanner/I/O/CLI checks; no separate tooling test project is needed.
+
+## ProjectStats verification
+
+`ProjectStatsScannerTests` and `ProjectStatsApplicationTests` add 75 cases to the unchanged 763-case
+baseline. Synthetic repositories cover classification/nearest-project ownership/density, lexical
+attributes, UTF-8/BOM/CRLF/CR/LF and UTF-16 counts, deterministic ordering/Top-N, excluded-before-read
+privacy, report self-exclusion, source/output protection, read/write/encoding/size failures,
+real Windows junctions and Unix file/directory/dangling symlinks, all formats, strict CLI, Git fallback,
+branch sanitization, assembly identity and absence of product/analysis dependencies. Conditional
+Windows exclusive-open and Unix symlink branches reflect filesystem semantics without test skips.
+Tests create and delete only their owned temporary repositories.
+
+After locked restore and Release solution build:
+
+```text
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "Seqvium.Tests.ProjectStats.*"
+dotnet test --solution Seqvium.sln -c Release --no-build --no-restore
+dotnet run --project tools/Seqvium.Tools.ProjectStats -c Release --no-build --no-restore -- . --markdown --output PROJECT_STATS.md
+git check-ignore PROJECT_STATS.md PROJECT_STATS.json
+```
+
+Windows 11 x64, SDK 10.0.401 / runtime 10.0.12: full locked restore and Release solution build pass
+with zero warnings/errors; **838 tests pass, zero failures/skips**, preserving all 763 prior cases.
+Real console/Markdown/JSON reports are inspected for counts, sanitized metadata, exclusion of root
+reports/cold history, relative paths and Git-ignore status. This accepts no musical/GUI/audio behavior.
+
+The same portable Release binaries execute under Ubuntu 24.04 / WSL2 Linux x64, runtime 10.0.12.
+The focused 75 cases pass there, including real Unix symlinks; Git/JSON scanning agrees with Windows
+structural results on the same source files. The available Linux SDK is 10.0.112 rather than pinned
+10.0.401: this is runtime/test evidence, not a separate Linux source build, hosted CI, GUI/audio
+acceptance or product release support.
 
 ## Future test categories
 

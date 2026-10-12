@@ -14,8 +14,8 @@ under [rolling governance](DOCUMENTATION_GOVERNANCE.md#rolling-current-knowledge
 SEQ-R0 has authorized bounded experimental evidence and remains **partially evidenced**; see its
 [report](experiments/SEQ-R0_REPORT.md). R1 was separately authorized and its bounded foundation is
 complete; see [PROJECT_STATE](PROJECT_STATE.md). This roadmap/probe result grants no authorization
-for later stages. ProjectStats needs separate explicit code authorization;
-whether a dedicated tooling stage is useful remains Q-046, not an inserted commitment.
+for later stages. The separately authorized ProjectStats developer tool is implemented under
+[its contract](PROJECT_STATS.md); it does not insert/reorder a musical product stage.
 [Open questions](KNOWN_PROBLEMS.md), including First Track Release dependency closure Q-061, do not
 reorder stages or make recording, automation, external hosting or ProjectStats implicit prerequisites.
 

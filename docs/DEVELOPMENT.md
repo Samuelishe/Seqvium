@@ -140,9 +140,13 @@ This includes analyzer packages, formatters, CMake/Ninja, native package manager
 and code generation. An experimentally used developer tool does not automatically become a repository
 requirement. Selection must follow task scope and actual project needs.
 
-[PROJECT_STATS](PROJECT_STATS.md) defines the accepted future BCL-only/cross-platform diagnostics
-direction. No CLI/project exists or is authorized by that contract alone; introduction waits for explicit
-code authorization. It is independent repository tooling, not part of the SEQ-R0 audio probe.
+[Seqvium.Tools.ProjectStats](../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj)
+is the implemented independent .NET 10 BCL-only repository diagnostics CLI. It belongs to the existing
+solution, with an empty package lock and no production/analysis dependencies. The pinned SDK and
+normal locked Release gates apply; no global tool or additional scripting environment is needed.
+[PROJECT_STATS](PROJECT_STATS.md#cli-and-outputs) owns console/Markdown/JSON invocations, explicit
+output, public corpus/privacy, count semantics and advisory limits. Its assembly metadata supplies
+tool identity; it is developer tooling, separate from musical product capabilities and the R0 probe.
 
 ## Verification output organization
 

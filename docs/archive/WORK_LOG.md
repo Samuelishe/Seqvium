@@ -1186,3 +1186,24 @@ Disposable host/configuration files are removed; final captures/result remain ig
 owner review. [Test execution](../TEST_EXECUTION.md#product-version-verification) owns reproducible
 checks and evidence limits. F2 stays partial, F3-B visual owner review stays pending, no production
 release is declared, and no Git commit/push/tag/index mutation is performed.
+
+## 2026-10-12 — SEQ-PROJECT-STATS-R1 repository diagnostics
+
+Implemented an independent BCL-only .NET 10 executable in `tools/Seqvium.Tools.ProjectStats`, added
+it to the solution, and placed synthetic tests in the existing main test project. Console/Markdown/
+JSON share structural metrics, privacy-safe metadata and stable advisory diagnostics; traversal is
+read-only with explicit output and pruned private/generated/reparse trees. Permanent contract/setup/
+verification/index/state owners now describe the real tool; Q-044/Q-045/Q-046 leave the active register.
+Changing statistics remain only in ignored local root reports, not permanent snapshots.
+
+Locked restore and full Release build pass with zero warnings/errors. All 763 prior tests and 75 new
+cases pass (838 total, zero failures/skips). The portable binaries and focused 75 cases also execute
+under Ubuntu 24.04 / WSL2 Linux x64 runtime 10.0.12, including real Unix symlinks; this does not claim
+an independent Linux source build with the available older SDK, GUI/audio acceptance, CI or release
+support. An initially invalid wildcard filter was corrected. Corpus review caught an overbroad audio
+exclusion before completion; source/test Audio inclusion now has a dedicated regression.
+
+Product remains `0.1.0.0000`: developer tooling adds no musical capability and changes no production
+code/resources. The compiled-test BUILD ambiguity and minimal proposed policy clarification remain
+explicit in [VERSIONING](../VERSIONING.md#seq-project-stats-r1-tooling-checkpoint). No PATCH, disputed
+BUILD, R5, visual polish, engine change or Git history/index mutation is included.

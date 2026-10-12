@@ -128,6 +128,20 @@ retrieved only for explicit historical tasks.
 Initialization stays at BUILD `0000`, including its versioning implementation/tests; it does not
 consume `.0001`. A later separate verified product-polish checkpoint may become `0.1.0.0001`.
 
+### SEQ-PROJECT-STATS-R1 tooling checkpoint
+
+Product identity remains **`0.1.0.0000`** under the owner's explicit tooling-only task direction.
+ProjectStats is an autonomous developer tool, not a new musical Seqvium capability. Production
+assemblies/resources are unchanged; the CLI reports its own SDK-default assembly version, without
+another version source. Locked Release verification and all prior/new tests are recorded in
+[test execution](TEST_EXECUTION.md#projectstats-verification). No PATCH or disputed BUILD is assigned.
+
+The current BUILD gate includes substantial compiled test changes, so tooling-only regressions in
+the main Tests project create a policy ambiguity. **Proposed clarification, pending owner review:**
+"A checkpoint confined to autonomous developer tooling and tests solely for that tooling does not
+consume product BUILD when production code and product resources are unchanged." This proposal is
+not a blanket accepted amendment to the gate; the retained identity above follows this task's scope.
+
 ## Compatibility boundaries
 
 Product version does not determine `.seqvium` format acceptance, graph schema/node state versions,

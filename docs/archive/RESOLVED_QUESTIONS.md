@@ -494,3 +494,21 @@ No release timeline or exact distribution matrix chosen; no platform runtime/har
   first-party dotted-key RU/EN fallback, bounded Dark/Light roles/compact metrics and Windows 96-DPI
   keyboard/window/focus evidence are established. Broader reset, contributions, editor/pane routing,
   theme APIs, screen readers, high/mixed DPI and Linux/macOS runtime remain in the active register.
+
+## 2026-10-12 — SEQ-PROJECT-STATS-R1 bounded developer tooling
+
+- **Q-044 — ProjectStats ownership/corpus classification: resolved for V1.** Top-level production,
+  tests, tooling, experiments, documentation and repository ownership follows actual source topology.
+  An explicit public-root/file corpus, nearest-project-folder assignment, pruning/privacy and
+  synthetic classification tests establish the bounded contract. Musical audio source/test folders
+  remain included while local corpora remain excluded. Owner: [ProjectStats](../PROJECT_STATS.md).
+- **Q-045 — Useful structural diagnostics/thresholds: resolved for V1.** PST001–PST005 cover exceptional
+  production/test file size, lexical attribute concentration, incomplete reads and bounded text size.
+  Real repository inspection and synthetic threshold tests verify stable codes and advisory behavior;
+  no quality score, semantic dependency analysis or automatic refactoring is introduced. Thresholds
+  remain evolvable under the current [contract](../PROJECT_STATS.md#stable-advisory-diagnostics).
+- **Q-046 — Separate tooling-stage sequencing: resolved by explicit owner authorization.**
+  SEQ-PROJECT-STATS-R1 introduces the independent developer tool after the existing R0–R4 foundations,
+  without making it a prerequisite or adding/reordering a musical roadmap stage. R4 remains partial,
+  F3-B visual owner acceptance remains pending, and R5 is not started. Owners:
+  [Development](../DEVELOPMENT.md), [ProjectStats](../PROJECT_STATS.md), [roadmap](../ROADMAP.md).

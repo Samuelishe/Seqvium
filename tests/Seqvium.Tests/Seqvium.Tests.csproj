@@ -10,5 +10,6 @@
         <PackageReference Include="xunit.v3.mtp-v1" Version="3.2.2"/>
         <ProjectReference Include="../../src/Seqvium.Core/Seqvium.Core.csproj"/>
         <ProjectReference Include="../../src/Seqvium.Desktop/Seqvium.Desktop.csproj"/>
+        <ProjectReference Include="../../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj"/>
     </ItemGroup>
 </Project>

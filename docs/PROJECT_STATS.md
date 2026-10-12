@@ -1,105 +1,170 @@
-# Future ProjectStats contract
+# ProjectStats repository diagnostics
 
-Role: Contract for future structural repository diagnostics; no executable tool exists.
-Read when: Authorizing, designing, implementing, or changing ProjectStats repository tooling.
-Authoritative for: Purpose/scope, future metrics, report/output policy, privacy/exclusions, advisory diagnostics, evolution boundary.
-Not authoritative for: Current executable capability, source topology, semantic architecture, build/test acceptance, or implementation authorization.
+Role: Canonical contract and guide for implemented structural repository diagnostics.
+Read when: Running, reviewing, implementing, or changing ProjectStats tooling.
+Authoritative for: Metrics/count semantics, corpus/classification, reports/metadata, privacy, advisory diagnostics, and evolution limits.
+Not authoritative for: Musical capability, semantic architecture, build/test acceptance, product version, or roadmap authorization.
 
-## Accepted direction and introduction boundary
+## Implemented tool and scope
 
-Seqvium should introduce a repository diagnostics CLI, conceptually `Seqvium.Tools.ProjectStats`,
-when executable repository tooling is explicitly authorized. This is accepted future direction,
-not an existing project or permission to create one during a documentation stage.
+**ProjectStats is repository diagnostics, not repository authority.**
+[Seqvium.Tools.ProjectStats](../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj) is an
+independent .NET 10 executable in the existing solution. It uses only the BCL, with no package or
+project references, Roslyn, Avalonia, Core, Desktop, audio adapter, or physical-device access.
+Tool identity/version come from assembly metadata, without independent version constants.
+[Development](DEVELOPMENT.md) owns SDK/setup; [versioning](VERSIONING.md) owns product identity.
 
-It is an early repository-tooling foundation, separate from SEQ-R0's audio probe. It may precede the
-probe after code authorization. Whether a dedicated pre-R0 tooling stage is useful remains Q-046 in
-[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md); no code stage is silently added to [ROADMAP](ROADMAP.md).
-[DEVELOPMENT](DEVELOPMENT.md) owns tool introduction/setup and version authority.
+The compact pipeline is options/application, path policy/file scanner, Git reader, models/collector,
+and renderer. Internals are visible to the existing Tests project for synthetic repositories and
+injected I/O failures. No semantic-analysis, smoke-coverage, indexing or historical database is added.
+Scanning is read-only; only explicit `--output` writes a file, without creating directories.
+This is not an MSBuild evaluator, compiler, test runner, coverage system, benchmark, quality gate or
+automatic refactoring tool. This developer checkpoint starts no R5 and accepts no R4 visuals/audio.
 
-## Purpose and scope boundary
+## CLI and outputs
 
-**ProjectStats is repository diagnostics, not repository authority.** It should be cross-platform,
-BCL-only initially, directly testable, and independent from production Seqvium assemblies, Avalonia,
-audio, and the native engine. Structural data should be deterministic where possible.
-
-Scanning is read-only and side-effect-free except an explicitly requested output file. It must be safe
-around generated/private repository-local trees. It is not a semantic compiler, Roslyn architecture
-analyzer, MSBuild evaluator, test runner, coverage system, benchmark, historical database, or quality gate.
-It must not acquire authority to refactor code automatically.
-
-## Bounded V1 structural metrics
-
-Possible initial metrics; exact path rules wait for actual source topology (Q-044):
-
-- Scanned/text file counts and files by extension; solution/project inventory without MSBuild evaluation.
-- C# files/lines/characters; native C/C++/header equivalents only if native source exists.
-- AXAML/XAML, Markdown, and build/config files.
-- Production/test/tooling/experiment ownership categories.
-- Approximate test attributes where meaningful; label textual approximations rather than claim test discovery.
-- Largest files by category, folder structural density, and bounded skipped/unreadable paths.
-
-Metrics are descriptive. A large file or concentration is a review signal, not proof of bad design.
-V1 does not require semantic dependency or ABI inference. Define count semantics and classification
-before relying on output; diagnostics/thresholds await real sizes and usefulness (Q-045).
-
-## Reports, output, and evidence metadata
-
-Plan human console, Markdown, and JSON reports. Generated reports are local/ignored diagnostics;
-establish an ignored output location when the tool is introduced, and exclude it from scans.
-Do not commit changing statistics snapshots into PROJECT_STATE or ordinary history.
-
-Conceptual future invocations only; these commands are **not currently runnable**:
+From the repository root:
 
 ```text
-dotnet run --project Seqvium.Tools.ProjectStats -- .
-dotnet run --project Seqvium.Tools.ProjectStats -- . --top 25 --markdown
-dotnet run --project Seqvium.Tools.ProjectStats -- . --json
+dotnet run --project tools/Seqvium.Tools.ProjectStats -- .
+dotnet run --project tools/Seqvium.Tools.ProjectStats -- . --top 25
+dotnet run --project tools/Seqvium.Tools.ProjectStats -- . --markdown
+dotnet run --project tools/Seqvium.Tools.ProjectStats -- . --json
+dotnet run --project tools/Seqvium.Tools.ProjectStats -- . --markdown --output PROJECT_STATS.md
+dotnet run --project tools/Seqvium.Tools.ProjectStats -- . --json --output PROJECT_STATS.json
 ```
 
-The first useful implementation should include generated UTC timestamp, tool version, Git availability,
-branch, HEAD SHA, dirty state, sanitized repository root (`.`), scan duration, and normalized
-invocation/options. Git unavailability must yield an explicit fallback, not prevent structural reporting.
-Sanitize options/metadata as well as subjects: no absolute user paths, usernames, private sample paths,
-or device identities. Structural ordering is deterministic; timestamp/duration/Git dirty state are
-intentionally live runtime metadata, not structural instability.
+For existing Release binaries, add `-c Release --no-build --no-restore` before `--`, or invoke
+`bin/Release/net10.0/Seqvium.Tools.ProjectStats.dll` with `dotnet`. SDK build/restore operations are
+separate from the scanner's read-only execution guarantee.
+
+Root defaults to the current directory. `--top` defaults to 10 and accepts integers in **1..100**.
+Markdown/JSON are mutually exclusive; console is the default. Unknown/duplicate options, missing
+values, extra roots and unavailable/reparse roots return 2. `--help`/`-h` alone prints usage.
+Scan/output errors return 1, without printing exception content or input/output filenames.
+Advisories, individual unreadable files/directories, and Git unavailability do not fail a report.
+
+Output resolves relative to the scanned root; explicit external output is allowed. Parents must
+already exist and have no reparse ancestors. Existing source files and `docs/PROJECT_STATS.md` are
+protected. New custom targets are allowed; overwrite is limited to conventional generated names:
+`PROJECT_STATS.md`, `PROJECT_STATS.json`, `project-stats.*`. Prefer the two root outputs, which are
+ignored by [.gitignore](../.gitignore) and excluded on every scan. An explicit custom target is
+excluded for that invocation; use a conventional name or excluded tree for stable later scans
+without `--output`. Generated reports are local and must not be committed. This permanent owner is
+a different file. No live metric snapshots belong in PROJECT_STATE or ordinary history.
+
+## Public corpus, classification, and safety
+
+The corpus includes `src/`, `tests/`, `tools/`, `eng/`, `experiments/`, `docs/`, root solutions, and
+these root files: `AGENTS.md`, `README.md`, `LICENSE`, `NOTICE`, `global.json`, `NuGet.config`,
+`Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`, `.gitignore`,
+`.gitattributes`, `.editorconfig`. Other root files/trees are excluded. Git tracking/ignore rules do
+not define the corpus; new public source is counted before staging. New topology needs an explicit
+path-policy update and tests.
+
+Ownership uses the first segment: `src` production; `tests` tests; `tools`/`eng` tooling; `experiments`
+experiments; `docs` documentation; root files repository. Nested `tests` folders do not reclassify
+tooling/experiments. Authored `src/<project>/Audio` and `tests/<project>/Audio` are included.
+
+Before reading content or descending into directories, exclude:
+
+- `.git`, `.idea`, `.vs`, `.vscode`, hidden/cache trees, `bin`, `obj`, `packages`, `publish`,
+  `artifacts`, `.artifacts`, `.scratch`, `TestResults`, `build`, `out`, `dist`, `cmake-build-*`,
+  `node_modules`, temporary/scratch/local/report directories.
+- Private/secret/credentials/user/settings/personal/music/project trees, local sample/audio corpora,
+  recordings, sensitive filename tokens, environment/appsettings files, user/IDE settings,
+  keys/certificates, logs/backups, temporary/generated files, compiled binaries and audio/MIDI or
+  personal musical project formats. Exact lists live in [PathPolicy.cs](../tools/Seqvium.Tools.ProjectStats/PathPolicy.cs).
+- Generated report names, generated image captures below `docs/experiments`, and cold `docs/archive/`
+  history. Canonical `docs/PROJECT_STATS.md` is the sole generated-name exception.
+- Unsafe/non-ASCII/control/markup characters in filenames, segments over 160 characters,
+  UUID-like identifiers and segments matching the current username.
+- Symlink/junction/reparse files and trees, including root ancestors. Ancestors are checked again
+  before enumeration/text opening; reparse targets are not intentionally followed.
+
+Only admitted relative `/` paths are reported. Skips are aggregate reason counts, without excluded
+paths. Unreadable files/directories are separate aggregate counts without exception text. A skipped
+directory counts as one entry; descendants are not traversed to calculate hidden file totals.
+Unavailable entry attributes count as skipped entries, because their file/directory type is unknown.
+
+Admitted source/documentation namespaces must contain public authored material. V1 cannot infer
+arbitrary confidential content/names in public paths, evaluate all Git ignore rules, or provide an
+atomic boundary against hostile concurrent filesystem replacement. Private/local data belongs in
+excluded trees. No source text, device IDs, environment variables, usernames, absolute root/output
+paths or Git status filenames enter reports.
+
+## Metrics and count semantics
+
+- Total included/text/unreadable files and ordinal extension distribution. Unknown binary/resource
+  extensions count as files without opening contents.
+- C# files/lines/characters, isolated production/tests/tooling/experiments, plus documentation/root
+  ownership. Separate AXAML, XAML, Markdown, build/config, C, C++ and headers.
+- Build/config includes .NET manifests/solutions, props/targets, JSON/XML/config/manifest, YAML,
+  PowerShell/shell, CMake/TOML and editor/Git config formats.
+- .NET project/solution inventory without MSBuild evaluation. The closest containing project folder
+  owns each file; ordinal project-path order breaks same-folder ties. Empty projects remain visible;
+  files outside project folders are `[unassigned]`. Linked/conditional/generated Compile inputs are
+  not inferred.
+- All directories: direct/subtree files and subtree C# lines. Top-N density uses direct-file count
+  with ordinal path ties; subtree counts intentionally overlap.
+- Top-N largest readable text files for every file kind and C# ownership bucket, ordered by descending
+  lines, characters, then ordinal path. Other structural lists use ordinal key/path order.
+- Approximate Fact/Theory occurrences only in test-owned C#. Whitespace, `Xunit.`/`global::Xunit.` and
+  `Attribute` suffixes are recognized. This is a **lexical estimate**, including matches in comments
+  or strings; it does not resolve aliases, combined attribute lists, preprocessor conditions,
+  custom/inherited attributes or expanded theory rows. It is never the number of executed tests.
+
+Text defaults to strict UTF-8 with BOM detection. BOM is excluded; characters mean UTF-16 code units,
+including original line terminators (supplementary Unicode characters use two units). Empty text
+has zero lines; CRLF, CR and LF each terminate one line, with no extra empty line for a final
+terminator. Unreadable/invalid-encoding files count as included files without text metrics. Text over
+16 MiB is excluded before opening, with a separate reason/advisory bounding per-file allocation.
+
+## Evidence metadata
+
+All formats carry UTC timestamp, assembly-derived tool name/version, root `.`, Git availability,
+branch/HEAD/nullable dirty state, scan and report aggregation durations, format, Top-N, output-to-file
+flag, normalized parameters, and skipped/unreadable counts. Aggregation duration includes Git lookup,
+excluding rendering/writing. Output paths become `[explicit output]` in parameters. Structural lists
+are deterministic; time, durations, Git state and local skip counts may change.
+
+Git queries are `rev-parse --verify HEAD`, `branch --show-current`, and
+`status --porcelain=v1 --untracked-files=normal`. Optional locks are disabled through
+`--no-optional-locks` and `GIT_OPTIONAL_LOCKS=0`; each command has a five-second timeout, no shell,
+and concurrent stdout/stderr draining. Index/history are unchanged. Missing Git/non-repository/
+invalid HEAD yields unavailable metadata and null branch/HEAD/dirty. Detached HEAD is explicit.
+Common branches and bounded SEQ stage IDs are admitted; arbitrary branches become `[redacted]`.
+Only validated hexadecimal HEAD and dirty boolean are reported, never raw status paths/stderr.
 
 ## Stable advisory diagnostics
 
-Use structured diagnostics with `Code`, `Severity`, `Message`, and optional repository-relative `Subject`.
-Codes should remain stable once introduced. Diagnostics are **advisory**: their count/severity must not
-automatically fail build/CI. Possible signals include unusually large production/test files, unreadable
-files, unexpected repository locations, and suspicious test concentration. Do not freeze thresholds now
-or turn size advice into mandatory splits/refactoring.
+Diagnostics have `Code`, `Severity`, `Message`, and nullable safe relative `Subject`. Summary counts
+are grouped by code/severity. These signals never fail build/CI or require splitting/refactoring.
 
-## Privacy, exclusions, and traversal safety
+| Code | Severity | Signal |
+| --- | --- | --- |
+| PST001 | Warning | Production C# file has at least 1000 lines. |
+| PST002 | Warning | Test C# file has at least 2000 lines. |
+| PST003 | Info | Test file has at least 50 lexical Fact/Theory attributes. |
+| PST004 | Warning | Unreadable files/directories leave metrics incomplete; aggregate subject. |
+| PST005 | Info | Text over the 16 MiB limit was excluded; aggregate subject. |
 
-The future scanner must avoid `.git`, `.idea`, `.vs`, `.vscode`, `bin`, `obj`, `packages`, `artifacts`,
-`publish`, `TestResults`, generated report output, native build trees, local sample/audio scratch
-corpora, and private/sensitive repository-local areas if introduced. Final corpus/path rules are explicit
-and testable; source classification does not grant access to excluded material.
-
-Do not follow reparse/symlink directory escapes outside the intended corpus. Report skipped/unreadable
-paths in bounded sanitized form; private subjects must not reveal sensitive path names. Output targets
-are self-excluded so reports do not inflate later scans. Preserve unreadable-file diagnostics without
-making arbitrary machine access or permission changes.
+Initial thresholds identify exceptional size/concentration, verified against the real corpus and
+synthetic boundaries. No advisories is a valid result. No quality score, mass-refactoring advice or
+static dependency analysis exists. Preserve code meanings when evolving thresholds, or add new codes.
 
 ## Test strategy and placement
 
-When implemented, test the tool in the normal main `Seqvium.Tests/ProjectStats/` area, following
-[TEST_EXECUTION](TEST_EXECUTION.md#intended-test-topology). Use synthetic temporary repositories;
-running only against the live Seqvium repository is insufficient.
-
-Cover exclusions, deterministic ordering, ownership classification, line/character counts, test-attribute
-approximation, console/Markdown/JSON shape, output self-exclusion, locked/unreadable files, symlink/reparse
-safety, sanitized paths, Git metadata fallback, and native/managed classification once relevant.
-`InternalsVisibleTo` is allowed if justified. Do not create `Seqvium.Tools.ProjectStats.Tests` merely
-because the CLI has its own project; split only for real execution/dependency constraints.
+Tests live in [Seqvium.Tests/ProjectStats](../tests/Seqvium.Tests/ProjectStats/) in the main project.
+Synthetic repositories cover classification/projects/density, lexical counts, text/UTF-8/BOM/line
+endings, deterministic ordering, privacy/exclusions, generated-output self-exclusion, read/write
+failures, size bounds, real junctions/Unix symlinks, formats, invalid CLI, Git fallback, branch
+sanitization, source protection and assembly isolation.
+[TEST_EXECUTION](TEST_EXECUTION.md#projectstats-verification) owns commands/results/platform limits.
 
 ## Evolution boundary
 
-If semantic analysis becomes useful, justify a separate concern such as
-`Seqvium.Tools.RepositoryAnalysis` ([I-003](IDEAS.md#i-003--separate-semantic-repository-analysis)).
-ProjectStats may later read its result if justified, but must not silently become a Roslyn architecture
-oracle, dependency-policy engine, native ABI analyzer, or plugin verifier.
-Optional historical trend comparison remains speculative [I-004](IDEAS.md#i-004--optional-projectstats-trend-comparison);
-no historical metrics database or snapshot infrastructure is planned as V1 acceptance.
+Semantic analysis and compiler/ABI/plugin verification stay outside V1. A separately justified
+`Seqvium.Tools.RepositoryAnalysis` may own semantic analysis
+([I-003](IDEAS.md#i-003--separate-semantic-repository-analysis)); optional trend comparison remains
+[I-004](IDEAS.md#i-004--optional-projectstats-trend-comparison). No such subsystem is selected or required.
