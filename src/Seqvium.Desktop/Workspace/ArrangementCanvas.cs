@@ -24,6 +24,7 @@ internal sealed class ArrangementCanvas : Control
     private bool _resize;
     private bool _copy;
     private double _barWidth = 96;
+    private double _viewportWidth;
     private Rect _viewport;
     private readonly HashSet<Id<ArrangementClip>> _selection = [];
     private ArrangementClip[] _group = [];
@@ -78,11 +79,17 @@ internal sealed class ArrangementCanvas : Control
         _selection.RemoveWhere(id => !observation.Snapshot.State.ArrangementClips.Any(c => c.Id == id));
         if (!_selection.Contains(Selected ?? default)) Selected = _selection.Select(id => (Id<ArrangementClip>?)id).FirstOrDefault();
         if (!observation.Snapshot.State.ArrangementClips.Any(c => c.Id == Selected)) Selected = null;
-        int lanes = Math.Max(8, observation.Snapshot.State.ArrangementClips.Select(c => c.Lane + 2).DefaultIfEmpty(0).Max());
-        long bars = Math.Min(4096, Math.Max(32, ArrangementPreparation.EndTicks(observation.Snapshot.State) / BarTicks + 8));
-        Width = HeaderWidth + bars * _barWidth; Height = RulerHeight + Math.Min(32, lanes) * LaneHeight;
+        long viewportBars = (long)Math.Ceiling(Math.Max(0, _viewportWidth - HeaderWidth) / _barWidth);
+        long bars = Math.Min(4096, Math.Max(viewportBars, Math.Max(32, ArrangementPreparation.EndTicks(observation.Snapshot.State) / BarTicks + 8)));
+        Width = HeaderWidth + bars * _barWidth; Height = RulerHeight + 32 * LaneHeight;
         AutomationProperties.SetName(this, _shell["Arrangement.Hint"]);
         InvalidateVisual();
+    }
+
+    internal void SetViewportWidth(double width)
+    {
+        if (!double.IsFinite(width) || width <= 0 || _viewportWidth == width) return;
+        _viewportWidth = width; Adopt(_observation);
     }
 
     internal void Zoom(bool closer)

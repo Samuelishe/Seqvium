@@ -88,6 +88,12 @@ public sealed class WorkspaceState : IDisposable
 
     public WorkspaceState(WorkspaceLayout? restored = null) => _restored = restored;
 
+    internal void RestoreLayout(WorkspaceLayout layout)
+    {
+        CheckAvailable(); _restored = layout;
+        Reflow(Width, Height);
+    }
+
     public PanePlacement Get(string id) => _panes.First(pane => pane.InstanceId == id);
     public static PaneDefinition Definition(string id) => Definitions.First(pane => pane.InstanceId == id);
 

@@ -25,6 +25,8 @@ public sealed class WorkspaceBoundaryTests
     [InlineData(250, 374, PaneEdges.Bottom)]
     [InlineData(94, 94, PaneEdges.Left | PaneEdges.Top)]
     [InlineData(111, 111, PaneEdges.Left | PaneEdges.Top)]
+    [InlineData(120, 120, PaneEdges.Left | PaneEdges.Top)]
+    [InlineData(420, 360, PaneEdges.Right | PaneEdges.Bottom)]
     [InlineData(429, 111, PaneEdges.Right | PaneEdges.Top)]
     [InlineData(111, 369, PaneEdges.Left | PaneEdges.Bottom)]
     [InlineData(429, 369, PaneEdges.Right | PaneEdges.Bottom)]
@@ -37,7 +39,7 @@ public sealed class WorkspaceBoundaryTests
     [InlineData(447, 200)]
     [InlineData(250, 107)]
     [InlineData(250, 387)]
-    [InlineData(113, 113)]
+    [InlineData(125, 125)]
     [InlineData(double.NaN, 100)]
     public void ToleranceIsBoundedAndLeavesTheWorkingSurfaceAvailable(double x, double y) =>
         Assert.Null(Resolve([Floating("a", 100)], x, y));

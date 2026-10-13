@@ -18,7 +18,8 @@ checks are explicitly platform-specific. Linux/macOS GUI/runtime support is not 
 The output argument names an artifact parent; the host creates and prints a unique child run directory
 for each review, keeping failed and successful evidence distinguishable.
 Output directories should be absolute and task-owned, inside ignored `.artifacts/`.
-The `gestures` command runs a shorter matrix for focused input/alignment verification.
+The `gestures` command runs a shorter matrix for focused input/alignment verification, including
+committed toolbar Gain fractional drafts, Enter/Escape, invalid input, focus loss and stale authority.
 
 ## Catalog and central-change demonstration
 

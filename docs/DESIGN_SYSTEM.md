@@ -125,6 +125,10 @@ one DIP on the real GUI tree; toolbar Gain, Graph quick Gain and Node Editor are
 matrix. Apply this check when introducing another parameter row. This is geometric alignment,
 not a claim that unrelated typefaces have identical optical baselines.
 
+Toolbar Gain retains the existing numeric template and alignment, with committed fractional input
+(Enter/focus loss), local invalid feedback and Escape restoration. Floating 24-DIP corner grips have
+a matching 24-DIP hit region; straight frame edges retain the six-DIP band.
+
 ## New components, drawing and exceptions
 
 Start with an existing control/style and a specialized composition. Use `{DynamicResource ...}`

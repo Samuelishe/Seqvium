@@ -98,6 +98,18 @@ internal static partial class Program
         Require(await workflow.AddArrangementClipAsync(ArrangementEditBasis.From(workflow.State), sources[1], new(2 * 3840000L), 1, 4), "Bass arrangement failed.");
         Require(await workflow.AddArrangementClipAsync(ArrangementEditBasis.From(workflow.State), sources[2], new(6 * 3840000L), 2, 2), "Break arrangement failed.");
         Invoke(pane, "Refresh");
+        var viewportScroll = Field<ScrollViewer>(pane, "_scroll");
+        double originalPixels = canvas.TickPixels;
+        for (int zoom = 0; zoom < 12; zoom++) canvas.Zoom(false);
+        viewportScroll.Offset = default; main.UpdateLayout(); await Task.Delay(30); main.UpdateLayout();
+        var presenter = viewportScroll.GetVisualDescendants().OfType<Avalonia.Controls.Presenters.ScrollContentPresenter>().Single();
+        var origin = canvas.TranslatePoint(default, presenter)!.Value;
+        Require(Math.Abs(origin.X) < 1 && Math.Abs(origin.Y) < 1, "Zoomed Playlist is not anchored at TOP + LEFT.");
+        Require(canvas.Width >= viewportScroll.Viewport.Width && canvas.Height == HostMetrics.Values["Playlist.RulerHeight"] + 32 * HostMetrics.Values["Playlist.LaneHeight"],
+            "Expanded Playlist has unused horizontal space or inaccessible lane slots.");
+        Json(output, "playlist-extent", new { Passed = true, origin, viewportScroll.Viewport, canvas.Width, canvas.Height, Lanes = 32 });
+        canvas.ShowRange((viewportScroll.Viewport.Width - canvas.HeaderSize) / originalPixels, viewportScroll.Viewport.Width);
+        main.UpdateLayout();
         var snap = Field<ComboBox>(pane, "_snap"); snap.SelectedIndex = 2;
         Require(canvas.SnapTicks == 240000, "Snap selector did not select actual sixteenths."); snap.SelectedIndex = 0;
         Press(new(24, HostMetrics.Values["Playlist.RulerHeight"] + 44)); await Release(new(24, HostMetrics.Values["Playlist.RulerHeight"] + 44));

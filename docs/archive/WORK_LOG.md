@@ -1597,3 +1597,17 @@ The owner supplied Piano001 after the initial checks: its nine-voice piano patte
 source-graph preflight even in Song. Rack/export and Song source graphs now admit bounded 32 voices;
 32 passes, 33 still refuses. Physical Song reaches the finite end and Pattern loops across 120 → 135 →
 120, with unchanged project/media hashes. No schema/dependency/backend decision, staging, commit or push.
+
+
+## SEQ-TRACK-GUI — 2026-10-13
+
+Authored Night Transit through native mouse/keyboard and real Desktop dialogs: seven Patterns,
+13 library WAVs, 65 authored notes, 21 clips across seven layers, 32 bars at 124 BPM (61.94 s).
+Saved repeatedly, reopened silently, ran the full finite Song to Ended and exported WAV in the user
+Desktop project folder. No generated project JSON/API composition or distributed sample content.
+Real authoring exposed fractional Gain losing input, centered short Playlist content, unusable inner
+corner space and transient normal-startup pane shrinkage. Repaired these with guarded committed input,
+TOP + LEFT viewport coverage/all 32 lanes, 24-DIP corners and settled layout replay. BUILD 0.1.1.0002;
+183 focused cases, field/Playlist routes and guarded native checks pass, scoped in the
+[report](../experiments/SEQ-TRACK-GUI_REPORT.md). Earlier full-suite and pressure limits remain separate.
+No staging, commit or push; the saved project and all media remain the user's local work.

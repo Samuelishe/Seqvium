@@ -123,7 +123,9 @@ last-valid audio for invalid intent, edits history or changes live transport. Sa
 reported; cancellation/failure preserves an existing destination and cannot overwrite managed media.
 Save/Open preserves all music/track state; transport, selection/view and history remain session-only.
 
-This bounded editor offers whole-Pattern repeats, 32 lanes and a 4096-bar editing view. It adds no
+This bounded editor offers whole-Pattern repeats, 32 lanes and a 4096-bar editing view. All 32 lanes
+are available by vertical scrolling even before they contain clips. The timeline anchors at TOP + LEFT;
+its horizontal extent fills an expanded viewport with editable bars up to the existing limit. It adds no
 independent clip variation, audio trim/stretch,
 section markers, automation, velocity editor or stateful effects. Reference-informed follow-up lives
 in [R10 planning](ROADMAP.md#seq-r10--arrangement), separate from implemented controls.
@@ -136,6 +138,9 @@ intent/media with no inherited execution and requires another explicit Play. Nat
 Save/Discard/Cancel guard dirty replacement/close; cancellation and failed Save retain current work.
 Persistent blockers, degraded media, physical output faults and last-valid divergence remain visible
 in compact status with deliberate details. Icon actions have localized tooltips/names and shortcuts;
+Toolbar Gain keeps fractional typing local until Enter or focus loss, with one guarded history edit.
+Escape restores the canonical value; observation refresh does not erase a draft, and intervening
+generation/selection changes invalidate its authority. Enter retains the input focus for further edits.
 BPM opens a committed numeric popup in its transport location; meter shows the actual read-only
 setting. Tempo accepts 1–1000 BPM with at most six decimal places, invariant or popup-frozen locale
 decimal parsing. Enter/check applies once; Escape cancels; invalid values remain local. The popup

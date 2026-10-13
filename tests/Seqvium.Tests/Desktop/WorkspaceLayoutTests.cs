@@ -9,6 +9,20 @@ namespace Seqvium.Tests;
 public sealed class WorkspaceLayoutTests
 {
     [Fact]
+    public void SettledMaximizedWorkspaceRestoresSizesAfterTransientNormalStartupClamp()
+    {
+        using var authored = new WorkspaceState(); authored.Reflow(1692, 902);
+        authored.Open(WorkspaceState.ArrangementId);
+        var bounds = new PaneBounds(0, 0, 1687, 894); authored.SetBounds(WorkspaceState.ArrangementId, bounds);
+        var saved = authored.Capture();
+        using var reopened = new WorkspaceState(saved); reopened.Reflow(1160, 764);
+        Assert.Equal(1160, reopened.Bounds(WorkspaceState.ArrangementId).Width);
+        reopened.Reflow(1692, 902); reopened.RestoreLayout(saved);
+        Assert.Equal(bounds, reopened.Bounds(WorkspaceState.ArrangementId));
+        Assert.Equal(saved.ActivePaneId, reopened.ActivePaneId);
+    }
+
+    [Fact]
     public async Task MainWindowPlacementIsOptionalAndRoundtripsIndependentlyOfWorkspaceSize()
     {
         using var directory = new TemporaryDirectory();

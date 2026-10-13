@@ -195,7 +195,9 @@ public sealed class PaneGeometryTests
     [InlineData(332, 8, PaneEdges.Right | PaneEdges.Top)]
     [InlineData(8, 272, PaneEdges.Left | PaneEdges.Bottom)]
     [InlineData(332, 272, PaneEdges.Right | PaneEdges.Bottom)]
-    [InlineData(20, 20, PaneEdges.None)]
+    [InlineData(20, 20, PaneEdges.Left | PaneEdges.Top)]
+    [InlineData(320, 260, PaneEdges.Right | PaneEdges.Bottom)]
+    [InlineData(25, 25, PaneEdges.None)]
     [InlineData(170, 140, PaneEdges.None)]
     internal void HitRegionsGiveCornersPriorityAndLeaveHeaderAndContentAlone(double x, double y, PaneEdges expected)
         => Assert.Equal(expected, PaneGeometry.HitTest(x, y, 340, 280, PaneDock.Floating));

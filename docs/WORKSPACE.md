@@ -24,7 +24,7 @@ Other platforms keep native decorations/actions; custom header action buttons ar
 No TopMost, repeated foreground forcing or global hotkey registration is used. Normal initial activation
 is left to the platform. Header contrast/border, active-state tooltip and visible keyboard focus distinguish state.
 
-Initial client size is 1100x750 DIP; minimum 640x480 DIP. Header, toolbar and status geometry use
+Default startup is maximized with a 1400x900-DIP normal restore size; minimum 640x480 DIP. Header, toolbar and status geometry use
 HostMetrics; their v2 instrument materials use HostMaterials. The remaining area belongs to music; the main frame has no scrolling. Long titles/status use ellipsis
 and full tooltips, not global shrinking. About is a functional dismissible flyout with version/scope,
 not a permanent workspace explanation. Windows PerMonitorV2/layout scaling are enabled, but actual F1 evidence is
@@ -178,7 +178,9 @@ this is not lossless downgrade editing. Dynamic per-node layout persistence is d
 
 A missing main-window placement opens maximized, with a useful normal restore size. Version-1
 workspace layout optionally stores normal window dimensions in DIPs, screen position in pixels and
-maximized state, independently of the usable workspace dimensions. Minimized is never a startup state.
+maximized state, independently of the usable workspace dimensions. Saved pane geometry is replayed
+against the settled startup workspace; a temporary normal-sized arrange must not permanently shrink
+panes saved in a maximized window. Minimized is never a startup state.
 Restore selects an available monitor and clamps the rectangle to its working area; saved pane order,
 docks and floating sizes retain their existing adaptation. Single-monitor Windows restoration is
 verified; mixed DPI and monitor changes remain wider evidence gaps.
@@ -268,7 +270,7 @@ high/mixed DPI, cross-monitor and other OS runtime are not accepted from pure ge
 ### Resize hit targets and boundary ownership
 
 The visible border remains 1 DIP. Floating edge tolerance is 6 DIP inward and 6 DIP outward from the
-actual rendered rectangle (12 DIP total); corner regions extend 12 DIP inward and 6 DIP outward on
+actual rendered rectangle (12 DIP total); corner regions extend 24 DIP inward and 6 DIP outward on
 both axes (18x18 DIP). Corners take precedence over ordinary edges of the same pane. The workspace
 clips outward tolerance at its perimeter; controls and visible neighbours can reduce the available
 region. The pane content now reserves the existing inward tolerance with an inset and explicit transparent

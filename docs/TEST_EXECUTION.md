@@ -771,3 +771,12 @@ interaction accepted), and **hardware/audio-device accepted** (bounded real devi
 Use them only with declared evidence and material limits, not as ceremony for trivial tasks.
 `hosted-confirmed` never implies physical audio-device acceptance. Link detailed reports rather than
 accumulating individual runs in [PROJECT_STATE](PROJECT_STATE.md).
+
+## Native composing workflow verification
+
+The [SEQ-TRACK-GUI report](experiments/SEQ-TRACK-GUI_REPORT.md) separates native authoring in ordinary
+Desktop from the automated VisualCheck fixtures. The `gestures` route now checks committed toolbar
+Gain input under observation, Escape/invalid/focus-loss/stale cases; `arrangement` checks TOP + LEFT
+origin, viewport width coverage and all 32 lane slots. These routes use isolated fixture ownership.
+A real saved track is reopened, played to Ended and exported through native dialogs; its WAV is
+inspected read-only for duration and saturation. This UI scope does not trigger a repeated L3 suite.

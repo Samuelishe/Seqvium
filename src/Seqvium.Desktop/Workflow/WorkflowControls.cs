@@ -4,7 +4,10 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
+using Seqvium.Core;
 using Seqvium.Desktop.Presentation;
+using Seqvium.Desktop.Workspace;
 
 namespace Seqvium.Desktop.Workflow;
 
@@ -50,10 +53,12 @@ internal sealed class WorkflowControls : Grid
     private readonly Flyout _details;
     private bool _refreshing, _compact, _openInOverflow, _blocked;
     private Seqvium.Core.Id<Seqvium.Core.GraphAttachment>? _selection;
+    private (GraphEditBasis Basis, Id<GraphNode> Node)? _gainBasis;
     internal bool CanCancelImport { get; set; }
     internal bool GainShownElsewhere { get; set; }
     internal bool OccurrenceShownElsewhere { get; set; }
     internal Task PendingTempoCommand { get; private set; } = Task.CompletedTask;
+    internal Task PendingGainCommand { get; private set; } = Task.CompletedTask;
     internal Button StatusControl { get; } = new() { Classes = { "shell", "status" },
         HorizontalAlignment = HorizontalAlignment.Stretch };
 
@@ -152,9 +157,44 @@ internal sealed class WorkflowControls : Grid
                 await workflow.SelectAsync(choice.Id);
         };
         _gain.ValueChanged += async (_, _) =>
-        { if (!_refreshing && _gain.Value is { } gain) await workflow.SetGainAsync(gain); };
+        {
+            if (!_refreshing && _gainBasis is null && !_gain.IsKeyboardFocusWithin && _gain.Value is { } gain)
+                await workflow.SetGainAsync(gain);
+        };
+        _gain.GotFocus += (_, _) => BeginGainEdit();
+        _gain.LostFocus += async (_, _) => { if (!_gain.IsKeyboardFocusWithin) await CommitGainAsync(); };
+        _gain.AddHandler(KeyDownEvent, async (_, e) =>
+        {
+            if (e.Key == Avalonia.Input.Key.Enter) { e.Handled = true; await CommitGainAsync(); }
+            else if (e.Key == Avalonia.Input.Key.Escape) { e.Handled = true; _gainBasis = null; Refresh(); BeginGainEdit(); }
+        }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
         SizeChanged += (_, _) => Adapt();
         Refresh();
+    }
+
+    private void BeginGainEdit()
+    {
+        if (_refreshing || _gainBasis is not null) return;
+        var state = _workflow.State;
+        if (state.Selected is not { } selected || !state.Gain.HasValue) return;
+        var attachment = state.Snapshot.State.GraphAttachments.Single(a => a.Id == selected);
+        var node = state.Snapshot.State.Graphs.Single(g => g.Id == attachment.GraphId).Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
+        _gainBasis = (new(state.Document.LifecycleId, state.Generation, selected), node.Id);
+    }
+
+    private async Task CommitGainAsync()
+    {
+        if (_gainBasis is not { } draft) return;
+        if (!decimal.TryParse(_gain.Text, System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out var value) || value is < 0 or > 1)
+        { _gain.Classes.Add("invalid"); return; }
+        bool refocus = _gain.IsKeyboardFocusWithin;
+        _gainBasis = null; _gain.Classes.Remove("invalid");
+        PendingGainCommand = _workflow.SetGraphGainAsync(draft.Basis, draft.Node, value);
+        await PendingGainCommand; Refresh();
+        if (refocus && _gain.IsEnabled && _gain.IsEffectivelyVisible)
+            _gain.GetVisualDescendants().OfType<TextBox>().SingleOrDefault()?.Focus();
+        if (_gain.IsKeyboardFocusWithin) BeginGainEdit();
     }
 
     private Button Command(string key, string? icon = null)
@@ -272,7 +312,11 @@ internal sealed class WorkflowControls : Grid
             _gainLabel.Text = "Gain"; AutomationProperties.SetName(_gain, _shell["Workflow.Gain"]);
             ToolTip.SetTip(_gain, _shell["Workflow.GainUnit"]);
             _gain.Minimum = Math.Min(0m, state.Gain ?? 0m); _gain.Maximum = Math.Max(1m, state.Gain ?? 1m);
-            _gain.Value = state.Gain; _gain.IsEnabled = !interactionBlocked && !state.Busy && state.Gain.HasValue;
+            if (_gainBasis is { } gainDraft && (gainDraft.Basis.Lifecycle != state.Document.LifecycleId ||
+                gainDraft.Basis.Generation != state.Generation || gainDraft.Basis.Attachment != state.Selected || interactionBlocked))
+                _gainBasis = null;
+            if (_gainBasis is null) { _gain.Value = state.Gain; _gain.Text = state.Gain?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture); _gain.Classes.Remove("invalid"); }
+            _gain.IsEnabled = !interactionBlocked && !state.Busy && state.Gain.HasValue;
             _gain.IsVisible = state.Gain.HasValue && !GainShownElsewhere && Bounds.Width >= 690;
             _gainLabel.IsVisible = _gain.IsVisible && Bounds.Width >= 440;
             _source.Text = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ?? _shell["Workflow.NoSelection"];

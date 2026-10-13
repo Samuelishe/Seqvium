@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.1.0001`**, the SEQ-PLAYLIST-MUSIC BUILD checkpoint on the
+The current product alpha is **`0.1.1.0002`**, the SEQ-TRACK-GUI BUILD checkpoint on the
 owner-selected `0.1` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -36,6 +36,13 @@ The owner reports the visual redesign complete and now prioritizes music. Full a
 window and short physical loop checks pass; long pressure/acoustic/platform acceptance stays separate.
 
 ## Implemented capability
+
+SEQ-TRACK-GUI fixes real composing obstacles: fractional toolbar Gain commits once on Enter/focus loss,
+with Escape/stale guards and retained Enter focus; Playlist anchors at TOP + LEFT, fills an expanded
+viewport with bars and exposes all 32 lane slots; floating corner targets match the visible 24-DIP
+grip. Saved large panes restore after native maximized startup settles. A new 61.94 s, seven-Pattern /
+13-sample / 21-clip layered composition was authored through native GUI input and saved outside Git.
+See the [workflow report](experiments/SEQ-TRACK-GUI_REPORT.md) for the music and verification boundary.
 
 SEQ-PLAYLIST-MUSIC extends the existing music workflow with session seek/range looping, snapped
 single-transaction clip groups and navigation, restored normal/maximized main window, adaptive Rack +
@@ -201,6 +208,15 @@ acceptance remains with the owner; the earlier presentation was explicitly rejec
 
 ## Validation baseline
 
+SEQ-TRACK-GUI: zero-warning/error affected Release builds, **183/183** focused geometry/layout/graph/
+design/version cases (16.255 s CLI), followed by successful actual-window RU/EN Dark/Light field and
+Playlist routes. Toolbar regression covers fractional drafts under observation, Enter, Escape, invalid
+input, focus-loss commit and expired authority; 32-lane/viewport render check observes origin (0,0).
+Eleven guarded native Graph/Workspace checks also pass. Actual Desktop reopens the authored project,
+restores its large pane, scrolls to lane 32 and runs Song from start through Ended; GUI export produces
+2,972,903 stereo frames at 48 kHz with zero saturated samples. The latest full suite remains the earlier
+SEQ-PLAYLIST-MUSIC baseline; no DSP/schema/dependency change or full suite is claimed for this UI task.
+
 SEQ-PLAYLIST-MUSIC: final isolated zero-warning/error full Release build; **1052/1052** full-suite
 pass (18.668 s CLI summary), including dense five-channel 9/32-voice Rack/Song/BPM/export regressions
 and 33-voice refusal. Earlier focused passes cover 205 and final voice subset 99 cases. Actual
@@ -269,7 +285,7 @@ and platform/owner acceptance remain separate below. Historical validation belon
 ### Verification cadence
 
 Last successful L3: **SEQ-PLAYLIST-MUSIC, 2026-10-13**, full Release solution build and 1052/1052 automated
-tests. Completed repository tasks since that L3: **0**.
+tests. Completed repository tasks since that L3: **1**.
 Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
 a focused pass does not reset it.
 

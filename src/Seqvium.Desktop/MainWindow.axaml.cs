@@ -106,8 +106,15 @@ internal sealed partial class MainWindow : Window
         Opened += (_, _) =>
         {
             RememberWindow();
-            if (layout.Layout is null) Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-            { _workspace.State.ArrangeMusic(); _workspace.Commit(); });
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                if (_closing) return;
+                // Initial normal-size layout can precede the native maximized arrange.
+                // Replay saved geometry against the settled workspace, before user interaction.
+                if (layout.Layout is { } saved) _workspace.State.RestoreLayout(saved);
+                else _workspace.State.ArrangeMusic();
+                _workspace.Commit();
+            }, Avalonia.Threading.DispatcherPriority.Loaded);
         };
         PositionChanged += (_, _) => { RememberWindow(); if (IsVisible) _workspace.Commit(); };
         SizeChanged += (_, _) => RememberWindow();

@@ -224,6 +224,8 @@ internal static partial class Program
             if (shell.Preferences.Theme != theme) await shell.ToggleThemeAsync();
             editor.Select(new(GraphHitKind.Background));
             Field<GraphPaneContent>(main, "_graphPane").Refresh(); Invoke(main, "RefreshGainHierarchy");
+            if (language == HostLanguage.English && theme == HostTheme.Dark)
+                await ToolbarGainInputAsync(main, workflowControls, workflow, output);
             await CaptureAsync(main, output, $"{language}-{theme}-toolbar-gain");
             alignment.Add(FieldAlignment.Verify(Field<NumericUpDown>(workflowControls, "_gain"), Field<TextBlock>(workflowControls, "_gainLabel"), main, $"{language}-{theme}-toolbar"));
             editor.Select(new(GraphHitKind.Node, gain.Id));

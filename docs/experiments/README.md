@@ -165,3 +165,6 @@ The [music workflow report](SEQ-PLAYLIST-MUSIC_REPORT.md) records bounded seek/r
 workspace restoration/frame input, continuous channel topology, WAV compatibility and measured/physical
 sample boundaries. Its raw captures/media/TRX stay local and ignored; current contracts remain in
 the musical/audio/workspace owners.
+
+[SEQ-TRACK-GUI](SEQ-TRACK-GUI_REPORT.md) records a real native GUI composition and the Gain, Playlist
+extent/corner and startup-restoration repairs it exposed; the user track/media stay outside Git.

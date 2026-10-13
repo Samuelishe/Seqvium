@@ -51,8 +51,9 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
         this.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Background"));
         var toolbar = new WrapPanel { Orientation = Orientation.Horizontal, Margin = new(8) };
         Children.Add(toolbar);
-        _canvas = new(shell, workflow);
+        _canvas = new(shell, workflow) { HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
         _scroll = new ScrollViewer { Content = _canvas,
+            HorizontalContentAlignment = HorizontalAlignment.Left, VerticalContentAlignment = VerticalAlignment.Top,
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
         _canvas.SelectionChanged += Refresh;
@@ -127,7 +128,7 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
             _scroll.Offset = new(Math.Max(0, left * total * _canvas.TickPixels), _scroll.Offset.Y);
         };
         _overview.Margin = new(8, 0, 8, 4); SetRow(_overview, 1); Children.Add(_overview);
-        _scroll.ScrollChanged += (_, _) => RefreshOverview();
+        _scroll.ScrollChanged += (_, _) => { _canvas.SetViewportWidth(_scroll.Viewport.Width); RefreshOverview(); };
         _canvas.PanRequested += delta =>
         { _follow.IsChecked = false; _scroll.Offset = new(Math.Max(0, _scroll.Offset.X - delta.X), Math.Max(0, _scroll.Offset.Y - delta.Y)); };
         _scroll.AddHandler(PointerWheelChangedEvent, (_, e) =>

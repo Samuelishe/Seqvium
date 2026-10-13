@@ -18,7 +18,8 @@ opens it; the left Rack icon or **Panes** menu reopens it. Use short supported p
    Drag across a row to paint or erase; release commits the whole gesture, Escape cancels. The row's
    **…** menu fills every four/two steps, shifts or clears. Arrows navigate; Space/Enter toggles;
    Ctrl+Z/Y undo/redo. Edit the Pattern name and press Enter/check. Click BPM to set tempo.
-   At wider window sizes, the left Pattern list offers creation and rhythm previews.
+   At wider window sizes, the left Pattern list offers creation and rhythm previews. For balance, type
+   a fractional toolbar Gain such as `0.22`, then Enter or leave the field; Escape cancels the draft.
 4. Press **Play** (F5) for a continuous cycle; Stop ends it. The outlined column and bar:beat:sixteenth
    display follow the audio renderer. Change steps while it plays: future steps update after preparation,
    and already passed steps are heard next time around. Unchanged sounding notes keep their position.

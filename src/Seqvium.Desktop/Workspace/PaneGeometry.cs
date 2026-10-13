@@ -16,7 +16,7 @@ internal enum PaneEdges
 internal static class PaneGeometry
 {
     public const double EdgeThickness = 6;
-    public const double CornerSize = 12;
+    public const double CornerSize = 24;
 
     public static PaneBounds Resize(PaneBounds start, PaneEdges edges, double dx, double dy,
         double width, double height, PaneDefinition definition, PaneDock dock)
@@ -54,7 +54,7 @@ internal static class PaneGeometry
     public static PaneEdges HitTest(double x, double y, double width, double height, PaneDock dock,
         bool control = false)
     {
-        // Six DIPs on either side of the visual boundary; corners extend twelve inward, six outward.
+        // Corners include the visible 24-DIP resize grip; straight edges keep their six-DIP band.
         if (control || !double.IsFinite(x) || !double.IsFinite(y) ||
             x < -EdgeThickness || y < -EdgeThickness ||
             x > width + EdgeThickness || y > height + EdgeThickness) return PaneEdges.None;

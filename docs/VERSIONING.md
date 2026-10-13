@@ -132,6 +132,16 @@ retrieved only for explicit historical tasks.
 | `0.1.0.0006` | SEQ-R5-MUSIC | Verified continuous Pattern loop/position/live notes, 1–32 bars, atomic deletion/navigation collapse and selected-Pattern WAV export; full 1009-case Release pass, actual-window checks and short physical loop evidence under the [checkpoint](#seq-r5-music-checkpoint). R5 and R4 pressure acceptance remain partial. |
 | `0.1.1.0000` | SEQ-R10-PLAYLIST | One completed standalone Song composition capability: shared clips, simultaneous finite playback, real track Mute/Solo and whole-Song WAV, with compatible persistence and reference-informed editing/navigation. PATCH resets BUILD; zero-warning isolated full Release build, 1030 tests, actual-window RU/EN Dark/Light controls and short physical two-Pattern/live-edit output under the [report](experiments/SEQ-R10-PLAYLIST_REPORT.md). R5/R10 wider scope, owner visual acceptance and R4 pressure remain separate; no release/staging/commit/push. |
 | `0.1.1.0001` | SEQ-PLAYLIST-MUSIC | One verified BUILD for composition navigation, range transport, group edits, workspace restoration and live channel/audio usability. Evidence and limits are in the [checkpoint](#seq-playlist-music-checkpoint) and [report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md). |
+| `0.1.1.0002` | SEQ-TRACK-GUI | One verified BUILD for real composing workflow repairs, with native GUI track authoring and focused/rendered evidence under the [report](experiments/SEQ-TRACK-GUI_REPORT.md). |
+
+### SEQ-TRACK-GUI checkpoint
+
+Identity advances once from **`0.1.1.0001` to `0.1.1.0002`**. BUILD covers the verified GUI workflow
+repairs found while authoring a real layered track: committed fractional Gain, anchored/filled Playlist
+extent and all 32 lanes, usable corner targets and settled maximized pane restoration. No independent
+editor, schema, dependency, DSP or product-line change warrants PATCH/MINOR. Focused checks and actual
+native authoring, full finite playback and GUI export are scoped in the
+[report](experiments/SEQ-TRACK-GUI_REPORT.md). No staging, commit, push, tag or release.
 
 ### SEQ-PLAYLIST-MUSIC checkpoint
 
