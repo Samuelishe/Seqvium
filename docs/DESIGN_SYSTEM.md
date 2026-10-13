@@ -70,7 +70,7 @@ and pane layout bounds remain composition/interaction geometry, rather than hund
 | Transport/status Button | `play` with `active`; `status` with `warning`/`error`/`playing` | Existing transport and status surfaces; keep the deliberate semantic exception |
 | Numeric input | TextBox `numeric`; NumericUpDown | Use committed TextBox sessions where a transaction must be atomic; NumericUpDown remains the existing quick control. Styling does not merge their edit semantics |
 | ComboBox | Default | Actual target/occurrence selection; popup and state resources follow the same palette |
-| ToggleButton | Default; `step` + `channel0`–`channel7` | Actual toggles; Rack's retained tactile template adds a bevel, lit body, bottom indicator, captured pressed recess and independent focus frame |
+| ToggleButton | Default; `step` + `channel0`–`channel7`, `current` | Actual toggles; Rack's retained tactile template adds a bevel, lit body, bottom indicator, captured pressed recess and independent focus frame; `current` outlines the actual playing column using Status.Playing |
 | Rail Button | `rail`, `active` | Direct named pane activation; vector icons and real enabled/active state |
 | Pattern name | TextBox `patternName` | Integrated committed name, actual text editing/focus without a duplicate form label |
 | Slider / Gain level | Default Slider; `GainLevelControl`, `GainDialControl` | Shared roles/materials; captured single-commit gestures, keyboard access, same exact parameter and history |

@@ -92,7 +92,12 @@ generation, attachment and Pattern authority; it stores no editable steps. `Desk
 serializes creation, channel acceptance, name and note edits on the existing owner. Core adds only
 `ProjectEdit.RenamePattern`, preserving the same Pattern and unknown fields. Creation supplies a
 real Placement/item context/attachment; channel import uses the existing media acceptance callback.
-No musical schema, history, scheduler, PCM store, graph engine or dynamic pane registry is added.
+No musical schema, history, PCM store or dynamic pane registry is added. R5-F2/F3 now extends the
+same prepared execution with continuous looping and compatible live note publication, rather than
+adding another engine. The control owner computes continuation mappings; the consumer only borrows
+prepared tables and fixed voices. Pattern length uses existing canonical duration; channel deletion
+repairs known topology and references atomically. PatternWaveExport freezes state/media roots and
+renders through the existing graph off-thread without a device or history operation.
 [UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) owns grid scope; [graph](NODE_GRAPH.md#r5-f1-channel-composition)
 owns safe automatic wiring. Existing audio preparation/publication and joined lifetime remain unchanged.
 

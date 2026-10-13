@@ -153,6 +153,12 @@ public static class GraphPreparation
         // buffer clear plus read/compute/write per input; voice interpolation/envelope; bounded slot scans per event.
         long signalWork = plan.Graph?.Operations.Sum(operation => (long)frames * plan.Channels *
             (1 + 4 * Math.Max(1, operation.Inputs.Length))) ?? 0;
+        if (plan.Loop is { } clock)
+        {
+            long shortestCycle = Math.Max(1, clock.Frame(clock.StartTicks + clock.LengthTicks) - plan.StartFrame - 1);
+            maximumWindow = (int)Math.Min((long)frames * 64,
+                Math.Max(maximumWindow, (frames / shortestCycle + 2) * plan.Events.Length));
+        }
         long work = checked((long)frames * plan.Channels * plan.VoiceCapacity * 16 +
             signalWork + (long)maximumWindow * plan.VoiceCapacity);
         if (work > MaximumPacketWork) throw new GraphPreparationException(GraphPreparationReasons.Budget);

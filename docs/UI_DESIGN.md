@@ -57,8 +57,12 @@ Only implemented actions are offered. User-restored layout remains authoritative
 A pristine layout opens the Rack with a useful creation action, without inserting music. At wider
 window sizes, a project navigator lists actual playback occurrences with canonical rhythm thumbnails;
 it creates/selects Patterns. Narrow windows reclaim that space and retain the occurrence selector.
-The compact Pattern name/header, sixteenth-note ruler, fixed row geometry and four beat groups make
-the rhythm readable as music. Sixteen sculpted pads share a channel tint, active indicator and glow.
+The compact Pattern name/header, length selector, sixteenth-note ruler and fixed row geometry make
+the rhythm readable as music. Whole-bar extension repeats four beat groups without shrinking pads.
+The 16–512 sculpted pads share a channel tint, active indicator and glow. The actual current column
+uses the shared playing outline independently of checked state and keyboard focus; the footer gives
+bar:beat:sixteenth position. Pattern deletion and channel menu deletion use ordinary danger/action
+styles with target-aware Undo; the navigation rail toggle reclaims space.
 Larger hit targets, persistent names and short contextual commands replace repeated step captions.
 The scrollable grid preserves readable geometry when the pane is narrow; its local header/footer
 retain creation/import access. Empty and unsupported states reflect actual project content.

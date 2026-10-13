@@ -15,7 +15,7 @@ public enum SamplerTransportState { Unprepared, Ready, Playing, Stopped, Ended, 
 public readonly record struct SamplerExecutionStatus(Guid ExecutingRevision, Guid OriginPreparedRevision,
     Guid EquivalentCanonicalRevision, long Epoch, long Position, int Voices, bool Playing, bool Terminated,
     long StopAcknowledgment, SamplerTransportState Transport, Id<GraphAttachment>? AttachmentId,
-    long PreparedExecutionId);
+    long PreparedExecutionId, bool Looping = false, long LoopPositionTicks = 0);
 
 internal sealed record GraphRevisionUpdate(long PreparedExecutionId, Id<GraphAttachment> Attachment,
     Guid Revision, Guid EquivalentRevision,
@@ -35,6 +35,8 @@ public sealed class RealtimeSampler : IDisposable
         internal readonly CancellationToken Cancellation;
         internal readonly long StopAtPublication;
         internal Guid Revision, EquivalentRevision;
+        internal long ContinuationAuthority;
+        internal int[]? ContinuationNotes;
 
         internal State(PreparedSampler plan, long authority, bool transient, CancellationToken cancellation, long stop)
         {
@@ -64,6 +66,7 @@ public sealed class RealtimeSampler : IDisposable
     private long _acknowledgedStop, _epoch, _position;
     private long _rejectedPreparedExecutionId;
     private int _voices;
+    private bool _looping;
     private Guid _revision;
     private GraphRevisionUpdate? _update;
     private int _statusSequence;
@@ -128,7 +131,8 @@ public sealed class RealtimeSampler : IDisposable
                 _stopBoundary ? SamplerTransportState.Stopped : _playing ? SamplerTransportState.Playing :
                     _active is null ? SamplerTransportState.Unprepared :
                         _active.Execution.Position == _active.Plan.EndFrame ? SamplerTransportState.Ended : SamplerTransportState.Ready,
-            _active?.Plan.GraphAttachmentId, _active?.Authority ?? 0);
+            _active?.Plan.GraphAttachmentId, _active?.Authority ?? 0, _looping && _active?.Plan.Loop is not null,
+            _active?.Execution.LoopPositionTicks ?? 0);
         Interlocked.Increment(ref _statusSequence);
     }
 
@@ -176,7 +180,7 @@ public sealed class RealtimeSampler : IDisposable
     }
 
     internal SamplerPublication Publish(PreparedSampler plan, long authority, bool valid, bool cancelled,
-        bool transient = false, CancellationToken lifetimeCancellation = default)
+        bool transient = false, CancellationToken lifetimeCancellation = default, bool preservePlayback = false)
     {
         if (cancelled)
         {
@@ -212,8 +216,19 @@ public sealed class RealtimeSampler : IDisposable
             if (count > 64) throw new NotSupportedException("Realtime event density exceeds 64 events per frame.");
         }
 
-        Volatile.Write(ref _pending,
-            new State(plan, authority, transient, lifetimeCancellation, Volatile.Read(ref _stop)));
+        var state = new State(plan, authority, transient, lifetimeCancellation, Volatile.Read(ref _stop));
+        var active = Volatile.Read(ref _active);
+        if (preservePlayback && active is not null && plan.Loop is { } clock &&
+            active.Plan.Loop is { } previous && clock.Compatible(previous) &&
+            plan.CanonicalBasis is { } nextBasis && active.Plan.CanonicalBasis is { } oldBasis &&
+            GraphExecutionCoordinator.SameExecution(oldBasis, nextBasis, ignoreGain: true, ignoreNotes: true))
+        {
+            var indices = plan.Notes.Select((note, index) => (note, index)).ToDictionary(item => item.note.Occurrence);
+            state.ContinuationNotes = active.Plan.Notes.Select(note => indices.TryGetValue(note.Occurrence, out var next) &&
+                next.note == note ? next.index : -1).ToArray();
+            state.ContinuationAuthority = active.Authority;
+        }
+        Volatile.Write(ref _pending, state);
         PreparedStatesCreated++;
         return SamplerPublication.Accepted;
     }
@@ -242,9 +257,10 @@ public sealed class RealtimeSampler : IDisposable
     }
 
     public long Panic() => Stop();
+    public void SetLooping(bool looping) => Volatile.Write(ref _looping, looping);
 
     /// <summary>Single consumer. No allocation, I/O, locks, document access or reclamation. False means invalid packet.
-    /// A publication restarts at its prepared start in a new epoch; it does not transfer live voices.</summary>
+    /// Compatible live note edits retain loop position and unchanged voices; other publications begin a new epoch.</summary>
     public bool Process(Span<float> output)
     {
         output.Clear();
@@ -265,11 +281,15 @@ public sealed class RealtimeSampler : IDisposable
                 else
                 {
                     var old = _active;
-                    if (_playing && old?.Plan.Graph is not null && pending.Plan.Graph is not null)
+                    bool continuing = _playing && _looping && old is not null &&
+                        pending.ContinuationAuthority == old.Authority && pending.ContinuationNotes is { };
+                    pending.Execution.SetLooping(_looping);
+                    if (continuing) pending.Execution.ContinueFrom(old!.Execution, pending.ContinuationNotes!);
+                    else if (_playing && old?.Plan.Graph is not null && pending.Plan.Graph is not null)
                         _transitionRemaining = GraphTransitionFrames;
                     _active = pending;
                     _revision = pending.Plan.Revision;
-                    _epoch++;
+                    if (!continuing) _epoch++;
                     if (old is not null) Volatile.Write(ref _retired, old);
                 }
             }
@@ -326,13 +346,16 @@ public sealed class RealtimeSampler : IDisposable
         int renderedFrames = 0;
         if (_playing && active is not null)
         {
-            int frames = (int)Math.Min(output.Length / Channels, active.Plan.EndFrame - active.Execution.Position);
+            active.Execution.SetLooping(_looping);
+            int frames = _looping && active.Plan.Loop is not null ? output.Length / Channels :
+                (int)Math.Max(0, Math.Min(output.Length / Channels, active.Plan.EndFrame - active.Execution.Position));
             if (frames > 0)
             {
                 active.Execution.Process(output[..(frames * Channels)]);
                 renderedFrames = frames;
             }
-            if (active.Execution.Position == active.Plan.EndFrame) _playing = false;
+            if ((!_looping || active.Plan.Loop is null) && active.Execution.Position >= active.Plan.EndFrame)
+            { active.Execution.Stop(); _playing = false; }
         }
 
         // Finite new-topology fade-in only. Hard Stop/Panic never emit an old-state tail.
@@ -429,6 +452,7 @@ public sealed class SamplerPreparationRequest : IDisposable
     internal Func<CancellationToken, Task>? PreparationGate { get; set; }
     internal PreparedSampler? Plan => _plan;
     internal long Authority => _authority;
+    internal bool PreservePlayback { get; set; }
 
     internal SamplerPreparationRequest(RealtimeSampler consumer, ProjectDocument document, Id<Pattern> target,
         int voices, int repeats, MusicalPosition start, long authority, Id<GraphAttachment>? graphTarget = null)
@@ -493,7 +517,8 @@ public sealed class SamplerPreparationRequest : IDisposable
                      (_graphTarget is { } graph ? _document.Current.State.GraphAttachments.Any(item => item.Id == graph) :
                          _document.Current.State.Patterns.Any(pattern => pattern.Id == _target));
         var result = _consumer.Publish(_plan, _authority, valid,
-            _cancellation.IsCancellationRequested || cancellationToken.IsCancellationRequested);
+            _cancellation.IsCancellationRequested || cancellationToken.IsCancellationRequested,
+            preservePlayback: PreservePlayback);
         if (result == SamplerPublication.Accepted) _plan = null;
         else if (result == SamplerPublication.Capacity && _graphTarget.HasValue) return result;
         else

@@ -35,9 +35,25 @@ unknown semantics disable grid operations. External Edit/Undo/Redo/Open refresh 
 Commands freeze target and generation; stale/ABA/concurrent actions cannot duplicate notes or switch
 objects. Selection, replacement, pane hide/collapse and shutdown withdraw local actions; native picker
 deactivation alone does not invalidate its unchanged import target. Creation/Open never start audio.
-Accepted grid/channel edits hard-stop the selected execution; explicit Play prepares the current
-finite bar from its start. Existing history/graph convergence retains its prior bounded semantics,
-without a seamless live-edit promise. Loop/live position continuity belong to R5-F2/F3.
+Explicit Play continuously cycles the selected Pattern. Note toggles, captured row operations and
+Undo/Redo of notes preserve position and unchanged sounding voices after bounded preparation.
+Future notes take effect at publication; already passed new/restored notes wait until the next cycle.
+Deleting a sounding step stops that voice. Stop/Panic remain sticky through preparation and retries.
+Creation, selection, channel topology, length and BPM edits stop transport; Play deliberately restarts.
+The current column outline and bar:beat:sixteenth display read renderer state, with up to 50 ms
+observation delay; they do not claim an output-latency-corrected audible cursor.
+
+The length selector offers 1–32 whole 4/4 bars (16–512 sixteenths). Extension adds empty time and
+restores ordinary end-clipped gates without changing note identities. Shortening refuses occupied
+later steps; it never silently discards notes. A channel menu can remove a channel from the recognized
+unshared graph, repairing its Mix tree in one Undo. Shared/custom/unknown topology refuses safely.
+Pattern deletion removes all its placements and their item graphs in one Undo, retaining independent
+sounds/resources and unrelated music. Target/generation guards apply to every action.
+The rail toggle hides/restores navigation independently of music; its session choice survives resizing.
+WAV export is a toolbar overflow action for the selected occurrence through its current valid graph.
+It captures one frozen revision, writes one finite cycle as 48 kHz stereo PCM16, reports clipping and
+leaves transport, music and history intact. Failed/cancelled export preserves an existing destination.
+No Arrangement, simultaneous Patterns, effects beyond Gain, velocity or general seek editor is added.
 [Audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback) owns gate/tail limits;
 [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns retained geometry/focus.
 

@@ -180,7 +180,7 @@ public sealed class StepSequencerTests
         var part = f.Pattern.Parts[0]; var note = part.Notes.Single(); var pattern = f.Pattern;
         Assert.True(await f.Edit(edit =>
         {
-            if (kind == "length") edit.SetPatternLength(pattern.Id, new(BeatSteps.BarTicks * 2));
+            if (kind == "length") edit.SetPatternLength(pattern.Id, new(BeatSteps.BarTicks + BeatSteps.StepTicks));
             else edit.UpdateNote(pattern.Id, part.Id, note.Id, new(kind == "off-grid" ? 1 : 0), note.Duration,
                 kind == "pitch" ? note.Pitch + 1 : note.Pitch, note.Intensity);
         }));
@@ -227,7 +227,7 @@ public sealed class StepSequencerTests
     }
 
     [Fact]
-    public async Task ExplicitDesktopPlayEndsOneBarAndStepEditsKeepHardStopSticky()
+    public async Task ExplicitDesktopPlayLoopsAndStepEditsContinueUntilHardStop()
     {
         await using var f = new Fixture(); await f.Create();
         await f.Channel("Kick", .4f); await f.Channel("Snare", .2f); await f.Channel("Hi-Hat", .1f);
@@ -240,11 +240,17 @@ public sealed class StepSequencerTests
         Assert.Equal(1, f.Opens); Assert.NotNull(f.Sampler);
         for (int pass = 0; pass < 3010; pass++) { f.Sampler.Process(packet); peak = Math.Max(peak, packet.Max()); }
         Assert.InRange(peak, .12499f, .12501f);
-        Assert.Equal(SamplerTransportState.Ended, f.Sampler.ReadStatus().Transport);
-        Assert.False(f.Sampler.ReadStatus().Playing);
-        await f.Toggle(0, 8); f.Sampler.Process(packet);
+        Assert.Equal(SamplerTransportState.Playing, f.Sampler.ReadStatus().Transport);
+        Assert.True(f.Sampler.ReadStatus().Looping);
+        long epoch = f.Sampler.TransportEpoch, position = f.Sampler.RenderPosition;
+        await f.Toggle(0, 8);
+        for (int pass = 0; pass < 10000 && f.Sampler.ReadStatus().ExecutingRevision != f.State.Snapshot.Revision; pass++)
+        { await f.Workflow.ObserveAsync(); f.Sampler.Process(packet); await Task.Yield(); }
+        Assert.Equal(f.State.Snapshot.Revision, f.Sampler.ReadStatus().ExecutingRevision);
+        Assert.True(f.Sampler.ReadStatus().Playing); Assert.Equal(epoch, f.Sampler.TransportEpoch);
+        Assert.True(f.Sampler.RenderPosition > position);
+        Assert.True(await f.Workflow.StopAsync(true)); f.Sampler.Process(packet);
         Assert.All(packet, value => Assert.Equal(0, value)); Assert.False(f.Sampler.ReadStatus().Playing);
-        Assert.True(await f.Workflow.StopAsync(true));
     }
 
     [Theory]
@@ -323,7 +329,7 @@ public sealed class StepSequencerTests
         Assert.True(await f.Edit(edit =>
         {
             if (kind == "meter") edit.SetSettings(new(new Tempo(120), new Meter(3, 4)));
-            else if (kind == "length") edit.SetPatternLength(pattern.Id, new(BeatSteps.BarTicks * 2));
+            else if (kind == "length") edit.SetPatternLength(pattern.Id, new(BeatSteps.BarTicks + BeatSteps.StepTicks));
             else if (kind == "duplicate") edit.AddNote(pattern.Id, part.Id, note.Position, note.Duration, note.Pitch, note.Intensity);
             else if (kind == "root-changed") edit.ConfigurePcmSampler(part.SoundId, f.State.Snapshot.State.Resources.Single().Id, 61, 0);
             else edit.UpdateNote(pattern.Id, part.Id, note.Id, new(kind == "off-grid" ? 1 : 0),
@@ -438,5 +444,94 @@ public sealed class StepSequencerTests
         workspace.Dock(WorkspaceState.BeatId, PaneDock.Left); workspace.Collapse(WorkspaceState.BeatId); workspace.Open(WorkspaceState.BeatId);
         var saved = workspace.Capture(); using var reopened = new WorkspaceState(saved); reopened.Reflow(640, 380);
         Assert.Equal(workspace.Get(WorkspaceState.BeatId), reopened.Get(WorkspaceState.BeatId));
+    }
+
+    [Theory]
+    [InlineData(2)] [InlineData(3)] [InlineData(32)]
+    public async Task LongerPatternsPreserveNotesAndHistoryAndSurviveSaveOpen(int bars)
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Kick"); await f.Toggle(0, 15);
+        var before = f.State.Snapshot; var note = f.Pattern.Parts[0].Notes.Single();
+        Assert.True(await f.Workflow.ResizeBeatAsync(f.Basis, bars));
+        Assert.Equal(bars * 16, BeatSteps.StepCount(f.Pattern));
+        var extended = f.Pattern.Parts[0].Notes.Single(); Assert.Equal(note.Id, extended.Id);
+        Assert.Equal(960000, extended.Duration.Ticks);
+        Assert.True(await f.Workflow.UndoAsync()); Assert.Same(before, f.State.Snapshot);
+        Assert.True(await f.Workflow.UndoAsync(true));
+        await f.Toggle(0, bars * 16 - 1);
+        var after = f.State.Snapshot;
+        Assert.False(await f.Workflow.ResizeBeatAsync(f.Basis, 1));
+        Assert.Equal("Beat.ShortenOccupied", f.State.Detail); Assert.Same(after, f.State.Snapshot);
+        string path = f.Directory.File("long.seqvium"); Assert.True(await f.Workflow.SaveAsync(path));
+        Assert.True(await f.Workflow.OpenAsync(path, UnsavedDecision.Discard));
+        Assert.True(ProjectDocument.HasSameContent(after.State, f.State.Snapshot.State));
+        Assert.Equal(bars * 16 - 1, BeatSteps.Step(f.Pattern.Parts[0].Notes.Single(n => n.Id != note.Id)));
+        Assert.Equal(0, f.Opens); Assert.Equal(0, f.State.UndoCount);
+    }
+
+    [Theory]
+    [InlineData(0)] [InlineData(1)] [InlineData(2)]
+    public async Task DeleteAnyChannelRepairsMixTreeAndUndoRestoresAllIdentities(int index)
+    {
+        await using var f = new Fixture(); await f.Create();
+        await f.Channel("Kick"); await f.Channel("Snare"); await f.Channel("Hat");
+        await f.Toggle(0, 0); await f.Toggle(1, 0); await f.Toggle(2, 0);
+        var before = f.State.Snapshot; var part = f.Pattern.Parts[index]; int undo = f.State.UndoCount;
+        Assert.True(await f.Workflow.DeleteBeatChannelAsync(f.Basis, part.Id));
+        Assert.Equal(undo + 1, f.State.UndoCount); Assert.Equal(2, f.Pattern.Parts.Length);
+        Assert.DoesNotContain(f.State.Snapshot.State.Sounds, sound => sound.Id == part.SoundId);
+        Assert.Equal(3, f.State.Snapshot.State.Resources.Length); // Saved/history media stays owned.
+        Assert.True(GraphDiagnostics.Inspect(f.State.Snapshot.State).Single().IsEligibleForPreparation);
+        using (var plan = GraphPreparation.Prepare(f.Document, f.Basis.Attachment, 48000, 2, 32, cancellationToken: TestContext.Current.CancellationToken))
+        using (var execution = plan.CreateExecution())
+        { var samples = new float[64]; execution.Process(samples); Assert.Equal(.2f, samples[0]); }
+        Assert.True(await f.Workflow.UndoAsync()); Assert.Same(before, f.State.Snapshot);
+        Assert.True(await f.Workflow.UndoAsync(true));
+        foreach (var remaining in f.Pattern.Parts.ToArray())
+            Assert.True(await f.Workflow.DeleteBeatChannelAsync(f.Basis, remaining.Id));
+        Assert.Empty(f.Pattern.Parts); Assert.Empty(f.State.Snapshot.State.GraphAttachments.Single().Sources);
+        await f.Channel("New"); Assert.True(GraphDiagnostics.Inspect(f.State.Snapshot.State).Single().IsEligibleForPreparation);
+        string path = f.Directory.File("deleted.seqvium"); var state = f.State.Snapshot.State;
+        Assert.True(await f.Workflow.SaveAsync(path)); Assert.True(await f.Workflow.OpenAsync(path, UnsavedDecision.Discard));
+        Assert.True(ProjectDocument.HasSameContent(state, f.State.Snapshot.State));
+    }
+
+    [Fact]
+    public async Task PatternDeletionRemovesItsOccurrencesAndGraphsAndUndoRestoresProject()
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Kick"); await f.Toggle(0, 0);
+        var target = f.Basis; await f.Create(); await f.Channel("Other");
+        var other = f.Pattern; Assert.True(await f.Workflow.SelectAsync(target.Attachment));
+        var before = f.State.Snapshot;
+        Assert.True(await f.Workflow.DeleteBeatAsync(f.Basis));
+        Assert.Equal(other, Assert.Single(f.State.Snapshot.State.Patterns));
+        Assert.Single(f.State.Snapshot.State.Placements); Assert.Single(f.State.Snapshot.State.Graphs);
+        Assert.Single(f.State.Snapshot.State.Contexts); Assert.Equal(other.Id, f.Pattern.Id);
+        Assert.True(await f.Workflow.UndoAsync()); Assert.Same(before, f.State.Snapshot);
+        Assert.False(await f.Workflow.DeleteBeatAsync(target)); Assert.Equal("Beat.Stale", f.State.Detail);
+    }
+
+    [Fact]
+    public async Task ExportWritesActualGraphPcmAndLeavesMusicHistoryAndMediaIntact()
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Kick"); await f.Channel("Snare", .2f);
+        Assert.True(await f.Workflow.ResizeBeatAsync(f.Basis, 2)); await f.Toggle(0, 0); await f.Toggle(1, 31);
+        var before = f.State.Snapshot; int undo = f.State.UndoCount;
+        string path = f.Directory.File("beat.wav");
+        Assert.True(await f.Workflow.ExportWaveAsync(f.Basis, path, TestContext.Current.CancellationToken), f.State.Detail);
+        Assert.Equal("Workflow.Exported", f.State.StatusKey); Assert.Same(before, f.State.Snapshot);
+        Assert.Equal(undo, f.State.UndoCount); Assert.Equal(0, f.Opens);
+        using var decoded = WavDecoder.Decode(await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken));
+        Assert.Equal(192000, decoded.Frames); Assert.Equal(2, decoded.Channels); Assert.Equal(48000, decoded.SampleRate);
+        using var pcm = decoded.Lease(); Assert.InRange(pcm.Samples[0], .09998f, .10002f);
+        Assert.InRange(pcm.Samples[186000 * 2], .04998f, .05002f); Assert.Equal(0, pcm.Samples[48000]);
+        byte[] original = await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken);
+        using var cancelled = new CancellationTokenSource(); cancelled.Cancel();
+        Assert.False(await f.Workflow.ExportWaveAsync(f.Basis, path, cancelled.Token));
+        Assert.Equal(original, await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken));
+        string media = ProjectMedia.Resolve(f.Document, f.State.Snapshot.State.Resources[0]);
+        Assert.False(await f.Workflow.ExportWaveAsync(f.Basis, media, TestContext.Current.CancellationToken));
+        Assert.Empty(System.IO.Directory.GetFiles(f.Directory.Path, "*.pending", SearchOption.AllDirectories));
+        Assert.Same(before, f.State.Snapshot);
     }
 }

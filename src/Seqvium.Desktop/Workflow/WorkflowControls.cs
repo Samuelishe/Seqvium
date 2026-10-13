@@ -123,7 +123,7 @@ internal sealed class WorkflowControls : Grid
         _overflow.Content = HostIcons.Create("More", _overflow);
         AutomationProperties.SetAutomationId(_information, "Workflow.SourceInfo");
         AutomationProperties.SetAutomationId(_overflow, "Workflow.More");
-        AddOverflow("SaveAs"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
+        AddOverflow("SaveAs"); AddOverflow("ExportWave", "Save"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
         _overflowBody.Children.Add(_overflowParameters);
         _overflow.Flyout = new Flyout { Content = _overflowBody };
         var body = new StackPanel { Width = 330, Classes = { "spaced" } };
@@ -179,7 +179,7 @@ internal sealed class WorkflowControls : Grid
         button.Classes.Remove("command"); button.Width = double.NaN;
         button.HorizontalAlignment = HorizontalAlignment.Stretch; button.HorizontalContentAlignment = HorizontalAlignment.Left;
         var row = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "spaced" } };
-        row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key, button, 16));
+        row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key == "ExportWave" ? "Save" : key, button, 16));
         var text = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
         _menuLabels.RemoveAll(item => item.Key == key);
         _menuLabels.Add((text, key)); row.Children.Add(text); button.Content = row;
@@ -242,7 +242,7 @@ internal sealed class WorkflowControls : Grid
                 button.IsVisible = key != "CancelImport" || CanCancelImport;
                 button.IsEnabled = key == "CancelImport" ? CanCancelImport : transport ? state.CanStop || state.Busy :
                     !interactionBlocked && !state.Busy && key switch
-                    { "Play" => state.CanPlay, "Undo" => state.UndoCount > 0, "Redo" => state.RedoCount > 0, _ => true };
+                    { "Play" => state.CanPlay, "ExportWave" => state.Selected is not null, "Undo" => state.UndoCount > 0, "Redo" => state.RedoCount > 0, _ => true };
                 var shortcut = WorkflowPresentation.Shortcut(key); var label = _shell["Workflow." + key];
                 AutomationProperties.SetName(button, label); AutomationProperties.SetAcceleratorKey(button, shortcut);
                 ToolTip.SetTip(button, label + (shortcut.Length == 0 ? "" : " · " + shortcut) +

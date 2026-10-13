@@ -19,10 +19,18 @@ opens it; the left Rack icon or **Panes** menu reopens it. Use short supported p
    **…** menu fills every four/two steps, shifts or clears. Arrows navigate; Space/Enter toggles;
    Ctrl+Z/Y undo/redo. Edit the Pattern name and press Enter/check. Click BPM to set tempo.
    At wider window sizes, the left Pattern list offers creation and rhythm previews.
-4. Press the existing toolbar **Play** (F5). It plays one bar and stops. Step edits stop playback;
-   press Play again to hear the current bar. Longer samples cut at a quarter-note gate or the bar end,
-   so this is best suited to short drums. Continuous loop and seamless live editing are not available yet.
-5. Save the project. **Open** restores the channels/steps silently for further editing. Keep its
+4. Press **Play** (F5) for a continuous cycle; Stop ends it. The outlined column and bar:beat:sixteenth
+   display follow the audio renderer. Change steps while it plays: future steps update after preparation,
+   and already passed steps are heard next time around. Unchanged sounding notes keep their position.
+   Long samples still cut at a quarter-note gate or the Pattern end, so short drums work best.
+5. Choose the number of bars in the Pattern header (1–32). Added bars start empty. Clear late steps
+   before shortening; length and BPM changes stop playback. The row **…** menu deletes a channel,
+   and the header × deletes the Pattern and its occurrences; Undo restores them. The top left **…**
+   rail button hides/restores the Pattern navigation at wide window sizes.
+6. Use toolbar **… → Export selected Pattern to WAV** for a 48 kHz stereo PCM16 file with its
+   current graph processing. Lower Gain and export again if clipping is reported. This exports one
+   cycle of the selected Pattern; song arrangement and simultaneous Patterns are still ahead.
+7. Save the project. **Open** restores the channels/steps silently for further editing. Keep its
    `.seqvium.media` directory with the project. History starts fresh on Open.
 
 The editor explains unsupported meter/Pattern shape or notes and preserves them. Adding channels to

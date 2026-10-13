@@ -150,6 +150,20 @@ internal sealed partial class MainWindow
                     if (destination is not null) await _workflow.SaveAsync(destination);
                     break;
                 case "Play": await _workflow.PlayAsync(); break;
+                case "ExportWave":
+                    var exportBasis = BeatSteps.Resolve(_workflow.State).Basis;
+                    if (exportBasis is null) break;
+                    using (var exportFile = await StorageProvider.SaveFilePickerAsync(new()
+                    {
+                        Title = _session["Workflow.ExportWave"], DefaultExtension = "wav",
+                        SuggestedFileName = "Pattern.wav", FileTypeChoices = [new("WAV") { Patterns = ["*.wav"] }],
+                        ShowOverwritePrompt = true
+                    }))
+                    {
+                        if (exportFile?.TryGetLocalPath() is { } exportPath && !_closing)
+                            await _workflow.ExportWaveAsync(exportBasis, exportPath);
+                    }
+                    break;
                 case "Undo": await _workflow.UndoAsync(); break;
                 case "Redo": await _workflow.UndoAsync(true); break;
             }

@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.0.0005`**, the verified SEQ-UI-REDESIGN BUILD checkpoint on the
+The current product alpha is **`0.1.0.0006`**, the verified SEQ-R5-MUSIC BUILD checkpoint on the
 owner-selected `0.1.0` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -26,10 +26,12 @@ SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / nar
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 Completed rationale is cold history; current contracts stay in canonical owners.
 
-**R5 is in progress / partial. R5-F1 is functionally implemented:** empty Beat creation, independent
-WAV channels, canonical 16-step editing, finite bar playback and Save/Open. Focused deterministic and
-bounded actual-window GUI evidence pass; guarded Rack/native graph actions pass. Picker/acoustic acceptance remains separate.
-Continuous loop and seamless live-edit/position continuity remain R5-F2/F3.
+**R5 is in progress / partial. R5-F1 and the bounded F2/F3 musical slice are implemented:** empty
+Beat creation, independent WAV channels, 1–32 bars, continuous Play, renderer position and compatible
+live step edits, atomic channel/Pattern deletion, navigation collapse, selected-Pattern WAV export
+and Save/Open. Velocity, simultaneous Patterns, Arrangement and richer processors remain future work.
+The owner reports the visual redesign complete and now prioritizes music. Full automated, actual
+window and short physical loop checks pass; long pressure/acoustic/platform acceptance stays separate.
 
 ## Implemented capability
 
@@ -45,13 +47,16 @@ and remains editable from narrow overflow; musical-time content is preserved. Ga
 the existing editor draft/parameter/history. No schema/DSP/audio scheduling changes were made.
 The eleven inspected references are outside Git at `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-UI-REDESIGN`.
 Current decisions are in UI_DESIGN/DESIGN_SYSTEM; validation/limits are in the
-[redesign report](experiments/SEQ-UI-REDESIGN_REPORT.md). Aesthetic acceptance belongs to the owner.
+[redesign report](experiments/SEQ-UI-REDESIGN_REPORT.md). The owner reports this redesign complete.
 
 Panes → Step Sequencer / Channel Rack now creates an empty one-bar 4/4 Pattern without changing BPM/
 meter. Add WAV Channel durably accepts empty Parts/Sounds and exact placement Source bindings; three
 channels feed existing binary Mix nodes → Gain → Output. Step toggles create/delete canonical notes
-at exact sixteenths, with root pitch/unit intensity and finite quarter-note gates clipped to the bar.
-Name, notes and channel acceptance use the one history; shared note edits change the same Pattern.
+at exact sixteenths, with root pitch/unit intensity and finite quarter-note gates clipped to the Pattern end.
+Name, notes, length and deletion use the one history; shared note edits change the same Pattern.
+A derived absolute-tick LoopClock repeats in the same audio packet; compatible prepared note edits
+retain position, epoch and unchanged voice ages. Export renders one frozen occurrence through its
+current graph to 48 kHz stereo PCM16, preserving transport/history and reporting clipping.
 Save/Open preserves IDs/media, with fresh silent runtime/history on Open. Unsupported shape/notes/
 unknown data and unsafe/shared channel expansion refuse without rewriting content. Static retained
 pane behavior, RU/EN, Dark/Light, local scrolling, keyboard and toggle accessibility reuse the host.
@@ -131,9 +136,11 @@ with per-action refusal explanations and dismissal/basis guards for retained men
 
 ## Current focus
 
-The authorized R5-F1 slice is complete at its finite deterministic/runtime composition boundary.
-Its limited GUI review and new musical workflow do not finish R5, prior R4 physical acceptance or
-owner visual review. F2/F3 and richer musical editors require their own tasks; this change stops at F1.
+SEQ-R5-MUSIC completes the owner-authorized continuous rhythm workflow and selected-Pattern export.
+Users can develop a multi-bar beat while it plays and share a WAV. Next composition work needs
+Arrangement placement, simultaneous Pattern execution and song export; EQ/delay/reverb need actual
+processor/state/editor ownership. R5 still lacks richer velocity/per-channel controls. This checkpoint
+does not close prior R4 pressure acceptance or declare a release.
 
 The bounded workspace and canonical intent foundations are locally ready. F2's functional execution
 passes verification, but its repeated physical pressure result is not uniformly successful.
@@ -142,7 +149,7 @@ and multi-source workflow require owner inspection under [ROADMAP](ROADMAP.md).
 Remaining [readiness recommendations](NODE_GRAPH.md#r4-implementation-readiness-recommendation) grant
 no further authorization. R4 remains partial; F2 alone cannot deliver a workstation or select an engine ABI.
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
-Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/export/recovery and MIDI/capture/recording remain later work.
+Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/song export/recovery and MIDI/capture/recording remain later work.
 
 The owner accepts DESIGN-R1 for the bounded **SEQ-NODE-EDITOR-IMPL-F1** slice, now implemented:
 one retained Node Editor with explicit lifecycle/attachment/definition/node identity, body double-click,
@@ -164,6 +171,20 @@ acceptance remains with the owner; the earlier presentation was explicitly rejec
 
 ## Validation baseline
 
+SEQ-R5-MUSIC: final full Release solution build has zero warnings/errors; **1009/1009** tests pass
+(19.233 s CLI test summary; isolated build 7.65 s, restore reused unchanged locked assets). Early
+L3 was selected for shared realtime scheduling/continuation risk. Prior focused L1/L2 passes 210 cases.
+Actual Windows steps/catalog/field matrix checks pass, including RU/EN Dark/Light ordinary/reduced
+Rack, real length/deletion/navigation actions, 96 long pads, real-renderer current-column/2:1:2 position
+with a substituted physical borrower. Four earlier guarded native Rack checks pass; the final native
+attempt refuses on foreground, while rendered/routed checks pass. Dark/Light images were
+inspected. Physical WASAPI loop smoke passes at 48 kHz stereo/1056 frames for 6.026 s: live convergence
+with unchanged epoch, zero processor/service allocation, no processor/packet misses or padding
+exhaustion, acknowledged Stop and joined teardown. This is short output evidence, not acoustic or
+pressure acceptance. [Report](experiments/SEQ-R5-MUSIC_REPORT.md) owns commands, initial failures,
+timings and retained local evidence. No dependencies, format marker or engine/backend decision changes.
+
+
 SEQ-UI-REDESIGN: affected ordinary Release builds and final isolated Tests/reference builds pass
 with zero warnings/errors. Final focused L1/L2 covers **435/435**, zero failures/skips, across
 19 named Desktop interaction/presentation/metadata classes; after final warning-copy changes the
@@ -180,21 +201,17 @@ Normal output became locked by a user-launched Desktop during final refinement; 
 preserved. Complete final executables are in `.artifacts/seq-ui-redesign/release/Release/net10.0/`.
 The [report](experiments/SEQ-UI-REDESIGN_REPORT.md) records actual scope, paths, failures and commands.
 
-Last full baseline, SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE: Windows 11 x64, SDK 10.0.401/runtime 10.0.12;
-locked restore, full Release solution build with zero warnings/errors and **933/933** tests.
-Subsequent focused verification does not replace that L3 baseline. Existing deterministic three-WAV
-90/120/240 BPM PCM/coordinator evidence remains in
-[R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); physical pressure failures and
-platform/owner acceptance remain separate below. Historical validation detail belongs to the linked
-reports and archive rather than this handoff.
+The current full baseline is SEQ-R5-MUSIC on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
+Existing three-WAV 90/120/240 BPM finite PCM evidence remains in
+[R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); prior physical pressure failures
+and platform/owner acceptance remain separate below. Historical validation belongs to reports/archive.
 
 ### Verification cadence
 
-Last successful L3: **SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE, 2026-10-13**, full Release solution build
-and 933/933 automated tests (retained full-suite TRX runner interval: 17.5105 seconds).
-Completed repository tasks since that L3: **3** — SEQ-TEST-STRATEGY-R1, SEQ-R5-F1 and SEQ-UI-REDESIGN.
-Update this small checkpoint field once at task completion; successful L3 resets it to zero under
-[test policy](TEST_EXECUTION.md#required-verification-levels). A focused pass does not reset it.
+Last successful L3: **SEQ-R5-MUSIC, 2026-10-13**, full Release solution build and 1009/1009 automated
+tests (19.233 seconds CLI summary). Completed repository tasks since that L3: **0**.
+Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
+a focused pass does not reset it.
 
 ## Active blockers / evidence gaps
 

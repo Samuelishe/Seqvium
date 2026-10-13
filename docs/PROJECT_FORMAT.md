@@ -27,7 +27,10 @@ explicit Play required. This adds a normal-process UI lifecycle, not crash recov
 
 R5-F1 saves the existing Pattern/Part/Note/Sound/Placement/graph/binding identities and managed WAV
 references, with no step array, grid flags or reader/schema change. Open restores those identities
-into a fresh silent lifecycle; the retained editor reprojects them. Undo/Redo history remains
+into a fresh silent lifecycle; the retained editor reprojects them. R5-F2/F3 length changes use the
+existing Pattern.Length and canonical note durations; deletion uses the existing entity/reference
+arrays. Loop/playhead, continuation mappings and export state are runtime-only. WAV export writes a
+separate audio file and changes no project format, schema, writer marker or saved association. Undo/Redo history remains
 session-local, as before: Save preserves working history, while Open begins new history for continued
 editing. Unsupported/unknown musical data is preserved rather than quantized by the grid.
 

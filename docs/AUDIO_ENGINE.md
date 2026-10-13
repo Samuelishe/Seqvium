@@ -18,21 +18,46 @@ F2's [report](experiments/SEQ-R2-F2_REPORT.md) provides scoped real-WAV/device e
 ### R5-F1 finite step Pattern playback
 
 The Channel Rack feeds the same GraphPreparation → PreparedSampler → GraphExecutionCoordinator →
-RealtimeSampler/Desktop output path. Explicit Play uses one repetition of the selected placement's
-one-bar Pattern at current BPM, with canonical absolute event positions and the existing finite Stop
-boundary. Creation/Open do not open output. No UI timing loop, second scheduler or playhead is added.
+RealtimeSampler/Desktop output path. The finite offline/default Core execution remains available;
+Desktop Play now enables the continuous mode described below. Creation/Open do not open output.
 
 A new step starts at `step * ticksPerQuarter / 4`, at the sound's rootPitch and intensity 1. Its
-ordinary gate duration is `min(ticksPerQuarter, barTicks - startTicks)`: a quarter note, shortened near
+ordinary gate duration is `min(ticksPerQuarter, patternLengthTicks - startTicks)`: a quarter note, shortened near
 the bar end. Imported channel sounds use release 0. Short percussion reaches natural EOF; longer
-samples cut at NoteOff or the bar boundary. This is neither an infinite one-shot tail nor a new
+samples cut at NoteOff or the Pattern boundary. This is neither an infinite one-shot tail nor a new
 sampler policy; BPM changes its audible gate length. Dense/long overlapping notes may exceed eight
-voices and preparation refuses the plan. Grid/channel edits issue hard Stop before publication;
-another explicit Play starts the current bar. Existing Undo/Redo/graph convergence, last-valid,
-readiness/publication/epoch and joined retirement semantics remain unchanged. F2/F3 own continuous
-looping and seamless live-edit/position continuity. Deterministic event/PCM and a substituted physical
-borrower verify the path under [test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification),
-without an acoustic or device-stability claim.
+voices and preparation refuses the plan. Channel topology, BPM and length changes stop playback;
+step edits use the compatible publication below. Last-valid, generation, readiness and joined lifetime
+protections remain. [Test execution](TEST_EXECUTION.md#r5-continuous-music-verification) owns evidence.
+
+### R5-F2/F3 continuous Pattern playback and WAV export
+
+Desktop enables looping on the existing sampler; raw audition and ordinary offline rendering remain
+finite by default. A one-cycle prepared plan carries a derived LoopClock. Int128 rational mapping of
+absolute iteration/event ticks matches constant-tempo rounding without callback BigInteger allocation
+or accumulation of rounded loop lengths. The consumer processes the next iteration inside the same
+packet; no output is dropped or zero-filled merely because a cycle ends. Source gates/voices end at
+the musical boundary. There are currently no stateful effects or effect-tail preservation claims.
+
+The control owner compares the new plan with the actual active canonical basis while ignoring notes,
+Pattern names, geometry and Gain. Matching format, tempo, length, placement, sound/resource and graph
+dependencies permit continuation. It precomputes old-note to new-note mappings; the callback uses a
+binary event search and fixed voice-slot copies to retain absolute render position, iteration, epoch,
+voice age and release of unchanged notes. Removed/changed notes end; new past notes are not retriggered.
+Pending supersession, capacity retries, ABA and Stop still use the existing authority/retirement slots.
+Other replacements retain the existing restart/fade policy. No callback allocation, disk access,
+mutable document traversal or second timer scheduler is introduced. Cyclic packet-work preflight
+accounts for repeated events, including several cycles within a packet. ReadStatus exposes Looping
+and relative LoopPositionTicks; the position is renderer progress, not measured audible latency.
+
+PatternWaveExport freezes canonical state/media roots on the control owner, then prepares and renders
+off-thread through the same graph execution. One finite selected occurrence is written as 48 kHz
+stereo PCM16 WAV, excluding leading placement silence. Scratch is packet bounded. RIFF size limits
+refuse before writing; samples saturate at PCM16 bounds and clipping is reported. An exclusively owned
+sibling temporary is flushed and atomically replaces the destination only on success. Cancellation
+removes that temporary. Export refuses destinations inside retained project-media roots and changes
+no document/history/output state. Song export, configurable formats, normalization and effects are
+still separate work.
 
 ### WAV and decoded ownership
 
@@ -137,8 +162,8 @@ Publishing into an occupied pending slot reports capacity rejection. At a packet
 can switch only when retirement capacity is free; it hands the old execution to the retired mailbox and
 never borrows it again. The control owner reclaims its leases; lack of reclamation delays replacement
 without growing storage. A superseded pending state retires without execution. Accepted replacements
-restart at their prepared absolute start in a new epoch, terminate old voices and do not claim seamless
-live-state transfer. Source leases remain immutable and independent; no canonical mutable data reaches Process.
+restart at their prepared absolute start in a new epoch and terminate old voices, except the explicitly
+compatible R5 loop note-edit continuation described above. Source leases remain immutable and independent; no canonical mutable data reaches Process.
 Plans over 64 events at one frame are refused wholly before realtime publication.
 
 Gain in [0,1] is latest-wins. Start and sticky Stop/Panic use separately retained monotonic command identities:
@@ -226,8 +251,8 @@ Gain-only changes on equivalent topology/schedule/media publish an immutable lat
 at a packet boundary, preserving voice cursors, release and transport. Geometry-only changes need no
 decode, topology construction or scratch rebuild; equivalent provenance advances separately. Coalesced
 Gain then geometry carries the full current coefficients, so supersession cannot lose an unapplied Gain.
-Topology/source/schedule replacement restarts the prepared absolute range in a new epoch, with no
-live state-transfer claim. Preparation/convergence never issues Start; deliberate coordinator Start
+Topology/source/tempo/length replacement restarts the prepared absolute range in a new epoch.
+Compatible loop note edits retain position/voices under the R5 continuation above. Preparation/convergence never issues Start; deliberate coordinator Start
 requires the current validated publication authority. Stop/Panic remain sticky through completion/retry.
 
 `RealtimeSampler.ReadStatus` returns a value snapshot protected by a single-consumer sequence counter;

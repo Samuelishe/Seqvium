@@ -53,12 +53,20 @@ internal sealed partial class MainWindow : Window
         var navigationBody = new Grid { ColumnDefinitions = new("Auto,Auto") };
         navigationBody.Children.Add(navigation); Grid.SetColumn(patterns, 1); navigationBody.Children.Add(patterns);
         NavigationRegion.Child = navigationBody;
+        bool navigationCollapsed = false;
         void AdaptNavigation()
         {
-            patterns.IsVisible = Bounds.Width >= 1000;
+            patterns.IsVisible = !navigationCollapsed && Bounds.Width >= 1000;
+            navigation.NavigationToggle.Classes.Set("active", patterns.IsVisible);
             _workflowControls.OccurrenceShownElsewhere = patterns.IsVisible;
             _workflowControls.Refresh();
         }
+        navigation.NavigationToggle.Click += (_, _) =>
+        {
+            navigationCollapsed = !navigationCollapsed;
+            if (navigationCollapsed && patterns.IsKeyboardFocusWithin) navigation.NavigationToggle.Focus();
+            AdaptNavigation();
+        };
         SizeChanged += (_, _) => AdaptNavigation(); AdaptNavigation();
         // The first workspace starts at a musical tool without creating or modifying a Pattern.
         if (layout.Layout is null) Opened += (_, _) => _workspace.Open(WorkspaceState.BeatId);

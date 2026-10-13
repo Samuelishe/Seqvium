@@ -33,7 +33,13 @@ The pristine empty chain is separately checked. Existing node identities, ports,
 unrelated content remain intact; only the known Gain-input cable is replaced. Invalid/custom graphs,
 other layouts/dependencies, shared Pattern channel expansion and capacity exhaustion refuse before
 acceptance. At most eight parts/sources are offered, subject to existing graph/media/voice preparation
-budgets. No new mixer, binding kind, graph schema or processor is added.
+budgets. Channel deletion recognizes the same unshared tree, removes the bound Source and its
+parent Mix, reconnects the sibling to the parent's former destination and removes Part relationships.
+Removing the last channel restores the intentional empty/unready Gain → Output graph. Surviving
+node/port/Gain identities are preserved; Undo restores the exact snapshot. Unused Sound definitions
+may be removed only when no other Part or Group uses them; resource descriptors and retained files
+remain owned. Pattern deletion removes all its occurrences/item graphs, preserving unrelated music.
+No new mixer, binding kind, graph schema or processor is added.
 
 ## Progressive graph interaction
 

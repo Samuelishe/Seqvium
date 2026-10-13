@@ -23,6 +23,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
     private readonly StackPanel _items = new() { Classes = { "compact" } };
     private readonly Dictionary<Id<GraphAttachment>, Button> _choices = [];
     private bool _disposed;
+    private (Guid Lifecycle, long Generation, Id<GraphAttachment>? Selected, bool Busy, bool Closed, HostPreferences Preferences)? _rendered;
     internal Task PendingCommand { get; private set; } = Task.CompletedTask;
 
     internal PatternNavigator(ShellSession shell, DesktopWorkflow workflow, WorkspaceHost workspace)
@@ -49,6 +50,10 @@ internal sealed class PatternNavigator : Grid, IDisposable
     {
         if (_disposed) return;
         var observation = _workflow.State; var state = observation.Snapshot.State;
+        var basis = (observation.Document.LifecycleId, observation.Generation, observation.Selected, observation.Busy,
+            observation.IsClosed, _shell.Preferences);
+        if (_rendered == basis) return;
+        _rendered = basis;
         _title.Text = _shell["Navigator.Patterns"];
         ToolTip.SetTip(_create, _shell["Beat.Create"]); AutomationProperties.SetName(_create, _shell["Beat.Create"]);
         _create.IsEnabled = !observation.Busy && !observation.IsClosed && state.Settings.Meter is { Numerator: 4, Denominator: 4 };

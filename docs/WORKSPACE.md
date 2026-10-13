@@ -94,7 +94,7 @@ Old two-pane version-1 layouts remain readable; missing graph entries start hidd
 `step-sequencer.main` / `step-sequencer` is one static pane, titled Channel Rack (RU: Каналы).
 Pristine layout opens it without musical creation; restored visibility remains authoritative.
 Panes or the left Rack rail action opens it. Default floating bounds are 960×390 DIP, minimum 360×290; the application's 640×480 minimum is unchanged. Its own horizontal/
-vertical scrolling preserves the 16-step content in narrow floating/docked panes. Existing header,
+vertical scrolling preserves the 16–512-step content in narrow floating/docked panes. Existing header,
 activation, focus, collapse/hide/reopen, boundary resizing and left/right docking are reused.
 Older layouts omit this pane and restore it hidden; only geometry/visibility/docking persist in user
 layout, with no musical/editor model there.
@@ -102,7 +102,8 @@ layout, with no musical/editor model there.
 The left rail opens existing Rack/Graph/Node Editor/Inspector/Appearance panes without replacing them.
 At window width >= 1000 DIP a project navigator lists actual occurrences with Pattern thumbnails.
 Its selection/create commands use DesktopWorkflow; navigation itself does not edit the document.
-Below that width it is hidden, reclaiming workspace space. It is session presentation, not persisted
+A rail toggle hides/restores it; the session choice is preserved across window resizing. Below that
+width it is hidden, reclaiming workspace space. It is session presentation, not persisted
 musical content or a separate layout registry.
 
 The pane follows the workflow's selected occurrence. Its selector appears only for multiple choices;

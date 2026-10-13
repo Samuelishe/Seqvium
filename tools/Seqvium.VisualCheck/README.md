@@ -73,6 +73,11 @@ shared pad hit geometry, Pattern name/action alignment and local horizontal scro
 routed checks exercise captured continuous paint, erase cancellation, actual Fill popup, Gain dial
 preview/fine movement/single commit/cancellation, BPM popup and navigator creation/selection/Undo.
 A dense authored eight-channel fixture checks 128 pads in both themes and ninth-channel refusal.
+R5 musical checks additionally invoke the actual length selector, channel deletion menu, Pattern
+deletion button and navigation collapse/restore. An independent Rack window uses real workflow/
+coordinator/PCM with a substituted physical borrower, checking 96 long-pattern pads, actual renderer
+phase 2:1:2, current-column outline, Stop cleanup and graph WAV export in Dark/Light. It opens no
+audio device; physical loop smoke belongs to DeviceCheck.
 A separate native click/focus/drag/Escape smoke uses an exact foreground guard and may report refusal.
 It requests ordinary activation only; it never bypasses the guard or exercises a native file picker. Its media/projects/PNG/JSON are ignored run artifacts,
 subject to the same rolling retention. Device-independent musical PCM checks stay in Tests.

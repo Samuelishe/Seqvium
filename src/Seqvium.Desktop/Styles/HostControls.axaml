@@ -412,6 +412,10 @@
     <Style Selector="ToggleButton.step:pressed /template/ Border#StepSurface">
         <Setter Property="BoxShadow" Value="{DynamicResource Material.Recess}" />
     </Style>
+    <Style Selector="ToggleButton.step.current /template/ Border#StepSurface">
+        <Setter Property="BorderBrush" Value="{DynamicResource Status.Playing}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource Border.Focus}" />
+    </Style>
     <Style Selector="Grid.dropReady">
         <Setter Property="Background" Value="{DynamicResource Surface.Accent}" />
     </Style>

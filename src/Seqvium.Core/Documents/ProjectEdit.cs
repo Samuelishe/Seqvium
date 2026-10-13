@@ -134,6 +134,20 @@ public sealed partial class ProjectEdit
         ChangePart(patternId, partId, part => part with { Notes = Remove(part.Notes, item => item.Id == noteId) });
     }
 
+    /// <summary>Remove a channel and its placement relationships/bindings. Graph topology repair is explicit.</summary>
+    public void DeletePart(Id<Pattern> patternId, Id<MusicalPart> partId)
+    {
+        CheckActive();
+        ChangePattern(patternId, pattern => pattern with { Parts = Remove(pattern.Parts, part => part.Id == partId) });
+        State = State with
+        {
+            Placements = [.. State.Placements.Select(placement => placement.PatternId == patternId ? placement with
+            { PartRelationships = [.. placement.PartRelationships.Where(part => part.PartId != partId)] } : placement)],
+            GraphAttachments = [.. State.GraphAttachments.Select(attachment => attachment with
+            { Sources = [.. attachment.Sources.Where(source => source.PartId != partId)] })]
+        };
+    }
+
     public Id<PatternPlacement> AddPlacement(Id<Pattern> patternId, MusicalPosition position)
     {
         CheckActive();

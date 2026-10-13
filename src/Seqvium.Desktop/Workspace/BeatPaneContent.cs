@@ -31,11 +31,16 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     private readonly StackPanel _patternControls = new() { Classes = { "tight" } };
     private readonly List<Channel> _channels = [];
     private readonly List<(MenuItem Item, string Key)> _menuLabels = [];
-    private readonly TextBlock _length = new() { Classes = { "caption" }, VerticalAlignment = VerticalAlignment.Center };
+    private readonly ComboBox _bars = new() { MinWidth = 90 };
+    private readonly Button _delete = new() { Classes = { "command", "danger" } };
+    private readonly TextBlock _position = new() { Classes = { "numeric", "success" }, VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBlock _guide = new() { Classes = { "caption" }, TextWrapping = Avalonia.Media.TextWrapping.Wrap };
     private readonly TextBlock _empty = new() { Classes = { "secondary" }, TextWrapping = Avalonia.Media.TextWrapping.Wrap, Margin = new(16) };
     private readonly TextBlock _sounds = new() { Classes = { "caption" }, VerticalAlignment = VerticalAlignment.Center };
     private readonly Grid _ruler;
+    private readonly Grid _rack;
+    private readonly List<TextBlock> _rulerCells = [];
+    private int _stepCount = BeatSteps.Count;
     private readonly ScrollViewer _rackScroll;
     private (Channel Row, BeatEditBasis Basis, bool[] Values, bool Value, int Last, IPointer Pointer)? _paint;
     private readonly Dictionary<ToggleButton, BeatEditBasis> _armed = [];
@@ -45,6 +50,8 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     private Guid _lifecycle;
     private long _generation = -1, _interaction;
     private bool _refreshing, _disposed;
+    private WorkflowState? _lastRendered;
+    private int _currentStep = -1;
     internal Task PendingCommand { get; private set; } = Task.CompletedTask;
 
     internal BeatPaneContent(ShellSession shell, DesktopWorkflow workflow, Func<BeatEditBasis, Func<bool>, Task> import)
@@ -53,22 +60,20 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         RowDefinitions = new("Auto,Auto,*,Auto");
         var toolbar = new Grid { ColumnDefinitions = new("*,Auto"), Margin = new(12, 8, 12, 8) };
         _patternControls.Children.Add(_target);
-        var rename = new Grid { ColumnDefinitions = new("*,Auto,Auto"), Classes = { "parameterRow" } };
+        var rename = new Grid { ColumnDefinitions = new("*,Auto,Auto,Auto"), Classes = { "parameterRow" } };
         rename.Children.Add(_name); SetColumn(_apply, 1); rename.Children.Add(_apply);
         _apply.Content = HostIcons.Create("Check", _apply, 16);
-        SetColumn(_length, 2); _length.Margin = new(12, 0); rename.Children.Add(_length);
+        SetColumn(_bars, 2); _bars.Margin = new(8, 0); rename.Children.Add(_bars);
+        SetColumn(_delete, 3); _delete.Content = HostIcons.Create("Close", _delete, 16); rename.Children.Add(_delete);
         _patternControls.Children.Add(rename); toolbar.Children.Add(_patternControls);
         SetColumn(_create, 1); toolbar.Children.Add(_create); Children.Add(toolbar);
         _message.Margin = new(12, 0, 12, 8); SetRow(_message, 1); Children.Add(_message);
         var rack = new Grid { RowDefinitions = new("Auto,Auto,Auto"), MinWidth = 820 };
+        _rack = rack;
         _ruler = RackRow(); _ruler.Margin = new(12, 0); _ruler.Height = 48;
         _ruler.Bind(BackgroundProperty, this.GetResourceObservable("Rack.Ruler"));
         _sounds.Margin = new(12, 0); _ruler.Children.Add(_sounds);
-        var rulerSteps = StepGroups((step) => new TextBlock {
-            Text = step % 4 == 0 ? (step / 4 + 1).ToString(System.Globalization.CultureInfo.InvariantCulture) : new[] { "", "e", "&", "a" }[step % 4],
-            Classes = { "caption" }, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
-            FontWeight = step % 4 == 0 ? Avalonia.Media.FontWeight.Bold : Avalonia.Media.FontWeight.Normal });
-        SetColumn(rulerSteps, 1); _ruler.Children.Add(rulerSteps); rack.Children.Add(_ruler);
+        RebuildRuler(); rack.Children.Add(_ruler);
         _rows.Margin = new(12, 4, 12, 8); SetRow(_rows, 1); rack.Children.Add(_rows);
         SetRow(_empty, 2); rack.Children.Add(_empty);
         _rackScroll = new() { Content = rack, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
@@ -78,9 +83,10 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         tray.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Border.Default"));
         tray.Bind(Border.BoxShadowProperty, this.GetResourceObservable("Material.Recess"));
         SetRow(tray, 2); Children.Add(tray);
-        var footer = new Grid { ColumnDefinitions = new("Auto,*"), Margin = new(12, 8, 12, 8), ColumnSpacing = 16 };
+        var footer = new Grid { ColumnDefinitions = new("Auto,*,Auto"), Margin = new(12, 8, 12, 8), ColumnSpacing = 16 };
         _add.Classes.Add("primary"); footer.Children.Add(_add);
         SetColumn(_guide, 1); _guide.VerticalAlignment = VerticalAlignment.Center; footer.Children.Add(_guide);
+        SetColumn(_position, 2); footer.Children.Add(_position);
         SetRow(footer, 3); Children.Add(footer);
         AddHandler(KeyDownEvent, (_, args) => {
             if (args.Key != Key.Escape || _paint is null) return;
@@ -109,6 +115,20 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         AutomationProperties.SetAutomationId(_create, "Beat.Create"); AutomationProperties.SetAutomationId(_add, "Beat.AddWav");
         AutomationProperties.SetAutomationId(_target, "Beat.Target"); AutomationProperties.SetAutomationId(_name, "Beat.Name");
         AutomationProperties.SetAutomationId(_apply, "Beat.ApplyName");
+        AutomationProperties.SetAutomationId(_bars, "Beat.Bars");
+        AutomationProperties.SetAutomationId(_delete, "Beat.Delete");
+        AutomationProperties.SetAutomationId(_position, "Beat.Position");
+        _bars.SelectionChanged += async (_, _) =>
+        {
+            if (_refreshing || _basis is not { } basis || _bars.SelectedIndex < 0) return;
+            CancelGesture(); PendingCommand = workflow.ResizeBeatAsync(basis, _bars.SelectedIndex + 1);
+            await PendingCommand; Refresh();
+        };
+        _delete.Click += async (_, _) =>
+        {
+            if (_basis is not { } basis) return;
+            CancelGesture(); PendingCommand = workflow.DeleteBeatAsync(basis); await PendingCommand; Refresh();
+        };
         _create.Click += async (_, _) =>
         {
             CancelGesture(); var state = workflow.State;
@@ -140,12 +160,12 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     }
 
     private Pattern? SelectedPattern() => BeatSteps.Resolve(_workflow.State).Pattern;
-    private void WorkflowChanged(WorkflowState _) => Dispatcher.UIThread.Post(() => { if (!_disposed) Refresh(); });
+    private void WorkflowChanged(WorkflowState _) => Dispatcher.UIThread.Post(() => { if (!_disposed) Refresh(false); });
     private void PreferencesChanged(object? sender, PropertyChangedEventArgs _) => Refresh();
     private void Label(Control control, string key)
     {
         string text = _shell[key]; AutomationProperties.SetName(control, text); ToolTip.SetTip(control, text);
-        if (control is Button button && button != _apply)
+        if (control is Button button && button != _apply && button != _delete)
         {
             if (button == _create && Bounds.Width < 500) { button.Content = HostIcons.Create("Add", button, 16); return; }
             var row = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "compact" } };
@@ -154,10 +174,15 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             button.Content = row;
         }
     }
-    internal void Refresh()
+    internal void Refresh(bool force = true)
     {
         if (_disposed) return;
         var observation = _workflow.State; var state = observation.Snapshot.State;
+        if (!force && _lastRendered is { } previous && previous.Document.LifecycleId == observation.Document.LifecycleId &&
+            previous.Generation == observation.Generation && previous.Selected == observation.Selected &&
+            previous.Busy == observation.Busy && previous.IsClosed == observation.IsClosed)
+        { RefreshPosition(observation); return; }
+        _lastRendered = observation;
         var (pattern, basis) = BeatSteps.Resolve(observation);
         if (_lifecycle != observation.Document.LifecycleId || _generation != observation.Generation || _basis?.Attachment != basis?.Attachment)
         {
@@ -169,6 +194,10 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         try
         {
             Label(_create, "Beat.Create"); Label(_add, "Beat.AddWav"); Label(_name, "Beat.Name"); Label(_apply, "Beat.ApplyName"); Label(_target, "Beat.Target");
+            Label(_bars, "Beat.Bars"); Label(_delete, "Beat.Delete");
+            var barLabels = Enumerable.Range(1, BeatSteps.MaximumBars).Select(i => $"{i} {_shell["Beat.BarsUnit"]}").ToArray();
+            if (!_bars.Items.OfType<string>().SequenceEqual(barLabels)) _bars.ItemsSource = barLabels;
+            _bars.SelectedIndex = pattern is null ? -1 : (int)(pattern.Length.Ticks / BeatSteps.BarTicks) - 1;
             bool available = !observation.Busy && !observation.IsClosed;
             _create.IsEnabled = available && state.Settings.Meter is { Numerator: 4, Denominator: 4 };
             string? refusal = BeatSteps.PatternRefusal(state, pattern);
@@ -177,8 +206,11 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             _empty.Text = _shell[pattern is null ? "Beat.StartHint" : "Beat.AddHint"];
             _sounds.Text = _shell["Beat.Sounds"];
             _guide.Text = _shell["Beat.PaintHint"];
-            _length.Text = refusal is null ? _shell["Beat.GridInfo"] : "";
-            _length.IsVisible = Bounds.Width >= 720;
+            _bars.IsEnabled = available && refusal is null;
+            _delete.IsEnabled = available && basis is not null;
+            int nextCount = refusal is null ? BeatSteps.StepCount(pattern!) : BeatSteps.Count;
+            bool lengthChanged = nextCount != _stepCount;
+            if (lengthChanged) { _stepCount = nextCount; RebuildRuler(); _rack.MinWidth = 210 + _stepCount * 38; }
             _create.Classes.Set("primary", pattern is null);
             _ruler.IsVisible = pattern is not null;
             foreach (var (item, key) in _menuLabels) item.Header = _shell[key];
@@ -195,7 +227,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             _add.IsVisible = pattern is not null;
             ToolTip.SetShowOnDisabled(_add, true);
             if (channelRefusal is not null) ToolTip.SetTip(_add, _shell["Beat.AddWav"] + " · " + _shell[channelRefusal]);
-            if (pattern is null || _patternId != pattern.Id || !_channels.Select(c => c.Part).SequenceEqual(pattern.Parts.Select(p => p.Id)))
+            if (lengthChanged || pattern is null || _patternId != pattern.Id || !_channels.Select(c => c.Part).SequenceEqual(pattern.Parts.Select(p => p.Id)))
             {
                 _rows.Children.Clear(); _channels.Clear(); _menuLabels.Clear(); _expired.Clear(); _patternId = pattern?.Id;
                 if (pattern is not null)
@@ -205,10 +237,10 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             {
                 var part = pattern!.Parts.Single(p => p.Id == channel.Part);
                 channel.Label.Text = part.Name; ToolTip.SetTip(channel.Label, part.Name);
-                string? partRefusal = refusal ?? BeatSteps.PartRefusal(state, part);
+                string? partRefusal = refusal ?? BeatSteps.PartRefusal(state, part, pattern.Length.Ticks);
                 channel.Warning.Text = partRefusal is null ? "" : _shell[partRefusal];
                 channel.Warning.IsVisible = partRefusal is not null;
-                for (int step = 0; step < BeatSteps.Count; step++)
+                for (int step = 0; step < _stepCount; step++)
                 {
                     var button = channel.Steps[step];
                     var notes = part.Notes.Where(n => BeatSteps.Step(n) == step).ToArray();
@@ -219,8 +251,29 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                     ToolTip.SetTip(button, text + (partRefusal is null ? " · " + _shell["Beat.Keyboard"] : " · " + _shell[partRefusal]));
                 }
             }
+            // Reset after rebuilding controls so the current column always receives the shared marker.
+            foreach (var cell in _rulerCells) cell.Classes.Remove("success");
+            foreach (var channel in _channels) foreach (var button in channel.Steps) button.Classes.Remove("current");
+            _currentStep = -1; RefreshPosition(observation);
         }
         finally { _refreshing = false; }
+    }
+
+    private void RefreshPosition(WorkflowState observation)
+    {
+        var execution = observation.Execution?.Execution;
+        bool playing = execution is { Playing: true, Looping: true } && execution.Value.AttachmentId == _basis?.Attachment;
+        int current = playing ? (int)(execution!.Value.LoopPositionTicks / BeatSteps.StepTicks) : -1;
+        _position.Text = playing ? $"{current / 16 + 1}:{current % 16 / 4 + 1}:{current % 4 + 1}" : "—";
+        AutomationProperties.SetName(_position, _shell["Beat.Position"] + " " + _position.Text);
+        if (current == _currentStep) return;
+        foreach (int step in new[] { _currentStep, current })
+        {
+            if (step < 0 || step >= _stepCount) continue;
+            _rulerCells[step].Classes.Set("success", step == current);
+            foreach (var channel in _channels) channel.Steps[step].Classes.Set("current", step == current);
+        }
+        _currentStep = current;
     }
 
     private void AddRow(MusicalPart part)
@@ -245,7 +298,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         ToolTip.SetTip(more, _shell["Beat.ChannelActions"]);
         AutomationProperties.SetName(more, _shell["Beat.ChannelActions"] + " · " + part.Name);
         AutomationProperties.SetAutomationId(more, $"Beat.Actions.{part.Id}");
-        foreach (string key in new[] { "Fill4", "Fill2", "ShiftLeft", "ShiftRight", "Clear" })
+        foreach (string key in new[] { "Fill4", "Fill2", "ShiftLeft", "ShiftRight", "Clear", "DeleteChannel" })
         {
             var item = new MenuItem { Header = _shell["Beat." + key] };
             AutomationProperties.SetAutomationId(item, $"Beat.{key}.{part.Id}");
@@ -258,15 +311,19 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 var current = _channels.FirstOrDefault(c => c.Part == part.Id);
                 if (current is null) return;
                 bool[] before = current.Steps.Select(b => b.IsChecked == true).ToArray();
-                bool[] desired = Enumerable.Range(0, 16).Select(i => key switch {
+                if (key == "DeleteChannel")
+                {
+                    CancelGesture(); PendingCommand = _workflow.DeleteBeatChannelAsync(basis, part.Id); await PendingCommand; Refresh(); return;
+                }
+                bool[] desired = Enumerable.Range(0, before.Length).Select(i => key switch {
                     "Fill4" => i % 4 == 0, "Fill2" => i % 2 == 0,
-                    "ShiftLeft" => before[(i + 1) % 16], "ShiftRight" => before[(i + 15) % 16], _ => false }).ToArray();
+                    "ShiftLeft" => before[(i + 1) % before.Length], "ShiftRight" => before[(i + before.Length - 1) % before.Length], _ => false }).ToArray();
                 CancelGesture(); PendingCommand = _workflow.SetBeatStepsAsync(basis, part.Id, desired); await PendingCommand; Refresh();
             };
             menu.Items.Add(item);
         }
         row.Children.Add(identity);
-        var buttons = new ToggleButton[BeatSteps.Count];
+        var buttons = new ToggleButton[_stepCount];
         var groups = StepGroups((step) => {
                 var button = new ToggleButton { Classes = { "step", $"channel{index % 8}" }, HorizontalAlignment = HorizontalAlignment.Stretch };
                 AutomationProperties.SetAutomationId(button, $"Beat.Step.{part.Id}.{step}");
@@ -276,10 +333,10 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 {
                     if (args.Key is Key.Enter or Key.Space) Arm(button);
                     if (args.KeyModifiers != KeyModifiers.None) return;
-                    int next = args.Key == Key.Left ? step - 1 : args.Key == Key.Right ? step + 1 : args.Key == Key.Home ? 0 : args.Key == Key.End ? 15 : step;
+                    int next = args.Key == Key.Left ? step - 1 : args.Key == Key.Right ? step + 1 : args.Key == Key.Home ? 0 : args.Key == Key.End ? _stepCount - 1 : step;
                     int currentRow = _channels.FindIndex(c => c.Part == part.Id);
                     int nextRow = args.Key == Key.Up ? currentRow - 1 : args.Key == Key.Down ? currentRow + 1 : currentRow;
-                    if ((next != step || nextRow != currentRow) && next is >= 0 and < BeatSteps.Count && nextRow >= 0 && nextRow < _channels.Count)
+                    if ((next != step || nextRow != currentRow) && next >= 0 && next < _stepCount && nextRow >= 0 && nextRow < _channels.Count)
                     { _channels[nextRow].Steps[next].Focus(); args.Handled = true; }
                 }, RoutingStrategies.Tunnel);
                 button.Click += async (_, _) =>
@@ -306,10 +363,24 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     }
 
     private static Grid RackRow() => new() { ColumnDefinitions = new("210,*") };
-    private static Grid StepGroups(Func<int, Control> create)
+    private void RebuildRuler()
     {
-        var groups = new Grid { ColumnDefinitions = new("*,*,*,*"), ColumnSpacing = 10, Margin = new(0, 0, 8, 0) };
-        for (int beat = 0; beat < 4; beat++)
+        if (_ruler.Children.Count > 1) _ruler.Children.RemoveAt(1);
+        _rulerCells.Clear();
+        var cells = StepGroups(step =>
+        {
+            var text = new TextBlock {
+                Text = step % 4 == 0 ? $"{step / 16 + 1}.{step % 16 / 4 + 1}" : new[] { "", "e", "&", "a" }[step % 4],
+                Classes = { "caption" }, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
+                FontWeight = step % 4 == 0 ? Avalonia.Media.FontWeight.Bold : Avalonia.Media.FontWeight.Normal };
+            _rulerCells.Add(text); return text;
+        });
+        SetColumn(cells, 1); _ruler.Children.Add(cells);
+    }
+    private Grid StepGroups(Func<int, Control> create)
+    {
+        var groups = new Grid { ColumnDefinitions = new(string.Join(",", Enumerable.Repeat("*", _stepCount / 4))), ColumnSpacing = 10, Margin = new(0, 0, 8, 0) };
+        for (int beat = 0; beat < _stepCount / 4; beat++)
         {
             var group = new Grid { ColumnDefinitions = new("*,*,*,*"), ColumnSpacing = 4 };
             SetColumn(group, beat); groups.Children.Add(group);

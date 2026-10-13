@@ -191,9 +191,88 @@ internal static partial class Program
         }
         Require(!await workflow.AddBeatWavAsync(BeatSteps.Resolve(workflow.State).Basis!, Path.Combine(output, "Kick.wav")), "Channel capacity incorrectly accepted a ninth channel.");
         pane.Refresh(); await CaptureAsync(main, output, "channel-limit");
+        main.WindowState = WindowState.Normal; main.Width = 1100; main.Height = 750; main.UpdateLayout();
+        var navigationToggle = main.GetVisualDescendants().OfType<Button>().Single(b => AutomationProperties.GetAutomationId(b) == "Navigator.Toggle");
+        navigationToggle.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent)); main.UpdateLayout();
+        Require(!main.GetVisualDescendants().OfType<PatternNavigator>().Single().IsVisible, "Navigator collapse failed.");
+        await CaptureAsync(main, output, "navigation-collapsed");
+        navigationToggle.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent)); main.UpdateLayout();
+        Require(main.GetVisualDescendants().OfType<PatternNavigator>().Single().IsVisible, "Navigator restore failed.");
+        await MusicalControlsAsync(shell, output);
         Json(output, "steps", new { Rows = rows, RoutedInput = "create, twelve step automation actions with synthetic pointer events, second toggle, external Undo/Redo, arrow/Space, stale held click, captured paint/skipped cells/one Undo, Escape/capture-loss erase cancellation, actual Fill popup",
             SaveOpen = "canonical identity and visible states restored", RetainedLifecycle = "dock/collapse/hide/reopen", NativeInput = native,
             AudioStarted = workflow.State.CanStop, PhysicalAudio = false });
+    }
+
+    private sealed class MusicalBorrower : IAudioOutputLifetime
+    {
+        public bool Joined { get; private set; }
+        public void Close() => Joined = true;
+        public void Dispose() => Require(Joined, "Simulated output must join.");
+    }
+
+    // Production Rack controls, real coordinator/sampler, substituted physical borrower; no sound/device.
+    private static async Task MusicalControlsAsync(ShellSession shell, string output)
+    {
+        RealtimeSampler? sampler = null;
+        await using var workflow = new DesktopWorkflow(ProjectDocument.Create(), () =>
+        {
+            sampler = new(48000, 2, 2048);
+            return new(new MusicalBorrower(), sampler, "Simulated physical borrower", () => null);
+        }, Path.Combine(output, "musical-media"));
+        await workflow.CreateBeatAsync(workflow.State.Document.LifecycleId, workflow.State.Generation, "Live rhythm");
+        foreach (var name in new[] { "Kick", "Snare", "Hi-Hat" })
+            Require(await workflow.AddBeatWavAsync(BeatSteps.Resolve(workflow.State).Basis!, Path.Combine(output, name + ".wav")), "Music fixture import failed.");
+        using var pane = new BeatPaneContent(shell, workflow, (_, _) => Task.CompletedTask);
+        var window = new Window { Width = 1000, Height = 460, Content = pane, Title = "Seqvium musical controls verification" };
+        window.Show();
+        try
+        {
+            window.UpdateLayout();
+            var bars = Field<ComboBox>(pane, "_bars"); bars.SelectedIndex = 1; await pane.PendingCommand; pane.Refresh();
+            var pattern = BeatSteps.Resolve(workflow.State).Pattern!;
+            Require(pattern.Length.Ticks == BeatSteps.BarTicks * 2, "Length selector did not extend canonical Pattern.");
+            Require(pane.GetVisualDescendants().OfType<ToggleButton>().Count() == 96, "Long Rack did not expose 32 steps per channel.");
+            Require(await workflow.ToggleBeatStepAsync(BeatSteps.Resolve(workflow.State).Basis!, pattern.Parts[0].Id, 16), "Long step failed.");
+            var play = workflow.PlayAsync(); var packet = new float[4096];
+            for (int i = 0; i < 2000 && !play.IsCompleted; i++)
+            { sampler?.Process(packet); await workflow.ObserveAsync(); await Task.Delay(1); }
+            Require(await play, "Simulated Desktop Play failed.");
+            long target = 102000;
+            while (sampler!.RenderPosition < target)
+                sampler.Process(packet.AsSpan(0, (int)Math.Min(2048, target - sampler.RenderPosition) * 2));
+            await workflow.ObserveAsync(); pane.Refresh(); window.UpdateLayout();
+            var position = Field<TextBlock>(pane, "_position");
+            Require(position.Text == "2:1:2", "Rack position does not match actual sampler phase: " + position.Text);
+            Require(pane.GetVisualDescendants().OfType<ToggleButton>().Count(b => b.Classes.Contains("current")) == 3, "Current step marker missing.");
+            Field<ScrollViewer>(pane, "_rackScroll").Offset = new(670, 0);
+            foreach (var theme in new[] { HostTheme.Dark, HostTheme.Light })
+            {
+                if (shell.Preferences.Theme != theme) await shell.ToggleThemeAsync();
+                pane.Refresh(); window.UpdateLayout(); await CaptureAsync(window, output, "live-long-" + theme);
+                var nameText = Field<TextBox>(pane, "_name").GetVisualDescendants().OfType<TextPresenter>().Single();
+                double Center(Control c) => c.TranslatePoint(default, window)!.Value.Y + c.Bounds.Height / 2;
+                Require(Math.Abs(Center(nameText) - Center(bars)) <= 1, "Length selector/name alignment failed.");
+            }
+            await workflow.StopAsync(); sampler.Process(packet); await workflow.ObserveAsync(); pane.Refresh();
+            Require(!pane.GetVisualDescendants().OfType<ToggleButton>().Any(b => b.Classes.Contains("current")), "Stop left a stale position marker.");
+            var more = pane.GetVisualDescendants().OfType<Button>().Single(b => AutomationProperties.GetAutomationId(b) == $"Beat.Actions.{pattern.Parts[1].Id}");
+            more.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            var delete = more.ContextMenu!.Items.OfType<MenuItem>().Single(m => AutomationProperties.GetAutomationId(m) == $"Beat.DeleteChannel.{pattern.Parts[1].Id}");
+            delete.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent)); await pane.PendingCommand; more.ContextMenu.Close(); pane.Refresh();
+            Require(BeatSteps.Resolve(workflow.State).Pattern!.Parts.Length == 2, "Channel menu deletion failed.");
+            Require(await workflow.UndoAsync(), "Channel deletion Undo failed."); pane.Refresh();
+            string exported = Path.Combine(output, "gui-pattern.wav");
+            Require(await workflow.ExportWaveAsync(BeatSteps.Resolve(workflow.State).Basis!, exported), "GUI workflow export failed.");
+            Field<Button>(pane, "_delete").RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent)); await pane.PendingCommand; pane.Refresh();
+            Require(workflow.State.Occurrences.Length == 0 && Field<Button>(pane, "_create").IsEnabled, "Pattern deletion left an unusable Rack.");
+            Require(await workflow.UndoAsync(), "Pattern deletion Undo failed."); pane.Refresh();
+            Json(output, "musical-controls", new { LongSteps = 96, Position = "2:1:2", CurrentColumn = 17,
+                LengthSelector = "actual selection event", ChannelDelete = "actual menu action / exact Undo",
+                PatternDelete = "actual button / Undo", Export = "graph PCM16 WAV", PhysicalAudio = false,
+                Playback = "real sampler/coordinator with substituted physical borrower" });
+        }
+        finally { window.Close(); }
     }
     private static async Task RedesignControlsAsync(MainWindow main, BeatPaneContent pane, DesktopWorkflow workflow,
         WorkspaceHost workspace, ShellSession shell, string output)

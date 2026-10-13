@@ -335,11 +335,12 @@ capabilities and tasks; the current pane reserves editor capacity rather than st
 
 ## SEQ-R5 — Pattern Workspace
 
-**In progress / partial.** The separately authorized R5-F1 finite Channel Rack/16-step workflow is
-implemented; [current state](PROJECT_STATE.md) owns evidence and limits, with completed work in the
-[archive](archive/WORK_LOG.md#seq-r5-f1--2026-10-13). Its finite one-bar Play does not close R5.
-R5-F2/F3 retain continuous Pattern loop and responsive live editing/position continuity; richer velocity
-editing remains later R5 scope. No later-stage implementation is authorized by this summary.
+**In progress / partial.** R5-F1 plus the owner-authorized SEQ-R5-MUSIC loop/live-edit slice are
+implemented: continuous Pattern playback, renderer position, compatible live step edits, 1–32 bars,
+channel/Pattern deletion, navigation collapse and selected-Pattern WAV export.
+[Current state](PROJECT_STATE.md) owns evidence and limits; [completed work](archive/WORK_LOG.md#seq-r5-music--2026-10-13)
+records the checkpoint. Richer velocity, per-channel controls and remaining musical editors still
+keep R5 partial. Bounded Pattern export does not close the later First Track/song-export stage.
 
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,
 several channels, velocity, and responsive live editing over extensible musical events.
@@ -355,15 +356,14 @@ Keep the reference-driven physical materials as editors grow; do not revert to g
 
 | Priority / scope | Desired interaction | Required implementation boundary |
 | --- | --- | --- |
-| Next, R5-F2/F3 | Continuous loop, visible actual play position, seamless live rhythm changes | Engine-owned loop/position and bounded edit publication/voice continuity; no UI-timer imitation |
 | Later R5 / R9 | Expandable velocity lane, per-note accents, richer note preview/editing | Supported intensity/duration semantics and execution; lift current unsupported-row refusal deliberately with preservation tests |
 | R5/R11 integration | Functional channel mute/solo/level/pan and sample audition | Explicit Part/Sound/routing versus transient audition scope, valid execution/Undo; no unbound decorative knobs |
 | R7/R8 and First Track R12 | Project sound browser, waveform previews and fast find/audition/drop | Existing durable-media foundation plus bounded preview decoding, cancellation and transient audio borrowing; library publication remains separate |
 | R11 / actual processing nodes | Instrument/EQ panels, meaningful signal/spectrum visualization | Real parameters/DSP and bounded measured taps delivered off the realtime/UI path; own material language and state preservation |
 | Workspace Q-032 | Independent instrument panels and comparisons | Dynamic instance/layout/target retirement and focus ownership, beyond the current reusable singleton |
 
-These are implementation follow-ups, not shipped controls or a new release schedule. Meter/longer
-patterns and multi-file drop need explicit scope/refusal design when the musical/import boundaries grow.
+These remaining follow-ups are not shipped controls or a new release schedule. Longer Patterns now
+use whole 4/4 bars with occupied-shortening refusal. Other meters and multi-file drop remain separate.
 
 ## SEQ-R6 — Extension Foundation
 

@@ -162,6 +162,32 @@ click/focus/drag/Escape and graph/Workspace gestures use exact foreground guards
 results remain separate. Captures contain actual authored fixture data, never fake product tracks.
 No new native picker/Explorer D&D, acoustic/device pressure, high-DPI or other-platform claim follows.
 
+## R5 continuous music verification
+
+`LoopPlaybackTests` verifies 4000 cycles against independent absolute tick/frame and PCM oracles at
+48 kHz/137 and 1000 BPM, 44.1 kHz/137.123456 BPM, including several boundaries within a packet.
+It checks live voice age/position/epoch, past-note insertion/erasure/Undo, superseded pending capacity,
+sticky Stop and zero warmed callback allocation. `StepSequencerTests` adds 2/3/32-bar gates/IDs/Save,
+occupied-shortening refusal, first/middle/last channel tree repair and exact Undo, selected Pattern
+removal, actual graph WAV PCM, cancellation/destination/media protection and real Desktop loop convergence.
+Default finite realtime/offline/audition, graph lifecycle, history and persistence remain covered.
+
+The final SEQ-R5-MUSIC L3 passes 1009 cases with zero failures/skips after a zero-warning full Release
+build. The initial focused L1/L2 passes 210 cases. Existing locked restore assets were reused because
+SDK/dependency inputs are unchanged. Full L3 was justified by shared scheduler/voice-publication risk;
+it resets cadence, without establishing native/physical acceptance. See the
+[report](experiments/SEQ-R5-MUSIC_REPORT.md) for commands, timing and initial failed checks.
+
+VisualCheck `steps` covers actual length/channel/Pattern/navigation controls and a simulated-output
+Rack window driven by the real workflow/coordinator/sampler. Dark/Light live renders show 96 pads and
+position 2:1:2/current column 17, followed by cleared markers on Stop; no physical audio opens there.
+The existing RU/EN ordinary/reduced matrix, catalog, field alignment and four guarded native Rack
+checks passed earlier; the final isolated native attempt refuses on foreground and is not counted
+as a pass. Native export picker and acoustic listening remain unverified. DeviceCheck `loop-smoke`
+separately plays quiet authored PCM for six seconds through WASAPI, proving live convergence with
+unchanged epoch, continued position, Stop/join and zero measured allocation/deadline failures on that
+path. It neither repeats nor closes the failing R4-F2 pressure protocol.
+
 ## Product version verification
 
 [VERSIONING](VERSIONING.md) owns identity and checkpoint authority.

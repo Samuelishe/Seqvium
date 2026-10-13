@@ -129,6 +129,21 @@ retrieved only for explicit historical tasks.
 | `0.1.0.0003` | SEQ-DESKTOP-FOUNDATIONS-F1 | One BUILD for verified Workspace input/activation, Design System v1/field alignment, Desktop Single Instance and reusable visual/process checks within existing musical capabilities. Locked restore, zero-warning ordinary/isolated Release builds, all 922 tests (908 baseline plus 14), actual RU/EN × Dark/Light renders/alignment/resource propagation and independent Windows activation/crash/timeout evidence are in the [report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md). A user-held apphost required temporary isolated output; the user session was preserved and normal output later built cleanly. Forty guarded Windows screen captures and the early five-check native subset pass; final `native-complete/matrix.json` confirms eleven native mouse/keyboard checks. The full native matrix remains incomplete after earlier guard refusals, and routed events are not native input. PATCH remains 0; F2 partial, F3-B/visual owner acceptance pending, Q-032/Q-055 open. No intermediate bump, release, commit, push or tag. |
 | `0.1.0.0004` | SEQ-R5-F1 | Verified finite Channel Rack/16-step musical editor, safe existing Mix composition and Save/Open. BUILD decision/evidence/limits are recorded in the [checkpoint](#seq-r5-f1-checkpoint) below; R5 remains partial. |
 | `0.1.0.0005` | SEQ-UI-REDESIGN | One verified BUILD for instrument UI v2, atomic row painting/actions, navigation/WAV drop, exact BPM and captured Gain dial; 435 focused tests plus final 82-case subset and actual Windows renders/guarded native checks. Existing finite musical capability, schema and DSP remain; R5 looping/live continuity and owner aesthetic acceptance stay separate. See the [report](experiments/SEQ-UI-REDESIGN_REPORT.md). |
+| `0.1.0.0006` | SEQ-R5-MUSIC | Verified continuous Pattern loop/position/live notes, 1–32 bars, atomic deletion/navigation collapse and selected-Pattern WAV export; full 1009-case Release pass, actual-window checks and short physical loop evidence under the [checkpoint](#seq-r5-music-checkpoint). R5 and R4 pressure acceptance remain partial. |
+
+### SEQ-R5-MUSIC checkpoint
+
+Identity advances once from **0.1.0.0005 to 0.1.0.0006**. BUILD classifies the verified continuous
+Pattern/live-edit and editing/export extension within the owner-selected alpha line. R5 remains
+partial without velocity/per-channel controls; Arrangement, simultaneous Patterns and processors
+beyond Gain remain missing. Retain PATCH 0 rather than declaring a finished Pattern Workspace or
+First Track checkpoint. MAJOR/MINOR and the independent format/reader/writer markers are unchanged.
+
+Final full Release build has zero warnings/errors and all 1009 automated cases pass. Actual Windows
+Rack/catalog/field matrix and bounded six-second WASAPI loop/live-edit/Stop/join pass under the
+[report](experiments/SEQ-R5-MUSIC_REPORT.md). Acoustic listening, wider native picker/platform checks
+and prior pressure acceptance remain separate. Early L3 is selected for shared audio-execution risk,
+not the version increase; cadence resets to zero. No staging, commit, push, tag or release occurs.
 
 ### SEQ-UI-REDESIGN checkpoint
 

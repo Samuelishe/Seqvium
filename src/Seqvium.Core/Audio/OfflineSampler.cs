@@ -76,6 +76,8 @@ public sealed class PreparedSampler : IDisposable
     public Id<GraphAttachment>? GraphAttachmentId => Graph?.AttachmentId;
     public long PacketWork { get; internal set; }
     public int MaximumPacketEvents { get; internal set; }
+    internal LoopClock? Loop { get; set; }
+    internal ProjectState? CanonicalBasis { get; set; }
 
     internal PreparedSampler(Guid revision, int rate, int channels, int capacity, long start, long end, int zero,
         ImmutableArray<PreparedNote> notes, ImmutableArray<PreparedEvent> events, PcmLease[] sources,
@@ -248,8 +250,14 @@ public static class SamplerPreparation
                 .ThenBy(item => item.Occurrence?.PartId.Value).ThenBy(item => item.Occurrence?.NoteId.Value)
                 .ThenBy(item => item.Occurrence?.Iteration).ToImmutableArray();
             ValidateCapacity(sorted, notes, sources, voiceCapacity, last);
+            var clock = new LoopClock(start.Ticks, pattern.Length.Ticks, state.Settings.Tempo, sampleRate);
+            // Different tick boundaries must stay ordered after every fractional-frame loop shift.
+            // Sub-frame content retains finite execution instead of silently losing/reordering events.
+            var boundaries = sorted.Select(item => item.Position.Ticks).Distinct().Order().ToArray();
+            bool loopable = repeats == 1 && zero == 0 && clock.SpansFrame(pattern.Length.Ticks) &&
+                boundaries.Zip(boundaries.Skip(1), (left, right) => clock.SpansFrame(right - left)).All(distinct => distinct);
             return new(snapshot.Revision, sampleRate, channels, voiceCapacity, first, last, zero, notes.ToImmutable(),
-                sorted, [.. sources], graph);
+                sorted, [.. sources], graph) { Loop = loopable ? clock : null, CanonicalBasis = state };
         }
         catch
         {
@@ -283,6 +291,7 @@ public sealed class OfflineSampler : IDisposable
     private sealed class Voice
     {
         internal PreparedNote? Note;
+        internal int NoteIndex;
         internal long Age;
         internal int ReleaseAge = -1;
     }
@@ -295,7 +304,11 @@ public sealed class OfflineSampler : IDisposable
     private readonly float[][]? _signals;
     private float[]? _coefficients;
     private int _lastSamples;
+    private bool _looping;
+    private long _iteration;
     public long Position { get; private set; }
+    internal long LoopPositionTicks => _looping && _plan.Loop is { } clock
+        ? Math.Clamp(clock.Ticks(Position) - clock.StartTicks - _iteration * clock.LengthTicks, 0, clock.LengthTicks - 1) : 0;
 
     public int ActiveVoices
     {
@@ -330,7 +343,36 @@ public sealed class OfflineSampler : IDisposable
         _stopped = false;
         _eventIndex = 0;
         Position = _plan.StartFrame;
+        _iteration = 0;
     }
+
+    internal void SetLooping(bool looping) => _looping = looping && _plan.Loop is not null;
+
+    // Mapping is constructed by the control owner, never searched/allocated in the callback.
+    internal void ContinueFrom(OfflineSampler old, int[] notes)
+    {
+        Position = old.Position; _iteration = old._iteration; _stopped = old._stopped;
+        int first = 0, last = _plan.Events.Length;
+        while (first < last)
+        {
+            int middle = first + (last - first) / 2;
+            if (EventFrame(_plan.Events[middle]) < Position) first = middle + 1;
+            else last = middle;
+        }
+        _eventIndex = first;
+        for (int index = 0; index < old._voices.Length; index++)
+        {
+            var source = old._voices[index];
+            if (source.Note is null || notes[source.NoteIndex] < 0) continue;
+            var destination = _voices[index];
+            destination.NoteIndex = notes[source.NoteIndex];
+            destination.Note = _plan.Notes[destination.NoteIndex];
+            destination.Age = source.Age; destination.ReleaseAge = source.ReleaseAge;
+        }
+    }
+
+    private long EventFrame(PreparedEvent item) => _looping && _plan.Loop is { } clock
+        ? clock.Frame(item.Position.Ticks + _iteration * clock.LengthTicks) : item.Frame;
 
     public void Stop()
     {
@@ -347,7 +389,7 @@ public sealed class OfflineSampler : IDisposable
         int frames = interleavedOutput.Length / _plan.Channels;
         if (_plan.Graph is { } prepared && frames > prepared.MaximumPacketFrames)
             throw new ArgumentOutOfRangeException(nameof(interleavedOutput), "Graph packet exceeds prepared capacity.");
-        if (frames > _plan.EndFrame - Position)
+        if (!_looping && frames > _plan.EndFrame - Position)
             throw new ArgumentOutOfRangeException(nameof(interleavedOutput),
                 "Block exceeds the prepared end boundary.");
         interleavedOutput.Clear();
@@ -356,6 +398,13 @@ public sealed class OfflineSampler : IDisposable
             foreach (var signal in _signals) signal.AsSpan(0, _lastSamples).Clear();
         for (int frame = 0; frame < frames; frame++)
         {
+            if (_looping && _plan.Loop is { } clock &&
+                Position >= clock.Frame(clock.StartTicks + (_iteration + 1) * clock.LengthTicks))
+            {
+                // Source gates end at the musical boundary; the next sample starts in this same packet.
+                foreach (var voice in _voices) voice.Note = null;
+                _iteration++; _eventIndex = 0;
+            }
             ApplyEvents();
             foreach (var voice in _voices)
             {
@@ -409,7 +458,7 @@ public sealed class OfflineSampler : IDisposable
         }
 
         // Events at block end belong to the following block, except final retirement is immediate.
-        if (Position == _plan.EndFrame) Stop();
+        if (!_looping && Position == _plan.EndFrame) Stop();
     }
 
     /// <summary>Single-owner bounded diagnostics for the most recently processed packet, before or after Mix.</summary>
@@ -424,12 +473,12 @@ public sealed class OfflineSampler : IDisposable
 
     private void ApplyEvents()
     {
-        while (_eventIndex < _plan.Events.Length && _plan.Events[_eventIndex].Frame == Position)
+        while (_eventIndex < _plan.Events.Length && EventFrame(_plan.Events[_eventIndex]) <= Position)
         {
             var item = _plan.Events[_eventIndex++];
             if (item.Kind == ExecutionEventKind.Stop)
             {
-                Stop();
+                if (!_looping) Stop();
                 continue;
             }
 
@@ -455,6 +504,7 @@ public sealed class OfflineSampler : IDisposable
 
                 if (voice is null) throw new InvalidOperationException("Prepared voice capacity invariant failed.");
                 voice.Note = _plan.Notes[item.NoteIndex];
+                voice.NoteIndex = item.NoteIndex;
                 voice.Age = 0;
                 voice.ReleaseAge = -1;
             }

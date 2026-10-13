@@ -13,6 +13,7 @@ internal sealed class WorkspaceRail : Border, IDisposable
     private readonly ShellSession _shell;
     private readonly WorkspaceHost _host;
     private readonly Dictionary<string, Button> _buttons = [];
+    internal Button NavigationToggle { get; } = new() { Classes = { "rail" } };
 
     internal WorkspaceRail(ShellSession shell, WorkspaceHost host)
     {
@@ -22,6 +23,9 @@ internal sealed class WorkspaceRail : Border, IDisposable
         this.Bind(BorderBrushProperty, this.GetResourceObservable("Border.Default"));
         BorderThickness = new(0, 0, 1, 0);
         var body = new StackPanel { Margin = new(7, 10), Classes = { "spaced" } }; Child = body;
+        NavigationToggle.Content = HostIcons.Create("More", NavigationToggle, 20);
+        AutomationProperties.SetAutomationId(NavigationToggle, "Navigator.Toggle");
+        body.Children.Add(NavigationToggle);
         foreach (var (id, icon) in new[] { (WorkspaceState.BeatId, "Rack"), (WorkspaceState.GraphId, "Graph"),
                      (WorkspaceState.NodeEditorId, "Sound"), (WorkspaceState.InspectorId, "Inspector"), (WorkspaceState.AppearanceId, "Theme") })
         {
@@ -36,6 +40,8 @@ internal sealed class WorkspaceRail : Border, IDisposable
     private void PreferencesChanged(object? sender, PropertyChangedEventArgs args) => Refresh();
     private void Refresh()
     {
+        AutomationProperties.SetName(NavigationToggle, _shell["Navigator.Toggle"]);
+        ToolTip.SetTip(NavigationToggle, _shell["Navigator.Toggle"]);
         foreach (var (id, button) in _buttons)
         {
             string label = _shell[WorkspaceState.Definition(id).TitleKey];

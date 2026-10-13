@@ -8,6 +8,24 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-R5-MUSIC — 2026-10-13
+
+Completed the owner's musical follow-up: continuous selected-Pattern Play and actual renderer phase,
+live note/row edits preserving position and unchanged voices, 1–32 bars, atomic channel/Pattern
+deletion/Undo, navigation collapse and graph-processed selected-Pattern PCM16 WAV export. Existing
+canonical time, document/history, media, graph and output lifetimes are reused without dependencies,
+schema changes or a second engine. Arrangement/concurrent Patterns, song export, velocity and effects
+beyond Gain remain future work; R5 and the earlier R4-F2 pressure acceptance remain partial.
+
+Final full Release build has zero warnings/errors and all 1009 tests pass; early L3 is selected for
+shared realtime execution/publication risk, resetting cadence to zero. Actual Windows steps/catalog/
+field matrix and bounded six-second physical WASAPI loop/live-edit/Stop/join pass. Native/routed/
+simulated borrower and physical evidence are distinguished in the
+[report](../experiments/SEQ-R5-MUSIC_REPORT.md), including corrected initial checks and retained local
+artifacts. Owner declares the previous visual redesign complete. One BUILD advances 0.1.0.0005 to
+0.1.0.0006; no release, staging, commit or push. Initial Git status was clean; permanent new source,
+tests and verification tools remain for user review, and generated evidence stays ignored locally.
+
 ## 2026-10-06 — SEQ-KB-R0
 
 - Established English canonical owner documents, a compact agent entry point, public README,

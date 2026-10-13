@@ -178,6 +178,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 _cancellation?.Dispose();
                 _cancellation = new();
                 _request = _sampler.BeginGraphPreparation(_document, _target, _voices, _repeats);
+                // The sampler compares against its actual active basis, including superseded pending handoffs.
+                _request.PreservePlayback = _repeats == 1;
                 _request.PreparationGate = _gate;
                 _busy = true; _preparations++;
                 _work = PrepareAsync(_request, snapshot, _desired, _cancellation.Token);
@@ -237,10 +239,14 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         _executionRevision = snapshot.Revision; _startAuthority = request.Authority; _blocker = null;
     }
 
-    private static bool SameExecution(ProjectState left, ProjectState right, bool ignoreGain)
+    internal static bool SameExecution(ProjectState left, ProjectState right, bool ignoreGain, bool ignoreNotes = false)
     {
         ProjectState Normalize(ProjectState state) => state with
         {
+            Patterns = ignoreNotes ? [.. state.Patterns.Select(pattern => pattern with
+            {
+                Name = "", Parts = [.. pattern.Parts.Select(part => part with { Notes = [] })]
+            })] : state.Patterns,
             Graphs = [.. state.Graphs.OrderBy(item => item.Id.Value).Select(graph => graph with
             {
                 Nodes = [.. graph.Nodes.OrderBy(item => item.Id.Value).Select(node => node with

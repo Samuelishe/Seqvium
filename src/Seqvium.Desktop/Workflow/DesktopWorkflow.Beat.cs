@@ -18,7 +18,7 @@ internal sealed partial class DesktopWorkflow
     });
 
     private (Pattern Pattern, PatternPlacement Placement, GraphAttachment Attachment, GraphDefinition Graph)
-        ValidateBeatBasis(BeatEditBasis basis)
+        ValidateBeatBasis(BeatEditBasis basis, bool requireGrid = true)
     {
         if (_closed || _document.LifecycleId != basis.Lifecycle || _document.Generation != basis.Generation ||
             _selected != basis.Attachment) throw new InvalidOperationException("Beat.Stale");
@@ -28,7 +28,7 @@ internal sealed partial class DesktopWorkflow
         var placement = state.Placements.SingleOrDefault(p => p.ItemContextId == attachment.ContextId && p.PatternId == basis.Pattern)
             ?? throw new InvalidOperationException("Beat.Stale");
         var pattern = state.Patterns.Single(p => p.Id == basis.Pattern);
-        if (BeatSteps.PatternRefusal(state, pattern) is { } refusal) throw new InvalidOperationException(refusal);
+        if (requireGrid && BeatSteps.PatternRefusal(state, pattern) is { } refusal) throw new InvalidOperationException(refusal);
         return (pattern, placement, attachment, state.Graphs.Single(g => g.Id == attachment.GraphId));
     }
 
@@ -71,15 +71,14 @@ internal sealed partial class DesktopWorkflow
     {
         var (pattern, _, _, _) = ValidateBeatBasis(basis);
         var part = pattern.Parts.SingleOrDefault(p => p.Id == partId) ?? throw new InvalidOperationException("Beat.Stale");
-        if (BeatSteps.PartRefusal(_document.Current.State, part) is { } refusal) throw new InvalidOperationException(refusal);
+        if (BeatSteps.PartRefusal(_document.Current.State, part, pattern.Length.Ticks) is { } refusal) throw new InvalidOperationException(refusal);
+        if (step < 0 || step >= BeatSteps.StepCount(pattern)) throw new ArgumentOutOfRangeException(nameof(step));
         var position = BeatSteps.Position(step);
         var existing = part.Notes.SingleOrDefault(n => n.Position == position);
         var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters["rootPitch"];
-        // Stop before publication; F1 editing requires a fresh explicit Play from the start.
-        _playGeneration++; _coordinator?.Stop();
         bool changed = _document.Edit(existing is null ? "Enable beat step" : "Disable beat step", edit =>
         {
-            if (existing is null) edit.AddNote(pattern.Id, part.Id, position, BeatSteps.Duration(step), root, 1m);
+            if (existing is null) edit.AddNote(pattern.Id, part.Id, position, BeatSteps.Duration(step, pattern.Length.Ticks), root, 1m);
             else edit.DeleteNote(pattern.Id, part.Id, existing.Id);
         });
         _status = "Workflow.Ready";
@@ -93,20 +92,19 @@ internal sealed partial class DesktopWorkflow
         var desired = steps.ToArray();
         return Command("Workflow.EditFailed", () =>
         {
-            if (desired.Length != BeatSteps.Count) throw new ArgumentException("Expected sixteen steps.", nameof(steps));
             var (pattern, _, _, _) = ValidateBeatBasis(basis);
+            if (desired.Length != BeatSteps.StepCount(pattern)) throw new ArgumentException("Step count must match Pattern length.", nameof(steps));
             var part = pattern.Parts.SingleOrDefault(p => p.Id == partId) ?? throw new InvalidOperationException("Beat.Stale");
-            if (BeatSteps.PartRefusal(_document.Current.State, part) is { } refusal) throw new InvalidOperationException(refusal);
+            if (BeatSteps.PartRefusal(_document.Current.State, part, pattern.Length.Ticks) is { } refusal) throw new InvalidOperationException(refusal);
             var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters["rootPitch"];
-            bool differs = Enumerable.Range(0, BeatSteps.Count).Any(i => desired[i] != part.Notes.Any(n => BeatSteps.Step(n) == i));
+            bool differs = Enumerable.Range(0, desired.Length).Any(i => desired[i] != part.Notes.Any(n => BeatSteps.Step(n) == i));
             if (!differs) return Task.FromResult(false);
-            _playGeneration++; _coordinator?.Stop();
             bool changed = _document.Edit("Edit channel rhythm", edit =>
             {
                 for (int i = 0; i < desired.Length; i++)
                 {
                     var existing = part.Notes.SingleOrDefault(n => BeatSteps.Step(n) == i);
-                    if (desired[i] && existing is null) edit.AddNote(pattern.Id, part.Id, BeatSteps.Position(i), BeatSteps.Duration(i), root, 1m);
+                    if (desired[i] && existing is null) edit.AddNote(pattern.Id, part.Id, BeatSteps.Position(i), BeatSteps.Duration(i, pattern.Length.Ticks), root, 1m);
                     else if (!desired[i] && existing is not null) edit.DeleteNote(pattern.Id, part.Id, existing.Id);
                 }
             });
@@ -117,12 +115,12 @@ internal sealed partial class DesktopWorkflow
 
     /// <summary>Recognize a fully connected source/mix tree feeding the sole Gain → Output.
     /// No arbitrary graph is rebuilt; only its known final input cable is replaced.</summary>
-    internal static string? BeatChannelRefusal(ProjectState state, Pattern pattern, GraphAttachment attachment, GraphDefinition graph)
+    internal static string? BeatChannelRefusal(ProjectState state, Pattern pattern, GraphAttachment attachment, GraphDefinition graph, bool adding = true)
     {
         if (BeatSteps.PatternRefusal(state, pattern) is { } refusal) return refusal;
         if (state.Placements.Count(p => p.PatternId == pattern.Id) != 1) return "Beat.SharedChannels";
         int count = pattern.Parts.Length;
-        if (count >= GraphDiagnostics.MaximumSources || graph.Nodes.Length + (count == 0 ? 1 : 2) > GraphDiagnostics.MaximumNodes)
+        if (adding && (count >= GraphDiagnostics.MaximumSources || graph.Nodes.Length + (count == 0 ? 1 : 2) > GraphDiagnostics.MaximumNodes))
             return "Beat.ChannelLimit";
         if (!graph.AdditionalData.IsEmpty || !attachment.AdditionalData.IsEmpty ||
             graph.Nodes.SelectMany(n => n.Ports).Any(p => p.Layout != GraphBuiltIns.Stereo) ||
@@ -148,6 +146,67 @@ internal sealed partial class DesktopWorkflow
         else if (!report.IsEligibleForPreparation) return "Beat.GraphUnsupported";
         return null;
     }
+
+    internal Task<bool> ResizeBeatAsync(BeatEditBasis basis, int bars) => Command("Workflow.EditFailed", () =>
+    {
+        var (pattern, _, _, _) = ValidateBeatBasis(basis);
+        if (bars is < 1 or > BeatSteps.MaximumBars) throw new ArgumentOutOfRangeException(nameof(bars));
+        long length = bars * BeatSteps.BarTicks;
+        if (length == pattern.Length.Ticks) return Task.FromResult(false);
+        if (pattern.Parts.Any(part => BeatSteps.PartRefusal(_document.Current.State, part, pattern.Length.Ticks) is not null))
+            throw new InvalidOperationException("Beat.NotesUnsupported");
+        if (pattern.Parts.SelectMany(part => part.Notes).Any(note => note.Position.Ticks >= length))
+            throw new InvalidOperationException("Beat.ShortenOccupied");
+        _playGeneration++; _coordinator?.Stop();
+        return Task.FromResult(_document.Edit("Change Pattern length", edit =>
+        {
+            foreach (var part in pattern.Parts)
+                foreach (var note in part.Notes)
+                    edit.UpdateNote(pattern.Id, part.Id, note.Id, note.Position,
+                        BeatSteps.Duration(BeatSteps.Step(note)!.Value, length), note.Pitch, note.Intensity);
+            edit.SetPatternLength(pattern.Id, new(length));
+        }));
+    });
+
+    internal Task<bool> DeleteBeatAsync(BeatEditBasis basis) => Command("Workflow.EditFailed", () =>
+    {
+        var (pattern, _, _, _) = ValidateBeatBasis(basis, requireGrid: false);
+        _playGeneration++; _coordinator?.Stop();
+        return Task.FromResult(_document.Edit("Delete Pattern and occurrences", edit =>
+        {
+            foreach (var placement in _document.Current.State.Placements.Where(p => p.PatternId == pattern.Id))
+                edit.DeletePlacement(placement.Id);
+            edit.DeletePattern(pattern.Id);
+        }));
+    });
+
+    internal Task<bool> DeleteBeatChannelAsync(BeatEditBasis basis, Id<MusicalPart> partId) => Command("Workflow.EditFailed", () =>
+    {
+        var (pattern, _, attachment, graph) = ValidateBeatBasis(basis);
+        if (BeatChannelRefusal(_document.Current.State, pattern, attachment, graph, adding: false) is { } refusal)
+            throw new InvalidOperationException(refusal);
+        var part = pattern.Parts.Single(p => p.Id == partId);
+        var source = attachment.Sources.Single(binding => binding.PartId == partId);
+        var cable = graph.Connections.Single(edge => edge.FromNodeId == source.NodeId);
+        var destination = graph.Nodes.Single(node => node.Id == cable.ToNodeId);
+        _playGeneration++; _coordinator?.Stop();
+        return Task.FromResult(_document.Edit("Delete WAV channel", edit =>
+        {
+            if (destination.Type == GraphBuiltIns.Mix)
+            {
+                var sibling = graph.Connections.Single(edge => edge.ToNodeId == destination.Id && edge.Id != cable.Id);
+                var onward = graph.Connections.Single(edge => edge.FromNodeId == destination.Id);
+                edit.DeleteGraphNode(graph.Id, destination.Id);
+                edit.ConnectGraphPorts(graph.Id, sibling.FromNodeId, sibling.FromPortId, onward.ToNodeId, onward.ToPortId);
+            }
+            edit.DeleteGraphNode(graph.Id, source.NodeId);
+            edit.DeletePart(pattern.Id, partId);
+            edit.SetContextMix(attachment.ContextId, pattern.Parts.Length > 2);
+            var state = _document.Current.State;
+            if (!state.Patterns.SelectMany(p => p.Parts).Any(p => p.Id != partId && p.SoundId == part.SoundId) &&
+                !state.Groups.Any(group => group.SoundIds.Contains(part.SoundId))) edit.DeleteSound(part.SoundId);
+        }));
+    });
 
     internal Task<bool> AddBeatWavAsync(BeatEditBasis basis, string path, CancellationToken cancellation = default)
         => Command("Workflow.ImportFailed", async () =>

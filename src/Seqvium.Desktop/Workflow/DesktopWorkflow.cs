@@ -81,7 +81,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
                 }
                 catch (Exception error) { _status = "Workflow.DeviceFault"; _detail = error.Message; Publish(); }
             }, null);
-        }, null, 100, 100);
+        }, null, 50, 50);
         _owner.Post(_ => Publish(), null);
     }
 
@@ -242,6 +242,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             }
         }
         _status = "Workflow.Preparing"; Publish();
+        _output!.Sampler.SetLooping(true);
         for (int wait = 0; wait < 1500 && generation == _playGeneration; wait++)
         {
             var status = _coordinator!.ReadStatus();
@@ -347,7 +348,8 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         string? detail = _detail;
         bool actionFailure = _status.EndsWith("Failed", StringComparison.Ordinal) || _status == "Workflow.DeviceFault";
         // Import progress remains observable even while an empty Beat graph has no Source yet.
-        if (!actionFailure && !(_busy && _status == "Workflow.Importing"))
+        bool exportResult = _status is "Workflow.Exporting" or "Workflow.Exported" or "Workflow.ExportClipped";
+        if (!actionFailure && !exportResult && !(_busy && _status == "Workflow.Importing"))
         {
             if (execution?.Blocker is { } blocker) { statusKey = "Workflow.Blocked"; detail = blocker; }
             else if (execution?.PreparationPending == true) statusKey = "Workflow.Preparing";
