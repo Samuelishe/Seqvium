@@ -134,6 +134,30 @@ NuGet packages restored, production assemblies created or CMake/Ninja selected. 
 `Directory.Build.props` enforces nullable/warnings-as-errors. These experimental facts do not select
 the production audio SDK/topology.
 
+## Local development resources
+
+The home-machine setup keeps personal material outside the repository:
+
+- `%USERPROFILE%/Music/Seqvium Sample Library/Ready`: categorized WAVs for the existing file picker or
+  single-file Rack drop. `Originals` preserves downloaded members; `Sources` keeps official source
+  pages/notices and archive indexes; JSON/CSV catalogs and receipts record exact paths, licenses,
+  hashes and any preparation. Read the local `README.md` before sharing/exporting standalone content.
+- `%USERPROFILE%/Documents/Seqvium Resources/Design References`: private owner images, stable IDs,
+  searchable `index.html`, original provenance/identification confidence and `DESIGN-BRIEF.md`.
+- `%USERPROFILE%/Documents/Seqvium Resources/Tools` and `Verification`: local preparation scripts,
+  isolated preview tooling and read-only WAV audit evidence. Pillow is local to that Tools directory,
+  not a product dependency or globally required Python package.
+
+These are optional machine-local inputs, not bundled assets, automatic Browser roots or application
+settings. Other contributors need no personal files to build/test/launch Seqvium. Do not add WAVs,
+archives, images, source snapshots or private catalogs to Git or use them as required test fixtures.
+Accepted project media still follows the existing durable import boundary; the external library is
+not a managed project-media directory. Preserve original audio and source pitch/BPM/chord metadata;
+sampler-root configuration is distinct from file format compatibility. Existing user preferences and
+projects are not replaced by resource preparation. GUI captures stay in ignored `.artifacts/` under
+the existing retention policy. [UI design](UI_DESIGN.md#reference-library-and-next-editor-direction)
+owns transferable decisions; private catalogs own per-image/source provenance, never public assets.
+
 ## Version authority
 
 [VERSIONING](VERSIONING.md) owns product identity and checkpoint authority. Root

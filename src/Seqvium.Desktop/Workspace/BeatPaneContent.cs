@@ -34,7 +34,6 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     private readonly ComboBox _bars = new() { MinWidth = 90 };
     private readonly Button _delete = new() { Classes = { "command", "danger" } };
     private readonly TextBlock _position = new() { Classes = { "numeric", "success" }, VerticalAlignment = VerticalAlignment.Center };
-    private readonly TextBlock _guide = new() { Classes = { "caption" }, TextWrapping = Avalonia.Media.TextWrapping.Wrap };
     private readonly TextBlock _empty = new() { Classes = { "secondary" }, TextWrapping = Avalonia.Media.TextWrapping.Wrap, Margin = new(16) };
     private readonly TextBlock _sounds = new() { Classes = { "caption" }, VerticalAlignment = VerticalAlignment.Center };
     private readonly Grid _ruler;
@@ -85,7 +84,6 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         SetRow(tray, 2); Children.Add(tray);
         var footer = new Grid { ColumnDefinitions = new("Auto,*,Auto"), Margin = new(12, 8, 12, 8), ColumnSpacing = 16 };
         _add.Classes.Add("primary"); footer.Children.Add(_add);
-        SetColumn(_guide, 1); _guide.VerticalAlignment = VerticalAlignment.Center; footer.Children.Add(_guide);
         SetColumn(_position, 2); footer.Children.Add(_position);
         SetRow(footer, 3); Children.Add(footer);
         AddHandler(KeyDownEvent, (_, args) => {
@@ -205,7 +203,8 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             _empty.IsVisible = pattern is null || pattern.Parts.IsEmpty;
             _empty.Text = _shell[pattern is null ? "Beat.StartHint" : "Beat.AddHint"];
             _sounds.Text = _shell["Beat.Sounds"];
-            _guide.Text = _shell["Beat.PaintHint"];
+            ToolTip.SetTip(_position, _shell["Beat.PaintHint"]);
+            AutomationProperties.SetHelpText(_rack, _shell["Beat.PaintHint"]);
             _bars.IsEnabled = available && refusal is null;
             _delete.IsEnabled = available && basis is not null;
             int nextCount = refusal is null ? BeatSteps.StepCount(pattern!) : BeatSteps.Count;
@@ -248,7 +247,9 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                     button.IsEnabled = available && partRefusal is null;
                     string text = $"{part.Name} · {_shell["Beat.Step"]} {step + 1} · {_shell[notes.Length > 0 ? "Beat.On" : "Beat.Off"]}";
                     AutomationProperties.SetName(button, text);
-                    ToolTip.SetTip(button, text + (partRefusal is null ? " · " + _shell["Beat.Keyboard"] : " · " + _shell[partRefusal]));
+                    ToolTip.SetTip(button, text + (partRefusal is null
+                        ? " · " + _shell["Beat.Keyboard"] + " · " + _shell["Beat.PaintHint"]
+                        : " · " + _shell[partRefusal]));
                 }
             }
             // Reset after rebuilding controls so the current column always receives the shared marker.

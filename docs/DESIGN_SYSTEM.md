@@ -2,8 +2,10 @@
 
 Role: Technical catalog for the implemented first-party Desktop visual API.
 Read when: Creating or changing any first-party control, window, pane, drawing, or shared style.
-Authoritative for: Token/component use, supported variants, template integration, exceptions, and shared-style verification.
-Not authoritative for: Visual principles, musical/workspace behavior, product acceptance, or independently maintained numeric/color values.
+Authoritative for: Token/component use, supported variants, template integration, exceptions, and shared-style
+verification.
+Not authoritative for: Visual principles, musical/workspace behavior, product acceptance, or independently maintained
+numeric/color values.
 
 ## Ownership and entry points
 
@@ -29,7 +31,7 @@ All color roles exist in Dark and Light. `HostPalette.For` is also the fallback 
 drawing control; application resources are the live authority after attachment.
 
 | Category | Implemented semantic roles | Use |
-| --- | --- | --- |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Surfaces | `Surface.Background`, `Surface.Raised`, `Surface.Workspace` | Application, pane/header/popup, working canvas |
 | Interaction surfaces | `Surface.Hover`, `Surface.Pressed`, `Surface.Selected`, `Surface.Accent` | Shared control states and selection |
 | Status surfaces | `Surface.Playing`, `Surface.Critical` | Active transport and destructive hover |
@@ -47,7 +49,7 @@ drawing control; application resources are the live authority after attachment.
 Geometry and typography resources are declared in `HostMetrics.Values` and its typed `Resources`:
 
 | Category | Resources | Use |
-| --- | --- | --- |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | Shell/chrome | `Chrome.Height`, `Toolbar.Height`, `Status.Height`, `Chrome.ButtonWidth`, `Pane.HeaderHeight`, `Pane.Corner` | Shared frame and pane chrome |
 | Controls | `Control.Height`, `Control.InputHeight`, `Control.ComfortableHeight`, `Control.IconWidth`, `Control.StatusHeight`, `Control.Corner` | Default, editable, modal, icon and status variants |
 | Boundaries | `Border.Width`, `Focus.Width`, `Border.Control`, `Border.Top`, `Border.Bottom`, `Border.Focus` | Drawing widths and typed control/frame thicknesses |
@@ -63,10 +65,18 @@ Colors are semantic values. Geometry's spacing scale is the small base vocabular
 roles give those values a purpose. Shape, graph coordinates, menu placement, content-specific widths
 and pane layout bounds remain composition/interaction geometry, rather than hundreds of universal tokens.
 
+Dark/Light have equal visual-quality goals under [theme parity](UI_DESIGN.md#theme-parity-and-control-economy).
+Light's Rack.Step roles also supply the saturated Playlist bodies; Rack.Channel roles supply their
+deeper note/identity ink and checked-pad bodies. Keep those pairs coherent when changing either theme.
+HostPresentation checks note/body and checked-indicator contrast; actual material overlays, glow,
+focus/selection and sparse/dense content still require image review. Do not lighten channel ink and
+then compensate with a separate local palette. The current Dark values are unaffected by the home
+preparation; actual values remain source-owned.
+
 ## Standard controls and variants
 
 | Component | Default / supported classes | Guidance |
-| --- | --- | --- |
+| --------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Button | Default standard; `primary`, `compact`, `command`/`icon`, `danger`/`critical`, `comfortable` | Standard commands, principal action, dense input action, named vector icon, destructive action, owned-modal action |
 | Transport/status Button | `play` with `active`; `status` with `warning`/`error`/`playing` | Existing transport and status surfaces; keep the deliberate semantic exception |
 | Numeric input | TextBox `numeric`; NumericUpDown | Use committed TextBox sessions where a transaction must be atomic; NumericUpDown remains the existing quick control. Styling does not merge their edit semantics |
@@ -125,8 +135,8 @@ one DIP on the real GUI tree; toolbar Gain, Graph quick Gain and Node Editor are
 matrix. Apply this check when introducing another parameter row. This is geometric alignment,
 not a claim that unrelated typefaces have identical optical baselines.
 
-Toolbar Gain retains the existing numeric template and alignment, with committed fractional input
-(Enter/focus loss), local invalid feedback and Escape restoration. Floating 24-DIP corner grips have
+Toolbar Gain retains the existing numeric template and alignment, with committed fractional input (Enter/focus loss),
+local invalid feedback and Escape restoration. Floating 24-DIP corner grips have
 a matching 24-DIP hit region; straight frame edges retain the six-DIP band.
 
 ## New components, drawing and exceptions
@@ -159,7 +169,8 @@ Instance tests, the component catalog and rendered field-alignment checks. Selec
 geometries from the affected controls; full suite and full GUI/native matrix follow the risk/cadence
 rules in [TEST_EXECUTION](TEST_EXECUTION.md#required-verification-levels). Inspect screenshots in both themes;
 check actual hit targets, focus, disabled/error states, labels/disclosure and localized minimum sizes.
-The cheap source guard rejects literal HEX colors outside HostPalette and missing palette/metric/material style resources.
+The cheap source guard rejects literal HEX colors outside HostPalette and missing palette/metric/material style
+resources.
 It does not replace image review or detect every possible programmatic hardcoded color expression.
 The compatibility aliases are tied to actual installed Fluent templates: recheck their names and
 rendered behavior when upgrading Avalonia. Evidence/acceptance limits belong to

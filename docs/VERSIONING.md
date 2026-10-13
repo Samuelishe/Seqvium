@@ -1,9 +1,12 @@
 # Product versioning
 
 Role: Canonical product identity and checkpoint policy.
-Read when: Changing production/test/product resource files, choosing a version checkpoint, or displaying runtime identity.
-Authoritative for: Product syntax, component authority, checkpoint gates, MSBuild source, runtime display, and version ledger.
-Not authoritative for: Roadmap acceptance, project format/schema, SDK/dependencies, ABI, devices, packaging, or release publication.
+Read when: Changing production/test/product resource files, choosing a version checkpoint, or displaying runtime
+identity.
+Authoritative for: Product syntax, component authority, checkpoint gates, MSBuild source, runtime display, and version
+ledger.
+Not authoritative for: Roadmap acceptance, project format/schema, SDK/dependencies, ABI, devices, packaging, or release
+publication.
 
 ## Syntax and representations
 
@@ -17,7 +20,7 @@ labels nor `+SHA` are part of human-readable product identity.
 ## Authority and change gates
 
 | Component | Authority | Meaning and evidence |
-| --- | --- | --- |
+| ----------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | MAJOR | Project owner only | A major mature product generation or explicit release milestone. Never automatically assign `1.0`. |
 | MINOR | Project owner only | A major product/roadmap line with a substantially new capability set. Codex may propose, never independently apply. |
 | PATCH | Owner; Codex under the gates below | A completed, verified substantial standalone user capability or major functional block, judged by product capability rather than diff size or commits. |
@@ -61,7 +64,7 @@ and the independent R0 probe retain their SDK/default identity. Future productio
 an explicit scope update; a tool does not acquire product identity merely by its project name.
 
 | MSBuild property | Derived value |
-| --- | --- |
+| ---------------------------------------------------------------------- | --------------------------------------- |
 | `SeqviumDisplayVersion`, `InformationalVersion` | Padded display representation |
 | `SeqviumNumericVersion`, `Version`, `AssemblyVersion`, `FileVersion` | Numeric four-component representation |
 | `VersionPrefix` | Numeric MAJOR.MINOR.PATCH |
@@ -100,7 +103,7 @@ Classification uses changed paths as well as commit subjects. Accompanying tests
 create separate milestones. Bounded local accepted-ready scope differs from full acceptance.
 
 | Exact Git references / period | Development and acceptance distinction |
-| --- | --- |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | KB-R0–R21: `ccba50f` through `edad470` (2026-10-06–08) | Documentation/KB, architecture/UX contracts, roadmap, governance and repository policy; no compiled production capability or numbered product checkpoint. |
 | R0: `aa8d7dc` | Isolated managed/native realtime experiment and evidence; narrow/partial, no permanent production engine/ABI selection. |
 | R1: `43d613a` | Core canonical music/documents/time/history/persistence, deterministic tests and build foundation; bounded local accepted-ready R1. |
@@ -122,7 +125,7 @@ retrieved only for explicit historical tasks.
 ## Version ledger
 
 | Version | Checkpoint | Decision, evidence and limits |
-| --- | --- | --- |
+| -------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `0.1.0.0000` | SEQ-VERSIONING-R1 | Explicit owner-selected initial alpha after the implemented foundations audited above; replaces temporary Desktop identity. Canonical/evaluated MSBuild, Release binary, About and regression checks are owned by [test execution](TEST_EXECUTION.md#product-version-verification). Does not close R4/F2/F3-B acceptance or announce a release. |
 | `0.1.0.0001` | SEQ-R4-F3-B-UX-F1 | One completed Desktop behavior repair: context-request menu lifecycle, capture ownership, usable button-anchored node creation and stale-action guards. Locked restore, full Release build (zero warnings/errors), 867 passing tests preserving all 838 prior cases, and guarded Windows native RU/EN × Dark/Light menu/creation/Undo/keyboard evidence under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair). BUILD only; PATCH stays 0, no new musical capability, F3-B owner acceptance pending, F2 partial, no release/commit/tag. |
 | `0.1.0.0002` | SEQ-NODE-EDITOR-IMPL-F1 | One verified Desktop interface/architecture checkpoint within the existing Source/Gain/Mix/Output capability line: reusable retained node editor, canonical Gain gestures, lifecycle guards, structural details and status economy. BUILD is selected for this bounded extension of existing attenuation/routing, rather than claiming a completed independent musical editor/processing capability for PATCH. Locked restore, zero-warning Release build and 908 passing tests preserve all 867 baseline cases. Actual Windows RU/EN × Dark/Light ordinary/reduced render/lifecycle and empty-state checks, guarded native opening/menu/drag checks, and separately labelled routed Gain/capture tests are recorded in the [report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md). Final native Gain input was refused on foreground loss; physical audio, full native matrix and broader platform acceptance are not claimed. PATCH remains 0; F2 partial, F3-B pending owner review, Q-032 open. No release/commit/tag. |
@@ -133,6 +136,18 @@ retrieved only for explicit historical tasks.
 | `0.1.1.0000` | SEQ-R10-PLAYLIST | One completed standalone Song composition capability: shared clips, simultaneous finite playback, real track Mute/Solo and whole-Song WAV, with compatible persistence and reference-informed editing/navigation. PATCH resets BUILD; zero-warning isolated full Release build, 1030 tests, actual-window RU/EN Dark/Light controls and short physical two-Pattern/live-edit output under the [report](experiments/SEQ-R10-PLAYLIST_REPORT.md). R5/R10 wider scope, owner visual acceptance and R4 pressure remain separate; no release/staging/commit/push. |
 | `0.1.1.0001` | SEQ-PLAYLIST-MUSIC | One verified BUILD for composition navigation, range transport, group edits, workspace restoration and live channel/audio usability. Evidence and limits are in the [checkpoint](#seq-playlist-music-checkpoint) and [report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md). |
 | `0.1.1.0002` | SEQ-TRACK-GUI | One verified BUILD for real composing workflow repairs, with native GUI track authoring and focused/rendered evidence under the [report](experiments/SEQ-TRACK-GUI_REPORT.md). |
+| `0.1.1.0003` | SEQ-HOME-RESOURCES | One verified BUILD for Light musical color/material refinement and contextual Rack/Playlist help; private resource preparation consumes no separate version. Evidence and inherited harness limits are in the [report](experiments/SEQ-HOME-RESOURCES_REPORT.md). |
+
+### SEQ-HOME-RESOURCES checkpoint
+
+Identity advances once from **`0.1.1.0002` to `0.1.1.0003`**. BUILD covers verified compiled
+theme/control-economy refinement within existing editors. Private resources/documentation alone do
+not qualify; no independent editor warrants PATCH. MAJOR/MINOR/PATCH, schema, DSP and dependencies
+remain unchanged. Zero-warning affected Release build, 196 focused cases and actual component/
+Playlist/field/editor review are scoped in the [report](experiments/SEQ-HOME-RESOURCES_REPORT.md).
+The pre-existing Rack reduced-tempo harness failure and one retried Playlist input failure remain
+reported, not weakened into passes. No full-suite rerun, complete Rack/native/audio acceptance,
+release, staging, commit, push or tag.
 
 ### SEQ-TRACK-GUI checkpoint
 

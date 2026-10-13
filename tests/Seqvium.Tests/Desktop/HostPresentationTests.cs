@@ -78,6 +78,12 @@ public sealed class HostPresentationTests
         // Unselected nodes need their own visible surface/boundary before focus or selection.
         Assert.True(Contrast(palette["Graph.Node"], palette["Surface.Workspace"]) >= 1.05);
         Assert.True(Contrast(palette["Graph.NodeBorder"], palette["Surface.Workspace"]) >= 1.8);
+        for (int channel = 0; channel < 8; channel++)
+        {
+            // The same identities draw note previews and checked pads: both need visible ink.
+            Assert.True(Contrast(palette[$"Rack.Channel{channel}"], palette[$"Rack.Step{channel}"]) >= 3);
+            Assert.True(Contrast(palette["Rack.StepInk"], palette[$"Rack.Channel{channel}"]) >= 4.5);
+        }
         Assert.NotEqual(palette["Surface.Background"], palette["Focus.Active"]);
         Assert.Equal(HostPalette.For(HostTheme.Dark).Keys.Order(), HostPalette.For(HostTheme.Light).Keys.Order());
     }

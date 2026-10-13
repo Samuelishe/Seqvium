@@ -1582,7 +1582,6 @@ DESIGN_SYSTEM; implementation evidence is in the
 [report](../experiments/SEQ-UI-REDESIGN_REPORT.md). Aesthetic approval stays with the owner. Remaining
 loop/live/velocity/processing capabilities stay in ROADMAP rather than appear as unbound controls.
 
-
 ## SEQ-R10-PLAYLIST — bounded Song identity and execution (2026-10-13)
 
 The owner authorizes composition now and trusts bounded architecture/design choices. Song clips
@@ -1605,3 +1604,19 @@ identity, stationary headings, a musical ruler/overview and physical shared cont
 range, automation, recording and measured Mixer surfaces are planned against actual owners rather
 than imitated. Current contracts are in ARCHITECTURE/AUDIO_ENGINE/PROJECT_FORMAT/UX/UI_DESIGN; this
 record preserves rationale and grants neither wider-stage acceptance nor a permanent engine ABI.
+
+## SEQ-HOME-RESOURCES — equal theme quality and reference boundary (2026-10-13)
+
+The owner requests equal expressive/tactile quality for Light and Dark and permits improving older
+surfaces when the result supports music, without expanding preparation into a workstation rewrite.
+This supersedes treating Dark as the quality target and Light merely as a legible fallback. Current
+constraints are in UI_DESIGN/DESIGN_SYSTEM; current Light colors strengthen musical bodies/ink and
+materials while Dark values stay intact. Quiet grids and contextual help preserve useful density.
+
+All supplied images are preserved in a private indexed catalog, with original provenance and qualified
+product identification. Static composition informs editor design but cannot verify gestures, DSP or
+feature availability. Select readable note/grid/velocity relationships, saturated Light musical
+content, tactile controls and contextual selected-band depth; retain Seqvium identities and real
+capability boundaries. Samples/source licenses stay separate from distributed product provenance.
+No source graphics or audio are bundled. Deferred root-pitch/Rack/Piano Roll/controller/Mixer/EQ work
+stays in current planning; this decision implements no future editor and closes no prior audio gap.

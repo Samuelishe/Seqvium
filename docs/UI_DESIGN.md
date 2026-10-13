@@ -24,15 +24,71 @@ manipulation. Detailed knobs and graphical editors are encouraged when they supp
 Avoid making every surface equally luminous or surrounding ordinary settings with elaborate frames.
 Materials may be rich without obscuring labels, focus, grid rhythm or actual values.
 
-Dark is the primary studio presentation. Light uses cool pale chassis surfaces and deeper active
-channel colors, with the same geometry, materials, states and interaction. It is designed separately
-for legibility rather than obtained by inversion. A checked pad has both a lit body and a small
+Dark and Light are equal-quality working presentations. Dark keeps the slate studio chassis;
+Light uses cool pale surfaces, saturated channel bodies and deeper colored ink, with the same
+geometry, materials, states and interaction. Light must not become a desaturated fallback: review
+musical color, depth and manipulation appeal as well as text contrast. Design it independently
+rather than by inversion. A checked pad has both a lit body and a small
 indicator; focus remains an independent outline. Channel hue supplements readable names and numbers.
 
 `HostPalette` owns semantic colors, `HostMetrics` geometry/typography and `HostMaterials` derived
 gradients/shadows. Standard controls and DrawingContext compositions use these shared resources.
 Instrument-specific composition is encouraged; a general-purpose form is not the default music UI.
 No borrowed graphics or screenshot textures are shipped.
+
+### Theme parity and control economy
+
+The current Light resources strengthen jade selection/action surfaces, colored Rack off bodies and
+Playlist clip bodies, channel ink, boundaries and derived bevel/shadow depth. Dark color/material
+values are preserved. Ordinary note-preview ink has at least 3:1 contrast against its channel body;
+the checked-pad indicator has at least 4.5:1 against each checked body in both themes. These checks
+cover those specific pairs, not accessibility certification or all composited hover/selection states.
+Final perceived quality requires real dense/sparse content and owner review.
+
+Rack no longer reserves footer space for a paint tutorial; localized step/position tooltips and
+accessibility help retain that guidance. Playlist keeps its useful empty-state invitation, then
+reclaims the instruction row when clips exist; the selection-tool tooltip and canvas accessibility
+help expose gestures. Keep target names, musical time, values and persistent blockers visible.
+Recognizable commands use original vectors with accessible names/tooltips; ambiguous operations
+keep concise contextual menu labels. An icon does not replace a necessary musical identity or value.
+
+## Reference library and next-editor direction
+
+The home-machine preparation inspected all 19 owner-supplied images, including the AVIF. Originals
+are catalogued outside Git under `%USERPROFILE%/Documents/Seqvium Resources/Design References`, with
+stable PR/PL/MX/EQ IDs, original paths/names, SHA-256, dimensions, identification confidence and
+per-image observations/limits. The local `index.html` provides search and original-image access;
+`catalog.json`/CSV and `DESIGN-BRIEF.md` preserve provenance and retrieval. Original publication URLs
+and reuse rights were not supplied. These are private study references, never distributable assets.
+[Development](DEVELOPMENT.md#local-development-resources) owns the local-resource entry points.
+Earlier reference locations describe their originating machine; their absence on another machine
+does not invalidate the design owners or authorize reconstruction of missing personal material.
+
+The following are selected design directions; only theme/control-economy changes above are implemented
+by this preparation. Static images establish visible composition and feedback, not interaction,
+performance or acoustic evidence. Gestures below are Seqvium proposals governed by
+[UX](UX_CONTRACT.md); exact bindings, dimensions and capabilities need the bounded editor task.
+
+| Working area | Selected solution and comparison with Seqvium | Implementation boundary |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Piano Roll | PR-05's readable note bodies/pitch labels, PR-01's clear loop bracket, PR-03's time-aligned parameter lane and PR-02's dense-content test. Dominant grid, fixed keyboard/ruler, stronger bar than beat/subdivision lines, quiet pitch rows; note names appear only when they fit. A compact Pattern/Part target and sharing indication precede editing; optional ghost parts cannot look selected. Direct draw/select/move/end-resize with forgiving hit areas, cursor/preview feedback and pointer-anchored navigation are the intended direction | Same canonical NoteEvents and history; explicit shared Pattern scope, pitch/duration/intensity, audition/root pitch and Rack coexistence must be validated. Controller curves like PR-04 are later capabilities |
+| Channel Rack | Preserve the implemented bevelled pads, beat groups, paint/erase and row menus. Piano Roll access should live on the identified Part/channel; do not replace the working rhythm surface with generic forms | Rich notes must be preserved when a step view cannot represent them; richer preview/velocity and channel mix controls remain planned |
+| Playlist | PL-02's meaningful note/audio/automation distinction, PL-04's stable track/time composition and PL-03's saturated Light bodies with dark content ink. Keep the implemented fixed headings, overview, shared clips and scoped selection; improve existing compositions when musical work benefits | Current thumbnails show real notes. Waveforms, sections, automation and lower contextual editors require their actual owners; arrangement tracks do not imply Mixer channels |
+| Node Graph / Node Editor | Retain the implemented free canvas, typed ports, nearest-cable selection and target-aware editor. EQ references favor a large meaningful visualization with optional exact parameter depth; a processing summary opens the graph rather than putting every cable in the music editor | Gain's transfer curve is analytical, not a measured signal. New processors/editors need actual parameter/provider and lifecycle ownership |
+| Synthesizers | MX-03/EQ-01/EQ-05 suggest sculpted caps, graduated arcs, clear position and exact value access. Group oscillator/filter/envelope controls around real musical functions; waveform/envelope surfaces can dominate when they explain the sound | No dedicated synth screenshot is in this batch. This is a transfer/inference, not source-feature evidence; DSP, instrument state, voices and editor availability must exist first |
+| Mixer | MX-03's tactile knobs/recessed faders, MX-04's readable signal ladders and MX-01's aligned channel identity. Preserve a useful strip minimum and horizontal bank navigation; keep Master locatable, M/S distinct and routing depth contextual | Real level/pan/mute/solo, measured taps, channel identities and routing differ from Playlist organization; do not fabricate meters or copy touch-screen proportions |
+| Effects / EQ | EQ-05's dominant curve/selected handles and EQ-03's selected-band Frequency/Gain/Q panel are strongest. EQ-01/EQ-02 link band colors to controls; EQ-04 keeps analysis subordinate to editable curves. Selected-band depth beats permanent all-band machinery | Actual EQ/filter/analysis/automation capabilities and bounded measured data first; pitch tracking, dynamic EQ and transient/tonal separation remain processor work |
+| Browser / Sample Lab | Fast category/search/find, native-pitch audition and explicit use; disclose source/license/root/BPM details on demand. The prepared filesystem library is useful input for that workflow | No Browser/Sample Lab screenshot in this batch; direction follows SAMPLE_WORKFLOW, not a claimed reference. Local files are not an implemented Personal Library/index/pack system |
+
+Physical character belongs mainly to controls and instrument panels. Grids and analytical plots need
+quiet surfaces so notes, connections and curves stay legible. Light's strongest supplied evidence is
+PL-03 (Pro Tools) and PL-05 (REAPER-style); Light knobs/EQ/synth composition must be designed and
+reviewed independently, not claimed as observed in dark screenshots. Do not extract proprietary icons,
+panel textures or screenshots. Existing original vectors/derived materials cover this preparation;
+create new original assets only for a concrete editor need.
+
+[R9 planning](ROADMAP.md#seq-r9--piano-roll) and the existing later-stage follow-ups own deferred work.
+The [preparation report](experiments/SEQ-HOME-RESOURCES_REPORT.md) records actual verification limits.
 
 ## Implemented R3-F1 visual baseline
 
@@ -82,7 +138,7 @@ All eleven owner-supplied images were inspected. They are retained outside the r
 The [review report](experiments/SEQ-UI-REDESIGN_REPORT.md) records implementation/evidence/limits.
 
 | Reference | Useful design decisions | Adaptation / limitation |
-| --- | --- | --- |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Screenshot 1, SONAR step instrument | Bevelled drum pads, beat divisions, lit selected hits, substantial chassis | Keep tactile rhythm; enlarge tiny targets and remove repeated control labels |
 | Screenshot 2, SONAR expanded channel | Parameter controls beside a channel and an expandable velocity lane | Use contextual row commands now; velocity requires supported note/intensity execution |
 | Screenshot 3, FL Studio | Fast Channel Rack, compact transport, colored steps, instrument identity, graphical note overview | Rail/navigator and real rhythm thumbnails; avoid copying layout or adding unavailable channel knobs |
@@ -107,7 +163,7 @@ references were also reviewed for hierarchy/materials. These are private local v
 distributed application assets; the implementation uses original vectors and shared host resources.
 
 | Reference | Strong transferable solution | Implemented / planned boundary |
-| --- | --- | --- |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `playlist_main.png`, annotated FL Playlist | Source picker distinct from tracks, musical ruler, overview/scroll, clip notes, clear contextual tools | Source selection, shared clips, overview, snap, Ctrl-copy, repeats, M/S and retained pane are real; seek/range/group editing now work; markers/automation/audio clips are follow-up |
 | `Screenshot-2024-10-04-at-1.47.57-PM.png.webp`, FL song | Track colors and repeated clip headers connect the overview to the song; named parts make structure legible | Named/color tracks, actual duration/pitch thumbnails, stationary headings and muted dimming; dynamic groups and section markers remain planned |
 | `1.-Color.jpg`, SONAR | Strong colored track identity, substantial controls, visible editing tools and waveform/fade detail | Adapt header/material depth and real gates; waveform trim/fades require supported audio-clip semantics, not decorative waveforms |
@@ -232,7 +288,8 @@ persistent unavailable-future-feature prose and primary-screen framework/version
 Density must preserve readable text, keyboard access, useful pointer targets and correct platform DPI.
 Choose dimensions deliberately from hierarchy/content, never microscopic typography or indiscriminate
 whole-application scaling. Accessibility and readable minimums are constraints, not density tradeoffs
-to silently discard. Shared metrics evolve with verified composition; early shell dimensions are not immutable constraints.
+to silently discard. Shared metrics evolve with verified composition; early shell dimensions are not immutable
+constraints.
 
 ### Specialized musical surfaces and multi-pane composition
 
@@ -267,8 +324,9 @@ notes, channels and other editor content may scroll horizontally/vertically wher
 
 Use deliberate instrument materials, substantial panels, bevelled controls, bounded light and shadow,
 readable boundaries and consistent typography. Rich decoration is welcome when it reinforces the
-instrument's character and preserves manipulation and visual hierarchy. Dark is the preferred primary working presentation; Light remains coherent
-and functional. Distinguish active context, selected material, keyboard focus and disabled/unavailable
+instrument's character and preserves manipulation and visual hierarchy. Dark and Light both require
+expressive musical color, material depth and sustained-working legibility. Distinguish active context,
+selected material, keyboard focus and disabled/unavailable
 states. Sparse accents and purposeful musical colors explain track/clip/pattern/context organization,
 activity and relationships, rather than merely decorate. Essential information also needs non-color cues.
 
@@ -342,7 +400,8 @@ placement and retained sizing.
 Gain uses its node name once in the pane title, a short source/scope line, and a graduated physical
 dial beside the level slider, exact linear value and derived dB. The dial supports relative vertical
 movement, Shift fine adjustment, double-click unity, arrows/Home/End and cancellation; all surfaces
-share the same canonical parameter and one draft/commit owner. Unity/Silence sit below the level control. The labelled analytical
+share the same canonical parameter and one draft/commit owner. Unity/Silence sit below the level control. The labelled
+analytical
 transfer graph is a compact, initially collapsed Curve disclosure; its formula is available on
 request. This deliberately refines DESIGN-R1 following owner review: primary musical controls take
 precedence over permanently displayed teaching text and a large graph. The graph remains distinct
@@ -397,7 +456,8 @@ Selection, keyboard focus, previews and invalid elements have distinct outlines/
 an exclamation mark supplements error color. Hover/context feedback explains affected diagnostics.
 `Graph.Cable`, `Graph.Grid`, `Graph.Node` and `Graph.NodeBorder` extend HostPalette equally for Dark/Light.
 Unselected nodes use a slightly lighter Dark fill, white Light fill and defined boundaries so they
-remain visible against the grid. The pane-local row contains explicit target, create/import/frame/delete/context actions;
+remain visible against the grid. The pane-local row contains explicit target, create/import/frame/delete/context
+actions;
 the main command row remains unchanged. Gain exposes one compact invariant text input on selection,
 with linear ratio semantics, retained invalid intent and explicit commit. Technical IDs stay in the
 existing requested details only. Pan/zoom affect canvas content, never global typography or document

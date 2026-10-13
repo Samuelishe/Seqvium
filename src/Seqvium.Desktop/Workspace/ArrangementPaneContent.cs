@@ -231,6 +231,9 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
             long ticks = _canvas.PositionTicks;
             _position.Text = $"  {ticks / state.Settings.Meter.TicksPerBar + 1}:{ticks % state.Settings.Meter.TicksPerBar / state.Settings.Meter.TicksPerBeat + 1}  ";
             _hint.Text = _shell[state.ArrangementClips.IsEmpty ? "Arrangement.EmptyHint" : "Arrangement.Hint"];
+            _hint.IsVisible = state.ArrangementClips.IsEmpty;
+            ToolTip.SetTip(_select, _shell["Arrangement.Select"] + " · " + _shell["Arrangement.Hint"]);
+            AutomationProperties.SetHelpText(_canvas, _shell["Arrangement.Hint"]);
             RefreshOverview();
         }
         finally { _refreshing = false; }
