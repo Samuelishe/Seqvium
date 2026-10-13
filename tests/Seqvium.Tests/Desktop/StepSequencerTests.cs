@@ -110,6 +110,85 @@ public sealed class StepSequencerTests
         Assert.False(await f.Workflow.ToggleBeatStepAsync(fresh, part, 0)); Assert.Empty(f.Pattern.Parts);
     }
 
+    [Fact]
+    public async Task RowGestureIsOneUndoPreservesUnchangedNotesAndDoesNotTouchOtherChannels()
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Kick"); await f.Channel("Snare");
+        await f.Toggle(0, 0); await f.Toggle(1, 4);
+        var note = f.Pattern.Parts[0].Notes.Single(); var other = f.Pattern.Parts[1]; var before = f.State.Snapshot;
+        int undo = f.State.UndoCount;
+        var desired = Enumerable.Range(0, 16).Select(i => i % 4 == 0).ToArray();
+        Assert.True(await f.Workflow.SetBeatStepsAsync(f.Basis, f.Pattern.Parts[0].Id, desired));
+        Assert.Equal(undo + 1, f.State.UndoCount);
+        Assert.Equal(new[] { 0, 4, 8, 12 }, f.Pattern.Parts[0].Notes.Select(n => BeatSteps.Step(n)!.Value).Order());
+        Assert.Contains(f.Pattern.Parts[0].Notes, n => n.Id == note.Id);
+        Assert.Equal(other, f.Pattern.Parts[1]); var after = f.State.Snapshot;
+        Assert.False(await f.Workflow.SetBeatStepsAsync(f.Basis, f.Pattern.Parts[0].Id, desired));
+        Assert.Same(after, f.State.Snapshot); Assert.Equal(undo + 1, f.State.UndoCount);
+        Assert.True(await f.Workflow.UndoAsync()); Assert.Same(before, f.State.Snapshot);
+        Assert.True(await f.Workflow.UndoAsync(true)); Assert.Same(after, f.State.Snapshot);
+        Assert.True(await f.Workflow.SetBeatStepsAsync(f.Basis, f.Pattern.Parts[0].Id, new bool[16]));
+        Assert.Empty(f.Pattern.Parts[0].Notes); Assert.Equal(other, f.Pattern.Parts[1]);
+        Assert.Equal(0, f.Opens);
+    }
+
+    [Fact]
+    public async Task HeldRowBasisExpiresAfterUndoEvenWhenIdenticalTargetReturns()
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Kick");
+        var basis = f.Basis; var part = f.Pattern.Parts[0].Id;
+        await f.Toggle(0, 8); Assert.True(await f.Workflow.UndoAsync());
+        var before = f.State.Snapshot; int undo = f.State.UndoCount;
+        Assert.False(await f.Workflow.SetBeatStepsAsync(basis, part, Enumerable.Repeat(true, 16).ToArray()));
+        Assert.Equal("Beat.Stale", f.State.Detail); Assert.Same(before, f.State.Snapshot); Assert.Equal(undo, f.State.UndoCount);
+    }
+
+    [Fact]
+    public async Task TempoEditPreservesMusicIsOneUndoAndRejectsStaleDrafts()
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Kick"); await f.Toggle(0, 0);
+        var before = f.State.Snapshot; var pattern = f.Pattern; int undo = f.State.UndoCount;
+        var basis = f.Basis;
+        Assert.True(await f.Workflow.SetTempoAsync(basis.Lifecycle, basis.Generation, 137.5m));
+        Assert.Equal(137.5m, f.State.Snapshot.State.Settings.Tempo.BeatsPerMinute);
+        Assert.Equal(before.State.Settings.Meter, f.State.Snapshot.State.Settings.Meter);
+        Assert.Equal(pattern, f.Pattern); Assert.Equal(undo + 1, f.State.UndoCount);
+        var after = f.State.Snapshot;
+        Assert.False(await f.Workflow.SetTempoAsync(f.Basis.Lifecycle, f.Basis.Generation, 137.5m));
+        Assert.Same(after, f.State.Snapshot); Assert.Equal(undo + 1, f.State.UndoCount);
+        Assert.True(await f.Workflow.UndoAsync()); Assert.Same(before, f.State.Snapshot);
+        Assert.False(await f.Workflow.SetTempoAsync(basis.Lifecycle, basis.Generation, 90));
+        Assert.Equal("Workflow.EditStale", f.State.Detail); Assert.Same(before, f.State.Snapshot);
+        Assert.Equal(0, f.Opens);
+    }
+
+    [Theory]
+    [InlineData("0")] [InlineData("1001")] [InlineData("120.1234567")]
+    public async Task TempoEditRefusesOutOfRangeOrUnrepresentableValues(string text)
+    {
+        await using var f = new Fixture(); var before = f.State.Snapshot;
+        Assert.False(await f.Workflow.SetTempoAsync(f.State.Document.LifecycleId, f.State.Generation,
+            decimal.Parse(text, System.Globalization.CultureInfo.InvariantCulture)));
+        Assert.Same(before, f.State.Snapshot); Assert.Equal(0, f.State.UndoCount);
+    }
+
+    [Theory]
+    [InlineData("length")] [InlineData("off-grid")] [InlineData("pitch")]
+    public async Task RowOperationsRefuseUnsupportedContentWithoutRewritingIt(string kind)
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Kick"); await f.Toggle(0, 0);
+        var part = f.Pattern.Parts[0]; var note = part.Notes.Single(); var pattern = f.Pattern;
+        Assert.True(await f.Edit(edit =>
+        {
+            if (kind == "length") edit.SetPatternLength(pattern.Id, new(BeatSteps.BarTicks * 2));
+            else edit.UpdateNote(pattern.Id, part.Id, note.Id, new(kind == "off-grid" ? 1 : 0), note.Duration,
+                kind == "pitch" ? note.Pitch + 1 : note.Pitch, note.Intensity);
+        }));
+        var before = f.State.Snapshot; int undo = f.State.UndoCount;
+        Assert.False(await f.Workflow.SetBeatStepsAsync(f.Basis, part.Id, new bool[16]));
+        Assert.Same(before, f.State.Snapshot); Assert.Equal(undo, f.State.UndoCount);
+    }
+
     [Theory]
     [InlineData(90)] [InlineData(120)] [InlineData(240)]
     public async Task ThreeIndependentWavsProduceExactDrumEventsAndPcmThroughExistingGraph(int bpm)

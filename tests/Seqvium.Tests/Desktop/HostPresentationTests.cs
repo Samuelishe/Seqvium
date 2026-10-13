@@ -85,12 +85,12 @@ public sealed class HostPresentationTests
     [Fact]
     public void SharedMetricsKeepCompactReadableShellAndDevelopmentVersionIndependent()
     {
-        Assert.All(HostMetrics.Values.Values, value => Assert.InRange(value, 1, 36));
+        Assert.All(HostMetrics.Values.Values, value => Assert.InRange(value, 1, 56));
         Assert.InRange(HostMetrics.Values["Type.Body"], 12, 14);
-        Assert.Equal(30, HostMetrics.Values["Chrome.Height"]);
-        Assert.Equal(30, HostMetrics.Values["Toolbar.Height"]);
-        Assert.Equal(22, HostMetrics.Values["Status.Height"]);
-        Assert.Equal(24, HostMetrics.Values["Control.Height"]);
+        Assert.Equal(34, HostMetrics.Values["Chrome.Height"]);
+        Assert.Equal(48, HostMetrics.Values["Toolbar.Height"]);
+        Assert.Equal(24, HostMetrics.Values["Status.Height"]);
+        Assert.Equal(30, HostMetrics.Values["Control.Height"]);
         using var directory = new TemporaryDirectory();
         using var session = new ShellSession(new(directory.File("prefs.json")), new(new(), false));
         Assert.Equal(typeof(ShellSession).Assembly

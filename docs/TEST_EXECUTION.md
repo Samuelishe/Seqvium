@@ -143,6 +143,25 @@ alignment, navigation, Save/Open and retained lifecycle. Synthetic pointer plus 
 are labelled separately from the guarded native click. The F1 native attempt refused on foreground;
 native pickers and physical audio were not exercised. No full native matrix or stress follows.
 
+### SEQ-UI-REDESIGN verification
+
+Nine StepSequencer cases add atomic row operation/gesture Undo, unchanged note identities/no-op,
+ABA and unsupported-data refusal, canonical tempo preservation/stale/range boundaries. Presentation
+resource guards now include palette-derived HostMaterials; shared geometry assertions follow v2.
+Final focused L1/L2 passes 435 cases in 19 named Desktop classes, including ProductVersionTests.
+After final warning text, HostPresentation/DesignSystem/StepSequencer rerun passes 82 cases. These
+are focused checks, not a full suite. Actual commands, build/output-lock workaround and timings are
+recorded in the [report](experiments/SEQ-UI-REDESIGN_REPORT.md). L3 cadence advances to three.
+
+The real GUI catalog/window matrix checks shared resources, parameter centers, themes/languages,
+ordinary/reduced/minimum/maximized geometry and owned modal states. The extended `steps` host checks
+captured row paint/erase cancellation, actual row menu, Gain dial draft/commit/fine/keyboard paths,
+tempo popup and narrow overflow, navigator create/select/Undo, routed single-WAV drop/exact Undo/
+multi-file refusal, dense eight-channel rendering and ninth-channel refusal. Native Windows Rack
+click/focus/drag/Escape and graph/Workspace gestures use exact foreground guards; routed and native
+results remain separate. Captures contain actual authored fixture data, never fake product tracks.
+No new native picker/Explorer D&D, acoustic/device pressure, high-DPI or other-platform claim follows.
+
 ## Product version verification
 
 [VERSIONING](VERSIONING.md) owns identity and checkpoint authority.

@@ -69,9 +69,12 @@ It creates an empty Beat, durably accepts three authored WAV fixtures, invokes r
 automation actions with synthetic pointer events, checks second-toggle/Undo/Redo, arrow/Space and
 stale-held-input behavior, then Save/Open and retained dock/collapse/hide/reopen. Eight actual renders
 cover RU/EN × Dark/Light at 1100×750 and 640×480. `steps.json` records 48 accessible checked/off cells,
-24-DIP hit areas, Pattern name/action alignment and local horizontal scrolling. A separate native
-single-click/focus smoke uses an exact foreground guard and may report refusal. It never forces
-foreground or exercises a native file picker. Its media/projects/PNG/JSON are ignored run artifacts,
+shared pad hit geometry, Pattern name/action alignment and local horizontal scrolling. Additional
+routed checks exercise captured continuous paint, erase cancellation, actual Fill popup, Gain dial
+preview/fine movement/single commit/cancellation, BPM popup and navigator creation/selection/Undo.
+A dense authored eight-channel fixture checks 128 pads in both themes and ninth-channel refusal.
+A separate native click/focus/drag/Escape smoke uses an exact foreground guard and may report refusal.
+It requests ordinary activation only; it never bypasses the guard or exercises a native file picker. Its media/projects/PNG/JSON are ignored run artifacts,
 subject to the same rolling retention. Device-independent musical PCM checks stay in Tests.
 
 ## Independent-process Single Instance checks

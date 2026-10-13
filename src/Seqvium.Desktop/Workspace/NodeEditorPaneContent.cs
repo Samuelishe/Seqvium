@@ -28,6 +28,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     private readonly TextBlock _linear = new() { Classes = { "caption" } };
     private readonly TextBox _value = new() { Width = 80, Classes = { "numeric" } };
     private readonly GainLevelControl _level;
+    private readonly GainDialControl _dial;
     private readonly GainTransferPlot _plot;
     private readonly Grid _gain = new() { RowDefinitions = new("Auto,Auto,Auto,Auto"), Classes = { "parameterRow" } };
     private readonly Expander _curve;
@@ -58,7 +59,10 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         Children.Add(_scope);
         _level = new(shell) { Focusable = true };
         _plot = new(shell) { Height = 116 };
-        SetRow(_level, 1); _gain.Children.Add(_level);
+        _dial = new(shell) { Width = 86, Height = 86, Focusable = true };
+        var levelRow = new Grid { ColumnDefinitions = new("Auto,*"), ColumnSpacing = 12 };
+        levelRow.Children.Add(_dial); SetColumn(_level, 1); levelRow.Children.Add(_level);
+        SetRow(levelRow, 1); _gain.Children.Add(levelRow);
         var exact = new Grid { ColumnDefinitions = new("*,Auto,Auto,Auto"), Classes = { "parameterRow" } };
         _commit = Button("Commit", async () => await CommitTextAsync());
         _commit.Classes.Add("command");
@@ -107,20 +111,23 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         };
         AddHandler(KeyDownEvent, (_, e) =>
         {
-            if (e.Key != Key.Escape || !_editor.HasDraft && !_level.HasGesture) return;
+            if (e.Key != Key.Escape || !_editor.HasDraft && !_level.HasGesture && !_dial.HasGesture) return;
             e.Handled = true; CancelGesture(); Refresh();
         }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-        _level.Begin = () =>
+        _dial.Begin = _level.Begin = () =>
         {
             _editor.Observe(_workflow.State);
             return _command.IsCompleted && _editor.BeginDraft();
         };
-        _level.Preview += value =>
+        void PreviewLevel(decimal value)
         {
             _editor.UpdateDraft(value);
             _refreshing = true; _value.Text = value.ToString(CultureInfo.InvariantCulture); _refreshing = false;
             RefreshPreview();
-        };
+        }
+        _level.Preview += PreviewLevel; _dial.Preview += PreviewLevel;
+        _dial.Completed += async () => await CommitDraftAsync();
+        _dial.Cancelled += () => { _editor.CancelDraft(); Refresh(); };
         _level.Completed += async () => await CommitDraftAsync();
         _level.Cancelled += () => { _editor.CancelDraft(); Refresh(); };
         workflow.Changed += WorkflowChanged; shell.PropertyChanged += PreferencesChanged;
@@ -149,7 +156,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         else if (!_editor.ChangedElsewhere) _changeNotice.Stop();
         if (changed || _renderedTarget != _editor.Target)
         {
-            _level.Cancel(); CancelSources(); _feedback = null;
+            _level.Cancel(); _dial.Cancel(); CancelSources(); _feedback = null;
             _renderedTarget = _editor.Target;
         }
         _refreshing = true;
@@ -177,9 +184,11 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
                 if (button == _commit) ToolTip.SetTip(button, _shell["NodeEditor.Commit"]);
                 button.IsEnabled = _editor.CanEditGain && _command.IsCompleted;
             }
-            _value.IsEnabled = _level.IsEnabled = _editor.CanEditGain && _command.IsCompleted;
+            _value.IsEnabled = _level.IsEnabled = _dial.IsEnabled = _editor.CanEditGain && _command.IsCompleted;
             AutomationProperties.SetName(_value, _shell["Graph.Linear"]);
             AutomationProperties.SetName(_level, _shell["NodeEditor.Level"]);
+            AutomationProperties.SetName(_dial, _shell["NodeEditor.Level"] + " · " + _db.Text);
+            ToolTip.SetTip(_dial, _shell["NodeEditor.DialHint"]);
             if (!_editor.HasDraft)
                 _value.Text = node?.Parameters.TryGetValue(GraphBuiltIns.GainAmplitude, out var value) == true ? value.ToString() : "";
             if (!gain) _details.Text = Details();
@@ -201,6 +210,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         bool valid = _editor.HasDraft ? Parse(_value.Text, out _) : _editor.Amplitude is >= 0 and <= 1;
         decimal? amplitude = valid ? _editor.HasDraft ? _editor.Draft?.After : _editor.Amplitude : null;
         _level.Amplitude = amplitude; _level.InvalidateVisual();
+        _dial.Amplitude = amplitude; _dial.InvalidateVisual();
         _plot.Amplitude = amplitude; _plot.IsDraft = _editor.HasDraft; _plot.InvalidateVisual();
         _db.IsVisible = amplitude is not null;
         _curve.IsVisible = amplitude is not null;
@@ -332,7 +342,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     }
     private async Task SetAmplitudeAsync(decimal value)
     {
-        _editor.Observe(_workflow.State); _level.Cancel(); _editor.CancelDraft();
+        _editor.Observe(_workflow.State); _level.Cancel(); _dial.Cancel(); _editor.CancelDraft();
         if (!_editor.BeginDraft()) return;
         _editor.UpdateDraft(value); await CommitDraftAsync();
     }
@@ -358,13 +368,13 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     }
     public void CancelGesture()
     {
-        _level.Cancel(); _editor.CancelDraft(); _editor.DismissChangeNotice(); _changeNotice.Stop(); CancelSources();
+        _level.Cancel(); _dial.Cancel(); _editor.CancelDraft(); _editor.DismissChangeNotice(); _changeNotice.Stop(); CancelSources();
         if (!_disposed) Refresh();
     }
     public void Dispose()
     {
         if (_disposed) return;
-        _disposed = true; _changeNotice.Stop(); _level.Cancel(); _editor.CancelDraft(); CancelSources();
+        _disposed = true; _changeNotice.Stop(); _level.Cancel(); _dial.Cancel(); _editor.CancelDraft(); CancelSources();
         _workflow.Changed -= WorkflowChanged; _shell.PropertyChanged -= PreferencesChanged;
     }
 }

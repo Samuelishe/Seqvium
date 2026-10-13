@@ -286,7 +286,7 @@ belongs to [PROJECT_STATE](PROJECT_STATE.md). F3 must use those foundations with
 **R4-F3-A — first usable desktop audio workflow: implemented, conditionally accepted for continued development.** Real
 native WAV import/use creates one canonical Source → Gain → Output occurrence; selected Gain edits,
 explicit physical Play/Stop/Panic, Undo/Redo, Save/Save As/Open and safe dirty/session lifetime are
-integrated in the retained R3 host. One icon command row, semantic Dark/Light, read-only BPM/meter,
+integrated in the retained R3 host. One icon command row, instrument Dark/Light, committed BPM/read-only meter,
 compact owned modal and contextual diagnostics follow [UI design](UI_DESIGN.md#first-party-visual-design-rules).
 [Evidence](experiments/SEQ-R4-F3-A_REPORT.md) separates deterministic, GUI/device and acceptance limits.
 This bounded slice neither closes all F3 nor reclassifies F2's pressure failures.
@@ -345,6 +345,25 @@ Create the first genuinely musical editing workflow: Channel Rack, Step Sequence
 several channels, velocity, and responsive live editing over extensible musical events.
 Edit the identified shared Pattern content so all its references reflect note edits, with understandable
 target/sharing scope; do not introduce invisible musical copies when opened from a placement.
+
+### Instrument UI follow-up after SEQ-UI-REDESIGN
+
+The owner-authorized redesign implements the v2 instrument presentation and actual Rack gestures,
+row operations, project navigation, WAV drop, BPM editing and Gain dial. It does not close R5 or
+establish visual acceptance; the [review report](experiments/SEQ-UI-REDESIGN_REPORT.md) owns evidence.
+Keep the reference-driven physical materials as editors grow; do not revert to generic settings forms.
+
+| Priority / scope | Desired interaction | Required implementation boundary |
+| --- | --- | --- |
+| Next, R5-F2/F3 | Continuous loop, visible actual play position, seamless live rhythm changes | Engine-owned loop/position and bounded edit publication/voice continuity; no UI-timer imitation |
+| Later R5 / R9 | Expandable velocity lane, per-note accents, richer note preview/editing | Supported intensity/duration semantics and execution; lift current unsupported-row refusal deliberately with preservation tests |
+| R5/R11 integration | Functional channel mute/solo/level/pan and sample audition | Explicit Part/Sound/routing versus transient audition scope, valid execution/Undo; no unbound decorative knobs |
+| R7/R8 and First Track R12 | Project sound browser, waveform previews and fast find/audition/drop | Existing durable-media foundation plus bounded preview decoding, cancellation and transient audio borrowing; library publication remains separate |
+| R11 / actual processing nodes | Instrument/EQ panels, meaningful signal/spectrum visualization | Real parameters/DSP and bounded measured taps delivered off the realtime/UI path; own material language and state preservation |
+| Workspace Q-032 | Independent instrument panels and comparisons | Dynamic instance/layout/target retirement and focus ownership, beyond the current reusable singleton |
+
+These are implementation follow-ups, not shipped controls or a new release schedule. Meter/longer
+patterns and multi-file drop need explicit scope/refusal design when the musical/import boundaries grow.
 
 ## SEQ-R6 — Extension Foundation
 

@@ -56,7 +56,7 @@
         <Setter Property="Height" Value="{DynamicResource Control.Height}" />
         <Setter Property="MinHeight" Value="{DynamicResource Control.Height}" />
         <Setter Property="FontSize" Value="{DynamicResource Type.Body}" />
-        <Setter Property="Background" Value="{DynamicResource Surface.Raised}" />
+        <Setter Property="Background" Value="{DynamicResource Material.Button}" />
         <Setter Property="Foreground" Value="{DynamicResource Text.Primary}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Border.Default}" />
         <Setter Property="BorderThickness" Value="{DynamicResource Border.Control}" />
@@ -81,6 +81,7 @@
         <Setter Property="CornerRadius" Value="0" />
     </Style>
     <Style Selector="Border.workspacePane">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.PanelShadow}" />
         <Setter Property="BorderThickness" Value="{DynamicResource Border.Control}" />
         <Setter Property="CornerRadius" Value="{DynamicResource Pane.Corner}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Border.Default}" />
@@ -270,5 +271,154 @@
     </Style>
     <Style Selector="Button.status.playing">
         <Setter Property="Foreground" Value="{DynamicResource Status.Playing}" />
+    </Style>
+
+    <!-- Music-specific pad: state is conveyed by fill, inset pulse and toggle automation. -->
+    <Style Selector="ToggleButton.step">
+        <Setter Property="Height" Value="{DynamicResource Rack.StepHeight}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Rack.StepHeight}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.StepBorder}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="StepSurface" Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                        CornerRadius="{DynamicResource Rack.StepCorner}" BoxShadow="{DynamicResource Material.PadShadow}">
+                    <Grid>
+                        <Border CornerRadius="{DynamicResource Rack.StepCorner}" Background="{DynamicResource Material.Bevel}" />
+                        <Border Name="Pulse" Width="12" Height="3" CornerRadius="1" Opacity="0"
+                                Background="{DynamicResource Rack.StepInk}" VerticalAlignment="Bottom" Margin="0,0,0,6" />
+                        <Border Name="StepFocus" BorderThickness="2" Margin="-2" CornerRadius="{DynamicResource Rack.StepCorner}"
+                                BorderBrush="{DynamicResource Focus.Active}" IsVisible="False" />
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ToggleButton.step:checked /template/ Border#Pulse">
+        <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="ToggleButton.step:pointerover /template/ Border#StepSurface">
+        <Setter Property="BorderBrush" Value="{DynamicResource Text.Primary}" />
+    </Style>
+    <Style Selector="ToggleButton.step:focus-visible /template/ Border#StepFocus">
+        <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="ToggleButton.step:disabled">
+        <Setter Property="Opacity" Value="0.5" />
+    </Style>
+    <Style Selector="Button.rail">
+        <Setter Property="Width" Value="38" />
+        <Setter Property="Height" Value="38" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource Text.Secondary}" />
+    </Style>
+    <Style Selector="Button.rail.active /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Surface.Accent}" />
+    </Style>
+    <Style Selector="Button.rail.active">
+        <Setter Property="Foreground" Value="{DynamicResource Accent.Action}" />
+    </Style>
+    <Style Selector="Button.play">
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Background" Value="{DynamicResource Surface.Playing}" />
+    </Style>
+    <Style Selector="TextBox.patternName">
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel0">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step0}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel0:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel0}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel0}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel1">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step1}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel1:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel1}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel1}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel2">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step2}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel2:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel2}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel2}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel3">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step3}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel3:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel3}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel3}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel4">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step4}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel4:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel4}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel4}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel5">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step5}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel5:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel5}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel5}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel6">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step6}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel6:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel6}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel6}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel7">
+        <Setter Property="Background" Value="{DynamicResource Rack.Step7}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel7:checked">
+        <Setter Property="Background" Value="{DynamicResource Rack.Channel7}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Rack.Channel7}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel0:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow0}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel1:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow1}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel2:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow2}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel3:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow3}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel4:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow4}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel5:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow5}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel6:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow6}" />
+    </Style>
+    <Style Selector="ToggleButton.step.channel7:checked /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Glow7}" />
+    </Style>
+    <Style Selector="ToggleButton.step:pressed /template/ Border#StepSurface">
+        <Setter Property="BoxShadow" Value="{DynamicResource Material.Recess}" />
+    </Style>
+    <Style Selector="Grid.dropReady">
+        <Setter Property="Background" Value="{DynamicResource Surface.Accent}" />
+    </Style>
+    <Style Selector="Button.command.play /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Surface.Playing}" />
+    </Style>
+    <Style Selector="Button.command.play:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Material.Button}" />
     </Style>
 </Styles>

@@ -134,6 +134,11 @@ without copied reference application assets or font glyph dependencies. Shared h
 code. Quiet synthetic GUI/device test WAVs and screenshots are ignored local evidence, not shipped
 musical content or runtime assets. Existing dependency/distribution notice obligations remain unchanged.
 
+SEQ-UI-REDESIGN introduces original Seqvium-authored vector rail icons, parameter-dial/thumbnail
+drawing, instrument gradients and shadows under Apache-2.0. The eleven owner-supplied design images
+are local research references outside Git and are neither runtime assets nor distributed content.
+No additional dependency, borrowed font, texture, preset, sample or proprietary icon is introduced.
+
 ## Planned / under evaluation
 
 These are candidates or product directions, not dependencies, adoption decisions, or promises.

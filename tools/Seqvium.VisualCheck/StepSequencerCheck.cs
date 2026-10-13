@@ -10,6 +10,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using Seqvium.Core;
 using Seqvium.Desktop;
@@ -83,9 +84,45 @@ internal static partial class Program
             new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased), KeyModifiers.None, MouseButton.Left));
         await pane.PendingCommand; pane.Refresh(); Require(Step(0, 1).IsChecked == false, "Stale pointer action committed.");
 
+        // Real captured paint controls: a skipped-cell move still paints a continuous row in one Undo.
+        main.UpdateLayout();
+        Point Root(ToggleButton b) => b.TranslatePoint(new(b.Bounds.Width / 2, b.Bounds.Height / 2), main)!.Value;
+        void PressStep(ToggleButton b) => b.RaiseEvent(new PointerPressedEventArgs(b, pointer, main, Root(b), 0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed), KeyModifiers.None, 1));
+        void MoveStep(ToggleButton b) => (pointer.Captured as Control ?? b).RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent,
+            pointer.Captured as Control ?? b, pointer, main, Root(b), 0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
+        async Task ReleaseStep(ToggleButton b)
+        {
+            (pointer.Captured as Control ?? b).RaiseEvent(new PointerReleasedEventArgs(pointer.Captured as Control ?? b, pointer, main, Root(b), 0,
+                new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased), KeyModifiers.None, MouseButton.Left));
+            await pane.PendingCommand; pane.Refresh();
+        }
+        var beforePaint = workflow.State.Snapshot; undo = workflow.State.UndoCount;
+        PressStep(Step(0, 1)); MoveStep(Step(0, 3)); await ReleaseStep(Step(0, 3));
+        Require(workflow.State.UndoCount == undo + 1 && Enumerable.Range(1, 3).All(i => Step(0, i).IsChecked == true), "Paint did not fill skipped cells in one transaction.");
+        Require(await workflow.UndoAsync(), "Paint Undo failed."); pane.Refresh();
+        Require(workflow.State.Snapshot == beforePaint, "Paint Undo did not restore exact identity.");
+        PressStep(Step(0, 0)); MoveStep(Step(0, 3));
+        pane.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape });
+        await ReleaseStep(Step(0, 3));
+        Require(workflow.State.Snapshot == beforePaint, "Escape published an erase draft.");
+        PressStep(Step(0, 1)); MoveStep(Step(0, 3)); pointer.Capture(null); await ReleaseStep(Step(0, 3));
+        Require(workflow.State.Snapshot == beforePaint, "Capture loss published a paint draft.");
+        // Open the actual row popup and invoke its menu action; verify canonical result/Undo.
+        var more = pane.GetVisualDescendants().OfType<Button>().Single(b => AutomationProperties.GetAutomationId(b) == $"Beat.Actions.{pattern.Parts[0].Id}");
+        more.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+        await CapturePopupAsync(more.ContextMenu!, output, "channel-menu");
+        var fill = more.ContextMenu!.Items.OfType<MenuItem>().Single(m => AutomationProperties.GetAutomationId(m) == $"Beat.Fill4.{pattern.Parts[0].Id}");
+        fill.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent)); await pane.PendingCommand; pane.Refresh();
+        Require(Enumerable.Range(0, 16).All(i => Step(0, i).IsChecked == (i % 4 == 0)), "Fill menu did not edit canonical row.");
+        Require(await workflow.UndoAsync(), "Menu Undo failed."); pane.Refresh(); more.ContextMenu.Close();
+        Require(workflow.State.Snapshot == beforePaint, "Menu Undo did not restore exact identity.");
+
         string save = Path.Combine(output, "drums.seqvium"); Require(await workflow.SaveAsync(save), "GUI save failed.");
         Require(await workflow.OpenAsync(save, UnsavedDecision.Discard), "GUI Open failed."); pane.Refresh();
         Require(BeatSteps.Resolve(workflow.State).Pattern!.Id == pattern.Id && Step(0, 0).IsChecked == true, "Open lost grid identity/state.");
+        await RedesignControlsAsync(main, pane, workflow, workspace, shell, output);
         var rows = new List<object>();
         foreach (var language in new[] { HostLanguage.English, HostLanguage.Russian })
         foreach (var theme in new[] { HostTheme.Dark, HostTheme.Light })
@@ -96,7 +133,7 @@ internal static partial class Program
             main.Width = reduced ? 640 : 1100; main.Height = reduced ? 480 : 750;
             await Task.Delay(80); main.UpdateLayout();
             workspace.State.Dock(WorkspaceState.BeatId, PaneDock.Floating);
-            workspace.State.SetBounds(WorkspaceState.BeatId, new(24, 24, reduced ? 560 : 780, 330));
+            workspace.State.SetBounds(WorkspaceState.BeatId, new(24, 24, reduced ? 560 : 960, 390));
             pane.Refresh(); Step(0, 0).Focus(); main.UpdateLayout();
             await CaptureAsync(main, output, $"{language}-{theme}-{(reduced ? "reduced" : "normal")}");
             var name = Field<TextBox>(pane, "_name"); var apply = Field<Button>(pane, "_apply");
@@ -107,8 +144,24 @@ internal static partial class Program
             Require(buttons.Length == 48 && buttons.All(b => b.Bounds.Height >= 24 && !string.IsNullOrWhiteSpace(AutomationProperties.GetName(b))), "Grid hit area or accessible names failed.");
             var peer = ControlAutomationPeer.CreatePeerForElement(Step(0, 0));
             Require(peer is IToggleProvider { ToggleState: ToggleState.On }, "Checked step accessibility state failed.");
-            var scroll = pane.GetVisualDescendants().OfType<ScrollViewer>().First();
+            var scroll = Field<ScrollViewer>(pane, "_rackScroll");
             if (reduced) Require(scroll.Extent.Width > scroll.Viewport.Width, "Reduced pane lacks local horizontal scrolling.");
+            if (reduced && language == HostLanguage.English && theme == HostTheme.Dark)
+            {
+                var controls = Field<WorkflowControls>(main, "_workflowControls");
+                var overflow = Field<Button>(controls, "_overflow");
+                ((Flyout)overflow.Flyout!).ShowAt(overflow); await Task.Delay(20); main.UpdateLayout();
+                var tempo = Field<Button>(controls, "_tempoAction");
+                Require(tempo.IsEffectivelyVisible && tempo.Bounds.Width > 0 &&
+                    Field<Border>(controls, "_overflowParameters").Child is not null, "Reduced tempo action is unreachable.");
+                ((Flyout)tempo.Flyout!).ShowAt(tempo); await Task.Delay(20);
+                var field = Field<TextBox>(controls, "_tempoEdit"); var beforeTempo = workflow.State.Snapshot;
+                field.Text = "129.25"; field.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+                await controls.PendingTempoCommand;
+                Require(workflow.State.Snapshot.State.Settings.Tempo.BeatsPerMinute == 129.25m, "Reduced tempo popup failed.");
+                Require(await workflow.UndoAsync() && workflow.State.Snapshot == beforeTempo, "Reduced tempo Undo failed.");
+                overflow.Flyout.Hide(); pane.Refresh();
+            }
             rows.Add(new { language, theme, reduced, Steps = buttons.Length, Focus = Step(0, 0).IsFocused,
                 NameAlignmentDip = Math.Abs(Center(text) - Center(apply)), scroll.Extent, scroll.Viewport });
         }
@@ -116,12 +169,114 @@ internal static partial class Program
         workspace.Open(WorkspaceState.BeatId); workspace.State.Hide(WorkspaceState.BeatId); workspace.Open(WorkspaceState.BeatId);
         Require(main.GetVisualDescendants().OfType<BeatPaneContent>().Single() == pane, "Workspace replaced retained content.");
         workspace.State.Dock(WorkspaceState.BeatId, PaneDock.Floating);
-        main.Width = 1100; main.Height = 750; workspace.State.SetBounds(WorkspaceState.BeatId, new(24, 24, 780, 330)); main.UpdateLayout();
+        main.Width = 1100; main.Height = 750; workspace.State.SetBounds(WorkspaceState.BeatId, new(24, 24, 960, 390)); main.UpdateLayout();
+        await Task.Delay(80); main.Activate(); await Task.Delay(80); main.UpdateLayout();
         var native = await StepNativeInput.VerifyAsync(main, pane, workflow, Step(0, 1)); pane.Refresh();
-        Json(output, "steps", new { Rows = rows, RoutedInput = "create, twelve step automation actions with synthetic pointer events, second toggle, external Undo/Redo, arrow/Space, stale held click",
+        // Dense fixture uses real canonical imports/notes; it adds no bundled product content.
+        foreach (var (name, rhythm) in new[] { ("Clap", 4), ("Low Tom", 7), ("Percussion", 3), ("Ride", 2), ("Texture", 5) })
+        {
+            string path = Path.Combine(output, name + ".wav"); WriteStepWav(path, .02f);
+            Require(await workflow.AddBeatWavAsync(BeatSteps.Resolve(workflow.State).Basis!, path), "Dense fixture import failed.");
+            var basis = BeatSteps.Resolve(workflow.State).Basis!; var part = BeatSteps.Resolve(workflow.State).Pattern!.Parts.Last();
+            Require(await workflow.SetBeatStepsAsync(basis, part.Id, Enumerable.Range(0, 16).Select(i => i % rhythm == 0).ToArray()), "Dense fixture rhythm failed.");
+        }
+        pane.Refresh();
+        main.WindowState = WindowState.Maximized; await Task.Delay(100);
+        workspace.State.SetBounds(WorkspaceState.BeatId, new(20, 20, Math.Max(820, workspace.State.Width - 40), Math.Max(560, workspace.State.Height - 40)));
+        foreach (var theme in new[] { HostTheme.Dark, HostTheme.Light })
+        {
+            if (shell.Preferences.Theme != theme) await shell.ToggleThemeAsync();
+            await CaptureAsync(main, output, $"dense-{theme}");
+            Require(pane.GetVisualDescendants().OfType<ToggleButton>().Count() == 128, "Dense Rack lost channels/steps.");
+        }
+        Require(!await workflow.AddBeatWavAsync(BeatSteps.Resolve(workflow.State).Basis!, Path.Combine(output, "Kick.wav")), "Channel capacity incorrectly accepted a ninth channel.");
+        pane.Refresh(); await CaptureAsync(main, output, "channel-limit");
+        Json(output, "steps", new { Rows = rows, RoutedInput = "create, twelve step automation actions with synthetic pointer events, second toggle, external Undo/Redo, arrow/Space, stale held click, captured paint/skipped cells/one Undo, Escape/capture-loss erase cancellation, actual Fill popup",
             SaveOpen = "canonical identity and visible states restored", RetainedLifecycle = "dock/collapse/hide/reopen", NativeInput = native,
             AudioStarted = workflow.State.CanStop, PhysicalAudio = false });
     }
+    private static async Task RedesignControlsAsync(MainWindow main, BeatPaneContent pane, DesktopWorkflow workflow,
+        WorkspaceHost workspace, ShellSession shell, string output)
+    {
+        var before = workflow.State.Snapshot; int undo = workflow.State.UndoCount;
+        var attachment = workflow.State.Selected!.Value;
+        var graph = before.State.Graphs.Single(g => g.Id == before.State.GraphAttachments.Single(a => a.Id == attachment).GraphId);
+        var gain = graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
+        Invoke(main, "OpenNodeEditor", new NodeEditorTarget(workflow.State.Document.LifecycleId, attachment, graph.Id, gain.Id));
+        var editor = main.GetVisualDescendants().OfType<NodeEditorPaneContent>().Single();
+        editor.Refresh(); main.UpdateLayout();
+        var dial = Field<GainDialControl>(editor, "_dial");
+        using var pointer = new Pointer(100043, PointerType.Mouse, true);
+        var origin = dial.TranslatePoint(new(dial.Bounds.Width / 2, dial.Bounds.Height / 2), main)!.Value;
+        void Press() => dial.RaiseEvent(new PointerPressedEventArgs(dial, pointer, main, origin, 0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed), KeyModifiers.None, 1));
+        void Move(KeyModifiers modifiers = KeyModifiers.None) => dial.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, dial,
+            pointer, main, origin + new Vector(0, -40), 0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), modifiers));
+        async Task Release()
+        {
+            dial.RaiseEvent(new PointerReleasedEventArgs(dial, pointer, main, origin + new Vector(0, -40), 0,
+                new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased), KeyModifiers.None, MouseButton.Left));
+            await editor.PendingCommand; editor.Refresh();
+        }
+        Press(); Move();
+        Require(workflow.State.Snapshot == before && dial.Amplitude == .45m, "Dial preview published music or relative gesture failed.");
+        await CaptureAsync(main, output, "gain-dial-draft");
+        await Release(); Require(workflow.State.Gain == .45m && workflow.State.UndoCount == undo + 1, "Dial release did not commit once.");
+        Require(await workflow.UndoAsync(), "Dial Undo failed."); editor.Refresh();
+        Press(); Move(KeyModifiers.Shift); Require(dial.Amplitude == .29m, "Dial fine movement failed.");
+        editor.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape }); await Release();
+        Require(workflow.State.Snapshot == before, "Dial Escape published a draft.");
+        Press(); Move(); pointer.Capture(null); await Release();
+        Require(workflow.State.Snapshot == before, "Dial capture loss published a draft.");
+        dial.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.End }); await editor.PendingCommand; editor.Refresh();
+        Require(workflow.State.Gain == 1 && workflow.State.UndoCount == undo + 1, "Dial keyboard End failed.");
+        Require(await workflow.UndoAsync(), "Dial keyboard Undo failed."); editor.Refresh(); workspace.State.Hide(WorkspaceState.NodeEditorId);
+
+        var controls = Field<WorkflowControls>(main, "_workflowControls");
+        var tempo = Field<Button>(controls, "_tempoAction");
+        ((Flyout)tempo.Flyout!).ShowAt(tempo); await Task.Delay(20); main.UpdateLayout();
+        var field = Field<TextBox>(controls, "_tempoEdit"); field.Text = "137.5";
+        field.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+        await controls.PendingTempoCommand;
+        Require(workflow.State.Snapshot.State.Settings.Tempo.BeatsPerMinute == 137.5m && workflow.State.UndoCount == undo + 1, "Tempo popup did not commit once.");
+        Require(await workflow.UndoAsync(), "Tempo Undo failed."); pane.Refresh();
+        Require(workflow.State.Snapshot == before, "Tempo Undo rewrote Pattern content.");
+        var navigator = main.GetVisualDescendants().OfType<PatternNavigator>().Single();
+        var original = workflow.State.Selected!.Value;
+        Field<Button>(navigator, "_create").RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+        await navigator.PendingCommand; pane.Refresh(); main.UpdateLayout();
+        Require(workflow.State.Snapshot.State.Patterns.Length == 2 && workflow.State.Selected != original &&
+            BeatSteps.Resolve(workflow.State).Pattern is { Parts.Length: 0 }, "Navigator did not create/select an empty Pattern.");
+        await CaptureAsync(main, output, "pattern-navigation");
+        var first = navigator.GetVisualDescendants().OfType<Button>().Single(b =>
+            AutomationProperties.GetAutomationId(b) == "Navigator.Pattern." + original);
+        var twoPatterns = workflow.State.Snapshot;
+        first.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent)); await navigator.PendingCommand; pane.Refresh();
+        Require(workflow.State.Selected == original && workflow.State.Snapshot == twoPatterns && workflow.State.UndoCount == undo + 1,
+            "Navigator selection rewrote music/history.");
+        Require(await workflow.UndoAsync(), "Navigator create Undo failed."); pane.Refresh();
+        Require(workflow.State.Snapshot == before, "Navigator create Undo changed existing Pattern identity.");
+        string dropPath = Path.Combine(output, "Drop.wav"); WriteStepWav(dropPath, .02f);
+        var file = await main.StorageProvider.TryGetFileFromPathAsync(dropPath) ?? throw new InvalidOperationException("Drop fixture unavailable.");
+        using var transfer = new DataTransfer(); transfer.Add(DataTransferItem.CreateFile(file));
+        pane.RaiseEvent(new DragEventArgs(DragDrop.DragOverEvent, transfer, pane, new Point(10, 10), KeyModifiers.None));
+        Require(pane.Classes.Contains("dropReady"), "Single WAV drop did not expose its target.");
+        pane.RaiseEvent(new DragEventArgs(DragDrop.DropEvent, transfer, pane, new Point(10, 10), KeyModifiers.None));
+        await pane.PendingCommand; pane.Refresh();
+        Require(BeatSteps.Resolve(workflow.State).Pattern is { Parts.Length: 4 } && workflow.State.UndoCount == undo + 1,
+            "Routed WAV drop did not import one canonical channel.");
+        Require(await workflow.UndoAsync(), "Drop Undo failed."); pane.Refresh();
+        Require(workflow.State.Snapshot == before && !pane.Classes.Contains("dropReady"), "Drop Undo changed existing Pattern identity.");
+        transfer.Add(DataTransferItem.CreateFile(file));
+        pane.RaiseEvent(new DragEventArgs(DragDrop.DragOverEvent, transfer, pane, new Point(10, 10), KeyModifiers.None));
+        Require(!pane.Classes.Contains("dropReady"), "Multi-file drop was presented as supported.");
+        Json(output, "redesign-controls", new { Dial = "relative/fine preview, single commit/Undo, Escape, capture loss, keyboard End",
+            Tempo = "actual popup Enter / one Undo / canonical restoration",
+            Navigator = "actual create/select buttons, unchanged selection history, exact create Undo",
+            Drop = "routed single-file import / exact Undo / multi-file refusal; not native Explorer input", PhysicalAudio = false });
+    }
+
     private static void WriteStepWav(string path, float amplitude)
     {
         using var file = File.Create(path); using var writer = new BinaryWriter(file);
@@ -156,6 +311,32 @@ internal static class StepNativeInput
             passed.Add("native click → one canonical note / one Undo");
             Program.Require(button.IsFocused, "Native step click did not focus."); passed.Add("native grid focus");
             Program.Require(await workflow.UndoAsync(), "Native smoke restore failed."); pane.Refresh();
+            var beforePaint = workflow.State.Snapshot;
+            var part = BeatSteps.Resolve(workflow.State).Pattern!.Parts[0].Id;
+            ToggleButton Step(int i) => pane.GetVisualDescendants().OfType<ToggleButton>().Single(b =>
+                AutomationProperties.GetAutomationId(b) == $"Beat.Step.{part}.{i}");
+            void MoveTo(ToggleButton cell)
+            {
+                Program.Require(Guard(), "Native paint foreground changed.");
+                var at = cell.PointToScreen(new(cell.Bounds.Width / 2, cell.Bounds.Height / 2));
+                Program.Require(SetCursorPos(at.X, at.Y), "Native paint cursor move failed.");
+            }
+            undo = workflow.State.UndoCount;
+            MoveTo(Step(1)); Mouse(true); await Task.Delay(30); MoveTo(Step(3)); await Task.Delay(30); Mouse(false);
+            await Task.Delay(120); await pane.PendingCommand; pane.Refresh();
+            Program.Require(workflow.State.UndoCount == undo + 1 && Enumerable.Range(1, 3).All(i => Step(i).IsChecked == true),
+                "Native paint failed to fill skipped cells in one Undo.");
+            passed.Add("native captured drag → continuous three-step paint / one Undo");
+            Program.Require(await workflow.UndoAsync(), "Native paint Undo failed."); pane.Refresh();
+            Program.Require(workflow.State.Snapshot == beforePaint, "Native paint Undo lost canonical identity.");
+            MoveTo(Step(0)); Mouse(true); await Task.Delay(30); MoveTo(Step(3)); await Task.Delay(30);
+            Program.Require(Guard(), "Native erase foreground changed.");
+            var escape = new Input { Type = 1, Data = new() { Keyboard = new() { Key = 0x1B } } };
+            var escapeUp = new Input { Type = 1, Data = new() { Keyboard = new() { Key = 0x1B, Flags = 2 } } };
+            Program.Require(SendInput(2, [escape, escapeUp], Marshal.SizeOf<Input>()) == 2, "Native Escape failed.");
+            await Task.Delay(30); Mouse(false); await Task.Delay(80); await pane.PendingCommand; pane.Refresh();
+            Program.Require(workflow.State.Snapshot == beforePaint && workflow.State.UndoCount == undo, "Native Escape published erase draft.");
+            passed.Add("native Escape cancels captured erase without musical mutation");
             return new { Result = "passed", Passed = passed, ForegroundGuard = true };
         }
         finally

@@ -8,71 +8,92 @@ Not authoritative for: Workflow semantics, pane lifecycle, graph execution, or i
 
 ## Design intent and scope
 
-Seqvium should feel like a creative instrument. Pleasant manipulation, tactile interaction, spatial
-clarity, and visual quality are product requirements under [PROJECT_VISION](PROJECT_VISION.md).
-This is the evolving principles owner. [DESIGN_SYSTEM](DESIGN_SYSTEM.md) catalogs implemented v1;
-resources remain the actual-value source. Deliberate later UI design stages must
-establish final colors, typography, pixel dimensions, icons, theme details, control library, and window mockups.
-Dark/Light baseline direction is accepted below; R3-F1 implements a restrained initial shell, not the final visual
-system.
+Seqvium should feel like a creative instrument: substantial, tactile and enjoyable to manipulate.
+The owner explicitly requests expressive instrument design, including volume, complex controls,
+shadows, gradients, lighting and meaningful visualizations. Implementation difficulty is not a
+reason to reject an otherwise useful design. The older flat-shell preference is superseded.
+[DESIGN_SYSTEM](DESIGN_SYSTEM.md) catalogs the implemented v2 visual API; source owns actual values.
+Visual quality and musical correctness are complementary requirements.
+
+## Instrument materials and hierarchy
+
+Use a slate chassis, illuminated jade actions, colored channel identities and sculpted controls.
+Depth has a deliberate structure: workspace recess, raised instrument panel, bevelled control,
+active light. Highlights, shadows, gradients and controlled glow create character and explain
+manipulation. Detailed knobs and graphical editors are encouraged when they support a real parameter.
+Avoid making every surface equally luminous or surrounding ordinary settings with elaborate frames.
+Materials may be rich without obscuring labels, focus, grid rhythm or actual values.
+
+Dark is the primary studio presentation. Light uses cool pale chassis surfaces and deeper active
+channel colors, with the same geometry, materials, states and interaction. It is designed separately
+for legibility rather than obtained by inversion. A checked pad has both a lit body and a small
+indicator; focus remains an independent outline. Channel hue supplements readable names and numbers.
+
+`HostPalette` owns semantic colors, `HostMetrics` geometry/typography and `HostMaterials` derived
+gradients/shadows. Standard controls and DrawingContext compositions use these shared resources.
+Instrument-specific composition is encouraged; a general-purpose form is not the default music UI.
+No borrowed graphics or screenshot textures are shipped.
 
 ## Implemented R3-F1 visual baseline
 
-The shell uses compact flat chrome with project title/unsaved state, one narrow canonical tempo/meter
-and preference toolbar, a quiet full-width workspace and a narrow audio-inactive/status strip. Dashboard
-cards, hero headings and introductory/future-feature paragraphs are absent. Version and bounded
-capability information appear only in the functional About flyout, not in the ordinary workspace.
-System-default font/fallback requires no borrowed assets. R4-F3-A replaces action/window glyphs with
-the project-authored vector family described below, retaining the accepted frame.
-
-`HostPalette` provides identical Dark/Light semantic roles; `HostMetrics` supplies shared shell,
-control, typography and spacing resources. Their current names/use are cataloged once in
-[DESIGN_SYSTEM](DESIGN_SYSTEM.md#token-catalog); actual values remain in source. These are implemented
-defaults and usable variants, not a mandate to shrink specialized future editor compositions.
-XAML consumes semantic brushes rather than per-control theme colors. Fluent supplies base control state
-behavior, while host styles supply shell surface/accent/focus. Color is accompanied by text/shape/state.
-Tests verify complete roles and text contrast; actual Dark/Light screenshots and small-window reachability
-are evidence only for the implemented Windows shell. Theme switching retains window, controls and focus.
+The retained single-window shell now uses the v2 instrument materials, larger readable shared
+typography and one transport row. Project actions, Play/Stop, BPM, meter and history have clear groups.
+Version/capability details remain in About; technical information is disclosed deliberately.
+The original F1 frame's lifecycle/OS behavior is retained; its dimensions and flat appearance are
+superseded by the shared resources. Theme/language switching retains the window and controls.
 
 ## Implemented R3-F2 pane presentation
 
-Optional Inspector/Appearance surfaces use 28-DIP headers, 1-DIP boundaries, minimal rounding and the
-existing semantic resources/body typography. Active panes have a distinct outline and stronger title;
-keyboard-focused actions retain the separate visible control focus treatment. The actions, collapse,
-close and resize affordances are compact; dock actions live in a deliberately opened menu. Floating
-resize targets use invisible inward/outward tolerance around the narrow visual boundary, with larger
-corner regions taking priority. Interactive target size is separate from border thickness: density
-must not require precise placement on a hairline. Controls and visible neighbouring content keep
-input ownership; no additional permanent padding or decorative grips are needed. A transient accent
-on the chosen 1-DIP boundary edges and the direction cursor identify the intended pane/action before capture,
-without activation or selection changes. [Workspace](WORKSPACE.md#resize-hit-targets-and-boundary-ownership)
-owns exact tolerance and arbitration. The 28-DIP title row retains compact typography. The existing
-bottom-right marker stays inside its corner target; the remaining bottom edge uses a vertical cursor.
-Header title space uses a move cursor; action buttons own arrow cursors with normal hover/pressed/focus styling. Docked
-panes
-expose only their horizontal inner divider. Close (×) and Collapse (−) remain distinct. A 28-DIP
-bottom strip appears only while a pane is visible/collapsed, with an upward collapse marker and readable
-localized titles. Hidden/default panes occupy no persistent workspace surface. Inspector rows contain
-real project facts; Appearance offers two real preference actions, without decorative cards or fake editors.
-Pane-local scrolling preserves readable content at minimum size. RU titles use ellipsis/tooltips when
-needed. No palette, font scaling scheme or full control framework is introduced. The
-[F2 visual observations](experiments/SEQ-R3-F2_REPORT.md#visual-observations-and-local-review-artifacts)
-record actual overlap, dock/floating, collapse, small geometry and Light. Generated captures are local
-review artifacts, not committed assets. The owner accepts F1 and the current bounded F2 presentation/
-interaction level; the professional DAW target below guides later real editor work, without another
-R3 polishing prerequisite. This acceptance does not establish dense musical-editor usability.
+Panels have a substantial raised surface, bevelled header, readable title, shadow and distinct
+active outline. Close, collapse, docking and resize retain existing behavior. Invisible resize
+tolerance remains independent of the visual boundary under
+[Workspace](WORKSPACE.md#resize-hit-targets-and-boundary-ownership).
+Inspector/Appearance use shared controls; scrolling and localized tooltips preserve small-pane use.
+The left navigation rail opens actual Rack, Graph, Editor, Inspector and Appearance surfaces.
+Only implemented actions are offered. User-restored layout remains authoritative.
 
 ## Implemented R5-F1 Channel Rack composition
 
-The compact retained pane uses short New Beat Pattern/Add WAV Channel commands, one committed Pattern
-name, channel names and four groups of four numbered ToggleButtons. Shared checked/off/focus states
-and beat-group gaps distinguish musical steps in both themes; no separate palette or drawing style
-is introduced. The occurrence selector is hidden for a single choice. Warnings appear only for real
-unsupported content, with disabled cells preserving readable state. The existing transport/status
-strip is reused. Local scrolling handles narrow panes; no additional global toolbar row or larger
-application minimum is imposed. Name/action rendered centers and 24-DIP step hit areas are checked
-in RU/EN × Dark/Light at ordinary/reduced sizes under
-[test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification).
+A pristine layout opens the Rack with a useful creation action, without inserting music. At wider
+window sizes, a project navigator lists actual playback occurrences with canonical rhythm thumbnails;
+it creates/selects Patterns. Narrow windows reclaim that space and retain the occurrence selector.
+The compact Pattern name/header, sixteenth-note ruler, fixed row geometry and four beat groups make
+the rhythm readable as music. Sixteen sculpted pads share a channel tint, active indicator and glow.
+Larger hit targets, persistent names and short contextual commands replace repeated step captions.
+The scrollable grid preserves readable geometry when the pane is narrow; its local header/footer
+retain creation/import access. Empty and unsupported states reflect actual project content.
+
+Captured dragging paints or erases a continuous row, previews locally and commits once on release.
+Escape/capture loss cancels. Row actions fill every four/two steps, rotate or clear through one
+canonical transaction. Single-WAV drop and Add sound share managed acceptance. Arrows/Space/Enter
+retain accessible step editing. Existing unsupported data is preserved, not converted to fit the UI.
+The transport BPM opens an exact committed editor; meter remains a value. A physical Gain dial
+complements exact amplitude and the level slider in Node Editor. No second parameter/history exists.
+The transfer curve visualizes the actual mathematical setting; it does not pretend to measure audio.
+
+## SEQ-UI-REDESIGN reference assessment
+
+All eleven owner-supplied images were inspected. They are retained outside the repository at
+`%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-UI-REDESIGN`; no reference assets are distributed.
+The [review report](experiments/SEQ-UI-REDESIGN_REPORT.md) records implementation/evidence/limits.
+
+| Reference | Useful design decisions | Adaptation / limitation |
+| --- | --- | --- |
+| Screenshot 1, SONAR step instrument | Bevelled drum pads, beat divisions, lit selected hits, substantial chassis | Keep tactile rhythm; enlarge tiny targets and remove repeated control labels |
+| Screenshot 2, SONAR expanded channel | Parameter controls beside a channel and an expandable velocity lane | Use contextual row commands now; velocity requires supported note/intensity execution |
+| Screenshot 3, FL Studio | Fast Channel Rack, compact transport, colored steps, instrument identity, graphical note overview | Rail/navigator and real rhythm thumbnails; avoid copying layout or adding unavailable channel knobs |
+| Screenshot 4, EON ARP | Strong purple identity, coherent illuminated matrix, graphical musical focus | Transfer rhythm clarity and restrained light; preserve Seqvium's own palette |
+| Screenshot 5, blue arpeggiator | Beat grouping and visually distinct parameter lanes | Reserve lanes for real parameters; do not preallocate disabled lanes |
+| Screenshots 6–7, Logic | Track colors repeated in the grid, clear time ruler, integrated editing hierarchy | Apply row colors and common ruler; Arrangement remains a separate future surface |
+| Screenshot 8, omniGRID | Dense legible rhythm and contextual per-note depth | Take direct editing and disclosure; avoid microscopic text and arbitrary knob inventory |
+| FabFilter Pro-Q 4 image | Large purposeful analytical surface, curves, quiet tools around the signal | Actual Gain transfer fill/glow now; live spectrum/EQ require real processing and measurement |
+| Serum image | Layered instrument chassis, finely graduated knobs, shape/value feedback | Graduated captured Gain dial; future instruments inherit shared materials with their own composition |
+| Reason rack image | Physical panel depth, coherent rack hardware, color/material character | Raised panels, bevels and light; decorative hardware must not displace musical work |
+
+The references justify material richness. Their tiny controls, cryptic abbreviations and excessive
+simultaneous options are not requirements. Seqvium keeps their musical character while improving
+target size, naming, disclosure, cancellation and canonical editing safety. Final visual acceptance
+belongs to the owner; screenshots and automated checks establish evidence, not aesthetic approval.
 
 ## Professional DAW Workspace Design Target
 
@@ -96,18 +117,19 @@ authorize future editors or choose their layouts.
   never automatically multiply permanent toolbar rows or shrink fonts. Import, Play/Stop and access
   to Save must remain reachable at 640x480 DIP. Undo/Redo remain compact icon-only actions.
 - **Global musical parameters:** show actual tempo and meter compactly near transport when space
-  permits; read-only values must look like values, not editing affordances. Overflow/Inspector retains
-  them at reduced width. When editing arrives, preserve their familiar location rather than moving
-  these global parameters to an unrelated surface.
+  permits. BPM opens its real committed editor; meter remains read-only. Overflow/Inspector retains
+  access at reduced width. Future meter editing should preserve that familiar location.
 - **Icons:** use icon-only for recognizable actions, with localized accessible names, tooltips and
   shortcut hints; explain disabled reasons. Ambiguous commands may have short menu labels. Reusable
   first-party vectors share geometry, stroke weight, rounded joins, 16–20 DIP readability and platform
   DPI scaling. No emoji, font-dependent action glyphs, mixed icon families or borrowed application assets.
 - **Semantic hierarchy:** Dark uses graphite surfaces and readable light text; Light uses cool neutral
   backgrounds and readable dark text. Central resources distinguish selection, keyboard focus, hover,
-  pressed, unavailable, active transport, warning and critical actions. Restrained blue-violet action
+  pressed, unavailable, active transport, warning and critical actions. Semantic action
   accents, green transport, amber warning and moderate red critical feedback have distinct purposes.
-  Color supplements shape/text/state; no fake meters, heavy shadows/glows or decorative gradients.
+  Jade action accents and channel colors now identify Seqvium. Color supplements shape/text/state.
+  Material depth, shadows, glow and gradients are supported expressive tools; signal displays must
+  represent actual data or clearly labelled mathematical relationships.
   Unselected working elements must remain distinguishable from their surrounding surface in both
   themes. Use modest surface separation and readable boundaries; selection/focus is additional
   emphasis, not the only way to locate a node or control. Review the actual canvas composition.
@@ -139,7 +161,7 @@ authorize future editors or choose their layouts.
 R4-F3-A implements `Presentation/HostIcons`, `Styles/HostControls.axaml` and shared palette roles
 `Surface.Hover/Pressed/Selected/Playing/Critical/Accent`, `Status.Playing/Critical`, extending existing
 Dark/Light resources. A single retained row presents real project/transport/history actions, selection
-and linear Gain (0–1); BPM/meter are read-only and move into overflow on narrow windows. Save As lives
+and linear Gain (0–1); BPM is editable and meter remains read-only, with narrow-window overflow access. Save As lives
 in overflow; selection moves into details when space is limited. The content-sized owned unsaved modal
 uses the same resources. The details flyout is a compact view of canonical intent, **not a node canvas**.
 The owner conditionally accepts F3-A for continued development; final canvas/interaction acceptance
@@ -174,7 +196,7 @@ persistent unavailable-future-feature prose and primary-screen framework/version
 Density must preserve readable text, keyboard access, useful pointer targets and correct platform DPI.
 Choose dimensions deliberately from hierarchy/content, never microscopic typography or indiscriminate
 whole-application scaling. Accessibility and readable minimums are constraints, not density tradeoffs
-to silently discard. R3-F1's compact metrics are starting values, not immutable future dimensions.
+to silently discard. Shared metrics evolve with verified composition; early shell dimensions are not immutable constraints.
 
 ### Specialized musical surfaces and multi-pane composition
 
@@ -207,8 +229,9 @@ notes, channels and other editor content may scroll horizontally/vertically wher
 
 ### Visual hierarchy, color and control economy
 
-Use restrained predominantly flat surfaces, thin separators, subtle surface contrasts, minimal rounding
-and consistent typography. Dark is the preferred primary working presentation; Light remains coherent
+Use deliberate instrument materials, substantial panels, bevelled controls, bounded light and shadow,
+readable boundaries and consistent typography. Rich decoration is welcome when it reinforces the
+instrument's character and preserves manipulation and visual hierarchy. Dark is the preferred primary working presentation; Light remains coherent
 and functional. Distinguish active context, selected material, keyboard focus and disabled/unavailable
 states. Sparse accents and purposeful musical colors explain track/clip/pattern/context organization,
 activity and relationships, rather than merely decorate. Essential information also needs non-color cues.
@@ -280,8 +303,10 @@ for the supported node. [Graph](NODE_GRAPH.md#full-node-editors-proposal) owns c
 Gain attenuation/transfer-graph slice; [Workspace](WORKSPACE.md#node-editor-placement-proposal) owns
 placement and retained sizing.
 
-Gain uses its node name once in the pane title, a short source/scope line, and Level with adjacent
-linear value and derived dB. Unity/Silence sit below the level control. The labelled analytical
+Gain uses its node name once in the pane title, a short source/scope line, and a graduated physical
+dial beside the level slider, exact linear value and derived dB. The dial supports relative vertical
+movement, Shift fine adjustment, double-click unity, arrows/Home/End and cancellation; all surfaces
+share the same canonical parameter and one draft/commit owner. Unity/Silence sit below the level control. The labelled analytical
 transfer graph is a compact, initially collapsed Curve disclosure; its formula is available on
 request. This deliberately refines DESIGN-R1 following owner review: primary musical controls take
 precedence over permanently displayed teaching text and a large graph. The graph remains distinct
@@ -398,11 +423,9 @@ The R3 shell needs a small host-owned semantic foundation sufficient for the sur
 - Common control sizing/spacing and typography roles preserve readable hierarchy and usable targets
   under the responsive-layout contract.
 
-These are responsibility categories, not final tokens, palette values, dimensions, fonts or a complete
-catalog. Concepts such as `Surface.Background`, `Text.Primary`, `Accent.Primary` and `Status.Warning`
-illustrate future categories only; the bounded implemented host keys above are not a public extension API. Reusable
-icon/resource roles may be added
-where justified; the shell does not need every future graph or Sample Lab token in advance.
+The implemented v2 vocabulary is cataloged in DESIGN_SYSTEM, with source-owned colors, dimensions,
+typography and material recipes. These host keys are not a public extension API. Reusable icon/resource
+roles may grow with real editors; no unused future parameter inventory is required in advance.
 
 Dark/Light provide coherent alternative resources for the same UI semantics, not different document
 models. Main workspace chrome, Browser/project-resource surfaces, node graph, Sample Lab and first-party

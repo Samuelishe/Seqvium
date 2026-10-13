@@ -48,6 +48,20 @@ internal sealed partial class MainWindow : Window
         _workspace = new(session, new(layout.Layout), ToggleLanguageAsync, ToggleThemeAsync,
             CreatePaneContent);
         WorkspaceRegion.Child = _workspace;
+        var navigation = new WorkspaceRail(session, _workspace);
+        var patterns = new PatternNavigator(session, _workflow, _workspace);
+        var navigationBody = new Grid { ColumnDefinitions = new("Auto,Auto") };
+        navigationBody.Children.Add(navigation); Grid.SetColumn(patterns, 1); navigationBody.Children.Add(patterns);
+        NavigationRegion.Child = navigationBody;
+        void AdaptNavigation()
+        {
+            patterns.IsVisible = Bounds.Width >= 1000;
+            _workflowControls.OccurrenceShownElsewhere = patterns.IsVisible;
+            _workflowControls.Refresh();
+        }
+        SizeChanged += (_, _) => AdaptNavigation(); AdaptNavigation();
+        // The first workspace starts at a musical tool without creating or modifying a Pattern.
+        if (layout.Layout is null) Opened += (_, _) => _workspace.Open(WorkspaceState.BeatId);
         _workspace.State.Changed += RefreshGainHierarchy;
         RefreshGainHierarchy();
         _workspace.LeaveRequested += () => PaneMenuAction.Focus();
@@ -85,6 +99,8 @@ internal sealed partial class MainWindow : Window
         {
             session.PropertyChanged -= SessionChanged;
             _workspace.State.Changed -= RefreshGainHierarchy;
+            navigation.Dispose();
+            patterns.Dispose();
             _workspace.Dispose();
             _nodeEditor.Dispose();
             session.Dispose();

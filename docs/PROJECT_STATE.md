@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.0.0004`**, a verified finite step-sequencing BUILD checkpoint on the
+The current product alpha is **`0.1.0.0005`**, the verified SEQ-UI-REDESIGN BUILD checkpoint on the
 owner-selected `0.1.0` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -28,10 +28,24 @@ Completed rationale is cold history; current contracts stay in canonical owners.
 
 **R5 is in progress / partial. R5-F1 is functionally implemented:** empty Beat creation, independent
 WAV channels, canonical 16-step editing, finite bar playback and Save/Open. Focused deterministic and
-bounded actual-window GUI evidence pass; native input/picker and acoustic acceptance are not claimed.
+bounded actual-window GUI evidence pass; guarded Rack/native graph actions pass. Picker/acoustic acceptance remains separate.
 Continuous loop and seamless live-edit/position continuity remain R5-F2/F3.
 
 ## Implemented capability
+
+SEQ-UI-REDESIGN implements the owner's substantial instrument direction: slate/jade identity,
+layered panels, bevelled colored pads, shadows/glow, graduated Gain dial and coherent Dark/Light.
+Shared HostPalette/HostMetrics/HostMaterials own colors, geometry and derived materials; original
+vector rail icons and controls introduce no dependency or borrowed asset. A pristine layout opens
+Rack; saved layout remains authoritative. Rail actions expose actual panes. A wide-window navigator
+creates/selects real Patterns/occurrences with canonical rhythm thumbnails, without selection history.
+Captured row paint/erase commits once; Escape/capture loss/stale basis cancels. Fill/rotate/clear and
+single-WAV drop use the existing document/import owners. BPM commits settings once, stops playback
+and remains editable from narrow overflow; musical-time content is preserved. Gain's dial shares
+the existing editor draft/parameter/history. No schema/DSP/audio scheduling changes were made.
+The eleven inspected references are outside Git at `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-UI-REDESIGN`.
+Current decisions are in UI_DESIGN/DESIGN_SYSTEM; validation/limits are in the
+[redesign report](experiments/SEQ-UI-REDESIGN_REPORT.md). Aesthetic acceptance belongs to the owner.
 
 Panes → Step Sequencer / Channel Rack now creates an empty one-bar 4/4 Pattern without changing BPM/
 meter. Add WAV Channel durably accepts empty Parts/Sounds and exact placement Source bindings; three
@@ -45,7 +59,7 @@ pane behavior, RU/EN, Dark/Light, local scrolling, keyboard and toggle accessibi
 and [test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification) own contracts/evidence.
 
 Desktop now has user-wide Single Instance activation before document/audio initialization, independent
-workspace deactivation and thresholded graph gestures. [Design System v1](DESIGN_SYSTEM.md) supplies
+workspace deactivation and thresholded graph gestures. [Design System v2](DESIGN_SYSTEM.md) supplies
 implicit standard controls, semantic template/drawing resources and verified parameter-row alignment.
 The separate [VisualCheck](../tools/Seqvium.VisualCheck/README.md) host provides isolated component,
 window, routed-input and process verification without a production developer surface.
@@ -66,8 +80,8 @@ remain alive; floating panes and the two docks resize independently. Keyboard tr
 Escape and safe focus return are implemented. [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes)
 owns exact bounds; [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage) owns restoration,
 corruption preservation, write failure and joined shutdown. RU/EN fallback and Dark/Light resources
-apply without replacing controls or editing music. The compact 30/30/22-DIP frame, 28-DIP pane chrome/
-conditional strip and local content scrolling follow [UI design](UI_DESIGN.md).
+apply without replacing controls or editing music. The single command row, instrument panel materials,
+shared frame/pad geometry and local scrolling follow [UI design](UI_DESIGN.md) and source-owned metrics.
 F3-B adds the bounded graph editor below. No general docking hierarchy, snapping, automatic audio startup or reset UI exists.
 
 R1 provides immutable canonical documents, typed stable identities, shared multi-instrument Patterns,
@@ -99,7 +113,7 @@ Sound/Pattern/Part/Note/Placement and exactly bound Source → Gain → Output g
 canonical intent; explicit Play/Stop/Panic, Undo/Redo and Save/Save As/Open use existing Core APIs.
 Dirty Save/Discard/Cancel, preparation/output joins and fresh silent reopen protect document/PCM lifetime.
 A non-GUI host owner supplies immutable observations to the retained R3 shell/panes. One vector command
-row, read-only BPM/meter, narrow overflow, compact status/details and owned content-sized modal follow
+row, committed transport BPM editor/read-only meter, narrow overflow, compact status/details and owned modal follow
 [permanent visual rules](UI_DESIGN.md#first-party-visual-design-rules). No bundled sample content is added.
 
 R4-F3-B supplies one explicitly targeted retained Node Graph pane with real Source/Gain/Mix/Output,
@@ -150,81 +164,35 @@ acceptance remains with the owner; the earlier presentation was explicitly rejec
 
 ## Validation baseline
 
-R5-F1: affected Release Tests project/references build with zero warnings/errors. L1/L2 pass 380/380;
-the strengthened realtime three-channel case plus three new gate/channel-Undo cases pass 4/4 after
-one incremental rebuild (383 distinct covered cases, including 48 StepSequencer cases). No full suite
-was run. Actual isolated Avalonia RU/EN × Dark/Light at 1100×750/640×480 passes eight rendered variants,
-48 checked/off named cells, exact field/action alignment, keyboard/automation and retained lifecycle.
-Native pointer smoke refuses on foreground guard; pickers/physical sound are not exercised. Offline
-three-WAV PCM at 90/120/240 BPM and real Desktop coordinator/realtime sampler with a substituted output
-borrower verify finite playback, note gates and sticky Stop. Evidence is retained locally under
-`.artifacts/seq-r5-f1/` with rolling retention; timings and commands are in
-[completed work](archive/WORK_LOG.md#seq-r5-f1--2026-10-13). Version is `0.1.0.0004`.
+SEQ-UI-REDESIGN: affected ordinary Release builds and final isolated Tests/reference builds pass
+with zero warnings/errors. Final focused L1/L2 covers **435/435**, zero failures/skips, across
+19 named Desktop interaction/presentation/metadata classes; after final warning-copy changes the
+affected three-class subset passes **82/82**. Nine new cases protect atomic row gestures, retained
+identities/Undo/ABA/refusals and exact canonical tempo editing. The full suite was not rerun.
+Actual Windows production controls pass the Dark/Light component catalog, RU/EN ordinary/reduced
+Rack renders and common window/field matrix. Checks include Save/Open, pane lifecycle, captured paint,
+row popup, dial, tempo popup (including narrow overflow), navigator and routed WAV drop/Undo/refusal.
+An authored eight-channel fixture checks 128 pads in each theme and ninth-channel refusal.
+Four guarded native Rack click/focus/drag/Escape checks and eleven native graph/Workspace checks pass;
+routed input is reported separately. No physical audio/device/picker/Explorer-drop acceptance follows.
+Screenshots were visually inspected and copied for owner review outside rolling retention.
+Normal output became locked by a user-launched Desktop during final refinement; the user session was
+preserved. Complete final executables are in `.artifacts/seq-ui-redesign/release/Release/net10.0/`.
+The [report](experiments/SEQ-UI-REDESIGN_REPORT.md) records actual scope, paths, failures and commands.
 
-Last full baseline, F1-FINALIZE: local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12.
-Locked restore and full Release solution build pass with **zero warnings/errors; all 933 tests pass,
-zero failures/skips**.
-SEQ-TEST-STRATEGY-R1 adds three developer retention/deadline cases. The affected Release test-project
-build passes with zero warnings/errors, and focused retention/IPC checks pass **19/19**, with the
-final retention rerun **14/14** after resource-cleanup/test-deadline review; isolated
-startup/joined-close, timeout exit 124 and small-fixture retention pass. The full suite was not rerun
-after these changes. [TEST_EXECUTION](TEST_EXECUTION.md#required-verification-levels) owns the accepted
-L0–L4 policy and mandatory test-writing rules; production identity remains `0.1.0.0003`.
-The original F1 evidence confirms 922 cases (908 baseline plus 14 foundation); finalize adds 11
-developer retention/reliability regressions. Focused retention/instance checks pass 16/16; bounded
-startup/close and independent-process smoke pass, with a verified watchdog exit 124. The [foundation report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md)
-records actual RU/EN × Dark/Light renders/field alignment and process activation/crash/timeout checks;
-40 guarded Windows screen captures and an early five-check native mouse subset pass. The final
-`native-complete/matrix.json` confirms **11 native mouse/keyboard checks**; the full native input
-matrix remains incomplete. Developer verification now has bounded watchdogs and automatic artifact
-rotation under the [retention policy](experiments/README.md#rolling-retention-v1).
-All 867 prior cases remain; 41 node editor regressions cover identity/drafts/commands/persistence,
-empty-state economy and actual deterministic F2 PCM/identity/Stop convergence without a device.
-The [editor report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md) records actual Windows RU/EN ×
-Dark/Light normal/reduced content, lifecycle and empty-state smoke, guarded native opening/menu/drag,
-separately labelled routed Gain/capture checks, failed intermediate checks and foreground refusal.
-No physical audio or complete native matrix is inferred. The inherited fresh-Play test helper now
-consumes the final Start packet before asserting playback; production audio is unchanged.
-The [menu repair evidence](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair)
-records native right press/release, nested hover/creation, Undo, toolbar creation and keyboard checks
-in RU/EN × Dark/Light, plus actual-window retained-pane and stale-action checks.
-All 763 prior cases are preserved; 75 synthetic repository/CLI/format/privacy cases cover ProjectStats.
-The focused tooling cases and actual CLI also run under Ubuntu 24.04 / WSL2 Linux x64, runtime 10.0.12;
-[tool verification](TEST_EXECUTION.md#projectstats-verification) owns scope and SDK/build limits.
-This does not establish Linux musical/GUI/audio or distributed-product acceptance.
-Actual About rendering is verified in RU/EN and Dark/Light under
-[version verification](TEST_EXECUTION.md#product-version-verification), without audio or release acceptance.
-The prior 704 cases comprise the original 652 plus 52 F3-B geometry, editing, target and PCM/lifecycle
-cases. The cable correction adds 28 nearest/tie/tolerance/label/deletion identity regressions.
-The F3-A suite contains 34 workflow and nine
-presentation/observation cases. [Test execution](TEST_EXECUTION.md#r4-f3-a-desktop-workflow-verification)
-owns the cases/commands; deterministic tests initialize neither the GUI platform nor physical audio.
-[F1 evidence](experiments/SEQ-R3-F1_REPORT.md) records actual chrome/OS keyboard/preference behavior.
-[F2 evidence](experiments/SEQ-R3-F2_REPORT.md#resize-hit-targets-and-boundary-arbitration) records 525
-completed boundary/cursor/control checks at normal/reduced sizes across RU/EN, Dark/Light and both
-front orders, with failed intermediate runs and automation limits separately retained.
-The completed R3 audit remains separate from current F3-A evidence. Desktop now composes the existing
-Windows audio adapter only on explicit Play. [F3-A evidence](experiments/SEQ-R4-F3-A_REPORT.md) records
-real RU/EN, Dark/Light, 1100x750, reduced 640-DIP width, maximized, owned modal, native picker,
-parameter/failure and retained pane checks, plus a quiet Samsung USB C Earphones 48 kHz stereo smoke.
-Screenshots stay ignored locally for owner review; no subjective listening or pressure acceptance follows.
-F3-B's [focused report](experiments/SEQ-R4-F3-B_REPORT.md) records real sparse/dense canvas/pointer/
-keyboard, RU/EN Dark/Light, reduced/maximized, native picker/Save/reopen, retained target and joined
-replacement checks plus a quiet user-edited Kick/Snare Play/invalid/repair/Stop smoke on Samsung USB C
-Earphones at 48 kHz stereo. A discovered observation-order crash was fixed and replacement rerun.
-RID-independent local build feasibility is not hosted or Linux/macOS runtime evidence.
-[R2-F2](experiments/SEQ-R2-F2_REPORT.md), [F3](experiments/SEQ-R2-F3_REPORT.md) and
-[F4](experiments/SEQ-R2-F4_REPORT.md) retain distinct workload/source/device evidence, including physical
-UR12 44.1 kHz stereo float32 output/join checks. The independent
-[R4-F2 report](experiments/SEQ-R4-F2_REPORT.md) records 32-node/8-source graph execution on the current
-High Definition Audio output at 48 kHz stereo, baseline/CPU-GC-control pressure, oracle/parity and joined
-fault lifetimes. No acoustic perception, DAC latency, multi-hour/all-device or additional platform claim follows.
+Last full baseline, SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE: Windows 11 x64, SDK 10.0.401/runtime 10.0.12;
+locked restore, full Release solution build with zero warnings/errors and **933/933** tests.
+Subsequent focused verification does not replace that L3 baseline. Existing deterministic three-WAV
+90/120/240 BPM PCM/coordinator evidence remains in
+[R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); physical pressure failures and
+platform/owner acceptance remain separate below. Historical validation detail belongs to the linked
+reports and archive rather than this handoff.
 
 ### Verification cadence
 
 Last successful L3: **SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE, 2026-10-13**, full Release solution build
 and 933/933 automated tests (retained full-suite TRX runner interval: 17.5105 seconds).
-Completed repository tasks since that L3: **2** — SEQ-TEST-STRATEGY-R1 and SEQ-R5-F1.
+Completed repository tasks since that L3: **3** — SEQ-TEST-STRATEGY-R1, SEQ-R5-F1 and SEQ-UI-REDESIGN.
 Update this small checkpoint field once at task completion; successful L3 resets it to zero under
 [test policy](TEST_EXECUTION.md#required-verification-levels). A focused pass does not reset it.
 

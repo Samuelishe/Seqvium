@@ -96,6 +96,15 @@ No musical schema, history, scheduler, PCM store, graph engine or dynamic pane r
 [UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) owns grid scope; [graph](NODE_GRAPH.md#r5-f1-channel-composition)
 owns safe automatic wiring. Existing audio preparation/publication and joined lifetime remain unchanged.
 
+SEQ-UI-REDESIGN adds retained rail/navigation projections, palette-derived HostMaterials and a captured
+GainDialControl sharing the existing Node Editor draft owner. Pattern thumbnails read canonical note
+positions; they retain no editable music. Rack row painting stores only an ephemeral preview/frozen
+basis. SetBeatStepsAsync copies submitted cells, revalidates authority/unsupported data, preserves
+unaffected note identities and commits one existing ProjectDocument transaction. SetTempoAsync edits
+only canonical ProjectSettings, preserving musical-time positions and stopping the finite execution.
+WAV drop goes through the existing import/media acceptance owner. No DSP, scheduling, schema,
+serialization marker, executable graph, realtime thread or second document/history owner changes.
+
 ## R1 canonical foundation
 
 The production foundation uses one `Seqvium.Core` library and one `Seqvium.Tests` project. Domain

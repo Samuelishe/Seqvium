@@ -11,6 +11,10 @@ The [SEQ-R0 Audio Architecture Probe](../ROADMAP.md#seq-r0--audio-architecture-p
 adopt an engine/backend/ABI or authorize R1. [AUDIO_ENGINE](../AUDIO_ENGINE.md) and
 [KNOWN_PROBLEMS](../KNOWN_PROBLEMS.md) retain canonical contracts and open questions.
 
+[SEQ-UI-REDESIGN](SEQ-UI-REDESIGN_REPORT.md) records the owner-directed instrument UI overhaul,
+reference assessment, canonical interaction changes, real Windows render/native evidence and limits.
+Owner references and selected review images live outside Git; generated fixtures remain local.
+
 ## Bounded probe discipline
 
 SEQ-R2-F2's [protocol](SEQ-R2-F2_PROTOCOL.md), [report](SEQ-R2-F2_REPORT.md) and

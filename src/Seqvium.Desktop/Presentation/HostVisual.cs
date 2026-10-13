@@ -11,7 +11,8 @@ internal static class HostVisual
 {
     public static IBrush Brush(Control owner, HostTheme fallback, string role) =>
         owner.TryFindResource(role, out var value) && value is IBrush brush ? brush :
-            new SolidColorBrush(Color.Parse(HostPalette.For(fallback)[role]));
+            HostMaterials.For(fallback).TryGetValue(role, out var material) && material is IBrush materialBrush ? materialBrush :
+                new SolidColorBrush(Color.Parse(HostPalette.For(fallback)[role]));
     public static double Metric(Control owner, string role) =>
         owner.TryFindResource(role, out var value) ? value switch
         { double metric => metric, CornerRadius radius => radius.TopLeft, _ => HostMetrics.Values[role] } : HostMetrics.Values[role];

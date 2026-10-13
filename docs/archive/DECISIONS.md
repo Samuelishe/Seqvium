@@ -1564,3 +1564,20 @@ a new independent musical/DSP block for PATCH nor broader R4/native/platform acc
 Current contracts remain in [architecture](../ARCHITECTURE.md#node-editor-state-and-lifetime-proposal),
 [graph](../NODE_GRAPH.md#full-node-editors-proposal) and
 [workspace](../WORKSPACE.md#node-editor-placement-proposal).
+
+## SEQ-UI-REDESIGN — instrument material direction (2026-10-13)
+
+The owner explicitly rejects treating substantial volume/decor as poor design and authorizes a
+whole-interface redesign from eleven local musical-software references. Flat-only/shadow/glow/
+gradient bans are superseded by purposeful instrument materials, rich controls and meaningful
+visualization. Difficulty alone is not a design rejection criterion. Palette/metric/material owners
+keep Dark/Light coherent; actual musical state and safe manipulation remain mandatory.
+The old smallest-change wording must not shrink an expressly broad redesign into repainting.
+Material richness creates character; it must not obscure rhythm, names, focus or supported actions.
+
+Captured row gestures use one canonical transaction, with ephemeral previews and stale cancellation.
+Gain dial shares existing parameter/draft ownership; tempo edits settings without rewriting music.
+Reference images are research, not copied assets. The v2 principles/API are current in UI_DESIGN and
+DESIGN_SYSTEM; implementation evidence is in the
+[report](../experiments/SEQ-UI-REDESIGN_REPORT.md). Aesthetic approval stays with the owner. Remaining
+loop/live/velocity/processing capabilities stay in ROADMAP rather than appear as unbound controls.

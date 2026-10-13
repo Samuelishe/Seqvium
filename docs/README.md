@@ -6,15 +6,19 @@ workflow and points to the detailed sources for each subject.
 
 ## Create a drum pattern
 
-After [building and launching](../README.md#getting-started), open **Step Sequencer / Channel Rack**
-from the **Panes** menu. Use short supported percussion WAVs (the formats below apply).
+After [building and launching](../README.md#getting-started), use **Channel Rack**. A pristine layout
+opens it; the left Rack icon or **Panes** menu reopens it. Use short supported percussion WAVs
+(the formats below apply).
 
-1. Click **New Beat Pattern**. It creates an empty bar with 16 sixteenth-note steps in the current
+1. Click **New pattern**. It creates an empty bar with 16 sixteenth-note steps in the current
    4/4 project; it does not change BPM or add preset hits.
-2. Click **Add WAV Channel** for your Kick, Snare and Hi-Hat. Each import adds a separate row;
+2. Click **Add sound**, or drop one WAV into the Rack, for your Kick, Snare and Hi-Hat. Each adds a row;
    source mixing is connected automatically for this initial graph.
 3. Enable Kick steps 1/9, Snare 5/13 and Hi-Hat 1/3/5/7/9/11/13/15. Click again to remove a hit.
-   Arrows navigate; Space/Enter toggles; Ctrl+Z/Y undo/redo. Edit the Pattern name and press Enter/check.
+   Drag across a row to paint or erase; release commits the whole gesture, Escape cancels. The row's
+   **…** menu fills every four/two steps, shifts or clears. Arrows navigate; Space/Enter toggles;
+   Ctrl+Z/Y undo/redo. Edit the Pattern name and press Enter/check. Click BPM to set tempo.
+   At wider window sizes, the left Pattern list offers creation and rhythm previews.
 4. Press the existing toolbar **Play** (F5). It plays one bar and stops. Step edits stop playback;
    press Play again to hear the current bar. Longer samples cut at a quarter-note gate or the bar end,
    so this is best suited to short drums. Continuous loop and seamless live editing are not available yet.
@@ -36,8 +40,9 @@ No samples are bundled.
    tooltips; secondary actions may move into the overflow menu in a narrow window.
 2. Open **Node Graph**, or press Ctrl+G. The imported item starts with Source → Gain → Output.
    Source supplies the sample, Gain adjusts its level, and Output receives the result.
-3. Double-click the body of Gain to open **Node Editor**. Drag the level control and release to
-   apply, or enter an exact linear amplitude between 0 and 1 and press Enter or **Apply**.
+3. Double-click Gain to open **Node Editor**. Drag its dial vertically or use the level slider;
+   release applies once, Shift adjusts finely and Escape cancels. Double-click the dial for unity,
+   or enter an exact linear amplitude between 0 and 1 and press Enter or **Apply**.
    `1` preserves the level and `0` silences it; the editor also shows dB attenuation. Expand **Curve**
    to see the input/output relationship. Escape cancels unfinished input. When the editor is hidden
    or collapsed, the graph's quick Gain input is available; it uses a decimal point, for example

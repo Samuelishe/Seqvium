@@ -103,6 +103,11 @@ internal sealed class GainTransferPlot(ShellSession shell) : Control
             double a = (double)Amplitude.Value;
             var pen = new Pen(HostVisual.Brush(this, shell.Preferences.Theme, IsDraft ? "Status.Warning" : "Accent.Action"), 2,
                 IsDraft ? new DashStyle([4, 3], 0) : null);
+            var fill = new StreamGeometry();
+            using (var shape = fill.Open()) { shape.BeginFigure(At(-1, 0), true); shape.LineTo(At(-1, -a));
+                shape.LineTo(At(1, a)); shape.LineTo(At(1, 0)); shape.EndFigure(true); }
+            context.DrawGeometry(HostVisual.Brush(this, shell.Preferences.Theme, "Material.CurveFill"), null, fill);
+            context.DrawLine(new Pen(HostVisual.Brush(this, shell.Preferences.Theme, "Material.Signal"), 6), At(-1, -a), At(1, a));
             context.DrawLine(pen, At(-1, -a), At(1, a));
         }
     }

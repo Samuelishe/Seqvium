@@ -1512,3 +1512,27 @@ checks pass. Final read-only Git status has 30 modified tracked files and five i
 files (three production editor/workflow files, one permanent focused test and one reusable GUI tool).
 The staging index is unchanged. Initial tree was clean, so all listed work belongs to this task;
 ignored evidence/build/runtime material is retained under its existing ownership policies.
+
+## SEQ-UI-REDESIGN — 2026-10-13
+
+Owner-authorized whole-interface redesign implements instrument UI v2: shared slate/jade Dark/Light
+palette, layered materials, sculpted colored pads, pane/graph depth, own vector navigation icons,
+Pattern navigator/thumbnails and physical Gain dial. Actual canonical row painting/fill/shift/clear,
+single-WAV drop and committed BPM complement existing keyboard/Undo/Save/Open. All eleven supplied
+images were inspected and moved individually to the owner's LocalAppData reference folder outside
+Git; selected real review screenshots are retained there separately from rolling tool artifacts.
+
+Zero-warning affected ordinary/isolated Release builds and final focused 435/435 pass, with final
+82/82 after concise warning-copy review. Nine new boundary cases preserve row/tempo identity,
+history, no-op, stale/ABA/refusal and representable tempo. Real Windows catalog and RU/EN × Dark/Light
+window/Rack geometry, field alignment, retained lifecycle, authored dense 128-pad fixture and routed
+paint/menu/dial/tempo/navigation/drop checks pass. Four guarded native Rack and eleven graph/Workspace
+actions pass in their recorded runs. The [report](../experiments/SEQ-UI-REDESIGN_REPORT.md) records
+exact receipts, commands, intermediate failures and physical/high-DPI/platform limits.
+
+A user opened normal Desktop during refinement, locking outputs. The user session was preserved;
+complete final apphost/test/tool outputs were built separately under the task artifact root. Neither
+closing that session nor overwriting locked binaries is necessary for source/isolated verification.
+One BUILD advances 0.1.0.0004 to 0.1.0.0005; cadence advances from two to three, without full-suite
+or broader R4/R5/aesthetic acceptance. Current owners and public first-use guides were synchronized,
+and engine-dependent follow-ups were placed in ROADMAP. No staging or Git history mutation occurs.

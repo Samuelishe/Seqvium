@@ -50,9 +50,9 @@ internal sealed class WorkspacePane : Border, IDisposable
         _session = session;
         _definition = definition;
         Classes.Add("workspacePane");
-        this.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Background"));
+        this.Bind(BackgroundProperty, this.GetResourceObservable("Material.Panel"));
         AutomationProperties.SetAutomationId(this, Id);
-        var body = new Grid { RowDefinitions = new("Auto,*"), Margin = new(5, 10, 5, 10) };
+        var body = new Grid { RowDefinitions = new("Auto,*"), Margin = new(1) };
         Child = _surface;
         _surface.Children.Add(body);
         _header = new() { Classes = { "paneHeader" } };
@@ -138,7 +138,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         if (_disposed) return;
         RefreshTitle();
         Classes.Set("active", active);
-        _title.FontWeight = active ? Avalonia.Media.FontWeight.SemiBold : Avalonia.Media.FontWeight.Normal;
+        _title.FontWeight = Avalonia.Media.FontWeight.SemiBold;
         foreach (var (item, key) in _items)
         {
             item.Header = _session[key];

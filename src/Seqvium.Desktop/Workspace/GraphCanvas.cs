@@ -147,8 +147,10 @@ internal sealed class GraphCanvas : Control
             bool selected = node.Id == _editor.SelectedNode, error = Diagnostics.Any(d => d.NodeId == node.Id);
             var rectangle = new Rect(body.X, body.Y, body.Width, body.Height);
             double corner = HostVisual.Metric(this, "Control.Corner");
+            context.DrawRectangle(Brush("Material.Shade"), null, rectangle.Translate(new(0, 3)), corner, corner);
             context.DrawRectangle(Brush(selected ? "Surface.Selected" : "Graph.Node"),
                 new Pen(Brush(selected ? "Accent.Action" : error ? "Status.Critical" : "Graph.NodeBorder"), HostVisual.Metric(this, selected ? "Focus.Width" : "Border.Width")), rectangle, corner, corner);
+            context.DrawRectangle(Brush("Material.Bevel"), null, rectangle, corner, corner);
             string accent = node.Type switch { GraphBuiltIns.Source => "Status.Playing", GraphBuiltIns.Mix => "Status.Warning",
                 GraphBuiltIns.Gain => "Accent.Action", _ => "Text.Secondary" };
             context.DrawRectangle(Brush(accent), null, new Rect(body.X + 1, body.Y + 8, 3, 16));

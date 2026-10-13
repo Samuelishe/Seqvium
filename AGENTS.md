@@ -13,7 +13,9 @@ For every nontrivial task:
 2. Inspect Git status and existing files; preserve staged, unstaged, and untracked user work.
 3. Select only the needed owners below or through [INDEX](docs/INDEX.md).
 4. Inspect affected source/tests if they exist; use `rg --files` and `rg` for discovery.
-5. Make the smallest coherent change and validate in proportion to its risk.
+5. Make a coherent change within the user's authorized scope and validate in proportion to its risk.
+   An explicitly requested whole-interface redesign can replace existing compositions, tokens and
+   guidelines together; do not reduce that request to cosmetic changes to preserve an older baseline.
 6. Update durable documents in the same change only when their owned truth changes.
 
 Do not depend on earlier chat history or load the whole knowledge base by default.

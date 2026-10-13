@@ -14,12 +14,13 @@ the wider direction.
 The current desktop provides a small working environment for playing and processing samples. You can:
 
 - Import WAV samples and play the selected sample item.
-- Create an empty one-bar Beat Pattern, add WAV channels and edit 16 steps with mouse or keyboard.
+- Create a one-bar Pattern in Channel Rack, add or drop WAV sounds, and paint/erase 16 steps.
+  Fill, shift or clear a row; navigate Patterns with rhythm thumbnails; edit the transport BPM.
   Play the rhythm once, then save/reopen it with its samples and continue editing.
 - Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
   and pan or zoom the canvas.
 - Adjust sample levels and mix independent WAV sources within the same graph.
-- Double-click a node to open its reusable editor: adjust Gain with a level control, exact amplitude
+- Double-click a node to open its reusable editor: adjust Gain with a physical dial, slider, exact amplitude
   and dB display, or inspect Source, Mix and Output details.
 - Undo and redo edits, save a project with its imported audio, and reopen it.
 - Arrange internal workspace panes by moving, resizing, docking or collapsing them.
@@ -58,7 +59,7 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 ```
 
 The application opens an empty project and stays silent until you press Play.
-Import your own WAV to begin; no sample library is bundled. Save projects you want to keep.
+Channel Rack opens in a pristine layout: create a Pattern and add your own WAVs; no sample library is bundled. Save projects you want to keep.
 Launching it again brings the existing window forward where the OS allows, instead of opening
 another workspace. If the running application does not respond, the new launch reports this and exits.
 

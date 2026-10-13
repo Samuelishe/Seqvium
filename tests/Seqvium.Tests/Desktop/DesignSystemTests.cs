@@ -42,7 +42,7 @@ public sealed class DesignSystemTests
     public void FirstPartyUiHasOneColorOwnerAndEveryHostStyleResourceExists()
     {
         string root = FindRoot(); string desktop = Path.Combine(root, "src", "Seqvium.Desktop");
-        var roles = HostPalette.For(HostTheme.Dark).Keys.Concat(HostMetrics.Resources.Keys).ToHashSet(StringComparer.Ordinal);
+        var roles = HostPalette.For(HostTheme.Dark).Keys.Concat(HostMetrics.Resources.Keys).Concat(HostMaterials.For(HostTheme.Dark).Keys).ToHashSet(StringComparer.Ordinal);
         Assert.Equal(HostPalette.For(HostTheme.Dark).Keys.Order(), HostPalette.For(HostTheme.Light).Keys.Order());
         foreach (string file in Directory.EnumerateFiles(desktop, "*", SearchOption.AllDirectories)
                      .Where(f => !f.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) &&

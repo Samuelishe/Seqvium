@@ -128,6 +128,18 @@ retrieved only for explicit historical tasks.
 | `0.1.0.0002` | SEQ-NODE-EDITOR-IMPL-F1 | One verified Desktop interface/architecture checkpoint within the existing Source/Gain/Mix/Output capability line: reusable retained node editor, canonical Gain gestures, lifecycle guards, structural details and status economy. BUILD is selected for this bounded extension of existing attenuation/routing, rather than claiming a completed independent musical editor/processing capability for PATCH. Locked restore, zero-warning Release build and 908 passing tests preserve all 867 baseline cases. Actual Windows RU/EN × Dark/Light ordinary/reduced render/lifecycle and empty-state checks, guarded native opening/menu/drag checks, and separately labelled routed Gain/capture tests are recorded in the [report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md). Final native Gain input was refused on foreground loss; physical audio, full native matrix and broader platform acceptance are not claimed. PATCH remains 0; F2 partial, F3-B pending owner review, Q-032 open. No release/commit/tag. |
 | `0.1.0.0003` | SEQ-DESKTOP-FOUNDATIONS-F1 | One BUILD for verified Workspace input/activation, Design System v1/field alignment, Desktop Single Instance and reusable visual/process checks within existing musical capabilities. Locked restore, zero-warning ordinary/isolated Release builds, all 922 tests (908 baseline plus 14), actual RU/EN × Dark/Light renders/alignment/resource propagation and independent Windows activation/crash/timeout evidence are in the [report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md). A user-held apphost required temporary isolated output; the user session was preserved and normal output later built cleanly. Forty guarded Windows screen captures and the early five-check native subset pass; final `native-complete/matrix.json` confirms eleven native mouse/keyboard checks. The full native matrix remains incomplete after earlier guard refusals, and routed events are not native input. PATCH remains 0; F2 partial, F3-B/visual owner acceptance pending, Q-032/Q-055 open. No intermediate bump, release, commit, push or tag. |
 | `0.1.0.0004` | SEQ-R5-F1 | Verified finite Channel Rack/16-step musical editor, safe existing Mix composition and Save/Open. BUILD decision/evidence/limits are recorded in the [checkpoint](#seq-r5-f1-checkpoint) below; R5 remains partial. |
+| `0.1.0.0005` | SEQ-UI-REDESIGN | One verified BUILD for instrument UI v2, atomic row painting/actions, navigation/WAV drop, exact BPM and captured Gain dial; 435 focused tests plus final 82-case subset and actual Windows renders/guarded native checks. Existing finite musical capability, schema and DSP remain; R5 looping/live continuity and owner aesthetic acceptance stay separate. See the [report](experiments/SEQ-UI-REDESIGN_REPORT.md). |
+
+### SEQ-UI-REDESIGN checkpoint
+
+Identity advances once from **`0.1.0.0004` to `0.1.0.0005`**. BUILD classifies a substantial verified
+interface/interaction improvement within the existing finite Pattern and Gain capability line.
+It adds no independent completed R5 loop/live processing block for PATCH and does not settle visual
+owner acceptance. No MAJOR/MINOR, format/reader/writer marker, dependency or DSP change occurs.
+Final isolated Release builds pass with zero warnings/errors; built metadata/About identity is
+included in 435 focused cases. Current report distinguishes native, routed, rendered and physical
+evidence and records an output lock without terminating the user app. Cadence advances from two to
+three; this BUILD does not trigger or replace L3. No intermediate bump, staging, commit, push or tag.
 
 ### SEQ-R5-F1 checkpoint
 

@@ -1,4 +1,4 @@
-# Design System v1
+# Design System v2
 
 Role: Technical catalog for the implemented first-party Desktop visual API.
 Read when: Creating or changing any first-party control, window, pane, drawing, or shared style.
@@ -10,10 +10,12 @@ Not authoritative for: Visual principles, musical/workspace behavior, product ac
 [UI_DESIGN](UI_DESIGN.md) owns visual principles, density and hierarchy. This catalog specifies how
 to implement them. Actual values belong exclusively to
 [HostPalette](../src/Seqvium.Desktop/Presentation/HostPalette.cs) and
-[HostMetrics](../src/Seqvium.Desktop/Presentation/HostMetrics.cs). Do not copy their numbers or HEX
+[HostMetrics](../src/Seqvium.Desktop/Presentation/HostMetrics.cs).
+[HostMaterials](../src/Seqvium.Desktop/Presentation/HostMaterials.cs) derives instrument gradients and
+shadows from the same semantic palette. Do not copy their numbers or HEX
 into another maintained table, local control style, or documentation page.
 
-[App](../src/Seqvium.Desktop/App.axaml.cs) installs typed metric resources and semantic brushes.
+[App](../src/Seqvium.Desktop/App.axaml.cs) installs typed metrics, semantic brushes and derived materials.
 [HostControls](../src/Seqvium.Desktop/Styles/HostControls.axaml) styles standard controls by default;
 a new first-party editor inherits the system without adding a class to every control.
 `shell`/`workflow` remain compatibility markers for existing surfaces, not alternate visual systems.
@@ -36,7 +38,11 @@ drawing control; application resources are the live authority after attachment.
 | Action/state | `Accent.Action`, `State.Unavailable` | Actions/selection and disabled state |
 | Status | `Status.Warning`, `Status.Critical`, `Status.Playing` | Warning/error and current success/transport indication; accompany meaning with text/shape |
 | Graph | `Graph.Node`, `Graph.NodeBorder`, `Graph.Cable`, `Graph.Grid` | Unselected nodes and canvas-specific geometry |
-| Level controls | `Control.Track`, `Control.Fill`, `Control.Thumb` | Both standard Slider and captured Gain level drawing |
+| Level controls | `Control.Track`, `Control.Fill`, `Control.Thumb` | Slider, captured Gain level and physical dial |
+| Channel Rack | `Rack.Channel0`–`Rack.Channel7`, corresponding `Off` roles, `Rack.Ruler`, `Rack.StepInk`, `Rack.StepBorder` | Channel identity, checked/off bodies, common ruler and indicators |
+| Material colors | `Material.Highlight`, `Material.Shade`, `Material.Clear`, `Material.Signal` | Palette-owned light, shade, transparent endpoint and signal tint |
+| Material brushes | `Material.Panel`, `Material.Button`, `Material.Bevel`, `Material.Dial`, `Material.CurveFill` | Derived layered instrument surfaces and analytical fill |
+| Material shadows | `Material.PanelShadow`, `Material.Recess`, `Material.PadShadow`, `Material.Glow0`–`Material.Glow7` | Raised/recessed surfaces and active channel light; typed BoxShadows |
 
 Geometry and typography resources are declared in `HostMetrics.Values` and its typed `Resources`:
 
@@ -47,8 +53,9 @@ Geometry and typography resources are declared in `HostMetrics.Values` and its t
 | Boundaries | `Border.Width`, `Focus.Width`, `Border.Control`, `Border.Top`, `Border.Bottom`, `Border.Focus` | Drawing widths and typed control/frame thicknesses |
 | Spacing | `Space.XSmall`, `Space.Small`, `Space.Gap`, `Space.Medium`, `Space.Large`, `Space.Section` | Increasing density scale; use a role instead of a copied dimension |
 | Padding | `Padding.Control`, `Padding.Input`, `Padding.Content`, `Padding.Popup`, `Padding.Dialog`, `Padding.Parameter`, `Padding.ComboBox`, `Padding.Numeric`, `Padding.Status`, `Padding.Icon` | Typed padding/margin roles for actual compositions |
-| Typography | `Type.Body`, `Type.Caption`, `Type.Section`, `Type.PaneTitle`, `Type.Numeric`, `Type.FontFamily`, `Type.MonospaceFamily` | Body/caption/section/pane/numeric text; monospace only for technical or fixed-column content |
+| Typography | `Type.Body`, `Type.Caption`, `Type.Section`, `Type.PaneTitle`, `Type.Numeric`, `Type.Transport`, `Type.FontFamily`, `Type.MonospaceFamily` | Body/caption/section/pane/numeric/transport emphasis; monospace for technical or fixed-column content |
 | Level/scroll | `Level.Height`, `Level.TrackHeight`, `Level.ThumbSize`, `Level.Inset`, `ScrollBar.Size` | Real hit area, drawn/templated geometry, visible local scrolling |
+| Rack/navigation | `Rack.StepHeight`, `Rack.RowHeight`, `Rack.StepCorner`, `Rail.Width` | Pad hit geometry, rhythmic row and navigation rail |
 | Numeric template | `Control.NumericInnerHeight` | Derived inner height respecting outer control/border; do not set a second local template minimum |
 
 Colors are semantic values. Geometry's spacing scale is the small base vocabulary; padding/control
@@ -63,8 +70,10 @@ and pane layout bounds remain composition/interaction geometry, rather than hund
 | Transport/status Button | `play` with `active`; `status` with `warning`/`error`/`playing` | Existing transport and status surfaces; keep the deliberate semantic exception |
 | Numeric input | TextBox `numeric`; NumericUpDown | Use committed TextBox sessions where a transaction must be atomic; NumericUpDown remains the existing quick control. Styling does not merge their edit semantics |
 | ComboBox | Default | Actual target/occurrence selection; popup and state resources follow the same palette |
-| ToggleButton | Default | Disclosure/actual toggles, with distinct checked/disabled states; no unused checkbox component API is invented |
-| Slider / Gain level | Default Slider; `GainLevelControl` | Same track/fill/thumb roles. The Gain control retains its captured one-commit semantics and keyboard gestures |
+| ToggleButton | Default; `step` + `channel0`–`channel7` | Actual toggles; Rack's retained tactile template adds a bevel, lit body, bottom indicator, captured pressed recess and independent focus frame |
+| Rail Button | `rail`, `active` | Direct named pane activation; vector icons and real enabled/active state |
+| Pattern name | TextBox `patternName` | Integrated committed name, actual text editing/focus without a duplicate form label |
+| Slider / Gain level | Default Slider; `GainLevelControl`, `GainDialControl` | Shared roles/materials; captured single-commit gestures, keyboard access, same exact parameter and history |
 | Expander | Default | Progressive disclosure, shared header/content resources; specialized content retains its own layout |
 | Menu / ContextMenu | Default | Retain framework keyboard/popup lifecycle, shared surfaces and states |
 | ToolTip / FlyoutPresenter | Default | Brief hints and deliberately opened details, shared typography/padding/boundaries |
@@ -128,7 +137,7 @@ Instance tests, the component catalog and rendered field-alignment checks. Selec
 geometries from the affected controls; full suite and full GUI/native matrix follow the risk/cadence
 rules in [TEST_EXECUTION](TEST_EXECUTION.md#required-verification-levels). Inspect screenshots in both themes;
 check actual hit targets, focus, disabled/error states, labels/disclosure and localized minimum sizes.
-The cheap source guard rejects literal HEX colors outside HostPalette and missing host style resources.
+The cheap source guard rejects literal HEX colors outside HostPalette and missing palette/metric/material style resources.
 It does not replace image review or detect every possible programmatic hardcoded color expression.
 The compatibility aliases are tied to actual installed Fluent templates: recheck their names and
 rendered behavior when upgrading Avalonia. Evidence/acceptance limits belong to

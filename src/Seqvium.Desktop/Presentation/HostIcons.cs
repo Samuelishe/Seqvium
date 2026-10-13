@@ -38,6 +38,11 @@ internal static class HostIcons
         ["Graph"] = "M3 4H9V10H3Z M15 14H21V20H15Z M9 7H15V17 M3 17H15",
         ["Add"] = "M12 4V20 M4 12H20",
         ["Delete"] = "M4 6H20 M9 6V3H15V6 M6 6L7 21H17L18 6 M10 10V17 M14 10V17",
+        ["Rack"] = "M3 5H7V9H3Z M10 5H14V9H10Z M17 5H21V9H17Z M3 15H7V19H3Z M10 15H14V19H10Z M17 15H21V19H17Z",
+        ["Sound"] = "M3 10H7L12 5V19L7 14H3Z M16 8C20 10 20 14 16 16 M19 5C25 9 25 15 19 19",
+        ["Inspector"] = "M5 3H19V21H5Z M9 8H15 M9 12H15 M9 16H13",
+        ["Left"] = "M15 5L8 12L15 19",
+        ["Right"] = "M9 5L16 12L9 19",
         ["Fit"] = "M3 9V3H9 M15 3H21V9 M21 15V21H15 M9 21H3V15 M8 8H16V16H8Z"
     }.ToFrozenDictionary(StringComparer.Ordinal);
 

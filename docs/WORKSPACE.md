@@ -16,7 +16,7 @@ unresponsive IPC gives a bounded diagnostic instead of another workspace. See
 One actual main OS window hosts identity, compact canonical project summary, preference actions and
 `WorkspaceRegion`. R3-F2 adds the bounded internal host below while retaining the accepted F1 frame.
 
-On Windows the restrained custom 30-DIP header has named/focusable minimize, maximize/restore and close
+On Windows the shared custom instrument header has named/focusable minimize, maximize/restore and close
 buttons. Native styles and Avalonia decoration roles preserve title dragging and border resizing;
 Alt+Space opens the actual OS menu after Alt release, Win+Up/Down and Alt+F4 retain OS behavior.
 The menu uses installed user32 only. It follows OS language, independently of shell RU/EN.
@@ -24,8 +24,8 @@ Other platforms keep native decorations/actions; custom header action buttons ar
 No TopMost, repeated foreground forcing or global hotkey registration is used. Normal initial activation
 is left to the platform. Header contrast/border, active-state tooltip and visible keyboard focus distinguish state.
 
-Initial client size is 1100x750 DIP; minimum 640x480 DIP. A compact 30-DIP toolbar and 22-DIP status strip
-leave the rest to the quiet workspace; the main frame has no scrolling. Long titles/status use ellipsis
+Initial client size is 1100x750 DIP; minimum 640x480 DIP. Header, toolbar and status geometry use
+HostMetrics; their v2 instrument materials use HostMaterials. The remaining area belongs to music; the main frame has no scrolling. Long titles/status use ellipsis
 and full tooltips, not global shrinking. About is a functional dismissible flyout with version/scope,
 not a permanent workspace explanation. Windows PerMonitorV2/layout scaling are enabled, but actual F1 evidence is
 single-monitor
@@ -34,8 +34,9 @@ single-monitor
 
 ## R4-F3-A commands and owned modal lifecycle
 
-The accepted 30/30/22-DIP chrome/toolbar/status frame remains. One command row groups project,
-transport and history icons with a real occurrence selector/Gain, read-only canonical BPM/meter and
+The single-window chrome/toolbar/status contract remains, with v2 shared dimensions and materials.
+One command row groups project, transport and history with an actual occurrence selector/Gain,
+committed transport BPM editor, read-only meter and
 existing preference/pane actions. Reduced width moves secondary commands/selection/parameters into
 explicit overflow/details; Inspector retains musical parameters. No new editor pane or toolbar row
 is added. Project replacement updates retained Inspector content without changing layout/pane identity.
@@ -90,13 +91,19 @@ Old two-pane version-1 layouts remain readable; missing graph entries start hidd
 
 ## R5-F1 retained step sequencer
 
-`step-sequencer.main` / `step-sequencer` is one additional static pane, titled Step Sequencer / Channel
-Rack (RU: Степ-секвенсор / Каналы). It starts hidden; Panes opens it. Default floating bounds are
-780×330 DIP, minimum 300×230; the application's 640×480 minimum is unchanged. Its own horizontal/
+`step-sequencer.main` / `step-sequencer` is one static pane, titled Channel Rack (RU: Каналы).
+Pristine layout opens it without musical creation; restored visibility remains authoritative.
+Panes or the left Rack rail action opens it. Default floating bounds are 960×390 DIP, minimum 360×290; the application's 640×480 minimum is unchanged. Its own horizontal/
 vertical scrolling preserves the 16-step content in narrow floating/docked panes. Existing header,
 activation, focus, collapse/hide/reopen, boundary resizing and left/right docking are reused.
 Older layouts omit this pane and restore it hidden; only geometry/visibility/docking persist in user
 layout, with no musical/editor model there.
+
+The left rail opens existing Rack/Graph/Node Editor/Inspector/Appearance panes without replacing them.
+At window width >= 1000 DIP a project navigator lists actual occurrences with Pattern thumbnails.
+Its selection/create commands use DesktopWorkflow; navigation itself does not edit the document.
+Below that width it is hidden, reclaiming workspace space. It is session presentation, not persisted
+musical content or a separate layout registry.
 
 The pane follows the workflow's selected occurrence. Its selector appears only for multiple choices;
 the Pattern name is editable canonical content. Focus returns to an enabled step, otherwise Create.

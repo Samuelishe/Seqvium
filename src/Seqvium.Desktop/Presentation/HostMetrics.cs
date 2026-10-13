@@ -6,21 +6,23 @@ using Avalonia.Media;
 
 namespace Seqvium.Desktop.Presentation;
 
-/// <summary>Design System v1 geometry and typography; DIP values and typed Avalonia resources.</summary>
+/// <summary>Design System v2 geometry and typography; DIP values and typed Avalonia resources.</summary>
 public static class HostMetrics
 {
     public static IReadOnlyDictionary<string, double> Values { get; } = new Dictionary<string, double>
     {
-        ["Type.Body"] = 12, ["Type.Caption"] = 11,
-        ["Chrome.Height"] = 30, ["Toolbar.Height"] = 30, ["Status.Height"] = 22,
-        ["Control.Height"] = 24, ["Control.Corner"] = 2, ["Space.Gap"] = 6,
-        ["Control.InputHeight"] = 26, ["Control.ComfortableHeight"] = 28,
-        ["Control.IconWidth"] = 26, ["Control.StatusHeight"] = 20,
-        ["Pane.HeaderHeight"] = 28, ["Pane.Corner"] = 1, ["Chrome.ButtonWidth"] = 36,
+        ["Type.Body"] = 13, ["Type.Caption"] = 11, ["Type.Transport"] = 18,
+        ["Chrome.Height"] = 34, ["Toolbar.Height"] = 48, ["Status.Height"] = 24,
+        ["Control.Height"] = 30, ["Control.Corner"] = 5, ["Space.Gap"] = 6,
+        ["Control.InputHeight"] = 30, ["Control.ComfortableHeight"] = 34,
+        ["Control.IconWidth"] = 32, ["Control.StatusHeight"] = 22,
+        ["Pane.HeaderHeight"] = 32, ["Pane.Corner"] = 8, ["Chrome.ButtonWidth"] = 42,
         ["Border.Width"] = 1, ["Focus.Width"] = 2,
         ["Space.XSmall"] = 2, ["Space.Small"] = 4, ["Space.Medium"] = 8,
         ["Space.Large"] = 12, ["Space.Section"] = 16,
-        ["Type.Section"] = 12, ["Type.PaneTitle"] = 12, ["Type.Numeric"] = 12,
+        ["Type.Section"] = 14, ["Type.PaneTitle"] = 13, ["Type.Numeric"] = 13,
+        ["Rack.StepHeight"] = 34, ["Rack.RowHeight"] = 52, ["Rack.StepCorner"] = 4,
+        ["Rail.Width"] = 52,
         ["Level.Height"] = 30, ["Level.TrackHeight"] = 8, ["Level.ThumbSize"] = 12,
         ["Level.Inset"] = 8, ["ScrollBar.Size"] = 12
     }.ToFrozenDictionary(StringComparer.Ordinal);

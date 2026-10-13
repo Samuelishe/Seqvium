@@ -59,5 +59,6 @@ public sealed partial class App : Application
         _appliedTheme = theme;
         RequestedThemeVariant = theme == HostTheme.Light ? ThemeVariant.Light : ThemeVariant.Dark;
         foreach (var (role, value) in HostPalette.For(theme)) Resources[role] = new SolidColorBrush(Color.Parse(value));
+        foreach (var (role, value) in HostMaterials.For(theme)) Resources[role] = value;
     }
 }

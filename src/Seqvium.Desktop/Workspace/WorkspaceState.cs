@@ -64,7 +64,7 @@ public sealed class WorkspaceState : IDisposable
         new(AppearanceId, "appearance", "Pane.Appearance", 280, 170, new(270, 145, 320, 220)),
         new(GraphId, "node-graph", "Pane.Graph", 300, 260, new(48, 36, 960, 520)),
         new(NodeEditorId, "node-editor", "Pane.NodeEditor", 300, 210, new(280, 64, 360, 220)),
-        new(BeatId, "step-sequencer", "Pane.Beat", 300, 230, new(64, 48, 780, 330))
+        new(BeatId, "step-sequencer", "Pane.Beat", 360, 290, new(24, 24, 960, 390))
     ];
 
     private readonly List<PanePlacement> _panes = Definitions.Select(definition =>

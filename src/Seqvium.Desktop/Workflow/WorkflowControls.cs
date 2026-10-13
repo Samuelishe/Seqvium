@@ -22,8 +22,13 @@ internal sealed class WorkflowControls : Grid
     private readonly StackPanel _musicalParameters = new() { Orientation = Orientation.Horizontal,
         VerticalAlignment = VerticalAlignment.Center, Classes = { "compact" }, Margin = new(4, 0) };
     private readonly TextBlock _tempo = new() { FontWeight = FontWeight.SemiBold };
+    private readonly Button _tempoAction = new() { Classes = { "compact" } };
+    private readonly TextBox _tempoEdit = new() { Width = 88, Classes = { "numeric" } };
+    private (Guid Lifecycle, long Generation)? _tempoBasis;
+    private System.Globalization.CultureInfo _tempoCulture = System.Globalization.CultureInfo.InvariantCulture;
     private readonly TextBlock _meter = new() { FontWeight = FontWeight.SemiBold, Margin = new(8, 0, 4, 0) };
-    private readonly TextBlock _overflowParameters = new() { Margin = new(6), Classes = { "secondary" } };
+    private readonly Border _parameterSlot = new();
+    private readonly Border _overflowParameters = new() { Margin = new(6) };
     private readonly Border _selectionSlot = new() { Margin = new(4, 0), Width = 220,
         VerticalAlignment = VerticalAlignment.Center };
     private readonly ComboBox _occurrences = new() { Classes = { "workflow" }, MinWidth = 100,
@@ -46,6 +51,8 @@ internal sealed class WorkflowControls : Grid
     private Seqvium.Core.Id<Seqvium.Core.GraphAttachment>? _selection;
     internal bool CanCancelImport { get; set; }
     internal bool GainShownElsewhere { get; set; }
+    internal bool OccurrenceShownElsewhere { get; set; }
+    internal Task PendingTempoCommand { get; private set; } = Task.CompletedTask;
     internal Button StatusControl { get; } = new() { Classes = { "shell", "status" },
         HorizontalAlignment = HorizontalAlignment.Stretch };
 
@@ -57,13 +64,54 @@ internal sealed class WorkflowControls : Grid
         foreach (var key in new[] { "Import", "Open", "Save" }) _project.Children.Add(Command(key));
         commands.Children.Add(_project); commands.Children.Add(Separator());
         foreach (var key in new[] { "Play", "Stop", "Panic" }) commands.Children.Add(Command(key));
-        _musicalParameters.Children.Add(_tempo);
+        _tempo.Bind(TextBlock.FontSizeProperty, this.GetResourceObservable("Type.Transport"));
+        _tempoAction.Content = _tempo; _musicalParameters.Children.Add(_tempoAction);
+        var tempoPopup = new StackPanel { Classes = { "spaced" } };
+        var tempoRow = new Grid { ColumnDefinitions = new("Auto,Auto,Auto"), Classes = { "parameterRow" } };
+        tempoRow.Children.Add(_tempoEdit);
+        var bpm = new TextBlock { Text = "BPM" }; Grid.SetColumn(bpm, 1); tempoRow.Children.Add(bpm);
+        var tempoApply = new Button { Classes = { "command" } }; tempoApply.Content = HostIcons.Create("Check", tempoApply, 16);
+        Grid.SetColumn(tempoApply, 2); tempoRow.Children.Add(tempoApply); tempoPopup.Children.Add(tempoRow);
+        var tempoHint = new TextBlock { Classes = { "caption" }, MaxWidth = 240, TextWrapping = TextWrapping.Wrap };
+        tempoPopup.Children.Add(tempoHint);
+        var tempoFlyout = new Flyout { Content = tempoPopup }; _tempoAction.Flyout = tempoFlyout;
+        AutomationProperties.SetAutomationId(_tempoAction, "Workflow.EditTempo");
+        AutomationProperties.SetAutomationId(_tempoEdit, "Workflow.TempoValue");
+        AutomationProperties.SetAutomationId(tempoApply, "Workflow.ApplyTempo");
+        tempoFlyout.Opened += (_, _) =>
+        {
+            var state = workflow.State; _tempoBasis = (state.Document.LifecycleId, state.Generation);
+            _tempoCulture = System.Globalization.CultureInfo.GetCultureInfo(_shell.Preferences.Language == HostLanguage.Russian ? "ru-RU" : "en-US");
+            _tempoEdit.Text = _shell.Tempo; _tempoEdit.Classes.Remove("invalid");
+            tempoHint.Text = _shell["Workflow.TempoHint"];
+            AutomationProperties.SetName(_tempoEdit, _shell["Project.Tempo"]);
+            AutomationProperties.SetName(tempoApply, _shell["Workflow.ApplyTempo"]);
+            _tempoEdit.Focus(); _tempoEdit.SelectAll();
+        };
+        async Task CommitTempoAsync()
+        {
+            bool parsed = decimal.TryParse(_tempoEdit.Text, System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out var value) ||
+                decimal.TryParse(_tempoEdit.Text, System.Globalization.NumberStyles.Float, _tempoCulture, out value);
+            if (_tempoBasis is not { } basis || !parsed || value is < 1 or > 1000 || decimal.Round(value, 6) != value)
+            { _tempoEdit.Classes.Add("invalid"); return; }
+            _tempoBasis = null;
+            PendingTempoCommand = workflow.SetTempoAsync(basis.Lifecycle, basis.Generation, value);
+            await PendingTempoCommand; tempoFlyout.Hide();
+        }
+        tempoApply.Click += async (_, _) => await CommitTempoAsync();
+        _tempoEdit.KeyDown += async (_, e) =>
+        {
+            if (e.Key == Avalonia.Input.Key.Enter) { e.Handled = true; await CommitTempoAsync(); }
+            if (e.Key == Avalonia.Input.Key.Escape) { e.Handled = true; _tempoBasis = null; tempoFlyout.Hide(); }
+        };
+        tempoFlyout.Closed += (_, _) => _tempoBasis = null;
         _musicalParameters.Children.Add(new TextBlock { Text = "BPM", Classes = { "caption" },
             VerticalAlignment = VerticalAlignment.Center });
         _musicalParameters.Children.Add(_meter);
-        commands.Children.Add(_musicalParameters);
+        _parameterSlot.Child = _musicalParameters; commands.Children.Add(_parameterSlot);
         commands.Children.Add(Separator());
-        commands.Children.Add(Command("Undo")); commands.Children.Add(Command("Redo")); commands.Children.Add(Separator());
+        commands.Children.Add(Command("Undo")); commands.Children.Add(Command("Redo"));
         Children.Add(commands);
         _selectionSlot.Child = _occurrences;
         var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Classes = { "parameterRow" } };
@@ -140,7 +188,7 @@ internal sealed class WorkflowControls : Grid
     private void Adapt()
     {
         // Reparent retained controls into explicit overflow, never add another command row.
-        bool compact = Bounds.Width < 600, moveOpen = Bounds.Width < 470;
+        bool compact = Bounds.Width < 780, moveOpen = Bounds.Width < 560;
         if (_compact != compact)
         {
             bool focused = _occurrences.IsKeyboardFocusWithin;
@@ -162,8 +210,16 @@ internal sealed class WorkflowControls : Grid
             if (focused) _overflow.Focus();
         }
         _gainLabel.IsVisible = Bounds.Width >= 440;
-        _musicalParameters.IsVisible = Bounds.Width >= 770;
-        _overflowParameters.IsVisible = !_musicalParameters.IsVisible;
+        bool parametersInOverflow = Bounds.Width < 510;
+        if (parametersInOverflow != (_overflowParameters.Child is not null))
+        {
+            bool focused = _musicalParameters.IsKeyboardFocusWithin;
+            _tempoBasis = null; _tempoAction.Flyout?.Hide();
+            if (parametersInOverflow) { _parameterSlot.Child = null; _overflowParameters.Child = _musicalParameters; }
+            else { _overflowParameters.Child = null; _parameterSlot.Child = _musicalParameters; }
+            if (focused) _overflow.Focus();
+        }
+        _overflowParameters.IsVisible = parametersInOverflow;
         Refresh(_blocked);
     }
 
@@ -174,8 +230,9 @@ internal sealed class WorkflowControls : Grid
         try
         {
             _tempo.Text = _shell.Tempo; _meter.Text = _shell.Meter;
-            _overflowParameters.Text = _shell.Tempo + " BPM · " + _shell.Meter;
-            ToolTip.SetTip(_tempo, _shell["Project.Tempo"] + " · " + _shell["Workflow.ReadOnly"]);
+            ToolTip.SetTip(_tempoAction, _shell["Project.Tempo"] + " · " + _shell["Workflow.TempoHint"]);
+            AutomationProperties.SetName(_tempoAction, _shell["Project.Tempo"] + ": " + _shell.Tempo + " BPM");
+            _tempoAction.IsEnabled = !interactionBlocked && !state.Busy && !state.IsClosed;
             ToolTip.SetTip(_meter, _shell["Project.Meter"] + " · " + _shell["Workflow.ReadOnly"]);
             AutomationProperties.SetName(_tempo, _shell["Project.Tempo"] + ": " + _shell.Tempo + " BPM");
             AutomationProperties.SetName(_meter, _shell["Project.Meter"] + ": " + _shell.Meter);
@@ -197,7 +254,7 @@ internal sealed class WorkflowControls : Grid
             _selection = state.Selected; _occurrences.SelectedItem = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected);
             _occurrences.PlaceholderText = _shell["Workflow.NoSelection"];
             _occurrences.IsVisible = state.Occurrences.Length > 0;
-            _selectionSlot.IsVisible = !_compact && state.Occurrences.Length > 0;
+            _selectionSlot.IsVisible = !_compact && state.Occurrences.Length > 1 && !OccurrenceShownElsewhere;
             _selectionPopup.IsVisible = _compact && state.Occurrences.Length > 0;
             _occurrences.IsEnabled = !interactionBlocked && !state.Busy && state.Occurrences.Length > 0;
             AutomationProperties.SetName(_occurrences, _shell["Workflow.Occurrence"]);
@@ -206,7 +263,7 @@ internal sealed class WorkflowControls : Grid
             ToolTip.SetTip(_gain, _shell["Workflow.GainUnit"]);
             _gain.Minimum = Math.Min(0m, state.Gain ?? 0m); _gain.Maximum = Math.Max(1m, state.Gain ?? 1m);
             _gain.Value = state.Gain; _gain.IsEnabled = !interactionBlocked && !state.Busy && state.Gain.HasValue;
-            _gain.IsVisible = state.Gain.HasValue && !GainShownElsewhere;
+            _gain.IsVisible = state.Gain.HasValue && !GainShownElsewhere && Bounds.Width >= 690;
             _gainLabel.IsVisible = _gain.IsVisible && Bounds.Width >= 440;
             _source.Text = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ?? _shell["Workflow.NoSelection"];
             _source.IsVisible = state.Selected is not null && !_compact;

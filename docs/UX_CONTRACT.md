@@ -11,11 +11,17 @@ and R5-F1 grid below; broader musical editors remain future work.
 
 ## Implemented R5-F1 step sequencing
 
-Panes → Step Sequencer / Channel Rack provides New Beat Pattern, Add WAV Channel and a committed
-Pattern name field. Creation is empty, one bar with 16 sixteenths, and requires current 4/4 without
+The Rack rail action (or Panes → Channel Rack) provides New pattern, Add sound and a committed
+Pattern name field. Pristine layout exposes the Rack without inserting music. A wide-window project
+navigator creates Patterns and selects actual occurrences with canonical rhythm thumbnails. Creation is empty, one bar with 16 sixteenths, and requires current 4/4 without
 changing meter or BPM. Rows are canonical MusicalParts. A click or Space/Enter creates/deletes one
 NoteEvent and one Undo entry. Arrows move between steps/rows; Home/End reach row ends; Tab accesses
-commands. Toggle automation reports On/Off and accepts the same canonical action. Name commits with
+commands. Captured left dragging paints when begun on an off step and erases when begun on an on
+step. Movement fills skipped cells in the same row. The draft changes no music until release; one
+release produces one Undo entry. Escape, capture loss, deactivation or invalidated basis cancels.
+Row context commands Fill every 4/2, shift left/right and Clear use the same atomic row transaction.
+No-op operations add no history or playback stop. Add sound or a single local WAV drop uses the same
+managed acceptance/refusal path. Toggle automation reports On/Off and accepts the same canonical action. Name commits with
 Enter/check; Escape cancels local text. Global transport/history retain their existing commands.
 
 The editor follows the explicitly selected playback occurrence and labels its actual Pattern.
@@ -43,8 +49,12 @@ intent/media with no inherited execution and requires another explicit Play. Nat
 Save/Discard/Cancel guard dirty replacement/close; cancellation and failed Save retain current work.
 Persistent blockers, degraded media, physical output faults and last-valid divergence remain visible
 in compact status with deliberate details. Icon actions have localized tooltips/names and shortcuts;
-read-only BPM/meter show actual settings without pretending to edit them. Narrow overflow and retained
-Inspector preserve access. The owned unsaved modal starts with safe Cancel focus and returns focus.
+BPM opens a committed numeric popup in its transport location; meter shows the actual read-only
+setting. Tempo accepts 1–1000 BPM with at most six decimal places, invariant or popup-frozen locale
+decimal parsing. Enter/check applies once; Escape cancels; invalid values remain local. The popup
+freezes lifecycle/generation, refusing intervening edits instead of overwriting them. An accepted
+tempo change stops playback, preserves musical-time positions and requires explicit Play; no-op
+adds no history or stop. Narrow overflow and retained Inspector preserve access. The owned unsaved modal starts with safe Cancel focus and returns focus.
 [Workspace](WORKSPACE.md#r4-f3-a-commands-and-owned-modal-lifecycle) owns lifecycle/keys;
 [UI design](UI_DESIGN.md#first-party-visual-design-rules) owns presentation. This is not graph canvas,
 Pattern/Piano Roll, Arrangement, Mixer or Browser acceptance.
@@ -103,6 +113,11 @@ show concise changed-elsewhere feedback rather than overwrite it or silently com
 Programmatic refresh is not a user edit. Local text Undo/input takes precedence over project commands;
 Enter in a numeric field commits it rather than opening another editor. Keyboard and pointer access
 share the same target and document transactions.
+
+The physical Gain dial and slider share the same editor draft. Relative vertical dragging previews;
+release commits once, Shift gives fine movement, double-click restores unity and arrows/Home/End
+provide keyboard access. Escape/capture loss cancels. The exact amplitude field remains available.
+The dial's ring displays its real value; the transfer plot is analytical, not a live signal meter.
 
 The node name belongs in the pane title; source and processing scope appear once below it. Gain's
 short Level label groups exact amplitude and derived dB with the control. Curve is optional disclosure,

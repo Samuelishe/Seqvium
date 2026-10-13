@@ -5,6 +5,18 @@ namespace Seqvium.Desktop.Workflow;
 
 internal sealed partial class DesktopWorkflow
 {
+    internal Task<bool> SetTempoAsync(Guid lifecycle, long generation, decimal bpm) => Command("Workflow.EditFailed", () =>
+    {
+        if (_document.LifecycleId != lifecycle || _document.Generation != generation) throw new InvalidOperationException("Workflow.EditStale");
+        var tempo = new Tempo(bpm);
+        var settings = _document.Current.State.Settings;
+        if (settings.Tempo == tempo) return Task.FromResult(false);
+        _playGeneration++; _coordinator?.Stop();
+        bool changed = _document.Edit("Change tempo", edit => edit.SetSettings(settings with { Tempo = tempo }));
+        _status = "Workflow.Ready";
+        return Task.FromResult(changed);
+    });
+
     private (Pattern Pattern, PatternPlacement Placement, GraphAttachment Attachment, GraphDefinition Graph)
         ValidateBeatBasis(BeatEditBasis basis)
     {
@@ -73,6 +85,35 @@ internal sealed partial class DesktopWorkflow
         _status = "Workflow.Ready";
         return Task.FromResult(changed);
     });
+
+    /// <summary>Publish one row gesture or rhythm operation as one canonical Undo transaction.</summary>
+    internal Task<bool> SetBeatStepsAsync(BeatEditBasis basis, Id<MusicalPart> partId, IReadOnlyList<bool> steps)
+    {
+        // Own the submitted value before crossing to the workflow thread.
+        var desired = steps.ToArray();
+        return Command("Workflow.EditFailed", () =>
+        {
+            if (desired.Length != BeatSteps.Count) throw new ArgumentException("Expected sixteen steps.", nameof(steps));
+            var (pattern, _, _, _) = ValidateBeatBasis(basis);
+            var part = pattern.Parts.SingleOrDefault(p => p.Id == partId) ?? throw new InvalidOperationException("Beat.Stale");
+            if (BeatSteps.PartRefusal(_document.Current.State, part) is { } refusal) throw new InvalidOperationException(refusal);
+            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters["rootPitch"];
+            bool differs = Enumerable.Range(0, BeatSteps.Count).Any(i => desired[i] != part.Notes.Any(n => BeatSteps.Step(n) == i));
+            if (!differs) return Task.FromResult(false);
+            _playGeneration++; _coordinator?.Stop();
+            bool changed = _document.Edit("Edit channel rhythm", edit =>
+            {
+                for (int i = 0; i < desired.Length; i++)
+                {
+                    var existing = part.Notes.SingleOrDefault(n => BeatSteps.Step(n) == i);
+                    if (desired[i] && existing is null) edit.AddNote(pattern.Id, part.Id, BeatSteps.Position(i), BeatSteps.Duration(i), root, 1m);
+                    else if (!desired[i] && existing is not null) edit.DeleteNote(pattern.Id, part.Id, existing.Id);
+                }
+            });
+            _status = "Workflow.Ready";
+            return Task.FromResult(changed);
+        });
+    }
 
     /// <summary>Recognize a fully connected source/mix tree feeding the sole Gain → Output.
     /// No arbitrary graph is rebuilt; only its known final input cable is replaced.</summary>

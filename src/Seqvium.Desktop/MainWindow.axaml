@@ -12,7 +12,7 @@
         </ControlTheme>
     </Window.Resources>
     <Grid RowDefinitions="Auto,Auto,*,Auto">
-        <Border x:Name="Chrome" Height="{DynamicResource Chrome.Height}" Background="{DynamicResource Surface.Raised}"
+        <Border x:Name="Chrome" Height="{DynamicResource Chrome.Height}" Background="{DynamicResource Material.Panel}"
                 BorderThickness="{DynamicResource Border.Bottom}" BorderBrush="{DynamicResource Border.Default}">
             <Grid ColumnDefinitions="*,Auto">
                 <Grid x:Name="TitleRegion" ColumnDefinitions="Auto,*,Auto" Background="Transparent" Margin="{DynamicResource Padding.Control}">
@@ -36,7 +36,7 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <Border Grid.Row="1" Height="{DynamicResource Toolbar.Height}" Background="{DynamicResource Surface.Raised}"
+        <Border Grid.Row="1" Height="{DynamicResource Toolbar.Height}" Background="{DynamicResource Material.Panel}"
                 BorderBrush="{DynamicResource Border.Default}" BorderThickness="{DynamicResource Border.Bottom}" Padding="{DynamicResource Padding.Control}">
             <Grid ColumnDefinitions="*,Auto">
                 <Border x:Name="WorkflowRegion" />
@@ -92,7 +92,10 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <Border Grid.Row="2" x:Name="WorkspaceRegion" Background="{DynamicResource Surface.Workspace}" />
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,*">
+            <Border x:Name="NavigationRegion" />
+            <Border Grid.Column="1" x:Name="WorkspaceRegion" Background="{DynamicResource Surface.Workspace}" />
+        </Grid>
         <Border Grid.Row="3" Height="{DynamicResource Status.Height}" BorderBrush="{DynamicResource Border.Default}"
                 BorderThickness="{DynamicResource Border.Top}" Padding="{DynamicResource Padding.Control}">
             <Grid ColumnDefinitions="*,Auto">
