@@ -1291,7 +1291,30 @@ with shared Fluent/drawing resources and parameter-row alignment, user-wide Desk
 and an isolated reusable VisualCheck host. One BUILD checkpoint advances 0.1.0.0002 to 0.1.0.0003;
 no new musical capability/PATCH is claimed. Locked restore, zero-warning Release build, 922 tests,
 actual both-theme/localized GUI renders and independent-process activation/crash/timeout checks pass.
-Forty guarded Windows screen captures and five native mouse checks pass; broader native input remains partial after earlier refusals. F2 partial, F3-B/visual owner acceptance
+Forty guarded Windows screen captures and the early five-check native subset pass; the final retained JSON confirms eleven native mouse/keyboard checks. The full native input matrix remains incomplete after earlier refusals. F2 partial, F3-B/visual owner acceptance
 and Q-032/Q-055 remain unchanged. No Git history/index/publication operations. Current contracts are
 in DESIGN_SYSTEM, WORKSPACE, UX_CONTRACT and ARCHITECTURE; detailed evidence is in
 [the foundation report](../experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md).
+
+## SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE — 2026-10-13
+
+Synchronized F1 state/report/version evidence: original retained TRX confirms 922/922; the earlier
+five-check native subset and final eleven-check mouse/keyboard result are now distinct. Added
+developer-only bounded watchdog/observed GUI tasks, partial native diagnostics and joined process
+cleanup. Existing production Single Instance lifecycle passed source/focused/process review; no
+attribution is made for the earlier ten-minute delay. Production code and 0.1.0.0003 remain unchanged.
+
+Inventoried every artifact producer and actually removed reviewed old SDK build copies/bin/obj plus
+redundant F1 catalog/TRX outputs: approximately 2.573 → 0.370 GiB, 2.202 GiB net freed. Raw R4-F2
+pressure traces, owner projects/media, accepted render/native evidence and distinct failures remain.
+Automatic rolling retention now runs at normal VisualCheck GUI/process boundaries, with manual
+dry-run/apply, manifests/reservations and active/reparse/foreign-data protection. A small synthetic
+junction remains because automatic approval review rejected unlink with `blocked by policy`; its
+target is inside .artifacts and its protection was verified.
+
+Locked restore, zero-warning/error Release build, 933/933 full tests and 16/16 focused checks pass.
+Real bounded startup/joined-close, four process cases, watchdog exit 124, junction and live-host
+protection are verified without repeating the full GUI/native matrix or physical audio. R4-F2
+partial, R4-F3-B/visual owner acceptance and broader native/platform evidence gaps remain unchanged.
+Details: [foundation report](../experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md#completion-and-reliability-audit).
+No staging, commit, push, tag or history changes; HEAD remains b0a5c6d.

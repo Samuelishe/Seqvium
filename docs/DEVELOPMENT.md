@@ -166,6 +166,12 @@ globally ignore image/audio/JSON/Markdown extensions. Narrow generated-image ign
 `docs/experiments/` do not hide intentional resources elsewhere. Git ignore rules do not untrack
 existing files; any removal still needs scoped authorization and must not alter the staging index.
 
+[Rolling retention v1](experiments/README.md#rolling-retention-v1) is executable in VisualCheck and
+runs automatically at its GUI/process verification boundaries. Use its
+[manual dry-run/apply commands](../tools/Seqvium.VisualCheck/README.md#artifact-retention) for a storage
+review. A tool must mark its owned run and completed status before automatic rotation can consider it;
+unknown artifact directories require specific review, never age-only deletion.
+
 Small reproducible cases belong in the regular test suite. A genuinely reusable, adopted verification
 tool belongs in an appropriate `tests/` or `tools/` location with documented setup/input/output and
 existing tool-introduction/licensing review, not in a generated-artifact folder or a common utility.

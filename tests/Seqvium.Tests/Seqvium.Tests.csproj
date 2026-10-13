@@ -11,5 +11,6 @@
         <ProjectReference Include="../../src/Seqvium.Core/Seqvium.Core.csproj"/>
         <ProjectReference Include="../../src/Seqvium.Desktop/Seqvium.Desktop.csproj"/>
         <ProjectReference Include="../../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj"/>
+        <ProjectReference Include="../../tools/Seqvium.VisualCheck/Seqvium.VisualCheck.csproj"/>
     </ItemGroup>
 </Project>

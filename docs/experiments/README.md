@@ -80,6 +80,54 @@ and report any local artifacts deliberately kept, their location/reason and revi
 Do not stage, rewrite history or use broad Git cleanup commands. A local-only screenshot location is
 not a durable Markdown link target or a promise that every clone contains those images.
 
+## Rolling retention v1
+
+Developer verification applies the executable policy in
+[ArtifactRetention](../../tools/Seqvium.VisualCheck/ArtifactRetention.cs). Its `Policy` defaults are
+listed here; other tooling guides link this owner rather than repeat the settings.
+
+| Constraint | Default / deterministic order |
+| --- | --- |
+| Completed success age | 7 days |
+| Completed failure age | 14 days |
+| Runs per producer/scenario | At most 3 eligible completed runs |
+| Mandatory evidence reserve | Latest success and latest failure, ordered by completion time then ordinal path |
+| Total artifact size | Soft 1 GiB budget |
+
+Reservations consume count slots and override age/count/budget. Fill remaining slots with newest
+runs, then select unreserved runs exceeding age or count. If the projected tree still exceeds the
+budget, select remaining eligible runs oldest first, breaking equal-time ties by ordinal path.
+Pinned exceptional evidence, unknown trees, live owners and incomplete runs are never budget victims;
+an excess caused by protected data is reported. Active/incomplete runs are outside the completed-run
+quota until completion and owner exit. Explicit preservation needs a concrete engineering reason,
+scope and review boundary; do not pin every ordinary result.
+
+`catalog`, `matrix`, `gestures` and the small lifecycle `smoke` create a unique run beneath the supplied
+artifact parent. The process script creates its own unique run. They automatically apply retention
+before verification and after normal joined completion. New `.seqvium-run.json` manifests identify
+owner/schema, producer, scenario, run ID, PID plus process start time, timestamps and success/failure.
+A held `.active` lease also protects the GUI run. A watchdog failure is recorded as completed failure
+only as its isolated host exits; a parent with an unjoined child remains incomplete.
+
+Deletion requires a valid completed manifest, absent owner, free lease, no active executable/command
+line referring to the target, no nested ownership and a wholly readable tree without reparse points.
+The process snapshot is bounded; its failure protects all candidates. Windows uses the existing
+PowerShell/CIM environment, Linux uses `/proc`; other platforms conservatively retain candidates.
+This is portability-aware tooling, not evidence of other-OS Desktop acceptance. Canonical root/ancestor
+checks and a root cleanup lock guard deletion. Each file is checked for links and exclusive access;
+partial failures keep the manifest for diagnostics/retry and do not stop independent candidates.
+The local deletion journal rotates into one previous log, rather than growing without a bound.
+Dry-run neither writes ownership/log files nor deletes anything.
+
+Legacy data has no immunity but is never inferred disposable from age alone. The finalize inventory
+reviewed SDK dependency/runtime manifests, generated `obj` sources/file lists and absent process owners
+before adopting exact old build/cache directories as `disposable` with a `ReviewReason`. Completed
+F1 JSON/TRX families were separately adopted for rotation. Everything else stays unmarked/protected
+until a similarly specific review; notably unresolved R4-F2 raw traces and owner project/media/review
+material were retained. Original F1 render/native raw evidence has explicit preservation reasons.
+Build-copy deletion removes generated outputs, not the temporary harness source kept for provenance.
+Manual planning/application commands are in [VisualCheck](../../tools/Seqvium.VisualCheck/README.md#artifact-retention).
+
 ## Report contents
 
 A report under this directory should include:
@@ -93,7 +141,7 @@ A report under this directory should include:
 - Recommendation: accept, reject, narrow, or investigate further, with rationale.
 
 Keep only selected durable findings here under the retention policy above; disposable captures/logs
-remain local. Do not add an artifact framework before a probe requires it. Offline render evidence and
+remain local. Offline render evidence and
 real device/callback evidence must remain distinguishable.
 
 When a result justifies a durable decision, update the affected technical owner and

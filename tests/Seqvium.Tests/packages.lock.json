@@ -302,7 +302,7 @@
       "seqvium.audio.windows": {
         "type": "Project",
         "dependencies": {
-          "Seqvium.Core": "[0.1.0, )"
+          "Seqvium.Core": "[0.1.0.3, )"
         }
       },
       "seqvium.core": {
@@ -313,12 +313,18 @@
         "dependencies": {
           "Avalonia.Desktop": "[12.1.3, )",
           "Avalonia.Themes.Fluent": "[12.1.3, )",
-          "Seqvium.Audio.Windows": "[0.1.0, )",
-          "Seqvium.Core": "[0.1.0, )"
+          "Seqvium.Audio.Windows": "[0.1.0.3, )",
+          "Seqvium.Core": "[0.1.0.3, )"
         }
       },
       "seqvium.tools.projectstats": {
         "type": "Project"
+      },
+      "seqvium.visualcheck": {
+        "type": "Project",
+        "dependencies": {
+          "Seqvium.Desktop": "[0.1.0.3, )"
+        }
       }
     }
   }

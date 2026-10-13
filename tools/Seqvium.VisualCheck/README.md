@@ -15,8 +15,9 @@ tools/Seqvium.VisualCheck/Check-Processes.ps1
 
 On another OS invoke the corresponding built DLL through `dotnet`; Windows screen/input/process
 checks are explicitly platform-specific. Linux/macOS GUI/runtime support is not established here.
-Use a new output directory for each review to keep failed and successful evidence distinguishable.
-Output directories should be absolute and task-owned, normally under ignored `.artifacts/`.
+The output argument names an artifact parent; the host creates and prints a unique child run directory
+for each review, keeping failed and successful evidence distinguishable.
+Output directories should be absolute and task-owned, inside ignored `.artifacts/`.
 The `gestures` command runs a shorter matrix for focused input/alignment verification.
 
 ## Catalog and central-change demonstration
@@ -62,7 +63,8 @@ screen review. Render capture and Windows screen/input evidence remain distinct.
 with an internal isolated identity. It checks one document initialization, successful activation,
 restoration of the existing minimized window, graceful shutdown, explicit crash and reacquisition.
 Separate `noipc`/`stalled` hosts hold the real lease while a Desktop secondary must time out with a
-diagnostic and no document. The script terminates only the Process objects it created.
+diagnostic and no document. The script terminates only the Process objects it created, joins them with bounded waits and disposes
+their handles. Child stdout/stderr and partial results survive failed runs.
 
 The private `desktop`, `lease`, `noipc`, `stalled`, `activate` commands belong to this developer tool;
 the production Desktop exposes none of them. Protocol tests require no GUI/audio/device. Different
@@ -80,3 +82,42 @@ Do not weaken failed assertions or overwrite failed evidence to claim a pass.
 
 [Design System](../../docs/DESIGN_SYSTEM.md) owns component use;
 [Test execution](../../docs/TEST_EXECUTION.md) owns evidence tiers and suite commands.
+
+## Deadlines and diagnostics
+
+Every isolated host has an independent 120-second watchdog covering startup, awaited commands,
+GUI closure and IPC teardown. Override with `--timeout-seconds=N` (1..600). Timeout persists a
+diagnostic and exits **124**; ordinary exceptions return **1**, and existing activation refusal codes
+remain unchanged. Only the current test host exits; no ordinary Seqvium process is discovered/killed.
+The process script has a 90-second scenario deadline plus bounded child cleanup. No daemon is used.
+
+The GUI scenario is an observed Task; its save/close errors are caught and diagnosed. Native checks
+write `native-progress.json` after each passed check and on refusal/error; routed results are written
+before native input begins. Synthetic capture is released in `finally`. Outstanding native releases
+are attempted only while the exact test window is still foreground; diagnostics retain held-input
+state if foreground is lost. This guard never injects into another application.
+
+For a short real startup/joined-close check without captures or input:
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll smoke "$PWD/.artifacts/desktop-smoke" --timeout-seconds=15
+```
+
+## Artifact retention
+
+Normal GUI/process invocations automatically apply
+[rolling retention v1](../../docs/experiments/README.md#rolling-retention-v1) before and after the
+run. The policy owner describes limits, reservations, manifests and legacy review. To inspect/apply
+the same policy manually, after the normal Release build:
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll retention dry-run "$PWD/.artifacts"
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll retention apply "$PWD/.artifacts"
+```
+
+Paths must remain inside the explicit `.artifacts` root. Unmarked trees, unfinished runs and
+exceptional raw evidence remain protected. Deletion errors are reported individually and return a
+nonzero CLI code; protected excess over the soft budget is reported without silent deletion.
+The private `retention begin/complete` commands serve the process-script lifecycle. They do not
+classify arbitrary legacy data. DeviceCheck's console measurements and ProjectStats' explicit report
+files do not claim run ownership or silently adopt their destinations.

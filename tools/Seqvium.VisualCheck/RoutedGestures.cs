@@ -15,6 +15,8 @@ internal static class RoutedGestures
         GraphEditorSession editor, NodeEditorSession nodeEditor, NodeEditorTarget target)
     {
         var pointer = new Pointer(100001, PointerType.Mouse, true);
+        try
+        {
         var down = new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed);
         var move = new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other);
         var up = new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased);
@@ -125,6 +127,8 @@ internal static class RoutedGestures
             "Dock/collapse/hide/reopen changed floating layout/target/history.");
         passed.Add("workspace deactivation/focus/reactivation and independent selection/target/history; dock/collapse/hide/reopen retain layout/editor");
         return new { Result = "passed", Input = "synthetic routed events, actual GUI controls", Passed = passed, NativeWindowsInput = false };
+        }
+        finally { pointer.Capture(null); canvas.CancelGesture(); }
     }
     private static void RequireObserved(GraphEditorSession editor, DesktopWorkflow workflow) => editor.Observe(workflow.State);
 }

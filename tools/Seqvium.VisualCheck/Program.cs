@@ -21,6 +21,52 @@ internal static class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        try { return Execute(args); }
+        catch (Exception error) { Console.Error.WriteLine(error); return 1; }
+    }
+
+    private static int Execute(string[] args)
+    {
+        if (args.Length >= 3 && args[0] == "retention")
+        {
+            if (args[1] is "dry-run" or "apply")
+            {
+                var report = ArtifactRetention.Apply(args[2], args[1] == "apply");
+                Console.WriteLine(JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
+                return report.Diagnostics.Any(d => d.StartsWith("Deletion failed:", StringComparison.Ordinal)) ? 1 : 0;
+            }
+            if (args[1] == "begin" && args.Length == 5)
+            {
+                using var owner = System.Diagnostics.Process.GetProcessById(int.Parse(args[4]));
+                ArtifactRetention.Apply(ArtifactRetention.RootFor(args[2]), true);
+                ArtifactRetention.Validate(ArtifactRetention.RootFor(args[2]), args[2]);
+                Directory.CreateDirectory(args[2]);
+                Require(!File.Exists(Path.Combine(args[2], ArtifactRetention.Marker)), "Run already exists.");
+                ArtifactRetention.Write(args[2], new("Seqvium.Artifacts.v1", "VisualCheck", args[3], Path.GetFileName(args[2]),
+                    DateTimeOffset.UtcNow, null, "running", owner.Id, owner.StartTime.ToUniversalTime().Ticks));
+                return 0;
+            }
+            if (args[1] == "complete" && args.Length == 4)
+            {
+                Require(args[3] is "success" or "failure", "Invalid completion status.");
+                var marker = Path.Combine(args[2], ArtifactRetention.Marker);
+                ArtifactRetention.Validate(ArtifactRetention.RootFor(args[2]), args[2]);
+                var manifest = JsonSerializer.Deserialize<ArtifactRetention.Manifest>(File.ReadAllText(marker))!;
+                Require(manifest.Owner == "Seqvium.Artifacts.v1", "Unknown owner.");
+                ArtifactRetention.Write(args[2], manifest with { Completed = DateTimeOffset.UtcNow, Status = args[3] });
+                ArtifactRetention.Apply(ArtifactRetention.RootFor(args[2]), true);
+                return 0;
+            }
+            throw new ArgumentException("retention dry-run|apply <artifact-root> / begin <run-directory> <scenario> <owner-pid> / complete <run-directory> success|failure");
+        }
+        int timeoutSeconds = 120;
+        var timeoutArgument = args.FirstOrDefault(a => a.StartsWith("--timeout-seconds=", StringComparison.Ordinal));
+        if (timeoutArgument is not null)
+        {
+            timeoutSeconds = int.Parse(timeoutArgument.Split('=')[1]);
+            Require(timeoutSeconds is >= 1 and <= 600, "Deadline must be 1..600 seconds.");
+            args = args.Where(a => a != timeoutArgument).ToArray();
+        }
         if (args.Length < 2) { Console.Error.WriteLine("catalog|matrix <absolute-output> / desktop|lease|noipc|stalled <identity> <absolute-output> / activate <identity>"); return 1; }
         if (args[0] == "activate")
         {
@@ -29,7 +75,10 @@ internal static class Program
         }
         if (args[0] is "lease" or "noipc" or "stalled")
         {
-            string directory = Path.GetFullPath(args[2]); Directory.CreateDirectory(directory);
+            Require(args.Length == 3, "Lease requires identity and output.");
+            string directory = Path.GetFullPath(args[2]);
+            ArtifactRetention.Validate(ArtifactRetention.RootFor(directory), directory); Directory.CreateDirectory(directory);
+            using var watchdog = new VerificationDeadline(TimeSpan.FromSeconds(timeoutSeconds), directory, () => Environment.Exit(124));
             using var instance = new DesktopInstance(DesktopLaunch.Isolated(args[1], directory).Identity);
             if (!instance.IsPrimary) return 4;
             if (args[0] != "noipc") instance.StartListening(args[0] == "stalled" ? ct => Task.Delay(Timeout.Infinite, ct) : _ =>
@@ -41,7 +90,10 @@ internal static class Program
         }
         if (args[0] == "desktop")
         {
-            string directory = Path.GetFullPath(args[2]); Directory.CreateDirectory(directory);
+            Require(args.Length == 3, "Desktop requires identity and output.");
+            string directory = Path.GetFullPath(args[2]);
+            ArtifactRetention.Validate(ArtifactRetention.RootFor(directory), directory); Directory.CreateDirectory(directory);
+            using var watchdog = new VerificationDeadline(TimeSpan.FromSeconds(timeoutSeconds), directory, () => Environment.Exit(124));
             return Seqvium.Desktop.Program.RunDesktop([], DesktopLaunch.Isolated(args[1], directory), app =>
             {
                 app.MainWindowCreated += window =>
@@ -61,28 +113,61 @@ internal static class Program
                 };
             }, key => { File.AppendAllText(Path.Combine(directory, "diagnostic.txt"), key + "\n"); });
         }
-        string output = Path.GetFullPath(args[1]); Directory.CreateDirectory(output);
-        int result = 0;
-        int desktopExit = Seqvium.Desktop.Program.RunDesktop([], DesktopLaunch.Isolated(Guid.NewGuid().ToString("N"), Path.Combine(output, "config")), app =>
+        Require(args[0] is "catalog" or "matrix" or "gestures" or "smoke", "Unknown scenario.");
+        using var run = new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0]);
+        string output = run.Directory;
+        Console.WriteLine("Verification output: " + output);
+        using var deadline = new VerificationDeadline(TimeSpan.FromSeconds(timeoutSeconds), output, () =>
         {
-            app.MainWindowCreated += async main =>
+            try { run.Complete(124); }
+            finally { Environment.Exit(124); } // Only this isolated test process, never an ordinary Desktop.
+        });
+        int result = 0;
+        Task scenarioWork = Task.CompletedTask;
+        async Task VerifyAndCloseAsync(App app, MainWindow main)
+        {
+            try
+            {
+                if (args[0] == "smoke")
+                {
+                    await Task.Delay(100);
+                    Require(main.IsVisible, "Isolated Desktop window did not open.");
+                    Json(output, "smoke", new { WindowOpened = true, NativeInput = false, AudioStarted = false });
+                }
+                else if (args[0] == "catalog") await ComponentCatalog.VerifyAsync(app, main, output);
+                else await MatrixAsync(app, main, output, args[0] == "matrix");
+            }
+            catch (Exception error) { result = 1; Failure(output, error.ToString()); }
+            finally
             {
                 try
                 {
-                    if (args[0] == "catalog") await ComponentCatalog.VerifyAsync(app, main, output);
-                    else if (args[0] is "matrix" or "gestures") await MatrixAsync(app, main, output, args[0] == "matrix");
-                    else throw new ArgumentException("Unknown scenario.");
-                }
-                catch (Exception error) { result = 1; File.WriteAllText(Path.Combine(output, "failure.txt"), error.ToString()); }
-                finally
-                {
                     var workflow = Field<DesktopWorkflow>(main, "_workflow");
-                    if (workflow.State.IsDirty) await workflow.SaveAsync(Path.Combine(output, "final-fixture.seqvium"));
+                    if (workflow.State.IsDirty) Require(await workflow.SaveAsync(Path.Combine(output, "final-fixture.seqvium")), "Shutdown fixture save failed.");
                     main.Close();
                 }
-            };
-        }, key => { result = 1; File.WriteAllText(Path.Combine(output, "failure.txt"), key); });
-        return desktopExit == 0 ? result : desktopExit;
+                catch (Exception error) { result = 1; Failure(output, "Shutdown: " + error); }
+            }
+        }
+        try
+        {
+            int desktopExit = Seqvium.Desktop.Program.RunDesktop([], DesktopLaunch.Isolated(Guid.NewGuid().ToString("N"), Path.Combine(output, "config")),
+                app => app.MainWindowCreated += main => scenarioWork = VerifyAndCloseAsync(app, main),
+                key => { result = 1; Failure(output, key); });
+            Require(scenarioWork.IsCompleted, "GUI lifetime exited before its scenario/shutdown task completed.");
+            scenarioWork.GetAwaiter().GetResult();
+            result = desktopExit == 0 ? result : desktopExit;
+        }
+        catch (Exception error) { result = 1; Failure(output, error.ToString()); }
+        run.Complete(result);
+        return result;
+    }
+
+    private static void Failure(string output, string message)
+    {
+        Console.Error.WriteLine(message);
+        try { File.AppendAllText(Path.Combine(output, "failure.txt"), message + Environment.NewLine); }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException) { Console.Error.WriteLine("Cannot persist diagnostic: " + error.Message); }
     }
 
     internal static T Field<T>(object owner, string name) => (T)(owner.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(owner)
@@ -189,6 +274,7 @@ internal static class Program
         var canvas = main.GetVisualDescendants().OfType<GraphCanvas>().Single();
         canvas.Fit(); await Task.Delay(180);
         var routed = await RoutedGestures.VerifyAsync(canvas, workspace, workflow, editor, nodeEditor, target);
+        Json(output, "routed-gestures", routed);
         foreach (var theme in new[] { HostTheme.Dark, HostTheme.Light })
         {
             if (shell.Preferences.Theme != theme) await shell.ToggleThemeAsync();
@@ -209,7 +295,7 @@ internal static class Program
             finally { app.Resources["Graph.Node"] = accepted; app.Resources["Control.Corner"] = acceptedCorner; }
             await CaptureAsync(main, output, theme + "-graph-restored");
         }
-        var native = await NativePointer.VerifyAsync(main, canvas, workspace, workflow, editor, nodeEditor, target);
+        var native = await NativePointer.VerifyAsync(main, canvas, workspace, workflow, editor, nodeEditor, target, output);
         Json(output, "matrix", new { Rows = rows, FieldAlignment = alignment, RoutedGestures = routed, NativePointer = native, Screenshots = "Real Win32/Avalonia window renders at 96 DIP; native input separately guarded", AudioStarted = workflow.State.CanStop });
         Require(await workflow.SaveAsync(Path.Combine(output, "fixture.seqvium")), "Final isolated fixture save failed.");
     }

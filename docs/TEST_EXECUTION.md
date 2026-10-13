@@ -45,6 +45,22 @@ resolve F2 physical realtime evidence. No audio session or production release wa
 
 ## Current and future execution
 
+### Artifact retention and reliability checks
+
+`ArtifactRetentionTests` uses small isolated temporary `.artifacts` fixtures for age/count/budget,
+last success/failure reservations, idempotence, dry-run immutability, reviewed legacy deletion,
+active owners/leases, nested/invalid ownership, links/external paths, partial file locks, synthetic
+ACL denial, automatic lifecycle hooks and dispatcher-independent timeout diagnostics.
+
+```text
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*ArtifactRetentionTests" --filter-class "*DesktopInstanceTests"
+```
+
+The [VisualCheck guide](../tools/Seqvium.VisualCheck/README.md#deadlines-and-diagnostics) supplies
+bounded real startup/close and process checks, with explicit timeout exit codes. Retention runs
+at those tools' lifecycle boundaries under the [policy](experiments/README.md#rolling-retention-v1).
+It does not silently change raw `dotnet test` output paths or claim ownership of unrelated reports.
+
 ### Desktop foundation verification
 
 `DesktopFoundationGestureTests` covers nullable pane activation/layout restoration, screen-DIP click

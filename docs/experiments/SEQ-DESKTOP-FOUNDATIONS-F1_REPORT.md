@@ -98,8 +98,9 @@ different-user/elevation/session runtime coverage and Linux/macOS acceptance rem
 | No listener / stalled activation | Passed | Bounded diagnostic/exit, no secondary document |
 | Old layouts and inactive restoration | Passed | Existing layout suite plus nullable activation regression; no schema migration |
 | Native screen captures | Passed | **40 actual Windows screen captures**, with exact foreground guard; all window/pane/field/modal/central-change compositions |
-| Native mouse subset | Passed | **Five** checks in the final RU/Light ordinary window: micro selection without Undo, graph background clear with retained target, pan, workspace deactivation/focus, pane reactivation |
-| Full native input matrix / catalog screen attempts | Partial | Earlier matrix attempts and six catalog screen captures were refused; native double click/drag/keyboard/all-theme input coverage is not claimed |
+| Early native mouse subset | Passed | **Five** checks in `matrix-complete/matrix.json` (also `gestures-all`): micro selection without Undo, graph background clear with retained target, pan, workspace deactivation/focus, pane reactivation |
+| Final bounded native mouse/keyboard run | Passed | **Eleven** checks in `native-complete/matrix.json`: those five, Source/Gain body double click, threshold/one Undo/exact displacement/restoration at zoom 0.5/1/2, Escape cancellation, exact arrow movement at zoom 2 with Undo |
+| Full native input matrix / catalog screen attempts | Partial | Earlier matrix attempts and six catalog screen captures were refused; final bounded double click/drag/keyboard evidence exists; complete all-theme/size native input coverage is not claimed |
 | Markdown relative links / anchors, ownership and diff | Passed | Changed documentation; source names/owners and decision states reviewed |
 | User app, settings and projects | Preserved | No user process terminated; isolated settings/layout/media; early harness-only media cleaned precisely |
 | Physical audio, high/mixed DPI, Linux/macOS GUI/runtime, elevation/multiple-user/session matrix | Not run | No wider support, audio/visual owner acceptance or security certification inferred |
@@ -110,11 +111,15 @@ apphost, an absolute `BaseOutputPath` under `.artifacts/desktop-f1/release/` per
 build and the same full suite with that property; it does not change canonical version metadata.
 The suite passed in that output and again in normal output after the user closed their app.
 
-Local retained evidence is under `.artifacts/desktop-f1/`: final isolated `release/`,
-`tests-complete/`, `catalog-complete/`, `matrix-complete/` and `processes-final/` (earlier isolated runs remain for failure provenance).
+Local retained evidence is under `.artifacts/desktop-f1/`: `tests-complete/`, `tests-final-normal/`,
+`catalog-complete/`, `matrix-complete/`, `native-complete/` and `processes-final/`; original failed/
+incomplete attempts remain for provenance. The temporary isolated `release/` build copy and redundant
+completed catalog/TRX outputs were removed in the finalize checkpoint; normal source build outputs
+remain reproducible. Retained raw matrix/native evidence has an explicit preservation reason.
 These are ignored technical artifacts, not public README images or clone requirements. Renders
 come from actual running windows/popups; capture JSON distinguishes them from optional Windows screen
-pixels. Earlier screen/pointer attempts were refused; the final matrix obtained foreground naturally and passed 40 screen captures plus five actual mouse checks. Catalog pseudo states and routed input remain synthetic, and the broader native input matrix is incomplete.
+pixels. Earlier screen/pointer attempts were refused; the final matrix obtained foreground naturally and passed 40 screen captures plus the early five-check mouse subset. The subsequent shorter
+`native-complete` run confirms eleven mouse/keyboard checks, with `AudioStarted: false`. Catalog pseudo states and routed input remain synthetic, and the broader native input matrix is incomplete.
 
 ## Intermediate defects and corrections
 
@@ -146,7 +151,7 @@ Q-032, Q-055 and broad recovery/platform questions are not closed. No commit, st
 
 The main new owners are `Desktop/Lifecycle/` (process ownership), `Presentation/HostFluentResources`/`HostVisual` (resource integration), `Workspace/GraphDragThreshold` (screen input), the three focused Desktop test classes, `tools/Seqvium.VisualCheck/` (reusable host/scripts), and `docs/DESIGN_SYSTEM.md` (catalog). Existing shell/pane controls and canonical documents are updated in place.
 
-At verification: `master`, unchanged HEAD `8e3542ea16adbe8afcc2faf1aee409b85515cd44`, **41 modified tracked files, 21 new untracked source/test/tool/document files**, no staged changes and no pre-existing worktree changes. Every listed path belongs to this task. Generated evidence is ignored; source, locks and reusable checks must be retained. This is an observed snapshot, not a replacement for live Git status.
+Original F1 worktree snapshot (historical, before the finalize checkpoint): `master`, unchanged HEAD `8e3542ea16adbe8afcc2faf1aee409b85515cd44`, **41 modified tracked files, 21 new untracked source/test/tool/document files**, no staged changes and no pre-existing worktree changes. Every listed path belongs to this task. Generated evidence is ignored; source, locks and reusable checks must be retained. This is an observed snapshot, not a replacement for live Git status.
 
 ```text
  M AGENTS.md
@@ -212,3 +217,74 @@ At verification: `master`, unchanged HEAD `8e3542ea16adbe8afcc2faf1aee409b85515c
 ?? tools/Seqvium.VisualCheck/Seqvium.VisualCheck.csproj
 ?? tools/Seqvium.VisualCheck/packages.lock.json
 ```
+
+## Completion and reliability audit
+
+SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE, 2026-10-13: initial `master` HEAD
+`b0a5c6dc765a66875f1422132e80b35a5f9bafd4`, clean worktree. Retained `tests-complete` and
+`tests-final-normal` TRX each confirm 922/922, no failures/skips. `matrix-complete/matrix.json`
+confirms the early five native checks; `native-complete/matrix.json` confirms all eleven listed
+above, independently of the wider render matrix. These original outputs were inspected without
+rerunning the full GUI/native matrix. State, version ledger and archived work now agree.
+
+The developer host formerly lacked a scenario-wide deadline and could lose exceptions during
+final save/close outside its handler. The independent watchdog now bounds startup, awaited commands,
+GUI shutdown and listener disposal; timeout writes `failure.txt` and exits 124 in its own isolated
+host. The GUI scenario is an observed Task, save failure is asserted, close exceptions are recorded
+and premature GUI exit fails. Native progress is persisted after each check and on refusal/error;
+routed evidence survives a later native failure. Synthetic capture is always released; native
+release cleanup retains the exact foreground guard. Process verification now bounds crash/cleanup
+joins, disposes Process handles and retains child stdout/stderr plus partial results on failure.
+
+Source audit of DesktopInstance/DesktopLaunch/Program/App/MainWindow confirms existing ownership
+before configuration/document/audio, current-user pipe access, bounded connection/readiness/request
+waits, cancelled/joined IPC, entry-thread mutex release, abandonment recovery, isolated media and
+normal workflow/layout/preference shutdown joins. Expected persistence failures are translated by
+the existing stores. No production defect was reproduced requiring a lifecycle rewrite or product
+change. Framework GUI callbacks remain under their existing ownership; this bounded audit does not
+claim arbitrary disk/driver failures cannot delay user shutdown. Yesterday's ten-minute delay was
+not reproduced or attributed. Production behavior/version is unchanged at `0.1.0.0003`.
+
+The complete local inventory covered every artifact producer before deletion. Reviewed SDK build
+copies/caches contained dependency/runtime manifests or NuGet assets and auto-generated `obj` source,
+with no user projects/media and no active artifact owner. Dry-run listed exact paths/bytes/reasons;
+apply removed `desktop-f1/release`, `node-editor-f1/bin/obj`,
+`seq-r4-f3-b-crossing/GuiHost/bin/obj`, `seq-r4-f3-b-ux-f1/bin/obj`, and redundant
+`desktop-f1/catalog-final`, `catalog-verified`, `tests`. Repeat apply deleted nothing.
+
+| Inventory snapshot | Bytes | Files | Directories |
+| --- | ---: | ---: | ---: |
+| Before | 2,762,128,802 | 1,886 | 359 |
+| After cleanup and validation outputs | 397,513,935 | 1,468 | 194 |
+
+Net storage freed: **2.202 GiB**; ten deleted directory roots accounted for
+2,365,983,239 bytes including adopted markers. Inventory snapshots and reviewed plans/logs
+are local under `.artifacts/finalize-audit/`; metadata/report writes explain the small difference
+between gross deletion and net storage change. R4-F2 raw pressure traces (323,538,249 bytes),
+F3-A/F3-B project/media and About evidence retain their original file counts and bytes.
+Owner review renders, distinct failures, temporary harness source and unknown provenance remain.
+A synthetic junction fixture is intentionally left at
+`finalize-audit/junction-check`: dry-run/apply preserved its external-for-fixture sentinel; automatic
+approval review rejected unlink with `blocked by policy`. No alternative bypass was attempted;
+the junction target stays inside the agreed artifact tree, and inventory does not follow it.
+
+[Rolling retention v1](README.md#rolling-retention-v1) now executes automatically at VisualCheck
+GUI/process lifecycle boundaries, with manifests, active-owner/lease protection, deterministic
+reservations/rotation, explicit legacy review and a bounded local journal. Numeric policy settings
+and manual command links stay in that owner. Unknown and exceptional evidence are retained explicitly.
+
+Validation: locked restore; final full Release build with zero warnings/errors; **933/933** tests
+(no failures/skips), preserving all 922 baseline cases; focused **16/16** (11 new retention/watchdog
+and five existing instance cases). Small fixtures cover age/count/budget, reservations, dry-run,
+legacy, repeated apply, active/incomplete/pinned owners, invalid/nested manifests, links/external
+paths, file locks/partial access and synthetic ACL denial. Additional real Windows fixtures verified
+junction protection and an active isolated host referenced by command line even with manifest PID 0;
+it rotated only after graceful owner exit. Real short startup/close and four process checks pass,
+and the watchdog produced exit 124 plus failure diagnostics. No captures/native input in the normal
+smoke. Full GUI/native matrices, physical audio and other-OS acceptance were deliberately not rerun.
+An initial slow module-enumeration approach was replaced with one bounded process snapshot; the
+generic unsupported TRX flag was corrected to xUnit's `--report-xunit-trx` before the actual full run.
+
+R4-F2 stays partial; R4-F3-B and active Gain/general visual acceptance stay with the owner. Full native
+input and physical audio remain separate. Git HEAD/index/history are unchanged; this checkpoint
+changes developer tooling/tests and documentation only.

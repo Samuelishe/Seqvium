@@ -131,10 +131,15 @@ acceptance remains with the owner; the earlier presentation was explicitly rejec
 ## Validation baseline
 
 Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 922 tests pass, zero failures/skips**.
-All 908 baseline cases and 14 foundation cases pass. The [foundation report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md)
+solution build pass with **zero warnings/errors; all 933 tests pass, zero failures/skips**.
+The original F1 evidence confirms 922 cases (908 baseline plus 14 foundation); finalize adds 11
+developer retention/reliability regressions. Focused retention/instance checks pass 16/16; bounded
+startup/close and independent-process smoke pass, with a verified watchdog exit 124. The [foundation report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md)
 records actual RU/EN × Dark/Light renders/field alignment and process activation/crash/timeout checks;
-40 guarded Windows screen captures and five native mouse checks pass; broader native input remains partial.
+40 guarded Windows screen captures and an early five-check native mouse subset pass. The final
+`native-complete/matrix.json` confirms **11 native mouse/keyboard checks**; the full native input
+matrix remains incomplete. Developer verification now has bounded watchdogs and automatic artifact
+rotation under the [retention policy](experiments/README.md#rolling-retention-v1).
 All 867 prior cases remain; 41 node editor regressions cover identity/drafts/commands/persistence,
 empty-state economy and actual deterministic F2 PCM/identity/Stop convergence without a device.
 The [editor report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md) records actual Windows RU/EN ×
