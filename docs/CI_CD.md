@@ -13,8 +13,9 @@ authorize CI implementation.
 Exact workflow names, triggers, actions/versions, path filters, and branch-protection rules remain
 implementation choices when real validation exists.
 
-Once the first real managed solution/projects exist, keep CI simple for meaningful code/project changes:
-a Windows/Ubuntu/macOS matrix where practical, each performing restore, Release build, and tests.
+When CI is explicitly authorized, keep ordinary feedback focused on meaningful code/project changes
+and affected contracts. A Windows/Ubuntu/macOS matrix remains a possible source of portable evidence;
+choose its scope and frequency from actual platform risk and measured cost.
 The exact commands follow actual projects and [TEST_EXECUTION](TEST_EXECUTION.md); the zero-warning
 requirement follows [CODING_GUIDELINES](CODING_GUIDELINES.md). Begin portable evidence early under
 [PORTABILITY](PORTABILITY.md), without manufacturing tests for an empty solution.
@@ -26,7 +27,7 @@ library-specific reference scripts or preselect a native toolchain/RID matrix.
 
 ## R3-F1 hosted feasibility assessment
 
-The desktop is plain `net10.0` and does not reference the Windows audio adapter; platform detection and
+At R3-F1 the desktop was plain `net10.0` without a Windows audio adapter reference; platform detection and
 guarded chrome avoid Windows-only build requirements. Avalonia uses package-native assets, not global
 templates or desktop SDK workloads. Its RID-independent/no-apphost build passed on the local Windows
 SDK; pure shell tests need neither a display nor physical audio. Therefore a pinned .NET 10 Windows/
@@ -37,7 +38,9 @@ native assets, though pure tests do not initialize Avalonia platform/rendering s
 No workflow or external service was introduced incidentally. Existing exact locked commands remain the
 candidate job steps; inspect pinned SDK availability and OS native prerequisites before introducing jobs.
 GUI smoke on Linux needs display/session setup and macOS requires an actual interactive environment;
-those are separate evidence tiers, not prerequisites for every pure test job. Hosted compilation must
+those are separate evidence tiers, not prerequisites for every pure test job. Current Desktop also
+references the guarded Windows adapter since R4-F3-A; revisit target prerequisites when introducing CI.
+Hosted compilation must
 never be labeled desktop/device or distribution acceptance.
 
 ## Documentation validation and later growth
@@ -48,16 +51,22 @@ Account for GitHub required-check semantics: a workflow skipped by path filterin
 check pending. Decide filters and required-check policy together when CI exists; no such settings are
 selected here.
 
-Only when full verification has measurable runtime/cost may CI evolve toward:
+Future CI must preserve the accepted [L0–L4 policy](TEST_EXECUTION.md#required-verification-levels):
+ordinary feedback uses L0/L1 plus risk-selected L2; full automated L3 is periodic or explicitly justified,
+and L4 runtime/native/stress/device checks are separately selected. The local ten-task cadence belongs
+to PROJECT_STATE; future hosted triggers can implement practical scheduled/manual/checkpoint full
+verification without counting commits as tasks. BUILD increments and ordinary commits are not full-suite
+triggers. This task authorizes policy only, not workflows or services.
 
 | Purpose         | Possible scope / gates                                                                                                                  |
 |-----------------|-----------------------------------------------------------------------------------------------------------------------------------------|
 | Fast feedback   | Ordinary push/PR: focused/fast Windows validation where useful, portable managed validation, docs                                       |
-| Full acceptance | Manual, scheduled, milestone and/or release gates: full suite, distribution/runtime checks, heavier DSP/stress/native checks, packaging |
+| Full automated | Periodic/manual or justified milestone/release checks: full Release build and automated suite (L3) |
+| Runtime acceptance | Separately selected native GUI, visual matrix, stress, physical device and distribution checks; L3 does not trigger L4 automatically |
 
 A small project should have a small CI system. Fast feedback must not silently become full acceptance;
-record the revision and scope of acceptance evidence. Do not introduce this split or a collection of
-specialized workflows before measured need. Packaging/runtime validation is a separate evidence class,
+record the revision and scope of acceptance evidence. Measure real costs before implementing a
+collection of specialized workflows. Packaging/runtime validation is a separate evidence class,
 not merely another successful source build.
 
 ## Workflow correctness

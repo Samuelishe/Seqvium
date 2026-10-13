@@ -7,6 +7,114 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Required verification levels
+
+Check enough to justify confidence in the change. Remove redundant work without weakening meaningful
+assertions or scenario coverage. Select the scope before running it and report the level, commands,
+results and remaining evidence gaps. These rules apply to ordinary tasks and handoffs.
+
+| Level | Scope | When |
+| --- | --- | --- |
+| L0 | Source/diff checks and compilation of affected projects, zero warnings/errors | During work and before completion |
+| L1 | Focused tests for changed components and direct contract/lifetime dependencies | Every code task |
+| L2 | Related integration and cross-subsystem scenarios | When interactions or shared contracts change |
+| L3 | Full Release solution build and the entire automated suite | About every 10 completed repository tasks; earlier for substantial risk or a release checkpoint |
+| L4 | Native GUI input, full visual matrix, physical audio and stress | Specific affected risk or explicit request; independently selected |
+
+An ordinary code task finishes with successful L0 + L1; add L2 for changed subsystem interactions or
+contracts. Documentation-only tasks use static link/anchor, ownership, decision-status, consistency,
+scope and diff checks; no application build or Markdown-existence tests are required. A focused test
+project build already compiles its project references: do not also build those projects separately
+without a distinct reason. Select classes from affected source/usages, rather than assuming folders
+are namespaces. Local Core edits alone do not require L3.
+
+L3 is not automatic after each substantial handoff, BUILD increment or commit. Early L3 can be
+justified by project-format compatibility, a dangerous migration, DSP/realtime invariants, a broad
+semantic refactor, platform dependency updates or a release checkpoint. Explain the concrete risk
+before broadening. L4 does not follow L3 automatically; a full automated pass establishes neither
+native input nor physical audio/visual acceptance. Never label L1/L2 as a full regression pass.
+
+Use the existing [current checkpoint](PROJECT_STATE.md#verification-cadence) to record the last
+successful L3 and the number of completed tasks since it. Count completed repository tasks, including
+documentation/tooling tasks, once; builds, commits, intermediate edits and status messages do not count.
+At approximately 10, plan L3 with the next completion; reset to zero after a successful full build
+and full suite. Failed/incomplete L3 does not reset the count. This is a coarse cadence, not a task
+management system or a reason to delay important checks.
+
+### Time budget and reuse
+
+Aim for **at most 120 seconds** for ordinary focused verification, including any required restore,
+affected build and tests. This is an optimization target, never permission to omit required evidence.
+Record restore, build, test-run and selected tooling durations separately with scope/environment.
+If over budget, identify the expensive phase/test from existing logs or one bounded diagnostic run;
+do not repeat the whole command blindly. Use incremental builds and precise class/method filters.
+
+Restore with `--locked-mode` on setup or changed SDK/package/restore inputs or missing assets; do not
+repeat restore for unchanged dependencies with valid assets. Build affected outputs once with
+`--no-restore`, then test with `--no-build --no-restore` only when those outputs match the current
+sources, configuration and framework. Reuse a sufficient successful check until a relevant new change,
+failure or unresolved dependency invalidates it. A documentation edit does not invalidate compiled tests.
+Record the covered source state so evidence remains reviewable.
+
+The last retained 933-case full-suite TRX measures **17.5105 seconds** between runner start/finish
+(Windows x64, SDK 10.0.401/runtime 10.0.12, F1-FINALIZE). It excludes CLI startup, restore and build;
+it is historical timing, not a full pass of later sources or a timing guarantee. Restore/full-build
+timings are unavailable in that evidence. Obtain missing full-route timing at the next scheduled L3,
+never run an expensive full suite solely to collect statistics. The bounded audit and current measured
+tooling costs are recorded in [completed work](archive/WORK_LOG.md#seq-test-strategy-r1--2026-10-13).
+
+### Fast commands for the installed runner
+
+Root `global.json` selects .NET 10 Microsoft.Testing.Platform; Tests uses `xunit.v3.mtp-v1` 3.2.2
+(locked MTP 1.9.1). Inspect those manifests, `Directory.Build.props`, and any future
+`Directory.Packages.props` after setup changes. No central package manifest currently exists.
+From a restored checkout, this is one affected build followed by one L1 run:
+
+```text
+dotnet build tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*ArtifactRetentionTests" --filter-class "*DesktopInstanceTests"
+```
+
+Repeated `--filter-class` arguments are OR. Class and method filters use fully qualified names or
+`*` at the beginning/end. For one method, use `--filter-method
+"Seqvium.Tests.ArtifactRetentionTests.BusyCleanupLockSkipsAutomaticRotationButManualApplyFailsAndCanRetry"`.
+Use `--list-tests` with the intended filter to inspect selection without executing it, and check the
+reported count: zero selected tests is not successful verification. Use `--project`/`--solution`,
+pass MTP arguments directly without `--`, and do not use VSTest `--filter`/`--logger` syntax.
+The installed runner's `--help` is the local authority for optional switches. It provides
+`--filter-trait` but current tests have no category traits; do not pretend `Category=Integration`
+selects the integration cases. It does not expose `--filter-query` in this installed version.
+Reports use existing `--report-xunit-trx --results-directory <owned-ignored-directory>`; no generic
+TRX, coverage or dump extension is installed. No custom runner or route registry is required.
+
+For planned L3, use the full commands in [current execution](#current-and-future-execution); omit
+restore if its inputs/assets are unchanged. Select L4 commands separately from the owning harness guide.
+
+## Current test routes and costs
+
+The suite has one managed test project; categories below describe execution requirements, not
+mutually exclusive counts or implemented trait groups. Contract and regression describe purpose and
+can apply to unit, integration or GUI tests. Existing checks are retained.
+
+| Kind | Current examples / focused class patterns | Required boundary / cost |
+| --- | --- | --- |
+| Unit | `*MusicalTimeTests`, `*PaneGeometryTests`, `*WorkspaceBoundaryTests`, `*GraphCanvasGeometryTests` | Pure logic/geometry; no OS window/device |
+| Contract | `*DocumentTests`, `*GraphDiagnosticTests`, `*GraphPersistenceTests`, `*ProductVersionTests` | Canonical intent/format/metadata; version evaluation starts SDK processes |
+| Integration | `*ManagedMediaTests`, `*GraphLifecycleTests`, `*DesktopWorkflowTests`, `*DesktopInstanceTests`, `*ArtifactRetentionTests` | Real controlled storage, owner/coordinator or IPC; choose the affected boundary |
+| Regression | Nearest-cable cases, stale editor/menu guards, deferred text notification, retention lock/watchdog cases | Reproduce a named failure; geometry/logic stays below GUI when sufficient |
+| GUI | VisualCheck `smoke`, `catalog`, `gestures`, `matrix` | Actual Avalonia templates, dispatcher/window/render; synthetic routed events are separate from OS input |
+| Native | Guarded VisualCheck pointer/screen checks and independent-process activation | Real foreground/Windows input/processes; isolate test identities and stop on guard refusal |
+| Stress | Explicit DeviceCheck/probe pressure commands; warmed allocation and bounded capacity cases also exist in managed tests | Sustained pressure is L4; deterministic allocation/capacity checks are focused by affected contract |
+| Physical | DeviceCheck and the independent R0 probe | Explicit real device/backend, separate from ordinary tests; never implicit physical sound |
+
+WAV parsing, document persistence envelopes and offline DSP can use memory/generated inputs; actual
+Save/relocate/file-lock/access-failure contracts need owned temporary storage. Pure Desktop sessions,
+geometry and control text/resource checks do not require GUI platform startup. Actual template geometry,
+pixels, native pickers, foreground/input and rendered acceptance require their declared GUI/native route.
+Named mutex/pipe, real MSBuild evaluation and retention process ownership checks require the OS, not
+an active user window or audio device. Wall time is necessary for timeout/watchdog tests and explicit
+stress/device measurements; ordinary musical time and concurrency use controlled values/gates.
+
 ## Product version verification
 
 [VERSIONING](VERSIONING.md) owns identity and checkpoint authority.
@@ -20,7 +128,7 @@ these tests require the checkout and pinned SDK, but initialize neither GUI nor 
 Project JSON cases preserve the independent major/minor/minimum-reader gates, codec writer marker,
 round trip and incompatible-reader refusal. Existing persistence/graph compatibility tests remain intact.
 
-The focused command after the normal Release gates is:
+The focused command after an affected Release build is:
 
 ```text
 dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*ProductVersionTests"
@@ -50,7 +158,9 @@ resolve F2 physical realtime evidence. No audio session or production release wa
 `ArtifactRetentionTests` uses small isolated temporary `.artifacts` fixtures for age/count/budget,
 last success/failure reservations, idempotence, dry-run immutability, reviewed legacy deletion,
 active owners/leases, nested/invalid ownership, links/external paths, partial file locks, synthetic
-ACL denial, automatic lifecycle hooks and dispatcher-independent timeout diagnostics.
+ACL denial, automatic lifecycle hooks, competing cleanup locks and dispatcher-independent deadlines
+during startup/Dispose maintenance. Automatic rotation may skip a busy cleanup lock with diagnostics;
+manual apply returns nonzero when cleanup was skipped. Every deletion still requires lock ownership.
 
 ```text
 dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*ArtifactRetentionTests" --filter-class "*DesktopInstanceTests"
@@ -85,13 +195,12 @@ The R1 [Seqvium.Tests](../tests/Seqvium.Tests/Seqvium.Tests.csproj) project uses
 explicit MTP v1 support; its lock file resolves Microsoft.Testing.Platform 1.9.1. This suitable setup
 was available in the installed package cache and verified against SDK 10.0.401 / runtime 10.0.12;
 no VSTest adapter, coverage tool or additional runner is introduced. SDK 10 MTP mode is selected in
-[global.json](../global.json). From the repository root:
+[global.json](../global.json). Setup/planned L3 commands from the repository root:
 
 ```text
 dotnet restore Seqvium.sln --locked-mode
 dotnet build Seqvium.sln -c Release --no-restore
 dotnet test --solution Seqvium.sln -c Release --no-build --no-restore
-dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --filter-class "*MusicalTimeTests"
 ```
 
 Use MTP arguments directly, without a `--` separator. xUnit filtering uses `--filter-class`,
@@ -102,7 +211,8 @@ transaction rejection/deletion/history, processing relationships, exact time con
 compatibility/unknown data (including known-field edits), net-zero history, degraded access and
 normal-process save failures. Fixtures are synthetic
 and files use owned temporary directories. The locked-file overwrite check is Windows-specific;
-the directory-target failure and canonical checks are portable. There are no timing sleeps.
+the directory-target failure and canonical checks are portable. Ordinary synchronization uses explicit
+gates; infinite cancellable waits deliberately model stalled/cancelled work.
 F1 adds `WavDecoderTests`, `ManagedMediaTests`, `OfflineSamplerTests` and the independent tiny
 `WavFixtures` writer. They cover supported/extensible PCM/float WAV, all truncated prefixes/chunk bounds,
 durable unnamed acceptance/source removal, Save As/reopen/relocation, actual integrity/degraded Save,
@@ -177,7 +287,7 @@ canonical snapshot/generation/history/name/numeric integrity, acceptance of actu
 WAV work after preference changes, shell create/close, ordered preference commands, all four persisted
 combinations, missing/corrupt/oversize/write-failed settings and preservation of unrelated user content.
 They reference Desktop but never initialize the platform or open a physical window/audio stream.
-Use the existing full locked Release commands; `--filter-class "*HostPresentationTests"` selects host
+After an affected build, `--filter-class "*HostPresentationTests"` selects host
 presentation cases when needed. The [F1 report](experiments/SEQ-R3-F1_REPORT.md) separately records actual
 Windows UI Automation/pointer/keyboard smoke and visual inspection. Compilation/pure tests are not GUI
 acceptance; high/mixed DPI, screen readers and Linux/macOS runtime remain missing evidence.
@@ -198,7 +308,7 @@ tests**, retaining all 867 earlier cases. The existing fresh-Play helper consume
 after owner acknowledgment before asserting actual playback; no physical output is substituted as
 GUI/audio evidence.
 
-Use the full locked Release commands above, or select `--filter-class "*NodeEditorTests"` after the
+Select `--filter-class "*NodeEditorTests"` after the affected
 build. The [editor report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md) separately records native
 Windows opening/menu/drag, actual-window RU/EN × Dark/Light ordinary/reduced and empty-state smoke,
 controlled routed Gain/capture interactions, previous failures and foreground refusal. Routed events
@@ -245,8 +355,8 @@ an actual Windows window and the unsuccessful bounded native-input attempt.
 Tests initialize no GUI platform/device and use owner barriers, completion gates and sequential PCM
 packets, with no sleeps as timing oracles. The seven initial R3 test failures assumed exactly two panes;
 their count/conflict assertions now include the added hidden graph pane without removing baseline cases.
-Use the existing locked restore, full Release build and full solution commands above. For focused work:
-`dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --filter-class "*GraphEditor*"`.
+For focused work after the affected build:
+`dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*GraphEditor*"`.
 Actual Windows canvas/picker/workspace/focus checks and quiet physical output are separate evidence in
 [the focused report](experiments/SEQ-R4-F3-B_REPORT.md). Owner review remains mandatory; green tests
 do not accept canvas usability or reclassify the inherited F2 starvation evidence.
@@ -271,7 +381,7 @@ Localized close labels and keyboard hints are checked separately from actual con
 touching visible sides, covered/invisible boundary exclusion, control sources, inactive direct resizing,
 gesture stability after reordering and current independent dock seams. These display-independent cases
 do not initialize Avalonia's platform or claim native cursor/capture correctness.
-Use the same locked restore/full Release commands.
+Use an affected build and the focused classes below; broader levels follow the selected risk.
 The [F2 correction](experiments/SEQ-R3-F2_REPORT.md#geometry-and-chrome-correction)
 records 359 actual Windows input/cursor checks, retained content identity/focus and inspected local captures.
 The original 58 checks missed the owner's reproducible resize/cursor defects; they do not establish
@@ -308,7 +418,7 @@ branch sanitization, assembly identity and absence of product/analysis dependenc
 Windows exclusive-open and Unix symlink branches reflect filesystem semantics without test skips.
 Tests create and delete only their owned temporary repositories.
 
-After locked restore and Release solution build:
+After the affected Release build (the full solution command is reserved for planned L3):
 
 ```text
 dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "Seqvium.Tests.ProjectStats.*"
@@ -349,11 +459,26 @@ Subsystem contracts remain in [AUDIO_ENGINE](AUDIO_ENGINE.md), [NODE_GRAPH](NODE
 
 ## Test quality
 
+- Every new test must name and exercise a concrete contract, regression cause, important boundary
+  or failure. Prefer observable behavior through the responsible public API; do not test private
+  methods solely for convenience. Internal seams are appropriate for concrete ownership/testability
+  boundaries, rather than exposing production state just to assert implementation details.
+- Use Theory/parameterization for multiple inputs of one contract. Do not create near-identical cases
+  to inflate counts. Before adding a case, inspect existing neighbouring coverage. Repeat a contract
+  across levels only when a distinct boundary needs evidence, and explain that reason in the test
+  or verification report (for example, offline oracle versus realtime publication versus editor command).
+- Keep fixtures small and realistic. Reuse the independent tiny WAV/composition builders where suitable;
+  avoid both oversized setup for pure logic and excessive mocks of behavior the test should exercise.
 - Prefer generated audio, project-authored tiny fixtures, deterministic event streams, fixed seeds,
   and temporary directories. Explicitly own fixtures, tasks, resources, cleanup, and lifecycle.
   Do not depend on developer music libraries, personal samples, commercial songs, downloaded packs,
   or mutable machine configuration. Tracked audio/MIDI/image/font/test assets follow
   [THIRD_PARTY](THIRD_PARTY.md) provenance; document generated-fixture creation when useful.
+- Tests must not depend on execution order, other tests' mutable state, personal files/settings,
+  pre-existing processes or the active user window. Use unique test-owned identities/temporary resources
+  for OS integration. Ordinary unit/integration tests must never open real audio devices. Own and
+  release objects, leases, threads, timers, subscriptions and tasks even on assertion failure.
+  Control clock, lifetime and cancellation; bound external waits and join test-owned work before cleanup.
 - Async tests use `await`, meaningful cancellation, and deterministic synchronization; avoid
   `.Result`/`.Wait()`. Arbitrary `Thread.Sleep`, `Task.Delay`, polling delays, and timing luck are not
   the normal proof of concurrency. Prefer fake/virtual clocks, explicit schedulers,
@@ -361,12 +486,20 @@ Subsystem contracts remain in [AUDIO_ENGINE](AUDIO_ENGINE.md), [NODE_GRAPH](NODE
   publication signals. Tests of timing itself must declare tolerances/environment and must not
   masquerade as deterministic unit tests.
 - Preserve failure semantics; do not weaken assertions for green output. Functional correctness and
-  timing/platform acceptance are distinct claims.
+  timing/platform acceptance are distinct claims. Never hide errors, widen numerical tolerances without
+  a contract-based reason, or disable meaningful scenarios to meet a time target.
 - Prefer device-independent offline tests for deterministic DSP/signal/scheduling logic. Test declared
   numerical tolerances rather than assume bit identity across arbitrary processors/platforms/plugins.
   Physical-device latency/crackle acceptance remains separate.
 - Automate pure UI layout/state logic where useful. Actual pointer interaction, DPI, windowing,
   rendering integration, and audio-device feel may require declared runtime/manual evidence.
+- For a defect fix, prefer a regression that reproduces the cause and detects its return; demonstrate
+  failure under a representative fault when useful. A small visual change does not justify dozens of
+  GUI tests. Keep pure logic/geometry, synthetic routed events, real OS input and visual acceptance
+  separate in both selection and reporting.
+- Fast unit/contract checks must stay fast. A new expensive check needs a concrete cost reason and
+  a separate focused route documented here or in its harness guide. Avoid repeatedly starting a
+  platform/process for cases whose contract needs only values; retain real boundary checks where needed.
 
 For critical scheduling, serialization, compatibility, or lifetime regressions, optional negative-proof
 evidence can deliberately inject a representative fault and confirm that the owning test fails.
@@ -375,18 +508,11 @@ is introduced now.
 
 ## Focused, full local, and hosted workflow
 
-- **Focused:** during implementation, run affected tests and direct contract/lifecycle neighbours.
-  Broaden for shared contracts/consumers and risky publication, serialization, interop, or lifetime boundaries.
-- **Full local:** before meaningful milestone/task handoff while the suite remains reasonably fast,
-  run a Release build and the normal full suite with zero warnings/errors under
-  [CODING_GUIDELINES](CODING_GUIDELINES.md). Enforcement begins with actual projects.
-- **Hosted:** after an authorized push, inspect the actual enabled Windows/Ubuntu/macOS checks and
-  their revision/scope under [CI_CD](CI_CD.md); a push alone is not successful hosted evidence.
-
-Do not repeat sufficient green checks without a new change, failure, or unresolved concern. Runtime/manual
-evidence supplements tests where needed. If the suite becomes materially expensive, justify named routes
-and fast/full separation from measured cost, preserving full acceptance scope. A single route registry
-is retained as deferred [I-002](IDEAS.md#i-002--named-test-routes); no filters/route infrastructure exists now.
+Follow [L0–L4](#required-verification-levels) for local scope, cadence and reuse. Existing class/method
+filters provide focused routes; the deferred registry [I-002](IDEAS.md#i-002--named-test-routes) is
+not required. After an authorized push, inspect only actually enabled hosted checks and their
+revision/scope under [CI_CD](CI_CD.md); a push alone is not successful hosted evidence. No hosted
+workflow currently exists. Runtime/manual evidence supplements the automated scope when selected.
 
 ## R4-F3-A desktop workflow verification
 
@@ -404,7 +530,8 @@ retry. Successful rollback permits a fresh explicit Play without canonical edits
 including non-default real tempo/meter. Existing 609 cases remain intact. No GUI platform or physical
 device is initialized by the ordinary suite. Actual totals belong to PROJECT_STATE.
 
-Run the existing locked restore, full Release build and full MTP solution command. Actual Windows
+Build affected projects and select `--filter-class "*DesktopWorkflowTests"` plus
+`--filter-class "*WorkflowPresentationTests"` and affected integration neighbours. Actual Windows
 review separately exercises native pickers, owned unsaved modal, retained panes, narrow overflow,
 RU/EN, Dark/Light, Gain endpoints, focus/shortcuts and failed Save. Quiet explicit physical playback is
 a bounded smoke only. [F3-A evidence](experiments/SEQ-R4-F3-A_REPORT.md) distinguishes deterministic,
@@ -435,7 +562,7 @@ cases now target required minor 2; all baseline test cases remain. Malformed ide
 document/port/processing bounds, JSON depth/lifetime and failed Save retaining prior file/state/history
 are deterministic and use owned temporary directories.
 
-Run the unchanged locked restore, Release build and full solution test commands above. Optional focused
+After the affected Release build, focused
 run: `dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "Seqvium.Tests.Graph*"`.
 These tests open no GUI, audio device or network and establish intent eligibility only. Media decode,
 prepared graph resources, PCM separation/oracles, realtime budgets/publication and actual canvas/device

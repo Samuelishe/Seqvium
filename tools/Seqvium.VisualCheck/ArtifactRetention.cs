@@ -17,7 +17,7 @@ internal static class ArtifactRetention
         string Kind = "run", string? PreserveReason = null, string? ReviewReason = null);
     internal sealed record Candidate(string Path, long Bytes, string Reason, Manifest Manifest);
     internal sealed record Report(long BeforeBytes, long AfterBytes, List<Candidate> Plan,
-        List<Candidate> Deleted, List<string> Diagnostics, bool OverBudget);
+        List<Candidate> Deleted, List<string> Diagnostics, bool OverBudget, bool CleanupSkipped = false);
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
     private static readonly StringComparison Comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
@@ -62,25 +62,46 @@ internal static class ArtifactRetention
 
     internal sealed class Run : IDisposable
     {
-        private readonly FileStream _lease;
+        private readonly FileStream? _lease;
+        private readonly VerificationDeadline _deadline;
+        private readonly Action<string> _maintain;
         private Manifest _manifest;
         internal string Directory { get; }
-        internal Run(string parent, string scenario)
+        internal Run(string parent, string scenario, TimeSpan? timeout = null, Action? expired = null,
+            Action<string>? maintain = null)
         {
             string root = RootFor(parent);
             Validate(root, parent); System.IO.Directory.CreateDirectory(parent);
-            Apply(root, true);
-            string id = DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N");
-            Directory = Path.Combine(parent, id); System.IO.Directory.CreateDirectory(Directory);
-            _lease = new FileStream(Path.Combine(Directory, ".active"), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
-            using var process = Process.GetCurrentProcess();
-            _manifest = new("Seqvium.Artifacts.v1", "VisualCheck", scenario, id, DateTimeOffset.UtcNow, null,
-                "running", process.Id, process.StartTime.ToUniversalTime().Ticks);
-            Write(Directory, _manifest);
+            Directory = parent;
+            _maintain = maintain ?? (path => Apply(path, true));
+            // Start before maintenance; retain the same deadline through Dispose maintenance.
+            _deadline = new(timeout ?? TimeSpan.FromSeconds(120), () => Directory,
+                expired ?? (() => Environment.Exit(124)));
+            try
+            {
+                _maintain(root);
+                string id = DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N");
+                Directory = Path.Combine(parent, id); System.IO.Directory.CreateDirectory(Directory);
+                _lease = new FileStream(Path.Combine(Directory, ".active"), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                using var process = Process.GetCurrentProcess();
+                _manifest = new("Seqvium.Artifacts.v1", "VisualCheck", scenario, id, DateTimeOffset.UtcNow, null,
+                    "running", process.Id, process.StartTime.ToUniversalTime().Ticks);
+                Write(Directory, _manifest);
+            }
+            catch
+            {
+                try { _lease?.Dispose(); }
+                finally { _deadline.Dispose(); }
+                throw;
+            }
         }
         internal void Complete(int exit) => Write(Directory, _manifest = _manifest with
             { Status = exit == 0 ? "success" : "failure", Completed = DateTimeOffset.UtcNow });
-        public void Dispose() { _lease.Dispose(); Apply(RootFor(Directory), true); }
+        public void Dispose()
+        {
+            try { _lease?.Dispose(); _maintain(RootFor(Directory)); }
+            finally { _deadline.Dispose(); }
+        }
     }
 
     private static bool Alive(Manifest manifest)
@@ -147,7 +168,20 @@ internal static class ArtifactRetention
         Validate(root, Path.Combine(root, "retention-boundary"));
         foreach (string name in new[] { ".retention.lock", "retention.jsonl", "retention.previous.jsonl" })
             if (new FileInfo(Path.Combine(root, name)).LinkTarget is not null) throw new IOException("Reparse retention metadata: " + name);
-        using var gate = apply ? new FileStream(Path.Combine(root, ".retention.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None) : null;
+        FileStream? gate = null;
+        if (apply)
+        {
+            try { gate = new FileStream(Path.Combine(root, ".retention.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            catch (IOException error) when ((error.HResult & 0xffff) is 32 or 33 or 11)
+            {
+                // Sharing/lock violation (Windows) or EAGAIN (Unix). No scan, log write or deletion
+                // without the cleanup lease. Automatic rotation is optional; manual apply fails.
+                string diagnostic = "Cleanup skipped: retention lock is busy; no cleanup performed.";
+                Console.Error.WriteLine("retention: " + diagnostic);
+                return new(0, 0, [], [], [diagnostic], false, CleanupSkipped: true);
+            }
+        }
+        using var cleanupLease = gate;
         var diagnostics = new List<string>(); var markers = new List<string>(); long before = 0;
         // A reparse/inaccessible subtree is retained; it cannot hide a deletion candidate.
         foreach (var entry in new DirectoryInfo(root).EnumerateFileSystemInfos())

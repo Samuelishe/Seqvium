@@ -86,10 +86,16 @@ Do not weaken failed assertions or overwrite failed evidence to claim a pass.
 ## Deadlines and diagnostics
 
 Every isolated host has an independent 120-second watchdog covering startup, awaited commands,
-GUI closure and IPC teardown. Override with `--timeout-seconds=N` (1..600). Timeout persists a
+GUI closure, IPC teardown and automatic artifact maintenance before/after the scenario. The run owns
+its watchdog from before startup rotation until Dispose rotation finishes. Manual retention and
+process-script begin/complete commands also have a deadline. Override with `--timeout-seconds=N`
+(1..600). Timeout persists a
 diagnostic and exits **124**; ordinary exceptions return **1**, and existing activation refusal codes
 remain unchanged. Only the current test host exits; no ordinary Seqvium process is discovered/killed.
 The process script has a 90-second scenario deadline plus bounded child cleanup. No daemon is used.
+If startup rotation times out before a run directory exists, `failure.txt` is written to its supplied
+artifact parent; later timeout diagnostics go to the run directory. A timeout does not wait for another
+manifest write before exiting; a run interrupted before completion stays incomplete and protected.
 
 The GUI scenario is an observed Task; its save/close errors are caught and diagnosed. Native checks
 write `native-progress.json` after each passed check and on refusal/error; routed results are written
@@ -118,6 +124,11 @@ dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll ret
 Paths must remain inside the explicit `.artifacts` root. Unmarked trees, unfinished runs and
 exceptional raw evidence remain protected. Deletion errors are reported individually and return a
 nonzero CLI code; protected excess over the soft budget is reported without silent deletion.
+Only the holder of the exclusive root `.retention.lock` may delete or update retention journals.
+A sharing/lock conflict skips optional automatic rotation immediately with diagnostics, allowing an
+independent verification to continue. Manual `apply` reports `CleanupSkipped: true` and exits **1**;
+retry after the owner releases the lock. Skipped report byte counts are unavailable (serialized as zero),
+not a measurement of an empty tree. Other I/O/access errors remain errors; dry-run is read-only.
 The private `retention begin/complete` commands serve the process-script lifecycle. They do not
 classify arbitrary legacy data. DeviceCheck's console measurements and ProjectStats' explicit report
 files do not claim run ownership or silently adopt their destinations.

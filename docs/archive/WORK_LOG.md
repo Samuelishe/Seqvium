@@ -1318,3 +1318,105 @@ protection are verified without repeating the full GUI/native matrix or physical
 partial, R4-F3-B/visual owner acceptance and broader native/platform evidence gaps remain unchanged.
 Details: [foundation report](../experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md#completion-and-reliability-audit).
 No staging, commit, push, tag or history changes; HEAD remains b0a5c6d.
+
+## SEQ-TEST-STRATEGY-R1 — 2026-10-13
+
+Accepted risk-based verification and mandatory test-writing rules in TEST_EXECUTION, with short
+agent instructions and practical development commands. Future CI policy separates fast feedback,
+full automated verification and independently selected runtime acceptance; no workflow/service/runner
+was created. Ordinary code completion requires L0 + L1, with L2 for affected interactions; L3 is
+approximately every ten completed tasks or earlier for concrete significant risk/release checkpoints.
+L4 is independently selected. Sufficient successful checks are reused until invalidated. The focused
+target is 120 seconds without weakening coverage/assertions. PROJECT_STATE retains the existing last
+full checkpoint and a one-task cadence count; no task-management infrastructure was introduced.
+
+### Bounded audit findings
+
+Inspected the sole managed xUnit v3/MTP project, support fixtures, representative document/format,
+offline/realtime/lifetime, Desktop, metadata and tooling tests, VisualCheck and retained F1-FINALIZE
+TRX. Classification/routes are in TEST_EXECUTION; regression/contract purposes overlap execution
+categories. Ordinary tests initialize no physical audio device or GUI platform. Real temporary files
+are required for Save/relocation/file locks and access failure; memory WAV/JSON/PCM fixtures serve
+parsing and numerical contracts. Desktop logic/geometry stays below actual render/native acceptance.
+No category traits or shared xUnit class/collection fixtures were found; most folders use the same
+`Seqvium.Tests` namespace, so folder-based namespace filtering would miss their classes.
+
+Observed costs in the previous 933-case TRX (parallel class execution means sums are not wall time):
+ProductVersionTests' 31 cases sum to 16.997 s, including 21 real SDK/MSBuild evaluations with 30-second
+failure bounds. ArtifactRetentionTests' 11 cases sum to 7.263 s because repeated Apply calls take real
+PowerShell/CIM ownership snapshots. The largest single case, GraphExecutionTests' decoded-budget
+refusal, takes 1.611 s; source generates an 8,000,000-float source and imports five large independent
+PCM dependencies to reach the real decoded budget. GraphLifecycleTests deliberately forces GC for a
+weak-reference lease-release contract. These are real boundaries/cost reasons, not evidence that
+their assertions can safely be replaced with mocks or smaller inputs.
+
+No finite Task.Delay/Thread.Sleep synchronization sleeps were found in ordinary tests. Infinite
+cancellable delays model cancellation/stalled IPC, and short wall-clock bounds test timeout behavior.
+VisualCheck has fixed 100/180/250 ms render/input-settle waits and a larger render/language/theme/size
+matrix; that host belongs on the selected runtime route, not every ordinary handoff. Replacing those
+waits with explicit framework/native readiness is a possible later optimization, not a verified defect
+or a change made here. Tiny independent WAV/composition fixtures and existing Theory inputs already
+avoid large external assets and excessive mocks; no concrete redundant shared fixture was identified.
+
+Coverage overlaps at deliberate boundaries: persistence/envelope gates also appear in version tests,
+and numerical/Stop/lifetime assertions appear in offline, realtime, coordinator and Desktop command
+tests. These check different entry/publication/lifecycle paths; the limited audit does not establish
+safe deletion candidates. Future repeated coverage needs that justification. Confirmed fragility:
+NodeEditorTests accesses named private control fields, and version/design guards assert selected source
+text. Renames or equivalent syntax can break these while behavior remains valid; some source checks
+intentionally enforce canonical ownership. Preserve existing working cases and prefer observable
+contracts for new cases. No tests were mass-deleted or rewritten.
+
+### Reliability correction and evidence
+
+ArtifactRetention.Run now owns one deadline before startup Apply and through Dispose Apply, releasing
+it on acquisition/cleanup errors. Timeout diagnostics resolve to the supplied parent until the unique
+run directory exists, then to the run. Timeout exits 124 without waiting for an extra completion-marker
+write; interrupted incomplete evidence remains protected. Retention dry-run/apply and process-script
+begin/complete also run under the same configurable deadline policy.
+
+Cleanup lock sharing/lock violations immediately return explicit CleanupSkipped diagnostics. Optional
+automatic rotation continues without cleanup; manual apply returns 1. Other I/O errors retain error
+semantics. No deletion, scan or journal mutation occurs on lock conflict; the successful path still
+holds the exclusive lock through deletion/journaling and preserves existing ownership/link checks.
+One regression covers held-lock automatic/manual behavior, unchanged candidate bytes/no journal and
+successful deletion after release. A two-input Theory blocks startup/Dispose maintenance behind an
+explicit gate and observes watchdog diagnostics while work is still blocked. Three cases are added
+to the 933-case baseline; later full-suite success is not claimed.
+
+Windows x64, SDK 10.0.401/runtime 10.0.12, current source at this checkpoint:
+
+| Phase | Measured duration | Scope / result |
+| --- | --- | --- |
+| Restore | Unknown; not rerun | Dependencies unchanged; valid existing assets used |
+| Affected Release build | 11.802 s wall time (MSBuild reports 11.41 s) | Tests project and references; zero warnings/errors, no restore |
+| Incremental build after review | 5.126 s wall time (MSBuild reports 4.22 s) | Required by the final constructor-cleanup guard and test-deadline change; zero warnings/errors |
+| L1 tests | 9.466 s CLI wall time (runner summary 8.781 s) | Retention + DesktopInstance, 19/19 passed, zero failures/skips; no build/restore |
+| Final affected L1 rerun | 9.937 s CLI wall time (runner summary 9.271 s) | Retention only, 14/14; unrelated IPC tests and successful GUI/timeout checks were not repeated |
+| Full suite | Historical runner interval 17.5105 s | Previous F1-FINALIZE TRX: 933/933; no new full run or full build |
+| Full Release solution build | Unknown | Prior success has no retained duration; measure at next planned L3 |
+| VisualCheck | 2.085 s wall time | One isolated startup/joined-close smoke, including lifecycle retention; exit 0 |
+| Full visual/native matrix | Unknown; not run | No matrix cost or full native/visual acceptance inferred |
+| Retention | 0.579 s wall time | Manual apply of one 403-byte task-owned synthetic disposable run; deletion confirmed, exit 0; not whole-repository cost |
+| Timeout process | 1.111 s wall time | One isolated lease with one-second deadline; persisted diagnostic and exit 124 |
+
+Initial affected build + L1 costs 21.268 s. Review then made constructor lease disposal release its
+deadline in finally even if Dispose throws, and gave the lifecycle timer tests one second instead of
+20 ms so constructor file I/O is less likely to consume their timer before the selected maintenance
+boundary. That relevant code/test change justified one incremental build and affected-class rerun;
+both focused cycles together cost 36.331 s, within the ordinary target. Runner help confirms installed
+class/method wildcard filters, OR across repeated classes, no advertised query filter and the existing
+`--report-xunit-trx`. Actual combined-class invocation selects 19 cases; exact method discovery selects
+one case without re-executing green tests. Static documentation links/anchors, ownership, status,
+scope/consistency and Git diff checks pass as L0 (10 changed Markdown files, 393 relative links/anchors;
+no link issues or whitespace errors). The Design System's shared-style route now delegates full-suite/
+matrix scope to the same policy while retaining catalog and rendered alignment checks.
+Logs/TRX and smoke/deadline diagnostics are retained
+under ignored `.artifacts/test-strategy-r1/` for this verification's review; temporary retention input
+was removed by the checked apply. Remaining compact diagnostics/fixtures may be removed after review;
+no GUI screenshots or reusable ad hoc scripts were created. No user artifacts were adopted or rotated.
+
+Version gates were reviewed; explicit owner direction retains product 0.1.0.0003 despite compiled
+tooling regressions falling within broad BUILD wording. Core, DSP, project schema and production
+Desktop files/resources are unchanged. No full/native matrix, physical sound, hosted CI, staging,
+commit, push, tag or history/index mutation. Initial working tree was clean; task base HEAD d179233.

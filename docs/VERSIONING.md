@@ -164,3 +164,15 @@ code/resources are unchanged. The owner's explicit tooling-only direction exclud
 BUILD for these regressions. Reliability/cleanup verification is recorded in the
 [foundation report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md#completion-and-reliability-audit).
 R4-F2 remains partial; F3-B/visual owner acceptance, full native matrix and physical audio remain separate.
+
+### SEQ-TEST-STRATEGY-R1
+
+Identity remains **`0.1.0.0003`** under the owner's explicit instruction against an automatic version
+increase. This is a developer tooling/test-policy checkpoint: VisualCheck retention deadlines and
+cleanup-lock contention plus three focused regressions; production assemblies/resources, DSP and
+project format are unchanged. It adds no standalone user capability for PATCH and does not qualify
+for MAJOR/MINOR. Compiled regression changes are within the existing BUILD wording, but this task's
+explicit version constraint overrides delegated automatic BUILD authority; it does not adopt the
+general tooling exemption proposed above. Focused verification and limits are recorded in
+[completed work](archive/WORK_LOG.md#seq-test-strategy-r1--2026-10-13). Version changes do not trigger
+L3 independently of the risk/cadence policy in TEST_EXECUTION.

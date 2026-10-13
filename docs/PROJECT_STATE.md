@@ -130,8 +130,15 @@ acceptance remains with the owner; the earlier presentation was explicitly rejec
 
 ## Validation baseline
 
-Local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12: locked restore and full Release
-solution build pass with **zero warnings/errors; all 933 tests pass, zero failures/skips**.
+Last full baseline, F1-FINALIZE: local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12.
+Locked restore and full Release solution build pass with **zero warnings/errors; all 933 tests pass,
+zero failures/skips**.
+SEQ-TEST-STRATEGY-R1 adds three developer retention/deadline cases. The affected Release test-project
+build passes with zero warnings/errors, and focused retention/IPC checks pass **19/19**, with the
+final retention rerun **14/14** after resource-cleanup/test-deadline review; isolated
+startup/joined-close, timeout exit 124 and small-fixture retention pass. The full suite was not rerun
+after these changes. [TEST_EXECUTION](TEST_EXECUTION.md#required-verification-levels) owns the accepted
+L0–L4 policy and mandatory test-writing rules; production identity remains `0.1.0.0003`.
 The original F1 evidence confirms 922 cases (908 baseline plus 14 foundation); finalize adds 11
 developer retention/reliability regressions. Focused retention/instance checks pass 16/16; bounded
 startup/close and independent-process smoke pass, with a verified watchdog exit 124. The [foundation report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md)
@@ -181,6 +188,14 @@ UR12 44.1 kHz stereo float32 output/join checks. The independent
 [R4-F2 report](experiments/SEQ-R4-F2_REPORT.md) records 32-node/8-source graph execution on the current
 High Definition Audio output at 48 kHz stereo, baseline/CPU-GC-control pressure, oracle/parity and joined
 fault lifetimes. No acoustic perception, DAC latency, multi-hour/all-device or additional platform claim follows.
+
+### Verification cadence
+
+Last successful L3: **SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE, 2026-10-13**, full Release solution build
+and 933/933 automated tests (retained full-suite TRX runner interval: 17.5105 seconds).
+Completed repository tasks since that L3: **1** — SEQ-TEST-STRATEGY-R1.
+Update this small checkpoint field once at task completion; successful L3 resets it to zero under
+[test policy](TEST_EXECUTION.md#required-verification-levels). A focused pass does not reset it.
 
 ## Active blockers / evidence gaps
 

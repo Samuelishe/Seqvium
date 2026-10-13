@@ -35,13 +35,25 @@ The application uses C#/.NET 10 and Avalonia. [Seqvium.sln](../Seqvium.sln) cont
 production application. Default unnamed media is stored under LocalApplicationData; tests use
 their own directories.
 
-From the repository root with .NET SDK 10.0.401 (or a later patch in the 10.0.4xx band):
+From the repository root with .NET SDK 10.0.401 (or a later patch in the 10.0.4xx band),
+restore on setup or changed restore inputs/missing assets:
 
 ```text
 dotnet restore Seqvium.sln --locked-mode
-dotnet build Seqvium.sln -c Release --no-restore
-dotnet test --solution Seqvium.sln -c Release --no-build --no-restore
 ```
+
+For an ordinary test/tooling change, build the affected test project once and then select classes:
+
+```text
+dotnet build tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*ArtifactRetentionTests"
+```
+
+The project build includes its references. For application launch without test changes, build
+`src/Seqvium.Desktop/Seqvium.Desktop.csproj` instead. Use `--no-build` only with matching current
+outputs. [TEST_EXECUTION](TEST_EXECUTION.md#required-verification-levels) owns required L0–L4 scope,
+the 120-second focused target, runner filters and periodic full commands; ordinary handoffs do not
+require a full suite. Reuse unchanged restored assets and sufficient successful checks.
 
 Root [global.json](../global.json) pins the feature band with `latestPatch`, disables prerelease SDKs
 and selects Microsoft.Testing.Platform. Project-local package lock files fix the restore graph.
@@ -152,7 +164,7 @@ requirement. Selection must follow task scope and actual project needs.
 [Seqvium.Tools.ProjectStats](../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj)
 is the implemented independent .NET 10 BCL-only repository diagnostics CLI. It belongs to the existing
 solution, with an empty package lock and no production/analysis dependencies. The pinned SDK and
-normal locked Release gates apply; no global tool or additional scripting environment is needed.
+locked restore and risk-selected Release checks apply; no global tool or additional scripting environment is needed.
 [PROJECT_STATS](PROJECT_STATS.md#cli-and-outputs) owns console/Markdown/JSON invocations, explicit
 output, public corpus/privacy, count semantics and advisory limits. Its assembly metadata supplies
 tool identity; it is developer tooling, separate from musical product capabilities and the R0 probe.

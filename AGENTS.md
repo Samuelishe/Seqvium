@@ -81,6 +81,17 @@ current source/ledger, classify the completed checkpoint once, and record any bu
 Documentation changes require relative-link, ownership, decision-status, scope, and diff checks.
 Code changes later require focused builds/tests and relevant runtime evidence; inspect the actual
 test platform before choosing commands. Do not create tests or CI merely for appearance.
+Follow [TEST_EXECUTION](docs/TEST_EXECUTION.md#required-verification-levels): ordinary code tasks
+require L0 + focused L1; add L2 for affected interactions/contracts. L3 is a full Release build/suite
+about every 10 completed tasks, earlier for concrete substantial risk or release checkpoints, never
+automatically for each handoff, BUILD or commit. Record cadence in PROJECT_STATE. Select L4 GUI/native/
+stress/physical evidence independently by risk/request. Docs-only changes use static checks.
+New tests must cover a specific behavior/contract, regression, boundary or failure; prefer observable
+behavior, small owned fixtures and Theory for repeated inputs. Avoid duplicate coverage without a
+distinct boundary, timing sleeps, order/user-state/device dependencies and implementation-only assertions.
+Aim for focused verification within 120 seconds; measure overruns, use valid incremental/no-build/
+no-restore outputs and MTP filters, and reuse sufficient green checks until relevant changes/failures.
+Report the actual scope; focused verification is never a full regression pass.
 Every first-party UI task must read DESIGN_SYSTEM and use its shared tokens/components, including
 DrawingContext code. Shared-style changes require the component catalog and rendered field-alignment
 checks; update the implementation when the visual contract changes.

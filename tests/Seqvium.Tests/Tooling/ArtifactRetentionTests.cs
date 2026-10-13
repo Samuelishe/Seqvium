@@ -147,5 +147,69 @@ public sealed class ArtifactRetentionTests : IDisposable
             Assert.Contains("success", File.ReadAllText(marker));
         }
     }
+    [Fact]
+    public void BusyCleanupLockSkipsAutomaticRotationButManualApplyFailsAndCanRetry()
+    {
+        string candidate = Run("disposable", 20, kind: "disposable");
+        var original = Directory.GetFiles(candidate).ToDictionary(p => p, File.ReadAllBytes);
+        using (var gate = new FileStream(Path.Combine(Root, ".retention.lock"), FileMode.OpenOrCreate,
+                   FileAccess.ReadWrite, FileShare.None))
+        {
+            var skipped = ArtifactRetention.Apply(Root, true, now: _now);
+            Assert.True(skipped.CleanupSkipped);
+            Assert.Empty(skipped.Plan); Assert.Empty(skipped.Deleted);
+            Assert.Contains(skipped.Diagnostics, d => d.Contains("no cleanup performed", StringComparison.Ordinal));
+            Assert.Equal(1, Seqvium.VisualCheck.Program.Main(["retention", "apply", Root]));
+            using (var current = new ArtifactRetention.Run(Path.Combine(Root, "new"), "busy-lock"))
+            {
+                current.Complete(0);
+                Assert.Contains("success", File.ReadAllText(Path.Combine(current.Directory, ArtifactRetention.Marker)));
+            }
+            foreach (var file in original) Assert.Equal(file.Value, File.ReadAllBytes(file.Key));
+            Assert.False(File.Exists(Path.Combine(Root, "retention.jsonl")));
+        }
+        var retried = ArtifactRetention.Apply(Root, true, now: _now);
+        Assert.False(retried.CleanupSkipped);
+        Assert.Contains(retried.Deleted, r => r.Path == candidate);
+        Assert.False(Directory.Exists(candidate));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RunWatchdogCoversBlockedStartupAndDisposeMaintenance(bool startup)
+    {
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var fired = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var release = new ManualResetEventSlim();
+        string parent = Path.Combine(Root, "bounded");
+        string output = parent;
+        int calls = 0;
+        // Block only the selected lifecycle boundary; no sleep substitutes for synchronization.
+        var work = Task.Run(() =>
+        {
+            using var current = new ArtifactRetention.Run(parent, "deadline", TimeSpan.FromSeconds(1),
+                () => fired.TrySetResult(), _ =>
+                {
+                    if (++calls != (startup ? 1 : 2)) return;
+                    entered.TrySetResult(); release.Wait();
+                });
+            output = current.Directory;
+            current.Complete(0);
+        }, TestContext.Current.CancellationToken);
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            await fired.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            Assert.False(work.IsCompleted);
+            Assert.Contains("Watchdog timeout", File.ReadAllText(Path.Combine(output, "failure.txt")));
+        }
+        finally
+        {
+            release.Set();
+            await work.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+        }
+    }
+
     public void Dispose() => Directory.Delete(_parent, true);
 }

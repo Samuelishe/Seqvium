@@ -106,15 +106,19 @@ scope and review boundary; do not pin every ordinary result.
 artifact parent. The process script creates its own unique run. They automatically apply retention
 before verification and after normal joined completion. New `.seqvium-run.json` manifests identify
 owner/schema, producer, scenario, run ID, PID plus process start time, timestamps and success/failure.
-A held `.active` lease also protects the GUI run. A watchdog failure is recorded as completed failure
-only as its isolated host exits; a parent with an unjoined child remains incomplete.
+A held `.active` lease also protects the GUI run. Watchdog diagnostics and exit 124 record timeout;
+a run interrupted before its completion marker or a parent with an unjoined child remains incomplete
+and protected. The watchdog covers automatic maintenance too, and does not wait for an additional
+completion-marker write before exiting.
 
 Deletion requires a valid completed manifest, absent owner, free lease, no active executable/command
 line referring to the target, no nested ownership and a wholly readable tree without reparse points.
 The process snapshot is bounded; its failure protects all candidates. Windows uses the existing
 PowerShell/CIM environment, Linux uses `/proc`; other platforms conservatively retain candidates.
 This is portability-aware tooling, not evidence of other-OS Desktop acceptance. Canonical root/ancestor
-checks and a root cleanup lock guard deletion. Each file is checked for links and exclusive access;
+checks and an exclusive root cleanup lock guard deletion. If that lock is busy, optional automatic
+rotation skips with diagnostics; explicit manual apply reports that cleanup did not run and returns
+nonzero. No scan-based deletion or retention-journal write proceeds without lock ownership. Each file is checked for links and exclusive access;
 partial failures keep the manifest for diagnostics/retry and do not stop independent candidates.
 The local deletion journal rotates into one previous log, rather than growing without a bound.
 Dry-run neither writes ownership/log files nor deletes anything.

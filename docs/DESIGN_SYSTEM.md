@@ -123,8 +123,10 @@ The catalog changes a common radius/fill temporarily, verifies propagation to te
 drawn levels, preserves invalid/disabled exceptions, then restores accepted values. The matrix does
 the analogous Graph.Node change and restores it without musical edits.
 
-Run the focused DesignSystem/Gesture/Instance tests, locked restore, Release build, full suite,
-catalog and GUI matrix after a shared style/template change. Inspect screenshots in both themes;
+After a shared style/template change, build affected projects and run focused DesignSystem/Gesture/
+Instance tests, the component catalog and rendered field-alignment checks. Select related GUI states/
+geometries from the affected controls; full suite and full GUI/native matrix follow the risk/cadence
+rules in [TEST_EXECUTION](TEST_EXECUTION.md#required-verification-levels). Inspect screenshots in both themes;
 check actual hit targets, focus, disabled/error states, labels/disclosure and localized minimum sizes.
 The cheap source guard rejects literal HEX colors outside HostPalette and missing host style resources.
 It does not replace image review or detect every possible programmatic hardcoded color expression.

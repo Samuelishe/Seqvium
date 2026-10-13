@@ -27,13 +27,24 @@ internal static class Program
 
     private static int Execute(string[] args)
     {
+        int timeoutSeconds = 120;
+        var timeoutArgument = args.FirstOrDefault(a => a.StartsWith("--timeout-seconds=", StringComparison.Ordinal));
+        if (timeoutArgument is not null)
+        {
+            timeoutSeconds = int.Parse(timeoutArgument.Split('=')[1]);
+            Require(timeoutSeconds is >= 1 and <= 600, "Deadline must be 1..600 seconds.");
+            args = args.Where(a => a != timeoutArgument).ToArray();
+        }
         if (args.Length >= 3 && args[0] == "retention")
         {
+            string root = ArtifactRetention.RootFor(args[2]);
+            ArtifactRetention.Validate(root, Path.Combine(root, "retention-boundary"));
+            using var watchdog = new VerificationDeadline(TimeSpan.FromSeconds(timeoutSeconds), root, () => Environment.Exit(124));
             if (args[1] is "dry-run" or "apply")
             {
                 var report = ArtifactRetention.Apply(args[2], args[1] == "apply");
                 Console.WriteLine(JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
-                return report.Diagnostics.Any(d => d.StartsWith("Deletion failed:", StringComparison.Ordinal)) ? 1 : 0;
+                return report.CleanupSkipped || report.Diagnostics.Any(d => d.StartsWith("Deletion failed:", StringComparison.Ordinal)) ? 1 : 0;
             }
             if (args[1] == "begin" && args.Length == 5)
             {
@@ -58,14 +69,6 @@ internal static class Program
                 return 0;
             }
             throw new ArgumentException("retention dry-run|apply <artifact-root> / begin <run-directory> <scenario> <owner-pid> / complete <run-directory> success|failure");
-        }
-        int timeoutSeconds = 120;
-        var timeoutArgument = args.FirstOrDefault(a => a.StartsWith("--timeout-seconds=", StringComparison.Ordinal));
-        if (timeoutArgument is not null)
-        {
-            timeoutSeconds = int.Parse(timeoutArgument.Split('=')[1]);
-            Require(timeoutSeconds is >= 1 and <= 600, "Deadline must be 1..600 seconds.");
-            args = args.Where(a => a != timeoutArgument).ToArray();
         }
         if (args.Length < 2) { Console.Error.WriteLine("catalog|matrix <absolute-output> / desktop|lease|noipc|stalled <identity> <absolute-output> / activate <identity>"); return 1; }
         if (args[0] == "activate")
@@ -114,14 +117,9 @@ internal static class Program
             }, key => { File.AppendAllText(Path.Combine(directory, "diagnostic.txt"), key + "\n"); });
         }
         Require(args[0] is "catalog" or "matrix" or "gestures" or "smoke", "Unknown scenario.");
-        using var run = new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0]);
+        using var run = new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
         string output = run.Directory;
         Console.WriteLine("Verification output: " + output);
-        using var deadline = new VerificationDeadline(TimeSpan.FromSeconds(timeoutSeconds), output, () =>
-        {
-            try { run.Complete(124); }
-            finally { Environment.Exit(124); } // Only this isolated test process, never an ordinary Desktop.
-        });
         int result = 0;
         Task scenarioWork = Task.CompletedTask;
         async Task VerifyAndCloseAsync(App app, MainWindow main)
