@@ -28,19 +28,33 @@ public static class DrumVoice
     public static ImmutableDictionary<string, decimal> Defaults { get; } = Parameters
         .ToImmutableDictionary(p => p.Key, p => p.Default).Add("rootPitch", RootPitch);
 
-    public static bool Supports(SoundDefinition sound) => sound.Algorithm == Algorithm &&
-                                                          sound.Extension is null && sound.AdditionalData.IsEmpty &&
-                                                          sound.ResourceIds.IsEmpty &&
-                                                          sound.Parameters.Count == Defaults.Count &&
-                                                          sound.Parameters.TryGetValue("rootPitch", out var root) &&
-                                                          root == RootPitch && Parameters.All(p =>
-                                                              sound.Parameters.TryGetValue(p.Key, out var value) &&
-                                                              value >= p.Minimum && value <= p.Maximum);
+    public static bool Supports(SoundDefinition sound) => DrumInstruments.Supports(sound);
+
+    internal static bool SupportsKick(SoundDefinition sound) => sound.Algorithm == Algorithm &&
+                                                                sound.Extension is null &&
+                                                                sound.AdditionalData.IsEmpty &&
+                                                                sound.ResourceIds.IsEmpty &&
+                                                                sound.Parameters.Count == Defaults.Count &&
+                                                                sound.Parameters.TryGetValue("rootPitch",
+                                                                    out var root) &&
+                                                                root == RootPitch && Parameters.All(p =>
+                                                                    sound.Parameters.TryGetValue(p.Key,
+                                                                        out var value) &&
+                                                                    value >= p.Minimum && value <= p.Maximum);
 
     public static void Validate(ImmutableDictionary<string, decimal> parameters)
     {
         if (!Supports(new(default, "Drum Voice", Algorithm, parameters, [], null)))
             throw new NotSupportedException("Unsupported Drum Voice state or parameter range.");
+    }
+
+    public static DecodedPcm Render(SoundDefinition sound, int sampleRate, decimal pitch = RootPitch,
+        CancellationToken cancellation = default)
+    {
+        if (!Supports(sound)) throw new NotSupportedException("Unsupported Drum Voice state.");
+        return sound.Algorithm == Algorithm
+            ? Render(sound.Parameters, sampleRate, pitch, cancellation)
+            : DrumInstruments.Render(sound, sampleRate, pitch, cancellation);
     }
 
     public static double Frequency(ImmutableDictionary<string, decimal> parameters, decimal pitch = RootPitch) =>

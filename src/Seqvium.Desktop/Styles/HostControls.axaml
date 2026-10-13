@@ -182,10 +182,12 @@
     <Style Selector="Button.command /template/ ContentPresenter, Button.icon /template/ ContentPresenter">
         <Setter Property="Background" Value="Transparent" />
     </Style>
-    <Style Selector="Button.command:pointerover /template/ ContentPresenter, Button.icon:pointerover /template/ ContentPresenter">
+    <Style
+        Selector="Button.command:pointerover /template/ ContentPresenter, Button.icon:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource Surface.Hover}" />
     </Style>
-    <Style Selector="Button.command:disabled /template/ ContentPresenter, Button.icon:disabled /template/ ContentPresenter">
+    <Style
+        Selector="Button.command:disabled /template/ ContentPresenter, Button.icon:disabled /template/ ContentPresenter">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
     </Style>
@@ -275,6 +277,9 @@
 
     <!-- Music-specific pad: state is conveyed by fill, inset pulse and toggle automation. -->
     <Style Selector="ToggleButton.step">
+        <Setter Property="Width" Value="{DynamicResource Rack.StepHeight}" />
+        <Setter Property="MinWidth" Value="{DynamicResource Rack.StepHeight}" />
+        <Setter Property="MaxWidth" Value="{DynamicResource Rack.StepHeight}" />
         <Setter Property="Height" Value="{DynamicResource Rack.StepHeight}" />
         <Setter Property="MinHeight" Value="{DynamicResource Rack.StepHeight}" />
         <Setter Property="Padding" Value="0" />
@@ -283,12 +288,23 @@
             <ControlTemplate>
                 <Border Name="StepSurface" Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
-                        CornerRadius="{DynamicResource Rack.StepCorner}" BoxShadow="{DynamicResource Material.PadShadow}">
+                        CornerRadius="{DynamicResource Rack.StepCorner}"
+                        BoxShadow="{DynamicResource Material.PadShadow}">
                     <Grid>
-                        <Border CornerRadius="{DynamicResource Rack.StepCorner}" Background="{DynamicResource Material.Bevel}" />
+                        <Border CornerRadius="{DynamicResource Rack.StepCorner}"
+                                Background="{DynamicResource Material.Bevel}" />
+                        <Border Name="StepCap" Margin="3,3,3,5" CornerRadius="{DynamicResource Rack.StepCorner}"
+                                BorderBrush="{DynamicResource Material.Highlight}"
+                                BorderThickness="{DynamicResource Border.Control}"
+                                Opacity="0.3" />
+                        <Border Name="StepHover" CornerRadius="{DynamicResource Rack.StepCorner}"
+                                Background="{DynamicResource Material.Highlight}" Opacity="0" />
+                        <Border Name="StepPress" CornerRadius="{DynamicResource Rack.StepCorner}"
+                                Background="{DynamicResource Material.Shade}" Opacity="0" />
                         <Border Name="Pulse" Width="12" Height="3" CornerRadius="1" Opacity="0"
                                 Background="{DynamicResource Rack.StepInk}" VerticalAlignment="Bottom" Margin="0,0,0,6" />
-                        <Border Name="StepFocus" BorderThickness="2" Margin="-2" CornerRadius="{DynamicResource Rack.StepCorner}"
+                        <Border Name="StepFocus" BorderThickness="2" Margin="-2"
+                                CornerRadius="{DynamicResource Rack.StepCorner}"
                                 BorderBrush="{DynamicResource Focus.Active}" IsVisible="False" />
                     </Grid>
                 </Border>
@@ -300,6 +316,15 @@
     </Style>
     <Style Selector="ToggleButton.step:pointerover /template/ Border#StepSurface">
         <Setter Property="BorderBrush" Value="{DynamicResource Text.Primary}" />
+    </Style>
+    <Style Selector="ToggleButton.step:pointerover /template/ Border#StepHover">
+        <Setter Property="Opacity" Value="0.12" />
+    </Style>
+    <Style Selector="ToggleButton.step:pressed /template/ Border#StepPress">
+        <Setter Property="Opacity" Value="0.3" />
+    </Style>
+    <Style Selector="ToggleButton.step:pressed /template/ Border#StepCap">
+        <Setter Property="Margin" Value="3,5,3,3" />
     </Style>
     <Style Selector="ToggleButton.step:focus-visible /template/ Border#StepFocus">
         <Setter Property="IsVisible" Value="True" />

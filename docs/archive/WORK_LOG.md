@@ -339,7 +339,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–N were checked against current owners with these semantic outcomes:
 
   | Case | Audited outcome / current owner |
-                        | --- | --- |
+                              | --- | --- |
   | A — filesystem preview | Repeated `D:\Samples\Kick\kick_17.wav` preview accepts no project media/Undo; close retains no accepted preview resource. Source disappearance affects further discovery/access, not project durability; [preview](../SAMPLE_WORKFLOW.md#preview-contextual-audition-and-accepted-use) |
   | B — filesystem use | Successful explicit import/use is coherent managed project acceptance; deleting/moving origin cannot break use; provenance is optional non-live metadata; [format](../PROJECT_FORMAT.md#source-provenance-and-reusable-content) |
   | C — content pack | Preview remains transient; only used audio is managed. Later Pack A uninstall cannot lose that audio; required active executable/preview lifetimes still respect existing safety; [extensions](../EXTENSIONS.md#lifecycle-and-missing-capabilities) |
@@ -386,7 +386,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–N were checked against current owners with these semantic outcomes:
 
   | Case | Audited outcome / current owner |
-                        | --- | --- |
+                              | --- | --- |
   | A — Russian host, English-only extension | Local English fallback keeps the capability available and other host surfaces Russian; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
   | B — missing/invalid translated entry | Per-resource usable English first-party fallback, then understandable host-owned generic presentation; no changed identity or unrelated capability loss; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
   | C — stable semantic identity | Display text never becomes command/property/node/port/capability/serialization identity; user Pattern/sample/track names stay user content; [identity](../ARCHITECTURE.md#stable-identity-and-provider-ownership) |
@@ -430,7 +430,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–O were audited against current contracts:
 
   | Case | Audited outcome / current owner |
-                        | --- | --- |
+                              | --- | --- |
   | A — Kick/Bass | Kick contribution/tap drives Bass-owned detector; Kick audible output continues, Bass audio remains separate; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
   | B — several destinations | Compatible consumers share the intended signal without requesting three unrelated performances; no buffer optimization or instance count selected; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
   | C — local/container | Dependencies connect existing scopes without another local level; target audible ownership survives external influence; [ownership](../ARCHITECTURE.md#cross-context-ownership-and-identity) |
@@ -450,7 +450,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses 1–12 accepted with explicit bounds, not assumed universal support:
 
   | Hypotheses | Audit result |
-                        | --- | --- |
+                              | --- | --- |
   | 1, 3, 4, 5 | Explicit project relationship and source/tap/dependency scope are necessary; detector/control influence alone adds no audible mix or local processing level |
   | 2 | Fan-out preserves one compatible intended source signal/performance; it neither guarantees free execution nor merges distinct required domains |
   | 6, 7 | No silent redirection after endpoint moves/deletes; retain invalid/unresolved intent only when safely understandable, with deliberate repair/removal and Undo |
@@ -490,7 +490,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–Q checked against current contracts; conceptual audit, not implementation validation:
 
   | Case | Accepted result / current owner |
-                        | --- | --- |
+                              | --- | --- |
   | A — random Kick | Choose family, generate/listen/regenerate, revisit available results, explicitly accept into a valid project; no detailed parameter prerequisite or implicit material creation; [random](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
   | B — nearby A | Intentionally use A's supported family reference inputs; explain unsupported input instead of hidden unrelated random fallback; no universal metric; [random/nearby](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
   | C — decay lock | Preserve declared supported constraint while exploring permitted transient/pitch variation; coupled perceptual properties and waveform identity are not promised; [locks](../SAMPLE_WORKFLOW.md#supported-locks-and-reference-changes) |
@@ -512,7 +512,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses audited rather than adopted without bounds:
 
   | Hypotheses | Audit result |
-                        | --- | --- |
+                              | --- | --- |
   | 1 | Accepted sound-first beginner loop with optional advanced controls; no detailed parameter knowledge or final layout required |
   | 2 | Refined: related variation intentionally uses supported family reference state; no universal waveform similarity or arbitrary-audio analysis promise |
   | 3, 4 | Accepted only for declared supported constraints; future-only, captured per request, coupling/unsupported cases explicit, not waveform identity |
@@ -550,7 +550,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–T audited conceptually against current owners; these are not implementation tests:
 
   | Case | Result / current owner |
-                        | --- | --- |
+                              | --- | --- |
   | A — Drums Main placement | Pattern owns Kick/Snare/Hat parts/events and sound references; occurrence owns its timing/local relationships; Drums owns timeline organization and optional explicit context. No automatic Pattern bus; independent instrument routes survive before intentional aggregation; [identities](../ARCHITECTURE.md#separate-sharing-identities) |
   | B — Bass in Drums | Purpose can guide compatible defaults, not exclusive synth ownership. A supported Bass occurrence is not incompatible merely by name; no silent copy/conversion or route mutation; [Arrangement](../ARCHITECTURE.md#semi-free-arrangement) |
   | C — heterogeneous content | Supported Pattern, fragment, sample clip and future recording occurrences retain distinct content/time/resource/context relationships. Fundamentally unsupported structural relationships can block or require deliberate transformation; missing execution does not erase safely representable intent; [compatibility](../ARCHITECTURE.md#compatible-material-and-bounded-organization) |
@@ -575,7 +575,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses audited with concrete bounds:
 
   | Hypotheses | Disposition |
-                        | --- | --- |
+                              | --- | --- |
   | 1, 2, 3 | Accepted distinct reusable content/occurrence and normal many-use sharing; local ownership does not require a frozen property inventory or one class per responsibility |
   | 4, 5 | Accepted no automatic bus; containing processing aggregates only explicitly intended audible contributions, not external detector inputs or all uses of a definition. Independent required paths precede mixing |
   | 6, 7, 8 | Accepted separately expressible music/sound/occurrence/media independence. Detaching music retains intended sounds/contexts; detaching sound need not copy notes/media or live instances; unsupported opaque-state independence is explicit |
@@ -618,7 +618,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–T were analyzed conceptually, not executed:
 
   | Case | Result / current owner |
-                        | --- | --- |
+                              | --- | --- |
   | A — unnamed hour of work | Candidate identifies the document/lifecycle and captured revision before a filename. Recover captured work/media; no promise for the uncaptured interval. Save As establishes a saved destination only on success; retirement needs coverage/owners or informed discard; [recovery](../PROJECT_FORMAT.md#recovery-state) |
   | B — saved R10, recovered R15 | R10 remains last explicit Save, R15 is offered and accepted as recovered unsaved work without writing R10. Opening R10 does not discard R15; subsequent explicit Save/Save As has an understandable destination; [UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work) |
   | C — failed Save | Pre-commit disk-full/permission/write/interruption preserves prior Save/media and unsaved canonical edits, still recovery-eligible. Recovery success/failure is independent; no false Save success. Around-commit uncertainty is handled separately; [Save](../PROJECT_FORMAT.md#save-save-as-and-relocation) |
@@ -1672,3 +1672,40 @@ inherited pressure/acoustic/platform limits remain. The authored Jade Pulse proj
 are preserved outside Git. [Report](../experiments/SEQ-FIRST-DRUM_REPORT.md) owns commands/failures/limits;
 current contracts stay in active audio/architecture/UX/UI/workspace/format/extension owners.
 User projects/resources were preserved; no staging, commit, push or tag was performed.
+
+## SEQ-DRUM-INSTRUMENTS — 2026-10-14
+
+Extended the original built-in kick with Snare, Closed/Open Hat, Clap, Tom and Rim; 21 factory
+snapshots, portable custom presets and a bounded linked-hat lifetime share the existing sound,
+notes, history, graph and persistence owners. Different synthesis and parameter anatomy avoid
+relabelled kick voices; the original kick signal remains compatible. Real GUI composing exposed
+repeated-audition gating and popup-list replacement; regressions exposed exact choke retirement
+and detached vector initialization. Those boundaries are repaired and verified.
+Full Release passes 1179 cases, seven-editor RU/EN Dark/Light/minimum review and native preset
+Save/Load. Native Windows input authors Jade Circuit, a 16-bar / four-Pattern percussion song,
+with physical playback and native Save/Open/WAV. One delegated PATCH advances 0.1.3.0000 to
+0.1.4.0000; [report](../experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md) owns evidence and failures.
+Subjective listening, prior pressure and wider platform acceptance remain separate.
+No library/reference/user-project, staging or Git-history mutation was performed.
+
+## SEQ-CHANNEL-RACK-MUSIC — 2026-10-14
+
+After completing the drum family, fixed proportional Rack cells as compact fixed squares with beat/bar
+gaps and tactile shared-material states. Owner feedback reduced pads/rows further and exposed the Pattern
+scrollbar over card edges; a derived gutter repairs that boundary. Rich melodic previews retain width.
+Native balancing found redundant unchanged toolbar Gain focus-loss commits consuming Save clicks;
+matching no-op drafts now withdraw without dispatch while stale/changed guards remain intact.
+
+Neon Orchard was authored entirely through native Windows GUI input: 15 Patterns, nine tracks,
+78 clips, all seven drums and five unchanged library originals. The actual application owns its managed
+copies, saves checkpoints and reopens between phases. Owner loudness feedback raised melodic source
+gains selectively. Full reopened physical Song and native WAV finish at 68.571 s, peak 0.734711 with
+zero saturated PCM samples. Project/media/final and comparison WAVs remain in their own Desktop folder.
+Owner listening exposed masked Glass Seeds: the quiet source peaks near −50 dBFS. Native replacement
+with the forte recording preserves all 16 notes and lifts the isolated export by about 33 dB.
+The compact 12-case Rack matrix/native painting/history/playhead and final 12-field/11-native-Graph
+checks pass, with early failed attempts reported separately. Focused 168/168 tests pass. One BUILD advances 0.1.4.0000
+to
+0.1.4.0001 without another PATCH/L3 reset. [Report](../experiments/SEQ-CHANNEL-RACK-MUSIC_REPORT.md)
+owns evidence/limits; subjective acoustic, earlier pressure and wider platform acceptance remain open.
+Library, references and prior user projects are preserved; no staging or Git-history mutation occurs.

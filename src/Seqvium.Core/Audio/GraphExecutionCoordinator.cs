@@ -350,7 +350,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 ?
                 [
                     .. state.Sounds.Select(sound => DrumVoice.Supports(sound)
-                        ? sound with { Parameters = DrumVoice.Defaults }
+                        ? sound with { Parameters = DrumInstruments.Find(sound.Algorithm)!.Defaults }
                         : sound)
                 ]
                 : state.Sounds,

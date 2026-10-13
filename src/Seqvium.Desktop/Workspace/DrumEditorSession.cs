@@ -31,6 +31,9 @@ internal sealed class DrumEditorSession
 
     public ImmutableDictionary<string, decimal> Values => Draft?.After ?? Sound?.Parameters ?? DrumVoice.Defaults;
 
+    public DrumInstruments.Instrument Instrument =>
+        DrumInstruments.Find(Sound?.Algorithm ?? DrumVoice.Algorithm) ?? DrumInstruments.All[0];
+
     public static SoundDefinition? Resolve(ProjectState state, NodeEditorTarget target)
     {
         var attachment =
@@ -73,9 +76,15 @@ internal sealed class DrumEditorSession
 
     public void Set(string key, decimal value)
     {
-        var parameter = DrumVoice.Parameters.Single(p => p.Key == key);
+        var parameter = Instrument.Parameters.Single(p => p.Key == key);
         if (Draft is { } draft && value >= parameter.Minimum && value <= parameter.Maximum)
             Draft = draft with { After = draft.After.SetItem(key, value) };
+    }
+
+    public void Preset(ImmutableDictionary<string, decimal> values)
+    {
+        DrumInstruments.Validate(Instrument.Algorithm, values);
+        if (Draft is { } draft) Draft = draft with { After = values };
     }
 
     public DrumProposal? Complete()

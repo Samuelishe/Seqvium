@@ -21,7 +21,7 @@ public static class HostMetrics
         ["Space.XSmall"] = 2, ["Space.Small"] = 4, ["Space.Medium"] = 8,
         ["Space.Large"] = 12, ["Space.Section"] = 16,
         ["Type.Section"] = 14, ["Type.PaneTitle"] = 13, ["Type.Numeric"] = 13,
-        ["Rack.StepHeight"] = 34, ["Rack.RowHeight"] = 52, ["Rack.StepCorner"] = 4,
+        ["Rack.StepHeight"] = 26, ["Rack.RowHeight"] = 44, ["Rack.StepCorner"] = 4,
         ["Rail.Width"] = 52,
         ["Playlist.LaneHeight"] = 72, ["Playlist.RulerHeight"] = 32, ["Playlist.HeaderWidth"] = 156,
         ["Playlist.OverviewHeight"] = 28,
@@ -53,6 +53,8 @@ public static class HostMetrics
         resources["Control.NumericInnerHeight"] = Values["Control.Height"] - 2 * Values["Border.Width"];
         resources["Padding.Status"] = new Thickness(0, 0, Values["Space.Gap"], 0);
         resources["Padding.Icon"] = new Thickness(3);
+        resources["Rack.BarPadding"] = new Thickness(0, 0, Values["Space.Medium"], 0);
+        resources["Navigation.ScrollGutter"] = new Thickness(0, 0, Values["ScrollBar.Size"] + Values["Space.Small"], 0);
         resources["Type.FontFamily"] = FontFamily.Default;
         resources["Type.MonospaceFamily"] = new FontFamily("Cascadia Mono,Consolas,monospace");
         return resources.ToFrozenDictionary(StringComparer.Ordinal);

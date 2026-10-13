@@ -8,7 +8,8 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.3.0000`**, the SEQ-FIRST-DRUM PATCH checkpoint on the
+The current product alpha is **`0.1.4.0001`**, the SEQ-CHANNEL-RACK-MUSIC BUILD checkpoint after SEQ-DRUM-INSTRUMENTS on
+the
 owner-selected `0.1` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -38,14 +39,32 @@ window and short physical loop checks pass; long pressure/acoustic/platform acce
 
 ## Implemented capability
 
-SEQ-FIRST-DRUM adds one built-in electronic kick without external samples: Tune/Decay/Tone/Noise,
+SEQ-CHANNEL-RACK-MUSIC fixes compact square pads, beat/bar grouping, scrollbar-free Pattern card edges,
+wide rich-note previews and redundant committed Gain focus-loss commands that could consume Save.
+Neon Orchard was authored exclusively through native GUI input: 15 Patterns, nine tracks, 78 clips,
+all seven drums plus five library samples, 32 bars at 112 BPM. Native reopen/full physical Song/export
+passes at 68.571 s with zero saturated samples. [Report](experiments/SEQ-CHANNEL-RACK-MUSIC_REPORT.md)
+separates native composition, rendered checks and subjective/pressure limits.
+Final Release/reference build has zero warnings/errors; 168 focused Rack/style/Piano/Arrangement/version
+cases pass. Compact 12-case geometry/native history/playhead and final 12-field/11-native-Graph checks pass.
+Owner listening identified a masked quiet pizzicato; native forte-source replacement preserves the
+16-note Glass Seeds rhythm and improves its isolated export by about 33 dB without editing library bytes.
+
+SEQ-DRUM-INSTRUMENTS adds Snare, Closed/Open Hat, Clap, Tom and Rim to the existing kick, with distinct
+synthesis and parameters, 21 factory snapshots and portable `.seqdrum` Save/Load. Linked hats choke
+across channels and audible Song clips, including loops/seek/export; simultaneous Closed wins.
+The retained editor adapts its knobs/curves, preserves shared sound history and supports repeated
+stopped audition. A four-Pattern / 16-bar native composition passes physical Song, native Save/Open
+and export without media. [Report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md) owns evidence and limits.
+
+The original kick retains Tune/Decay/Tone/Noise,
 pitch drop/time/shape and attack/amplitude shape, directly editable envelope points and actual derived
 waveform. Rack creates/opens the same explicitly bound Source editor; Piano notes transpose it with
 velocity and unchanged envelope time. Shared sound state uses existing Undo/Save/Open and Song/WAV
 graphs. Preparation generates disposable host-rate PCM; full one-shot tails overlap across loops,
 seek reconstructs them, finite exports retain them and sound commits preserve rhythm position/epoch.
 The spacious Dark/Light editor uses shared materials, exact values once and reflow/local scrolling.
-R6/R7 packages/exploration, other drums, presets/choke/modulation remain future scope.
+R6/R7 packages/exploration, further voices/layers, custom choke groups and modulation remain future scope.
 [Owners](AUDIO_ENGINE.md#built-in-drum-voice) and [report](experiments/SEQ-FIRST-DRUM_REPORT.md) define limits.
 
 SEQ-R9 implements a retained real Piano Roll: shared Pattern/Part notes, chords, mixed duration/
@@ -207,7 +226,7 @@ Browser and wider Mixer/effect stages remain unimplemented; private resources ar
 The musical-editor assessment adds synth/drum/sampler/browser/dynamics study and future existing-tool
 refinements under [UI design](UI_DESIGN.md#musical-editor-reference-proposals) and
 [planning](ROADMAP.md#musical-editor-reference-follow-ups). The first Drum Voice is now built-in;
-optional generator/package direction and further percussion remain separate. New inbox images were
+optional generator/package direction and further percussion depth remain separate. New inbox images were
 copied with hashes/provenance and retained originals.
 
 SEQ-R10-PLAYLIST completes the owner-authorized first finite composition workflow and song export,
@@ -247,6 +266,14 @@ future composition. R4-F2 remains partial and F3-B remains pending owner review.
 acceptance remains with the owner; the earlier presentation was explicitly rejected.
 
 ## Validation baseline
+
+SEQ-DRUM-INSTRUMENTS: full Release solution build passes with zero warnings/errors (3.16 s), **1179/1179 tests pass**,
+zero skips (10.079 s CLI). Focused drums cover 106 cases. Seven editor
+RU/EN × Dark/Light ordinary/minimum render/alignment/scroll checks and native custom preset Save/Load
+pass. Native Rack/Piano/Playlist creates four Patterns and 16 bars; physical reopened Song and native
+Save/Open/WAV pass. Export is 32.525 s / 1,561,200 stereo frames, peak .342896, zero saturated samples.
+Subjective listening and earlier pressure/platform limits remain unevidenced. See the
+[report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md).
 
 SEQ-FIRST-DRUM: isolated full Release solution build passes with zero warnings/errors (6.72 s), **1092/1092 tests
 pass**, no skips (8.572 s runner summary); focused L1/L2 passes 225 cases.
@@ -347,15 +374,15 @@ Normal output became locked by a user-launched Desktop during final refinement; 
 preserved. Complete final executables are in `.artifacts/seq-ui-redesign/release/Release/net10.0/`.
 The [report](experiments/SEQ-UI-REDESIGN_REPORT.md) records actual scope, paths, failures and commands.
 
-The current full baseline is SEQ-FIRST-DRUM on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
+The current full baseline is SEQ-DRUM-INSTRUMENTS on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
 Existing three-WAV 90/120/240 BPM finite PCM evidence remains in
 [R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); prior physical pressure failures
 and platform/owner acceptance remain separate below. Historical validation belongs to reports/archive.
 
 ### Verification cadence
 
-Last successful L3: **SEQ-FIRST-DRUM, 2026-10-13**, full Release solution build and 1092/1092 automated
-tests. Completed repository tasks since that L3: **0**.
+Last successful L3: **SEQ-DRUM-INSTRUMENTS, 2026-10-14**, full Release solution build and 1179/1179 automated
+tests. Completed repository tasks since that L3: **1**.
 Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
 a focused pass does not reset it.
 

@@ -5,9 +5,11 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using Avalonia.Platform.Storage;
 using Seqvium.Core;
 using Seqvium.Desktop.Presentation;
 using Seqvium.Desktop.Workflow;
@@ -36,11 +38,20 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
 
     private readonly Button _pitch = new(), _amplitude = new(), _hit = new() { Classes = { "primary" } };
     private readonly ComboBox _note = new() { Width = 84 };
+    private readonly ComboBox _presets = new() { MinWidth = 110 };
+
+    private readonly Button _savePreset = new() { Classes = { "command" } },
+        _loadPreset = new() { Classes = { "command" } };
+
+    private readonly ToggleButton _choke = new();
+    private readonly WrapPanel _primary = new() { HorizontalAlignment = HorizontalAlignment.Center };
+    private string? _instrumentAlgorithm;
     private readonly Slider _velocity = new() { Minimum = .05, Maximum = 1, Value = .8, Width = 84 };
     private readonly DrumEnvelopePlot _plot;
     private readonly WrapPanel _shape = new() { HorizontalAlignment = HorizontalAlignment.Center };
     private readonly DispatcherTimer _notice = new() { Interval = TimeSpan.FromSeconds(3) };
     private bool _refreshing, _disposed;
+    private bool _presetBusy;
     private Task _command = Task.CompletedTask;
     private CancellationTokenSource? _waveCancellation;
     private ImmutableDictionary<string, decimal>? _waveBasis;
@@ -76,9 +87,13 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         _note.SelectedIndex = (int)DrumVoice.RootPitch;
         var body = new StackPanel { Classes = { "tight" } };
         body.Children.Add(header);
-        var primary = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Center };
-        foreach (var parameter in DrumVoice.Parameters.Take(4)) primary.Children.Add(CreateParameter(parameter).Body);
-        body.Children.Add(primary);
+        var presets = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Left };
+        presets.Children.Add(_presets);
+        presets.Children.Add(_savePreset);
+        presets.Children.Add(_loadPreset);
+        presets.Children.Add(_choke);
+        body.Children.Add(presets);
+        body.Children.Add(_primary);
         var chassis = new Border { Child = body };
         chassis.Bind(Border.PaddingProperty, this.GetResourceObservable("Padding.Content"));
         chassis.Bind(Border.BackgroundProperty, this.GetResourceObservable("Material.Panel"));
@@ -93,7 +108,6 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         body.Children.Add(modes);
         _plot = new(shell) { Height = 280, MinWidth = 245 };
         body.Children.Add(_plot);
-        foreach (var parameter in DrumVoice.Parameters.Skip(4)) _shape.Children.Add(CreateParameter(parameter).Body);
         body.Children.Add(_shape);
         var scroll = new ScrollViewer
         {
@@ -111,6 +125,29 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         Identify(_velocity, "Velocity");
         Identify(_identity, "Identity");
         Identify(_status, "Status");
+        Identify(_presets, "Preset");
+        Identify(_savePreset, "SavePreset");
+        Identify(_loadPreset, "LoadPreset");
+        Identify(_choke, "Choke");
+        AttachedToVisualTree += (_, _) =>
+        {
+            _savePreset.Content ??= HostIcons.Create("Save", _savePreset, 16);
+            _loadPreset.Content ??= HostIcons.Create("Open", _loadPreset, 16);
+        };
+        _savePreset.Click += async (_, _) => await PresetFileAsync(true);
+        _loadPreset.Click += async (_, _) => await PresetFileAsync(false);
+        _presets.SelectionChanged += async (_, _) =>
+        {
+            if (_refreshing || _presets.SelectedIndex < 0 || !Begin()) return;
+            _session.Preset(_session.Instrument.Presets[_presets.SelectedIndex].Parameters);
+            await CommitAsync();
+        };
+        _choke.Click += async (_, _) =>
+        {
+            if (_refreshing || !Begin()) return;
+            _session.Set("choke", _choke.IsChecked == true ? 1 : 0);
+            await CommitAsync();
+        };
         _pitch.Click += (_, _) => Switch(false);
         _amplitude.Click += (_, _) => Switch(true);
         _hit.Click += async (_, _) =>
@@ -252,7 +289,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             return false;
         }
 
-        bool started = !_disposed && _command.IsCompleted && _session.Begin();
+        bool started = !_disposed && !_presetBusy && _command.IsCompleted && _session.Begin();
         if (started) _notice.Stop();
         return started;
     }
@@ -295,11 +332,53 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         try
         {
             var sound = _session.Sound;
+            var instrument = _session.Instrument;
+            if (_instrumentAlgorithm != instrument.Algorithm)
+            {
+                _primary.Children.Clear();
+                _shape.Children.Clear();
+                _parameters.Clear();
+                foreach (var parameter in instrument.Parameters.Where(p => p.Key != "choke"))
+                {
+                    var control = CreateParameter(parameter);
+                    (parameter.Key is "pitchAmount" or "pitchDecay" or "pitchCurve" or "attack" or "amplitudeCurve"
+                        ? _shape
+                        : _primary).Children.Add(control.Body);
+                }
+
+                _instrumentAlgorithm = instrument.Algorithm;
+                _waveBasis = null;
+                _plot.AmplitudeMode = !instrument.HasPitchEnvelope;
+                _plot.Algorithm = instrument.Algorithm;
+            }
+
+            var presetLabels = instrument.Presets.Select(p => _shell["Drum.Preset." + p.Name]).ToArray();
+            if (!_presets.Items.OfType<string>().SequenceEqual(presetLabels)) _presets.ItemsSource = presetLabels;
+            _presets.SelectedIndex = Enumerable.Range(0, instrument.Presets.Length).FirstOrDefault(i =>
+                    instrument.Presets[i].Parameters.OrderBy(v => v.Key)
+                        .SequenceEqual(_session.Values.OrderBy(v => v.Key)),
+                -1);
+            _presets.PlaceholderText = _shell["Drum.Custom"];
+            _presets.IsEnabled =
+                _savePreset.IsEnabled =
+                    _loadPreset.IsEnabled = _session.CanEdit && _command.IsCompleted && !_presetBusy;
+            _choke.IsVisible = instrument.IsHat;
+            _choke.IsEnabled = _session.CanEdit && _command.IsCompleted;
+            _choke.IsChecked = instrument.IsHat && _session.Values["choke"] == 1;
+            _choke.Content = _shell["Drum.Choke"];
+            ToolTip.SetTip(_choke, _shell["Drum.ChokeHint"]);
+            AutomationProperties.SetName(_presets, _shell["Drum.Presets"]);
+            AutomationProperties.SetName(_savePreset, _shell["Drum.SavePreset"]);
+            AutomationProperties.SetName(_loadPreset, _shell["Drum.LoadPreset"]);
+            ToolTip.SetTip(_savePreset, _shell["Drum.SavePreset"]);
+            ToolTip.SetTip(_loadPreset, _shell["Drum.LoadPreset"]);
             int uses = _workflow.State.Snapshot.State.Patterns.SelectMany(p => p.Parts)
                 .Count(p => p.SoundId == sound?.Id);
             _identity.Text = sound?.Name + (uses > 1 ? " · " + _shell["Drum.Shared"] + " " + uses : "");
             _pitch.Content = _shell["Drum.Pitch"];
+            _pitch.IsVisible = instrument.HasPitchEnvelope;
             _amplitude.Content = _shell["Drum.Amplitude"];
+            _amplitude.IsVisible = instrument.HasPitchEnvelope;
             _hit.Content = _shell["Drum.Audition"];
             _pitch.Classes.Set("primary", !_plot.AmplitudeMode);
             _amplitude.Classes.Set("primary", _plot.AmplitudeMode);
@@ -311,11 +390,14 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
                 AutomationProperties.SetName(p.Exact, p.Label.Text + " · " + p.Parameter.Unit);
                 AutomationProperties.SetName(p.Dial, p.Label.Text);
                 ToolTip.SetTip(p.Dial, _shell["Drum.DialHint"]);
-                p.Body.IsVisible = DrumVoice.Parameters.IndexOf(p.Parameter) < 4 ||
-                                   _plot.AmplitudeMode == (p.Parameter.Key is "attack" or "amplitudeCurve");
+                p.Body.IsVisible =
+                    p.Parameter.Key is not ("pitchAmount" or "pitchDecay" or "pitchCurve" or "attack"
+                        or "amplitudeCurve") ||
+                    _plot.AmplitudeMode == (p.Parameter.Key is "attack" or "amplitudeCurve");
             }
 
-            _hit.IsEnabled = _session.CanEdit && _command.IsCompleted && !_workflow.State.CanStop;
+            _hit.IsEnabled = _session.CanEdit && _command.IsCompleted &&
+                             _workflow.State.Execution?.Execution.Playing != true;
             _plot.IsEnabled = _session.CanEdit && _command.IsCompleted;
             AutomationProperties.SetName(_hit, _shell["Drum.Audition"]);
             AutomationProperties.SetName(_note, _shell["Drum.Note"]);
@@ -343,7 +425,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             decimal value = values[p.Parameter.Key];
             p.Dial.Amplitude = Normalize(p.Parameter, value);
             p.Dial.CenterText = p.Parameter.Key == "tune"
-                ? DrumVoice.Frequency(values).ToString("0.0")
+                ? DrumInstruments.Frequency(_session.Instrument.Algorithm, values).ToString("0.0")
                 : "";
             p.Dial.TrackRole = _shell.Preferences.Theme == HostTheme.Light ? "Graph.NodeBorder" : "Control.Track";
             p.Dial.HasRecessedWell = _shell.Preferences.Theme == HostTheme.Light;
@@ -372,19 +454,20 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             _waveCancellation = new();
             _waveBasis = values;
             _plot.Waveform = null;
-            PendingWaveform = RenderWaveformAsync(values, _note.SelectedIndex >= 0 ? _note.SelectedIndex : 36,
+            PendingWaveform = RenderWaveformAsync(sound with { Parameters = values },
+                _note.SelectedIndex >= 0 ? _note.SelectedIndex : 36,
                 _waveCancellation.Token);
         }
     }
 
-    private async Task RenderWaveformAsync(ImmutableDictionary<string, decimal> values, decimal pitch,
+    private async Task RenderWaveformAsync(SoundDefinition sound, decimal pitch,
         CancellationToken cancellation)
     {
         try
         {
             var envelope = await Task.Run(() =>
             {
-                using var pcm = DrumVoice.Render(values, 48000, pitch, cancellation);
+                using var pcm = DrumVoice.Render(sound, 48000, pitch, cancellation);
                 var result = new float[640];
                 for (int bin = 0; bin < 320; bin++)
                 {
@@ -408,6 +491,77 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         }
         catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
         {
+        }
+    }
+
+    private async Task PresetFileAsync(bool save)
+    {
+        if (_presetBusy || !_command.IsCompleted || !_session.CanEdit ||
+            TopLevel.GetTopLevel(this)?.StorageProvider is not { } storage) return;
+        Cancel();
+        var target = _session.Target;
+        var sound = _session.Sound!;
+        long generation = _workflow.State.Generation;
+        bool failed = false;
+        _presetBusy = true;
+        Refresh();
+        try
+        {
+            var type = new FilePickerFileType("Seqvium drum preset") { Patterns = ["*.seqdrum"] };
+            if (save)
+            {
+                var file = await storage.SaveFilePickerAsync(new()
+                {
+                    Title = _shell["Drum.SavePreset"], SuggestedFileName = sound.Name + ".seqdrum",
+                    DefaultExtension = "seqdrum", FileTypeChoices = [type], ShowOverwritePrompt = true
+                });
+                if (file is null) return;
+                using (file)
+                {
+                    var bytes = new DrumPresetFile(1, sound.Algorithm, sound.Parameters).Encode();
+                    await using var stream = await file.OpenWriteAsync();
+                    stream.SetLength(0);
+                    await stream.WriteAsync(bytes);
+                }
+            }
+            else
+            {
+                var files = await storage.OpenFilePickerAsync(new()
+                    { Title = _shell["Drum.LoadPreset"], AllowMultiple = false, FileTypeFilter = [type] });
+                if (files.Count == 0) return;
+                using var file = files[0];
+                await using var stream = await file.OpenReadAsync();
+                using var bytes = new MemoryStream();
+                var buffer = new byte[4096];
+                int count;
+                while ((count = await stream.ReadAsync(buffer)) > 0)
+                {
+                    if (bytes.Length + count > 32768) throw new NotSupportedException("Preset too large.");
+                    bytes.Write(buffer, 0, count);
+                }
+
+                var preset = DrumPresetFile.Decode(bytes.ToArray(), sound.Algorithm);
+                _presetBusy = false;
+                if (_disposed || _session.Target != target || _workflow.State.Generation != generation ||
+                    !Begin()) return;
+                _session.Preset(preset.Parameters);
+                await CommitAsync();
+            }
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException
+                                          or System.Text.Json.JsonException)
+        {
+            failed = true;
+        }
+        finally
+        {
+            _presetBusy = false;
+            if (!_disposed) Refresh();
+            if (failed && !_disposed)
+            {
+                _status.Text = _shell["Drum.PresetFailed"];
+                _status.IsVisible = true;
+            }
         }
     }
 

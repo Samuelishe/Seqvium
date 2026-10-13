@@ -175,3 +175,8 @@ extent/corner and startup-restoration repairs it exposed; the user track/media s
 Root Pitch, actual theme/field review, native chord/melody authoring and short physical Pattern/Song/
 audition/export evidence. Its preserved user example stays outside Git; no source library/reference
 assets are shipped and subjective acoustic or prior pressure acceptance is not claimed.
+
+[SEQ-DRUM-INSTRUMENTS](SEQ-DRUM-INSTRUMENTS_REPORT.md) records seven distinct built-in voices,
+linked hats, presets and native percussion composing. [SEQ-CHANNEL-RACK-MUSIC](SEQ-CHANNEL-RACK-MUSIC_REPORT.md)
+records compact Rack/navigation repairs, native Neon Orchard authoring, real full Song/WAV and
+owner-driven source balance correction. Delivered music/media remain outside Git.

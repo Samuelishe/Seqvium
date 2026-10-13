@@ -14,9 +14,10 @@ the wider direction.
 The current desktop provides a small working environment for samples, synthesized drums and music. You can:
 
 - Import WAV samples and play the selected sample item.
-- Add a built-in Drum Voice kick with no samples. Shape Tune, Decay, Tone, Noise and pitch/amplitude
-  envelopes in a spacious sound editor, drag curve points or enter exact values, and audition a hit.
-  Rack and Piano notes trigger it; the same sound participates in Song, Undo/Redo, Save/Open and WAV export.
+- Add built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim without sample files. Each has its own
+  synthesis, useful parameters and three starting presets. Shape envelopes, audition repeatedly,
+  save/load your own sound presets, and link hats for natural choke. Rack and Piano notes trigger the
+  same sounds in Pattern/Song, Undo/Redo, Save/Open and WAV export.
 - Create a Pattern in Channel Rack, add or drop WAV sounds, and paint/erase sixteenth-note steps.
   Choose 1–32 bars; fill, shift or clear a row, and delete channels or Patterns with Undo.
   Play a continuous loop with a visible position, change steps while it plays, and export the selected
@@ -60,8 +61,9 @@ WAV channel edits preserve the other voices in the supported Rack graph. Short b
 reduces sample-end clicks. WAV import supports mono/stereo PCM16/24/32 and float32 at 8–192 kHz;
 FLAC remains unavailable. EQ and other effects, third-party plugin hosting,
 MIDI input, recording and crash recovery remain missing.
-Drum Voice currently provides one electronic kick with independent finite hits; other drums, presets,
-choke groups and advanced modulation are still ahead. Sound parameters are shared across its uses.
+Built-in drums use finite mono hits and shared sound parameters. Linked hats share one choke group
+across channels and audible Song clips; advanced modulation, user-defined groups, stereo layers and
+per-channel mix controls remain ahead.
 Sampler pitching uses linear resampling, changing sample playback speed and natural duration; it is
 not time stretching or a multisample instrument. The shared graph has a 32-voice budget.
 Playback can glitch under heavy system load.
@@ -82,7 +84,8 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 ```
 
 The application opens an empty project and stays silent until you press Play.
-Channel Rack opens in a pristine layout: create a Pattern and add your own WAVs; no sample library is bundled. Save
+Channel Rack opens in a pristine layout: create a Pattern and add built-in drums or your own WAVs; no sample library is
+bundled. Save
 projects you want to keep.
 Launching it again brings the existing window forward where the OS allows, instead of opening
 another workspace. If the running application does not respond, the new launch reports this and exits.

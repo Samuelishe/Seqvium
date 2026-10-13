@@ -144,6 +144,7 @@ public static class ArrangementPreparation
             var sorted = events.OrderBy(e => e.Frame).ThenBy(e => e.Kind).ThenBy(e => e.Position.Ticks)
                 .ThenBy(e => e.Occurrence?.ClipId?.Value).ThenBy(e => e.Occurrence?.PartId.Value)
                 .ThenBy(e => e.Occurrence?.NoteId.Value).ThenBy(e => e.Occurrence?.Iteration).ToImmutableArray();
+            DrumChoke.Prepare(notes, sorted, state.Settings.Tempo, sampleRate);
             SamplerPreparation.ValidateCapacity(sorted, notes, sources, VoiceCapacity, last);
             int outputBuffer = bufferCount++;
             operations.Add(new(default, GraphOperationKind.Mix, outputBuffer, [.. outputs], -1));

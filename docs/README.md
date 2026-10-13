@@ -11,11 +11,14 @@ opens it; the left Rack icon or **Panes** menu reopens it. You can begin without
 
 1. Click **New pattern**. It creates an empty bar with 16 sixteenth-note steps in the current
    4/4 project; it does not change BPM or add preset hits.
-2. Click **Add Drum Voice** for a synthesized kick. Its editor opens automatically: Tune sets pitch,
-   Decay sets length, Tone shapes harmonics and Noise adds a transient. Drag Pitch/Amplitude curve
-   points or use the exact fields; one completed adjustment is one Undo. Audition plays a quiet hit
-   at the selected note/velocity. Double-click its channel name or use **… → Open sound editor** to return. **Add
-   sound** or a dropped WAV adds other sounds, such as Snare/Hi-Hat. Sources mix automatically.
+2. Click **Add drum…** and choose Kick, Snare, Closed/Open Hat, Clap, Tom or Rim. The sound editor
+   opens with a useful starting sound and three presets. Each instrument has its own controls:
+   Snare blends body and snappy noise; Clap spreads bursts; Tom exposes pitch drop and resonance.
+   Drag envelope points or enter exact values; each completed adjustment is one Undo. Audition
+   plays a quiet hit at the selected note/velocity. The small save/open buttons exchange custom
+   `.seqdrum` sound presets. Linked hats cut each other; switch **Hat choke** off for independent tails.
+   Double-click the channel name or use **… → Open sound editor** to return. **Add sound** or a dropped
+   WAV adds a sample channel. Sources mix automatically; rhythm stays in Rack.
 3. Enable Kick steps 1/9, Snare 5/13 and Hi-Hat 1/3/5/7/9/11/13/15. Click again to remove a hit.
    Drag across a row to paint or erase; release commits the whole gesture, Escape cancels. The row's **…** menu fills
    every four/two steps, shifts or clears. Arrows navigate; Space/Enter toggles;

@@ -9,6 +9,19 @@ progress.
 
 ## Drum Voice verification
 
+`rack-pads` verifies fixed square geometry/scroll reachability at three pane widths in RU/EN ×
+Dark/Light and native row painting, Undo/Redo and real playing-column rendering. `native-track`
+authors/reopens/balances/arranges/plays/exports the Neon Orchard score through native Windows input,
+not project JSON or musical APIs. [Report](experiments/SEQ-CHANNEL-RACK-MUSIC_REPORT.md) owns its
+measurements and the distinction from layout fixture setup and unrelated Graph native smoke.
+
+`DrumInstrumentTests` adds family synthesis/presets/extremes, media-free musical persistence/export,
+cross-channel/cross-clip hats, simultaneous priority, seek/partition parity and fractional-loop
+allocation/capacity. `drum-kit` performs native Windows Rack/Piano/Playlist authoring, physical Song
+and native Save/Open/export; `drum-kit-review` covers all seven editors and native custom presets.
+Both are bounded friend-host routes documented in [VisualCheck](../tools/Seqvium.VisualCheck/README.md)
+and the [family report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md).
+
 `DrumVoiceTests` covers actual parameter-to-signal differences, host rates/pitch/envelope time,
 velocity, short-note one-shot tails, loop overlap/preflight, seek, partition/consumer allocation,
 live publication/Stop, shared graph mixing, history/stale targets and media-free Save/Open/export.

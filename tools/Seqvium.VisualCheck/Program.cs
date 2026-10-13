@@ -159,7 +159,9 @@ internal static partial class Program
 
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
-                or "piano" or "piano-music" or "drum", "Unknown scenario.");
+                or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
+                or "native-track",
+            "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
         string output = run.Directory;
@@ -178,7 +180,23 @@ internal static partial class Program
                     Json(output, "smoke", new { WindowOpened = true, NativeInput = false, AudioStarted = false });
                 }
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
+                else if (args[0] == "rack-pads") await RackPadReviewAsync(main, output);
+                else if (args[0] == "native-track")
+                {
+                    Require(args.Length == 5, "native-track <output> <project> <library> <rhythm|melody|arrange|play>");
+                    await NativeTrackAsync(main, output, args[2], args[3], args[4]);
+                }
                 else if (args[0] == "drum") await DrumMusicAsync(main, output, args.Length > 2 ? args[2] : null);
+                else if (args[0] == "drum-kit")
+                {
+                    Require(args.Length == 3, "drum-kit <output> <delivery-directory>");
+                    await DrumKitMusicAsync(main, output, args[2]);
+                }
+                else if (args[0] == "drum-kit-review")
+                {
+                    Require(args.Length == 3, "drum-kit-review <output> <project>");
+                    await DrumKitReviewAsync(main, output, args[2]);
+                }
                 else if (args[0] == "piano") await PianoMatrixAsync(main, output);
                 else if (args[0] == "piano-music")
                 {
@@ -205,9 +223,16 @@ internal static partial class Program
                 {
                     var workflow = Field<DesktopWorkflow>(main, "_workflow");
                     if (workflow.State.IsDirty)
+                    {
+                        Require(args[0] != "native-track",
+                            "Native composer stopped with unsaved edits; checkpoint file is preserved.");
                         Require(await workflow.SaveAsync(Path.Combine(output, "final-fixture.seqvium")),
                             "Shutdown fixture save failed.");
-                    main.Close();
+                    }
+
+                    if (args[0] == "native-track")
+                        Dispatcher.UIThread.Post(() => new NativePointer.DrumInput(main).Key(0x73, modifier: 0x12));
+                    else main.Close();
                 }
                 catch (Exception error)
                 {
@@ -449,6 +474,7 @@ internal static partial class Program
             await CaptureAsync(main, output, theme + "-graph-restored");
         }
 
+        Json(output, "field-alignment", alignment);
         var native =
             await NativePointer.VerifyAsync(main, canvas, workspace, workflow, editor, nodeEditor, target, output);
         Json(output, "matrix",

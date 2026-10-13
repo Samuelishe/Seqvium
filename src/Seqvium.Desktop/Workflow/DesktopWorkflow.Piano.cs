@@ -89,7 +89,7 @@ internal sealed partial class DesktopWorkflow
                 _noteSession = new();
                 _noteSession.AttachOutput(_noteOutput.Lifetime, _noteOutput.Sampler);
                 _noteOutput.Sampler.SetGain(0.12f);
-                using var request = sound.Algorithm == DrumVoice.Algorithm
+                using var request = DrumVoice.Supports(sound)
                     ? new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, pitch, intensity)
                     : new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.ResourceIds.Single(),
                         sound.Parameters["rootPitch"], pitch, intensity);

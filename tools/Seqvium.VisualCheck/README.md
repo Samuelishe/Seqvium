@@ -23,6 +23,23 @@ committed toolbar Gain fractional drafts, Enter/Escape, invalid input, focus los
 
 ## First Drum Voice musical check
 
+`rack-pads <absolute-output>` reviews compact fixed pad geometry at three widths in RU/EN × Dark/Light,
+scroll reachability, native row painting/history and physical playing-column rendering.
+`native-track <absolute-output> <project> <library> <phase>` authors Neon Orchard exclusively by native
+Windows input; phases are rhythm, melody, preview, arrange, balance, seeds, seeds-forte and play. Project edits,
+pickers,
+transport and exports use real controls, never musical APIs/JSON. It saves checkpoints and reopens between
+phases; dirty failures retain the window for native rescue. Use only the explicit new composition target.
+The play phase deliberately runs the entire Song on physical output. See the
+[report](../../docs/experiments/SEQ-CHANNEL-RACK-MUSIC_REPORT.md) for scope/results and licensing boundaries.
+
+`drum-kit <absolute-output> <delivery-directory> --timeout-seconds=300` authors four Patterns and
+16 bars using guarded native Windows input in Rack, Piano Roll and Playlist, auditions all seven
+drums and performs native Save/Open and Song WAV pickers with physical output. It creates a unique
+example directory outside Git. `drum-kit-review <absolute-output> <project> --timeout-seconds=180`
+inspects every editor in RU/EN Dark/Light ordinary/minimum panes and verifies native portable preset
+Save/Load with single Undo. Review target/layout setup is separate from native musical authoring.
+
 `drum <absolute-output> [delivery-directory]` creates a seven-hit synthesized kick through actual
 production Rack controls, edits exact values and a captured fine dial, and verifies both editable
 envelopes through foreground-guarded native input. RU/EN Dark/Light ordinary and compact renders

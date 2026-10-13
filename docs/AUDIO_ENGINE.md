@@ -9,11 +9,28 @@ Not authoritative for: Final language/backend/ABI, musical serialization, extens
 
 ## Built-in Drum Voice
 
+The built-in family includes Kick, Snare, Closed/Open Hat, Clap, Tom and Rim. Each versioned algorithm
+and its validated parameters/defaults/presets are owned by
+[DrumInstruments](../src/Seqvium.Core/Audio/DrumInstruments.cs); the original kick algorithm and signal
+remain unchanged. Snare combines damped body modes with band-filtered noise; hats combine six
+inharmonic modes with high-frequency noise; Clap uses three spaced noise bursts and a tail; Tom uses
+pitched resonant modes with a drop; Rim combines wood/metal modes and a short noise click. New voices
+use two synthesis substeps and Nyquist mode attenuation with bounded saturation. Tune transposes the
+whole instrument; note pitch changes frequency/filter context, never envelope time.
+
+Closed/Open Hat expose a binary `choke` parameter, enabled by default. Enabled hats share one group
+across channels and audible Song clips, including independently created sounds. Preparation derives
+each hit's next onset; a three-ms fade ends inside that boundary. Closed wins simultaneous open/closed
+hits; same-kind ties follow stable event order. Muted clips cannot choke. Finite renders, seek and
+continuous Pattern loops use these prepared lifetimes; loop endpoints derive from absolute ticks at
+the actual tempo/rate. Disabled hats neither receive nor send choke. Solo audition has no group peers.
+There are no user-defined groups, stereo voices, modulation or continuous callback synthesis.
+
 `core.drum-voice.kick-v1` is a built-in electronic kick, with no external or managed sample resource.
 Its shared SoundDefinition stores Tune, Decay, Tone, Noise, pitch drop/time/shape, attack and amplitude
 shape. The fixed reference note is MIDI 36; Tune shifts its equal-tempered frequency, and every Piano
 note transposes the oscillator without changing envelope time. Velocity scales each independent hit.
-Tone changes harmonic balance and filtered noise color; deterministic noise supplies a short transient.
+For the kick, Tone changes harmonic balance and filtered noise color; deterministic noise supplies a short transient.
 Pitch and amplitude use the same analytical functions in the editor and synthesis. Parameter ranges
 and defaults belong to [DrumVoice](../src/Seqvium.Core/Audio/DrumVoice.cs).
 
@@ -29,9 +46,11 @@ tails overlap independently, including across Pattern loops; loop overlap is pre
 Finite Pattern/Song export includes the latest hit's natural tail. Explicit Stop/Panic/range boundaries
 still cut voices; seek reconstructs source age from the frozen signal. Shared sound edits preserve
 transport position/epoch, retire changed voices and affect subsequent hits after publication. There is
-no continuous audible uncommitted drag preview. Solo audition uses the same synthesis and quiet pitched
+no continuous audible uncommitted drag preview. Solo audition can retrigger while transport is stopped,
+even when an earlier audition owns an output. It uses the same synthesis and quiet pitched
 audition lifetime, bypassing downstream Gain/Mix while transport is stopped. Offline, realtime and WAV
-use the same prepared kernel and boundary policy. See [verification](experiments/SEQ-FIRST-DRUM_REPORT.md).
+use the same prepared kernel and boundary policy. See [family verification](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md)
+and the [original kick evidence](experiments/SEQ-FIRST-DRUM_REPORT.md).
 
 ## R2-F1 offline sampler foundation
 

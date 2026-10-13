@@ -23,6 +23,7 @@ internal sealed class DrumEnvelopePlot(ShellSession shell) : Control
     public decimal BasePitch { get; set; } = DrumVoice.RootPitch;
     public ImmutableDictionary<string, decimal> Values { get; set; } = DrumVoice.Defaults;
     public bool AmplitudeMode { get; set; }
+    public string Algorithm { get; set; } = DrumVoice.Algorithm;
     public bool IsDraft { get; set; }
     public float[]? Waveform { get; set; }
     public Func<bool>? Begin { get; set; }
@@ -96,7 +97,7 @@ internal sealed class DrumEnvelopePlot(ShellSession shell) : Control
                     Math.Log(.6);
             }
 
-            var parameter = DrumVoice.Parameters.Single(p => p.Key == key);
+            var parameter = DrumInstruments.Find(Algorithm)!.Parameters.Single(p => p.Key == key);
             Preview?.Invoke(key, Math.Clamp(decimal.Round((decimal)proposed, 2), parameter.Minimum, parameter.Maximum));
             e.Handled = true;
         };
@@ -154,7 +155,8 @@ internal sealed class DrumEnvelopePlot(ShellSession shell) : Control
             Text(
                 AmplitudeMode
                     ? (level * 100).ToString("0") + "%"
-                    : (DrumVoice.Frequency(Values, BasePitch) * Math.Pow(2, level * PitchScale / 12)).ToString("0"), 6,
+                    : (DrumInstruments.Frequency(Algorithm, Values, BasePitch) * Math.Pow(2, level * PitchScale / 12))
+                    .ToString("0"), 6,
                 y - 7);
             double x = plot.X + plot.Width * line / 4;
             context.DrawLine(new Pen(Brush("Graph.Grid"), 1), new(x, plot.Y), new(x, plot.Bottom));
@@ -163,11 +165,15 @@ internal sealed class DrumEnvelopePlot(ShellSession shell) : Control
                     right: line == 4);
         }
 
+        decimal tonePitch =
+            decimal.Round(
+                (decimal)(69 + 12 * Math.Log2(DrumInstruments.Frequency(Algorithm, Values, BasePitch) / 440)));
+        string noteName = tonePitch is >= 0 and <= 127 ? PianoNotes.Name(tonePitch) + " · " : "";
         Text(AmplitudeMode
             ? shell["Drum.Amplitude"]
             : shell["Drum.Pitch"] + " · " +
-              PianoNotes.Name(decimal.Round(BasePitch + Values["tune"])) + " · " +
-              DrumVoice.Frequency(Values, BasePitch).ToString("0.0") + " Hz", plot.X, 7, color);
+              noteName +
+              DrumInstruments.Frequency(Algorithm, Values, BasePitch).ToString("0.0") + " Hz", plot.X, 7, color);
         var geometry = new StreamGeometry();
         using (var path = geometry.Open())
         {

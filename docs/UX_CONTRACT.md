@@ -11,6 +11,11 @@ and the implemented Rack, Playlist and Piano Roll sections below; broader capabi
 
 ## Implemented R5-F1 step sequencing
 
+Step pads keep a compact fixed square geometry at every pane width; insufficient room scrolls
+horizontally instead of stretching or shrinking musical cells. Beat/bar gaps remain distinct.
+Rich melodic thumbnails use the available row width and never become step pads. The Pattern
+navigator reserves a scrollbar gutter, keeping complete card edges outside its vertical scrollbar.
+
 The Rack rail action (or Panes → Channel Rack) provides New pattern, Add sound and a committed
 Pattern name field. Pristine layout exposes the Rack without inserting music. A wide-window project
 navigator creates Patterns and selects actual occurrences with canonical rhythm thumbnails. Creation is empty, one bar
@@ -25,6 +30,8 @@ No-op operations add no history or playback stop. Add sound or a single local WA
 managed acceptance/refusal path. Toggle automation reports On/Off and accepts the same canonical action. Name commits
 with
 Enter/check; Escape cancels local text. Global transport/history retain their existing commands.
+Unchanged committed toolbar Gain loses focus without publishing another command or interrupting Save;
+changed/stale drafts retain the existing validation and history rules.
 
 The editor follows the explicitly selected playback occurrence and labels its actual Pattern.
 Notes and names edit shared Pattern content without a variation. New channels require an unshared
@@ -223,14 +230,21 @@ canvas/interaction review remains required independently of pure tests and a qui
 
 ## Drum Voice sound design
 
-Rack's Add Drum Voice creates one empty kick channel and opens its sound editor; it adds no preset
-rhythm. Channel identity double-click and Open sound editor return to that explicit Source target;
+Rack's Add drum chooser creates an empty Kick, Snare, Closed/Open Hat, Clap, Tom or Rim channel and
+opens its sound editor with a useful default; it adds no preset rhythm. Channel identity double-click
+and Open sound editor return to that explicit Source target;
 Open Piano Roll remains a separate channel action. The editor shapes sound, Rack writes rhythm and
 Piano writes pitch/duration/velocity. Shared Pattern/Song/history/Save/Open/export use the same intent.
 
-Tune/Decay/Tone/Noise have physical dials and convenient exact fields. Repeated numbers are omitted
+Only the chosen instrument's working parameters have physical dials and convenient exact fields.
+Each instrument offers three factory snapshots, a Custom state and explicit `.seqdrum` save/load
+buttons. Applying a snapshot is one Undo, retaining rhythm and shared sound identity. Hat choke
+links enabled hats across channels and audible Song clips; Closed wins simultaneous hits. Turning
+it off permits independent tails. File loads retain lifecycle/target/generation authority across the picker.
+Repeated numbers are omitted
 inside dials; Tune retains useful Hz alongside its semitone field. Pitch and Amplitude modes expose
-editable start/shape/end points and the applicable exact envelope parameters. Captured drag/fine
+editable start/shape/end points and the applicable exact envelope parameters. Pitch mode exists for
+Kick and Tom; other instruments expose amplitude and their actual waveform. Captured drag/fine
 adjustment, arrows/Home/End, default reset, Enter/focus-loss commit and Escape/capture-loss cancellation
 produce at most one logical edit. Uncommitted curves are dashed; intervening edits invalidate drafts.
 Audition selects a note/velocity and plays a quiet solo hit while transport is stopped, without history.

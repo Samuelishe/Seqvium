@@ -77,6 +77,12 @@ preparation; actual values remain source-owned.
 
 ## Standard controls and variants
 
+Rack pads use `Rack.StepHeight` for fixed width/minimum/maximum and height, with Auto-sized beat cells.
+`Rack.BarPadding` derives the additional bar gap from shared spacing. Rich-note previews still stretch.
+The inner cap, highlight/shade overlays and pressed recess retain existing semantic materials;
+playing outline and keyboard focus remain independent. `Navigation.ScrollGutter` reserves scrollbar
+width plus shared small spacing on the Pattern list; cards do not paint underneath the bar.
+
 | Component                 | Default / supported classes                                                                  | Guidance                                                                                                                                                                                                          |
 |---------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Button                    | Default standard; `primary`, `compact`, `command`/`icon`, `danger`/`critical`, `comfortable` | Standard commands, principal action, dense input action, named vector icon, destructive action, owned-modal action                                                                                                |
@@ -112,6 +118,8 @@ and a recessed well are optional host variants; default Gain presentation remain
 uses exact values once, retaining the distinct Tune frequency. Light well/scale and waveform choices
 derive from existing semantic roles, without local HEX colors or another palette.
 `DrumEnvelopePlot` uses HostVisual for the editable analytical curves and actual derived waveform.
+Instrument descriptors supply only the working knobs, preset selector and hat choke toggle. Portable
+preset actions use existing Save/Open vectors and standard buttons; repeated stopped audition remains enabled.
 The shared chassis, responsive audition/knob groups and local ScrollViewer preserve comfortable
 input dimensions. Rendered exact-text/unit centers and reachability are verified in both languages
 and themes under [the instrument report](experiments/SEQ-FIRST-DRUM_REPORT.md).

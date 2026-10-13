@@ -121,7 +121,7 @@ future composition; the [editor boundary](#full-node-editors-proposal) defines t
 
 ## Drum Voice source editor
 
-A Source bound to a supported `core.drum-voice.kick-v1` SoundDefinition opens the substantial built-in
+A Source bound to a supported built-in Drum SoundDefinition opens the substantial built-in
 instrument editor. Its graph remains Source → Gain/Mix → Output; there is no new port class, node type
 or second sequencer. Parameters address shared sound intent, with the sound name and multiple-part
 sharing count visible. Unknown/invalid sound state remains preserved and unavailable for execution.

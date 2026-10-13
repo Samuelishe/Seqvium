@@ -41,6 +41,9 @@ internal static partial class Program
         await rack.PendingCommand;
         rack.Refresh();
         Click("Beat.AddDrum");
+        await Task.Delay(50);
+        var drumMenu = ((Button)Id("Beat.AddDrum")).ContextMenu!;
+        ((MenuItem)drumMenu.Items[0]!).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
         await rack.PendingCommand;
         rack.Refresh();
         await Task.Delay(100);

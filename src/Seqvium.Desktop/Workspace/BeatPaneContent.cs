@@ -96,7 +96,8 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         _message.Margin = new(12, 0, 12, 8);
         SetRow(_message, 1);
         Children.Add(_message);
-        var rack = new Grid { RowDefinitions = new("Auto,Auto,Auto"), MinWidth = 820 };
+        var rack = new Grid
+            { RowDefinitions = new("Auto,Auto,Auto"), HorizontalAlignment = HorizontalAlignment.Stretch };
         _rack = rack;
         _ruler = RackRow();
         _ruler.Margin = new(12, 0);
@@ -169,16 +170,34 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         AutomationProperties.SetAutomationId(_create, "Beat.Create");
         AutomationProperties.SetAutomationId(_add, "Beat.AddWav");
         AutomationProperties.SetAutomationId(_drum, "Beat.AddDrum");
-        _drum.Click += async (_, _) =>
+        _drum.Click += (_, _) =>
         {
             if (_basis is not { } basis || !PendingCommand.IsCompleted) return;
-            var before = _workflow.State.Snapshot.State.Patterns.SelectMany(p => p.Parts).Select(p => p.Id).ToHashSet();
-            PendingCommand = _workflow.AddDrumVoiceAsync(basis, _shell["Drum.Kick"]);
-            await PendingCommand;
-            Refresh();
-            var created = _workflow.State.Snapshot.State.Patterns.SingleOrDefault(p => p.Id == basis.Pattern)?.Parts
-                .SingleOrDefault(p => !before.Contains(p.Id));
-            if (created is not null) SoundRequested?.Invoke(created.Id);
+            var menu = new ContextMenu();
+            foreach (var instrument in DrumInstruments.All)
+            {
+                var item = new MenuItem { Header = _shell["Drum." + instrument.Key] };
+                AutomationProperties.SetAutomationId(item, "Beat.AddDrum." + instrument.Key);
+                item.Click += async (_, _) =>
+                {
+                    menu.Close();
+                    if (!PendingCommand.IsCompleted) return;
+                    var before = _workflow.State.Snapshot.State.Patterns.SelectMany(p => p.Parts)
+                        .Select(p => p.Id).ToHashSet();
+                    PendingCommand =
+                        _workflow.AddDrumVoiceAsync(basis, _shell["Drum." + instrument.Key], instrument.Algorithm);
+                    await PendingCommand;
+                    Refresh();
+                    var created = _workflow.State.Snapshot.State.Patterns.SingleOrDefault(p => p.Id == basis.Pattern)
+                        ?.Parts
+                        .SingleOrDefault(p => !before.Contains(p.Id));
+                    if (created is not null) SoundRequested?.Invoke(created.Id);
+                };
+                menu.Items.Add(item);
+            }
+
+            _drum.ContextMenu = menu;
+            menu.Open(_drum);
         };
         AutomationProperties.SetAutomationId(_target, "Beat.Target");
         AutomationProperties.SetAutomationId(_name, "Beat.Name");
@@ -342,7 +361,6 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             {
                 _stepCount = nextCount;
                 RebuildRuler();
-                _rack.MinWidth = 210 + _stepCount * 38;
             }
 
             _create.Classes.Set("primary", pattern is null);
@@ -665,6 +683,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 VerticalAlignment = VerticalAlignment.Center,
                 FontWeight = step % 4 == 0 ? Avalonia.Media.FontWeight.Bold : Avalonia.Media.FontWeight.Normal
             };
+            text.Bind(WidthProperty, this.GetResourceObservable("Rack.StepHeight"));
             _rulerCells.Add(text);
             return text;
         });
@@ -676,12 +695,16 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     {
         var groups = new Grid
         {
-            ColumnDefinitions = new(string.Join(",", Enumerable.Repeat("*", _stepCount / 4))), ColumnSpacing = 10,
-            Margin = new(0, 0, 8, 0)
+            ColumnDefinitions = new(string.Join(",", Enumerable.Repeat("Auto", _stepCount / 4))),
+            Margin = new(0, 0, 8, 0), HorizontalAlignment = HorizontalAlignment.Left
         };
+        groups.Bind(ColumnSpacingProperty, this.GetResourceObservable("Space.Large"));
         for (int beat = 0; beat < _stepCount / 4; beat++)
         {
-            var group = new Grid { ColumnDefinitions = new("*,*,*,*"), ColumnSpacing = 4 };
+            var group = new Grid { ColumnDefinitions = new("Auto,Auto,Auto,Auto") };
+            group.Bind(ColumnSpacingProperty, this.GetResourceObservable("Space.Small"));
+            if (beat % 4 == 3 && beat + 1 < _stepCount / 4)
+                group.Bind(MarginProperty, this.GetResourceObservable("Rack.BarPadding"));
             SetColumn(group, beat);
             groups.Children.Add(group);
             for (int offset = 0; offset < 4; offset++)

@@ -12,13 +12,21 @@ Recovery, broader packaging and later migrations remain open; this is not a fina
 
 ## Drum Voice persistence
 
-The built-in kick stores algorithm `core.drum-voice.kick-v1` and validated decimal parameters in the
+Built-in drums store their versioned algorithm and validated decimal parameters in the
 existing shared SoundDefinition, with empty ResourceIds and no opaque ExtensionState. Notes, Source
 bindings and song clips keep their existing identities. No PCM buffers, waveform cache, editor drafts
 or audition state are serialized; synthesis reconstructs sound without files on Open. The JSON shape,
 writer and reader minor remain unchanged. An older host can preserve this unknown algorithm as
 unavailable sound intent rather than discard it; no executable downgrade compatibility is promised.
 Unknown/additional state remains preserved and refuses this bounded processor instead of being guessed.
+
+The original `core.drum-voice.kick-v1` keeps its exact parameter contract. Additional algorithms are
+`core.drum-voice.snare-v1`, `closedhat-v1`, `openhat-v1`, `clap-v1`, `tom-v1` and `rim-v1` under the same
+prefix. Hat `choke` is binary sound intent; prepared peer lifetimes are derived and never saved.
+Factory presets copy complete parameter snapshots into the sound in one history transaction; they
+add no persistent preset dependency. Explicit `.seqdrum` files contain version 1, algorithm and full
+parameters. Import is bounded to 32 KiB and requires the current instrument/version and validated
+ranges; it changes sound only, preserving notes/IDs. Failed/stale loads create no history entry.
 
 ## R4-F3-A desktop persistence lifecycle
 

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
@@ -22,8 +23,13 @@ internal sealed class WorkflowControls : Grid
     private readonly StackPanel _project = new() { Orientation = Orientation.Horizontal, Classes = { "joined" } };
     private readonly StackPanel _overflowBody = new() { Classes = { "tight" }, MinWidth = 180 };
     private readonly StackPanel _selectionPopup = new() { Spacing = 6 };
-    private readonly StackPanel _musicalParameters = new() { Orientation = Orientation.Horizontal,
-        VerticalAlignment = VerticalAlignment.Center, Classes = { "compact" }, Margin = new(4, 0) };
+
+    private readonly StackPanel _musicalParameters = new()
+    {
+        Orientation = Orientation.Horizontal,
+        VerticalAlignment = VerticalAlignment.Center, Classes = { "compact" }, Margin = new(4, 0)
+    };
+
     private readonly TextBlock _tempo = new() { FontWeight = FontWeight.SemiBold };
     private readonly Button _tempoAction = new() { Classes = { "compact" } };
     private readonly TextBox _tempoEdit = new() { Width = 88, Classes = { "numeric" } };
@@ -32,14 +38,29 @@ internal sealed class WorkflowControls : Grid
     private readonly TextBlock _meter = new() { FontWeight = FontWeight.SemiBold, Margin = new(8, 0, 4, 0) };
     private readonly Border _parameterSlot = new();
     private readonly Border _overflowParameters = new() { Margin = new(6) };
-    private readonly Border _selectionSlot = new() { Margin = new(4, 0), Width = 220,
-        VerticalAlignment = VerticalAlignment.Center };
-    private readonly ComboBox _occurrences = new() { Classes = { "workflow" }, MinWidth = 100,
-        HorizontalAlignment = HorizontalAlignment.Stretch };
-    private readonly NumericUpDown _gain = new() { Classes = { "workflow" }, Minimum = 0, Maximum = 1,
+
+    private readonly Border _selectionSlot = new()
+    {
+        Margin = new(4, 0), Width = 220,
+        VerticalAlignment = VerticalAlignment.Center
+    };
+
+    private readonly ComboBox _occurrences = new()
+    {
+        Classes = { "workflow" }, MinWidth = 100,
+        HorizontalAlignment = HorizontalAlignment.Stretch
+    };
+
+    private readonly NumericUpDown _gain = new()
+    {
+        Classes = { "workflow" }, Minimum = 0, Maximum = 1,
         Increment = 0.05m, FormatString = "0.00", Width = 64, ShowButtonSpinner = false,
-        NumberFormat = System.Globalization.CultureInfo.InvariantCulture.NumberFormat };
-    private readonly TextBlock _gainLabel = new() { VerticalAlignment = VerticalAlignment.Center, Margin = new(4, 0, 4, 0) };
+        NumberFormat = System.Globalization.CultureInfo.InvariantCulture.NumberFormat
+    };
+
+    private readonly TextBlock _gainLabel = new()
+        { VerticalAlignment = VerticalAlignment.Center, Margin = new(4, 0, 4, 0) };
+
     private readonly Button _information = new() { Classes = { "shell", "command" } };
     private readonly Button _overflow = new() { Classes = { "shell", "command" } };
     private readonly Button _mode = new() { Classes = { "compact" }, MinWidth = 62 };
@@ -59,86 +80,150 @@ internal sealed class WorkflowControls : Grid
     internal bool OccurrenceShownElsewhere { get; set; }
     internal Task PendingTempoCommand { get; private set; } = Task.CompletedTask;
     internal Task PendingGainCommand { get; private set; } = Task.CompletedTask;
-    internal Button StatusControl { get; } = new() { Classes = { "shell", "status" },
-        HorizontalAlignment = HorizontalAlignment.Stretch };
+
+    internal Button StatusControl { get; } = new()
+    {
+        Classes = { "shell", "status" },
+        HorizontalAlignment = HorizontalAlignment.Stretch
+    };
 
     internal WorkflowControls(ShellSession shell, DesktopWorkflow workflow, Func<string, Task> action)
     {
-        _shell = shell; _workflow = workflow; _action = action;
-        this.Bind(HeightProperty, this.GetResourceObservable("Toolbar.Height")); ColumnDefinitions = new("Auto,*,Auto");
-        var commands = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Classes = { "joined" } };
+        _shell = shell;
+        _workflow = workflow;
+        _action = action;
+        this.Bind(HeightProperty, this.GetResourceObservable("Toolbar.Height"));
+        ColumnDefinitions = new("Auto,*,Auto");
+        var commands = new StackPanel
+        {
+            Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Classes = { "joined" }
+        };
         foreach (var key in new[] { "Import", "Open", "Save" }) _project.Children.Add(Command(key));
-        commands.Children.Add(_project); commands.Children.Add(Separator());
+        commands.Children.Add(_project);
+        commands.Children.Add(Separator());
         foreach (var key in new[] { "Play", "Stop", "Panic" }) commands.Children.Add(Command(key));
         commands.Children.Add(_mode);
         AutomationProperties.SetAutomationId(_mode, "Workflow.Mode");
         _mode.Click += async (_, _) => await workflow.SetSongModeAsync(!workflow.State.SongMode);
         _tempo.Bind(TextBlock.FontSizeProperty, this.GetResourceObservable("Type.Transport"));
-        _tempoAction.Content = _tempo; _musicalParameters.Children.Add(_tempoAction);
+        _tempoAction.Content = _tempo;
+        _musicalParameters.Children.Add(_tempoAction);
         var tempoPopup = new StackPanel { Classes = { "spaced" } };
         var tempoRow = new Grid { ColumnDefinitions = new("Auto,Auto,Auto"), Classes = { "parameterRow" } };
         tempoRow.Children.Add(_tempoEdit);
-        var bpm = new TextBlock { Text = "BPM" }; Grid.SetColumn(bpm, 1); tempoRow.Children.Add(bpm);
-        var tempoApply = new Button { Classes = { "command" } }; tempoApply.Content = HostIcons.Create("Check", tempoApply, 16);
-        Grid.SetColumn(tempoApply, 2); tempoRow.Children.Add(tempoApply); tempoPopup.Children.Add(tempoRow);
+        var bpm = new TextBlock { Text = "BPM" };
+        Grid.SetColumn(bpm, 1);
+        tempoRow.Children.Add(bpm);
+        var tempoApply = new Button { Classes = { "command" } };
+        tempoApply.Content = HostIcons.Create("Check", tempoApply, 16);
+        Grid.SetColumn(tempoApply, 2);
+        tempoRow.Children.Add(tempoApply);
+        tempoPopup.Children.Add(tempoRow);
         var tempoHint = new TextBlock { Classes = { "caption" }, MaxWidth = 240, TextWrapping = TextWrapping.Wrap };
         tempoPopup.Children.Add(tempoHint);
-        var tempoFlyout = new Flyout { Content = tempoPopup }; _tempoAction.Flyout = tempoFlyout;
+        var tempoFlyout = new Flyout { Content = tempoPopup };
+        _tempoAction.Flyout = tempoFlyout;
         AutomationProperties.SetAutomationId(_tempoAction, "Workflow.EditTempo");
         AutomationProperties.SetAutomationId(_tempoEdit, "Workflow.TempoValue");
         AutomationProperties.SetAutomationId(tempoApply, "Workflow.ApplyTempo");
         tempoFlyout.Opened += (_, _) =>
         {
-            var state = workflow.State; _tempoBasis = (state.Document.LifecycleId, state.Generation);
-            _tempoCulture = System.Globalization.CultureInfo.GetCultureInfo(_shell.Preferences.Language == HostLanguage.Russian ? "ru-RU" : "en-US");
-            _tempoEdit.Text = _shell.Tempo; _tempoEdit.Classes.Remove("invalid");
+            var state = workflow.State;
+            _tempoBasis = (state.Document.LifecycleId, state.Generation);
+            _tempoCulture =
+                System.Globalization.CultureInfo.GetCultureInfo(_shell.Preferences.Language == HostLanguage.Russian
+                    ? "ru-RU"
+                    : "en-US");
+            _tempoEdit.Text = _shell.Tempo;
+            _tempoEdit.Classes.Remove("invalid");
             tempoHint.Text = _shell["Workflow.TempoHint"];
             AutomationProperties.SetName(_tempoEdit, _shell["Project.Tempo"]);
             AutomationProperties.SetName(tempoApply, _shell["Workflow.ApplyTempo"]);
-            _tempoEdit.Focus(); _tempoEdit.SelectAll();
+            _tempoEdit.Focus();
+            _tempoEdit.SelectAll();
         };
+
         async Task CommitTempoAsync()
         {
             bool parsed = decimal.TryParse(_tempoEdit.Text, System.Globalization.NumberStyles.Float,
-                System.Globalization.CultureInfo.InvariantCulture, out var value) ||
-                decimal.TryParse(_tempoEdit.Text, System.Globalization.NumberStyles.Float, _tempoCulture, out value);
+                              System.Globalization.CultureInfo.InvariantCulture, out var value) ||
+                          decimal.TryParse(_tempoEdit.Text, System.Globalization.NumberStyles.Float, _tempoCulture,
+                              out value);
             if (_tempoBasis is not { } basis || !parsed || value is < 1 or > 1000 || decimal.Round(value, 6) != value)
-            { _tempoEdit.Classes.Add("invalid"); return; }
+            {
+                _tempoEdit.Classes.Add("invalid");
+                return;
+            }
+
             _tempoBasis = null;
             PendingTempoCommand = workflow.SetTempoAsync(basis.Lifecycle, basis.Generation, value);
-            await PendingTempoCommand; tempoFlyout.Hide();
+            await PendingTempoCommand;
+            tempoFlyout.Hide();
         }
+
         tempoApply.Click += async (_, _) => await CommitTempoAsync();
         _tempoEdit.KeyDown += async (_, e) =>
         {
-            if (e.Key == Avalonia.Input.Key.Enter) { e.Handled = true; await CommitTempoAsync(); }
-            if (e.Key == Avalonia.Input.Key.Escape) { e.Handled = true; _tempoBasis = null; tempoFlyout.Hide(); }
+            if (e.Key == Avalonia.Input.Key.Enter)
+            {
+                e.Handled = true;
+                await CommitTempoAsync();
+            }
+
+            if (e.Key == Avalonia.Input.Key.Escape)
+            {
+                e.Handled = true;
+                _tempoBasis = null;
+                tempoFlyout.Hide();
+            }
         };
         tempoFlyout.Closed += (_, _) => _tempoBasis = null;
-        _musicalParameters.Children.Add(new TextBlock { Text = "BPM", Classes = { "caption" },
-            VerticalAlignment = VerticalAlignment.Center });
+        _musicalParameters.Children.Add(new TextBlock
+        {
+            Text = "BPM", Classes = { "caption" },
+            VerticalAlignment = VerticalAlignment.Center
+        });
         _musicalParameters.Children.Add(_meter);
-        _parameterSlot.Child = _musicalParameters; commands.Children.Add(_parameterSlot);
+        _parameterSlot.Child = _musicalParameters;
+        commands.Children.Add(_parameterSlot);
         commands.Children.Add(Separator());
-        commands.Children.Add(Command("Undo")); commands.Children.Add(Command("Redo"));
+        commands.Children.Add(Command("Undo"));
+        commands.Children.Add(Command("Redo"));
         Children.Add(commands);
         _selectionSlot.Child = _occurrences;
-        var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Classes = { "parameterRow" } };
+        var right = new StackPanel
+        {
+            Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center,
+            Classes = { "parameterRow" }
+        };
         right.Children.Add(_selectionSlot);
-        right.Children.Add(_gainLabel); right.Children.Add(_gain); right.Children.Add(_information); right.Children.Add(_overflow);
-        Grid.SetColumn(right, 1); Children.Add(right);
-        _buttons["Play"].Classes.Add("play"); _buttons["Panic"].Classes.Add("critical");
+        right.Children.Add(_gainLabel);
+        right.Children.Add(_gain);
+        right.Children.Add(_information);
+        right.Children.Add(_overflow);
+        Grid.SetColumn(right, 1);
+        Children.Add(right);
+        _buttons["Play"].Classes.Add("play");
+        _buttons["Panic"].Classes.Add("critical");
         _information.Content = HostIcons.Create("Info", _information);
         _overflow.Content = HostIcons.Create("More", _overflow);
         AutomationProperties.SetAutomationId(_information, "Workflow.SourceInfo");
         AutomationProperties.SetAutomationId(_overflow, "Workflow.More");
-        AddOverflow("SaveAs"); AddOverflow("ExportWave", "Export"); AddOverflow("ExportSong", "Export"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
+        AddOverflow("SaveAs");
+        AddOverflow("ExportWave", "Export");
+        AddOverflow("ExportSong", "Export");
+        AddOverflow("Graph");
+        AddOverflow("CancelImport", "Close");
         _overflowBody.Children.Add(_overflowParameters);
         _overflow.Flyout = new Flyout { Content = _overflowBody };
         var body = new StackPanel { Width = 330, Classes = { "spaced" } };
-        body.Children.Add(_selectionPopup); body.Children.Add(_source); body.Children.Add(_chain);
-        body.Children.Add(_detail); body.Children.Add(_device);
-        _technicalExpander.Content = _technical; body.Children.Add(_technicalExpander);
+        body.Children.Add(_selectionPopup);
+        body.Children.Add(_source);
+        body.Children.Add(_chain);
+        body.Children.Add(_detail);
+        body.Children.Add(_device);
+        _technicalExpander.Content = _technical;
+        body.Children.Add(_technicalExpander);
         _details = new() { Content = body };
         _information.Click += (_, _) => _details.ShowAt(_information);
         StatusControl.Click += (_, _) => _details.ShowAt(StatusControl);
@@ -162,11 +247,24 @@ internal sealed class WorkflowControls : Grid
                 await workflow.SetGainAsync(gain);
         };
         _gain.GotFocus += (_, _) => BeginGainEdit();
-        _gain.LostFocus += async (_, _) => { if (!_gain.IsKeyboardFocusWithin) await CommitGainAsync(); };
+        _gain.LostFocus += async (_, _) =>
+        {
+            if (!_gain.IsKeyboardFocusWithin) await CommitGainAsync();
+        };
         _gain.AddHandler(KeyDownEvent, async (_, e) =>
         {
-            if (e.Key == Avalonia.Input.Key.Enter) { e.Handled = true; await CommitGainAsync(); }
-            else if (e.Key == Avalonia.Input.Key.Escape) { e.Handled = true; _gainBasis = null; Refresh(); BeginGainEdit(); }
+            if (e.Key == Avalonia.Input.Key.Enter)
+            {
+                e.Handled = true;
+                await CommitGainAsync();
+            }
+            else if (e.Key == Avalonia.Input.Key.Escape)
+            {
+                e.Handled = true;
+                _gainBasis = null;
+                Refresh();
+                BeginGainEdit();
+            }
         }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
         SizeChanged += (_, _) => Adapt();
         Refresh();
@@ -178,7 +276,8 @@ internal sealed class WorkflowControls : Grid
         var state = _workflow.State;
         if (state.Selected is not { } selected || !state.Gain.HasValue) return;
         var attachment = state.Snapshot.State.GraphAttachments.Single(a => a.Id == selected);
-        var node = state.Snapshot.State.Graphs.Single(g => g.Id == attachment.GraphId).Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
+        var node = state.Snapshot.State.Graphs.Single(g => g.Id == attachment.GraphId).Nodes
+            .Single(n => n.Type == GraphBuiltIns.Gain);
         _gainBasis = (new(state.Document.LifecycleId, state.Generation, selected), node.Id);
     }
 
@@ -187,11 +286,26 @@ internal sealed class WorkflowControls : Grid
         if (_gainBasis is not { } draft) return;
         if (!decimal.TryParse(_gain.Text, System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out var value) || value is < 0 or > 1)
-        { _gain.Classes.Add("invalid"); return; }
+        {
+            _gain.Classes.Add("invalid");
+            return;
+        }
+
         bool refocus = _gain.IsKeyboardFocusWithin;
-        _gainBasis = null; _gain.Classes.Remove("invalid");
+        _gainBasis = null;
+        _gain.Classes.Remove("invalid");
+        var current = _workflow.State;
+        if (current.Document.LifecycleId == draft.Basis.Lifecycle && current.Generation == draft.Basis.Generation &&
+            current.Selected == draft.Basis.Attachment && current.Gain == value)
+        {
+            Refresh();
+            if (_gain.IsKeyboardFocusWithin) BeginGainEdit();
+            return;
+        }
+
         PendingGainCommand = _workflow.SetGraphGainAsync(draft.Basis, draft.Node, value);
-        await PendingGainCommand; Refresh();
+        await PendingGainCommand;
+        Refresh();
         if (refocus && _gain.IsEnabled && _gain.IsEffectivelyVisible)
             _gain.GetVisualDescendants().OfType<TextBox>().SingleOrDefault()?.Focus();
         if (_gain.IsKeyboardFocusWithin) BeginGainEdit();
@@ -203,30 +317,44 @@ internal sealed class WorkflowControls : Grid
         button.Content = HostIcons.Create(icon ?? key, button);
         AutomationProperties.SetAutomationId(button, "Workflow." + key);
         ToolTip.SetShowOnDisabled(button, true);
-        button.Click += async (_, _) => { _overflow.Flyout?.Hide(); await _action(key); };
-        _buttons.Add(key, button); return button;
+        button.Click += async (_, _) =>
+        {
+            _overflow.Flyout?.Hide();
+            await _action(key);
+        };
+        _buttons.Add(key, button);
+        return button;
     }
 
     private static Border Separator()
     {
-        var border = new Border { Width = 1, Height = 16, Margin = new(4, 0), VerticalAlignment = VerticalAlignment.Center };
-        border.Bind(BackgroundProperty, border.GetResourceObservable("Border.Default")); return border;
+        var border = new Border
+            { Width = 1, Height = 16, Margin = new(4, 0), VerticalAlignment = VerticalAlignment.Center };
+        border.Bind(BackgroundProperty, border.GetResourceObservable("Border.Default"));
+        return border;
     }
 
     private void AddOverflow(string key, string? icon = null)
     {
-        var button = Command(key, icon); FormatMenuButton(button, key); _overflowBody.Children.Add(button);
+        var button = Command(key, icon);
+        FormatMenuButton(button, key);
+        _overflowBody.Children.Add(button);
     }
 
     private void FormatMenuButton(Button button, string key)
     {
-        button.Classes.Remove("command"); button.Width = double.NaN;
-        button.HorizontalAlignment = HorizontalAlignment.Stretch; button.HorizontalContentAlignment = HorizontalAlignment.Left;
+        button.Classes.Remove("command");
+        button.Width = double.NaN;
+        button.HorizontalAlignment = HorizontalAlignment.Stretch;
+        button.HorizontalContentAlignment = HorizontalAlignment.Left;
         var row = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "spaced" } };
-        row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key is "ExportWave" or "ExportSong" ? "Export" : key, button, 16));
+        row.Children.Add(HostIcons.Create(
+            key == "CancelImport" ? "Close" : key is "ExportWave" or "ExportSong" ? "Export" : key, button, 16));
         var text = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
         _menuLabels.RemoveAll(item => item.Key == key);
-        _menuLabels.Add((text, key)); row.Children.Add(text); button.Content = row;
+        _menuLabels.Add((text, key));
+        row.Children.Add(text);
+        button.Content = row;
     }
 
     private void Adapt()
@@ -236,33 +364,66 @@ internal sealed class WorkflowControls : Grid
         if (_compact != compact)
         {
             bool focused = _occurrences.IsKeyboardFocusWithin;
-            if (compact) { _selectionSlot.Child = null; _selectionPopup.Children.Add(_occurrences); }
-            else { _selectionPopup.Children.Remove(_occurrences); _selectionSlot.Child = _occurrences; }
-            _compact = compact; _selectionSlot.IsVisible = !compact;
-            if (focused) _information.Focus();
-        }
-        if (_openInOverflow != moveOpen)
-        {
-            var button = _buttons["Open"]; bool focused = button.IsKeyboardFocusWithin;
-            if (moveOpen) { _project.Children.Remove(button); FormatMenuButton(button, "Open"); _overflowBody.Children.Insert(0, button); }
+            if (compact)
+            {
+                _selectionSlot.Child = null;
+                _selectionPopup.Children.Add(_occurrences);
+            }
             else
             {
-                _overflowBody.Children.Remove(button); button.Classes.Add("command"); button.ClearValue(WidthProperty);
-                button.Content = HostIcons.Create("Open", button); _project.Children.Insert(1, button);
+                _selectionPopup.Children.Remove(_occurrences);
+                _selectionSlot.Child = _occurrences;
             }
+
+            _compact = compact;
+            _selectionSlot.IsVisible = !compact;
+            if (focused) _information.Focus();
+        }
+
+        if (_openInOverflow != moveOpen)
+        {
+            var button = _buttons["Open"];
+            bool focused = button.IsKeyboardFocusWithin;
+            if (moveOpen)
+            {
+                _project.Children.Remove(button);
+                FormatMenuButton(button, "Open");
+                _overflowBody.Children.Insert(0, button);
+            }
+            else
+            {
+                _overflowBody.Children.Remove(button);
+                button.Classes.Add("command");
+                button.ClearValue(WidthProperty);
+                button.Content = HostIcons.Create("Open", button);
+                _project.Children.Insert(1, button);
+            }
+
             _openInOverflow = moveOpen;
             if (focused) _overflow.Focus();
         }
+
         _gainLabel.IsVisible = Bounds.Width >= 440;
         bool parametersInOverflow = Bounds.Width < 510;
         if (parametersInOverflow != (_overflowParameters.Child is not null))
         {
             bool focused = _musicalParameters.IsKeyboardFocusWithin;
-            _tempoBasis = null; _tempoAction.Flyout?.Hide();
-            if (parametersInOverflow) { _parameterSlot.Child = null; _overflowParameters.Child = _musicalParameters; }
-            else { _overflowParameters.Child = null; _parameterSlot.Child = _musicalParameters; }
+            _tempoBasis = null;
+            _tempoAction.Flyout?.Hide();
+            if (parametersInOverflow)
+            {
+                _parameterSlot.Child = null;
+                _overflowParameters.Child = _musicalParameters;
+            }
+            else
+            {
+                _overflowParameters.Child = null;
+                _parameterSlot.Child = _musicalParameters;
+            }
+
             if (focused) _overflow.Focus();
         }
+
         _overflowParameters.IsVisible = parametersInOverflow;
         Refresh(_blocked);
     }
@@ -270,10 +431,12 @@ internal sealed class WorkflowControls : Grid
     internal void Refresh(bool interactionBlocked = false)
     {
         _blocked = interactionBlocked;
-        var state = _workflow.State; _refreshing = true;
+        var state = _workflow.State;
+        _refreshing = true;
         try
         {
-            _tempo.Text = _shell.Tempo; _meter.Text = _shell.Meter;
+            _tempo.Text = _shell.Tempo;
+            _meter.Text = _shell.Meter;
             _mode.Content = _shell[state.SongMode ? "Arrangement.Song" : "Arrangement.Pattern"];
             _mode.Classes.Set("primary", state.SongMode);
             _mode.IsEnabled = !interactionBlocked && !state.Busy && !state.IsClosed;
@@ -289,37 +452,60 @@ internal sealed class WorkflowControls : Grid
             {
                 bool transport = key is "Stop" or "Panic";
                 button.IsVisible = key != "CancelImport" || CanCancelImport;
-                button.IsEnabled = key == "CancelImport" ? CanCancelImport : transport ? state.CanStop || state.Busy :
+                button.IsEnabled = key == "CancelImport" ? CanCancelImport :
+                    transport ? state.CanStop || state.Busy :
                     !interactionBlocked && !state.Busy && key switch
-                    { "Play" => state.CanPlay, "ExportWave" => state.Selected is not null,
-                        "ExportSong" => !state.Snapshot.State.ArrangementClips.IsEmpty, "Undo" => state.UndoCount > 0, "Redo" => state.RedoCount > 0, _ => true };
-                var shortcut = WorkflowPresentation.Shortcut(key); var label = _shell["Workflow." + key];
-                AutomationProperties.SetName(button, label); AutomationProperties.SetAcceleratorKey(button, shortcut);
+                    {
+                        "Play" => state.CanPlay, "ExportWave" => state.Selected is not null,
+                        "ExportSong" => !state.Snapshot.State.ArrangementClips.IsEmpty, "Undo" => state.UndoCount > 0,
+                        "Redo" => state.RedoCount > 0, _ => true
+                    };
+                var shortcut = WorkflowPresentation.Shortcut(key);
+                var label = _shell["Workflow." + key];
+                AutomationProperties.SetName(button, label);
+                AutomationProperties.SetAcceleratorKey(button, shortcut);
                 ToolTip.SetTip(button, label + (shortcut.Length == 0 ? "" : " · " + shortcut) +
-                    (button.IsEnabled ? "" : "\n" + _shell[WorkflowPresentation.DisabledReason(key, state)]));
+                                       (button.IsEnabled
+                                           ? ""
+                                           : "\n" + _shell[WorkflowPresentation.DisabledReason(key, state)]));
             }
+
             foreach (var (text, key) in _menuLabels) text.Text = _shell["Workflow." + key];
             _buttons["Play"].Classes.Set("active", state.Execution?.Execution.Playing == true);
-            if (!_occurrences.Items.OfType<OccurrenceChoice>().SequenceEqual(state.Occurrences)) _occurrences.ItemsSource = state.Occurrences;
-            _selection = state.Selected; _occurrences.SelectedItem = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected);
+            if (!_occurrences.Items.OfType<OccurrenceChoice>().SequenceEqual(state.Occurrences))
+                _occurrences.ItemsSource = state.Occurrences;
+            _selection = state.Selected;
+            _occurrences.SelectedItem = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected);
             _occurrences.PlaceholderText = _shell["Workflow.NoSelection"];
             _occurrences.IsVisible = state.Occurrences.Length > 0;
             _selectionSlot.IsVisible = !_compact && state.Occurrences.Length > 1 && !OccurrenceShownElsewhere;
             _selectionPopup.IsVisible = _compact && state.Occurrences.Length > 0;
             _occurrences.IsEnabled = !interactionBlocked && !state.Busy && state.Occurrences.Length > 0;
             AutomationProperties.SetName(_occurrences, _shell["Workflow.Occurrence"]);
-            ToolTip.SetTip(_occurrences, state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ?? _shell["Workflow.NoSelection"]);
-            _gainLabel.Text = "Gain"; AutomationProperties.SetName(_gain, _shell["Workflow.Gain"]);
+            ToolTip.SetTip(_occurrences,
+                state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ??
+                _shell["Workflow.NoSelection"]);
+            _gainLabel.Text = "Gain";
+            AutomationProperties.SetName(_gain, _shell["Workflow.Gain"]);
             ToolTip.SetTip(_gain, _shell["Workflow.GainUnit"]);
-            _gain.Minimum = Math.Min(0m, state.Gain ?? 0m); _gain.Maximum = Math.Max(1m, state.Gain ?? 1m);
+            _gain.Minimum = Math.Min(0m, state.Gain ?? 0m);
+            _gain.Maximum = Math.Max(1m, state.Gain ?? 1m);
             if (_gainBasis is { } gainDraft && (gainDraft.Basis.Lifecycle != state.Document.LifecycleId ||
-                gainDraft.Basis.Generation != state.Generation || gainDraft.Basis.Attachment != state.Selected || interactionBlocked))
+                                                gainDraft.Basis.Generation != state.Generation ||
+                                                gainDraft.Basis.Attachment != state.Selected || interactionBlocked))
                 _gainBasis = null;
-            if (_gainBasis is null) { _gain.Value = state.Gain; _gain.Text = state.Gain?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture); _gain.Classes.Remove("invalid"); }
+            if (_gainBasis is null)
+            {
+                _gain.Value = state.Gain;
+                _gain.Text = state.Gain?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                _gain.Classes.Remove("invalid");
+            }
+
             _gain.IsEnabled = !interactionBlocked && !state.Busy && state.Gain.HasValue;
             _gain.IsVisible = state.Gain.HasValue && !GainShownElsewhere && Bounds.Width >= 690;
             _gainLabel.IsVisible = _gain.IsVisible && Bounds.Width >= 440;
-            _source.Text = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ?? _shell["Workflow.NoSelection"];
+            _source.Text = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ??
+                           _shell["Workflow.NoSelection"];
             _source.IsVisible = state.Selected is not null && !_compact;
             _chain.Text = state.Chain;
             _chain.IsVisible = _chain.Text.Length > 0;
@@ -331,7 +517,8 @@ internal sealed class WorkflowControls : Grid
             _technicalExpander.Header = _shell["Workflow.Technical"];
             _technical.Text = state.Source + "\n" + (state.Detail ?? "");
             if (state.Execution is { } execution)
-                _technical.Text += $"\nCanonical: {execution.CanonicalRevision}\nExecuting: {execution.Execution.ExecutingRevision}\n" +
+                _technical.Text +=
+                    $"\nCanonical: {execution.CanonicalRevision}\nExecuting: {execution.Execution.ExecutingRevision}\n" +
                     $"Origin: {execution.Execution.OriginPreparedRevision}\nEquivalent: {execution.Execution.EquivalentCanonicalRevision}\n" +
                     $"Execution: {execution.Execution.PreparedExecutionId}\nAttachment: {execution.Execution.AttachmentId}";
             _technicalExpander.IsVisible = !string.IsNullOrWhiteSpace(_technical.Text);
@@ -339,18 +526,25 @@ internal sealed class WorkflowControls : Grid
             var status = _shell[statusKey];
             StatusControl.IsVisible = statusKey != "Status.Ready" || state.Execution?.LastValidPlaying == true;
             if (state.Execution?.LastValidPlaying == true) status += " · " + _shell["Status.LastValid"];
-            _statusText.Text = status; AutomationProperties.SetName(StatusControl, status);
+            _statusText.Text = status;
+            AutomationProperties.SetName(StatusControl, status);
             ToolTip.SetTip(StatusControl, _detail.Text + "\n" + _shell["Workflow.Details"]);
             StatusControl.Classes.Set("error", WorkflowPresentation.IsError(state));
             StatusControl.Classes.Set("warning", state.StatusKey is "Workflow.Blocked" or "Workflow.Degraded");
-            StatusControl.Classes.Set("playing", !WorkflowPresentation.IsError(state) && state.Execution?.Execution.Playing == true);
+            StatusControl.Classes.Set("playing",
+                !WorkflowPresentation.IsError(state) && state.Execution?.Execution.Playing == true);
             foreach (var button in new[] { _information, _overflow })
             {
                 var label = _shell[button == _information ? "Workflow.Details" : "Workflow.More"];
-                AutomationProperties.SetName(button, label); ToolTip.SetTip(button, label);
+                AutomationProperties.SetName(button, label);
+                ToolTip.SetTip(button, label);
             }
+
             _information.IsEnabled = _overflow.IsEnabled = !interactionBlocked || state.Busy;
         }
-        finally { _refreshing = false; }
+        finally
+        {
+            _refreshing = false;
+        }
     }
 }

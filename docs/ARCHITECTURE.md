@@ -238,9 +238,10 @@ graph model/history, DSP, assembly, plugin registry or docking framework is intr
 
 ## Built-in instrument ownership
 
-The first Drum Voice is a built-in SoundDefinition capability, not the removable R7 creative generator.
+The seven-voice Drum family is a built-in SoundDefinition capability, separate from the removable R7 creative generator.
 Canonical decimal parameters and algorithm identity use existing document history/serialization.
-`DrumVoice` owns synthesis and envelope functions; `BuiltInSound` recognizes the two implemented sound
+`DrumVoice` retains legacy kick synthesis/envelopes; `DrumInstruments` owns family descriptors,
+presets and new synthesis, and `DrumChoke` derives prepared hat lifetimes. `BuiltInSound` recognizes built-in sound
 capabilities without introducing a public registry. Derived host-rate signals enter the existing
 source/lease scheduler under [Audio](AUDIO_ENGINE.md#built-in-drum-voice).
 

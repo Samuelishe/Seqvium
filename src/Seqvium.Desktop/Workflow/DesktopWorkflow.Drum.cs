@@ -7,39 +7,44 @@ namespace Seqvium.Desktop.Workflow;
 
 internal sealed partial class DesktopWorkflow
 {
-    internal Task<bool> AddDrumVoiceAsync(BeatEditBasis basis, string name) => Command("Workflow.EditFailed", () =>
-    {
-        var (pattern, placement, attachment, graph) = ValidateBeatBasis(basis);
-        if (BeatChannelRefusal(_document.Current.State, pattern, attachment, graph) is { } refusal)
-            throw new InvalidOperationException(refusal);
-        bool changed = _document.Edit("Add Drum Voice", edit =>
+    internal Task<bool> AddDrumVoiceAsync(BeatEditBasis basis, string name) =>
+        AddDrumVoiceAsync(basis, name, DrumVoice.Algorithm);
+
+    internal Task<bool> AddDrumVoiceAsync(BeatEditBasis basis, string name, string algorithm) => Command(
+        "Workflow.EditFailed", () =>
         {
-            var sound = edit.AddSound(name, DrumVoice.Algorithm);
-            edit.SetSoundParameters(sound, DrumVoice.Defaults);
-            var part = edit.AddPart(pattern.Id, name, sound);
-            var source = edit.AddGraphNode(graph.Id, GraphBuiltIns.Source, new(0, pattern.Parts.Length * 120));
-            edit.BindGraphSource(attachment.Id, source.Id, placement.Id, part);
-            var gain = graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
-            var input = gain.Ports.Single(p => p.Direction == GraphPortDirection.Input);
-            if (pattern.Parts.IsEmpty)
-                edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, gain.Id, input.Id);
-            else
+            var (pattern, placement, attachment, graph) = ValidateBeatBasis(basis);
+            if (BeatChannelRefusal(_document.Current.State, pattern, attachment, graph) is { } refusal)
+                throw new InvalidOperationException(refusal);
+            bool changed = _document.Edit("Add Drum Voice", edit =>
             {
-                var cable = graph.Connections.Single(c => c.ToNodeId == gain.Id);
-                var mix = edit.AddGraphNode(graph.Id, GraphBuiltIns.Mix, new(180, pattern.Parts.Length * 120));
-                var slots = mix.Ports.Where(p => p.Direction == GraphPortDirection.Input).ToArray();
-                edit.DisconnectGraphPorts(graph.Id, cable.Id);
-                edit.ConnectGraphPorts(graph.Id, cable.FromNodeId, cable.FromPortId, mix.Id, slots[0].Id);
-                edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, mix.Id, slots[1].Id);
-                edit.ConnectGraphPorts(graph.Id, mix.Id,
-                    mix.Ports.Single(p => p.Direction == GraphPortDirection.Output).Id,
-                    gain.Id, input.Id);
-                edit.SetContextMix(attachment.ContextId, true);
-            }
+                var instrument = DrumInstruments.Find(algorithm) ?? throw new NotSupportedException("Unknown drum.");
+                var sound = edit.AddSound(name, algorithm);
+                edit.SetSoundParameters(sound, instrument.Defaults);
+                var part = edit.AddPart(pattern.Id, name, sound);
+                var source = edit.AddGraphNode(graph.Id, GraphBuiltIns.Source, new(0, pattern.Parts.Length * 120));
+                edit.BindGraphSource(attachment.Id, source.Id, placement.Id, part);
+                var gain = graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
+                var input = gain.Ports.Single(p => p.Direction == GraphPortDirection.Input);
+                if (pattern.Parts.IsEmpty)
+                    edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, gain.Id, input.Id);
+                else
+                {
+                    var cable = graph.Connections.Single(c => c.ToNodeId == gain.Id);
+                    var mix = edit.AddGraphNode(graph.Id, GraphBuiltIns.Mix, new(180, pattern.Parts.Length * 120));
+                    var slots = mix.Ports.Where(p => p.Direction == GraphPortDirection.Input).ToArray();
+                    edit.DisconnectGraphPorts(graph.Id, cable.Id);
+                    edit.ConnectGraphPorts(graph.Id, cable.FromNodeId, cable.FromPortId, mix.Id, slots[0].Id);
+                    edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, mix.Id, slots[1].Id);
+                    edit.ConnectGraphPorts(graph.Id, mix.Id,
+                        mix.Ports.Single(p => p.Direction == GraphPortDirection.Output).Id,
+                        gain.Id, input.Id);
+                    edit.SetContextMix(attachment.ContextId, true);
+                }
+            });
+            _status = "Workflow.Ready";
+            return Task.FromResult(changed);
         });
-        _status = "Workflow.Ready";
-        return Task.FromResult(changed);
-    });
 
     internal Task<bool> SetDrumParametersAsync(DrumProposal proposal) => Command("Workflow.EditFailed", () =>
     {
@@ -49,7 +54,7 @@ internal sealed partial class DesktopWorkflow
         if (sound?.Id != proposal.SoundId || !DrumVoice.Supports(sound) ||
             !sound.Parameters.OrderBy(p => p.Key).SequenceEqual(proposal.Before.OrderBy(p => p.Key)))
             throw new InvalidOperationException("Workflow.EditStale");
-        DrumVoice.Validate(proposal.After);
+        DrumInstruments.Validate(sound.Algorithm, proposal.After);
         bool changed = _document.Edit("Shape Drum Voice", edit => edit.SetSoundParameters(sound.Id, proposal.After));
         _status = "Workflow.Ready";
         return Task.FromResult(changed);
