@@ -27,7 +27,8 @@ the bar end. Imported channel sounds use release 0. Short percussion reaches nat
 samples cut at NoteOff or the Pattern boundary. This is neither an infinite one-shot tail nor a new
 sampler policy; BPM changes its audible gate length. Desktop Rack and Song source graphs admit up to
 32 concurrent voices; denser overlapping notes refuse preparation without dropping music. BPM and
-length changes stop playback; supported channel and step edits use the compatible publication below. Last-valid, generation, readiness and joined lifetime
+length changes stop playback; supported channel and step edits use the compatible publication below. Last-valid,
+generation, readiness and joined lifetime
 protections remain. [Test execution](TEST_EXECUTION.md#r5-continuous-music-verification) owns evidence.
 
 ### R5-F2/F3 continuous Pattern playback and WAV export
@@ -77,7 +78,8 @@ Original source-placement position does not offset the song clip. Preparation co
 on/off/end boundary independently and refuses incomplete sub-frame source tables rather than dropping
 their potentially audible relocated notes. Original Rack/finite/audition semantics remain available.
 
-Song and each prepared source graph admit at most 32 concurrent voices, the existing 100001-event and 128 MiB decoded limits,
+Song and each prepared source graph admit at most 32 concurrent voices, the existing 100001-event and 128 MiB decoded
+limits,
 16 MiB scratch and packet-work/density gates. Aggregate limits cover all prepared source graphs;
 overload refuses the entire plan. The callback reuses OfflineSampler with fixed tables/scratch/voices;
 it performs no decode, document traversal, UI work or allocation. Existing publication authority,
@@ -88,7 +90,8 @@ note mappings against the actual active plan. Source/scratch offsets may change,
 stable occurrence and musical/source configuration before transferring voice ages to new indices.
 Removed/gated/changed notes end; past new onsets are not replayed. Future onsets use the new plan.
 Shortening behind the active position finishes silently. Rack comparison excludes song-only track/clip
-metadata, so arranging while Rack loops cannot manufacture a restart. Settings/arbitrary topology changes remain incompatible. The bounded Rack Source/Mix/Gain/Output
+metadata, so arranging while Rack loops cannot manufacture a restart. Settings/arbitrary topology changes remain
+incompatible. The bounded Rack Source/Mix/Gain/Output
 channel tree also supports continuation: canonical comparison retains existing media/sounds, settings,
 lengths, placement, Gain/Output and unrelated intent, while projecting added/deleted parts and Mix nodes.
 Unchanged occurrence mappings transfer source age/release to new scratch indices. A recognized empty
@@ -131,7 +134,8 @@ linear interpolation converts the source rate, without a mastering-quality resam
 The byte limit, finite-float validation, channel ordering and lease ownership remain unchanged.
 FLAC is refused. Two narrow exporter variants are tolerated only after complete chunk validation:
 an outer RIFF size one byte larger than actual bytes, and a final mono PCM24 data size containing
-its one zero padding byte. No truncated PCM frame or arbitrary size mismatch is accepted. Supported `fmt` representations are 16 bytes, 18 bytes with zero extension,
+its one zero padding byte. No truncated PCM frame or arbitrary size mismatch is accepted. Supported `fmt`
+representations are 16 bytes, 18 bytes with zero extension,
 and 40-byte WAVE_FORMAT_EXTENSIBLE with full valid bits and PCM/float subtype GUIDs. Extensible masks
 are unspecified (0), mono front-center (4), or stereo front-left/right (3), preserving L/R ordering;
 other masks/container/valid-bit configurations are explicit refusals. These variants correspond to
@@ -139,11 +143,13 @@ ordinary [Microsoft extensible format definitions](https://learn.microsoft.com/e
 No compressed codecs, RF64/RIFX, PCM24/32, other rates/channel layouts, wavl/multiple data chunks,
 sample loops or generic codec plugins are supported.
 
-Except for the two bounded exporter variants above, require exact RIFF length, one prior `fmt` and one nonempty frame-aligned `data`, consistent byte rate/
+Except for the two bounded exporter variants above, require exact RIFF length, one prior `fmt` and one nonempty
+frame-aligned `data`, consistent byte rate/
 block alignment and valid extension/chunk bounds including odd padding. Unknown bounded chunks,
 including metadata/fact, are skipped; a fact chunk is not required for common float files. Do not use
 declared chunk lengths to allocate. Source input is limited to 16 MiB, decoded interleaved floats to
-at most 32 MiB per resource. Signed PCM16/24/32 scales by its exact binary full-scale denominator; finite float overload saturates to [-1,1]; NaN/Inf
+at most 32 MiB per resource. Signed PCM16/24/32 scales by its exact binary full-scale denominator; finite float overload
+saturates to [-1,1]; NaN/Inf
 refuse the resource. Decode/read/hash/storage happen outside execution. Durable source bytes are
 separate under [project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout).
 
@@ -156,7 +162,8 @@ Lease creation/disposal remains owner-serialized; F2's handoff protocol below pr
 
 `core.pcm-sampler.linear-v1` uses exactly one resource and explicit decimal `rootPitch` (0–127) and
 `releaseMilliseconds` (0–1000) in R1's sound parameters. MIDI-like note pitch permits fractional
-semitones within root ±12 and canonical [0,127]. Source cursor step is
+semitones throughout canonical [0,127] (SEQ-R9 removes the former root ±12 preparation/graph refusal).
+Source cursor step is
 `sourceRate / executionRate * 2^((notePitch - rootPitch) / 12)`; root playback adapts source rate.
 Linear interpolation uses adjacent samples, interpolating the final sample toward zero. Cursor is
 derived from integer voice age, avoiding partition-dependent incremental floating-point drift.
@@ -176,6 +183,19 @@ including zero-frame note dependencies, must be understood and available. Unsupp
 opaque sound state, extra sound parameters, relevant unknown Pattern/part/note/sound data and required
 placement processing/route/shared-performance relationships are refused, rather than silently omitted.
 R4-F2 adds independent item-local contributions below; wider execution domains and plugins remain Q-047.
+
+### SEQ-R9 pitched note audition
+
+`NoteAuditionRequest` captures source authority and prepares one pitched PCM voice off-thread through
+the same sampler kernel, with a maximum two-second gate and quiet 0.12 audition gain. Natural EOF may
+end earlier. It does not alter notes, history, shared root or the main execution plan, and bypasses
+downstream graph processing deliberately. Desktop owns a dedicated transient renderer/output session;
+publication revalidates lifecycle/revision/transport generation. Another preview, Play, Stop/Panic or
+close cancels and joins the previous lifetime. Preview is refused while Pattern/Song transport plays.
+Pitch ratio, intensity and source EOF use the same production kernel as offline/realtime execution.
+The bounded solo preview has zero release and its own finite gate; it is not a preview of a drawn
+note's duration/release or downstream graph envelope.
+This is not another transport, synthesis engine, MIDI input or sustained live instrument mode.
 
 ### Timing, processing ranges and determinism
 
@@ -232,7 +252,8 @@ can switch only when retirement capacity is free; it hands the old execution to 
 never borrows it again. The control owner reclaims its leases; lack of reclamation delays replacement
 without growing storage. A superseded pending state retires without execution. Accepted replacements
 restart at their prepared absolute start in a new epoch and terminate old voices, except the explicitly
-compatible R5 loop note-edit continuation described above. Source leases remain immutable and independent; no canonical mutable data reaches Process.
+compatible R5 loop note-edit continuation described above. Source leases remain immutable and independent; no canonical
+mutable data reaches Process.
 Plans over 64 events at one frame are refused wholly before realtime publication.
 
 Gain in [0,1] is latest-wins. Start and sticky Stop/Panic use separately retained monotonic command identities:
@@ -267,7 +288,8 @@ the broader user-facing settling/de-click and stateful seek/tail mechanisms rema
 ## R4-F2 independent contributions and realtime convergence
 
 [GraphPreparation](../src/Seqvium.Core/Audio/GraphPreparation.cs) prepares one identified item-local
-attachment/placement from current canonical intent. [Node graph](NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution)
+attachment/placement from current canonical
+intent. [Node graph](NODE_GRAPH.md#implemented-r4-f2-prepared-item-local-execution)
 owns Source/Gain/Mix/Output arithmetic and placement/part separation. `PreparedSampler` and `OfflineSampler`
 remain the sole musical plan/kernel for graph-free Patterns, transient audition and graph execution;
 `RealtimeSampler` retains R2 authority, borrowing, packet handoff, retirement and sticky commands.
@@ -284,12 +306,14 @@ is checked between source decodes and note scheduling units, around worker execu
 one synchronous decode/hash is bounded by the existing 16 MiB WAV limit and is not instantly interruptible.
 
 Graph preparation supports 1–32 voices; Desktop Rack/export and Song source graphs request 32,
-while low-level callers retain an eight-slot default. Retain 100,001 events, 128 MiB decoded PCM per plan, 64 events per frame, 1–1024 repeats,
+while low-level callers retain an eight-slot default. Retain 100,001 events, 128 MiB decoded PCM per plan, 64 events per
+frame, 1–1024 repeats,
 1–65,536 maximum packet frames, 44.1/48 kHz and mono/stereo. F1 caps remain 32 nodes, 64 connections,
 8 bound sources and 8 Mix inputs. Checked scratch accounting is producer buffers
 `bufferCount * maximumPacketFrames * channels * 4`, plus conservative node/edge/voice storage
 `nodes*256 + edges*16 + voices*128`; cap 16 MiB per state. Output aliases its input, so 32 nodes require
-at most 31 producer buffers. The eight-slot maximum stereo packet/topology fixture needs 16,262,640 bytes; 32 slots add 3,072 bytes,
+at most 31 producer buffers. The eight-slot maximum stereo packet/topology fixture needs 16,262,640 bytes; 32 slots add
+3,072 bytes,
 below 16,777,216. This accounting includes table/voice allowance, not an exact managed heap/RSS claim.
 
 Preflight computes the largest event window spanning a maximum packet, in addition to per-frame density.
@@ -322,7 +346,8 @@ at a packet boundary, preserving voice cursors, release and transport. Geometry-
 decode, topology construction or scratch rebuild; equivalent provenance advances separately. Coalesced
 Gain then geometry carries the full current coefficients, so supersession cannot lose an unapplied Gain.
 Other topology/source/tempo/length replacement restarts the prepared absolute range in a new epoch.
-Compatible loop note edits retain position/voices under the R5 continuation above. Preparation/convergence never issues Start; deliberate coordinator Start
+Compatible loop note edits retain position/voices under the R5 continuation above. Preparation/convergence never issues
+Start; deliberate coordinator Start
 requires the current validated publication authority. Stop/Panic remain sticky through completion/retry.
 
 `RealtimeSampler.ReadStatus` returns a value snapshot protected by a single-consumer sequence counter;
@@ -392,7 +417,8 @@ for retry, including partial startup before output/coordinator attachment comple
 transfers no ownership: the workflow retains and joins the unattached borrower itself. Ordinary startup
 rollback clears the failed composition; a later explicit Play can create a fresh session. An unconfirmed
 join retains output/sampler ownership and refuses replacement until cleanup succeeds; startup and
-rollback errors remain visible. There is no automatic restart. No input/capture stream is opened. Host polling is bounded
+rollback errors remain visible. There is no automatic restart. No input/capture stream is opened. Host polling is
+bounded
 control observation, not callback work. GC mode, backend, buffer capacity and scheduler priorities are
 unchanged. F2 pressure acceptance remains partial; a short desktop output smoke proves neither deadline
 acceptance nor subjective listening. [Architecture](ARCHITECTURE.md#r4-f3-a-integrated-documentaudio-owner)
@@ -585,7 +611,8 @@ owns observable blocker feedback; final overload UX, thresholds and resource pol
 Q-047 requires bounded comparisons of compatible sharing versus independent domains, voice interaction,
 separable source outputs, opaque-source instancing, shared-definition parameter synchronization and
 CPU/RAM scaling, including pressure/failure and lifetime cases. Concrete grouping, allocation, pooling,
-instance counts, limits and realtime publication beyond bounded R4-F2 remain open. Q-019/Q-029 own canonical references/edit
+instance counts, limits and realtime publication beyond bounded R4-F2 remain open. Q-019/Q-029 own canonical
+references/edit
 relationships; Q-063 owns undo/async commit, and Q-066 retains concrete cross-context control/sidechain
 execution mechanisms under the [graph semantics](NODE_GRAPH.md#cross-context-signal-and-control-relationships).
 These questions are coordinated, not fully resolved here.

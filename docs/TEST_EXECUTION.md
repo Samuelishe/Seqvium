@@ -13,13 +13,13 @@ Check enough to justify confidence in the change. Remove redundant work without 
 assertions or scenario coverage. Select the scope before running it and report the level, commands,
 results and remaining evidence gaps. These rules apply to ordinary tasks and handoffs.
 
-| Level | Scope | When |
-| --- | --- | --- |
-| L0 | Source/diff checks and compilation of affected projects, zero warnings/errors | During work and before completion |
-| L1 | Focused tests for changed components and direct contract/lifetime dependencies | Every code task |
-| L2 | Related integration and cross-subsystem scenarios | When interactions or shared contracts change |
-| L3 | Full Release solution build and the entire automated suite | About every 10 completed repository tasks; earlier for substantial risk or a release checkpoint |
-| L4 | Native GUI input, full visual matrix, physical audio and stress | Specific affected risk or explicit request; independently selected |
+| Level | Scope                                                                          | When                                                                                            |
+|-------|--------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| L0    | Source/diff checks and compilation of affected projects, zero warnings/errors  | During work and before completion                                                               |
+| L1    | Focused tests for changed components and direct contract/lifetime dependencies | Every code task                                                                                 |
+| L2    | Related integration and cross-subsystem scenarios                              | When interactions or shared contracts change                                                    |
+| L3    | Full Release solution build and the entire automated suite                     | About every 10 completed repository tasks; earlier for substantial risk or a release checkpoint |
+| L4    | Native GUI input, full visual matrix, physical audio and stress                | Specific affected risk or explicit request; independently selected                              |
 
 An ordinary code task finishes with successful L0 + L1; add L2 for changed subsystem interactions or
 contracts. Documentation-only tasks use static link/anchor, ownership, decision-status, consistency,
@@ -56,8 +56,8 @@ sources, configuration and framework. Reuse a sufficient successful check until 
 failure or unresolved dependency invalidates it. A documentation edit does not invalidate compiled tests.
 Record the covered source state so evidence remains reviewable.
 
-The last retained 933-case full-suite TRX measures **17.5105 seconds** between runner start/finish
-(Windows x64, SDK 10.0.401/runtime 10.0.12, F1-FINALIZE). It excludes CLI startup, restore and build;
+The last retained 933-case full-suite TRX measures **17.5105 seconds** between runner start/finish (Windows x64, SDK
+10.0.401/runtime 10.0.12, F1-FINALIZE). It excludes CLI startup, restore and build;
 it is historical timing, not a full pass of later sources or a timing guarantee. Restore/full-build
 timings are unavailable in that evidence. Obtain missing full-route timing at the next scheduled L3,
 never run an expensive full suite solely to collect statistics. The bounded audit and current measured
@@ -65,8 +65,8 @@ tooling costs are recorded in [completed work](archive/WORK_LOG.md#seq-test-stra
 
 ### Fast commands for the installed runner
 
-Root `global.json` selects .NET 10 Microsoft.Testing.Platform; Tests uses `xunit.v3.mtp-v1` 3.2.2
-(locked MTP 1.9.1). Inspect those manifests, `Directory.Build.props`, and any future
+Root `global.json` selects .NET 10 Microsoft.Testing.Platform; Tests uses `xunit.v3.mtp-v1` 3.2.2 (locked MTP 1.9.1).
+Inspect those manifests, `Directory.Build.props`, and any future
 `Directory.Packages.props` after setup changes. No central package manifest currently exists.
 From a restored checkout, this is one affected build followed by one L1 run:
 
@@ -96,16 +96,16 @@ The suite has one managed test project; categories below describe execution requ
 mutually exclusive counts or implemented trait groups. Contract and regression describe purpose and
 can apply to unit, integration or GUI tests. Existing checks are retained.
 
-| Kind | Current examples / focused class patterns | Required boundary / cost |
-| --- | --- | --- |
-| Unit | `*MusicalTimeTests`, `*PaneGeometryTests`, `*WorkspaceBoundaryTests`, `*GraphCanvasGeometryTests` | Pure logic/geometry; no OS window/device |
-| Contract | `*DocumentTests`, `*GraphDiagnosticTests`, `*GraphPersistenceTests`, `*ProductVersionTests` | Canonical intent/format/metadata; version evaluation starts SDK processes |
-| Integration | `*ManagedMediaTests`, `*GraphLifecycleTests`, `*DesktopWorkflowTests`, `*DesktopInstanceTests`, `*ArtifactRetentionTests` | Real controlled storage, owner/coordinator or IPC; choose the affected boundary |
-| Regression | Nearest-cable cases, stale editor/menu guards, deferred text notification, retention lock/watchdog cases | Reproduce a named failure; geometry/logic stays below GUI when sufficient |
-| GUI | VisualCheck `smoke`, `catalog`, `gestures`, `matrix` | Actual Avalonia templates, dispatcher/window/render; synthetic routed events are separate from OS input |
-| Native | Guarded VisualCheck pointer/screen checks and independent-process activation | Real foreground/Windows input/processes; isolate test identities and stop on guard refusal |
-| Stress | Explicit DeviceCheck/probe pressure commands; warmed allocation and bounded capacity cases also exist in managed tests | Sustained pressure is L4; deterministic allocation/capacity checks are focused by affected contract |
-| Physical | DeviceCheck and the independent R0 probe | Explicit real device/backend, separate from ordinary tests; never implicit physical sound |
+| Kind        | Current examples / focused class patterns                                                                                 | Required boundary / cost                                                                                |
+|-------------|---------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| Unit        | `*MusicalTimeTests`, `*PaneGeometryTests`, `*WorkspaceBoundaryTests`, `*GraphCanvasGeometryTests`                         | Pure logic/geometry; no OS window/device                                                                |
+| Contract    | `*DocumentTests`, `*GraphDiagnosticTests`, `*GraphPersistenceTests`, `*ProductVersionTests`                               | Canonical intent/format/metadata; version evaluation starts SDK processes                               |
+| Integration | `*ManagedMediaTests`, `*GraphLifecycleTests`, `*DesktopWorkflowTests`, `*DesktopInstanceTests`, `*ArtifactRetentionTests` | Real controlled storage, owner/coordinator or IPC; choose the affected boundary                         |
+| Regression  | Nearest-cable cases, stale editor/menu guards, deferred text notification, retention lock/watchdog cases                  | Reproduce a named failure; geometry/logic stays below GUI when sufficient                               |
+| GUI         | VisualCheck `smoke`, `catalog`, `gestures`, `matrix`                                                                      | Actual Avalonia templates, dispatcher/window/render; synthetic routed events are separate from OS input |
+| Native      | Guarded VisualCheck pointer/screen checks and independent-process activation                                              | Real foreground/Windows input/processes; isolate test identities and stop on guard refusal              |
+| Stress      | Explicit DeviceCheck/probe pressure commands; warmed allocation and bounded capacity cases also exist in managed tests    | Sustained pressure is L4; deterministic allocation/capacity checks are focused by affected contract     |
+| Physical    | DeviceCheck and the independent R0 probe                                                                                  | Explicit real device/backend, separate from ordinary tests; never implicit physical sound               |
 
 WAV parsing, document persistence envelopes and offline DSP can use memory/generated inputs; actual
 Save/relocate/file-lock/access-failure contracts need owned temporary storage. Pure Desktop sessions,
@@ -114,6 +114,26 @@ pixels, native pickers, foreground/input and rendered acceptance require their d
 Named mutex/pipe, real MSBuild evaluation and retention process ownership checks require the OS, not
 an active user window or audio device. Wall time is necessary for timeout/watchdog tests and explicit
 stress/device measurements; ordinary musical time and concurrency use controlled values/gates.
+
+## SEQ-R9 Piano Roll verification
+
+`PianoRollTests` covers shared canonical chords/mixed notes, Rack refusal, atomic stale/unknown/invalid
+edits, no-op order, group boundaries, rich length preservation, roots/metadata, Undo/Save/Open/export
+and joined pitched preview. `OfflineSamplerTests` adds full MIDI-range preparation and independent
+pitched PCM ramp oracles. Desktop presentation/layout tests cover the seventh retained capability.
+After the affected Release build, OR `--filter-class "*PianoRollTests" --filter-class "*OfflineSamplerTests"`
+with relevant host/layout classes under the installed MTP route, not VSTest syntax.
+
+`VisualCheck piano` uses actual windows with routed musical edits, RU/EN Dark/Light ordinary/reduced
+properties/root/Rack renders, field alignment and real containment. `piano-music` separately uses
+guarded native note gestures and explicitly audible normal physical output with supplied local
+catalogued WAVs. Save/Open/export use production workflow APIs, not native picker actions. Catalog and
+gestures verify shared resource propagation/field alignment; native graph checks are labelled separately.
+Commands, 1073-case full L3, timings, preserved user example and limits are in the
+[R9 report](experiments/SEQ-R9_REPORT.md)
+and [tool guide](../tools/Seqvium.VisualCheck/README.md#piano-roll-and-physical-musical-check).
+Early L3 is justified by shared pitch preparation/graph and transient audio lifetime changes. It resets
+cadence but neither closes R4 pressure acceptance nor supplies acoustic/high-DPI/all-platform evidence.
 
 ## Playlist music workflow verification
 
@@ -676,7 +696,8 @@ document/port/processing bounds, JSON depth/lifetime and failed Save retaining p
 are deterministic and use owned temporary directories.
 
 After the affected Release build, focused
-run: `dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "Seqvium.Tests.Graph*"`.
+run:
+`dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "Seqvium.Tests.Graph*"`.
 These tests open no GUI, audio device or network and establish intent eligibility only. Media decode,
 prepared graph resources, PCM separation/oracles, realtime budgets/publication and actual canvas/device
 behavior require separately authorized F2/F3 evidence. Current totals belong to PROJECT_STATE.

@@ -24,8 +24,10 @@ Other platforms keep native decorations/actions; custom header action buttons ar
 No TopMost, repeated foreground forcing or global hotkey registration is used. Normal initial activation
 is left to the platform. Header contrast/border, active-state tooltip and visible keyboard focus distinguish state.
 
-Default startup is maximized with a 1400x900-DIP normal restore size; minimum 640x480 DIP. Header, toolbar and status geometry use
-HostMetrics; their v2 instrument materials use HostMaterials. The remaining area belongs to music; the main frame has no scrolling. Long titles/status use ellipsis
+Default startup is maximized with a 1400x900-DIP normal restore size; minimum 640x480 DIP. Header, toolbar and status
+geometry use
+HostMetrics; their v2 instrument materials use HostMaterials. The remaining area belongs to music; the main frame has no
+scrolling. Long titles/status use ellipsis
 and full tooltips, not global shrinking. About is a functional dismissible flyout with version/scope,
 not a permanent workspace explanation. Windows PerMonitorV2/layout scaling are enabled, but actual F1 evidence is
 single-monitor
@@ -93,7 +95,8 @@ Old two-pane version-1 layouts remain readable; missing graph entries start hidd
 
 `step-sequencer.main` / `step-sequencer` is one static pane, titled Channel Rack (RU: Каналы).
 Pristine layout opens it without musical creation; restored visibility remains authoritative.
-Panes or the left Rack rail action opens it. Default floating bounds are 960×390 DIP, minimum 360×290; the application's 640×480 minimum is unchanged. Its own horizontal/
+Panes or the left Rack rail action opens it. Default floating bounds are 960×390 DIP, minimum 360×290; the application's
+640×480 minimum is unchanged. Its own horizontal/
 vertical scrolling preserves the 16–512-step content in narrow floating/docked panes. Existing header,
 activation, focus, collapse/hide/reopen, boundary resizing and left/right docking are reused.
 Older layouts omit this pane and restore it hidden; only geometry/visibility/docking persist in user
@@ -117,7 +120,8 @@ owns editing/refusals. No dynamic instance registration or second transport is i
 
 `arrangement.main` / `arrangement` is the fixed Playlist pane, opened by rail or Panes. It shares
 the retained floating/docking/collapse/hide/restore lifecycle and independently stored workspace
-layout. Historical layouts add it hidden; pristine startup opens Rack and Playlist in a music layout. The pane cancels clip,
+layout. Historical layouts add it hidden; pristine startup opens Rack and Playlist in a music layout. The pane cancels
+clip,
 overview and track-editor drafts on deactivation, hide/collapse, shutdown or invalid authority.
 Reopening retains content/view and adopts the current document. Focus returns to the timeline.
 
@@ -127,6 +131,21 @@ view state without editing music or inventing audio. Musical identity/commands a
 remain workflow-owned under [Playlist UX](UX_CONTRACT.md#implemented-playlist-arrangement).
 There is no dynamic pane registry, external window or second project/transport.
 
+## Retained Piano Roll pane
+
+SEQ-R9 adds type `piano-roll`, singleton instance `piano-roll.main`, default 1080×580 and minimum
+360×320 DIP. It is the seventh retained capability, initially hidden; older layouts acquire its
+hidden default without changing existing entries. Rail/Panes opens the selected Pattern/Part;
+Rack label double-click, melody preview and row menu explicitly open that Part. Returning to Rack
+does not convert musical data. Hide/collapse cancels captured drafts, retaining controls/camera and
+selection within the session; disposal withdraws local actions. Music remains project-owned, view
+state session-only, pane geometry independent user-layout state.
+
+Main-window adaptive navigation and canvas containment settle after actual arrange. Hiding navigation
+sets its column to zero, and queued workspace reflow invalidates arrange so visible pane bounds match
+state bounds after repeated actual-window reductions. This is reachability/layout repair, not music editing.
+[Piano UX](UX_CONTRACT.md#implemented-seq-r9-piano-roll) owns gestures and shared-target semantics.
+
 ## Node editor placement proposal
 
 **SEQ-NODE-EDITOR-IMPL-F1 — one reusable internal pane accepted and implemented for the first slice.**
@@ -134,11 +153,11 @@ The [graph owner](NODE_GRAPH.md#full-node-editors-proposal) states capability;
 [Architecture](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal) owns target identity/lifecycle.
 Q-032 remains open for independent editors and future Workspace composition.
 
-| Alternative | UX and architectural consequence | Recommendation |
-| --- | --- | --- |
-| One reusable internal Node Editor pane | Explicit target, existing resize/dock/collapse/focus behavior; one node at a time makes comparison sequential | Accepted and implemented first slice; another explicit open replaces the target |
-| Independent internal panes for different nodes | Simultaneous EQ/instrument comparisons and independently retained tabs/views; demands distinguishable target titles, duplicate-open activation, bounded creation/retirement, reachable overflow and resource ownership | Keep as a later option; do not emulate instances by preallocating arbitrary static slots |
-| External OS editor windows | Appropriate native-editor integration when embedding is unsafe/impractical; platform-specific parent/focus/resize/close behavior and more window-management overhead | Preserve the accepted third-party exception; do not make it the default first-party mechanism |
+| Alternative                                    | UX and architectural consequence                                                                                                                                                                                       | Recommendation                                                                                |
+|------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| One reusable internal Node Editor pane         | Explicit target, existing resize/dock/collapse/focus behavior; one node at a time makes comparison sequential                                                                                                          | Accepted and implemented first slice; another explicit open replaces the target               |
+| Independent internal panes for different nodes | Simultaneous EQ/instrument comparisons and independently retained tabs/views; demands distinguishable target titles, duplicate-open activation, bounded creation/retirement, reachable overflow and resource ownership | Keep as a later option; do not emulate instances by preallocating arbitrary static slots      |
+| External OS editor windows                     | Appropriate native-editor integration when embedding is unsafe/impractical; platform-specific parent/focus/resize/close behavior and more window-management overhead                                                   | Preserve the accepted third-party exception; do not make it the default first-party mechanism |
 
 The current registry is static in more than content creation: `WorkspaceState.Definitions`, definition
 lookup, restore/reflow and stable keyboard traversal; `WorkspaceHost` constructs fixed strip actions;

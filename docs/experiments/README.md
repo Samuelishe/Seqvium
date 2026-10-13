@@ -90,13 +90,13 @@ Developer verification applies the executable policy in
 [ArtifactRetention](../../tools/Seqvium.VisualCheck/ArtifactRetention.cs). Its `Policy` defaults are
 listed here; other tooling guides link this owner rather than repeat the settings.
 
-| Constraint | Default / deterministic order |
-| --- | --- |
-| Completed success age | 7 days |
-| Completed failure age | 14 days |
-| Runs per producer/scenario | At most 3 eligible completed runs |
+| Constraint                 | Default / deterministic order                                                   |
+|----------------------------|---------------------------------------------------------------------------------|
+| Completed success age      | 7 days                                                                          |
+| Completed failure age      | 14 days                                                                         |
+| Runs per producer/scenario | At most 3 eligible completed runs                                               |
 | Mandatory evidence reserve | Latest success and latest failure, ordered by completion time then ordinal path |
-| Total artifact size | Soft 1 GiB budget |
+| Total artifact size        | Soft 1 GiB budget                                                               |
 
 Reservations consume count slots and override age/count/budget. Fill remaining slots with newest
 runs, then select unreserved runs exceeding age or count. If the projected tree still exceeds the
@@ -106,7 +106,8 @@ an excess caused by protected data is reported. Active/incomplete runs are outsi
 quota until completion and owner exit. Explicit preservation needs a concrete engineering reason,
 scope and review boundary; do not pin every ordinary result.
 
-`catalog`, `matrix`, `gestures`, the focused `steps` and small lifecycle `smoke` create a unique run beneath the supplied
+`catalog`, `matrix`, `gestures`, the focused `steps` and small lifecycle `smoke` create a unique run beneath the
+supplied
 artifact parent. The process script creates its own unique run. They automatically apply retention
 before verification and after normal joined completion. New `.seqvium-run.json` manifests identify
 owner/schema, producer, scenario, run ID, PID plus process start time, timestamps and success/failure.
@@ -122,7 +123,8 @@ PowerShell/CIM environment, Linux uses `/proc`; other platforms conservatively r
 This is portability-aware tooling, not evidence of other-OS Desktop acceptance. Canonical root/ancestor
 checks and an exclusive root cleanup lock guard deletion. If that lock is busy, optional automatic
 rotation skips with diagnostics; explicit manual apply reports that cleanup did not run and returns
-nonzero. No scan-based deletion or retention-journal write proceeds without lock ownership. Each file is checked for links and exclusive access;
+nonzero. No scan-based deletion or retention-journal write proceeds without lock ownership. Each file is checked for
+links and exclusive access;
 partial failures keep the manifest for diagnostics/retry and do not stop independent candidates.
 The local deletion journal rotates into one previous log, rather than growing without a bound.
 Dry-run neither writes ownership/log files nor deletes anything.
@@ -168,3 +170,8 @@ the musical/audio/workspace owners.
 
 [SEQ-TRACK-GUI](SEQ-TRACK-GUI_REPORT.md) records a real native GUI composition and the Gain, Playlist
 extent/corner and startup-restoration repairs it exposed; the user track/media stay outside Git.
+
+[SEQ-R9](SEQ-R9_REPORT.md) records the bounded shared Piano Roll, safe Rack projection, explicit verified
+Root Pitch, actual theme/field review, native chord/melody authoring and short physical Pattern/Song/
+audition/export evidence. Its preserved user example stays outside Git; no source library/reference
+assets are shipped and subjective acoustic or prior pressure acceptance is not claimed.

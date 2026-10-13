@@ -1,43 +1,43 @@
 <Project>
-  <PropertyGroup>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-  </PropertyGroup>
-  <!-- Product components are numeric; only the human-readable BUILD is padded. -->
-  <PropertyGroup>
-    <SeqviumVersionMajor>0</SeqviumVersionMajor>
-    <SeqviumVersionMinor>1</SeqviumVersionMinor>
-    <SeqviumVersionPatch>1</SeqviumVersionPatch>
-    <SeqviumVersionBuild>3</SeqviumVersionBuild>
-    <SeqviumDisplayVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$([System.Int32]::Parse('$(SeqviumVersionBuild)').ToString('D4'))</SeqviumDisplayVersion>
-    <SeqviumNumericVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$(SeqviumVersionBuild)</SeqviumNumericVersion>
-    <!-- Both name and location delimit production identity; tools/tests cannot opt in by name alone. -->
-    <_SeqviumProductionDirectory>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'src', '$(MSBuildProjectName)'))</_SeqviumProductionDirectory>
-    <SeqviumProductAssembly Condition="('$(MSBuildProjectName)' == 'Seqvium.Core' or '$(MSBuildProjectName)' == 'Seqvium.Audio.Windows' or '$(MSBuildProjectName)' == 'Seqvium.Desktop') and '$(MSBuildProjectDirectory)' == '$(_SeqviumProductionDirectory)'">true</SeqviumProductAssembly>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(SeqviumProductAssembly)' == 'true'">
-    <!-- SDK/NuGet use numeric Version; explicit CLR metadata avoids SDK inference/normalization. -->
-    <VersionPrefix>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch)</VersionPrefix>
-    <Version>$(SeqviumNumericVersion)</Version>
-    <InformationalVersion>$(SeqviumDisplayVersion)</InformationalVersion>
-    <AssemblyVersion>$(SeqviumNumericVersion)</AssemblyVersion>
-    <FileVersion>$(SeqviumNumericVersion)</FileVersion>
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-  </PropertyGroup>
-  <Target Name="ValidateSeqviumProductVersion" BeforeTargets="GetAssemblyVersion;GenerateAssemblyInfo;CoreCompile"
-          Condition="'$(SeqviumProductAssembly)' == 'true'">
-    <ItemGroup>
-      <_SeqviumVersionComponent Include="$(SeqviumVersionMajor);$(SeqviumVersionMinor);$(SeqviumVersionPatch)" />
-    </ItemGroup>
-    <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch)', '^(0|[1-9][0-9]{0,4})(\.(0|[1-9][0-9]{0,4})){2}$'))"
-           Text="Seqvium MAJOR/MINOR/PATCH must be canonical nonnegative integers." />
-    <Error Condition="%(_SeqviumVersionComponent.Identity) &gt; 65534"
-           Text="Seqvium MAJOR/MINOR/PATCH must fit CLR metadata (0..65534)." />
-    <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(SeqviumVersionBuild)', '^(0|[1-9][0-9]{0,3})$'))"
-           Text="Seqvium BUILD must be a canonical integer in 0..9999; overflow requires an owner decision." />
-    <Error Condition="'$(Version)' != '$(SeqviumNumericVersion)' or '$(AssemblyVersion)' != '$(SeqviumNumericVersion)' or '$(FileVersion)' != '$(SeqviumNumericVersion)' or '$(InformationalVersion)' != '$(SeqviumDisplayVersion)' or '$(IncludeSourceRevisionInInformationalVersion)' != 'false'"
-           Text="Seqvium production metadata must derive from Directory.Build.props without overrides or a source revision suffix." />
-  </Target>
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    </PropertyGroup>
+    <!-- Product components are numeric; only the human-readable BUILD is padded. -->
+    <PropertyGroup>
+        <SeqviumVersionMajor>0</SeqviumVersionMajor>
+        <SeqviumVersionMinor>1</SeqviumVersionMinor>
+        <SeqviumVersionPatch>2</SeqviumVersionPatch>
+        <SeqviumVersionBuild>0</SeqviumVersionBuild>
+        <SeqviumDisplayVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$([System.Int32]::Parse('$(SeqviumVersionBuild)').ToString('D4'))</SeqviumDisplayVersion>
+        <SeqviumNumericVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$(SeqviumVersionBuild)</SeqviumNumericVersion>
+        <!-- Both name and location delimit production identity; tools/tests cannot opt in by name alone. -->
+        <_SeqviumProductionDirectory>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'src', '$(MSBuildProjectName)'))</_SeqviumProductionDirectory>
+        <SeqviumProductAssembly Condition="('$(MSBuildProjectName)' == 'Seqvium.Core' or '$(MSBuildProjectName)' == 'Seqvium.Audio.Windows' or '$(MSBuildProjectName)' == 'Seqvium.Desktop') and '$(MSBuildProjectDirectory)' == '$(_SeqviumProductionDirectory)'">true</SeqviumProductAssembly>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(SeqviumProductAssembly)' == 'true'">
+        <!-- SDK/NuGet use numeric Version; explicit CLR metadata avoids SDK inference/normalization. -->
+        <VersionPrefix>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch)</VersionPrefix>
+        <Version>$(SeqviumNumericVersion)</Version>
+        <InformationalVersion>$(SeqviumDisplayVersion)</InformationalVersion>
+        <AssemblyVersion>$(SeqviumNumericVersion)</AssemblyVersion>
+        <FileVersion>$(SeqviumNumericVersion)</FileVersion>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    </PropertyGroup>
+    <Target Name="ValidateSeqviumProductVersion" BeforeTargets="GetAssemblyVersion;GenerateAssemblyInfo;CoreCompile"
+            Condition="'$(SeqviumProductAssembly)' == 'true'">
+        <ItemGroup>
+            <_SeqviumVersionComponent Include="$(SeqviumVersionMajor);$(SeqviumVersionMinor);$(SeqviumVersionPatch)"/>
+        </ItemGroup>
+        <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch)', '^(0|[1-9][0-9]{0,4})(\.(0|[1-9][0-9]{0,4})){2}$'))"
+               Text="Seqvium MAJOR/MINOR/PATCH must be canonical nonnegative integers."/>
+        <Error Condition="%(_SeqviumVersionComponent.Identity) &gt; 65534"
+               Text="Seqvium MAJOR/MINOR/PATCH must fit CLR metadata (0..65534)."/>
+        <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(SeqviumVersionBuild)', '^(0|[1-9][0-9]{0,3})$'))"
+               Text="Seqvium BUILD must be a canonical integer in 0..9999; overflow requires an owner decision."/>
+        <Error Condition="'$(Version)' != '$(SeqviumNumericVersion)' or '$(AssemblyVersion)' != '$(SeqviumNumericVersion)' or '$(FileVersion)' != '$(SeqviumNumericVersion)' or '$(InformationalVersion)' != '$(SeqviumDisplayVersion)' or '$(IncludeSourceRevisionInInformationalVersion)' != 'false'"
+               Text="Seqvium production metadata must derive from Directory.Build.props without overrides or a source revision suffix."/>
+    </Target>
 </Project>

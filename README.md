@@ -22,6 +22,10 @@ The current desktop provides a small working environment for playing and process
   Name and color tracks, use Mute/Solo, seek or loop a ruler range, and move or duplicate groups.
   Navigate with the overview, pointer zoom, horizontal scrolling or middle-button pan.
   Song plays overlapping Patterns together with a moving playhead; export the whole composition to WAV.
+- Compose melodies, chords and bass in Piano Roll: draw, select, move/copy, resize and delete notes,
+  edit velocity or exact properties, and audition pitches. Snap, zoom, scrolling and ghost parts keep
+  editing musical. Rack and Playlist use the same notes; richer Rack rows show a safe melody preview.
+  Set a WAV's source Root Pitch explicitly; matching, hash-verified catalog metadata can initialize it.
 - Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
   and pan or zoom the canvas.
 - Adjust sample levels and mix independent WAV sources within the same graph.
@@ -36,6 +40,7 @@ The graph makes signal flow visible: a sample can pass through Gain to Output, o
 can meet at a Mix node. These are basic level and routing tools; richer effects are still ahead.
 
 For a first rhythm, follow [Create a drum pattern](docs/README.md#create-a-drum-pattern).
+For pitched music, follow [Compose a melody](docs/README.md#compose-a-melody).
 The [sample processing guide](docs/README.md#try-sample-processing) covers graph editing.
 
 ## Current state and limitations
@@ -44,14 +49,16 @@ Seqvium is an **early alpha**, not yet a ready replacement for FL Studio or Able
 It supports rhythm creation and a first working song arrangement workflow. Many advanced editing,
 instrument and processing capabilities remain unfinished.
 
-Step sequencing supports 1–32 bars in 4/4, continuous looping and live step editing. Velocity controls,
-Piano Roll and Mixer editors are still ahead. Playlist currently arranges whole Patterns and their
+Step sequencing supports 1–32 bars in 4/4, continuous looping and live step editing. Piano Roll edits
+the shared pitch/duration/velocity data; a Mixer editor is still ahead. Playlist arranges whole Patterns and their
 repeats; section markers, independent variations, audio trimming/stretching and automation remain ahead.
 WAV export covers either a selected Pattern or the whole Song, including the current processing graphs.
 WAV channel edits preserve the other voices in the supported Rack graph. Short boundary smoothing
 reduces sample-end clicks. WAV import supports mono/stereo PCM16/24/32 and float32 at 8–192 kHz;
 FLAC remains unavailable. EQ and other effects, third-party plugin hosting,
 MIDI input, recording and crash recovery remain missing.
+Sampler pitching uses linear resampling, changing sample playback speed and natural duration; it is
+not time stretching or a multisample instrument. The shared graph has a 32-voice budget.
 Playback can glitch under heavy system load.
 
 Windows 11 is the current development and tested desktop platform. Linux and macOS are intended
@@ -70,7 +77,8 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 ```
 
 The application opens an empty project and stays silent until you press Play.
-Channel Rack opens in a pristine layout: create a Pattern and add your own WAVs; no sample library is bundled. Save projects you want to keep.
+Channel Rack opens in a pristine layout: create a Pattern and add your own WAVs; no sample library is bundled. Save
+projects you want to keep.
 Launching it again brings the existing window forward where the OS allows, instead of opening
 another workspace. If the running application does not respond, the new launch reports this and exits.
 
@@ -81,7 +89,7 @@ walkthrough and routes to more detailed material.
 ## Where the project is heading
 
 The next musical editing work can build on continuous Pattern playback and live edits. The longer-term
-direction includes Piano Roll, richer Playlist editing, mixing, sample generation and resampling, detailed
+direction includes advanced note tools, richer Playlist editing, mixing, sample generation and resampling, detailed
 effect and instrument editors, and optional extensions. Recording and external plugin hosting
 are later goals.
 

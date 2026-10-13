@@ -339,7 +339,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–N were checked against current owners with these semantic outcomes:
 
   | Case | Audited outcome / current owner |
-                    | --- | --- |
+                      | --- | --- |
   | A — filesystem preview | Repeated `D:\Samples\Kick\kick_17.wav` preview accepts no project media/Undo; close retains no accepted preview resource. Source disappearance affects further discovery/access, not project durability; [preview](../SAMPLE_WORKFLOW.md#preview-contextual-audition-and-accepted-use) |
   | B — filesystem use | Successful explicit import/use is coherent managed project acceptance; deleting/moving origin cannot break use; provenance is optional non-live metadata; [format](../PROJECT_FORMAT.md#source-provenance-and-reusable-content) |
   | C — content pack | Preview remains transient; only used audio is managed. Later Pack A uninstall cannot lose that audio; required active executable/preview lifetimes still respect existing safety; [extensions](../EXTENSIONS.md#lifecycle-and-missing-capabilities) |
@@ -386,7 +386,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–N were checked against current owners with these semantic outcomes:
 
   | Case | Audited outcome / current owner |
-                    | --- | --- |
+                      | --- | --- |
   | A — Russian host, English-only extension | Local English fallback keeps the capability available and other host surfaces Russian; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
   | B — missing/invalid translated entry | Per-resource usable English first-party fallback, then understandable host-owned generic presentation; no changed identity or unrelated capability loss; [fallback](../ARCHITECTURE.md#language-support-and-resource-fallback) |
   | C — stable semantic identity | Display text never becomes command/property/node/port/capability/serialization identity; user Pattern/sample/track names stay user content; [identity](../ARCHITECTURE.md#stable-identity-and-provider-ownership) |
@@ -430,7 +430,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–O were audited against current contracts:
 
   | Case | Audited outcome / current owner |
-                    | --- | --- |
+                      | --- | --- |
   | A — Kick/Bass | Kick contribution/tap drives Bass-owned detector; Kick audible output continues, Bass audio remains separate; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
   | B — several destinations | Compatible consumers share the intended signal without requesting three unrelated performances; no buffer optimization or instance count selected; [relationships](../NODE_GRAPH.md#cross-context-signal-and-control-relationships) |
   | C — local/container | Dependencies connect existing scopes without another local level; target audible ownership survives external influence; [ownership](../ARCHITECTURE.md#cross-context-ownership-and-identity) |
@@ -450,7 +450,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses 1–12 accepted with explicit bounds, not assumed universal support:
 
   | Hypotheses | Audit result |
-                    | --- | --- |
+                      | --- | --- |
   | 1, 3, 4, 5 | Explicit project relationship and source/tap/dependency scope are necessary; detector/control influence alone adds no audible mix or local processing level |
   | 2 | Fan-out preserves one compatible intended source signal/performance; it neither guarantees free execution nor merges distinct required domains |
   | 6, 7 | No silent redirection after endpoint moves/deletes; retain invalid/unresolved intent only when safely understandable, with deliberate repair/removal and Undo |
@@ -490,7 +490,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–Q checked against current contracts; conceptual audit, not implementation validation:
 
   | Case | Accepted result / current owner |
-                    | --- | --- |
+                      | --- | --- |
   | A — random Kick | Choose family, generate/listen/regenerate, revisit available results, explicitly accept into a valid project; no detailed parameter prerequisite or implicit material creation; [random](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
   | B — nearby A | Intentionally use A's supported family reference inputs; explain unsupported input instead of hidden unrelated random fallback; no universal metric; [random/nearby](../SAMPLE_WORKFLOW.md#random-and-nearby-variation) |
   | C — decay lock | Preserve declared supported constraint while exploring permitted transient/pitch variation; coupled perceptual properties and waveform identity are not promised; [locks](../SAMPLE_WORKFLOW.md#supported-locks-and-reference-changes) |
@@ -512,7 +512,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses audited rather than adopted without bounds:
 
   | Hypotheses | Audit result |
-                    | --- | --- |
+                      | --- | --- |
   | 1 | Accepted sound-first beginner loop with optional advanced controls; no detailed parameter knowledge or final layout required |
   | 2 | Refined: related variation intentionally uses supported family reference state; no universal waveform similarity or arbitrary-audio analysis promise |
   | 3, 4 | Accepted only for declared supported constraints; future-only, captured per request, coupling/unsupported cases explicit, not waveform identity |
@@ -550,7 +550,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–T audited conceptually against current owners; these are not implementation tests:
 
   | Case | Result / current owner |
-                    | --- | --- |
+                      | --- | --- |
   | A — Drums Main placement | Pattern owns Kick/Snare/Hat parts/events and sound references; occurrence owns its timing/local relationships; Drums owns timeline organization and optional explicit context. No automatic Pattern bus; independent instrument routes survive before intentional aggregation; [identities](../ARCHITECTURE.md#separate-sharing-identities) |
   | B — Bass in Drums | Purpose can guide compatible defaults, not exclusive synth ownership. A supported Bass occurrence is not incompatible merely by name; no silent copy/conversion or route mutation; [Arrangement](../ARCHITECTURE.md#semi-free-arrangement) |
   | C — heterogeneous content | Supported Pattern, fragment, sample clip and future recording occurrences retain distinct content/time/resource/context relationships. Fundamentally unsupported structural relationships can block or require deliberate transformation; missing execution does not erase safely representable intent; [compatibility](../ARCHITECTURE.md#compatible-material-and-bounded-organization) |
@@ -575,7 +575,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Hypotheses audited with concrete bounds:
 
   | Hypotheses | Disposition |
-                    | --- | --- |
+                      | --- | --- |
   | 1, 2, 3 | Accepted distinct reusable content/occurrence and normal many-use sharing; local ownership does not require a frozen property inventory or one class per responsibility |
   | 4, 5 | Accepted no automatic bus; containing processing aggregates only explicitly intended audible contributions, not external detector inputs or all uses of a definition. Independent required paths precede mixing |
   | 6, 7, 8 | Accepted separately expressible music/sound/occurrence/media independence. Detaching music retains intended sounds/contexts; detaching sound need not copy notes/media or live instances; unsupported opaque-state independence is explicit |
@@ -618,7 +618,7 @@ is not established by local history; this log does not duplicate Git's commit ch
 - Cases A–T were analyzed conceptually, not executed:
 
   | Case | Result / current owner |
-                    | --- | --- |
+                      | --- | --- |
   | A — unnamed hour of work | Candidate identifies the document/lifecycle and captured revision before a filename. Recover captured work/media; no promise for the uncaptured interval. Save As establishes a saved destination only on success; retirement needs coverage/owners or informed discard; [recovery](../PROJECT_FORMAT.md#recovery-state) |
   | B — saved R10, recovered R15 | R10 remains last explicit Save, R15 is offered and accepted as recovered unsaved work without writing R10. Opening R10 does not discard R15; subsequent explicit Save/Save As has an understandable destination; [UX](../UX_CONTRACT.md#project-lifecycle-and-durable-work) |
   | C — failed Save | Pre-commit disk-full/permission/write/interruption preserves prior Save/media and unsaved canonical edits, still recovery-eligible. Recovery success/failure is independent; no false Save success. Around-commit uncertainty is handled separately; [Save](../PROJECT_FORMAT.md#save-save-as-and-relocation) |
@@ -1409,19 +1409,19 @@ to the 933-case baseline; later full-suite success is not claimed.
 
 Windows x64, SDK 10.0.401/runtime 10.0.12, current source at this checkpoint:
 
-| Phase | Measured duration | Scope / result |
-| -------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| Restore | Unknown; not rerun | Dependencies unchanged; valid existing assets used |
-| Affected Release build | 11.802 s wall time (MSBuild reports 11.41 s) | Tests project and references; zero warnings/errors, no restore |
-| Incremental build after review | 5.126 s wall time (MSBuild reports 4.22 s) | Required by the final constructor-cleanup guard and test-deadline change; zero warnings/errors |
-| L1 tests | 9.466 s CLI wall time (runner summary 8.781 s) | Retention + DesktopInstance, 19/19 passed, zero failures/skips; no build/restore |
-| Final affected L1 rerun | 9.937 s CLI wall time (runner summary 9.271 s) | Retention only, 14/14; unrelated IPC tests and successful GUI/timeout checks were not repeated |
-| Full suite | Historical runner interval 17.5105 s | Previous F1-FINALIZE TRX: 933/933; no new full run or full build |
-| Full Release solution build | Unknown | Prior success has no retained duration; measure at next planned L3 |
-| VisualCheck | 2.085 s wall time | One isolated startup/joined-close smoke, including lifecycle retention; exit 0 |
-| Full visual/native matrix | Unknown; not run | No matrix cost or full native/visual acceptance inferred |
-| Retention | 0.579 s wall time | Manual apply of one 403-byte task-owned synthetic disposable run; deletion confirmed, exit 0; not whole-repository cost |
-| Timeout process | 1.111 s wall time | One isolated lease with one-second deadline; persisted diagnostic and exit 124 |
+| Phase                          | Measured duration                              | Scope / result                                                                                                          |
+|--------------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Restore                        | Unknown; not rerun                             | Dependencies unchanged; valid existing assets used                                                                      |
+| Affected Release build         | 11.802 s wall time (MSBuild reports 11.41 s)   | Tests project and references; zero warnings/errors, no restore                                                          |
+| Incremental build after review | 5.126 s wall time (MSBuild reports 4.22 s)     | Required by the final constructor-cleanup guard and test-deadline change; zero warnings/errors                          |
+| L1 tests                       | 9.466 s CLI wall time (runner summary 8.781 s) | Retention + DesktopInstance, 19/19 passed, zero failures/skips; no build/restore                                        |
+| Final affected L1 rerun        | 9.937 s CLI wall time (runner summary 9.271 s) | Retention only, 14/14; unrelated IPC tests and successful GUI/timeout checks were not repeated                          |
+| Full suite                     | Historical runner interval 17.5105 s           | Previous F1-FINALIZE TRX: 933/933; no new full run or full build                                                        |
+| Full Release solution build    | Unknown                                        | Prior success has no retained duration; measure at next planned L3                                                      |
+| VisualCheck                    | 2.085 s wall time                              | One isolated startup/joined-close smoke, including lifecycle retention; exit 0                                          |
+| Full visual/native matrix      | Unknown; not run                               | No matrix cost or full native/visual acceptance inferred                                                                |
+| Retention                      | 0.579 s wall time                              | Manual apply of one 403-byte task-owned synthetic disposable run; deletion confirmed, exit 0; not whole-repository cost |
+| Timeout process                | 1.111 s wall time                              | One isolated lease with one-second deadline; persisted diagnostic and exit 124                                          |
 
 Initial affected build + L1 costs 21.268 s. Review then made constructor lease disposal release its
 deadline in finally even if Dispose throws, and gave the lifecycle timer tests one second instead of
@@ -1473,13 +1473,13 @@ long-source NoteOff/bar-gate cases and one atomic channel Undo/Redo/media case a
 build followed by only those changed/new methods passes 4/4; unrelated green cases were reused.
 Together these cover 383 distinct cases, including 48 new StepSequencer cases, not a full suite.
 
-| Final verification phase | Measured wall time | Evidence scope |
-| ----------------------------------- | ------------------------------------ | --------------------------------------------------------------- |
-| Affected Release build | 5.443 s (MSBuild 5.09 s) | Tests and its references, no restore |
-| L1/L2, 380 cases | 17.744 s (runner summary 17.099 s) | All selected cases pass; retained TRX |
-| Incremental final test-only build | 2.856 s (MSBuild 2.39 s) | Three-channel PCM strengthening and gate/channel-Undo cases |
-| Four changed/new cases | 2.457 s (runner summary 1.721 s) | Four pass; retained TRX |
-| Focused GUI `steps` | 8.664 s | Actual isolated window/render/automation lifecycle; no device |
+| Final verification phase          | Measured wall time                 | Evidence scope                                                |
+|-----------------------------------|------------------------------------|---------------------------------------------------------------|
+| Affected Release build            | 5.443 s (MSBuild 5.09 s)           | Tests and its references, no restore                          |
+| L1/L2, 380 cases                  | 17.744 s (runner summary 17.099 s) | All selected cases pass; retained TRX                         |
+| Incremental final test-only build | 2.856 s (MSBuild 2.39 s)           | Three-channel PCM strengthening and gate/channel-Undo cases   |
+| Four changed/new cases            | 2.457 s (runner summary 1.721 s)   | Four pass; retained TRX                                       |
+| Focused GUI `steps`               | 8.664 s                            | Actual isolated window/render/automation lifecycle; no device |
 
 Exact main command after affected build: `dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj
 -c Release --no-build --no-restore --filter-class '*StepSequencerTests' --filter-class '*DesktopWorkflowTests'
@@ -1626,3 +1626,18 @@ tests and actual catalog/Playlist/field/editor checks pass. Inherited reduced-te
 one retried Playlist routed-input failure remain explicit in the
 [report](../experiments/SEQ-HOME-RESOURCES_REPORT.md). No new musical editor, DSP, schema, bundled assets,
 full-suite claim, staging, commit, push or tag.
+
+## SEQ-R9 — 2026-10-13
+
+Implemented the bounded shared Piano Roll after studying all five prepared Piano originals/notes:
+note/group gestures, exact changed-only properties, velocity, snap/navigation/keyboard/ghosts and
+safe Rack rich-note previews. Canonical NoteEvents/history/Playlist/PCM remain one musical pipeline.
+Explicit root/name settings and exact-path/hash-verified optional catalog roots replace unreliable
+guessing; full MIDI pitch and joined quiet source-note audition reuse the existing sampler. GUI work
+repaired native resize containment, late-notification draft expiry and mixed-field/no-op history bugs.
+Native input authored Jade Nocturne (23 notes, two verified piano roots, four bars repeated twice),
+saved/reopened/exported through production workflows; project/media/WAV/review images are preserved
+outside Git. Full zero-warning Release build and 1073 tests, actual RU/EN Dark/Light field/render checks,
+eleven shared native checks and short physical Pattern/Song/live-edit/Undo pass, scoped in the
+[report](../experiments/SEQ-R9_REPORT.md). PATCH 0.1.2.0000 resets BUILD/cadence; no schema/dependencies,
+release, staging, commit, push or tag. Advanced tools/sampler features and prior R4 pressure remain separate.

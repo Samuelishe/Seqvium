@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.1.0003`**, the SEQ-HOME-RESOURCES BUILD checkpoint on the
+The current product alpha is **`0.1.2.0000`**, the SEQ-R9 Piano Roll PATCH checkpoint on the
 owner-selected `0.1` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -29,13 +29,23 @@ Completed rationale is cold history; current contracts stay in canonical owners.
 **R5 is in progress / partial. R5-F1 and the bounded F2/F3 musical slice are implemented:** empty
 Beat creation, independent WAV channels, 1–32 bars, continuous Play, renderer position and compatible
 live step edits, atomic channel/Pattern deletion, navigation collapse, selected-Pattern WAV export
-and Save/Open. Velocity and richer processors remain future work. The separately owner-authorized
+and Save/Open. SEQ-R9 now supplies shared melodic/velocity editing; channel mix and richer processors
+remain future work. The separately owner-authorized
 bounded R10 Playlist below now supplies simultaneous Patterns and finite song composition/export;
 it does not complete R5, R10's wider scope or intervening stages.
 The owner reports the visual redesign complete and now prioritizes music. Full automated, actual
 window and short physical loop checks pass; long pressure/acoustic/platform acceptance stays separate.
 
 ## Implemented capability
+
+SEQ-R9 implements a retained real Piano Roll: shared Pattern/Part notes, chords, mixed duration/
+velocity, draw/select/group move/Ctrl-copy/resize/delete, clipboard/exact properties, keyboard editing,
+snap/triplet/free, pitch/time scrolling, anchored zoom, ghosts and renderer playhead. Rack uses a safe
+rich-note thumbnail without flattening. Shared history, Pattern/Song execution and WAV export preserve
+the same notes. Explicit source root/name settings and exact-path/hash-verified optional catalog roots
+correct melodic WAV tuning; full MIDI pitch preparation and quiet stopped note audition use the same
+PCM kernel. Existing projects/media remain unchanged on Open. Source/unknown-data and stale guards
+retain refusals. See [R9 evidence](experiments/SEQ-R9_REPORT.md) and canonical UX/audio/sample owners.
 
 SEQ-TRACK-GUI fixes real composing obstacles: fractional toolbar Gain commits once on Enter/focus loss,
 with Escape/stale guards and retained Enter focus; Playlist anchors at TOP + LEFT, fills an expanded
@@ -95,8 +105,9 @@ Name, notes, length and deletion use the one history; shared note edits change t
 A derived absolute-tick LoopClock repeats in the same audio packet; compatible prepared note edits
 retain position, epoch and unchanged voice ages. Export renders one frozen occurrence through its
 current graph to 48 kHz stereo PCM16, preserving transport/history and reporting clipping.
-Save/Open preserves IDs/media, with fresh silent runtime/history on Open. Unsupported shape/notes/
-unknown data and unsafe/shared channel expansion refuse without rewriting content. Static retained
+Save/Open preserves IDs/media, with fresh silent runtime/history on Open. Unsupported shape/unknown
+data and unsafe/shared channel expansion refuse without rewriting content; known rich notes now have
+safe Rack previews and Piano editing. Static retained
 pane behavior, RU/EN, Dark/Light, local scrolling, keyboard and toggle accessibility reuse the host.
 [UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing), [audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback)
 and [test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification) own contracts/evidence.
@@ -181,15 +192,15 @@ The home machine has a private WAV library and searchable reference catalog outs
 [development](DEVELOPMENT.md#local-development-resources) owns entry points. Light now has stronger
 musical color/material depth while Dark values are preserved; populated Rack/Playlist move tutorials
 into contextual help. [UI design](UI_DESIGN.md#reference-library-and-next-editor-direction) and
-[R9 planning](ROADMAP.md#piano-roll-preparation-and-bounded-first-slice) record selected direction and
-next integration points. Preparation implements no Piano Roll, Browser or wider Mixer/effect stage.
+[R9 follow-ups](ROADMAP.md#seq-r9--piano-roll) retain advanced tools beyond the implemented bounded editor.
+Browser and wider Mixer/effect stages remain unimplemented; private resources are optional inputs.
 
 SEQ-R10-PLAYLIST completes the owner-authorized first finite composition workflow and song export,
 with a reference-informed timeline instrument. Next work is song sections/containers,
-explicit variants, velocity/Piano Roll and actual waveform/audio-clip scope; R11 meters/
+explicit variants, advanced note tools and actual waveform/audio-clip scope; R11 meters/
 automation/effects require their processing/state owners. Supported stateless Rack channel topology now preserves
 playback.
-R5 still lacks richer velocity/per-channel controls. New Playlist aesthetic acceptance belongs to the
+R5 still lacks per-channel mix controls. Piano/Playlist aesthetic acceptance belongs to the
 owner; the checkpoint does not close prior R4 pressure acceptance or declare a release.
 
 The bounded workspace and canonical intent foundations are locally ready. F2's functional execution
@@ -221,6 +232,17 @@ future composition. R4-F2 remains partial and F3-B remains pending owner review.
 acceptance remains with the owner; the earlier presentation was explicitly rejected.
 
 ## Validation baseline
+
+SEQ-R9: Windows 11 x64, SDK 10.0.401/runtime 10.0.12; final full Release solution build passes with
+zero warnings/errors and **1073/1073 tests pass**, no skips. Focused L1/L2, actual production-window
+RU/EN × Dark/Light ordinary/reduced Piano/property/source/Rack checks and shared catalog/field/Graph
+checks pass. Guarded native input authors 19 chord/melody notes plus four lower notes with verified
+library roots 57/45; physical note audition, continuous Pattern, finite Song and live-edit/Undo converge.
+Save/reopen preserves canonical identities; 48 kHz stereo exports contain 384000/768000 frames, nonzero
+PCM and no saturated samples. Two source hashes remain unchanged. A preserved Jade Nocturne project/
+media/WAV/theme review set lives outside Git; methods, locations and early failures are in the
+[report](experiments/SEQ-R9_REPORT.md). No subjective acoustic, native-picker, long pressure, high-DPI
+or wider platform acceptance is claimed. The previous Rack reduced-tempo harness gap is not relabelled a pass.
 
 SEQ-HOME-RESOURCES: home Windows 11 x64, SDK 10.0.401/runtime 10.0.12; locked restore and affected
 Release builds pass with zero warnings/errors, **196 focused cases pass** (not a full suite). Actual
@@ -307,8 +329,8 @@ and platform/owner acceptance remain separate below. Historical validation belon
 
 ### Verification cadence
 
-Last successful L3: **SEQ-PLAYLIST-MUSIC, 2026-10-13**, full Release solution build and 1052/1052 automated
-tests. Completed repository tasks since that L3: **2**.
+Last successful L3: **SEQ-R9, 2026-10-13**, full Release solution build and 1073/1073 automated
+tests. Completed repository tasks since that L3: **0**.
 Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
 a focused pass does not reset it.
 

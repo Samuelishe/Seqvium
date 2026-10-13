@@ -11,13 +11,17 @@ public sealed class WorkspaceLayoutTests
     [Fact]
     public void SettledMaximizedWorkspaceRestoresSizesAfterTransientNormalStartupClamp()
     {
-        using var authored = new WorkspaceState(); authored.Reflow(1692, 902);
+        using var authored = new WorkspaceState();
+        authored.Reflow(1692, 902);
         authored.Open(WorkspaceState.ArrangementId);
-        var bounds = new PaneBounds(0, 0, 1687, 894); authored.SetBounds(WorkspaceState.ArrangementId, bounds);
+        var bounds = new PaneBounds(0, 0, 1687, 894);
+        authored.SetBounds(WorkspaceState.ArrangementId, bounds);
         var saved = authored.Capture();
-        using var reopened = new WorkspaceState(saved); reopened.Reflow(1160, 764);
+        using var reopened = new WorkspaceState(saved);
+        reopened.Reflow(1160, 764);
         Assert.Equal(1160, reopened.Bounds(WorkspaceState.ArrangementId).Width);
-        reopened.Reflow(1692, 902); reopened.RestoreLayout(saved);
+        reopened.Reflow(1692, 902);
+        reopened.RestoreLayout(saved);
         Assert.Equal(bounds, reopened.Bounds(WorkspaceState.ArrangementId));
         Assert.Equal(saved.ActivePaneId, reopened.ActivePaneId);
     }
@@ -26,15 +30,19 @@ public sealed class WorkspaceLayoutTests
     public async Task MainWindowPlacementIsOptionalAndRoundtripsIndependentlyOfWorkspaceSize()
     {
         using var directory = new TemporaryDirectory();
-        using var state = new WorkspaceState(); state.Reflow(1200, 800); state.ArrangeMusic();
-        var rack = state.Bounds(WorkspaceState.BeatId); var playlist = state.Bounds(WorkspaceState.ArrangementId);
+        using var state = new WorkspaceState();
+        state.Reflow(1200, 800);
+        state.ArrangeMusic();
+        var rack = state.Bounds(WorkspaceState.BeatId);
+        var playlist = state.Bounds(WorkspaceState.ArrangementId);
         Assert.True(rack.Y + rack.Height < playlist.Y);
         Assert.True(playlist.Y + playlist.Height <= state.Height);
         var normal = new MainWindowPlacement(-1900, 40, 1400, 900, true);
         var store = new WorkspaceLayoutStore(directory.File("layout.json"));
         Assert.True(await store.SaveAsync(state.Capture() with { Window = normal }));
         var restored = await new WorkspaceLayoutStore(directory.File("layout.json")).LoadAsync();
-        Assert.False(restored.UsedFallback); Assert.Equal(normal, restored.Layout!.Window);
+        Assert.False(restored.UsedFallback);
+        Assert.Equal(normal, restored.Layout!.Window);
         Assert.Equal(1200, restored.Layout.Width);
     }
 
@@ -177,7 +185,7 @@ public sealed class WorkspaceLayoutTests
         Assert.NotNull(load.Layout);
         using var workspace = new WorkspaceState(load.Layout);
         workspace.Reflow(640, 390);
-        Assert.Equal(6, workspace.Panes.Length);
+        Assert.Equal(7, workspace.Panes.Length);
         var appearance = workspace.Get(WorkspaceState.AppearanceId);
         Assert.Equal(PaneVisibility.Visible, appearance.Visibility);
         Assert.False(appearance.AllowDocking);
@@ -198,16 +206,25 @@ public sealed class WorkspaceLayoutTests
         workspace.Open(WorkspaceState.InspectorId);
         workspace.Open(WorkspaceState.AppearanceId);
         var layout = workspace.Capture();
-        layout = layout with { Panes = [.. layout.Panes.Select(pane => pane.Visibility == PaneVisibility.Visible
-            ? pane with { Dock = PaneDock.Left } : pane)] };
+        layout = layout with
+        {
+            Panes =
+            [
+                .. layout.Panes.Select(pane => pane.Visibility == PaneVisibility.Visible
+                    ? pane with { Dock = PaneDock.Left }
+                    : pane)
+            ]
+        };
         var store = new WorkspaceLayoutStore(directory.File("layout.json"));
         Assert.True(await store.SaveAsync(layout));
         var load = await store.LoadAsync();
         using var reopened = new WorkspaceState(load.Layout);
         reopened.Reflow(640, 390);
         Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Left));
-        Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Floating && pane.Visibility == PaneVisibility.Visible));
-        Assert.All(reopened.Panes.Where(pane => pane.InstanceId is WorkspaceState.InspectorId or WorkspaceState.AppearanceId),
+        Assert.Single(reopened.Panes.Where(pane =>
+            pane.Dock == PaneDock.Floating && pane.Visibility == PaneVisibility.Visible));
+        Assert.All(
+            reopened.Panes.Where(pane => pane.InstanceId is WorkspaceState.InspectorId or WorkspaceState.AppearanceId),
             pane => Assert.Equal(PaneVisibility.Visible, pane.Visibility));
         Assert.Equal(PaneVisibility.Hidden, reopened.Get(WorkspaceState.GraphId).Visibility);
         Assert.Equal(PaneVisibility.Hidden, reopened.Get(WorkspaceState.NodeEditorId).Visibility);

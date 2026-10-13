@@ -7,13 +7,14 @@ feedback, discoverability, general workflow semantics.
 Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or current implementation.
 
 These are intended requirements except the explicitly implemented bounded R3 host, F3-A/F3-B workflows
-and R5-F1 grid below; broader musical editors remain future work.
+and the implemented Rack, Playlist and Piano Roll sections below; broader capabilities remain future work.
 
 ## Implemented R5-F1 step sequencing
 
 The Rack rail action (or Panes → Channel Rack) provides New pattern, Add sound and a committed
 Pattern name field. Pristine layout exposes the Rack without inserting music. A wide-window project
-navigator creates Patterns and selects actual occurrences with canonical rhythm thumbnails. Creation is empty, one bar with 16 sixteenths, and requires current 4/4 without
+navigator creates Patterns and selects actual occurrences with canonical rhythm thumbnails. Creation is empty, one bar
+with 16 sixteenths, and requires current 4/4 without
 changing meter or BPM. Rows are canonical MusicalParts. A click or Space/Enter creates/deletes one
 NoteEvent and one Undo entry. Arrows move between steps/rows; Home/End reach row ends; Tab accesses
 commands. Captured left dragging paints when begun on an off step and erases when begun on an on
@@ -21,15 +22,17 @@ step. Movement fills skipped cells in the same row. The draft changes no music u
 release produces one Undo entry. Escape, capture loss, deactivation or invalidated basis cancels.
 Row context commands Fill every 4/2, shift left/right and Clear use the same atomic row transaction.
 No-op operations add no history or playback stop. Add sound or a single local WAV drop uses the same
-managed acceptance/refusal path. Toggle automation reports On/Off and accepts the same canonical action. Name commits with
+managed acceptance/refusal path. Toggle automation reports On/Off and accepts the same canonical action. Name commits
+with
 Enter/check; Escape cancels local text. Global transport/history retain their existing commands.
 
 The editor follows the explicitly selected playback occurrence and labels its actual Pattern.
 Notes and names edit shared Pattern content without a variation. New channels require an unshared
 Pattern and a recognized safe graph; refusing shared channel expansion preserves all placements.
-Unsupported meter/length is explained without conversion. Any off-grid/duplicate/non-root-pitch,
-non-unit-intensity, non-v1-duration or unknown musical data disables its affected row; aligned notes
-still show active steps and a warning, and all original data stays canonical/savable. Pattern-level
+Unsupported meter/length is explained without conversion. Known PCM notes with richer pitch,
+intensity, duration or timing show a read-only melodic thumbnail instead of destructive step controls.
+Double-click the channel name, its preview or the row Piano Roll command opens the exact Part.
+Unknown musical data still disables its affected row with a warning; all data stays canonical/savable. Pattern-level
 unknown semantics disable grid operations. External Edit/Undo/Redo/Open refresh the same controls.
 
 Commands freeze target and generation; stale/ABA/concurrent actions cannot duplicate notes or switch
@@ -44,8 +47,9 @@ The current column outline and bar:beat:sixteenth display read renderer state, w
 observation delay; they do not claim an output-latency-corrected audible cursor.
 
 The length selector offers 1–32 whole 4/4 bars (16–512 sixteenths). Extension adds empty time and
-restores ordinary end-clipped gates without changing note identities. Shortening refuses occupied
-later steps; it never silently discards notes. A channel menu can remove a channel from the recognized
+restores ordinary end-clipped step gates without changing note identities. Richer notes retain their
+exact durations on extension; shortening refuses occupied tails as well as later steps. It never
+silently discards notes. A channel menu can remove a channel from the recognized
 unshared graph, repairing its Mix tree in one Undo. Shared/custom/unknown topology refuses safely.
 Pattern deletion removes all its placements and their item graphs in one Undo, retaining independent
 sounds/resources and unrelated music. Target/generation guards apply to every action.
@@ -53,9 +57,47 @@ The rail toggle hides/restores navigation independently of music; its session ch
 WAV export is a toolbar overflow action for the selected occurrence through its current valid graph.
 It captures one frozen revision, writes one finite cycle as 48 kHz stereo PCM16, reports clipping and
 leaves transport, music and history intact. Failed/cancelled export preserves an existing destination.
-Rack scope adds no effects beyond Gain, velocity or general seek editor. Playlist composition is below.
+Rack scope adds no effects beyond Gain or an in-pad velocity editor. Piano Roll and Playlist are below.
 [Audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback) owns gate/tail limits;
 [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns retained geometry/focus.
+
+## Implemented SEQ-R9 Piano Roll
+
+One retained editor targets the selected occurrence's shared Pattern and explicit Part. Target and
+sharing are visible; opening it never detaches content. All three musical views, history, playback
+and export read canonical NoteEvents. Unknown Pattern/Part/note or unsupported sound semantics are
+refused without replacement. A recognized PCM Part supports overlapping notes and fractional loaded pitches.
+
+Draw click uses remembered duration/velocity; dragging empty space defines a duration. Body drag
+moves the selected group; Ctrl-drag creates new note identities. Right-edge drag resizes; right-click
+or Delete deletes. Shift-click toggles membership, Shift-drag/selection tool boxes notes; Ctrl+A
+selects all. Velocity stems align with time, with staggered chord handles. Exact properties offer
+pitch/start/duration/velocity; group pitch/start moves relatively and only changed duration/intensity
+fields apply. Boundary clamping preserves group spacing. Clipboard commands refuse an oversized span.
+Ctrl+C/X/V/D copies/cuts/pastes/duplicates; arrows nudge snap/pitch, Shift horizontal arrows resize,
+Shift vertical arrows transpose an octave, Alt horizontal arrows select individual notes, Enter auditions.
+
+Captured drafts edit no document before release. One accepted gesture is one Undo. Escape, capture
+loss, stale/ABA authority, hide/collapse, replacement and relevant preference changes cancel drafts.
+No-op movement, selection or survivor-order permutations add no history. Late status notifications
+must not cancel a still-authoritative properties/source draft. Group properties preserve mixed unedited fields.
+Compatible note changes use existing live preparation/continuation, not a separate editor transport.
+
+Fixed keyboard/ruler, bar/beat/subdivision hierarchy, Pattern-end bracket, selected outlines, edge
+cursors, preview bodies and aligned velocity communicate editing. Snap offers quarter/eighth/sixteenth/
+thirty-second, eighth-triplet and free; Alt temporarily bypasses snap. Wheel scrolls pitch, Shift-wheel
+time, Ctrl-wheel anchors horizontal zoom, middle-drag pans. View/selection/ghost/clipboard state is session-only.
+Other Parts are noninteractive ghosts. Pattern/Song playhead comes from renderer state, not measured latency.
+
+Root Pitch/source settings update shared SoundDefinition root and Part name in one validated transaction;
+they do not transpose notes or edit source bytes. C4 is MIDI 60. The selector sets integer roots and
+preserves a loaded fractional root when only renaming. No inferred pitch claim is made. Import initialization
+belongs to [sample workflow](SAMPLE_WORKFLOW.md#seq-r9-source-root-pitch).
+Keyboard and enabled edit audition use a quiet, bounded solo source voice while transport is stopped,
+not downstream graph monitoring. Stop/Panic/Play/close withdraw and join that preview. Creation/Open stay silent.
+
+Scale/quantize/humanization, automation/controller curves, MIDI/QWERTY recording, MPE, multisample
+mapping and independent simultaneous Piano editor targets remain [follow-ups](ROADMAP.md#seq-r9--piano-roll).
 
 ## Playlist music workflow
 
@@ -115,7 +157,8 @@ Compatible clip/note/Gain/track edits preserve time, epoch and unchanged voice a
 new past onsets do not retrigger. Shortening behind the playhead ends rather than restarting. Removing
 all clips stops. Incompatible topology/settings replacements retain the explicit existing interruption
 policy. Supported WAV channel changes also retain time and surviving voices under the
-[audio continuation contract](AUDIO_ENGINE.md#playlist-song-preparation-and-execution). Current cursor follows renderer time, not measured acoustic latency.
+[audio continuation contract](AUDIO_ENGINE.md#playlist-song-preparation-and-execution). Current cursor follows renderer
+time, not measured acoustic latency.
 
 Song export freezes the current canonical arrangement and its graph/media dependencies, includes
 leading silence/overlaps and writes 48 kHz stereo PCM16 through the same executor. It never substitutes
@@ -127,7 +170,8 @@ This bounded editor offers whole-Pattern repeats, 32 lanes and a 4096-bar editin
 are available by vertical scrolling even before they contain clips. The timeline anchors at TOP + LEFT;
 its horizontal extent fills an expanded viewport with editable bars up to the existing limit. It adds no
 independent clip variation, audio trim/stretch,
-section markers, automation, velocity editor or stateful effects. Reference-informed follow-up lives
+section markers, automation, in-clip velocity editor or stateful effects. Shared velocity edits are in Piano Roll.
+Reference-informed follow-up lives
 in [R10 planning](ROADMAP.md#seq-r10--arrangement), separate from implemented controls.
 
 ## Implemented R4-F3-A bounded workflow
@@ -146,7 +190,8 @@ setting. Tempo accepts 1–1000 BPM with at most six decimal places, invariant o
 decimal parsing. Enter/check applies once; Escape cancels; invalid values remain local. The popup
 freezes lifecycle/generation, refusing intervening edits instead of overwriting them. An accepted
 tempo change stops playback, preserves musical-time positions and requires explicit Play; no-op
-adds no history or stop. Narrow overflow and retained Inspector preserve access. The owned unsaved modal starts with safe Cancel focus and returns focus.
+adds no history or stop. Narrow overflow and retained Inspector preserve access. The owned unsaved modal starts with
+safe Cancel focus and returns focus.
 [Workspace](WORKSPACE.md#r4-f3-a-commands-and-owned-modal-lifecycle) owns lifecycle/keys;
 [UI design](UI_DESIGN.md#first-party-visual-design-rules) owns presentation. This is not graph canvas,
 Pattern/Piano Roll, Arrangement, Mixer or Browser acceptance.
@@ -357,7 +402,7 @@ objects manually. A sound should be audible before a user has mastered the full 
 
 ## Editing semantics
 
-Step Sequencer and Piano Roll should eventually provide compatible views of musical events. Moving
+Step Sequencer and Piano Roll provide compatible views of musical events in the bounded implementation above. Moving
 between them must not require recreating a phrase. The intended model and shared pattern references
 are owned by [ARCHITECTURE](ARCHITECTURE.md).
 
@@ -814,5 +859,5 @@ principles do not prescribe independently rendered third-party editor visuals.
 Pleasant direct manipulation, spatial clarity, and restrained feedback should make experimentation
 inviting. [UI_DESIGN](UI_DESIGN.md) owns gradual visual guidance and consistency between panes.
 
-The final visual language, bindings, window layout, onboarding, and detailed Piano Roll gestures
-remain open. This contract does not prescribe a final visual system.
+The implemented bounded Piano Roll gestures are specified above. Further bindings, onboarding and
+editor integration remain evolvable; this contract does not freeze a final visual system.

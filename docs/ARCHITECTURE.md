@@ -231,7 +231,8 @@ graph/diagnostics, including shell-triggered refreshes arriving before queued pa
 `DesktopWorkflow.Graph` validates lifecycle/generation/attachment on the existing owner and calls
 existing ProjectEdit operations. All audio preparation/publication/resource lifetime remains F2-owned.
 Native pickers/cancellation remain MainWindow-owned. Second-source durable acceptance creates independent
-music and graph binding atomically, with shared-Pattern refusal under [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item).
+music and graph binding atomically, with shared-Pattern refusal
+under [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item).
 The only new Core edit is validated Pattern length adjustment for a longer accepted source; no new
 graph model/history, DSP, assembly, plugin registry or docking framework is introduced.
 
@@ -266,17 +267,17 @@ changes. Dependency-specific reconciliation can come later with evidence; identi
 commit gate. Own command progress/acknowledgement separately from draft cancellation, so a Busy
 observation or delayed GUI callback cannot resubmit or redirect an already captured command.
 
-| Event | Implemented session behavior |
-| --- | --- |
-| Parameter edit, Undo or Redo while target exists | Re-resolve current node and refresh controls; cancel stale drafts/gestures. Stable target survives replacement immutable records; old commands remain invalid even after Undo/Redo ABA |
-| Node/graph/attachment/owning placement deletion | Keep target key as unavailable in the same lifecycle for possible Undo; disable mutation, cancel drafts and release node-specific active resources. Do not follow workflow's fallback playback selection |
-| Undo restores the exact target | Re-resolve ownership/capability and recreate presentation as needed; restore current values, never cancelled input, native handles or old pending commands. Redo deletion returns to unavailable |
-| Graph pane target/global selection/playback changes | Keep node target. Opening a different node explicitly cancels the old draft and replaces target; repeated same-target open only activates |
-| Attachment points to another definition, node type/state version becomes incompatible | Show unavailable/unsupported details; never redirect to a different same-name/type node or reinterpret old parameter input. Revalidate exact restoration normally |
-| Save or Save As | Preserve logical target; save canonical state only. No target/draft/native handle is serialized |
-| Open cancelled, candidate load/Save fails | Keep current document/session target; any cancelled draft stays cancelled. Existing dirty-decision and join behavior remains authoritative |
-| Successful document replacement or close | Withdraw commit authority, cancel proposals/open requests, detach subscriptions and release old observations/node presentation. Clear target even when reopened IDs/path match; new lifecycle needs explicit opening |
-| Hide/collapse or host shutdown | Cancel transient editing, retain only safe session view/target on hide; dispose subscriptions/content on shutdown. A queued GUI refresh checks disposal/current lifecycle before access |
+| Event                                                                                 | Implemented session behavior                                                                                                                                                                                         |
+|---------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Parameter edit, Undo or Redo while target exists                                      | Re-resolve current node and refresh controls; cancel stale drafts/gestures. Stable target survives replacement immutable records; old commands remain invalid even after Undo/Redo ABA                               |
+| Node/graph/attachment/owning placement deletion                                       | Keep target key as unavailable in the same lifecycle for possible Undo; disable mutation, cancel drafts and release node-specific active resources. Do not follow workflow's fallback playback selection             |
+| Undo restores the exact target                                                        | Re-resolve ownership/capability and recreate presentation as needed; restore current values, never cancelled input, native handles or old pending commands. Redo deletion returns to unavailable                     |
+| Graph pane target/global selection/playback changes                                   | Keep node target. Opening a different node explicitly cancels the old draft and replaces target; repeated same-target open only activates                                                                            |
+| Attachment points to another definition, node type/state version becomes incompatible | Show unavailable/unsupported details; never redirect to a different same-name/type node or reinterpret old parameter input. Revalidate exact restoration normally                                                    |
+| Save or Save As                                                                       | Preserve logical target; save canonical state only. No target/draft/native handle is serialized                                                                                                                      |
+| Open cancelled, candidate load/Save fails                                             | Keep current document/session target; any cancelled draft stays cancelled. Existing dirty-decision and join behavior remains authoritative                                                                           |
+| Successful document replacement or close                                              | Withdraw commit authority, cancel proposals/open requests, detach subscriptions and release old observations/node presentation. Clear target even when reopened IDs/path match; new lifecycle needs explicit opening |
+| Hide/collapse or host shutdown                                                        | Cancel transient editing, retain only safe session view/target on hide; dispose subscriptions/content on shutdown. A queued GUI refresh checks disposal/current lifecycle before access                              |
 
 Retained chrome may outlive node-specific content. Do not retain a deleted node or old document just
 to preserve an editor; retain the key and safe presentation context. Deletion Undo may restore the
@@ -775,6 +776,23 @@ working snapshot distinct from explicit Save, including unnamed documents, and d
 Retained Undo/recovery/pending states may still own apparently unused resources, so deletion cannot follow
 visible-reference removal alone. [PROJECT_FORMAT](PROJECT_FORMAT.md#media-and-persistence-integrity) owns
 these integrity contracts and [recovery state](PROJECT_FORMAT.md#recovery-state), without selecting storage mechanics.
+
+## SEQ-R9 shared note editor ownership
+
+Core `ProjectEdit.SetPartNotes` atomically replaces one explicit Part's notes under normal document
+validation/history; `RenamePart` and shared sound parameters retain their existing owners. Desktop
+`PianoNotes` owns pure snap/group transforms and safe-edit eligibility, while `DesktopWorkflow.Piano`
+owns serialized lifecycle/generation/Pattern/attachment authority and survivor-order normalization.
+Canvas drafts, selection, viewport and clipboard are transient projections; accepted notes are never
+an editor-private music store. Rack safely projects richer notes as a read-only melody; Playlist
+continues referencing the same Pattern and rendering actual NoteEvents.
+
+Optional `SampleRootMetadata` reads bounded, exact-path/hash-verified import metadata without writing
+the library. Root remains an explicit shared SoundDefinition parameter. `NoteAuditionRequest` owns
+frozen source preparation, using the existing PCM kernel; the workflow joins its transient renderer/
+physical borrower before transport changes/close. No new playback engine, history or project format.
+[UX](UX_CONTRACT.md#implemented-seq-r9-piano-roll), [audio](AUDIO_ENGINE.md#seq-r9-pitched-note-audition)
+and [sample workflow](SAMPLE_WORKFLOW.md#seq-r9-source-root-pitch) own observable/runtime details.
 
 ## Intended musical model
 

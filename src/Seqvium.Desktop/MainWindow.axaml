@@ -15,7 +15,8 @@
         <Border x:Name="Chrome" Height="{DynamicResource Chrome.Height}" Background="{DynamicResource Material.Panel}"
                 BorderThickness="{DynamicResource Border.Bottom}" BorderBrush="{DynamicResource Border.Default}">
             <Grid ColumnDefinitions="*,Auto">
-                <Grid x:Name="TitleRegion" ColumnDefinitions="Auto,*,Auto" Background="Transparent" Margin="{DynamicResource Padding.Control}">
+                <Grid x:Name="TitleRegion" ColumnDefinitions="Auto,*,Auto" Background="Transparent"
+                      Margin="{DynamicResource Padding.Control}">
                     <TextBlock x:Name="BrandName" Text="Seqvium" FontWeight="SemiBold" VerticalAlignment="Center" />
                     <TextBlock Grid.Column="1" Text="{Binding ProjectName}" TextTrimming="CharacterEllipsis"
                                Margin="12,0,6,0" VerticalAlignment="Center" ToolTip.Tip="{Binding ProjectName}" />
@@ -37,7 +38,8 @@
             </Grid>
         </Border>
         <Border Grid.Row="1" Height="{DynamicResource Toolbar.Height}" Background="{DynamicResource Material.Panel}"
-                BorderBrush="{DynamicResource Border.Default}" BorderThickness="{DynamicResource Border.Bottom}" Padding="{DynamicResource Padding.Control}">
+                BorderBrush="{DynamicResource Border.Default}" BorderThickness="{DynamicResource Border.Bottom}"
+                Padding="{DynamicResource Padding.Control}">
             <Grid ColumnDefinitions="*,Auto">
                 <Border x:Name="WorkflowRegion" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Space.Gap}"
@@ -49,7 +51,8 @@
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight">
                                 <StackPanel Spacing="{DynamicResource Space.Small}">
-                                    <Button Classes="shell" Content="{Binding [Workspace.MusicLayout]}" Click="MusicLayoutClicked"
+                                    <Button Classes="shell" Content="{Binding [Workspace.MusicLayout]}"
+                                            Click="MusicLayoutClicked"
                                             AutomationProperties.AutomationId="Workspace.MusicLayout" />
                                     <Button Classes="shell" Content="{Binding [Pane.Beat]}"
                                             Click="BeatClicked"
@@ -57,6 +60,8 @@
                                     <Button Classes="shell" Content="{Binding [Pane.Arrangement]}"
                                             Click="ArrangementClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenArrangement" />
+                                    <Button Classes="shell" Content="{Binding [Pane.Piano]}" Click="PianoClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenPiano" />
                                     <Button Classes="shell" Content="{Binding [Pane.Inspector]}"
                                             Click="InspectorClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenInspector" />
@@ -88,7 +93,7 @@
                                 <StackPanel Width="280" Spacing="{DynamicResource Space.Medium}">
                                     <TextBlock Text="Seqvium" Classes="section" />
                                     <TextBlock Text="{Binding Version}" />
-                                    <TextBlock Text="SEQ-R5-F1" Classes="caption" />
+                                    <TextBlock Text="SEQ-R9" Classes="caption" />
                                     <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
                                 </StackPanel>
                             </Flyout>

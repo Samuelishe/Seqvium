@@ -16,7 +16,10 @@ namespace Seqvium.Desktop.Workspace;
 public sealed class WorkspaceHost : Grid, IDisposable
 {
     private readonly ShellSession _session;
-    private readonly Canvas _canvas = new() { Focusable = true, ClipToBounds = true, Background = Avalonia.Media.Brushes.Transparent };
+
+    private readonly Canvas _canvas = new()
+        { Focusable = true, ClipToBounds = true, Background = Avalonia.Media.Brushes.Transparent };
+
     private readonly Border _boundaryCue = new() { IsHitTestVisible = false };
 
     private readonly StackPanel _strip = new()
@@ -77,7 +80,9 @@ public sealed class WorkspaceHost : Grid, IDisposable
             _resizeSave.Stop();
             Commit();
         };
-        _canvas.SizeChanged += (_, _) =>
+        // Reflow after the current arrange completes: mutating child bounds during SizeChanged can
+        // leave the framework's just-computed rectangle ahead of the canonical pane placement.
+        _canvas.SizeChanged += (_, _) => Dispatcher.UIThread.Post(() =>
         {
             if (_disposed || _stopping || _canvas.Bounds.Width <= 0 || _canvas.Bounds.Height <= 0) return;
             CancelGestures();
@@ -89,7 +94,8 @@ public sealed class WorkspaceHost : Grid, IDisposable
             }
 
             _hasSize = true;
-        };
+            _canvas.InvalidateArrange();
+        }, DispatcherPriority.Loaded);
         State.Changed += Refresh;
         session.PropertyChanged += SessionChanged;
         AddHandler(KeyDownEvent, PaneKeyDown);
@@ -179,7 +185,8 @@ public sealed class WorkspaceHost : Grid, IDisposable
     }
 
     internal Control CreateContent(PaneDefinition definition) => _contentFactory?.Invoke(definition) ??
-        new FirstPartyPaneContent(_session, definition, _language, _theme);
+                                                                 new FirstPartyPaneContent(_session, definition,
+                                                                     _language, _theme);
 
     internal void FrameGraph()
     {

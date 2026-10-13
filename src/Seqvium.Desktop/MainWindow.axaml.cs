@@ -25,14 +25,20 @@ internal sealed partial class MainWindow : Window
     private readonly GraphEditorSession _graphEditor = new();
     private readonly NodeEditorSession _nodeEditor = new();
     private GraphPaneContent? _graphPane;
+    private PianoRollPaneContent? _pianoPane;
     private bool _closing;
     private bool _shutdownComplete;
     private MainWindowPlacement? _normalWindow;
 
     private WorkspaceLayout CaptureLayout() => _workspace.State.Capture() with
     {
-        Window = _normalWindow is { } normal ? normal with { Maximized = WindowState == WindowState.Maximized ||
-            WindowState == WindowState.Minimized && normal.Maximized } : null
+        Window = _normalWindow is { } normal
+            ? normal with
+            {
+                Maximized = WindowState == WindowState.Maximized ||
+                            WindowState == WindowState.Minimized && normal.Maximized
+            }
+            : null
     };
 
     private void RememberWindow()
@@ -46,11 +52,17 @@ internal sealed partial class MainWindow : Window
     private void RestoreWindow(MainWindowPlacement? saved)
     {
         if (saved is null)
-        { _normalWindow = new(Position.X, Position.Y, Width, Height, true); WindowState = WindowState.Maximized; return; }
+        {
+            _normalWindow = new(Position.X, Position.Y, Width, Height, true);
+            WindowState = WindowState.Maximized;
+            return;
+        }
+
         var screen = Screens.ScreenFromPoint(new(saved.X, saved.Y)) ?? Screens.Primary;
         if (screen is not null)
         {
-            var area = screen.WorkingArea; double scale = screen.Scaling;
+            var area = screen.WorkingArea;
+            double scale = screen.Scaling;
             Width = Math.Clamp(saved.Width, Math.Min(MinWidth, area.Width / scale), area.Width / scale);
             Height = Math.Clamp(saved.Height, Math.Min(MinHeight, area.Height / scale), area.Height / scale);
             Position = new((int)Math.Clamp(saved.X, area.X, area.Right - Width * scale),
@@ -58,6 +70,7 @@ internal sealed partial class MainWindow : Window
             WindowStartupLocation = WindowStartupLocation.Manual;
             _normalWindow = new(Position.X, Position.Y, Width, Height, saved.Maximized);
         }
+
         WindowState = saved.Maximized ? WindowState.Maximized : WindowState.Normal;
     }
 
@@ -85,23 +98,32 @@ internal sealed partial class MainWindow : Window
         var navigation = new WorkspaceRail(session, _workspace);
         var patterns = new PatternNavigator(session, _workflow, _workspace);
         var navigationBody = new Grid { ColumnDefinitions = new("Auto,Auto") };
-        navigationBody.Children.Add(navigation); Grid.SetColumn(patterns, 1); navigationBody.Children.Add(patterns);
+        navigationBody.Children.Add(navigation);
+        Grid.SetColumn(patterns, 1);
+        navigationBody.Children.Add(patterns);
         NavigationRegion.Child = navigationBody;
         bool navigationCollapsed = false;
+
         void AdaptNavigation()
         {
             patterns.IsVisible = !navigationCollapsed && Bounds.Width >= 1000;
+            navigationBody.ColumnDefinitions[1].Width = patterns.IsVisible ? GridLength.Auto : new GridLength(0);
             navigation.NavigationToggle.Classes.Set("active", patterns.IsVisible);
             _workflowControls.OccurrenceShownElsewhere = patterns.IsVisible;
             _workflowControls.Refresh();
         }
+
         navigation.NavigationToggle.Click += (_, _) =>
         {
             navigationCollapsed = !navigationCollapsed;
             if (navigationCollapsed && patterns.IsKeyboardFocusWithin) navigation.NavigationToggle.Focus();
             AdaptNavigation();
         };
-        SizeChanged += (_, _) => AdaptNavigation(); AdaptNavigation();
+        SizeChanged += (_, _) => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            if (!_closing) AdaptNavigation();
+        }, Avalonia.Threading.DispatcherPriority.Loaded);
+        AdaptNavigation();
         // The first workspace starts at a musical tool without creating or modifying a Pattern.
         Opened += (_, _) =>
         {
@@ -116,7 +138,11 @@ internal sealed partial class MainWindow : Window
                 _workspace.Commit();
             }, Avalonia.Threading.DispatcherPriority.Loaded);
         };
-        PositionChanged += (_, _) => { RememberWindow(); if (IsVisible) _workspace.Commit(); };
+        PositionChanged += (_, _) =>
+        {
+            RememberWindow();
+            if (IsVisible) _workspace.Commit();
+        };
         SizeChanged += (_, _) => RememberWindow();
         _workspace.State.Changed += RefreshGainHierarchy;
         RefreshGainHierarchy();
@@ -181,10 +207,13 @@ internal sealed partial class MainWindow : Window
     {
         Title = $"{_session.ProjectName} — Seqvium";
         ToolTip.SetTip(TitleRegion, _session[IsActive ? "Window.Active" : "Window.Inactive"]);
-        BrandName.Bind(TextBlock.ForegroundProperty, BrandName.GetResourceObservable(IsActive ? "Text.Primary" : "Text.Secondary"));
-        Chrome.Bind(Border.BorderBrushProperty, Chrome.GetResourceObservable(IsActive ? "Focus.Active" : "Border.Default"));
+        BrandName.Bind(TextBlock.ForegroundProperty,
+            BrandName.GetResourceObservable(IsActive ? "Text.Primary" : "Text.Secondary"));
+        Chrome.Bind(Border.BorderBrushProperty,
+            Chrome.GetResourceObservable(IsActive ? "Focus.Active" : "Border.Default"));
         var label = _session[WindowState == WindowState.Maximized ? "Window.Restore" : "Window.Maximize"];
-        MaximizeAction.Content = HostIcons.Create(WindowState == WindowState.Maximized ? "Restore" : "Maximize", MaximizeAction, 16);
+        MaximizeAction.Content = HostIcons.Create(WindowState == WindowState.Maximized ? "Restore" : "Maximize",
+            MaximizeAction, 16);
         AutomationProperties.SetName(MaximizeAction, label);
         ToolTip.SetTip(MaximizeAction, label);
     }
@@ -193,8 +222,10 @@ internal sealed partial class MainWindow : Window
 
     private void MusicLayoutClicked(object? sender, RoutedEventArgs args)
     {
-        PaneMenuAction.Flyout?.Hide(); _workspace.CancelGestures();
-        _workspace.State.ArrangeMusic(); _workspace.Commit();
+        PaneMenuAction.Flyout?.Hide();
+        _workspace.CancelGestures();
+        _workspace.State.ArrangeMusic();
+        _workspace.Commit();
     }
 
     private void MaximizeClicked(object? sender, RoutedEventArgs args) =>
@@ -262,14 +293,28 @@ internal sealed partial class MainWindow : Window
     private void GraphClicked(object? sender, RoutedEventArgs args) => OpenGraph();
     private void NodeEditorClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.NodeEditorId);
     private void BeatClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.BeatId);
+    private void PianoClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.PianoId);
     private void ArrangementClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.ArrangementId);
 
     private Control CreatePaneContent(PaneDefinition definition)
     {
         if (definition.InstanceId == WorkspaceState.ArrangementId)
-            return new ArrangementPaneContent(_session, _workflow, WorkflowActionAsync, () => _workspace.Open(WorkspaceState.BeatId));
+            return new ArrangementPaneContent(_session, _workflow, WorkflowActionAsync,
+                () => _workspace.Open(WorkspaceState.BeatId));
         if (definition.InstanceId == WorkspaceState.BeatId)
-            return new BeatPaneContent(_session, _workflow, ImportBeatWavAsync);
+        {
+            var rack = new BeatPaneContent(_session, _workflow, ImportBeatWavAsync);
+            rack.PianoRequested += part =>
+            {
+                _workspace.Open(WorkspaceState.PianoId);
+                _pianoPane?.OpenPart(part);
+            };
+            return rack;
+        }
+
+        if (definition.InstanceId == WorkspaceState.PianoId)
+            return _pianoPane = new(_session, _workflow, WorkflowActionAsync,
+                () => _workspace.Open(WorkspaceState.BeatId));
         if (definition.InstanceId == WorkspaceState.GraphId)
         {
             var content = new GraphPaneContent(_session, _workflow, _graphEditor, ImportGraphWavAsync);
@@ -278,34 +323,42 @@ internal sealed partial class MainWindow : Window
             content.SelectionChanged += RefreshGainHierarchy;
             return content;
         }
+
         return definition.InstanceId == WorkspaceState.NodeEditorId
             ? new NodeEditorPaneContent(_session, _workflow, _nodeEditor)
             : new FirstPartyPaneContent(_session, definition, ToggleLanguageAsync, ToggleThemeAsync);
     }
+
     private void OpenNodeEditor(NodeEditorTarget target)
     {
         if (_closing || !_nodeEditor.Open(_workflow.State, target)) return;
         _workspace.Open(WorkspaceState.NodeEditorId);
     }
+
     private void RefreshGainHierarchy()
     {
         if (_shutdownComplete || _workspace is null) return;
-        var visibility = GainSurfacePresentation.Resolve(_workflow.State, _graphEditor, _nodeEditor.Target, _workspace.State);
+        var visibility =
+            GainSurfacePresentation.Resolve(_workflow.State, _graphEditor, _nodeEditor.Target, _workspace.State);
         _workflowControls.GainShownElsewhere = visibility.HideToolbarGain;
         _workflowControls.Refresh(_closing || _workflowActionBusy);
         if (_graphPane is { } graph && graph.GainShownInEditor != visibility.HideGraphGain)
-        { graph.GainShownInEditor = visibility.HideGraphGain; graph.Refresh(); }
+        {
+            graph.GainShownInEditor = visibility.HideGraphGain;
+            graph.Refresh();
+        }
     }
 
     private void OpenGraph()
     {
         if (_closing) return;
         bool same = _graphEditor.Target == _workflow.State.Selected &&
-            _graphEditor.Basis?.Lifecycle == _workflow.State.Document.LifecycleId;
+                    _graphEditor.Basis?.Lifecycle == _workflow.State.Document.LifecycleId;
         if (_workflow.State.Selected is { } target) _graphEditor.Open(_workflow.State, target);
         OpenPane(WorkspaceState.GraphId);
-        if (!same) Avalonia.Threading.Dispatcher.UIThread.Post(_workspace.FrameGraph,
-            Avalonia.Threading.DispatcherPriority.Loaded);
+        if (!same)
+            Avalonia.Threading.Dispatcher.UIThread.Post(_workspace.FrameGraph,
+                Avalonia.Threading.DispatcherPriority.Loaded);
     }
 
     private void OpenPane(string id)
@@ -331,10 +384,12 @@ internal sealed partial class MainWindow : Window
             _workflowControls.Refresh();
             return;
         }
+
         _workflow.Changed -= WorkflowChanged;
         await _workflow.DisposeAsync();
         _workspace.PrepareShutdown();
-        RememberWindow(); _layoutPersistence.Request(CaptureLayout());
+        RememberWindow();
+        _layoutPersistence.Request(CaptureLayout());
         await _layoutPersistence.ShutdownAsync();
         await _preferenceWork;
         _shutdownComplete = true;

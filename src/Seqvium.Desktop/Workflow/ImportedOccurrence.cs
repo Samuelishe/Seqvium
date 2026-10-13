@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using Seqvium.Core;
 
 namespace Seqvium.Desktop.Workflow;
@@ -14,10 +15,14 @@ internal static class ImportedOccurrence
 
     internal static GraphAttachment Create(ProjectEdit edit, MediaAcceptance media, string name,
         MusicalDuration duration)
+        => CreatePitched(edit, media, name, duration, 60m);
+
+    internal static GraphAttachment CreatePitched(ProjectEdit edit, MediaAcceptance media, string name,
+        MusicalDuration duration, decimal rootPitch)
     {
         var pattern = edit.AddPattern(name, duration);
         var part = edit.AddPart(pattern, name, media.SoundId);
-        edit.AddNote(pattern, part, default, duration, 60m, 1m);
+        edit.AddNote(pattern, part, default, duration, rootPitch, 1m);
         var placement = edit.AddPlacement(pattern, default);
         var attachment = edit.CreateItemGraph(placement);
         var source = edit.AddGraphNode(attachment.GraphId, GraphBuiltIns.Source, new(0, 0));
@@ -27,7 +32,8 @@ internal static class ImportedOccurrence
         edit.ConnectGraphPorts(attachment.GraphId, source.Id, source.Ports.Single().Id,
             gain.Id, gain.Ports.Single(port => port.Direction == GraphPortDirection.Input).Id);
         edit.ConnectGraphPorts(attachment.GraphId, gain.Id,
-            gain.Ports.Single(port => port.Direction == GraphPortDirection.Output).Id, output.Id, output.Ports.Single().Id);
+            gain.Ports.Single(port => port.Direction == GraphPortDirection.Output).Id, output.Id,
+            output.Ports.Single().Id);
         edit.BindGraphSource(attachment.Id, source.Id, placement, part);
         edit.SetGraphOutput(attachment.Id, output.Id);
         return attachment;

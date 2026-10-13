@@ -84,6 +84,7 @@ public sealed class HostPresentationTests
             Assert.True(Contrast(palette[$"Rack.Channel{channel}"], palette[$"Rack.Step{channel}"]) >= 3);
             Assert.True(Contrast(palette["Rack.StepInk"], palette[$"Rack.Channel{channel}"]) >= 4.5);
         }
+
         Assert.NotEqual(palette["Surface.Background"], palette["Focus.Active"]);
         Assert.Equal(HostPalette.For(HostTheme.Dark).Keys.Order(), HostPalette.For(HostTheme.Light).Keys.Order());
     }
@@ -91,7 +92,12 @@ public sealed class HostPresentationTests
     [Fact]
     public void SharedMetricsKeepCompactReadableShellAndDevelopmentVersionIndependent()
     {
-        Assert.All(HostMetrics.Values.Where(pair => !pair.Key.StartsWith("Playlist.", StringComparison.Ordinal)), pair => Assert.InRange(pair.Value, 1, 56));
+        Assert.All(HostMetrics.Values.Where(pair => !pair.Key.StartsWith("Playlist.", StringComparison.Ordinal) &&
+                                                    !pair.Key.StartsWith("Piano.", StringComparison.Ordinal)),
+            pair => Assert.InRange(pair.Value, 1, 56));
+        Assert.InRange(HostMetrics.Values["Piano.KeyWidth"], 60, 96);
+        Assert.InRange(HostMetrics.Values["Piano.VelocityHeight"], 60, 120);
+        Assert.InRange(HostMetrics.Values["Piano.RowHeight"], 16, 28);
         Assert.Equal(72, HostMetrics.Values["Playlist.LaneHeight"]);
         Assert.Equal(156, HostMetrics.Values["Playlist.HeaderWidth"]);
         Assert.InRange(HostMetrics.Values["Type.Body"], 12, 14);
@@ -102,7 +108,7 @@ public sealed class HostPresentationTests
         using var directory = new TemporaryDirectory();
         using var session = new ShellSession(new(directory.File("prefs.json")), new(new(), false));
         Assert.Equal(typeof(ShellSession).Assembly
-            .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()!.InformationalVersion,
+                .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()!.InformationalVersion,
             session.Version);
         Assert.Equal("EN", session.LanguageCode);
     }

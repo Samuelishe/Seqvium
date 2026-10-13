@@ -29,7 +29,7 @@ are preserved. PR/PL/MX/EQ IDs and searchable offline gallery provide retrieval.
 were not supplied and redistribution rights remain unverified. Empty inbox folders remain.
 Static screenshots establish composition/visible feedback, not tested gestures. Private catalogs
 own detailed provenance; [UI direction](../UI_DESIGN.md#reference-library-and-next-editor-direction)
-and [R9 planning](../ROADMAP.md#piano-roll-preparation-and-bounded-first-slice) own public conclusions.
+and [R9 planning](../ROADMAP.md#seq-r9--piano-roll) own public conclusions.
 
 ## Implementation and checks
 

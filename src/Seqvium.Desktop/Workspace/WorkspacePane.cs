@@ -21,7 +21,10 @@ internal sealed class WorkspacePane : Border, IDisposable
     private readonly PaneDefinition _definition;
 
     private readonly TextBlock _title = new()
-        { Classes = { "paneTitle" }, VerticalAlignment = VerticalAlignment.Center, TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis };
+    {
+        Classes = { "paneTitle" }, VerticalAlignment = VerticalAlignment.Center,
+        TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis
+    };
 
     private readonly Button _actions;
     private readonly Button _collapse;
@@ -89,6 +92,7 @@ internal sealed class WorkspacePane : Border, IDisposable
             editor.TitleChanged += RefreshTitle;
             editor.CurveExpansionChanged += CurveChanged;
         }
+
         Grid.SetRow(_content, 1);
         body.Children.Add(_content);
         _corner = new Border
@@ -101,11 +105,17 @@ internal sealed class WorkspacePane : Border, IDisposable
         // Scroll presenters can hit their wide drawing child beyond the visible content gutter.
         // Explicit transparent frame surfaces reserve the boundary for workspace arbitration.
         foreach (var edge in new[] { HorizontalAlignment.Left, HorizontalAlignment.Right })
-            _surface.Children.Add(new Border { Width = PaneGeometry.EdgeThickness, HorizontalAlignment = edge,
-                Background = Avalonia.Media.Brushes.Transparent });
+            _surface.Children.Add(new Border
+            {
+                Width = PaneGeometry.EdgeThickness, HorizontalAlignment = edge,
+                Background = Avalonia.Media.Brushes.Transparent
+            });
         foreach (var edge in new[] { VerticalAlignment.Top, VerticalAlignment.Bottom })
-            _surface.Children.Add(new Border { Height = PaneGeometry.EdgeThickness, VerticalAlignment = edge,
-                Background = Avalonia.Media.Brushes.Transparent });
+            _surface.Children.Add(new Border
+            {
+                Height = PaneGeometry.EdgeThickness, VerticalAlignment = edge,
+                Background = Avalonia.Media.Brushes.Transparent
+            });
         _header.PointerPressed += (_, args) => Begin(args);
         AddHandler(PointerPressedEvent, (_, _) => host.Activate(Id), RoutingStrategies.Tunnel);
         AddHandler(GotFocusEvent, (_, _) => host.Activate(Id));
@@ -113,7 +123,10 @@ internal sealed class WorkspacePane : Border, IDisposable
         PointerReleased += End;
         // Child controls also release Avalonia's implicit mouse capture after ordinary clicks.
         // Only loss of this pane's own geometry capture cancels its gesture/content.
-        PointerCaptureLost += (_, e) => { if (_pointer == e.Pointer) CancelGesture(); };
+        PointerCaptureLost += (_, e) =>
+        {
+            if (_pointer == e.Pointer) CancelGesture();
+        };
         // Consume local geometry chords before standard Shift+Arrow focus navigation.
         AddHandler(KeyDownEvent, PaneKeyDown, RoutingStrategies.Tunnel);
     }
@@ -160,22 +173,31 @@ internal sealed class WorkspacePane : Border, IDisposable
         _permission.IsChecked = pane.AllowDocking;
         _corner.IsVisible = pane.Dock == PaneDock.Floating;
         if (_content is FirstPartyPaneContent firstParty) firstParty.Refresh();
+        if (_content is PianoRollPaneContent piano)
+        {
+            if (pane.Visibility != PaneVisibility.Visible) piano.CancelGesture();
+            else piano.Refresh();
+        }
+
         if (_content is GraphPaneContent graph) graph.Refresh();
         if (_content is ArrangementPaneContent arrangement)
         {
             if (pane.Visibility != PaneVisibility.Visible) arrangement.CancelGesture();
             else arrangement.Refresh();
         }
+
         if (_content is BeatPaneContent beat)
         {
             if (pane.Visibility != PaneVisibility.Visible) beat.Suspend();
             else beat.Refresh();
         }
+
         if (_content is NodeEditorPaneContent editor)
         {
             if (pane.Visibility != PaneVisibility.Visible) editor.CancelGesture();
             else editor.Refresh();
         }
+
         RefreshTitle();
     }
 
@@ -183,15 +205,19 @@ internal sealed class WorkspacePane : Border, IDisposable
     {
         if (_disposed) return;
         _title.Text = _content is NodeEditorPaneContent editor ? editor.Title : _session[_definition.TitleKey];
-        ToolTip.SetTip(_title, _title.Text); AutomationProperties.SetName(this, _title.Text);
+        ToolTip.SetTip(_title, _title.Text);
+        AutomationProperties.SetName(this, _title.Text);
     }
+
     private void CurveChanged(bool expanded)
     {
-        if (_disposed || _host.State.Get(Id) is not { Visibility: PaneVisibility.Visible, Dock: PaneDock.Floating }) return;
+        if (_disposed || _host.State.Get(Id) is not
+                { Visibility: PaneVisibility.Visible, Dock: PaneDock.Floating }) return;
         var bounds = _host.State.Bounds(Id);
         if (expanded)
         {
-            _curveCollapsedHeight = bounds.Height; _curveExpandedHeight = Math.Max(bounds.Height, 350);
+            _curveCollapsedHeight = bounds.Height;
+            _curveExpandedHeight = Math.Max(bounds.Height, 350);
             _host.State.SetBounds(Id, bounds with { Height = _curveExpandedHeight.Value });
         }
         else
@@ -201,6 +227,7 @@ internal sealed class WorkspacePane : Border, IDisposable
                 _host.State.SetBounds(Id, bounds with { Height = previous });
             _curveCollapsedHeight = _curveExpandedHeight = null;
         }
+
         _host.Commit();
     }
 
@@ -218,11 +245,15 @@ internal sealed class WorkspacePane : Border, IDisposable
         if (_content is GraphPaneContent graph) graph.FocusCanvas();
         else if (_content is NodeEditorPaneContent editor) editor.FocusEditor();
         else if (_content is BeatPaneContent beat) beat.FocusEditor();
+        else if (_content is PianoRollPaneContent piano) piano.FocusEditor();
         else if (_content is ArrangementPaneContent arrangement) arrangement.FocusEditor();
         else _actions.Focus();
     }
 
-    internal void FrameGraph() { if (_content is GraphPaneContent graph) graph.Frame(); }
+    internal void FrameGraph()
+    {
+        if (_content is GraphPaneContent graph) graph.Frame();
+    }
 
     internal void SetResizeCursor(Cursor? cursor)
     {
@@ -273,6 +304,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         if (_content is GraphPaneContent graph) graph.CancelGesture();
         if (_content is NodeEditorPaneContent editor) editor.CancelGesture();
         if (_content is BeatPaneContent beat) beat.CancelGesture();
+        if (_content is PianoRollPaneContent piano) piano.CancelGesture();
         if (_content is ArrangementPaneContent arrangement) arrangement.CancelGesture();
         if (_pointer is not { } pointer) return;
         _pointer = null;

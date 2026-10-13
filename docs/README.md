@@ -7,16 +7,16 @@ workflow and points to the detailed sources for each subject.
 ## Create a drum pattern
 
 After [building and launching](../README.md#getting-started), use **Channel Rack**. A pristine layout
-opens it; the left Rack icon or **Panes** menu reopens it. Use short supported percussion WAVs
-(the formats below apply).
+opens it; the left Rack icon or **Panes** menu reopens it. Use short supported percussion WAVs (the formats below
+apply).
 
 1. Click **New pattern**. It creates an empty bar with 16 sixteenth-note steps in the current
    4/4 project; it does not change BPM or add preset hits.
 2. Click **Add sound**, or drop one WAV into the Rack, for your Kick, Snare and Hi-Hat. Each adds a row;
    source mixing is connected automatically for this initial graph.
 3. Enable Kick steps 1/9, Snare 5/13 and Hi-Hat 1/3/5/7/9/11/13/15. Click again to remove a hit.
-   Drag across a row to paint or erase; release commits the whole gesture, Escape cancels. The row's
-   **…** menu fills every four/two steps, shifts or clears. Arrows navigate; Space/Enter toggles;
+   Drag across a row to paint or erase; release commits the whole gesture, Escape cancels. The row's **…** menu fills
+   every four/two steps, shifts or clears. Arrows navigate; Space/Enter toggles;
    Ctrl+Z/Y undo/redo. Edit the Pattern name and press Enter/check. Click BPM to set tempo.
    At wider window sizes, the left Pattern list offers creation and rhythm previews. For balance, type
    a fractional toolbar Gain such as `0.22`, then Enter or leave the field; Escape cancels the draft.
@@ -37,7 +37,35 @@ opens it; the left Rack icon or **Panes** menu reopens it. Use short supported p
 The editor explains unsupported meter/Pattern shape or notes and preserves them. Adding channels to
 an already shared Pattern or a custom graph can be refused safely; existing shared steps still edit
 the shared musical content. Up to eight channels and 32 simultaneous voices are offered in Rack and
-Song; excessive overlapping voices/media can block Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
+Song; excessive overlapping voices/media can block
+Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
+
+## Compose a melody
+
+1. Create a Pattern in Rack, choose its length, and add a melodic WAV. Double-click the channel name
+   or choose **Piano Roll** from its row menu; the piano rail icon and **Panes** also open the editor.
+2. Check **Root Pitch** before composing. This is the note actually recorded in the source WAV, not
+   the note you want to play. C4 means MIDI 60. Set the documented source note; if it is unknown, the
+   default C4 is only a configuration, not a detected pitch. A matching nearby `catalog.json` with
+   `file`, `root_midi` and SHA-256 can supply a verified initial root. The source popup also names the channel.
+3. Click the musical grid to draw, or drag an empty row for a longer note. Drag note bodies to move,
+   Ctrl-drag to copy, and drag right edges to resize. Shift-click extends selection; Shift-drag empty
+   space or the selection tool draws a box. Right-click/Delete removes notes. Escape cancels a held edit.
+4. Drag the aligned velocity handles; staggered handles keep chord voices individually reachable.
+   The properties button exposes exact pitch, start, duration and velocity. Group edits change only
+   the fields you actually adjust; 100% velocity means intensity 1. Each finished gesture is one Undo.
+5. Choose snap (including eighth-note triplets or free). Wheel scrolls pitch, Shift+wheel scrolls
+   time, Ctrl+wheel zooms around the pointer, and middle-drag pans. Keyboard arrows nudge; Shift+left/right
+   changes duration, Shift+up/down moves an octave. Ctrl+A/C/X/V/D selects/copies/cuts/pastes/duplicates;
+   Alt+left/right chooses a note without moving it, Enter auditions. Ctrl+Z/Y undo/redo.
+6. Keyboard clicks and the audition toggle provide quiet source-note previews while stopped. Play uses
+   the real Pattern/Song transport and processing graphs. Place the Pattern in Playlist for a song;
+   all placements share your edits. Save/Open and Pattern/Song WAV export preserve this musical data.
+
+Returning to Rack does not quantize or erase richer notes. A melody preview replaces incompatible
+step pads; open Piano Roll to edit it. Root changes affect every use of the shared sound, not the
+stored note pitches or WAV bytes. Linear sample pitching changes natural duration; there is no
+sustain loop, time stretching, MIDI recording or automatic pitch detector yet.
 
 ## Arrange a song
 
@@ -45,7 +73,8 @@ Song; excessive overlapping voices/media can block Play. [Editing scope](UX_CONT
 2. Choose a source Pattern in Playlist and click a track to place it. Clips share the original notes;
    double-click a clip to return to its Rack. Overlapping clips play together, including on the same track.
 3. Drag a clip to move it. Ctrl-drag makes a shared copy; dragging the right edge changes the number
-   of whole Pattern repeats. Shift-click adds/removes clips from a selection; the selection tool draws a box and Ctrl+A selects all.
+   of whole Pattern repeats. Shift-click adds/removes clips from a selection; the selection tool draws a box and Ctrl+A
+   selects all.
    Move, Ctrl-copy, Duplicate/Ctrl+D and Delete operate on the group in one Undo while retaining spacing.
    Duplicate appends the group after its last end. Delete removes only the selected clips.
    Ctrl+Z/Y restores edits. The snap selector offers bars, beats, sixteenths or free movement;
@@ -55,12 +84,14 @@ Song; excessive overlapping voices/media can block Play. [Editing scope](UX_CONT
    independent of the source Pattern's Rack loop, and are saved with the project.
 5. Playlist's Play button starts at the chosen song cursor; click its ruler to seek, or drag the ruler
    to define and enable a loop. The loop button disables/re-enables the retained range; Start returns to zero.
-   Cursor/range are session state and do not change Save, Undo or whole-Song export. The global **Pattern / Song** button
+   Cursor/range are session state and do not change Save, Undo or whole-Song export. The global **Pattern / Song**
+   button
    chooses between the continuous Rack and finite Playlist; switching stops transport. Select/edit
    another Rack source during Song without switching its playback target. Compatible clip/note/Mute/Solo
    edits continue from the current time; passed new notes wait for a future occurrence.
 6. Use Shift+wheel for horizontal scrolling, Ctrl+wheel to zoom around the pointer, or middle-drag to pan.
-   Drag the overview viewport to navigate, its ends to zoom, or choose Fit song. Track headings remain visible when scrolling
+   Drag the overview viewport to navigate, its ends to zoom, or choose Fit song. Track headings remain visible when
+   scrolling
    horizontally. Follow playback keeps the renderer's cursor in view and can be turned off.
 7. Use Playlist's export button or **… → Export song to WAV** for the whole arrangement, including
    leading gaps and overlaps, as 48 kHz stereo PCM16. Save/Open preserves the clips, tracks and samples;
@@ -71,7 +102,8 @@ compatible musical material; they do not assign instruments or create Mixer chan
 checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
 are available now; section markers, independent variations, clip trimming and automation remain planned. WAV channel
 add/delete/Undo/Redo keeps the current clock and other voices for the supported source/mix tree.
-Other incompatible topology changes retain their restart policy. See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
+Other incompatible topology changes retain their restart policy.
+See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
 
 ## Try sample processing
 

@@ -28,12 +28,14 @@ pitched source and supported execution configurations. Personal Library ownershi
 
 ## R4-F3-A desktop import and musical use
 
-The native WAV picker imports supported bounded PCM16/24/32 or float32 mono/stereo material at 8–192 kHz using the existing
+The native WAV picker imports supported bounded PCM16/24/32 or float32 mono/stereo material at 8–192 kHz using the
+existing
 R2 durable protocol. `WavImport.Accept(createUse, cancellation)` invokes optional musical creation
 inside the same validated owner Edit as resource/sound acceptance. Failure/cancellation accepts no
 false occurrence; Dispose removes an unaccepted candidate. Resource retention, history and Save remain R2-owned.
 
-One accepted import creates a named Pattern, Part, native-pitch note (pitch/root 60, intensity 1),
+One accepted import creates a named Pattern, Part, native-pitch note (pitch equals configured root,
+intensity 1; verified catalog root or fallback 60 under the R9 policy below),
 Placement at tick zero and an item-local Source → Gain → Output graph, initial Gain 0.25. Source binds
 the exact new PlacementId/PartId. Pattern/note duration is
 `ceil((sourceFrames / sourceRate + 1 / 44100) * ticksPerQuarter * BPM / 60) + 1` ticks at current constant tempo.
@@ -82,6 +84,22 @@ accepted audio remains durable through Undo/Redo and Save/reopen even if the ori
 The conservative lifecycle/generation gate applies across picker and preparation; rejected work does
 not silently attach to a changed graph. Cancel import remains available in existing project overflow.
 [Graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor) owns canvas/binding operations.
+
+## SEQ-R9 source Root Pitch
+
+Toolbar import, Rack channel import and Graph Add WAV can initialize the PCM sound's root from an
+optional nearby `catalog.json`. The lookup walks at most twelve ancestor directories, reads at most
+2 MiB/depth 16, and requires a normalized exact file match, a valid decimal `root_midi` in [0,127]
+and the SHA-256 of the exact bytes being accepted. Malformed/unavailable/mismatched metadata is
+optional: import continues with explicit root 60. No filename, chord label, FFT or guessed musical
+pitch is treated as calibration. No private catalog or library becomes a bundled/required resource.
+
+Full-source imports place their initial note at that native root; Rack channels remain empty. Piano
+Roll's source popup exposes channel name and explicit MIDI root (C4=60), updating the canonical shared
+SoundDefinition without rewriting notes/media. Existing projects keep their stored roots; catalog
+changes never silently retune them. Fractional roots remain supported in the model and are preserved
+by name-only edits; finer manual tuning UI is deferred. Pitch ratio/resampling/EOF belong to
+[audio](AUDIO_ENGINE.md#pitches-voices-and-output). The library, source files and catalogs remain read-only.
 
 ## R2-F3 bounded source access, raw preview and reuse
 

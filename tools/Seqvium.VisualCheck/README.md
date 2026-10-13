@@ -25,8 +25,8 @@ committed toolbar Gain fractional drafts, Enter/Escape, invalid input, focus los
 
 `catalog` opens real standard/primary/compact/icon/danger buttons, sliders, drawn Gain levels,
 numeric fields, selection/toggle controls, disclosure, diagnostics, menus and tooltip in both themes.
-Named fixture pseudo states expose hover/pressed/focus/disabled/error rendering; those columns are
-**synthetic states**, not native Windows mouse evidence. Not every state applies to every component.
+Named fixture pseudo states expose hover/pressed/focus/disabled/error rendering; those columns are **synthetic states**,
+not native Windows mouse evidence. Not every state applies to every component.
 
 The host temporarily replaces `Control.Corner` and `Control.Fill`, verifies actual button corners,
 Fluent slider decrease-track brushes and drawn Gain brushes, then restores accepted resources in
@@ -80,8 +80,33 @@ coordinator/PCM with a substituted physical borrower, checking 96 long-pattern p
 phase 2:1:2, current-column outline, Stop cleanup and graph WAV export in Dark/Light. It opens no
 audio device; physical loop smoke belongs to DeviceCheck.
 A separate native click/focus/drag/Escape smoke uses an exact foreground guard and may report refusal.
-It requests ordinary activation only; it never bypasses the guard or exercises a native file picker. Its media/projects/PNG/JSON are ignored run artifacts,
+It requests ordinary activation only; it never bypasses the guard or exercises a native file picker. Its
+media/projects/PNG/JSON are ignored run artifacts,
 subject to the same rolling retention. Device-independent musical PCM checks stay in Tests.
+
+## Piano Roll and physical musical check
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll piano "$PWD/.artifacts/seq-r9/gui"
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll piano-music "$PWD/.artifacts/seq-r9/music" "C:/path/to/Seqvium Sample Library" "C:/path/to/preserved-examples"
+```
+
+`piano` uses authored PCM in an isolated production window, edit audition disabled, no audio device.
+Routed checks compose chords/melody, move/copy/resize/cancel, edit separate chord velocity, keyboard
+selection, exact group properties/Undo, root/source settings and late-notification guards. It checks
+shared Rack previews, Save/Open and graph WAV. RU/EN × Dark/Light ordinary/reduced renders measure
+actual pane containment and label/TextPresenter alignment. Routed events are not native input.
+
+`piano-music` explicitly plays through the normal physical output at current system volume. It reads
+the supplied private catalog, accepts verified VSCO single-note WAVs (MIDI roots 57/45), then composes
+19 upper and four lower notes through guarded Windows SendInput: chords, different duration/velocity,
+move/Ctrl-copy/resize/Escape/Undo. Real workflow APIs handle import, save/reopen, shared Playlist repeat
+and Pattern/Song export, not native picker input. It checks pitched audition, continuous Pattern,
+finite Song, live-edit/Undo convergence, library hashes and exported PCM frame counts/peak/saturation.
+`piano-music.json` separates native input, physical execution and unavailable acoustic judgement.
+No pressure, high-DPI, other-OS or all-device claim follows. The optional third directory receives a
+unique preserved project/media, Pattern/Song WAV and theme renders outside temporary rolling retention;
+source WAV/catalogs are never modified. Without it, output remains isolated/ignored and temporary.
 
 ## Independent-process Single Instance checks
 
@@ -89,7 +114,8 @@ subject to the same rolling retention. Device-independent musical PCM checks sta
 with an internal isolated identity. It checks one document initialization, successful activation,
 restoration of the existing minimized window, graceful shutdown, explicit crash and reacquisition.
 Separate `noipc`/`stalled` hosts hold the real lease while a Desktop secondary must time out with a
-diagnostic and no document. The script terminates only the Process objects it created, joins them with bounded waits and disposes
+diagnostic and no document. The script terminates only the Process objects it created, joins them with bounded waits and
+disposes
 their handles. Child stdout/stderr and partial results survive failed runs.
 
 The private `desktop`, `lease`, `noipc`, `stalled`, `activate` commands belong to this developer tool;

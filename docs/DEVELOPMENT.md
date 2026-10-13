@@ -153,7 +153,9 @@ settings. Other contributors need no personal files to build/test/launch Seqvium
 archives, images, source snapshots or private catalogs to Git or use them as required test fixtures.
 Accepted project media still follows the existing durable import boundary; the external library is
 not a managed project-media directory. Preserve original audio and source pitch/BPM/chord metadata;
-sampler-root configuration is distinct from file format compatibility. Existing user preferences and
+sampler-root configuration is distinct from file format compatibility. SEQ-R9 imports optionally read
+a nearby exact-path/hash-verified catalog root under [sample policy](SAMPLE_WORKFLOW.md#seq-r9-source-root-pitch);
+absence never prevents build/import, and existing projects are not recalibrated on Open. User preferences and
 projects are not replaced by resource preparation. GUI captures stay in ignored `.artifacts/` under
 the existing retention policy. [UI design](UI_DESIGN.md#reference-library-and-next-editor-direction)
 owns transferable decisions; private catalogs own per-image/source provenance, never public assets.

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using Seqvium.Core;
 using Seqvium.Desktop.Workspace;
 
@@ -11,7 +12,7 @@ internal sealed partial class DesktopWorkflow
         if (_document.LifecycleId != basis.Lifecycle || _document.Generation != basis.Generation)
             throw new InvalidOperationException("Graph.Stale");
         var attachment = _document.Current.State.GraphAttachments.SingleOrDefault(a => a.Id == basis.Attachment)
-            ?? throw new InvalidOperationException("Graph.TargetMissing");
+                         ?? throw new InvalidOperationException("Graph.TargetMissing");
         return (attachment, _document.Current.State.Graphs.Single(g => g.Id == attachment.GraphId));
     }
 
@@ -99,9 +100,11 @@ internal sealed partial class DesktopWorkflow
             var attachment = _document.Current.State.GraphAttachments.SingleOrDefault(a => a.Id == target.AttachmentId);
             var node = _document.Current.State.Graphs.SingleOrDefault(g => g.Id == attachment?.GraphId)?.Nodes
                 .SingleOrDefault(n => n.Id == target.NodeId);
-            return Task.FromResult(attachment?.GraphId != target.GraphDefinitionId || node is not { Type: GraphBuiltIns.Source } ||
-                !GraphConnectionRules.Supported(node) ? null :
-                SourceAccess.DiscoverProjectAsync(_document, SourceAccess.MaximumEntries, cancellation));
+            return Task.FromResult(attachment?.GraphId != target.GraphDefinitionId ||
+                                   node is not { Type: GraphBuiltIns.Source } ||
+                                   !GraphConnectionRules.Supported(node)
+                ? null
+                : SourceAccess.DiscoverProjectAsync(_document, SourceAccess.MaximumEntries, cancellation));
         });
         return pending is null ? null : await pending.ConfigureAwait(false);
     }
@@ -118,14 +121,15 @@ internal sealed partial class DesktopWorkflow
     internal static PatternPlacement SourceDestination(ProjectState state, GraphAttachment attachment)
     {
         var placement = state.Placements.SingleOrDefault(p => p.ItemContextId == attachment.ContextId)
-            ?? throw new InvalidOperationException("Graph.TargetMissing");
+                        ?? throw new InvalidOperationException("Graph.TargetMissing");
         var pattern = state.Patterns.Single(p => p.Id == placement.PatternId);
         if (state.Placements.Count(p => p.PatternId == pattern.Id) != 1)
             throw new InvalidOperationException("Graph.SharedPattern");
         if (pattern.Parts.Length >= GraphDiagnostics.MaximumSources)
             throw new InvalidOperationException(GraphReasons.ProcessingLimit);
         var report = GraphDiagnostics.Inspect(state).Single(r => r.GraphId == attachment.GraphId);
-        if (report.Diagnostics.Any(d => d.Reason is GraphReasons.UnsupportedScope or GraphReasons.UnsupportedDependency))
+        if (report.Diagnostics.Any(d =>
+                d.Reason is GraphReasons.UnsupportedScope or GraphReasons.UnsupportedDependency))
             throw new InvalidOperationException(GraphReasons.UnsupportedDependency);
         return placement;
     }
@@ -134,20 +138,24 @@ internal sealed partial class DesktopWorkflow
         CancellationToken cancellation = default) => Command("Workflow.ImportFailed", async () =>
     {
         var (attachment, graph) = ValidateGraphBasis(basis);
-        if (graph.Nodes.Length >= GraphDiagnostics.MaximumNodes) throw new InvalidOperationException(GraphReasons.ProcessingLimit);
+        if (graph.Nodes.Length >= GraphDiagnostics.MaximumNodes)
+            throw new InvalidOperationException(GraphReasons.ProcessingLimit);
         var placement = SourceDestination(_document.Current.State, attachment);
         string name = Path.GetFileNameWithoutExtension(path);
-        using var request = ProjectMedia.BeginImport(_document, name, releaseMilliseconds: 0m, ownedMediaDirectory: _mediaDirectory);
-        _status = "Workflow.Importing"; Publish();
+        _status = "Workflow.Importing";
+        Publish();
         var prepared = await Task.Run(async () =>
         {
             await using var file = File.OpenRead(path);
             var bytes = await WavDecoder.ReadBytesAsync(file, cancellation);
             using var pcm = WavDecoder.Decode(bytes);
-            return (Bytes: bytes, pcm.Frames, pcm.SampleRate);
+            return (Bytes: bytes, pcm.Frames, pcm.SampleRate, Root: SampleRootMetadata.Read(path, bytes));
         }, cancellation);
-        var duration = ImportedOccurrence.Duration(prepared.Frames, prepared.SampleRate, _document.Current.State.Settings.Tempo);
+        var duration = ImportedOccurrence.Duration(prepared.Frames, prepared.SampleRate,
+            _document.Current.State.Settings.Tempo);
         using var stream = new MemoryStream(prepared.Bytes, writable: false);
+        using var request = ProjectMedia.BeginImport(_document, name, rootPitch: prepared.Root,
+            releaseMilliseconds: 0m, ownedMediaDirectory: _mediaDirectory);
         await request.PrepareAsync(stream, cancellation);
         ValidateGraphBasis(basis);
         request.Accept((edit, media) =>
@@ -155,9 +163,10 @@ internal sealed partial class DesktopWorkflow
             var pattern = _document.Current.State.Patterns.Single(p => p.Id == placement.PatternId);
             if (duration.Ticks > pattern.Length.Ticks) edit.SetPatternLength(pattern.Id, duration);
             var part = edit.AddPart(pattern.Id, name, media.SoundId);
-            edit.AddNote(pattern.Id, part, default, duration, 60m, 1m);
+            edit.AddNote(pattern.Id, part, default, duration, prepared.Root, 1m);
             var source = edit.AddGraphNode(graph.Id, GraphBuiltIns.Source, position,
-                graph.Nodes.FirstOrDefault(n => n.Type == GraphBuiltIns.Source)?.Ports.FirstOrDefault()?.Layout ?? GraphBuiltIns.Stereo);
+                graph.Nodes.FirstOrDefault(n => n.Type == GraphBuiltIns.Source)?.Ports.FirstOrDefault()?.Layout ??
+                GraphBuiltIns.Stereo);
             edit.BindGraphSource(attachment.Id, source.Id, placement.Id, part);
             edit.SetContextMix(attachment.ContextId, true);
         }, cancellation);

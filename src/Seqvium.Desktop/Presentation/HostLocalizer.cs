@@ -40,13 +40,56 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> English { get; } = new Dictionary<string, string>
     {
+        ["Pane.Piano"] = "Piano Roll",
+        ["Piano.Pattern"] = "Shared Pattern",
+        ["Piano.Part"] = "Channel",
+        ["Piano.NoTarget"] = "Choose a Pattern and add a sound in the Channel Rack.",
+        ["Piano.Draw"] = "Draw notes · drag to set length",
+        ["Piano.Select"] = "Select notes · Shift-drag a box",
+        ["Piano.Snap"] = "Snap · Alt temporarily disables",
+        ["Piano.Length"] = "Length of new notes",
+        ["Piano.Duplicate"] = "Duplicate notes · Ctrl+D",
+        ["Piano.Delete"] = "Delete notes · Delete / right-click",
+        ["Piano.Properties"] = "Exact note properties",
+        ["Piano.GroupProperties"] =
+            "Pitch and start move the group. Only changed length or velocity values apply to all selected notes.",
+        ["Piano.Velocity"] = "Velocity",
+        ["Piano.Ghosts"] = "Show other channels",
+        ["Piano.Audition"] = "Audition edited notes while stopped",
+        ["Piano.ZoomIn"] = "Zoom in · Ctrl+wheel",
+        ["Piano.ZoomOut"] = "Zoom out · Ctrl+wheel",
+        ["Piano.Fit"] = "Fit Pattern · Home",
+        ["Piano.Root"] = "Root",
+        ["Piano.ChannelName"] = "Channel name",
+        ["Piano.RootPitch"] = "Source note · MIDI pitch",
+        ["Piano.RootHint"] =
+            "Set the note recorded in this sample. This tunes its shared sound; written notes keep their pitches. Library roots are used only with verified catalog hashes; other imports start at C4 (60).",
+        ["Piano.Apply"] = "Apply",
+        ["Piano.Play"] = "Play Pattern",
+        ["Piano.Stop"] = "Stop",
+        ["Piano.Rack"] = "Open Channel Rack",
+        ["Piano.Export"] = "Export Pattern to WAV",
+        ["Piano.Pitch"] = "Pitch · MIDI",
+        ["Piano.Start"] = "Start · quarters",
+        ["Piano.Duration"] = "Length · quarters",
+        ["Piano.Shared"] = "Shared song clips",
+        ["Piano.PatternScope"] = "Shared Pattern notes",
+        ["Piano.Selected"] = "selected",
+        ["Piano.KeyboardSelection"] =
+            "Alt+Left/Right selects a note; Enter auditions it. Arrows move notes, Shift+Left/Right changes length, Shift+Up/Down changes octave.",
+        ["Piano.NameRequired"] = "A channel name is required.",
+        ["Piano.Open"] = "Open Piano Roll",
+        ["Piano.Help"] =
+            "Click to draw; drag notes to move, Ctrl-drag to copy, drag the right edge to resize. Shift-click adds selection; Shift-drag selects a box. Delete removes; arrows move, Shift+Up/Down changes octave. Ctrl+A/C/X/V/D; Alt bypasses snap. Wheel scrolls pitch, Shift+wheel scrolls time, Ctrl+wheel zooms; middle-drag pans. Keyboard clicks audition while stopped.",
+        ["Piano.AuditionUnavailable"] = "Note audition is unavailable.",
         ["Pane.Arrangement"] = "Playlist",
         ["Workflow.ExportSong"] = "Export song to WAV",
         ["Arrangement.Source"] = "Pattern to place",
         ["Arrangement.Song"] = "Song",
         ["Arrangement.Pattern"] = "Pattern",
         ["Arrangement.Mode"] = "Playback mode",
-        ["Arrangement.ModeHint"] = "Pattern loops the selected Rack; Song plays the Playlist from the beginning. Switching stops playback.",
+        ["Arrangement.ModeHint"] =
+            "Pattern loops the selected Rack; Song plays the Playlist from the beginning. Switching stops playback.",
         ["Arrangement.Play"] = "Play song from beginning",
         ["Arrangement.Stop"] = "Stop",
         ["Arrangement.Duplicate"] = "Duplicate after clip · Ctrl+D",
@@ -74,10 +117,13 @@ public sealed class HostLocalizer
         ["Arrangement.Start"] = "Return to song start",
         ["Arrangement.Select"] = "Selection tool · drag a box / Shift+click · Ctrl+A: all",
         ["Arrangement.Loop"] = "Loop selected range · drag the ruler to choose a range",
-        ["Arrangement.Hint"] = "Ruler: seek / drag loop · Shift+click: select · Ctrl+D: duplicate group · Shift+wheel: scroll · Ctrl+wheel: zoom · middle drag: pan · double-click: Rack",
-        ["Arrangement.EmptyHint"] = "Choose a Pattern and click a track to begin your song. Overlapping clips play together. Song ▶ plays the Playlist; Pattern keeps Rack looping.",
+        ["Arrangement.Hint"] =
+            "Ruler: seek / drag loop · Shift+click: select · Ctrl+D: duplicate group · Shift+wheel: scroll · Ctrl+wheel: zoom · middle drag: pan · double-click: Rack",
+        ["Arrangement.EmptyHint"] =
+            "Choose a Pattern and click a track to begin your song. Overlapping clips play together. Song ▶ plays the Playlist; Pattern keeps Rack looping.",
         ["Arrangement.Empty"] = "Place a Pattern in the Playlist first.",
-        ["Arrangement.Unsupported"] = "This clip contains dependencies that song playback cannot interpret. Its data is preserved.",
+        ["Arrangement.Unsupported"] =
+            "This clip contains dependencies that song playback cannot interpret. Its data is preserved.",
         ["Navigator.Patterns"] = "PATTERNS",
         ["Navigator.Toggle"] = "Show / hide pattern navigation",
         ["Beat.Bars"] = "Pattern length in bars",
@@ -118,14 +164,18 @@ public sealed class HostLocalizer
         ["Beat.MeterUnsupported"] = "Channel Rack supports 4/4. Your project's meter is preserved.",
         ["Beat.LengthUnsupported"] = "Channel Rack supports 1–32 bars of sixteenth-note steps.",
         ["Beat.SoundUnsupported"] = "This sound is unavailable for step editing. Its data is preserved.",
-        ["Beat.NotesUnsupported"] = "Some notes cannot be represented by this step grid. They are preserved; editing this row is unavailable.",
+        ["Beat.NotesUnsupported"] =
+            "Some notes cannot be represented by this step grid. They are preserved; editing this row is unavailable.",
         ["Beat.GraphUnsupported"] = "This graph needs manual sound routing. Open Node Graph to add a WAV source.",
-        ["Beat.SharedChannels"] = "This pattern is shared. Adding sounds is unavailable; existing steps still edit shared content.",
+        ["Beat.SharedChannels"] =
+            "This pattern is shared. Adding sounds is unavailable; existing steps still edit shared content.",
         ["Beat.ChannelLimit"] = "This rack is full (8 sounds).",
         ["Beat.Stale"] = "The Pattern target changed. Retry on the current selection.",
         ["Workflow.EditStale"] = "The project changed. Reopen the parameter to edit its current value.",
-        ["Desktop.Instance.Unresponsive"] = "Seqvium is already running but did not respond. Close this message and try again after the existing application is ready. A second workspace was not opened.",
-        ["Desktop.Instance.Unavailable"] = "Seqvium could not establish exclusive desktop ownership. No workspace was opened.",
+        ["Desktop.Instance.Unresponsive"] =
+            "Seqvium is already running but did not respond. Close this message and try again after the existing application is ready. A second workspace was not opened.",
+        ["Desktop.Instance.Unavailable"] =
+            "Seqvium could not establish exclusive desktop ownership. No workspace was opened.",
         ["Pane.Graph"] = "Node Graph",
         ["Pane.NodeEditor"] = "Node Editor",
         ["NodeEditor.Open"] = "Open Editor",
@@ -308,18 +358,61 @@ public sealed class HostLocalizer
             "Layout read incompletely; safe entries restored. Original file preserved; layout saving disabled this session.",
         ["Workspace.SaveFailed"] = "Workspace layout could not be saved; this session remains usable.",
         ["Host.Scope"] =
-            "WAV channels, one-bar step sequencing, Source / Gain / Mix / Output editing, Play / Stop / Panic and Save / Open are available."
+            "Compose notes and rhythms in Piano Roll and Channel Rack, arrange shared Patterns in Playlist, tune WAV sources, edit Source / Gain / Mix / Output, save projects and export WAV."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     public static IReadOnlyDictionary<string, string> Russian { get; } = new Dictionary<string, string>
     {
+        ["Pane.Piano"] = "Ноты · Piano Roll",
+        ["Piano.Pattern"] = "Общий паттерн",
+        ["Piano.Part"] = "Канал",
+        ["Piano.NoTarget"] = "Выберите паттерн и добавьте звук в каналах.",
+        ["Piano.Draw"] = "Рисовать ноты · потяните для выбора длины",
+        ["Piano.Select"] = "Выделять ноты · Shift и рамка",
+        ["Piano.Snap"] = "Привязка · Alt временно отключает",
+        ["Piano.Length"] = "Длина новых нот",
+        ["Piano.Duplicate"] = "Дублировать ноты · Ctrl+D",
+        ["Piano.Delete"] = "Удалить ноты · Delete / правая кнопка",
+        ["Piano.Properties"] = "Точные свойства нот",
+        ["Piano.GroupProperties"] =
+            "Высота и начало перемещают группу. Только изменённые длина или velocity применяются ко всем выделенным нотам.",
+        ["Piano.Velocity"] = "Velocity",
+        ["Piano.Ghosts"] = "Показывать другие каналы",
+        ["Piano.Audition"] = "Прослушивать редактируемые ноты при остановке",
+        ["Piano.ZoomIn"] = "Приблизить · Ctrl и колесо",
+        ["Piano.ZoomOut"] = "Отдалить · Ctrl и колесо",
+        ["Piano.Fit"] = "Показать паттерн целиком · Home",
+        ["Piano.Root"] = "Исходная нота",
+        ["Piano.ChannelName"] = "Название канала",
+        ["Piano.RootPitch"] = "Нота источника · MIDI",
+        ["Piano.RootHint"] =
+            "Укажите ноту, записанную в сэмпле. Настройка общего звука не меняет написанные ноты. Данные библиотеки применяются только при совпадении хеша каталога; другие WAV начинают с C4 (60).",
+        ["Piano.Apply"] = "Применить",
+        ["Piano.Play"] = "Играть паттерн",
+        ["Piano.Stop"] = "Стоп",
+        ["Piano.Rack"] = "Открыть каналы",
+        ["Piano.Export"] = "Экспорт паттерна в WAV",
+        ["Piano.Pitch"] = "Высота · MIDI",
+        ["Piano.Start"] = "Начало · четверти",
+        ["Piano.Duration"] = "Длина · четверти",
+        ["Piano.Shared"] = "Общие клипы песни",
+        ["Piano.PatternScope"] = "Общие ноты паттерна",
+        ["Piano.Selected"] = "выделено",
+        ["Piano.KeyboardSelection"] =
+            "Alt+←/→ выбирает ноту; Enter прослушивает. Стрелки перемещают ноты, Shift+←/→ меняет длину, Shift+↑/↓ меняет октаву.",
+        ["Piano.NameRequired"] = "Укажите название канала.",
+        ["Piano.Open"] = "Открыть Piano Roll",
+        ["Piano.Help"] =
+            "Щелчок создаёт ноту; перетаскивание перемещает, Ctrl копирует, правый край меняет длину. Shift добавляет выделение или рисует рамку. Delete удаляет; стрелки перемещают, Shift+↑/↓ меняет октаву. Ctrl+A/C/X/V/D; Alt отключает привязку. Колесо прокручивает высоту, Shift время, Ctrl масштаб; средняя кнопка перемещает вид. Клавиши звучат при остановленном транспорте.",
+        ["Piano.AuditionUnavailable"] = "Прослушивание ноты недоступно.",
         ["Pane.Arrangement"] = "Плейлист",
         ["Workflow.ExportSong"] = "Экспорт композиции в WAV",
         ["Arrangement.Source"] = "Паттерн для размещения",
         ["Arrangement.Song"] = "Song",
         ["Arrangement.Pattern"] = "Pattern",
         ["Arrangement.Mode"] = "Режим воспроизведения",
-        ["Arrangement.ModeHint"] = "Pattern зацикливает выбранный Rack; Song играет плейлист с начала. Переключение останавливает воспроизведение.",
+        ["Arrangement.ModeHint"] =
+            "Pattern зацикливает выбранный Rack; Song играет плейлист с начала. Переключение останавливает воспроизведение.",
         ["Arrangement.Play"] = "Слушать композицию с начала",
         ["Arrangement.Stop"] = "Стоп",
         ["Arrangement.Duplicate"] = "Дублировать после клипа · Ctrl+D",
@@ -347,10 +440,13 @@ public sealed class HostLocalizer
         ["Arrangement.Start"] = "Вернуться к началу композиции",
         ["Arrangement.Select"] = "Выделение · рамка / Shift+клик · Ctrl+A: всё",
         ["Arrangement.Loop"] = "Цикл участка · перетащите по линейке для выбора границ",
-        ["Arrangement.Hint"] = "Линейка: позиция / цикл · Shift+клик: выделение · Ctrl+D: копия группы · Shift+колесо: прокрутка · Ctrl+колесо: масштаб · средняя кнопка: панорама · двойной клик: Rack",
-        ["Arrangement.EmptyHint"] = "Выберите паттерн и нажмите на дорожку. Перекрывающиеся клипы играют вместе. Song ▶ играет плейлист, Pattern зацикливает Rack.",
+        ["Arrangement.Hint"] =
+            "Линейка: позиция / цикл · Shift+клик: выделение · Ctrl+D: копия группы · Shift+колесо: прокрутка · Ctrl+колесо: масштаб · средняя кнопка: панорама · двойной клик: Rack",
+        ["Arrangement.EmptyHint"] =
+            "Выберите паттерн и нажмите на дорожку. Перекрывающиеся клипы играют вместе. Song ▶ играет плейлист, Pattern зацикливает Rack.",
         ["Arrangement.Empty"] = "Сначала разместите паттерн в плейлисте.",
-        ["Arrangement.Unsupported"] = "Клип содержит зависимости, которые воспроизведение композиции пока не поддерживает. Данные сохранены.",
+        ["Arrangement.Unsupported"] =
+            "Клип содержит зависимости, которые воспроизведение композиции пока не поддерживает. Данные сохранены.",
         ["Navigator.Patterns"] = "ПАТТЕРНЫ",
         ["Navigator.Toggle"] = "Показать / скрыть навигацию по паттернам",
         ["Beat.Bars"] = "Длина паттерна в тактах",
@@ -391,13 +487,17 @@ public sealed class HostLocalizer
         ["Beat.MeterUnsupported"] = "Каналы поддерживают размер 4/4. Размер вашего проекта сохранён.",
         ["Beat.LengthUnsupported"] = "Каналы поддерживают 1–32 такта с шестнадцатыми шагами.",
         ["Beat.SoundUnsupported"] = "Этот звук недоступен для редактирования шагов. Его данные сохранены.",
-        ["Beat.NotesUnsupported"] = "Некоторые ноты не помещаются в эту сетку шагов. Они сохранены; редактирование строки недоступно.",
-        ["Beat.GraphUnsupported"] = "Этот граф требует ручной маршрутизации звука. Откройте граф узлов для добавления WAV-источника.",
-        ["Beat.SharedChannels"] = "Добавление каналов в общий паттерн пока недоступно. Редактирование шагов меняет общее содержимое.",
+        ["Beat.NotesUnsupported"] =
+            "Некоторые ноты не помещаются в эту сетку шагов. Они сохранены; редактирование строки недоступно.",
+        ["Beat.GraphUnsupported"] =
+            "Этот граф требует ручной маршрутизации звука. Откройте граф узлов для добавления WAV-источника.",
+        ["Beat.SharedChannels"] =
+            "Добавление каналов в общий паттерн пока недоступно. Редактирование шагов меняет общее содержимое.",
         ["Beat.ChannelLimit"] = "Все 8 звуковых каналов заняты.",
         ["Beat.Stale"] = "Цель паттерна изменилась. Повторите действие для текущего выбора.",
         ["Workflow.EditStale"] = "Проект изменился. Откройте параметр снова для редактирования текущего значения.",
-        ["Desktop.Instance.Unresponsive"] = "Seqvium уже запущен, но не ответил. Закройте сообщение и повторите запуск, когда приложение будет готово. Второй Workspace не открыт.",
+        ["Desktop.Instance.Unresponsive"] =
+            "Seqvium уже запущен, но не ответил. Закройте сообщение и повторите запуск, когда приложение будет готово. Второй Workspace не открыт.",
         ["Desktop.Instance.Unavailable"] = "Не удалось установить единственный экземпляр Seqvium. Workspace не открыт.",
         ["Pane.Graph"] = "Граф узлов",
         ["Pane.NodeEditor"] = "Редактор ноды",
@@ -584,6 +684,6 @@ public sealed class HostLocalizer
             "Макет прочитан не полностью; допустимые панели восстановлены. Исходный файл сохранён; запись макета отключена в этом сеансе.",
         ["Workspace.SaveFailed"] = "Сохранить макет не удалось; панели доступны в текущем сеансе.",
         ["Host.Scope"] =
-            "Доступны WAV-каналы, шаги одного такта, редактор источников / усиления / суммы / выхода, воспроизведение / Стоп / Panic и сохранение / открытие."
+            "Создавайте ноты и ритмы в Piano Roll и каналах, собирайте общие паттерны в Playlist, настраивайте высоту WAV, редактируйте граф, сохраняйте проекты и экспортируйте WAV."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 }

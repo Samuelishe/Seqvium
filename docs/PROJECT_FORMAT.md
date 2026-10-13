@@ -31,10 +31,10 @@ retain 0. Any nonempty song clips or track configuration requires `minor >= 2` a
 `minimumReaderMinor >= 2`, so an older reader refuses before discarding essential song intent.
 The minimum never decreases after Save/Open/removal. Product version and format version remain distinct.
 
-| Object | Known fields |
-| --- | --- |
-| Arrangement clip | `id`, `sourcePlacementId`, `position`, `lane`, `repeats` |
-| Arrangement track | `id`, `lane`, `name`, `colorIndex`, `muted`, `solo` |
+| Object            | Known fields                                             |
+|-------------------|----------------------------------------------------------|
+| Arrangement clip  | `id`, `sourcePlacementId`, `position`, `lane`, `repeats` |
+| Arrangement track | `id`, `lane`, `name`, `colorIndex`, `muted`, `solo`      |
 
 Clip IDs are distinct, sourcePlacementId addresses the actual existing Rack occurrence and its
 graph/Pattern, position is nonnegative Int64 musical ticks, lane is a fixed spatial slot `0..31`, and
@@ -50,6 +50,16 @@ JSON at both boundaries; unknown behavior blocks Song interpretation without rew
 preserves source IDs, sharing, track settings and managed media. Playback mode/start/position, view,
 selection, snap/follow/overview and Undo history remain runtime/session state. Open chooses Song when
 clips exist and stays silent. Whole-Song WAV is a separate deliverable, not project persistence.
+
+## SEQ-R9 note editing compatibility
+
+Piano Roll uses the existing Part name, NoteEvent identity/position/duration/pitch/intensity and PCM
+SoundDefinition `rootPitch` fields. No format, minimum-reader or writer marker changes are needed.
+Atomic note replacement validates canonical IDs/bounds and refuses unknown semantics instead of
+flattening them. Rack previews and Playlist placements retain the exact same shared content.
+Save/Open preserves mixed chords, durations, velocity and explicit roots; opening stays silent.
+Camera, selection, ghosts, snap, clipboard, preview drafts/audition and history remain session state,
+not serialized music. The seventh pane follows independent user layout preferences, not project JSON.
 
 ## R1 canonical JSON format
 
@@ -140,15 +150,15 @@ Graph records follow [GraphModel](../src/Seqvium.Core/Domain/GraphModel.cs); con
 required, including nullable `extension` and `outputNodeId`. All entity/reference identities are typed
 UUID strings and entity IDs join the existing globally distinct identity set.
 
-| Object | Known fields |
-| --- | --- |
-| Graph definition | `id`, `nodes`, `connections` |
-| Graph node | `id`, `type`, `stateVersion`, `parameters`, `ports`, `position`, `extension` |
-| Graph port | `id`, `role`, `direction`, `signalClass`, `use`, `layout`, `ratePolicy`, `cardinality`, `required` |
-| Graph connection | `id`, `fromNodeId`, `fromPortId`, `toNodeId`, `toPortId` |
-| Graph attachment | `id`, `graphId`, `contextId`, `outputNodeId`, `sources` |
-| Source binding | `id`, `nodeId`, `placementId`, `partId`, `boundary` |
-| Graph position | `x`, `y` |
+| Object           | Known fields                                                                                       |
+|------------------|----------------------------------------------------------------------------------------------------|
+| Graph definition | `id`, `nodes`, `connections`                                                                       |
+| Graph node       | `id`, `type`, `stateVersion`, `parameters`, `ports`, `position`, `extension`                       |
+| Graph port       | `id`, `role`, `direction`, `signalClass`, `use`, `layout`, `ratePolicy`, `cardinality`, `required` |
+| Graph connection | `id`, `fromNodeId`, `fromPortId`, `toNodeId`, `toPortId`                                           |
+| Graph attachment | `id`, `graphId`, `contextId`, `outputNodeId`, `sources`                                            |
+| Source binding   | `id`, `nodeId`, `placementId`, `partId`, `boundary`                                                |
+| Graph position   | `x`, `y`                                                                                           |
 
 `parameters` maps stable keys to retained JSON values. Gain v1's `linearAmplitude` is a decimal linear
 amplitude ratio with default 1 and eligibility range `[0,1]`; future amplification is a versioned
@@ -174,8 +184,8 @@ from resource/extension diagnostics. Reports establish intent eligibility only; 
 actual execution preparation remain separate gates. Save persists current invalid intent, never a plan.
 
 Existing 16 MiB/depth-64/text/global-100,000-entity limits remain; graphs, nodes, ports, edges, attachments
-and bindings count as entities. A node may declare at most 256 ports. F1 processing eligibility limits
-(32 nodes, 64 edges, 8 sources, 8 Mix inputs) are smaller than document limits and do not refuse Save.
+and bindings count as entities. A node may declare at most 256 ports. F1 processing eligibility limits (32 nodes, 64
+edges, 8 sources, 8 Mix inputs) are smaller than document limits and do not refuse Save.
 Int64 musical time, media-reference semantics and normal-process file replacement guarantees remain
 unchanged; no DSP state, buffers, device endpoints, workspace preferences or history are added to JSON.
 Caller-supplied sets of validated available resource/extension identities can suppress the corresponding

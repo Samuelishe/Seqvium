@@ -63,6 +63,7 @@ public sealed class WorkspaceState : IDisposable
     public const string NodeEditorId = "node-editor.main";
     public const string BeatId = "step-sequencer.main";
     public const string ArrangementId = "arrangement.main";
+    public const string PianoId = "piano-roll.main";
 
     public static ImmutableArray<PaneDefinition> Definitions { get; } =
     [
@@ -71,7 +72,8 @@ public sealed class WorkspaceState : IDisposable
         new(GraphId, "node-graph", "Pane.Graph", 300, 260, new(48, 36, 960, 520)),
         new(NodeEditorId, "node-editor", "Pane.NodeEditor", 300, 210, new(280, 64, 360, 220)),
         new(BeatId, "step-sequencer", "Pane.Beat", 360, 290, new(24, 24, 960, 390)),
-        new(ArrangementId, "arrangement", "Pane.Arrangement", 360, 290, new(32, 36, 1040, 480))
+        new(ArrangementId, "arrangement", "Pane.Arrangement", 360, 290, new(32, 36, 1040, 480)),
+        new(PianoId, "piano-roll", "Pane.Piano", 360, 320, new(42, 48, 1080, 580))
     ];
 
     private readonly List<PanePlacement> _panes = Definitions.Select(definition =>
@@ -90,7 +92,8 @@ public sealed class WorkspaceState : IDisposable
 
     internal void RestoreLayout(WorkspaceLayout layout)
     {
-        CheckAvailable(); _restored = layout;
+        CheckAvailable();
+        _restored = layout;
         Reflow(Width, Height);
     }
 
@@ -191,8 +194,10 @@ public sealed class WorkspaceState : IDisposable
     public void ArrangeMusic()
     {
         CheckAvailable();
-        Open(BeatId); Dock(BeatId, PaneDock.Floating);
-        Open(ArrangementId); Dock(ArrangementId, PaneDock.Floating);
+        Open(BeatId);
+        Dock(BeatId, PaneDock.Floating);
+        Open(ArrangementId);
+        Dock(ArrangementId, PaneDock.Floating);
         if (Height >= 640)
         {
             double rackHeight = Math.Clamp(Height * .38, 290, 390);
@@ -211,6 +216,7 @@ public sealed class WorkspaceState : IDisposable
             SetBounds(ArrangementId, new(0, 0, Width, Height));
             Collapse(BeatId);
         }
+
         Activate(ArrangementId);
     }
 

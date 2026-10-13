@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Frozen;
 
 namespace Seqvium.Desktop.Presentation;
@@ -18,6 +19,7 @@ public static class HostPalette
         ["Surface.Playing"] = "#24443C", ["Surface.Critical"] = "#4B3035", ["Surface.Accent"] = "#24474B",
         ["Graph.Cable"] = "#93B1C4", ["Graph.Grid"] = "#202C35",
         ["Graph.Node"] = "#26323C", ["Graph.NodeBorder"] = "#6E899C",
+        ["Piano.WhiteKey"] = "#BFCFD5", ["Piano.BlackKey"] = "#25323C", ["Piano.KeyInk"] = "#25323C",
         ["Control.Track"] = "#384651", ["Control.Fill"] = "#77D9CA",
         ["Control.Thumb"] = "#EDF2F5",
         ["Rack.Channel0"] = "#E49A83", ["Rack.Step0"] = "#3C302E",
@@ -45,6 +47,7 @@ public static class HostPalette
         ["Surface.Playing"] = "#C5E9D8", ["Surface.Critical"] = "#F8E3E6", ["Surface.Accent"] = "#C0E8DB",
         ["Graph.Cable"] = "#456677", ["Graph.Grid"] = "#D3E0E5",
         ["Graph.Node"] = "#FFFFFF", ["Graph.NodeBorder"] = "#5D7B8C",
+        ["Piano.WhiteKey"] = "#FAFCFD", ["Piano.BlackKey"] = "#344956", ["Piano.KeyInk"] = "#25323C",
         ["Control.Track"] = "#BECCD5", ["Control.Fill"] = "#007A65",
         ["Control.Thumb"] = "#F8FAFB",
         ["Rack.Channel0"] = "#BE4F24", ["Rack.Step0"] = "#F2C6B7",

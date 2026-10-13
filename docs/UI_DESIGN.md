@@ -64,21 +64,21 @@ and reuse rights were not supplied. These are private study references, never di
 Earlier reference locations describe their originating machine; their absence on another machine
 does not invalidate the design owners or authorize reconstruction of missing personal material.
 
-The following are selected design directions; only theme/control-economy changes above are implemented
-by this preparation. Static images establish visible composition and feedback, not interaction,
-performance or acoustic evidence. Gestures below are Seqvium proposals governed by
-[UX](UX_CONTRACT.md); exact bindings, dimensions and capabilities need the bounded editor task.
+The following are selected directions, not claims about source-DAW gestures or sound. The preparation
+implemented theme/control economy; SEQ-R9 now implements the bounded Piano surface below. Static
+images establish visible composition, not performance/acoustic evidence. [UX](UX_CONTRACT.md) owns
+Seqvium's implemented gestures; remaining reference-derived capabilities stay proposals.
 
-| Working area | Selected solution and comparison with Seqvium | Implementation boundary |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Piano Roll | PR-05's readable note bodies/pitch labels, PR-01's clear loop bracket, PR-03's time-aligned parameter lane and PR-02's dense-content test. Dominant grid, fixed keyboard/ruler, stronger bar than beat/subdivision lines, quiet pitch rows; note names appear only when they fit. A compact Pattern/Part target and sharing indication precede editing; optional ghost parts cannot look selected. Direct draw/select/move/end-resize with forgiving hit areas, cursor/preview feedback and pointer-anchored navigation are the intended direction | Same canonical NoteEvents and history; explicit shared Pattern scope, pitch/duration/intensity, audition/root pitch and Rack coexistence must be validated. Controller curves like PR-04 are later capabilities |
-| Channel Rack | Preserve the implemented bevelled pads, beat groups, paint/erase and row menus. Piano Roll access should live on the identified Part/channel; do not replace the working rhythm surface with generic forms | Rich notes must be preserved when a step view cannot represent them; richer preview/velocity and channel mix controls remain planned |
-| Playlist | PL-02's meaningful note/audio/automation distinction, PL-04's stable track/time composition and PL-03's saturated Light bodies with dark content ink. Keep the implemented fixed headings, overview, shared clips and scoped selection; improve existing compositions when musical work benefits | Current thumbnails show real notes. Waveforms, sections, automation and lower contextual editors require their actual owners; arrangement tracks do not imply Mixer channels |
-| Node Graph / Node Editor | Retain the implemented free canvas, typed ports, nearest-cable selection and target-aware editor. EQ references favor a large meaningful visualization with optional exact parameter depth; a processing summary opens the graph rather than putting every cable in the music editor | Gain's transfer curve is analytical, not a measured signal. New processors/editors need actual parameter/provider and lifecycle ownership |
-| Synthesizers | MX-03/EQ-01/EQ-05 suggest sculpted caps, graduated arcs, clear position and exact value access. Group oscillator/filter/envelope controls around real musical functions; waveform/envelope surfaces can dominate when they explain the sound | No dedicated synth screenshot is in this batch. This is a transfer/inference, not source-feature evidence; DSP, instrument state, voices and editor availability must exist first |
-| Mixer | MX-03's tactile knobs/recessed faders, MX-04's readable signal ladders and MX-01's aligned channel identity. Preserve a useful strip minimum and horizontal bank navigation; keep Master locatable, M/S distinct and routing depth contextual | Real level/pan/mute/solo, measured taps, channel identities and routing differ from Playlist organization; do not fabricate meters or copy touch-screen proportions |
-| Effects / EQ | EQ-05's dominant curve/selected handles and EQ-03's selected-band Frequency/Gain/Q panel are strongest. EQ-01/EQ-02 link band colors to controls; EQ-04 keeps analysis subordinate to editable curves. Selected-band depth beats permanent all-band machinery | Actual EQ/filter/analysis/automation capabilities and bounded measured data first; pitch tracking, dynamic EQ and transient/tonal separation remain processor work |
-| Browser / Sample Lab | Fast category/search/find, native-pitch audition and explicit use; disclose source/license/root/BPM details on demand. The prepared filesystem library is useful input for that workflow | No Browser/Sample Lab screenshot in this batch; direction follows SAMPLE_WORKFLOW, not a claimed reference. Local files are not an implemented Personal Library/index/pack system |
+| Working area             | Selected solution and comparison with Seqvium                                                                                                                                                                                                                                                    | Implementation boundary                                                                                                                                                           |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Piano Roll               | PR-05 note bodies/pitch labels, PR-01 bracket, PR-03 aligned velocity and PR-02 dense-content review inform the implemented original SEQ-R9 composition below                                                                                                                                    | Shared NoteEvents/history, explicit Part, root/audition and Rack preservation are verified within the bounded report; PR-04 controller curves remain later                        |
+| Channel Rack             | Existing bevelled pads/beat groups remain the rhythm surface. Identified Part labels/menus open Piano Roll; rich rows show real note previews                                                                                                                                                    | No flattening into step pads; per-channel mix controls remain planned                                                                                                             |
+| Playlist                 | PL-02's meaningful note/audio/automation distinction, PL-04's stable track/time composition and PL-03's saturated Light bodies with dark content ink. Keep the implemented fixed headings, overview, shared clips and scoped selection; improve existing compositions when musical work benefits | Current thumbnails show real notes. Waveforms, sections, automation and lower contextual editors require their actual owners; arrangement tracks do not imply Mixer channels      |
+| Node Graph / Node Editor | Retain the implemented free canvas, typed ports, nearest-cable selection and target-aware editor. EQ references favor a large meaningful visualization with optional exact parameter depth; a processing summary opens the graph rather than putting every cable in the music editor             | Gain's transfer curve is analytical, not a measured signal. New processors/editors need actual parameter/provider and lifecycle ownership                                         |
+| Synthesizers             | MX-03/EQ-01/EQ-05 suggest sculpted caps, graduated arcs, clear position and exact value access. Group oscillator/filter/envelope controls around real musical functions; waveform/envelope surfaces can dominate when they explain the sound                                                     | No dedicated synth screenshot is in this batch. This is a transfer/inference, not source-feature evidence; DSP, instrument state, voices and editor availability must exist first |
+| Mixer                    | MX-03's tactile knobs/recessed faders, MX-04's readable signal ladders and MX-01's aligned channel identity. Preserve a useful strip minimum and horizontal bank navigation; keep Master locatable, M/S distinct and routing depth contextual                                                    | Real level/pan/mute/solo, measured taps, channel identities and routing differ from Playlist organization; do not fabricate meters or copy touch-screen proportions               |
+| Effects / EQ             | EQ-05's dominant curve/selected handles and EQ-03's selected-band Frequency/Gain/Q panel are strongest. EQ-01/EQ-02 link band colors to controls; EQ-04 keeps analysis subordinate to editable curves. Selected-band depth beats permanent all-band machinery                                    | Actual EQ/filter/analysis/automation capabilities and bounded measured data first; pitch tracking, dynamic EQ and transient/tonal separation remain processor work                |
+| Browser / Sample Lab     | Fast category/search/find, native-pitch audition and explicit use; disclose source/license/root/BPM details on demand. The prepared filesystem library is useful input for that workflow                                                                                                         | No Browser/Sample Lab screenshot in this batch; direction follows SAMPLE_WORKFLOW, not a claimed reference. Local files are not an implemented Personal Library/index/pack system |
 
 Physical character belongs mainly to controls and instrument panels. Grids and analytical plots need
 quiet surfaces so notes, connections and curves stay legible. Light's strongest supplied evidence is
@@ -89,6 +89,26 @@ create new original assets only for a concrete editor need.
 
 [R9 planning](ROADMAP.md#seq-r9--piano-roll) and the existing later-stage follow-ups own deferred work.
 The [preparation report](experiments/SEQ-HOME-RESOURCES_REPORT.md) records actual verification limits.
+
+## Implemented SEQ-R9 musical surface
+
+The five Piano originals and their private analytical notes were inspected before implementation.
+PR-05 informs readable bevelled note bodies/names, PR-01 the Pattern-end bracket and layered axes,
+PR-03 aligned velocity, and PR-02 dense-note review. PR-04 controller curves remain deferred.
+These are composition principles, not copied assets, source-DAW input claims or distributed provenance.
+
+Seqvium's original canvas has a fixed keyboard/ruler, quiet alternating pitch rows, distinct bar/
+quarter/subdivision lines, channel-colored note materials and thin selection outlines. Names appear
+only when they fit; intensity strips, edge cursors and captured previews convey edits without permanent
+instructions. Chord velocity handles stagger while retaining onset stems. Muted ghost Parts are context,
+never a second selection target. Compact Pattern/Part scope, source-root access and contextual exact
+fields keep music dominant. Rich Rack rows show real pitch/duration/intensity, not misleading pads.
+
+Dark retains its accepted roles and jade/slate material depth; Light has independently reviewed keys,
+saturated bodies and readable ink. Both use the shared [Design System](DESIGN_SYSTEM.md), original
+vectors and derived materials. Actual RU/EN ordinary/reduced renders, field alignment, window-coordinate
+containment and native musical editing are in the [R9 report](experiments/SEQ-R9_REPORT.md).
+This establishes implementation/evidence, not subjective owner aesthetic acceptance.
 
 ## Implemented R3-F1 visual baseline
 
@@ -137,18 +157,18 @@ All eleven owner-supplied images were inspected. They are retained outside the r
 `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-UI-REDESIGN`; no reference assets are distributed.
 The [review report](experiments/SEQ-UI-REDESIGN_REPORT.md) records implementation/evidence/limits.
 
-| Reference | Useful design decisions | Adaptation / limitation |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Screenshot 1, SONAR step instrument | Bevelled drum pads, beat divisions, lit selected hits, substantial chassis | Keep tactile rhythm; enlarge tiny targets and remove repeated control labels |
-| Screenshot 2, SONAR expanded channel | Parameter controls beside a channel and an expandable velocity lane | Use contextual row commands now; velocity requires supported note/intensity execution |
-| Screenshot 3, FL Studio | Fast Channel Rack, compact transport, colored steps, instrument identity, graphical note overview | Rail/navigator and real rhythm thumbnails; avoid copying layout or adding unavailable channel knobs |
-| Screenshot 4, EON ARP | Strong purple identity, coherent illuminated matrix, graphical musical focus | Transfer rhythm clarity and restrained light; preserve Seqvium's own palette |
-| Screenshot 5, blue arpeggiator | Beat grouping and visually distinct parameter lanes | Reserve lanes for real parameters; do not preallocate disabled lanes |
-| Screenshots 6–7, Logic | Track colors repeated in the grid, clear time ruler, integrated editing hierarchy | Shared Rack colors and the real Playlist below; richer velocity/Piano Roll stay planned |
-| Screenshot 8, omniGRID | Dense legible rhythm and contextual per-note depth | Take direct editing and disclosure; avoid microscopic text and arbitrary knob inventory |
-| FabFilter Pro-Q 4 image | Large purposeful analytical surface, curves, quiet tools around the signal | Actual Gain transfer fill/glow now; live spectrum/EQ require real processing and measurement |
-| Serum image | Layered instrument chassis, finely graduated knobs, shape/value feedback | Graduated captured Gain dial; future instruments inherit shared materials with their own composition |
-| Reason rack image | Physical panel depth, coherent rack hardware, color/material character | Raised panels, bevels and light; decorative hardware must not displace musical work |
+| Reference                            | Useful design decisions                                                                           | Adaptation / limitation                                                                              |
+|--------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| Screenshot 1, SONAR step instrument  | Bevelled drum pads, beat divisions, lit selected hits, substantial chassis                        | Keep tactile rhythm; enlarge tiny targets and remove repeated control labels                         |
+| Screenshot 2, SONAR expanded channel | Parameter controls beside a channel and an expandable velocity lane                               | Contextual row commands and SEQ-R9 aligned velocity now cover the bounded shared-note scope          |
+| Screenshot 3, FL Studio              | Fast Channel Rack, compact transport, colored steps, instrument identity, graphical note overview | Rail/navigator and real rhythm thumbnails; avoid copying layout or adding unavailable channel knobs  |
+| Screenshot 4, EON ARP                | Strong purple identity, coherent illuminated matrix, graphical musical focus                      | Transfer rhythm clarity and restrained light; preserve Seqvium's own palette                         |
+| Screenshot 5, blue arpeggiator       | Beat grouping and visually distinct parameter lanes                                               | Reserve lanes for real parameters; do not preallocate disabled lanes                                 |
+| Screenshots 6–7, Logic               | Track colors repeated in the grid, clear time ruler, integrated editing hierarchy                 | Shared Rack colors, real Playlist and SEQ-R9 Piano Roll; deeper integration remains separate         |
+| Screenshot 8, omniGRID               | Dense legible rhythm and contextual per-note depth                                                | Take direct editing and disclosure; avoid microscopic text and arbitrary knob inventory              |
+| FabFilter Pro-Q 4 image              | Large purposeful analytical surface, curves, quiet tools around the signal                        | Actual Gain transfer fill/glow now; live spectrum/EQ require real processing and measurement         |
+| Serum image                          | Layered instrument chassis, finely graduated knobs, shape/value feedback                          | Graduated captured Gain dial; future instruments inherit shared materials with their own composition |
+| Reason rack image                    | Physical panel depth, coherent rack hardware, color/material character                            | Raised panels, bevels and light; decorative hardware must not displace musical work                  |
 
 The references justify material richness. Their tiny controls, cryptic abbreviations and excessive
 simultaneous options are not requirements. Seqvium keeps their musical character while improving
@@ -162,14 +182,14 @@ The owner-supplied five timeline images were inspected and moved from Desktop/sc
 references were also reviewed for hierarchy/materials. These are private local visual targets, not
 distributed application assets; the implementation uses original vectors and shared host resources.
 
-| Reference | Strong transferable solution | Implemented / planned boundary |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `playlist_main.png`, annotated FL Playlist | Source picker distinct from tracks, musical ruler, overview/scroll, clip notes, clear contextual tools | Source selection, shared clips, overview, snap, Ctrl-copy, repeats, M/S and retained pane are real; seek/range/group editing now work; markers/automation/audio clips are follow-up |
-| `Screenshot-2024-10-04-at-1.47.57-PM.png.webp`, FL song | Track colors and repeated clip headers connect the overview to the song; named parts make structure legible | Named/color tracks, actual duration/pitch thumbnails, stationary headings and muted dimming; dynamic groups and section markers remain planned |
-| `1.-Color.jpg`, SONAR | Strong colored track identity, substantial controls, visible editing tools and waveform/fade detail | Adapt header/material depth and real gates; waveform trim/fades require supported audio-clip semantics, not decorative waveforms |
-| `VJPS1X.jpg`, Cubase | Stable inspector/track column, musical range, organized groups, precise source editor and measured Master | Fixed headings, committed contextual track settings and scalable view now; musical range now works; groups/sample editor/Master measurement require their owners |
-| `daw-software-editing.jpg`, stylized DAW illustration | Rapid visual distinction of musical layers and a clear primary working area | Adapt color hierarchy only; it is an illustration, not pixel/interaction authority or permission for simulated Mixer/meters |
-| Earlier Logic / Reason / Serum / FabFilter | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability |
+| Reference                                               | Strong transferable solution                                                                                | Implemented / planned boundary                                                                                                                                                      |
+|---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `playlist_main.png`, annotated FL Playlist              | Source picker distinct from tracks, musical ruler, overview/scroll, clip notes, clear contextual tools      | Source selection, shared clips, overview, snap, Ctrl-copy, repeats, M/S and retained pane are real; seek/range/group editing now work; markers/automation/audio clips are follow-up |
+| `Screenshot-2024-10-04-at-1.47.57-PM.png.webp`, FL song | Track colors and repeated clip headers connect the overview to the song; named parts make structure legible | Named/color tracks, actual duration/pitch thumbnails, stationary headings and muted dimming; dynamic groups and section markers remain planned                                      |
+| `1.-Color.jpg`, SONAR                                   | Strong colored track identity, substantial controls, visible editing tools and waveform/fade detail         | Adapt header/material depth and real gates; waveform trim/fades require supported audio-clip semantics, not decorative waveforms                                                    |
+| `VJPS1X.jpg`, Cubase                                    | Stable inspector/track column, musical range, organized groups, precise source editor and measured Master   | Fixed headings, committed contextual track settings and scalable view now; musical range now works; groups/sample editor/Master measurement require their owners                    |
+| `daw-software-editing.jpg`, stylized DAW illustration   | Rapid visual distinction of musical layers and a clear primary working area                                 | Adapt color hierarchy only; it is an illustration, not pixel/interaction authority or permission for simulated Mixer/meters                                                         |
+| Earlier Logic / Reason / Serum / FabFilter              | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light           | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability                                                     |
 
 Playlist is a recessed time surface with substantial fixed track headers and a compact tool area.
 Clip headers carry source names, bodies show real note position/duration/pitch, track tint connects the
@@ -293,7 +313,7 @@ constraints.
 
 ### Specialized musical surfaces and multi-pane composition
 
-Future Pattern, Piano Roll, Arrangement, Mixer, Browser, Graph and Sample Lab share a coherent host
+Pattern, Piano Roll, Arrangement and Graph, plus future Mixer, Browser and Sample Lab, share a coherent host
 language while keeping task-specific interaction and useful density:
 
 - Arrangement prioritizes tracks, clips, time structure and editing.

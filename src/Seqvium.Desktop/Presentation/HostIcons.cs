@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Frozen;
 using Avalonia;
 using Avalonia.Controls;
@@ -43,6 +44,9 @@ internal static class HostIcons
         ["Add"] = "M12 4V20 M4 12H20",
         ["Delete"] = "M4 6H20 M9 6V3H15V6 M6 6L7 21H17L18 6 M10 10V17 M14 10V17",
         ["Rack"] = "M3 5H7V9H3Z M10 5H14V9H10Z M17 5H21V9H17Z M3 15H7V19H3Z M10 15H14V19H10Z M17 15H21V19H17Z",
+        ["Piano"] = "M3 4H21V20H3Z M7 4V14H10V4 M14 4V14H17V4 M8 14V20 M16 14V20",
+        ["Draw"] = "M4 20L5 15L17 3L21 7L9 19Z M14 6L18 10 M4 20L9 19",
+        ["Velocity"] = "M4 20V13 M9 20V6 M14 20V10 M19 20V3 M2 20H22",
         ["Playlist"] = "M3 4H21 M3 9H11V13H3Z M13 9H21V13H13Z M7 16H17V20H7Z",
         ["Duplicate"] = "M8 8H21V21H8Z M3 16V3H16",
         ["Follow"] = "M4 12H17 M12 7L17 12L12 17 M21 4V20",

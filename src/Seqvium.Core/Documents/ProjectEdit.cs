@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Immutable;
 
 namespace Seqvium.Core;
@@ -10,7 +11,11 @@ public sealed partial class ProjectEdit
     internal ProjectState State { get; private set; }
     internal ProjectEdit(ProjectState state) => State = state;
     internal void Seal() => _sealed = true;
-    private void CheckActive() { if (_sealed) throw new InvalidOperationException("Transaction has ended."); }
+
+    private void CheckActive()
+    {
+        if (_sealed) throw new InvalidOperationException("Transaction has ended.");
+    }
 
     public void RenameDocument(string? name)
     {
@@ -27,11 +32,17 @@ public sealed partial class ProjectEdit
         if (settings.Tempo == existing.Tempo && settings.Meter.Numerator == existing.Meter.Numerator &&
             settings.Meter.Denominator == existing.Meter.Denominator) return;
         // Update understood values without replacing optional future data on these same objects.
-        State = State with { Settings = existing with
+        State = State with
         {
-            Tempo = settings.Tempo,
-            Meter = existing.Meter with { Numerator = settings.Meter.Numerator, Denominator = settings.Meter.Denominator }
-        } };
+            Settings = existing with
+            {
+                Tempo = settings.Tempo,
+                Meter = existing.Meter with
+                {
+                    Numerator = settings.Meter.Numerator, Denominator = settings.Meter.Denominator
+                }
+            }
+        };
     }
 
     public Id<ResourceDescriptor> AddResource(string name, string? managedLocator = null, string? origin = null)
@@ -55,9 +66,14 @@ public sealed partial class ProjectEdit
     public void SetSoundParameters(Id<SoundDefinition> soundId, ImmutableDictionary<string, decimal> parameters)
     {
         CheckActive();
-        State = State with { Sounds = Replace(State.Sounds, item => item.Id == soundId, sound =>
-            sound.Parameters.Count == parameters.Count && sound.Parameters.All(pair => parameters.TryGetValue(pair.Key, out var value) && value == pair.Value)
-                ? sound : sound with { Parameters = parameters }) };
+        State = State with
+        {
+            Sounds = Replace(State.Sounds, item => item.Id == soundId, sound =>
+                sound.Parameters.Count == parameters.Count && sound.Parameters.All(pair =>
+                    parameters.TryGetValue(pair.Key, out var value) && value == pair.Value)
+                    ? sound
+                    : sound with { Parameters = parameters })
+        };
     }
 
     public void ConfigurePcmSampler(Id<SoundDefinition> soundId, Id<ResourceDescriptor> resourceId,
@@ -65,13 +81,19 @@ public sealed partial class ProjectEdit
     {
         CheckActive();
         PcmSampler.ValidateConfiguration(rootPitch, releaseMilliseconds);
-        State = State with { Sounds = Replace(State.Sounds, item => item.Id == soundId, sound =>
+        State = State with
         {
-            ProjectValidation.Require(sound.Algorithm == PcmSampler.Algorithm && sound.Extension is null,
-                "Only a first-party PCM sampler can accept this configuration.");
-            return sound with { ResourceIds = [resourceId], Parameters = sound.Parameters
-                .SetItem("rootPitch", rootPitch).SetItem("releaseMilliseconds", releaseMilliseconds) };
-        }) };
+            Sounds = Replace(State.Sounds, item => item.Id == soundId, sound =>
+            {
+                ProjectValidation.Require(sound.Algorithm == PcmSampler.Algorithm && sound.Extension is null,
+                    "Only a first-party PCM sampler can accept this configuration.");
+                return sound with
+                {
+                    ResourceIds = [resourceId], Parameters = sound.Parameters
+                        .SetItem("rootPitch", rootPitch).SetItem("releaseMilliseconds", releaseMilliseconds)
+                };
+            })
+        };
     }
 
     public Id<InstrumentGroup> AddGroup(string name, params Id<SoundDefinition>[] soundIds)
@@ -104,6 +126,12 @@ public sealed partial class ProjectEdit
         ChangePattern(patternId, pattern => pattern with { Name = name });
     }
 
+    public void RenamePart(Id<Pattern> patternId, Id<MusicalPart> partId, string name)
+    {
+        CheckActive();
+        ChangePart(patternId, partId, part => part with { Name = name });
+    }
+
     /// <summary>Changes the shared Pattern boundary; full transaction validation protects notes and placement ends.</summary>
     public void SetPatternLength(Id<Pattern> patternId, MusicalDuration length)
     {
@@ -124,14 +152,25 @@ public sealed partial class ProjectEdit
         MusicalPosition position, MusicalDuration duration, decimal pitch, decimal intensity)
     {
         CheckActive();
-        ChangePart(patternId, partId, part => part with { Notes = Replace(part.Notes, item => item.Id == noteId,
-            note => note with { Position = position, Duration = duration, Pitch = pitch, Intensity = intensity }) });
+        ChangePart(patternId, partId, part => part with
+        {
+            Notes = Replace(part.Notes, item => item.Id == noteId,
+                note => note with { Position = position, Duration = duration, Pitch = pitch, Intensity = intensity })
+        });
     }
 
     public void DeleteNote(Id<Pattern> patternId, Id<MusicalPart> partId, Id<NoteEvent> noteId)
     {
         CheckActive();
         ChangePart(patternId, partId, part => part with { Notes = Remove(part.Notes, item => item.Id == noteId) });
+    }
+
+    /// <summary>Replace one explicitly identified Part's notes atomically. Complete document validation
+    /// protects bounds and global identities; other Parts and unknown Part data remain intact.</summary>
+    public void SetPartNotes(Id<Pattern> patternId, Id<MusicalPart> partId, ImmutableArray<NoteEvent> notes)
+    {
+        CheckActive();
+        ChangePart(patternId, partId, part => part with { Notes = notes });
     }
 
     /// <summary>Remove a channel and its placement relationships/bindings. Graph topology repair is explicit.</summary>
@@ -141,10 +180,22 @@ public sealed partial class ProjectEdit
         ChangePattern(patternId, pattern => pattern with { Parts = Remove(pattern.Parts, part => part.Id == partId) });
         State = State with
         {
-            Placements = [.. State.Placements.Select(placement => placement.PatternId == patternId ? placement with
-            { PartRelationships = [.. placement.PartRelationships.Where(part => part.PartId != partId)] } : placement)],
-            GraphAttachments = [.. State.GraphAttachments.Select(attachment => attachment with
-            { Sources = [.. attachment.Sources.Where(source => source.PartId != partId)] })]
+            Placements =
+            [
+                .. State.Placements.Select(placement => placement.PatternId == patternId
+                    ? placement with
+                    {
+                        PartRelationships = [.. placement.PartRelationships.Where(part => part.PartId != partId)]
+                    }
+                    : placement)
+            ],
+            GraphAttachments =
+            [
+                .. State.GraphAttachments.Select(attachment => attachment with
+                {
+                    Sources = [.. attachment.Sources.Where(source => source.PartId != partId)]
+                })
+            ]
         };
     }
 
@@ -189,11 +240,14 @@ public sealed partial class ProjectEdit
         {
             var existing = placement.PartRelationships.ToDictionary(item => item.PartId);
             var merged = partRelationships.Select(item => existing.TryGetValue(item.PartId, out var old)
-                ? old with { SharedPerformanceKey = item.SharedPerformanceKey, RouteId = item.RouteId } : item).ToImmutableArray();
+                ? old with { SharedPerformanceKey = item.SharedPerformanceKey, RouteId = item.RouteId }
+                : item).ToImmutableArray();
             return placement with
             {
                 ItemContextId = itemContextId, ContainingContextId = containingContextId, RouteId = routeId,
-                PartRelationships = placement.PartRelationships.SequenceEqual(merged) ? placement.PartRelationships : merged
+                PartRelationships = placement.PartRelationships.SequenceEqual(merged)
+                    ? placement.PartRelationships
+                    : merged
             };
         });
     }
@@ -207,10 +261,14 @@ public sealed partial class ProjectEdit
         var variation = source with
         {
             Id = Id<Pattern>.New(), Name = name,
-            Parts = [.. source.Parts.Select(part => part with
-            {
-                Id = partIds[part.Id], Notes = [.. part.Notes.Select(note => note with { Id = Id<NoteEvent>.New() })]
-            })]
+            Parts =
+            [
+                .. source.Parts.Select(part => part with
+                {
+                    Id = partIds[part.Id],
+                    Notes = [.. part.Notes.Select(note => note with { Id = Id<NoteEvent>.New() })]
+                })
+            ]
         };
         State = State with { Patterns = State.Patterns.Add(variation) };
         ChangePlacement(placementId, item => item with
@@ -218,11 +276,22 @@ public sealed partial class ProjectEdit
             PatternId = variation.Id,
             PartRelationships = [.. item.PartRelationships.Select(part => part with { PartId = partIds[part.PartId] })]
         });
-        State = State with { GraphAttachments = [.. State.GraphAttachments.Select(attachment => attachment with
+        State = State with
         {
-            Sources = [.. attachment.Sources.Select(binding => binding.PlacementId == placementId &&
-                partIds.TryGetValue(binding.PartId, out var newPart) ? binding with { PartId = newPart } : binding)]
-        })] };
+            GraphAttachments =
+            [
+                .. State.GraphAttachments.Select(attachment => attachment with
+                {
+                    Sources =
+                    [
+                        .. attachment.Sources.Select(binding => binding.PlacementId == placementId &&
+                                                                partIds.TryGetValue(binding.PartId, out var newPart)
+                            ? binding with { PartId = newPart }
+                            : binding)
+                    ]
+                })
+            ]
+        };
         return variation.Id;
     }
 
@@ -242,8 +311,11 @@ public sealed partial class ProjectEdit
     {
         CheckActive();
         var placement = Find(State.Placements, item => item.Id == placementId);
-        State = State with { Placements = Remove(State.Placements, item => item.Id == placementId),
-            ArrangementClips = [.. State.ArrangementClips.Where(clip => clip.SourcePlacementId != placementId)] };
+        State = State with
+        {
+            Placements = Remove(State.Placements, item => item.Id == placementId),
+            ArrangementClips = [.. State.ArrangementClips.Where(clip => clip.SourcePlacementId != placementId)]
+        };
         if (placement.ItemContextId is { } contextId)
         {
             RemoveContextGraphs(contextId);
@@ -252,10 +324,30 @@ public sealed partial class ProjectEdit
     }
 
     // Definition/resource removal never cascades into unrelated musical content. Commit validates remaining uses.
-    public void DeletePattern(Id<Pattern> id) { CheckActive(); State = State with { Patterns = Remove(State.Patterns, item => item.Id == id) }; }
-    public void DeleteSound(Id<SoundDefinition> id) { CheckActive(); State = State with { Sounds = Remove(State.Sounds, item => item.Id == id) }; }
-    public void DeleteResource(Id<ResourceDescriptor> id) { CheckActive(); State = State with { Resources = Remove(State.Resources, item => item.Id == id) }; }
-    public void DeleteGroup(Id<InstrumentGroup> id) { CheckActive(); State = State with { Groups = Remove(State.Groups, item => item.Id == id) }; }
+    public void DeletePattern(Id<Pattern> id)
+    {
+        CheckActive();
+        State = State with { Patterns = Remove(State.Patterns, item => item.Id == id) };
+    }
+
+    public void DeleteSound(Id<SoundDefinition> id)
+    {
+        CheckActive();
+        State = State with { Sounds = Remove(State.Sounds, item => item.Id == id) };
+    }
+
+    public void DeleteResource(Id<ResourceDescriptor> id)
+    {
+        CheckActive();
+        State = State with { Resources = Remove(State.Resources, item => item.Id == id) };
+    }
+
+    public void DeleteGroup(Id<InstrumentGroup> id)
+    {
+        CheckActive();
+        State = State with { Groups = Remove(State.Groups, item => item.Id == id) };
+    }
+
     public void DeleteContext(Id<ProcessingContext> id)
     {
         CheckActive();
@@ -264,18 +356,28 @@ public sealed partial class ProjectEdit
         // Existing R1 callers must explicitly detach musical owners in this same edit.
         State = State with { Contexts = Remove(State.Contexts, item => item.Id == id) };
     }
-    public void DeleteRoute(Id<RouteIntent> id) { CheckActive(); State = State with { Routes = Remove(State.Routes, item => item.Id == id) }; }
+
+    public void DeleteRoute(Id<RouteIntent> id)
+    {
+        CheckActive();
+        State = State with { Routes = Remove(State.Routes, item => item.Id == id) };
+    }
 
     private void ChangePattern(Id<Pattern> id, Func<Pattern, Pattern> change) =>
         State = State with { Patterns = Replace(State.Patterns, item => item.Id == id, change) };
+
     private void ChangePart(Id<Pattern> patternId, Id<MusicalPart> partId, Func<MusicalPart, MusicalPart> change) =>
-        ChangePattern(patternId, pattern => pattern with { Parts = Replace(pattern.Parts, item => item.Id == partId, change) });
+        ChangePattern(patternId,
+            pattern => pattern with { Parts = Replace(pattern.Parts, item => item.Id == partId, change) });
+
     private void ChangePlacement(Id<PatternPlacement> id, Func<PatternPlacement, PatternPlacement> change) =>
         State = State with { Placements = Replace(State.Placements, item => item.Id == id, change) };
 
     private static T Find<T>(ImmutableArray<T> items, Func<T, bool> predicate)
     {
-        foreach (var item in items) if (predicate(item)) return item;
+        foreach (var item in items)
+            if (predicate(item))
+                return item;
         throw new ProjectValidationException("Edit target does not exist.");
     }
 
@@ -283,8 +385,11 @@ public sealed partial class ProjectEdit
     {
         var old = Find(items, predicate);
         var replacement = change(old);
-        return EqualityComparer<T>.Default.Equals(old, replacement) ? items : items.SetItem(items.IndexOf(old), replacement);
+        return EqualityComparer<T>.Default.Equals(old, replacement)
+            ? items
+            : items.SetItem(items.IndexOf(old), replacement);
     }
 
-    private static ImmutableArray<T> Remove<T>(ImmutableArray<T> items, Func<T, bool> predicate) => items.Remove(Find(items, predicate));
+    private static ImmutableArray<T> Remove<T>(ImmutableArray<T> items, Func<T, bool> predicate) =>
+        items.Remove(Find(items, predicate));
 }

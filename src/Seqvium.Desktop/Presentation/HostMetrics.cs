@@ -25,15 +25,19 @@ public static class HostMetrics
         ["Rail.Width"] = 52,
         ["Playlist.LaneHeight"] = 72, ["Playlist.RulerHeight"] = 32, ["Playlist.HeaderWidth"] = 156,
         ["Playlist.OverviewHeight"] = 28,
+        ["Piano.KeyWidth"] = 76, ["Piano.RowHeight"] = 20, ["Piano.RulerHeight"] = 32,
+        ["Piano.VelocityHeight"] = 92, ["Piano.NoteCorner"] = 3,
         ["Level.Height"] = 30, ["Level.TrackHeight"] = 8, ["Level.ThumbSize"] = 12,
         ["Level.Inset"] = 8, ["ScrollBar.Size"] = 12
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     public static IReadOnlyDictionary<string, object> Resources { get; } = BuildResources();
+
     private static FrozenDictionary<string, object> BuildResources()
     {
         var resources = Values.ToDictionary(x => x.Key, x => x.Key.EndsWith("Corner", StringComparison.Ordinal)
-            ? (object)new CornerRadius(x.Value) : x.Value);
+            ? (object)new CornerRadius(x.Value)
+            : x.Value);
         resources["Border.Control"] = new Thickness(Values["Border.Width"]);
         resources["Border.Top"] = new Thickness(0, Values["Border.Width"], 0, 0);
         resources["Border.Bottom"] = new Thickness(0, 0, 0, Values["Border.Width"]);

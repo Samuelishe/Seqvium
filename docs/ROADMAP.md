@@ -155,7 +155,7 @@ evidence; Q-061 retains the full dependency/release-scenario audit. Stage IDs/or
 The [graph contract](NODE_GRAPH.md#cross-context-signal-and-control-relationships) accepts bounded
 semantic dependencies, not universal routing or an early full sidechain/modulation system.
 
-| Stage                                            | Bounded responsibility                                                                                                                                                                                                                                                                                            |
+| Stage                         | Bounded responsibility                                                                                                                                                                                                                                           |
 |-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | R4 — Node Graph Foundation    | Preserve semantic distinctions and dependency validation/prepared-execution foundations capable of later explicit cross-context relationships. Validate supported connections; full cross-context UI, all taps and mature scheduling/modulation are not required |
 | R8 — Resampling               | Account for required external dependencies in the supported frozen object-render scope, or explicitly report unsupported/blocked cases. Never claim equivalent rendering after silently omitting them                                                            |
@@ -172,7 +172,7 @@ scope is unchanged and does not acquire a hidden advanced-routing prerequisite.
 [Project format](PROJECT_FORMAT.md#media-and-persistence-integrity) owns the failure/lifetime contract;
 the following assigns minimum responsibility within existing stages, not a full storage feature set.
 
-| Stage                                            | Bounded responsibility                                                                                                                                                                                                                                                                                            |
+| Stage                           | Bounded responsibility                                                                                                                                                                                                                                               |
 |---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | R1 — Domain Foundation          | Document identity/lifecycle, coherent canonical versioned Save/reopen and basic edit/Undo boundaries; sufficient revision/resource/ownership relationships for future recovery/media. Full recovery UI, storage GC and every media workflow are not R1 prerequisites |
 | R2 — Audio Resource Foundation  | Durable managed import/acceptance, partial-import failure safety, resource/source distinction and unnamed-project media lifetime; preview stays transient, accepted audio survives source disappearance                                                              |
@@ -342,8 +342,8 @@ implemented: continuous Pattern playback, renderer position, compatible live ste
 channel/Pattern deletion, navigation collapse and selected-Pattern WAV export.
 [Current state](PROJECT_STATE.md) owns evidence and
 limits; [completed work](archive/WORK_LOG.md#seq-r5-music--2026-10-13)
-records the checkpoint. Richer velocity, per-channel controls and remaining musical editors still
-keep R5 partial. Bounded Pattern export does not close the later First Track stage.
+records the checkpoint. SEQ-R9 now provides shared per-note velocity and melodic editing; per-channel
+mix controls and remaining integration still keep R5 partial. Pattern export does not close First Track.
 
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,
 several channels, velocity, and responsive live editing over extensible musical events.
@@ -357,13 +357,12 @@ row operations, project navigation, WAV drop, BPM editing and Gain dial. It does
 establish visual acceptance; the [review report](experiments/SEQ-UI-REDESIGN_REPORT.md) owns evidence.
 Keep the reference-driven physical materials as editors grow; do not revert to generic settings forms.
 
-| Priority / scope | Desired interaction | Required implementation boundary |
-| ------------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Later R5 / R9 | Expandable velocity lane, per-note accents, richer note preview/editing | Supported intensity/duration semantics and execution; lift current unsupported-row refusal deliberately with preservation tests |
-| R5/R11 integration | Functional channel mute/solo/level/pan and sample audition | Explicit Part/Sound/routing versus transient audition scope, valid execution/Undo; no unbound decorative knobs |
-| R7/R8 and First Track R12 | Project sound browser, waveform previews and fast find/audition/drop | Existing durable-media foundation plus bounded preview decoding, cancellation and transient audio borrowing; library publication remains separate |
-| R11 / actual processing nodes | Instrument/EQ panels, meaningful signal/spectrum visualization | Real parameters/DSP and bounded measured taps delivered off the realtime/UI path; own material language and state preservation |
-| Workspace Q-032 | Independent instrument panels and comparisons | Dynamic instance/layout/target retirement and focus ownership, beyond the current reusable singleton |
+| Priority / scope              | Desired interaction                                                  | Required implementation boundary                                                                                                                  |
+|-------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| R5/R11 integration            | Functional channel mute/solo/level/pan and sample audition           | Explicit Part/Sound/routing versus transient audition scope, valid execution/Undo; no unbound decorative knobs                                    |
+| R7/R8 and First Track R12     | Project sound browser, waveform previews and fast find/audition/drop | Existing durable-media foundation plus bounded preview decoding, cancellation and transient audio borrowing; library publication remains separate |
+| R11 / actual processing nodes | Instrument/EQ panels, meaningful signal/spectrum visualization       | Real parameters/DSP and bounded measured taps delivered off the realtime/UI path; own material language and state preservation                    |
+| Workspace Q-032               | Independent instrument panels and comparisons                        | Dynamic instance/layout/target retirement and focus ownership, beyond the current reusable singleton                                              |
 
 These remaining follow-ups are not shipped controls or a new release schedule. Longer Patterns now
 use whole 4/4 bars with occupied-shortening refusal. Other meters and multi-file drop remain separate.
@@ -416,47 +415,30 @@ or editor entry point; rendering one use cannot silently transform every shared 
 
 ## SEQ-R9 — Piano Roll
 
-Add richer pitch, duration, and velocity editing over the same underlying musical event model as
-the Step Sequencer.
-The richer editor retains the same shared-content target semantics; opening from a placement does not
-detach it or create another event model.
+**Implemented / locally verified bounded SEQ-R9 editor.** Shared pitch/duration/velocity editing,
+group gestures, exact properties, aligned velocity, keyboard/snap/zoom/scroll, read-only ghost context,
+safe Rack melody preview, explicit/verified import Root Pitch and stopped source-note audition now
+support real melody/chord/bass composition, Undo/Save/Open and Pattern/Song playback/export.
+Opening a Part never detaches it or creates another event model. [UX](UX_CONTRACT.md#implemented-seq-r9-piano-roll)
+owns current interactions; [UI](UI_DESIGN.md#implemented-seq-r9-musical-surface) owns selected reference
+application. [Evidence](experiments/SEQ-R9_REPORT.md) is scoped, not owner aesthetic or R4 pressure acceptance.
 
-### Piano Roll preparation and bounded first slice
+### Piano Roll follow-ups
 
-The home resources and [selected reference direction](UI_DESIGN.md#reference-library-and-next-editor-direction)
-are ready for the next task; this preparation does not implement R9 or silently start another stage.
-Prioritize composing/editing a real melodic phrase with existing WAV sounds, rather than a populated
-mock editor. Keep one shared Pattern/Part target, recognizable note bodies, fixed pitch/time axes,
-bar/beat hierarchy, snapping and an optional aligned velocity lane. Use the shared instrument materials
-and independently review Light as a first-class music theme. Specify exact pointer/keyboard gestures
-in that task, with discoverable actions, transient previews, Escape/stale/no-op handling and one Undo
-per continuous edit. Keep focus, note selection, active pane and command target distinct.
-
-The first slice must resolve these concrete integration points:
-
-- Place, select, move/copy, resize and delete notes with exact pitch/duration/intensity; verify overlap,
-  end boundaries, dense chords, short notes and scrolled/zoomed edge handles.
-- Preserve the same notes across Rack, Playlist and Piano Roll. The current Rack refuses richer
-  pitch/intensity/off-grid/gate data; select a truthful read-only preview or bounded richer projection
-  before lifting that refusal. Never quantize, erase or rebuild a phrase merely to fit step pads.
-- Native-pitch samples need an explicit, correct sampler root/tuning path. The local Piano single-note
-  subset has recorded MIDI roots; filenames/chord names are metadata, not an automatic root decision.
-  Current imports default to root 60. Do not advertise source pitch as calibrated Piano Roll pitch
-  until root configuration and realtime/offline behavior agree.
-- Test shared references, Undo/Redo, Save/Open/export, duration/intensity playback and live edits through
-  existing scheduling/voice limits. A Piano Roll must not invent another transport, PCM owner or history.
-- Review empty, sparse melody, layered parts, dense chords and selected/overlapping velocity handles
-  in RU/EN, Dark/Light and reduced/ordinary windows, with useful local scrolling and pointer targets.
-
-Controller/automation curves, scale/quantize tools, humanization, MIDI/QWERTY recording, MPE and
-multi-instrument advanced editing remain follow-ups requiring actual semantics and execution. Optional
-ghost-part context is a presentation proposal, not permission to mutate another Part. Mixer/EQ/synth
-reference ideas stay within the existing R11/extension/editor follow-ups and need real DSP/measurement.
+- Scale highlighting/locking, quantize, humanization and richer selection/transform tools need explicit
+  musical semantics, preview and Undo contracts, not decorative toolbar modes.
+- Controller/automation curves, MIDI/QWERTY recording and MPE need real event/input/execution ownership.
+- Multisample/key mapping, sustain loops, fine root tuning UI and higher-quality resampling need sampler
+  capabilities; a single WAV's speed-based pitch shift is not a complete instrument.
+- Independent simultaneous editor targets, richer multi-Part operations and make-unique/variants need
+  workspace/sharing ownership. Current ghosts are noninteractive and edits affect the explicit Part.
+- Other meters, channel mix/processing and deeper accessibility/high-DPI/platform evidence remain
+  separate work under their owners. Mixer/EQ/synth reference ideas still need real DSP/measurement.
 
 ## SEQ-R10 — Arrangement
 
 **In progress / bounded Playlist implemented.** The owner explicitly authorizes composition ahead of
-closing R6–R9. SEQ-R10-PLAYLIST provides shared Pattern clips, simultaneous finite song execution,
+closing R6–R8. SEQ-R10-PLAYLIST provides shared Pattern clips, simultaneous finite song execution,
 move/Ctrl-copy/repeat/duplicate/delete, named/color fixed tracks with actual Mute/Solo, snap, overview/
 fit/follow, renderer position, Undo/Redo, compatible Save/Open and whole-Song WAV.
 SEQ-PLAYLIST-MUSIC adds bounded seek/range transport, clip group editing, pointer navigation,
@@ -471,13 +453,13 @@ owns inspected reference choices, not an independent feature list.
 The inspected FL/SONAR/Cubase targets inform concrete next work, rather than unused toolbar controls.
 Prioritize a finished audible scenario with canonical history/persistence and proportional evidence.
 
-| Priority / bounded package | Musical/UI outcome | Required boundary / decision |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| R10 editing | Clipboard, precise selected-clip position, richer context menu and tool/cursor feedback; marquee/group move/copy/delete are implemented | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit |
-| R10 song structure | Named section markers, dynamic track insertion/reorder, groups/collapse and useful track height | Stable container/marker identities, lossless transition from fixed slots, separate visual organization from item/container processing and Mixer routing |
-| R10 Pattern variants | Explicit make-unique/variation and richer mini Piano Roll | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies |
-| R10 audio clips | Real cached waveform, source range, trim/split/fades, eventually local stretch/warp | Preserve media and non-destructive ranges; define actual render algorithms, finite tails, tempo relationship and safe split ownership before enabling tools |
-| R11 processing / automation | Measured stereo Master/track taps, useful meters, Mixer balance/pan/sends and automation lanes | Actual processor/measurement/tap/state ownership; no fake meters or duplicate Gain/DSP. Automation needs canonical musical-time lanes and realtime/offline equivalence |
+| Priority / bounded package  | Musical/UI outcome                                                                                                                      | Required boundary / decision                                                                                                                                           |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R10 editing                 | Clipboard, precise selected-clip position, richer context menu and tool/cursor feedback; marquee/group move/copy/delete are implemented | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit                                           |
+| R10 song structure          | Named section markers, dynamic track insertion/reorder, groups/collapse and useful track height                                         | Stable container/marker identities, lossless transition from fixed slots, separate visual organization from item/container processing and Mixer routing                |
+| R10 Pattern variants        | Explicit make-unique/variation and richer mini Piano Roll                                                                               | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies                                                   |
+| R10 audio clips             | Real cached waveform, source range, trim/split/fades, eventually local stretch/warp                                                     | Preserve media and non-destructive ranges; define actual render algorithms, finite tails, tempo relationship and safe split ownership before enabling tools            |
+| R11 processing / automation | Measured stereo Master/track taps, useful meters, Mixer balance/pan/sends and automation lanes                                          | Actual processor/measurement/tap/state ownership; no fake meters or duplicate Gain/DSP. Automation needs canonical musical-time lanes and realtime/offline equivalence |
 
 Expand Playlist with normal shared pattern references and explicit
 independent variations. Follow the semi-free direction: user-named structured containers, useful

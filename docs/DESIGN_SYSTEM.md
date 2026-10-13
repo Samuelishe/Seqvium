@@ -30,36 +30,38 @@ Application resource replacement synchronizes aliases; theme changes retain exis
 All color roles exist in Dark and Light. `HostPalette.For` is also the fallback for a detached
 drawing control; application resources are the live authority after attachment.
 
-| Category | Implemented semantic roles | Use |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Surfaces | `Surface.Background`, `Surface.Raised`, `Surface.Workspace` | Application, pane/header/popup, working canvas |
-| Interaction surfaces | `Surface.Hover`, `Surface.Pressed`, `Surface.Selected`, `Surface.Accent` | Shared control states and selection |
-| Status surfaces | `Surface.Playing`, `Surface.Critical` | Active transport and destructive hover |
-| Text | `Text.Primary`, `Text.Secondary` | Body and secondary/caption |
-| Boundaries | `Border.Default`, `Focus.Active` | Separators and the independently visible keyboard/active-pane outline |
-| Action/state | `Accent.Action`, `State.Unavailable` | Actions/selection and disabled state |
-| Status | `Status.Warning`, `Status.Critical`, `Status.Playing` | Warning/error and current success/transport indication; accompany meaning with text/shape |
-| Graph | `Graph.Node`, `Graph.NodeBorder`, `Graph.Cable`, `Graph.Grid` | Unselected nodes and canvas-specific geometry |
-| Level controls | `Control.Track`, `Control.Fill`, `Control.Thumb` | Slider, captured Gain level and physical dial |
-| Channel Rack | `Rack.Channel0`–`Rack.Channel7`, corresponding `Off` roles, `Rack.Ruler`, `Rack.StepInk`, `Rack.StepBorder` | Channel identity, checked/off bodies, common ruler and indicators |
-| Material colors | `Material.Highlight`, `Material.Shade`, `Material.Clear`, `Material.Signal` | Palette-owned light, shade, transparent endpoint and signal tint |
-| Material brushes | `Material.Panel`, `Material.Button`, `Material.Bevel`, `Material.Dial`, `Material.CurveFill` | Derived layered instrument surfaces and analytical fill |
-| Material shadows | `Material.PanelShadow`, `Material.Recess`, `Material.PadShadow`, `Material.Glow0`–`Material.Glow7` | Raised/recessed surfaces and active channel light; typed BoxShadows |
+| Category             | Implemented semantic roles                                                                                  | Use                                                                                       |
+|----------------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| Surfaces             | `Surface.Background`, `Surface.Raised`, `Surface.Workspace`                                                 | Application, pane/header/popup, working canvas                                            |
+| Interaction surfaces | `Surface.Hover`, `Surface.Pressed`, `Surface.Selected`, `Surface.Accent`                                    | Shared control states and selection                                                       |
+| Status surfaces      | `Surface.Playing`, `Surface.Critical`                                                                       | Active transport and destructive hover                                                    |
+| Text                 | `Text.Primary`, `Text.Secondary`                                                                            | Body and secondary/caption                                                                |
+| Boundaries           | `Border.Default`, `Focus.Active`                                                                            | Separators and the independently visible keyboard/active-pane outline                     |
+| Action/state         | `Accent.Action`, `State.Unavailable`                                                                        | Actions/selection and disabled state                                                      |
+| Status               | `Status.Warning`, `Status.Critical`, `Status.Playing`                                                       | Warning/error and current success/transport indication; accompany meaning with text/shape |
+| Graph                | `Graph.Node`, `Graph.NodeBorder`, `Graph.Cable`, `Graph.Grid`                                               | Unselected nodes and canvas-specific geometry                                             |
+| Level controls       | `Control.Track`, `Control.Fill`, `Control.Thumb`                                                            | Slider, captured Gain level and physical dial                                             |
+| Channel Rack         | `Rack.Channel0`–`Rack.Channel7`, corresponding `Off` roles, `Rack.Ruler`, `Rack.StepInk`, `Rack.StepBorder` | Channel identity, checked/off bodies, common ruler and indicators                         |
+| Piano keyboard       | `Piano.WhiteKey`, `Piano.BlackKey`, `Piano.KeyInk`                                                          | Theme-owned fixed keyboard, pitch identity and readable key labels                        |
+| Material colors      | `Material.Highlight`, `Material.Shade`, `Material.Clear`, `Material.Signal`                                 | Palette-owned light, shade, transparent endpoint and signal tint                          |
+| Material brushes     | `Material.Panel`, `Material.Button`, `Material.Bevel`, `Material.Dial`, `Material.CurveFill`                | Derived layered instrument surfaces and analytical fill                                   |
+| Material shadows     | `Material.PanelShadow`, `Material.Recess`, `Material.PadShadow`, `Material.Glow0`–`Material.Glow7`          | Raised/recessed surfaces and active channel light; typed BoxShadows                       |
 
 Geometry and typography resources are declared in `HostMetrics.Values` and its typed `Resources`:
 
-| Category | Resources | Use |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Shell/chrome | `Chrome.Height`, `Toolbar.Height`, `Status.Height`, `Chrome.ButtonWidth`, `Pane.HeaderHeight`, `Pane.Corner` | Shared frame and pane chrome |
-| Controls | `Control.Height`, `Control.InputHeight`, `Control.ComfortableHeight`, `Control.IconWidth`, `Control.StatusHeight`, `Control.Corner` | Default, editable, modal, icon and status variants |
-| Boundaries | `Border.Width`, `Focus.Width`, `Border.Control`, `Border.Top`, `Border.Bottom`, `Border.Focus` | Drawing widths and typed control/frame thicknesses |
-| Spacing | `Space.XSmall`, `Space.Small`, `Space.Gap`, `Space.Medium`, `Space.Large`, `Space.Section` | Increasing density scale; use a role instead of a copied dimension |
-| Padding | `Padding.Control`, `Padding.Input`, `Padding.Content`, `Padding.Popup`, `Padding.Dialog`, `Padding.Parameter`, `Padding.ComboBox`, `Padding.Numeric`, `Padding.Status`, `Padding.Icon` | Typed padding/margin roles for actual compositions |
-| Typography | `Type.Body`, `Type.Caption`, `Type.Section`, `Type.PaneTitle`, `Type.Numeric`, `Type.Transport`, `Type.FontFamily`, `Type.MonospaceFamily` | Body/caption/section/pane/numeric/transport emphasis; monospace for technical or fixed-column content |
-| Level/scroll | `Level.Height`, `Level.TrackHeight`, `Level.ThumbSize`, `Level.Inset`, `ScrollBar.Size` | Real hit area, drawn/templated geometry, visible local scrolling |
-| Rack/navigation | `Rack.StepHeight`, `Rack.RowHeight`, `Rack.StepCorner`, `Rail.Width` | Pad hit geometry, rhythmic row and navigation rail |
-| Playlist | `Playlist.LaneHeight`, `Playlist.RulerHeight`, `Playlist.HeaderWidth`, `Playlist.OverviewHeight` | Musical lane/header hit geometry and the derived song overview |
-| Numeric template | `Control.NumericInnerHeight` | Derived inner height respecting outer control/border; do not set a second local template minimum |
+| Category         | Resources                                                                                                                                                                              | Use                                                                                                   |
+|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| Shell/chrome     | `Chrome.Height`, `Toolbar.Height`, `Status.Height`, `Chrome.ButtonWidth`, `Pane.HeaderHeight`, `Pane.Corner`                                                                           | Shared frame and pane chrome                                                                          |
+| Controls         | `Control.Height`, `Control.InputHeight`, `Control.ComfortableHeight`, `Control.IconWidth`, `Control.StatusHeight`, `Control.Corner`                                                    | Default, editable, modal, icon and status variants                                                    |
+| Boundaries       | `Border.Width`, `Focus.Width`, `Border.Control`, `Border.Top`, `Border.Bottom`, `Border.Focus`                                                                                         | Drawing widths and typed control/frame thicknesses                                                    |
+| Spacing          | `Space.XSmall`, `Space.Small`, `Space.Gap`, `Space.Medium`, `Space.Large`, `Space.Section`                                                                                             | Increasing density scale; use a role instead of a copied dimension                                    |
+| Padding          | `Padding.Control`, `Padding.Input`, `Padding.Content`, `Padding.Popup`, `Padding.Dialog`, `Padding.Parameter`, `Padding.ComboBox`, `Padding.Numeric`, `Padding.Status`, `Padding.Icon` | Typed padding/margin roles for actual compositions                                                    |
+| Typography       | `Type.Body`, `Type.Caption`, `Type.Section`, `Type.PaneTitle`, `Type.Numeric`, `Type.Transport`, `Type.FontFamily`, `Type.MonospaceFamily`                                             | Body/caption/section/pane/numeric/transport emphasis; monospace for technical or fixed-column content |
+| Level/scroll     | `Level.Height`, `Level.TrackHeight`, `Level.ThumbSize`, `Level.Inset`, `ScrollBar.Size`                                                                                                | Real hit area, drawn/templated geometry, visible local scrolling                                      |
+| Rack/navigation  | `Rack.StepHeight`, `Rack.RowHeight`, `Rack.StepCorner`, `Rail.Width`                                                                                                                   | Pad hit geometry, rhythmic row and navigation rail                                                    |
+| Playlist         | `Playlist.LaneHeight`, `Playlist.RulerHeight`, `Playlist.HeaderWidth`, `Playlist.OverviewHeight`                                                                                       | Musical lane/header hit geometry and the derived song overview                                        |
+| Piano Roll       | `Piano.KeyWidth`, `Piano.RowHeight`, `Piano.RulerHeight`, `Piano.VelocityHeight`, `Piano.NoteCorner`                                                                                   | Keyboard/grid alignment, velocity lane and bevelled note geometry                                     |
+| Numeric template | `Control.NumericInnerHeight`                                                                                                                                                           | Derived inner height respecting outer control/border; do not set a second local template minimum      |
 
 Colors are semantic values. Geometry's spacing scale is the small base vocabulary; padding/control
 roles give those values a purpose. Shape, graph coordinates, menu placement, content-specific widths
@@ -75,24 +77,24 @@ preparation; actual values remain source-owned.
 
 ## Standard controls and variants
 
-| Component | Default / supported classes | Guidance |
-| --------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Button | Default standard; `primary`, `compact`, `command`/`icon`, `danger`/`critical`, `comfortable` | Standard commands, principal action, dense input action, named vector icon, destructive action, owned-modal action |
-| Transport/status Button | `play` with `active`; `status` with `warning`/`error`/`playing` | Existing transport and status surfaces; keep the deliberate semantic exception |
-| Numeric input | TextBox `numeric`; NumericUpDown | Use committed TextBox sessions where a transaction must be atomic; NumericUpDown remains the existing quick control. Styling does not merge their edit semantics |
-| ComboBox | Default | Actual target/occurrence selection; popup and state resources follow the same palette |
-| ToggleButton | Default; `step` + `channel0`–`channel7`, `current` | Actual toggles; Rack's retained tactile template adds a bevel, lit body, bottom indicator, captured pressed recess and independent focus frame; `current` outlines the actual playing column using Status.Playing |
-| Rail Button | `rail`, `active` | Direct named pane activation; vector icons and real enabled/active state |
-| Pattern name | TextBox `patternName` | Integrated committed name, actual text editing/focus without a duplicate form label |
-| Slider / Gain level | Default Slider; `GainLevelControl`, `GainDialControl` | Shared roles/materials; captured single-commit gestures, keyboard access, same exact parameter and history |
-| Expander | Default | Progressive disclosure, shared header/content resources; specialized content retains its own layout |
-| Menu / ContextMenu | Default | Retain framework keyboard/popup lifecycle, shared surfaces and states |
-| ToolTip / FlyoutPresenter | Default | Brief hints and deliberately opened details, shared typography/padding/boundaries |
-| Pane chrome | `workspacePane`, `active`, `paneHeader`, `paneChrome`, `paneTitle` | Active pane is separate from control keyboard focus and musical selection |
-| StackPanel spacing | Default gap; `joined`, `tight`, `compact`, `spaced`, `section` | Shared spacing scale; joined chrome/icon groups have no inter-control gap |
-| Parameter row | Grid or horizontal StackPanel `parameterRow` | Label, editable field, derived unit/value and action share the alignment rules below |
-| Text | `secondary`, `caption`, `section`, `numeric`, `monospace`, `warning`, `error`, `success` | Hierarchy/status rather than local color assignment |
-| ScrollViewer / ScrollBar | Default | Scroll content locally; visible shared scrollbar geometry/palette; never add whole-window scrolling to fit chrome |
+| Component                 | Default / supported classes                                                                  | Guidance                                                                                                                                                                                                          |
+|---------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Button                    | Default standard; `primary`, `compact`, `command`/`icon`, `danger`/`critical`, `comfortable` | Standard commands, principal action, dense input action, named vector icon, destructive action, owned-modal action                                                                                                |
+| Transport/status Button   | `play` with `active`; `status` with `warning`/`error`/`playing`                              | Existing transport and status surfaces; keep the deliberate semantic exception                                                                                                                                    |
+| Numeric input             | TextBox `numeric`; NumericUpDown                                                             | Use committed TextBox sessions where a transaction must be atomic; NumericUpDown remains the existing quick control. Styling does not merge their edit semantics                                                  |
+| ComboBox                  | Default                                                                                      | Actual target/occurrence selection; popup and state resources follow the same palette                                                                                                                             |
+| ToggleButton              | Default; `step` + `channel0`–`channel7`, `current`                                           | Actual toggles; Rack's retained tactile template adds a bevel, lit body, bottom indicator, captured pressed recess and independent focus frame; `current` outlines the actual playing column using Status.Playing |
+| Rail Button               | `rail`, `active`                                                                             | Direct named pane activation; vector icons and real enabled/active state                                                                                                                                          |
+| Pattern name              | TextBox `patternName`                                                                        | Integrated committed name, actual text editing/focus without a duplicate form label                                                                                                                               |
+| Slider / Gain level       | Default Slider; `GainLevelControl`, `GainDialControl`                                        | Shared roles/materials; captured single-commit gestures, keyboard access, same exact parameter and history                                                                                                        |
+| Expander                  | Default                                                                                      | Progressive disclosure, shared header/content resources; specialized content retains its own layout                                                                                                               |
+| Menu / ContextMenu        | Default                                                                                      | Retain framework keyboard/popup lifecycle, shared surfaces and states                                                                                                                                             |
+| ToolTip / FlyoutPresenter | Default                                                                                      | Brief hints and deliberately opened details, shared typography/padding/boundaries                                                                                                                                 |
+| Pane chrome               | `workspacePane`, `active`, `paneHeader`, `paneChrome`, `paneTitle`                           | Active pane is separate from control keyboard focus and musical selection                                                                                                                                         |
+| StackPanel spacing        | Default gap; `joined`, `tight`, `compact`, `spaced`, `section`                               | Shared spacing scale; joined chrome/icon groups have no inter-control gap                                                                                                                                         |
+| Parameter row             | Grid or horizontal StackPanel `parameterRow`                                                 | Label, editable field, derived unit/value and action share the alignment rules below                                                                                                                              |
+| Text                      | `secondary`, `caption`, `section`, `numeric`, `monospace`, `warning`, `error`, `success`     | Hierarchy/status rather than local color assignment                                                                                                                                                               |
+| ScrollViewer / ScrollBar  | Default                                                                                      | Scroll content locally; visible shared scrollbar geometry/palette; never add whole-window scrolling to fit chrome                                                                                                 |
 
 `command`/`icon` requires `HostIcons` and localized accessible name/tooltip. Chrome's square corner
 and status's low emphasis are deliberate variants; changing ordinary button radius must not round
@@ -156,6 +158,14 @@ changes, update UI_DESIGN and its implementation together; documentation is not 
 resources. New common roles belong in both palettes and the small catalog, with focused checks.
 
 ## Verification workflow
+
+SEQ-R9's drawn grid, keys, note bodies/handles, velocity stems and Rack melodic thumbnail use the
+same HostVisual palette/material/metric resolution as other musical surfaces. Piano/Draw/Velocity
+icons are original HostIcons vectors. Specialized keyboard/grid geometry is deliberately not a
+generic parameter-row minimum. Source/note properties use shared standard controls and numeric
+templates; actual label/TextPresenter alignment is measured, not inferred from outer height.
+Existing Dark role values are preserved; both keyboard palettes and actual sparse/chord/reduced
+compositions are reviewed separately. Evidence belongs to the [R9 report](experiments/SEQ-R9_REPORT.md).
 
 [VisualCheck](../tools/Seqvium.VisualCheck/README.md) is a separately invoked developer host, with
 isolated preferences/layout/media and no production developer tab. It renders real controls, menus,
