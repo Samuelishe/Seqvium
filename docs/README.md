@@ -4,6 +4,28 @@ Start here to try Seqvium or find the developer documentation. The [project over
 describes what is available today and what is still planned. This guide explains a first sample
 workflow and points to the detailed sources for each subject.
 
+## Create a drum pattern
+
+After [building and launching](../README.md#getting-started), open **Step Sequencer / Channel Rack**
+from the **Panes** menu. Use short supported percussion WAVs (the formats below apply).
+
+1. Click **New Beat Pattern**. It creates an empty bar with 16 sixteenth-note steps in the current
+   4/4 project; it does not change BPM or add preset hits.
+2. Click **Add WAV Channel** for your Kick, Snare and Hi-Hat. Each import adds a separate row;
+   source mixing is connected automatically for this initial graph.
+3. Enable Kick steps 1/9, Snare 5/13 and Hi-Hat 1/3/5/7/9/11/13/15. Click again to remove a hit.
+   Arrows navigate; Space/Enter toggles; Ctrl+Z/Y undo/redo. Edit the Pattern name and press Enter/check.
+4. Press the existing toolbar **Play** (F5). It plays one bar and stops. Step edits stop playback;
+   press Play again to hear the current bar. Longer samples cut at a quarter-note gate or the bar end,
+   so this is best suited to short drums. Continuous loop and seamless live editing are not available yet.
+5. Save the project. **Open** restores the channels/steps silently for further editing. Keep its
+   `.seqvium.media` directory with the project. History starts fresh on Open.
+
+The editor explains unsupported meter/Pattern shape or notes and preserves them. Adding channels to
+an already shared Pattern or a custom graph can be refused safely; existing shared steps still edit
+the shared musical content. Up to eight channels are offered; excessive overlapping voices/media can
+block Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
+
 ## Try sample processing
 
 First [build and launch the desktop](../README.md#getting-started) on Windows. Start with a short

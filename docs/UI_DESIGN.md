@@ -62,6 +62,18 @@ review artifacts, not committed assets. The owner accepts F1 and the current bou
 interaction level; the professional DAW target below guides later real editor work, without another
 R3 polishing prerequisite. This acceptance does not establish dense musical-editor usability.
 
+## Implemented R5-F1 Channel Rack composition
+
+The compact retained pane uses short New Beat Pattern/Add WAV Channel commands, one committed Pattern
+name, channel names and four groups of four numbered ToggleButtons. Shared checked/off/focus states
+and beat-group gaps distinguish musical steps in both themes; no separate palette or drawing style
+is introduced. The occurrence selector is hidden for a single choice. Warnings appear only for real
+unsupported content, with disabled cells preserving readable state. The existing transport/status
+strip is reused. Local scrolling handles narrow panes; no additional global toolbar row or larger
+application minimum is imposed. Name/action rendered centers and 24-DIP step hit areas are checked
+in RU/EN × Dark/Light at ordinary/reduced sizes under
+[test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification).
+
 ## Professional DAW Workspace Design Target
 
 This is an accepted long-term visual direction, not authorization to implement future stages or a

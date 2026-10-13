@@ -57,6 +57,23 @@ screen pixels, saving `.screen.png` only when this exact window owns foreground;
 records success/refusal. Popup/tooltip content may live in another native surface and needs its own
 screen review. Render capture and Windows screen/input evidence remain distinct.
 
+## Focused Step Sequencer check
+
+`steps` verifies the retained Channel Rack in an isolated production window without opening audio:
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll steps "$PWD/.artifacts/seq-r5-f1/steps"
+```
+
+It creates an empty Beat, durably accepts three authored WAV fixtures, invokes real ToggleButton
+automation actions with synthetic pointer events, checks second-toggle/Undo/Redo, arrow/Space and
+stale-held-input behavior, then Save/Open and retained dock/collapse/hide/reopen. Eight actual renders
+cover RU/EN × Dark/Light at 1100×750 and 640×480. `steps.json` records 48 accessible checked/off cells,
+24-DIP hit areas, Pattern name/action alignment and local horizontal scrolling. A separate native
+single-click/focus smoke uses an exact foreground guard and may report refusal. It never forces
+foreground or exercises a native file picker. Its media/projects/PNG/JSON are ignored run artifacts,
+subject to the same rolling retention. Device-independent musical PCM checks stay in Tests.
+
 ## Independent-process Single Instance checks
 
 `Check-Processes.ps1` starts two independent hosts through the same production `RunDesktop` path,

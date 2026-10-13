@@ -25,6 +25,12 @@ explicit Play required. This adds a normal-process UI lifecycle, not crash recov
 
 ## R1 canonical JSON format
 
+R5-F1 saves the existing Pattern/Part/Note/Sound/Placement/graph/binding identities and managed WAV
+references, with no step array, grid flags or reader/schema change. Open restores those identities
+into a fresh silent lifecycle; the retained editor reprojects them. Undo/Redo history remains
+session-local, as before: Save preserves working history, while Open begins new history for continued
+editing. Unsupported/unknown musical data is preserved rather than quantized by the grid.
+
 F3-B changes no schema: node coordinates/topology, source bindings, parameters and the second source's
 music/media use the existing graph-aware reader 1.1 and managed layout. Canonical incomplete/cyclic
 or invalid numeric intent remains savable; viewport, editor selection/target and last-valid execution

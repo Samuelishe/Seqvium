@@ -153,6 +153,11 @@ internal sealed class WorkspacePane : Border, IDisposable
         _corner.IsVisible = pane.Dock == PaneDock.Floating;
         if (_content is FirstPartyPaneContent firstParty) firstParty.Refresh();
         if (_content is GraphPaneContent graph) graph.Refresh();
+        if (_content is BeatPaneContent beat)
+        {
+            if (pane.Visibility != PaneVisibility.Visible) beat.Suspend();
+            else beat.Refresh();
+        }
         if (_content is NodeEditorPaneContent editor)
         {
             if (pane.Visibility != PaneVisibility.Visible) editor.CancelGesture();
@@ -199,6 +204,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         if (_disposed || !IsVisible || TopLevel.GetTopLevel(this) is null) return;
         if (_content is GraphPaneContent graph) graph.FocusCanvas();
         else if (_content is NodeEditorPaneContent editor) editor.FocusEditor();
+        else if (_content is BeatPaneContent beat) beat.FocusEditor();
         else _actions.Focus();
     }
 
@@ -252,6 +258,7 @@ internal sealed class WorkspacePane : Border, IDisposable
     {
         if (_content is GraphPaneContent graph) graph.CancelGesture();
         if (_content is NodeEditorPaneContent editor) editor.CancelGesture();
+        if (_content is BeatPaneContent beat) beat.CancelGesture();
         if (_pointer is not { } pointer) return;
         _pointer = null;
         _gesture?.Cancel();

@@ -49,6 +49,9 @@
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight">
                                 <StackPanel Spacing="{DynamicResource Space.Small}">
+                                    <Button Classes="shell" Content="{Binding [Pane.Beat]}"
+                                            Click="BeatClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenBeat" />
                                     <Button Classes="shell" Content="{Binding [Pane.Inspector]}"
                                             Click="InspectorClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenInspector" />
@@ -80,7 +83,7 @@
                                 <StackPanel Width="280" Spacing="{DynamicResource Space.Medium}">
                                     <TextBlock Text="Seqvium" Classes="section" />
                                     <TextBlock Text="{Binding Version}" />
-                                    <TextBlock Text="SEQ-R4-F3-B" Classes="caption" />
+                                    <TextBlock Text="SEQ-R5-F1" Classes="caption" />
                                     <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
                                 </StackPanel>
                             </Flyout>

@@ -48,6 +48,22 @@ Long supported samples are not truncated to a bar or hidden preview limit. No pr
 created on launch. Accepted bytes survive deletion of the external WAV, Undo/Redo and Save As/reopen.
 This is one-shot occurrence preview, not Pattern/Arrangement editing, Browser or Sample Lab.
 
+## R5-F1 Add WAV Channel
+
+Channel Rack's direct Add WAV Channel freezes lifecycle/generation/Pattern/attachment before its
+native picker. It validates supported Pattern and safe expansion first, then uses the same durable
+`BeginImport → PrepareAsync → Accept(createUse)` with cancellation, integrity and target revalidation.
+One acceptance/Undo adds an independent resource, SoundDefinition, empty MusicalPart and bound Source
+with [safe existing-graph composition](NODE_GRAPH.md#r5-f1-channel-composition). It adds no note and
+never changes Pattern length, meter or BPM. Shared Pattern channel expansion is explicitly unavailable
+in v1; editing existing shared steps remains supported. Cancel/error/stale/closed targets accept no
+partial channel. Status exposes import progress even while the empty graph lacks its first Source.
+
+Normal toolbar WAV import and Node Graph Add WAV retain their full-source initial-note policies above
+and below. The editor does not add a sample catalog, preview store or second resource lifetime.
+[Audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback) owns new step gate/EOF behavior;
+[project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout) owns the unchanged durable media layout.
+
 ## R4-F3-B add WAV to current item
 
 The graph pane explicitly imports a supported WAV into its identified item-local attachment. It

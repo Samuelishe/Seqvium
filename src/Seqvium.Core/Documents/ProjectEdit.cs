@@ -98,6 +98,12 @@ public sealed partial class ProjectEdit
         return part.Id;
     }
 
+    public void RenamePattern(Id<Pattern> patternId, string name)
+    {
+        CheckActive();
+        ChangePattern(patternId, pattern => pattern with { Name = name });
+    }
+
     /// <summary>Changes the shared Pattern boundary; full transaction validation protects notes and placement ends.</summary>
     public void SetPatternLength(Id<Pattern> patternId, MusicalDuration length)
     {

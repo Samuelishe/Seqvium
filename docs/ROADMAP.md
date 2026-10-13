@@ -335,6 +335,12 @@ capabilities and tasks; the current pane reserves editor capacity rather than st
 
 ## SEQ-R5 — Pattern Workspace
 
+**In progress / partial.** The separately authorized R5-F1 finite Channel Rack/16-step workflow is
+implemented; [current state](PROJECT_STATE.md) owns evidence and limits, with completed work in the
+[archive](archive/WORK_LOG.md#seq-r5-f1--2026-10-13). Its finite one-bar Play does not close R5.
+R5-F2/F3 retain continuous Pattern loop and responsive live editing/position continuity; richer velocity
+editing remains later R5 scope. No later-stage implementation is authorized by this summary.
+
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,
 several channels, velocity, and responsive live editing over extensible musical events.
 Edit the identified shared Pattern content so all its references reflect note edits, with understandable

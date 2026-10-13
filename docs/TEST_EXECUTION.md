@@ -115,6 +115,34 @@ Named mutex/pipe, real MSBuild evaluation and retention process ownership checks
 an active user window or audio device. Wall time is necessary for timeout/watchdog tests and explicit
 stress/device measurements; ordinary musical time and concurrency use controlled values/gates.
 
+## R5-F1 Step Sequencer verification
+
+`StepSequencerTests` covers exact bidirectional grid projection, finite gates, canonical toggle/name
+edits/Undo/Redo, atomic empty channel acceptance and restored graph/media identities, shared Pattern
+editing, concurrent/stale/ABA/closed targets, import cancellation/errors, unsupported shape/notes and
+unknown-data Save preservation. Three independently authored WAVs exercise exact NoteOn/Off positions
+and numerical Mix PCM at 90/120/240 BPM; Desktop Play uses the real coordinator/realtime sampler with
+only the physical output borrower substituted and proves finite Ended plus sticky Stop. Long-source
+cases separately establish ordinary NoteOff/bar clipping; voice/channel budget refusals are explicit.
+
+Use the existing affected Release build, then select this feature and relevant boundaries:
+
+```text
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*StepSequencerTests" --filter-class "*DesktopWorkflowTests" --filter-class "*ManagedMediaTests" --filter-class "*GraphExecutionTests"
+```
+
+Choose related Document/Persistence/GraphEditor/Workspace/NodeEditor/DesignSystem and metadata cases
+when those boundaries change. The completed F1 ran 380 cases, then only four changed/new cases after
+its final test-only strengthening, reusing unrelated green checks (383 distinct cases). Commands,
+timings and limitations belong to [completed work](archive/WORK_LOG.md#seq-r5-f1--2026-10-13).
+No schema/DSP/publication invariant changes justified early L3; cadence advances rather than resets.
+
+VisualCheck's [focused steps route](../tools/Seqvium.VisualCheck/README.md#focused-step-sequencer-check)
+renders RU/EN × Dark/Light at ordinary/reduced size, real controls/automation state, field/action
+alignment, navigation, Save/Open and retained lifecycle. Synthetic pointer plus automation actions
+are labelled separately from the guarded native click. The F1 native attempt refused on foreground;
+native pickers and physical audio were not exercised. No full native matrix or stress follows.
+
 ## Product version verification
 
 [VERSIONING](VERSIONING.md) owns identity and checkpoint authority.

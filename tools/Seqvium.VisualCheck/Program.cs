@@ -16,7 +16,7 @@ using Seqvium.Desktop.Workflow;
 
 namespace Seqvium.VisualCheck;
 
-internal static class Program
+internal static partial class Program
 {
     [STAThread]
     public static int Main(string[] args)
@@ -116,7 +116,7 @@ internal static class Program
                 };
             }, key => { File.AppendAllText(Path.Combine(directory, "diagnostic.txt"), key + "\n"); });
         }
-        Require(args[0] is "catalog" or "matrix" or "gestures" or "smoke", "Unknown scenario.");
+        Require(args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps", "Unknown scenario.");
         using var run = new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
         string output = run.Directory;
         Console.WriteLine("Verification output: " + output);
@@ -132,6 +132,7 @@ internal static class Program
                     Require(main.IsVisible, "Isolated Desktop window did not open.");
                     Json(output, "smoke", new { WindowOpened = true, NativeInput = false, AudioStarted = false });
                 }
+                else if (args[0] == "steps") await StepMatrixAsync(main, output);
                 else if (args[0] == "catalog") await ComponentCatalog.VerifyAsync(app, main, output);
                 else await MatrixAsync(app, main, output, args[0] == "matrix");
             }

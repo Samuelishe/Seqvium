@@ -14,6 +14,8 @@ the wider direction.
 The current desktop provides a small working environment for playing and processing samples. You can:
 
 - Import WAV samples and play the selected sample item.
+- Create an empty one-bar Beat Pattern, add WAV channels and edit 16 steps with mouse or keyboard.
+  Play the rhythm once, then save/reopen it with its samples and continue editing.
 - Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
   and pan or zoom the canvas.
 - Adjust sample levels and mix independent WAV sources within the same graph.
@@ -26,15 +28,17 @@ The current desktop provides a small working environment for playing and process
 The graph makes signal flow visible: a sample can pass through Gain to Output, or several sources
 can meet at a Mix node. These are basic level and routing tools; richer effects are still ahead.
 
-For a first listening session, follow the [sample processing guide](docs/README.md#try-sample-processing).
+For a first rhythm, follow [Create a drum pattern](docs/README.md#create-a-drum-pattern).
+The [sample processing guide](docs/README.md#try-sample-processing) covers graph editing.
 
 ## Current state and limitations
 
 Seqvium is an **early alpha**, not yet a ready replacement for FL Studio or Ableton Live.
-It is useful for trying sample playback and graph editing, but it does not yet offer a practical
+It is useful for creating simple rhythms and trying graph editing, but it does not yet offer a practical
 workflow for composing complete tracks.
 
-There is no step sequencer, Piano Roll, Arrangement or Mixer editor yet. Richer node editors,
+Step sequencing currently supports one bar in 4/4 and finite playback. Continuous loop, seamless live
+editing, velocity controls, Piano Roll, Arrangement and Mixer editors are still ahead. Richer node editors,
 EQ and other effects, third-party plugin hosting, MIDI input, audio recording, export and crash
 recovery are also still missing. Playback can glitch under heavy system load.
 
@@ -64,7 +68,7 @@ walkthrough and routes to more detailed material.
 
 ## Where the project is heading
 
-The next musical editing work focuses on reusable patterns and step sequencing. The longer-term
+The next musical editing work focuses on continuous Pattern playback and responsive live edits. The longer-term
 direction includes Piano Roll, Arrangement, mixing, sample generation and resampling, detailed
 effect and instrument editors, and optional extensions. Recording and external plugin hosting
 are later goals.

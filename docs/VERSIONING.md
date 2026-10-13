@@ -127,6 +127,25 @@ retrieved only for explicit historical tasks.
 | `0.1.0.0001` | SEQ-R4-F3-B-UX-F1 | One completed Desktop behavior repair: context-request menu lifecycle, capture ownership, usable button-anchored node creation and stale-action guards. Locked restore, full Release build (zero warnings/errors), 867 passing tests preserving all 838 prior cases, and guarded Windows native RU/EN × Dark/Light menu/creation/Undo/keyboard evidence under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md#context-menu-lifecycle-and-node-creation-repair). BUILD only; PATCH stays 0, no new musical capability, F3-B owner acceptance pending, F2 partial, no release/commit/tag. |
 | `0.1.0.0002` | SEQ-NODE-EDITOR-IMPL-F1 | One verified Desktop interface/architecture checkpoint within the existing Source/Gain/Mix/Output capability line: reusable retained node editor, canonical Gain gestures, lifecycle guards, structural details and status economy. BUILD is selected for this bounded extension of existing attenuation/routing, rather than claiming a completed independent musical editor/processing capability for PATCH. Locked restore, zero-warning Release build and 908 passing tests preserve all 867 baseline cases. Actual Windows RU/EN × Dark/Light ordinary/reduced render/lifecycle and empty-state checks, guarded native opening/menu/drag checks, and separately labelled routed Gain/capture tests are recorded in the [report](experiments/SEQ-NODE-EDITOR-IMPL-F1_REPORT.md). Final native Gain input was refused on foreground loss; physical audio, full native matrix and broader platform acceptance are not claimed. PATCH remains 0; F2 partial, F3-B pending owner review, Q-032 open. No release/commit/tag. |
 | `0.1.0.0003` | SEQ-DESKTOP-FOUNDATIONS-F1 | One BUILD for verified Workspace input/activation, Design System v1/field alignment, Desktop Single Instance and reusable visual/process checks within existing musical capabilities. Locked restore, zero-warning ordinary/isolated Release builds, all 922 tests (908 baseline plus 14), actual RU/EN × Dark/Light renders/alignment/resource propagation and independent Windows activation/crash/timeout evidence are in the [report](experiments/SEQ-DESKTOP-FOUNDATIONS-F1_REPORT.md). A user-held apphost required temporary isolated output; the user session was preserved and normal output later built cleanly. Forty guarded Windows screen captures and the early five-check native subset pass; final `native-complete/matrix.json` confirms eleven native mouse/keyboard checks. The full native matrix remains incomplete after earlier guard refusals, and routed events are not native input. PATCH remains 0; F2 partial, F3-B/visual owner acceptance pending, Q-032/Q-055 open. No intermediate bump, release, commit, push or tag. |
+| `0.1.0.0004` | SEQ-R5-F1 | Verified finite Channel Rack/16-step musical editor, safe existing Mix composition and Save/Open. BUILD decision/evidence/limits are recorded in the [checkpoint](#seq-r5-f1-checkpoint) below; R5 remains partial. |
+
+### SEQ-R5-F1 checkpoint
+
+Product identity advances once from **`0.1.0.0003` to `0.1.0.0004`**. BUILD classifies a verified
+finite musical editor checkpoint: empty Beat/independent WAV channels/canonical 16-step edits, safe
+existing Mix composition, one-bar Play and durable Save/Open. This is a real music-creation workflow,
+but it does not finish Pattern Workspace: continuous loop/live continuity remain F2/F3. The scale
+and remaining native-input/picker/acoustic evidence make a delegated PATCH claim debatable; retain
+PATCH 0 rather than interpreting the new grid as full R5 acceptance. MAJOR/MINOR stay owner-selected.
+
+Affected Release builds pass with zero warnings/errors; 380 focused L1/L2 cases and four changed/new
+boundary cases pass (383 distinct), including built metadata/About identity checks. Eight actual
+RU/EN × Dark/Light normal/reduced renders and controlled actions pass. Native click smoke refuses on
+foreground; no physical listening/device acceptance, full suite/native matrix or release is claimed.
+[Test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification) and
+[completed work](archive/WORK_LOG.md#seq-r5-f1--2026-10-13) own scope/timings. Format/reader markers are
+unchanged. L3 cadence advances to two completed tasks; version does not reset it. No staging, commit,
+push, tag or intermediate version bump occurred.
 
 Initialization stayed at BUILD `0000`, including its versioning implementation/tests. The separate
 verified Desktop repair consumes `.0001` and the bounded editor checkpoint consumes `.0002`;

@@ -1420,3 +1420,95 @@ Version gates were reviewed; explicit owner direction retains product 0.1.0.0003
 tooling regressions falling within broad BUILD wording. Core, DSP, project schema and production
 Desktop files/resources are unchanged. No full/native matrix, physical sound, hosted CI, staging,
 commit, push, tag or history/index mutation. Initial working tree was clean; task base HEAD d179233.
+
+## SEQ-R5-F1 — 2026-10-13
+
+Implemented the owner-authorized first finite musical editor from clean HEAD `b585e3c`: Panes →
+Step Sequencer / Channel Rack creates an empty 4/4 one-bar Pattern/Placement/item attachment without
+changing project settings. Native Add WAV Channel uses existing durable acceptance to create an
+independent Sound/empty Part/exact Source binding. A recognized stereo Source/binary-Mix tree feeds
+the retained Gain/Output; arbitrary or shared channel expansion refuses before acceptance. Existing
+nodes/positions/Gain and unrelated data survive. No separate step data, Undo, sample store, scheduler,
+DSP or pane registry was introduced. Core only gains a validated Pattern-name operation.
+
+Sixteenth-note toggles edit real shared NoteEvents once per command. New notes use sample root pitch,
+intensity 1 and ordinary quarter-note gates clipped at the bar; short sources reach EOF and long
+sources stop at NoteOff, without a one-shot-tail promise. Unsupported notes/unknown semantics are
+preserved with restricted row operations. Lifecycle/generation/attachment/Pattern guards cover stale,
+concurrent, ABA, replacement/close and held inputs. Accepted grid/channel edits stop transport before
+publication; explicit Play uses the existing coordinator/realtime sampler/output composition for
+one finite bar. Creation/Open stay silent. Save/Open retains Pattern/Part/Note/binding/media identity;
+existing history is kept by Save and remains intentionally session-local, fresh on Open.
+
+Validation: Windows 11 x64, SDK 10.0.401/runtime 10.0.12. Existing restored assets were valid and
+dependencies unchanged; no restore/network check was repeated. Affected Release build has zero
+warnings/errors; final 380-case L1/L2 run covers StepSequencer, DesktopWorkflow, GraphEditorWorkflow,
+WorkflowPresentation, Document, Persistence/GraphPersistence, WorkspaceState/Layout, DesignSystem,
+GraphExecution, NodeEditor, ManagedMedia and ProductVersion classes. It passes 380/380, zero skips.
+The final realtime case was strengthened to three independent WAVs and numerical PCM, with two
+long-source NoteOff/bar-gate cases and one atomic channel Undo/Redo/media case added. One incremental
+build followed by only those changed/new methods passes 4/4; unrelated green cases were reused.
+Together these cover 383 distinct cases, including 48 new StepSequencer cases, not a full suite.
+
+| Final verification phase | Measured wall time | Evidence scope |
+| --- | --- | --- |
+| Affected Release build | 5.443 s (MSBuild 5.09 s) | Tests and its references, no restore |
+| L1/L2, 380 cases | 17.744 s (runner summary 17.099 s) | All selected cases pass; retained TRX |
+| Incremental final test-only build | 2.856 s (MSBuild 2.39 s) | Three-channel PCM strengthening and gate/channel-Undo cases |
+| Four changed/new cases | 2.457 s (runner summary 1.721 s) | Four pass; retained TRX |
+| Focused GUI `steps` | 8.664 s | Actual isolated window/render/automation lifecycle; no device |
+
+Exact main command after affected build: `dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj
+-c Release --no-build --no-restore --filter-class '*StepSequencerTests' --filter-class '*DesktopWorkflowTests'
+--filter-class '*GraphEditorWorkflowTests' --filter-class '*WorkflowPresentationTests' --filter-class '*DocumentTests'
+--filter-class '*PersistenceTests' --filter-class '*WorkspaceStateTests' --filter-class '*WorkspaceLayoutTests'
+--filter-class '*DesignSystemTests' --filter-class '*GraphExecutionTests' --filter-class '*NodeEditorTests'
+--filter-class '*ManagedMediaTests' --filter-class '*ProductVersionTests' --report-xunit-trx --results-directory
+<owned-run>`. The final command replaces class filters with three exact `--filter-method` values:
+`Seqvium.Tests.StepSequencerTests.ExplicitDesktopPlayEndsOneBarAndStepEditsKeepHardStopSticky`,
+`Seqvium.Tests.StepSequencerTests.LongSamplesEndAtTheOrdinaryFiniteGateRatherThanOneShotTail` and
+`Seqvium.Tests.StepSequencerTests.ChannelUndoRestoresThePreviousGraphAndRedoRestoresMediaAndExactBindings`.
+Two Theory rows explain four selected cases. Existing integrity/cancellation checks were exercised
+alongside direct canonical-note, shared-content, unknown-data, Save/Open and budget refusals. Offline
+three-source PCM/events match independent timing/amplitude expectations at 90/120/240 BPM.
+
+The reusable VisualCheck `steps` route renders RU/EN × Dark/Light at 1100×750 and 640×480 (eight
+variants, plus empty startup). Inspected actual Avalonia images show distinct on/off/focus states,
+four beat groups, readable channel names, reachable commands and local horizontal scrolling. Actual
+TextPresenter/action centers differ by 0 DIP; 48 ToggleButton peers report named On/Off states and
+24-DIP hit areas. Synthetic pointer events plus actual automation invocations, arrow/Space, second
+toggle, external Undo/Redo, stale held input, Save/Open and retained dock/collapse/hide/reopen pass.
+Synthetic routed events do not establish native mouse/picker behavior. The one guarded native-click
+attempt refuses because the test window is not foreground; no forced foreground or retry matrix.
+No native picker, physical device/listening, stress or full native matrix was run, and no ordinary
+Desktop process/preferences were changed or killed. GUI used the same R5 view implementation before
+the metadata/About-scope-only bump; the final build/metadata cases verify the new identity.
+
+Initial iteration failures exposed expected empty-graph SourceCoverage handling, an offline test
+request beyond its finite boundary, old four-pane assumptions and synthetic Button pointer-over
+recognition. They were corrected before green evidence. Import progress now remains observable
+during the empty graph's diagnostic, allowing deterministic cancellation immediately after Begin.
+Accessible toggle invocation shares the canonical action while expired held gestures cannot use its
+current-target fallback. No failed run is described as passed.
+
+No early L3 was justified: no musical/schema compatibility, migration, scheduler/DSP/publication,
+join or platform contract changed; the small Core name edit is covered with document/persistence
+boundaries. Last L3 remains F1-FINALIZE (933/933); cadence advances from one to two completed tasks.
+One BUILD advances `0.1.0.0003` to `0.1.0.0004`, retaining PATCH 0 and owner-only MAJOR/MINOR. The
+finite editor is useful, but full R5/Pattern Workspace, looping/live continuity and broader native/
+acoustic evidence remain distinct; a PATCH claim is deliberately withheld under the debated-scale gate.
+Existing R4 partial acceptance is unchanged. Current contracts were updated in their owners; the
+public overview/reader guide now explain the actual rhythm path rather than declaring steps absent.
+
+TRX/timings/logs, authored GUI fixtures and images remain ignored under `.artifacts/seq-r5-f1/` for
+review, with completed manifests and existing rolling retention; no production sample assets were
+added. Retention rotated only eligible task-owned runs and preserved unrelated legacy/reparse/
+protected evidence. Reusable `steps` source is retained in tools. No staging, commit, push, tag,
+checkout, clean, reset, fetch or history/index mutation occurred.
+
+Final L0 documentation review checks audience/owners, implemented-versus-future scope and decision
+status. All 821 relative links/anchors across 17 changed Markdown files resolve; Git diff whitespace
+checks pass. Final read-only Git status has 30 modified tracked files and five intentional new source
+files (three production editor/workflow files, one permanent focused test and one reusable GUI tool).
+The staging index is unchanged. Initial tree was clean, so all listed work belongs to this task;
+ignored evidence/build/runtime material is retained under its existing ownership policies.

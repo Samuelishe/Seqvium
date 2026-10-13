@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.0.0003`**, a verified Desktop foundation BUILD checkpoint on the
+The current product alpha is **`0.1.0.0004`**, a verified finite step-sequencing BUILD checkpoint on the
 owner-selected `0.1.0` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -26,7 +26,23 @@ SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / nar
 [report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
 Completed rationale is cold history; current contracts stay in canonical owners.
 
+**R5 is in progress / partial. R5-F1 is functionally implemented:** empty Beat creation, independent
+WAV channels, canonical 16-step editing, finite bar playback and Save/Open. Focused deterministic and
+bounded actual-window GUI evidence pass; native input/picker and acoustic acceptance are not claimed.
+Continuous loop and seamless live-edit/position continuity remain R5-F2/F3.
+
 ## Implemented capability
+
+Panes → Step Sequencer / Channel Rack now creates an empty one-bar 4/4 Pattern without changing BPM/
+meter. Add WAV Channel durably accepts empty Parts/Sounds and exact placement Source bindings; three
+channels feed existing binary Mix nodes → Gain → Output. Step toggles create/delete canonical notes
+at exact sixteenths, with root pitch/unit intensity and finite quarter-note gates clipped to the bar.
+Name, notes and channel acceptance use the one history; shared note edits change the same Pattern.
+Save/Open preserves IDs/media, with fresh silent runtime/history on Open. Unsupported shape/notes/
+unknown data and unsafe/shared channel expansion refuse without rewriting content. Static retained
+pane behavior, RU/EN, Dark/Light, local scrolling, keyboard and toggle accessibility reuse the host.
+[UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing), [audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback)
+and [test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification) own contracts/evidence.
 
 Desktop now has user-wide Single Instance activation before document/audio initialization, independent
 workspace deactivation and thresholded graph gestures. [Design System v1](DESIGN_SYSTEM.md) supplies
@@ -101,6 +117,10 @@ with per-action refusal explanations and dismissal/basis guards for retained men
 
 ## Current focus
 
+The authorized R5-F1 slice is complete at its finite deterministic/runtime composition boundary.
+Its limited GUI review and new musical workflow do not finish R5, prior R4 physical acceptance or
+owner visual review. F2/F3 and richer musical editors require their own tasks; this change stops at F1.
+
 The bounded workspace and canonical intent foundations are locally ready. F2's functional execution
 passes verification, but its repeated physical pressure result is not uniformly successful.
 F3-A is conditionally accepted for continued development. F3-B's implemented canvas/editor interaction
@@ -129,6 +149,17 @@ future composition. R4-F2 remains partial and F3-B remains pending owner review.
 acceptance remains with the owner; the earlier presentation was explicitly rejected.
 
 ## Validation baseline
+
+R5-F1: affected Release Tests project/references build with zero warnings/errors. L1/L2 pass 380/380;
+the strengthened realtime three-channel case plus three new gate/channel-Undo cases pass 4/4 after
+one incremental rebuild (383 distinct covered cases, including 48 StepSequencer cases). No full suite
+was run. Actual isolated Avalonia RU/EN × Dark/Light at 1100×750/640×480 passes eight rendered variants,
+48 checked/off named cells, exact field/action alignment, keyboard/automation and retained lifecycle.
+Native pointer smoke refuses on foreground guard; pickers/physical sound are not exercised. Offline
+three-WAV PCM at 90/120/240 BPM and real Desktop coordinator/realtime sampler with a substituted output
+borrower verify finite playback, note gates and sticky Stop. Evidence is retained locally under
+`.artifacts/seq-r5-f1/` with rolling retention; timings and commands are in
+[completed work](archive/WORK_LOG.md#seq-r5-f1--2026-10-13). Version is `0.1.0.0004`.
 
 Last full baseline, F1-FINALIZE: local Windows 11 x64 (10.0.26300), SDK 10.0.401 / runtime 10.0.12.
 Locked restore and full Release solution build pass with **zero warnings/errors; all 933 tests pass,
@@ -193,7 +224,7 @@ fault lifetimes. No acoustic perception, DAC latency, multi-hour/all-device or a
 
 Last successful L3: **SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE, 2026-10-13**, full Release solution build
 and 933/933 automated tests (retained full-suite TRX runner interval: 17.5105 seconds).
-Completed repository tasks since that L3: **1** — SEQ-TEST-STRATEGY-R1.
+Completed repository tasks since that L3: **2** — SEQ-TEST-STRATEGY-R1 and SEQ-R5-F1.
 Update this small checkpoint field once at task completion; successful L3 resets it to zero under
 [test policy](TEST_EXECUTION.md#required-verification-levels). A focused pass does not reset it.
 

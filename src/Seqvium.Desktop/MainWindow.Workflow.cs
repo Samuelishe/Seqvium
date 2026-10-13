@@ -76,6 +76,32 @@ internal sealed partial class MainWindow
         return _workflowWork;
     }
 
+    private Task ImportBeatWavAsync(BeatEditBasis basis, Func<bool> current)
+    {
+        if (_closing || _workflowActionBusy) return Task.CompletedTask;
+        _workflowWork = RunBeatImportAsync(basis, current);
+        return _workflowWork;
+    }
+
+    private async Task RunBeatImportAsync(BeatEditBasis basis, Func<bool> current)
+    {
+        _workflowActionBusy = true; _workflowControls.Refresh(true);
+        try
+        {
+            var path = await PickOpenAsync(true);
+            if (path is null || _closing || !current()) return;
+            _importCancellation = new(); _workflowControls.CanCancelImport = true; _workflowControls.Refresh(true);
+            await _workflow.AddBeatWavAsync(basis, path, _importCancellation.Token);
+        }
+        catch (Exception error) { await _workflow.ReportFailureAsync(error.Message); }
+        finally
+        {
+            _importCancellation?.Dispose(); _importCancellation = null; _workflowControls.CanCancelImport = false;
+            _workflowActionBusy = false; _workflowControls.Refresh(_closing);
+            if (!_closing) _workspace.FocusPane(WorkspaceState.BeatId);
+        }
+    }
+
     private async Task RunGraphImportAsync(GraphEditBasis basis, GraphPosition position)
     {
         _workflowActionBusy = true; _workflowControls.Refresh(true);

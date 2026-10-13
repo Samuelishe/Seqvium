@@ -40,6 +40,27 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> English { get; } = new Dictionary<string, string>
     {
+        ["Pane.Beat"] = "Step Sequencer / Channel Rack",
+        ["Beat.Create"] = "New Beat Pattern",
+        ["Beat.DefaultName"] = "Beat Pattern",
+        ["Beat.AddWav"] = "Add WAV Channel",
+        ["Beat.Target"] = "Pattern occurrence",
+        ["Beat.Name"] = "Pattern name",
+        ["Beat.ApplyName"] = "Apply Pattern name",
+        ["Beat.NameRequired"] = "Enter a Pattern name.",
+        ["Beat.Step"] = "Step",
+        ["Beat.On"] = "On",
+        ["Beat.Off"] = "Off",
+        ["Beat.Keyboard"] = "Arrows: navigate · Space / Enter: toggle",
+        ["Beat.NoTarget"] = "Create a Beat Pattern to add WAV channels.",
+        ["Beat.MeterUnsupported"] = "Step Sequencer v1 requires project meter 4/4. The project meter is unchanged.",
+        ["Beat.LengthUnsupported"] = "Step Sequencer v1 requires a one-bar Pattern (16 sixteenth notes).",
+        ["Beat.SoundUnsupported"] = "This channel requires a supported PCM sampler sound. Its data is preserved.",
+        ["Beat.NotesUnsupported"] = "This row contains notes or data outside the v1 grid: off-grid, duplicate, pitch, intensity or duration. Preserved; editing is disabled.",
+        ["Beat.GraphUnsupported"] = "Add Channel requires a connected Source/Mix tree → Gain → Output. The existing graph is preserved.",
+        ["Beat.SharedChannels"] = "Adding channels to a shared Pattern is unavailable in v1. Existing steps still edit shared content.",
+        ["Beat.ChannelLimit"] = "Step Sequencer v1 supports up to eight WAV channels; playback also requires the existing voice and media budgets.",
+        ["Beat.Stale"] = "The Pattern target changed. Retry on the current selection.",
         ["Desktop.Instance.Unresponsive"] = "Seqvium is already running but did not respond. Close this message and try again after the existing application is ready. A second workspace was not opened.",
         ["Desktop.Instance.Unavailable"] = "Seqvium could not establish exclusive desktop ownership. No workspace was opened.",
         ["Pane.Graph"] = "Node Graph",
@@ -221,11 +242,32 @@ public sealed class HostLocalizer
             "Layout read incompletely; safe entries restored. Original file preserved; layout saving disabled this session.",
         ["Workspace.SaveFailed"] = "Workspace layout could not be saved; this session remains usable.",
         ["Host.Scope"] =
-            "Import WAV, edit Source / Gain / Mix / Output in Node Graph, Play / Stop / Panic and Save / Open are available."
+            "WAV channels, one-bar step sequencing, Source / Gain / Mix / Output editing, Play / Stop / Panic and Save / Open are available."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     public static IReadOnlyDictionary<string, string> Russian { get; } = new Dictionary<string, string>
     {
+        ["Pane.Beat"] = "Степ-секвенсор / Каналы",
+        ["Beat.Create"] = "Новый Beat Pattern",
+        ["Beat.DefaultName"] = "Beat Pattern",
+        ["Beat.AddWav"] = "Добавить WAV-канал",
+        ["Beat.Target"] = "Экземпляр паттерна",
+        ["Beat.Name"] = "Название паттерна",
+        ["Beat.ApplyName"] = "Применить название паттерна",
+        ["Beat.NameRequired"] = "Введите название паттерна.",
+        ["Beat.Step"] = "Шаг",
+        ["Beat.On"] = "Включён",
+        ["Beat.Off"] = "Выключен",
+        ["Beat.Keyboard"] = "Стрелки: переход · Пробел / Enter: переключение",
+        ["Beat.NoTarget"] = "Создайте Beat Pattern, чтобы добавить WAV-каналы.",
+        ["Beat.MeterUnsupported"] = "Степ-секвенсор v1 требует размер проекта 4/4. Размер проекта не изменён.",
+        ["Beat.LengthUnsupported"] = "Степ-секвенсор v1 требует паттерн длиной один такт (16 шестнадцатых).",
+        ["Beat.SoundUnsupported"] = "Канал требует поддерживаемый PCM-сэмплер. Данные сохранены.",
+        ["Beat.NotesUnsupported"] = "В строке есть ноты или данные вне сетки v1: смещение, дубли, высота, интенсивность или длительность. Данные сохранены; редактирование отключено.",
+        ["Beat.GraphUnsupported"] = "Добавление канала требует связный тракт Source/Mix → Gain → Output. Существующий граф сохранён.",
+        ["Beat.SharedChannels"] = "Добавление каналов в общий паттерн пока недоступно. Редактирование шагов меняет общее содержимое.",
+        ["Beat.ChannelLimit"] = "В v1 доступно до восьми WAV-каналов; Play также проверяет существующие лимиты голосов и медиа.",
+        ["Beat.Stale"] = "Цель паттерна изменилась. Повторите действие для текущего выбора.",
         ["Desktop.Instance.Unresponsive"] = "Seqvium уже запущен, но не ответил. Закройте сообщение и повторите запуск, когда приложение будет готово. Второй Workspace не открыт.",
         ["Desktop.Instance.Unavailable"] = "Не удалось установить единственный экземпляр Seqvium. Workspace не открыт.",
         ["Pane.Graph"] = "Граф узлов",
@@ -410,6 +452,6 @@ public sealed class HostLocalizer
             "Макет прочитан не полностью; допустимые панели восстановлены. Исходный файл сохранён; запись макета отключена в этом сеансе.",
         ["Workspace.SaveFailed"] = "Сохранить макет не удалось; панели доступны в текущем сеансе.",
         ["Host.Scope"] =
-            "Доступны импорт WAV, редактор источников / усиления / суммы / выхода, воспроизведение / Стоп / Panic и сохранение / открытие."
+            "Доступны WAV-каналы, шаги одного такта, редактор источников / усиления / суммы / выхода, воспроизведение / Стоп / Panic и сохранение / открытие."
     }.ToFrozenDictionary(StringComparer.Ordinal);
 }

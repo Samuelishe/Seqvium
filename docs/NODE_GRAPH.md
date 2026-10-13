@@ -19,6 +19,22 @@ applicable. It is separate from the musical timeline and user organization. It d
 Arrangement, and Arrangement need not expose DSP internals. [ARCHITECTURE](ARCHITECTURE.md) owns
 that separation and the musical model.
 
+## R5-F1 channel composition
+
+Beat creation supplies a real empty item graph: Gain (0.25) → Output. Without parts/sources this is
+intentionally unready for Play. First Add WAV Channel connects its bound Source to Gain; subsequent
+channels insert a built-in two-input Mix before that same Gain, combining its preceding Source/Mix
+tree with the new independent Source. Three channels therefore use two Mix nodes, one shared Gain
+and one Output, executed by the existing graph compiler/DSP. A full graph remains editable in Node Graph.
+
+Automatic expansion recognizes only a fully bound, acyclic stereo Source/binary-Mix tree feeding the
+sole Gain → designated Output, with each upstream output used once and no extra nodes/unknown intent.
+The pristine empty chain is separately checked. Existing node identities, ports, positions, Gain and
+unrelated content remain intact; only the known Gain-input cable is replaced. Invalid/custom graphs,
+other layouts/dependencies, shared Pattern channel expansion and capacity exhaustion refuse before
+acceptance. At most eight parts/sources are offered, subject to existing graph/media/voice preparation
+budgets. No new mixer, binding kind, graph schema or processor is added.
+
 ## Progressive graph interaction
 
 Graph complexity normally remains hidden until requested. Relevant musical items/containers visibly

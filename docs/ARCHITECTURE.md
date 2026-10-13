@@ -84,6 +84,18 @@ ownership for retry. Reopened documents have fresh lifecycle and no execution; e
 [Sample workflow](SAMPLE_WORKFLOW.md#r4-f3-a-desktop-import-and-musical-use) owns initial musical policy;
 [audio](AUDIO_ENGINE.md#r4-f3-a-desktop-execution-composition) owns the execution limits.
 
+## R5-F1 musical editor composition
+
+`Workspace/BeatPaneContent` is a retained projection of the selected occurrence's shared Pattern,
+parts and notes. `Workflow/BeatSteps` supplies exact grid projection/refusals and frozen lifecycle,
+generation, attachment and Pattern authority; it stores no editable steps. `DesktopWorkflow.Beat`
+serializes creation, channel acceptance, name and note edits on the existing owner. Core adds only
+`ProjectEdit.RenamePattern`, preserving the same Pattern and unknown fields. Creation supplies a
+real Placement/item context/attachment; channel import uses the existing media acceptance callback.
+No musical schema, history, scheduler, PCM store, graph engine or dynamic pane registry is added.
+[UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) owns grid scope; [graph](NODE_GRAPH.md#r5-f1-channel-composition)
+owns safe automatic wiring. Existing audio preparation/publication and joined lifetime remain unchanged.
+
 ## R1 canonical foundation
 
 The production foundation uses one `Seqvium.Core` library and one `Seqvium.Tests` project. Domain

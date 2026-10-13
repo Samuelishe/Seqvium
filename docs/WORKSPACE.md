@@ -88,6 +88,23 @@ separates native input from deterministic commands and controlled actual-window 
 Old two-pane version-1 layouts remain readable; missing graph entries start hidden.
 [Node graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor) owns editing and DSP semantics.
 
+## R5-F1 retained step sequencer
+
+`step-sequencer.main` / `step-sequencer` is one additional static pane, titled Step Sequencer / Channel
+Rack (RU: Степ-секвенсор / Каналы). It starts hidden; Panes opens it. Default floating bounds are
+780×330 DIP, minimum 300×230; the application's 640×480 minimum is unchanged. Its own horizontal/
+vertical scrolling preserves the 16-step content in narrow floating/docked panes. Existing header,
+activation, focus, collapse/hide/reopen, boundary resizing and left/right docking are reused.
+Older layouts omit this pane and restore it hidden; only geometry/visibility/docking persist in user
+layout, with no musical/editor model there.
+
+The pane follows the workflow's selected occurrence. Its selector appears only for multiple choices;
+the Pattern name is editable canonical content. Focus returns to an enabled step, otherwise Create.
+Hidden/collapsed content stays alive and cancels drafts/actions. Generations/selection/replacement
+invalidate held actions; reopening resolves current state. Picker return resolves its frozen musical
+target rather than whichever object later becomes selected. [UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing)
+owns editing/refusals. No dynamic instance registration or second transport is introduced.
+
 ## Node editor placement proposal
 
 **SEQ-NODE-EDITOR-IMPL-F1 — one reusable internal pane accepted and implemented for the first slice.**

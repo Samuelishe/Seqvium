@@ -102,7 +102,7 @@ an excess caused by protected data is reported. Active/incomplete runs are outsi
 quota until completion and owner exit. Explicit preservation needs a concrete engineering reason,
 scope and review boundary; do not pin every ordinary result.
 
-`catalog`, `matrix`, `gestures` and the small lifecycle `smoke` create a unique run beneath the supplied
+`catalog`, `matrix`, `gestures`, the focused `steps` and small lifecycle `smoke` create a unique run beneath the supplied
 artifact parent. The process script creates its own unique run. They automatically apply retention
 before verification and after normal joined completion. New `.seqvium-run.json` manifests identify
 owner/schema, producer, scenario, run ID, PID plus process start time, timestamps and success/failure.

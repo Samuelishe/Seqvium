@@ -6,8 +6,34 @@ Authoritative for: Progressive complexity, input/command and focus semantics, ba
 feedback, discoverability, general workflow semantics.
 Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or current implementation.
 
-These are intended requirements except the explicitly implemented bounded R3 host and F3-A/F3-B workflows
-below; broader musical editors remain future work.
+These are intended requirements except the explicitly implemented bounded R3 host, F3-A/F3-B workflows
+and R5-F1 grid below; broader musical editors remain future work.
+
+## Implemented R5-F1 step sequencing
+
+Panes → Step Sequencer / Channel Rack provides New Beat Pattern, Add WAV Channel and a committed
+Pattern name field. Creation is empty, one bar with 16 sixteenths, and requires current 4/4 without
+changing meter or BPM. Rows are canonical MusicalParts. A click or Space/Enter creates/deletes one
+NoteEvent and one Undo entry. Arrows move between steps/rows; Home/End reach row ends; Tab accesses
+commands. Toggle automation reports On/Off and accepts the same canonical action. Name commits with
+Enter/check; Escape cancels local text. Global transport/history retain their existing commands.
+
+The editor follows the explicitly selected playback occurrence and labels its actual Pattern.
+Notes and names edit shared Pattern content without a variation. New channels require an unshared
+Pattern and a recognized safe graph; refusing shared channel expansion preserves all placements.
+Unsupported meter/length is explained without conversion. Any off-grid/duplicate/non-root-pitch,
+non-unit-intensity, non-v1-duration or unknown musical data disables its affected row; aligned notes
+still show active steps and a warning, and all original data stays canonical/savable. Pattern-level
+unknown semantics disable grid operations. External Edit/Undo/Redo/Open refresh the same controls.
+
+Commands freeze target and generation; stale/ABA/concurrent actions cannot duplicate notes or switch
+objects. Selection, replacement, pane hide/collapse and shutdown withdraw local actions; native picker
+deactivation alone does not invalidate its unchanged import target. Creation/Open never start audio.
+Accepted grid/channel edits hard-stop the selected execution; explicit Play prepares the current
+finite bar from its start. Existing history/graph convergence retains its prior bounded semantics,
+without a seamless live-edit promise. Loop/live position continuity belong to R5-F2/F3.
+[Audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback) owns gate/tail limits;
+[Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns retained geometry/focus.
 
 ## Implemented R4-F3-A bounded workflow
 

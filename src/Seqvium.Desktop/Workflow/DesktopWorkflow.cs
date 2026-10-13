@@ -346,7 +346,8 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         string statusKey = _status;
         string? detail = _detail;
         bool actionFailure = _status.EndsWith("Failed", StringComparison.Ordinal) || _status == "Workflow.DeviceFault";
-        if (!actionFailure)
+        // Import progress remains observable even while an empty Beat graph has no Source yet.
+        if (!actionFailure && !(_busy && _status == "Workflow.Importing"))
         {
             if (execution?.Blocker is { } blocker) { statusKey = "Workflow.Blocked"; detail = blocker; }
             else if (execution?.PreparationPending == true) statusKey = "Workflow.Preparing";

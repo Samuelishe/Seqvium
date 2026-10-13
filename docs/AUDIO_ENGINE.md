@@ -15,6 +15,25 @@ preparation and the shared PCM execution used by offline and bounded F2 realtime
 four-slot scheduler and 48 kHz endpoint are not reused. A permanent engine/ABI remains unselected;
 F2's [report](experiments/SEQ-R2-F2_REPORT.md) provides scoped real-WAV/device evidence; broader claims remain open.
 
+### R5-F1 finite step Pattern playback
+
+The Channel Rack feeds the same GraphPreparation → PreparedSampler → GraphExecutionCoordinator →
+RealtimeSampler/Desktop output path. Explicit Play uses one repetition of the selected placement's
+one-bar Pattern at current BPM, with canonical absolute event positions and the existing finite Stop
+boundary. Creation/Open do not open output. No UI timing loop, second scheduler or playhead is added.
+
+A new step starts at `step * ticksPerQuarter / 4`, at the sound's rootPitch and intensity 1. Its
+ordinary gate duration is `min(ticksPerQuarter, barTicks - startTicks)`: a quarter note, shortened near
+the bar end. Imported channel sounds use release 0. Short percussion reaches natural EOF; longer
+samples cut at NoteOff or the bar boundary. This is neither an infinite one-shot tail nor a new
+sampler policy; BPM changes its audible gate length. Dense/long overlapping notes may exceed eight
+voices and preparation refuses the plan. Grid/channel edits issue hard Stop before publication;
+another explicit Play starts the current bar. Existing Undo/Redo/graph convergence, last-valid,
+readiness/publication/epoch and joined retirement semantics remain unchanged. F2/F3 own continuous
+looping and seamless live-edit/position continuity. Deterministic event/PCM and a substituted physical
+borrower verify the path under [test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification),
+without an acoustic or device-stability claim.
+
 ### WAV and decoded ownership
 
 [WavDecoder](../src/Seqvium.Core/Media/WavDecoder.cs) supports little-endian RIFF/WAVE PCM16 and IEEE float32,
