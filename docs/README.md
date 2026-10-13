@@ -29,7 +29,7 @@ opens it; the left Rack icon or **Panes** menu reopens it. Use short supported p
    rail button hides/restores the Pattern navigation at wide window sizes.
 6. Use toolbar **… → Export selected Pattern to WAV** for a 48 kHz stereo PCM16 file with its
    current graph processing. Lower Gain and export again if clipping is reported. This exports one
-   cycle of the selected Pattern; song arrangement and simultaneous Patterns are still ahead.
+   cycle of the selected Pattern; use Playlist below for a complete arrangement.
 7. Save the project. **Open** restores the channels/steps silently for further editing. Keep its
    `.seqvium.media` directory with the project. History starts fresh on Open.
 
@@ -37,6 +37,35 @@ The editor explains unsupported meter/Pattern shape or notes and preserves them.
 an already shared Pattern or a custom graph can be refused safely; existing shared steps still edit
 the shared musical content. Up to eight channels are offered; excessive overlapping voices/media can
 block Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
+
+## Arrange a song
+
+1. Create the Patterns you need in Channel Rack. Open **Playlist** from its rail icon or **Panes**.
+2. Choose a source Pattern in Playlist and click a track to place it. Clips share the original notes;
+   double-click a clip to return to its Rack. Overlapping clips play together, including on the same track.
+3. Drag a clip to move it. Ctrl-drag makes a shared copy; dragging the right edge changes the number
+   of whole Pattern repeats. The Duplicate button appends a copy. Delete removes only the clip.
+   Ctrl+Z/Y restores edits. The snap selector offers bars, beats, sixteenths or free movement;
+   Shift temporarily uses beats and Alt temporarily moves freely.
+4. Click a track heading to name it or choose its color. **M** mutes that track; **S** solos it.
+   Multiple solo tracks play together; Mute still silences a solo track. These are song gates,
+   independent of the source Pattern's Rack loop, and are saved with the project.
+5. Playlist's Play button starts the Song from the beginning. The global **Pattern / Song** button
+   chooses between the continuous Rack and finite Playlist; switching stops transport. Select/edit
+   another Rack source during Song without switching its playback target. Compatible clip/note/Mute/Solo
+   edits continue from the current time; passed new notes wait for a future occurrence.
+6. Use the overview strip to navigate, zoom or Fit song. Track headings remain visible when scrolling
+   horizontally. Follow playback keeps the renderer's cursor in view and can be turned off.
+7. Use Playlist's export button or **… → Export song to WAV** for the whole arrangement, including
+   leading gaps and overlaps, as 48 kHz stereo PCM16. Save/Open preserves the clips, tracks and samples;
+   Open stays silent. Keep the `.seqvium.media` directory with the project.
+
+The current Playlist has 32 fixed track slots and an editable view up to 4096 bars. Slots organize
+compatible musical material; they do not assign instruments or create Mixer channels. The engine
+checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
+are available now; ruler seeking, loop ranges, section markers, group selection, clip trimming and
+automation remain planned. Adding/deleting WAV channels and incompatible topology changes still
+interrupt playback. See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
 
 ## Try sample processing
 

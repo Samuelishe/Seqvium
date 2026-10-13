@@ -52,6 +52,9 @@
                                     <Button Classes="shell" Content="{Binding [Pane.Beat]}"
                                             Click="BeatClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenBeat" />
+                                    <Button Classes="shell" Content="{Binding [Pane.Arrangement]}"
+                                            Click="ArrangementClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenArrangement" />
                                     <Button Classes="shell" Content="{Binding [Pane.Inspector]}"
                                             Click="InspectorClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenInspector" />

@@ -56,8 +56,46 @@ stereo PCM16 WAV, excluding leading placement silence. Scratch is packet bounded
 refuse before writing; samples saturate at PCM16 bounds and clipping is reported. An exclusively owned
 sibling temporary is flushed and atomically replaces the destination only on success. Cancellation
 removes that temporary. Export refuses destinations inside retained project-media roots and changes
-no document/history/output state. Song export, configurable formats, normalization and effects are
+no document/history/output state. Configurable formats, normalization and effects are
 still separate work.
+
+### Playlist song preparation and execution
+
+[ArrangementPreparation](../src/Seqvium.Core/Audio/ArrangementPreparation.cs) compiles one finite song
+from canonical clips. Each source-placement's eligible Source/Gain/Mix/Output program is prepared once;
+its independent note voices are scheduled at every clip/repeat's absolute tick boundary. Clip identity
+and repeat number distinguish otherwise equal note occurrences. Current processors are stateless and
+linear, so contributions from uses of the same source graph share its prepared signal buffers without
+losing independent voice/gate identity. Stateful per-occurrence processing will require explicit
+execution ownership; this optimization grants no future shared-state DSP contract.
+
+The combined program offsets source/scratch/coefficient tables and mixes source-graph outputs.
+ArrangementTrack Mute/Solo gates note scheduling; multiple solos combine, with Mute precedence.
+All referenced graphs/media must be eligible, including muted tracks. The song ends at the latest
+clip's musical boundary plus the supported sampler release tail, preserving leading/trailing gaps.
+Original source-placement position does not offset the song clip. Preparation converts each absolute
+on/off/end boundary independently and refuses incomplete sub-frame source tables rather than dropping
+their potentially audible relocated notes. Original Rack/finite/audition semantics remain available.
+
+Song admits at most 32 concurrent voices, the existing 100001-event and 128 MiB decoded limits,
+16 MiB scratch and packet-work/density gates. Aggregate limits cover all prepared source graphs;
+overload refuses the entire plan. The callback reuses OfflineSampler with fixed tables/scratch/voices;
+it performs no decode, document traversal, UI work or allocation. Existing publication authority,
+pending/retired backpressure, last-valid diagnostics, sticky Stop/Panic and joined shutdown apply.
+
+The existing coordinator selects Pattern or Arrangement intent. Compatible song edits precompute
+note mappings against the actual active plan. Source/scratch offsets may change, so mappings compare
+stable occurrence and musical/source configuration before transferring voice ages to new indices.
+Removed/gated/changed notes end; past new onsets are not replayed. Future onsets use the new plan.
+Shortening behind the active position finishes silently. Rack comparison excludes song-only track/clip
+metadata, so arranging while Rack loops cannot manufacture a restart. Source topology/settings changes
+remain incompatible; continuous WAV channel changes are recorded debt, not implemented continuity.
+
+PatternWaveExport.ExportArrangementAsync freezes a revision/media roots and uses this same finite
+song program off-thread. It preserves leading silence and overlaps and writes 48 kHz stereo PCM16
+with the existing destination protection, cancellation, RIFF/clipping and sibling-temp publication rules.
+Song export never opens a device or exports an older last-valid schedule. The render frame/sample rate
+drive Desktop's cursor; this does not claim acoustic latency correction or long pressure acceptance.
 
 ### WAV and decoded ownership
 

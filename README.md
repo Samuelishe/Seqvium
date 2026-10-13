@@ -18,6 +18,9 @@ The current desktop provides a small working environment for playing and process
   Choose 1–32 bars; fill, shift or clear a row, and delete channels or Patterns with Undo.
   Play a continuous loop with a visible position, change steps while it plays, and export the selected
   Pattern to WAV. Save/reopen it with its samples and continue editing.
+- Build a song in Playlist: place shared Patterns on tracks, move and repeat clips, or Ctrl-drag a copy.
+  Name and color tracks, use Mute/Solo, choose snapping and navigate with the song overview.
+  Song plays overlapping Patterns together with a moving playhead; export the whole composition to WAV.
 - Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
   and pan or zoom the canvas.
 - Adjust sample levels and mix independent WAV sources within the same graph.
@@ -36,13 +39,15 @@ The [sample processing guide](docs/README.md#try-sample-processing) covers graph
 ## Current state and limitations
 
 Seqvium is an **early alpha**, not yet a ready replacement for FL Studio or Ableton Live.
-It is useful for creating simple rhythms and trying graph editing, but it does not yet offer a practical
-workflow for composing complete tracks.
+It supports rhythm creation and a first working song arrangement workflow. Many advanced editing,
+instrument and processing capabilities remain unfinished.
 
 Step sequencing supports 1–32 bars in 4/4, continuous looping and live step editing. Velocity controls,
-Piano Roll, Arrangement and Mixer editors are still ahead. Patterns cannot yet be placed on a timeline
-or played together. WAV export covers the selected Pattern, including its processing graph. EQ and
-other effects, third-party plugin hosting, MIDI input, recording and crash recovery remain missing.
+Piano Roll and Mixer editors are still ahead. Playlist currently arranges whole Patterns and their
+repeats; seeking, loop ranges, group selection, audio trimming/stretching and automation remain ahead.
+WAV export covers either a selected Pattern or the whole Song, including the current processing graphs.
+Adding or deleting WAV channels still stops playback. EQ and other effects, third-party plugin hosting,
+MIDI input, recording and crash recovery remain missing.
 Playback can glitch under heavy system load.
 
 Windows 11 is the current development and tested desktop platform. Linux and macOS are intended
@@ -72,7 +77,7 @@ walkthrough and routes to more detailed material.
 ## Where the project is heading
 
 The next musical editing work can build on continuous Pattern playback and live edits. The longer-term
-direction includes Piano Roll, Arrangement, mixing, sample generation and resampling, detailed
+direction includes Piano Roll, richer Playlist editing, mixing, sample generation and resampling, detailed
 effect and instrument editors, and optional extensions. Recording and external plugin hosting
 are later goals.
 

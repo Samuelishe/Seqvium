@@ -113,6 +113,20 @@ invalidate held actions; reopening resolves current state. Picker return resolve
 target rather than whichever object later becomes selected. [UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing)
 owns editing/refusals. No dynamic instance registration or second transport is introduced.
 
+## Retained Playlist pane
+
+`arrangement.main` / `arrangement` is the fixed Playlist pane, opened by rail or Panes. It shares
+the retained floating/docking/collapse/hide/restore lifecycle and independently stored workspace
+layout. Historical layouts add it hidden; pristine startup still opens Rack. The pane cancels clip,
+overview and track-editor drafts on deactivation, hide/collapse, shutdown or invalid authority.
+Reopening retains content/view and adopts the current document. Focus returns to the timeline.
+
+Source choice and song transport/track/clip tools wrap within the pane; only its timeline scrolls.
+Track headings remain stationary during horizontal navigation. The overview, fit and follow affect
+view state without editing music or inventing audio. Musical identity/commands and renderer status
+remain workflow-owned under [Playlist UX](UX_CONTRACT.md#implemented-playlist-arrangement).
+There is no dynamic pane registry, external window or second project/transport.
+
 ## Node editor placement proposal
 
 **SEQ-NODE-EDITOR-IMPL-F1 — one reusable internal pane accepted and implemented for the first slice.**

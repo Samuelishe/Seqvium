@@ -56,6 +56,7 @@ Geometry and typography resources are declared in `HostMetrics.Values` and its t
 | Typography | `Type.Body`, `Type.Caption`, `Type.Section`, `Type.PaneTitle`, `Type.Numeric`, `Type.Transport`, `Type.FontFamily`, `Type.MonospaceFamily` | Body/caption/section/pane/numeric/transport emphasis; monospace for technical or fixed-column content |
 | Level/scroll | `Level.Height`, `Level.TrackHeight`, `Level.ThumbSize`, `Level.Inset`, `ScrollBar.Size` | Real hit area, drawn/templated geometry, visible local scrolling |
 | Rack/navigation | `Rack.StepHeight`, `Rack.RowHeight`, `Rack.StepCorner`, `Rail.Width` | Pad hit geometry, rhythmic row and navigation rail |
+| Playlist | `Playlist.LaneHeight`, `Playlist.RulerHeight`, `Playlist.HeaderWidth`, `Playlist.OverviewHeight` | Musical lane/header hit geometry and the derived song overview |
 | Numeric template | `Control.NumericInnerHeight` | Derived inner height respecting outer control/border; do not set a second local template minimum |
 
 Colors are semantic values. Geometry's spacing scale is the small base vocabulary; padding/control
@@ -92,6 +93,17 @@ exclusive ownership failed before Avalonia/document initialization, so the secon
 the regular application just to report that failure. It is a lifecycle exception, not another component palette.
 
 ## Field and row alignment
+
+Playlist composes standard source/snap selectors, icon commands, repeat NumericUpDown, Follow toggle
+and an owned track settings flyout. M/S heading hit targets use shared control height/corners and
+instrument materials; the toolbar provides a keyboard-accessible track editor. Its color chips use
+actual palette-bound Border content inside standard buttons, so the button's material template cannot
+hide the swatch. Drawing uses HostVisual for track/clip identity, bevel, grid, note durations/pitches,
+selection, overview and renderer cursor. Clip/track colors use the existing Rack palette; no new
+HEX palette, borrowed screenshot, fake waveform, meter or dormant processor control is added.
+
+Playlist's repeat label/actual text centers are checked in the RU/EN Dark/Light ordinary/reduced
+window route. The overview/stationary headings and minimum-size wrap are part of rendered review.
 
 Parameter rows use one vertical center line for the label, actual editable text, units and action.
 Use `parameterRow`; do not compensate with arbitrary top margins, independent font sizes, or nested

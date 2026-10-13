@@ -18,6 +18,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     private readonly SynchronizationContext _owner;
     private readonly Timer? _progress;
     private readonly int _voices, _repeats;
+    private bool _arrangement;
     private readonly Func<CancellationToken, Task>? _gate;
     private Id<GraphAttachment> _target;
     private CancellationTokenSource? _cancellation;
@@ -64,6 +65,17 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     }
     internal RealtimeSampler Sampler => _sampler;
 
+    /// <summary>Mode changes end the old transport intent and prepare a finite song or continuous Rack target.</summary>
+    public void SelectArrangement(bool arrangement)
+    {
+        CheckOwner();
+        ObjectDisposedException.ThrowIf(_closed, this);
+        if (_arrangement == arrangement) return;
+        _sampler.Stop();
+        _arrangement = arrangement; _basis = null;
+        Refresh();
+    }
+
     public void SelectTarget(Id<GraphAttachment> target)
     {
         CheckOwner();
@@ -101,7 +113,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         var state = _document.Current.State;
         var attachment = state.GraphAttachments.SingleOrDefault(item => item.Id == _target);
         _intent = attachment is null ? null : GraphDiagnostics.Inspect(state).Single(item => item.GraphId == attachment.GraphId);
-        _blocker = _intent is { IsEligibleForPreparation: true } ? null :
+        _blocker = _arrangement ? ArrangementPreparation.Refusal(state) : _intent is { IsEligibleForPreparation: true } ? null :
             _intent?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
         _dirty = _blocker is null;
         Progress();
@@ -153,9 +165,9 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             var snapshot = _document.Current;
             var attachment = snapshot.State.GraphAttachments.SingleOrDefault(item => item.Id == _target);
             var report = _intent;
-            if (report is null || !report.IsEligibleForPreparation)
+            if (!_arrangement && (report is null || !report.IsEligibleForPreparation))
                 _blocker = report?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
-            else if (_basis is not null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
+            else if (!_arrangement && _basis is not null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
                 SameExecution(_basis.State, snapshot.State, ignoreGain: true) &&
                 ownsExecution && !_sampler.HasPending)
             {
@@ -177,7 +189,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             {
                 _cancellation?.Dispose();
                 _cancellation = new();
-                _request = _sampler.BeginGraphPreparation(_document, _target, _voices, _repeats);
+                _request = _arrangement ? _sampler.BeginArrangementPreparation(_document) :
+                    _sampler.BeginGraphPreparation(_document, _target, _voices, _repeats);
                 // The sampler compares against its actual active basis, including superseded pending handoffs.
                 _request.PreservePlayback = _repeats == 1;
                 _request.PreparationGate = _gate;
@@ -243,6 +256,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     {
         ProjectState Normalize(ProjectState state) => state with
         {
+            ArrangementClips = [],
+            ArrangementTracks = [],
             Patterns = ignoreNotes ? [.. state.Patterns.Select(pattern => pattern with
             {
                 Name = "", Parts = [.. pattern.Parts.Select(part => part with { Notes = [] })]

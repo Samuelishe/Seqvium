@@ -57,6 +57,7 @@ public sealed class WorkspaceState : IDisposable
     public const string GraphId = "node-graph.main";
     public const string NodeEditorId = "node-editor.main";
     public const string BeatId = "step-sequencer.main";
+    public const string ArrangementId = "arrangement.main";
 
     public static ImmutableArray<PaneDefinition> Definitions { get; } =
     [
@@ -64,7 +65,8 @@ public sealed class WorkspaceState : IDisposable
         new(AppearanceId, "appearance", "Pane.Appearance", 280, 170, new(270, 145, 320, 220)),
         new(GraphId, "node-graph", "Pane.Graph", 300, 260, new(48, 36, 960, 520)),
         new(NodeEditorId, "node-editor", "Pane.NodeEditor", 300, 210, new(280, 64, 360, 220)),
-        new(BeatId, "step-sequencer", "Pane.Beat", 360, 290, new(24, 24, 960, 390))
+        new(BeatId, "step-sequencer", "Pane.Beat", 360, 290, new(24, 24, 960, 390)),
+        new(ArrangementId, "arrangement", "Pane.Arrangement", 360, 290, new(32, 36, 1040, 480))
     ];
 
     private readonly List<PanePlacement> _panes = Definitions.Select(definition =>

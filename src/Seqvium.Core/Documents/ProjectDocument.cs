@@ -156,7 +156,8 @@ public sealed class ProjectDocument
                {
                    Patterns = right.Patterns, Sounds = right.Sounds, Placements = right.Placements,
                    Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes,
-                   Graphs = right.Graphs, GraphAttachments = right.GraphAttachments
+                   Graphs = right.Graphs, GraphAttachments = right.GraphAttachments, ArrangementClips = right.ArrangementClips,
+                   ArrangementTracks = right.ArrangementTracks
                } == right
                && SameSequence(left.Patterns, right.Patterns, (a, b) =>
                    a with { Parts = b.Parts } == b && SameSequence(a.Parts, b.Parts, (partA, partB) =>
@@ -171,7 +172,8 @@ public sealed class ProjectDocument
                && SameSequence(left.Groups, right.Groups, (a, b) =>
                    a with { SoundIds = b.SoundIds } == b && a.SoundIds.SequenceEqual(b.SoundIds))
                && left.Resources.SequenceEqual(right.Resources) && left.Contexts.SequenceEqual(right.Contexts)
-               && left.Routes.SequenceEqual(right.Routes)
+               && left.Routes.SequenceEqual(right.Routes) && left.ArrangementClips.SequenceEqual(right.ArrangementClips)
+               && left.ArrangementTracks.SequenceEqual(right.ArrangementTracks)
                && GraphContent.Same(left.Graphs, right.Graphs) && GraphContent.Same(left.GraphAttachments, right.GraphAttachments);
     }
 

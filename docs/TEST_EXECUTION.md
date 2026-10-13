@@ -115,6 +115,32 @@ Named mutex/pipe, real MSBuild evaluation and retention process ownership checks
 an active user window or audio device. Wall time is necessary for timeout/watchdog tests and explicit
 stress/device measurements; ordinary musical time and concurrency use controlled values/gates.
 
+## Playlist verification
+
+ArrangementTests covers independently calculated absolute tick/frame PCM for pitched-independent
+source graphs, gaps/overlaps/repeats and packet partitions at 44.1/48 kHz mono/stereo, explicit clip
+occurrence identity, track Mute/Solo gates, live voice age/epoch/position, silent shortening behind
+the playhead, zero warmed callback allocation, sticky Stop, voice/cancellation refusals, destination
+protection and WAV/realtime equivalence. Document cases check legacy defaults, required reader 1.2,
+unknown clip fields, net-zero history, source-deletion/Undo, track IDs/Save/Open, and stale/ABA commands.
+The Desktop case uses the real workflow/coordinator/renderer with only its physical borrower substituted.
+
+Use the affected build and MTP class filters `*ArrangementTests`, `*LoopPlaybackTests`,
+`*GraphLifecycleTests`, `*GraphExecutionTests`, `*PersistenceTests`, `*GraphPersistenceTests`,
+`*DesktopWorkflowTests` and affected Workspace/presentation/metadata classes. The checkpoint chooses
+early L3 because project compatibility and shared realtime continuation change. Full build/suite and
+scope/timing belong to the [report](experiments/SEQ-R10-PLAYLIST_REPORT.md), not a recurring per-task rule.
+
+VisualCheck `arrangement` is an isolated actual-window RU/EN Dark/Light ordinary/reduced route:
+placement/captured move/Ctrl-copy/right-edge repeats, cancellation/stale/Workspace withdrawal, source,
+track M/S/name/color, snap, overview/stationary headings/fit, duplicate/Delete/Undo, Save/Open, retained
+content and graph WAV. Actual editable repeat/label centers are measured. A second window uses the
+real Song renderer at 44.1 kHz to prove its cursor/2:2 readout. These are routed controls, not native OS
+input or physical sound. Images must be reviewed in both themes. DeviceCheck `song-smoke` separately
+checks two simultaneous quiet Patterns, live future-clip publication, finite end, retained epoch,
+allocation/deadline counters and acknowledged Stop/join on the physical output. It is short output
+evidence, not acoustic listening, pressure, high-DPI or other-platform acceptance.
+
 ## R5-F1 Step Sequencer verification
 
 `StepSequencerTests` covers exact bidirectional grid projection, finite gates, canonical toggle/name

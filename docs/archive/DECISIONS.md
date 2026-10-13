@@ -1581,3 +1581,27 @@ Reference images are research, not copied assets. The v2 principles/API are curr
 DESIGN_SYSTEM; implementation evidence is in the
 [report](../experiments/SEQ-UI-REDESIGN_REPORT.md). Aesthetic approval stays with the owner. Remaining
 loop/live/velocity/processing capabilities stay in ROADMAP rather than appear as unbound controls.
+
+
+## SEQ-R10-PLAYLIST — bounded Song identity and execution (2026-10-13)
+
+The owner authorizes composition now and trusts bounded architecture/design choices. Song clips
+reference existing source placements, so placing/repeating music shares Pattern/Part/Note/media and
+source-graph identity without adding Rack placements, invisible copies or a second history. Optional
+identified configuration addresses 32 explicit fixed spatial slots; named/color Mute/Solo tracks do
+not permanently assign instruments, create Mixer routes or choose a general container hierarchy.
+Dynamic containers/sections require their own identity/migration work.
+
+Finite song preparation derives independent clip/repeat note occurrences and a combined program on
+the same PCM executor/publication/retirement/output path. Stateless linear source graphs can process
+summed independent voices once; future stateful processors require explicit per-occurrence execution
+ownership. Track gates affect Song scheduling, leaving Rack audition independent. Compatible edits
+map stable occurrences to prepared indices off the callback and retain time/voice ages; overload and
+unknown/ineligible semantics refuse rather than drop content. Reader 1.2 is required for essential
+song/track data, while old empty/graph-only minimums remain valid.
+
+Inspected local FL/SONAR/Cubase and earlier instrument references justify strong colored track/clip
+identity, stationary headings, a musical ruler/overview and physical shared controls. Their waveform,
+range, automation, recording and measured Mixer surfaces are planned against actual owners rather
+than imitated. Current contracts are in ARCHITECTURE/AUDIO_ENGINE/PROJECT_FORMAT/UX/UI_DESIGN; this
+record preserves rationale and grants neither wider-stage acceptance nor a permanent engine ABI.

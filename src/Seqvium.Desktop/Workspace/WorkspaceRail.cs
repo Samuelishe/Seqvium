@@ -26,7 +26,7 @@ internal sealed class WorkspaceRail : Border, IDisposable
         NavigationToggle.Content = HostIcons.Create("More", NavigationToggle, 20);
         AutomationProperties.SetAutomationId(NavigationToggle, "Navigator.Toggle");
         body.Children.Add(NavigationToggle);
-        foreach (var (id, icon) in new[] { (WorkspaceState.BeatId, "Rack"), (WorkspaceState.GraphId, "Graph"),
+        foreach (var (id, icon) in new[] { (WorkspaceState.BeatId, "Rack"), (WorkspaceState.ArrangementId, "Playlist"), (WorkspaceState.GraphId, "Graph"),
                      (WorkspaceState.NodeEditorId, "Sound"), (WorkspaceState.InspectorId, "Inspector"), (WorkspaceState.AppearanceId, "Theme") })
         {
             var button = new Button { Classes = { "rail" } };

@@ -242,7 +242,8 @@ public sealed partial class ProjectEdit
     {
         CheckActive();
         var placement = Find(State.Placements, item => item.Id == placementId);
-        State = State with { Placements = Remove(State.Placements, item => item.Id == placementId) };
+        State = State with { Placements = Remove(State.Placements, item => item.Id == placementId),
+            ArrangementClips = [.. State.ArrangementClips.Where(clip => clip.SourcePlacementId != placementId)] };
         if (placement.ItemContextId is { } contextId)
         {
             RemoveContextGraphs(contextId);

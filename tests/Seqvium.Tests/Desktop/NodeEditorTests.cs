@@ -295,7 +295,7 @@ public sealed class NodeEditorTests
         restored.Collapse(WorkspaceState.NodeEditorId); restored.Open(WorkspaceState.NodeEditorId);
         restored.Hide(WorkspaceState.NodeEditorId); restored.Open(WorkspaceState.NodeEditorId);
         Assert.Equal(bounds, restored.Bounds(WorkspaceState.NodeEditorId));
-        Assert.Equal(5, restored.Panes.Length);
+        Assert.Equal(6, restored.Panes.Length);
     }
 
     [Fact]

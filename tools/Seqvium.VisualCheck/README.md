@@ -99,6 +99,17 @@ platform/security-certified by one Windows session.
 
 ## Evidence and maintenance
 
+The `arrangement` route renders the actual Playlist in RU/EN and Dark/Light at ordinary/reduced sizes,
+checks routed placement/move/Ctrl-copy/repeat/cancellation/stale gestures, track M/S/name/color,
+snap/overview/stationary headings/fit, Duplicate/Delete/Undo, Save/Open and graph Song WAV. It measures
+the actual repeat field/label centers and opens the real track settings flyout. A second window proves
+Song cursor/bar-beat from the real 44.1 kHz renderer with a substituted physical borrower. No native
+mouse, picker, acoustic/device or broad stress claim follows from this route.
+
+```powershell
+tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.exe arrangement "$PWD/.artifacts/playlist/gui"
+```
+
 Keep renders, screen captures, JSON, synthetic projects/media and TRX local/ignored under the
 [retention policy](../../docs/experiments/README.md#evidence-retention). This source, its lock and scripts
 are reusable verification material. The host uses narrow reflection to inspect existing retained

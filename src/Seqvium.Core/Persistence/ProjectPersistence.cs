@@ -27,7 +27,7 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 1;
+    public const int ReaderMinor = 2;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     public static byte[] Encode(ProjectDocument document)
@@ -40,8 +40,9 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        var file = new ProjectFile("seqvium-project", 1, Math.Max(compatibility.Minor, hasGraphs ? ReaderMinor : 0),
-            Math.Max(compatibility.MinimumReaderMinor, hasGraphs ? ReaderMinor : 0),
+        int required = !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 : hasGraphs ? 1 : 0;
+        var file = new ProjectFile("seqvium-project", 1, Math.Max(compatibility.Minor, required),
+            Math.Max(compatibility.MinimumReaderMinor, required),
             WriterVersion, snapshot.Revision, snapshot.State) { AdditionalData = compatibility.AdditionalData };
         var node = JsonSerializer.SerializeToNode(file, Options)?.AsObject()
             ?? throw new ProjectFormatException("Unable to encode project structure.");
@@ -80,8 +81,10 @@ public static class ProjectPersistence
             TransformAdditionalData(node, typeof(ProjectFile), loading: true);
             var file = node.Deserialize<ProjectFile>(Options) ?? throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
-            if ((!file.State.Graphs.IsEmpty || !file.State.GraphAttachments.IsEmpty) && file.MinimumReaderMinor < ReaderMinor)
+            if ((!file.State.Graphs.IsEmpty || !file.State.GraphAttachments.IsEmpty) && file.MinimumReaderMinor < 1)
                 throw new ProjectFormatException("Graph intent requires minimumReaderMinor >= 1.");
+            if ((!file.State.ArrangementClips.IsEmpty || !file.State.ArrangementTracks.IsEmpty) && file.MinimumReaderMinor < 2)
+                throw new ProjectFormatException("Arrangement requires minimumReaderMinor >= 2.");
             ProjectValidation.Require(file.Revision != Guid.Empty, "Revision cannot be empty.");
             ProjectValidation.Require(!string.IsNullOrWhiteSpace(file.WriterVersion) && file.WriterVersion.Length <= ProjectValidation.MaximumTextLength,
                 "Writer version is required.");
@@ -152,11 +155,12 @@ public static class ProjectPersistence
             File.Move(temporary, destination, overwrite: true);
             ownsTemporary = false;
             document.MarkSaved(snapshot, destination);
-            if (!snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty)
+            if (!snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty ||
+                !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty)
                 document.Compatibility = document.Compatibility with
                 {
-                    Minor = Math.Max(document.Compatibility.Minor, ReaderMinor),
-                    MinimumReaderMinor = Math.Max(document.Compatibility.MinimumReaderMinor, ReaderMinor)
+                    Minor = Math.Max(document.Compatibility.Minor, snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2),
+                    MinimumReaderMinor = Math.Max(document.Compatibility.MinimumReaderMinor, snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
             if (!document.MediaRoots.Contains(destination + ".media")) document.MediaRoots.Add(destination + ".media");

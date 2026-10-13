@@ -88,7 +88,7 @@ The [review report](experiments/SEQ-UI-REDESIGN_REPORT.md) records implementatio
 | Screenshot 3, FL Studio | Fast Channel Rack, compact transport, colored steps, instrument identity, graphical note overview | Rail/navigator and real rhythm thumbnails; avoid copying layout or adding unavailable channel knobs |
 | Screenshot 4, EON ARP | Strong purple identity, coherent illuminated matrix, graphical musical focus | Transfer rhythm clarity and restrained light; preserve Seqvium's own palette |
 | Screenshot 5, blue arpeggiator | Beat grouping and visually distinct parameter lanes | Reserve lanes for real parameters; do not preallocate disabled lanes |
-| Screenshots 6–7, Logic | Track colors repeated in the grid, clear time ruler, integrated editing hierarchy | Apply row colors and common ruler; Arrangement remains a separate future surface |
+| Screenshots 6–7, Logic | Track colors repeated in the grid, clear time ruler, integrated editing hierarchy | Shared Rack colors and the real Playlist below; richer velocity/Piano Roll stay planned |
 | Screenshot 8, omniGRID | Dense legible rhythm and contextual per-note depth | Take direct editing and disclosure; avoid microscopic text and arbitrary knob inventory |
 | FabFilter Pro-Q 4 image | Large purposeful analytical surface, curves, quiet tools around the signal | Actual Gain transfer fill/glow now; live spectrum/EQ require real processing and measurement |
 | Serum image | Layered instrument chassis, finely graduated knobs, shape/value feedback | Graduated captured Gain dial; future instruments inherit shared materials with their own composition |
@@ -98,6 +98,38 @@ The references justify material richness. Their tiny controls, cryptic abbreviat
 simultaneous options are not requirements. Seqvium keeps their musical character while improving
 target size, naming, disclosure, cancellation and canonical editing safety. Final visual acceptance
 belongs to the owner; screenshots and automated checks establish evidence, not aesthetic approval.
+
+## Playlist reference assessment and visual contract
+
+The owner-supplied five timeline images were inspected and moved from Desktop/screens to
+`%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`. Earlier Logic, Reason, Serum and FabFilter
+references were also reviewed for hierarchy/materials. These are private local visual targets, not
+distributed application assets; the implementation uses original vectors and shared host resources.
+
+| Reference | Strong transferable solution | Implemented / planned boundary |
+| --- | --- | --- |
+| `playlist_main.png`, annotated FL Playlist | Source picker distinct from tracks, musical ruler, overview/scroll, clip notes, clear contextual tools | Source selection, shared clips, overview, snap, Ctrl-copy, repeats, M/S and retained pane are real; range/markers/automation/audio clips are follow-up |
+| `Screenshot-2024-10-04-at-1.47.57-PM.png.webp`, FL song | Track colors and repeated clip headers connect the overview to the song; named parts make structure legible | Named/color tracks, actual duration/pitch thumbnails, stationary headings and muted dimming; dynamic groups and section markers remain planned |
+| `1.-Color.jpg`, SONAR | Strong colored track identity, substantial controls, visible editing tools and waveform/fade detail | Adapt header/material depth and real gates; waveform trim/fades require supported audio-clip semantics, not decorative waveforms |
+| `VJPS1X.jpg`, Cubase | Stable inspector/track column, musical range, organized groups, precise source editor and measured Master | Fixed headings, committed contextual track settings and scalable view now; groups/range/sample editor/Master measurement require their owners |
+| `daw-software-editing.jpg`, stylized DAW illustration | Rapid visual distinction of musical layers and a clear primary working area | Adapt color hierarchy only; it is an illustration, not pixel/interaction authority or permission for simulated Mixer/meters |
+| Earlier Logic / Reason / Serum / FabFilter | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability |
+
+Playlist is a recessed time surface with substantial fixed track headers and a compact tool area.
+Clip headers carry source names, bodies show real note position/duration/pitch, track tint connects the
+header, clip and overview. Selection uses an independent jade boundary; Mute/non-Solo uses dimming
+without erasing the content. A ruler separates bars from beats and the renderer cursor remains distinct.
+The overview shows actual occupied time and a viewport frame; it is navigation, not waveform/audio level.
+Panel/bevel materials come from HostMaterials; all colors, type and hit geometry come from the shared
+system. Color chips render visible palette content inside normal buttons. Both themes and narrow layouts
+must keep labels, real field text, targets and canonical content readable without whole-window scroll.
+
+Keep unfamiliar processing/state detail behind deliberate contextual editors. Do not duplicate transport
+owners, turn a spatial track into a compulsory instrument/Mixer channel, or show disabled imitations of
+tools from mature DAWs. Prior claims that Arrangement is wholly absent are superseded by this bounded
+Playlist; [UX](UX_CONTRACT.md#implemented-playlist-arrangement) owns behavior and
+[R10 planning](ROADMAP.md#seq-r10--arrangement) separates the next capabilities. Owner visual acceptance
+remains separate from verified rendering and functional evidence.
 
 ## Professional DAW Workspace Design Target
 

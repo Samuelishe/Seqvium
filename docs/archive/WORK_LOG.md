@@ -1554,3 +1554,33 @@ closing that session nor overwriting locked binaries is necessary for source/iso
 One BUILD advances 0.1.0.0004 to 0.1.0.0005; cadence advances from two to three, without full-suite
 or broader R4/R5/aesthetic acceptance. Current owners and public first-use guides were synchronized,
 and engine-dependent follow-ups were placed in ROADMAP. No staging or Git history mutation occurs.
+
+
+## SEQ-R10-PLAYLIST — 2026-10-13
+
+The owner requests real finite composition from reusable Rack Patterns, with compatible Undo/Save/Open
+and ideal whole-track WAV. A bounded Playlist is implemented ahead of closing the wider roadmap:
+shared source-placement clips, absolute tick scheduling, simultaneous voices/gaps/repeats, captured
+move/Ctrl-copy/repeat and one history. Named/color fixed tracks provide real Song Mute/Solo; snap,
+overview/fit/follow, stationary headings and actual note duration/pitch previews keep the view musical.
+Pattern mode retains the continuous Rack. Whole-Song WAV uses the same frozen eligible graph program.
+Reader 1.2 protects essential clips/track configuration; legacy projects keep empty song defaults and
+their older graph-only/empty minimums. Source deletion/Undo remains atomic.
+
+Five new local reference screenshots are moved, preserving names, to the owner-requested DesignReferences
+folder; earlier material targets were reviewed. Current adaptation, deferred capability and illustration
+boundaries are in UI_DESIGN/ROADMAP. No screenshot or borrowed asset is distributed. The observed
+WAV channel add/delete Stop remains explicit topology debt, with a bounded verification exit condition.
+
+Final isolated Release solution build has zero warnings/errors; 1030/1030 tests pass (17.466 s CLI),
+with L3 justified by compatibility/shared publication. Actual-window RU/EN Dark/Light ordinary/reduced
+Playlist, routed gestures/editor/navigation/Save/Open/export and repeat-text alignment pass; a real
+44.1 kHz renderer proves the 2:2 cursor. Final six-second physical two-Pattern Song passes simultaneous
+voices, live future-clip convergence, same epoch, finite Ended, zero allocations/deadline/padding misses
+and acknowledged Stop/join. This is not native/acoustic/pressure/platform acceptance. Initial failures
+and exact receipts live in [the report](../experiments/SEQ-R10-PLAYLIST_REPORT.md). A user-launched
+normal Desktop remains intact; complete isolated binaries and local review captures are retained.
+
+PATCH advances 0.1.0.0006 to 0.1.1.0000, resetting BUILD for the standalone verified Song workflow.
+R5/R10 broader scope and R4 acceptance stay partial; no release, staging, commit or push occurs.
+Cadence resets once after the final successful full build/suite.

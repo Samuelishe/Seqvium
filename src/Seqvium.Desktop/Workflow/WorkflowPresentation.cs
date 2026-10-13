@@ -20,7 +20,10 @@ internal static class WorkflowPresentation
         "Workflow.Cancelled" => "Status.Cancelled", "Workflow.Blocked" => "Status.Blocked",
         "Workflow.Degraded" => "Status.Degraded", "Workflow.SaveFailed" => "Status.SaveFailed",
         "Workflow.OpenFailed" => "Status.OpenFailed", "Workflow.ImportFailed" => "Status.ImportFailed",
-        "Workflow.DeviceFault" => "Status.DeviceFault", _ => "Status.ActionFailed"
+        "Workflow.DeviceFault" => "Status.DeviceFault",
+        "Workflow.Exporting" => "Workflow.Exporting", "Workflow.Exported" => "Workflow.Exported",
+        "Workflow.ExportClipped" => "Workflow.ExportClipped", "Workflow.ExportFailed" => "Workflow.ExportFailed",
+        _ => "Status.ActionFailed"
     };
     internal static string DisabledReason(string key, WorkflowState state) => state.Busy ? "Workflow.Busy" : key switch
     {

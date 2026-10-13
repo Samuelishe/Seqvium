@@ -53,9 +53,52 @@ The rail toggle hides/restores navigation independently of music; its session ch
 WAV export is a toolbar overflow action for the selected occurrence through its current valid graph.
 It captures one frozen revision, writes one finite cycle as 48 kHz stereo PCM16, reports clipping and
 leaves transport, music and history intact. Failed/cancelled export preserves an existing destination.
-No Arrangement, simultaneous Patterns, effects beyond Gain, velocity or general seek editor is added.
+Rack scope adds no effects beyond Gain, velocity or general seek editor. Playlist composition is below.
 [Audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback) owns gate/tail limits;
 [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns retained geometry/focus.
+
+## Implemented Playlist Arrangement
+
+Playlist is one retained editor of canonical ArrangementClips, with shared source-placement references,
+absolute tick positions, a fixed lane slot and whole-Pattern repeat count. Notes/resources/graphs are
+not copied by placement, duplication or Ctrl-drag. Double-click/Enter opens the source Rack; subsequent
+Pattern edits affect every referring clip. A placement's source graph applies to all its song uses.
+Same-lane overlaps are legal and audible; tracks are not instrument or Mixer ownership.
+
+Left click places the chosen source; captured drag moves a clip, Ctrl-drag copies it, and the right
+edge changes repeats. The explicit repeat field and Duplicate/Delete buttons provide alternatives.
+Bar/beat/sixteenth/free snap is a session view choice; Shift selects beat snap and Alt overrides freely.
+One release commits one Undo; Escape, capture loss, deactivation, hide/collapse, replacement or stale
+generation cancels. Home/End select the first/last clip; arrows nudge time/lane, Delete removes it and
+Ctrl+D appends a copy. The same global Undo/Redo and Save/Open apply. No-op edits publish nothing.
+
+Tracks use 32 fixed spatial slots, with optional identified name/color/Mute/Solo configuration.
+The heading opens a committed editor; M/S headings provide immediate canonical gates. Multiple Solo
+tracks play together; Mute takes precedence. Their state and stable configuration IDs survive Save/Open
+and Undo. They gate Song, not the independent Pattern loop, and introduce no per-track DSP/mixer route.
+Clip color follows its track; actual note position, duration and pitch drive the thumbnail. Muted/non-solo
+clips dim. A global overview navigates the real arrangement; fit/zoom/scroll/follow add no musical history.
+Headings stay visible during horizontal scroll. Minimum layouts wrap tools and scroll locally.
+
+Pattern mode continuously plays the selected Rack; Song mode finitely plays all arrangement clips
+from tick zero, with overlaps/gaps and a renderer-derived playhead/bar:beat display. Playlist Play
+explicitly selects Song. Switching modes stops; source selection during Song does not retarget/stop it.
+Compatible clip/note/Gain/track edits preserve time, epoch and unchanged voice ages after preparation;
+new past onsets do not retrigger. Shortening behind the playhead ends rather than restarting. Removing
+all clips stops. Incompatible topology/settings replacements retain the explicit existing interruption
+policy. Adding/deleting WAV channels still stops; [technical debt](TECH_DEBT.md#continuous-channel-topology)
+owns this observed limitation. Current cursor follows renderer time, not measured acoustic latency.
+
+Song export freezes the current canonical arrangement and its graph/media dependencies, includes
+leading silence/overlaps and writes 48 kHz stereo PCM16 through the same executor. It never substitutes
+last-valid audio for invalid intent, edits history or changes live transport. Saturation/clipping is
+reported; cancellation/failure preserves an existing destination and cannot overwrite managed media.
+Save/Open preserves all music/track state; transport, selection/view and history remain session-only.
+
+This bounded editor offers whole-Pattern repeats, 32 lanes and a 4096-bar editing view. It adds no
+ruler seeking, loop-range editor, group selection, independent clip variation, audio trim/stretch,
+section markers, automation, velocity editor or stateful effects. Reference-informed follow-up lives
+in [R10 planning](ROADMAP.md#seq-r10--arrangement), separate from implemented controls.
 
 ## Implemented R4-F3-A bounded workflow
 

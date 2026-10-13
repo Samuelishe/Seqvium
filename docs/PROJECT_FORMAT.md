@@ -23,6 +23,34 @@ Reopen restores canonical IDs, notes, graph and verified media only, with fresh 
 explicit Play required. This adds a normal-process UI lifecycle, not crash recovery or media-GC guarantees.
 [Architecture](ARCHITECTURE.md#r4-f3-a-integrated-documentaudio-owner) owns composition/joins.
 
+## Playlist reader 1.2
+
+The current reader accepts 1.0/1.1 projects with absent `arrangementClips` and `arrangementTracks`
+defaulting to empty arrays. Existing graph-only files retain minimum reader 1; empty graph-free files
+retain 0. Any nonempty song clips or track configuration requires `minor >= 2` and
+`minimumReaderMinor >= 2`, so an older reader refuses before discarding essential song intent.
+The minimum never decreases after Save/Open/removal. Product version and format version remain distinct.
+
+| Object | Known fields |
+| --- | --- |
+| Arrangement clip | `id`, `sourcePlacementId`, `position`, `lane`, `repeats` |
+| Arrangement track | `id`, `lane`, `name`, `colorIndex`, `muted`, `solo` |
+
+Clip IDs are distinct, sourcePlacementId addresses the actual existing Rack occurrence and its
+graph/Pattern, position is nonnegative Int64 musical ticks, lane is a fixed spatial slot `0..31`, and
+repeats is `1..1024` whole shared Patterns. Checked placement end must fit musical time. A track
+configuration has its own stable ID, unique slot, name, palette index `0..7` and song Mute/Solo flags.
+The slot is an explicit fixed coordinate, not a serialized array index, instrument ID or Mixer route;
+this slice introduces no track insertion/reorder/deletion hierarchy. Configuration is optional for
+unconfigured slots. Moving a clip changes its lane, without changing its musical/source references.
+
+Canonical edits/history include clips and configuration. Deleting a source placement atomically
+removes its referring clips; Undo restores identities and data. Known edits preserve optional unknown
+JSON at both boundaries; unknown behavior blocks Song interpretation without rewriting it. Save/Open
+preserves source IDs, sharing, track settings and managed media. Playback mode/start/position, view,
+selection, snap/follow/overview and Undo history remain runtime/session state. Open chooses Song when
+clips exist and stays silent. Whole-Song WAV is a separate deliverable, not project persistence.
+
 ## R1 canonical JSON format
 
 R5-F1 saves the existing Pattern/Part/Note/Sound/Placement/graph/binding identities and managed WAV

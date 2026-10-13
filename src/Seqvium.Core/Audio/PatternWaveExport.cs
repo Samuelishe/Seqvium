@@ -10,6 +10,14 @@ public static class PatternWaveExport
 {
     public static async Task<WaveExportResult> ExportAsync(ProjectDocument document, Id<GraphAttachment> target,
         string path, CancellationToken cancellation = default)
+        => await ExportCoreAsync(document, target, path, cancellation).ConfigureAwait(false);
+
+    public static async Task<WaveExportResult> ExportArrangementAsync(ProjectDocument document,
+        string path, CancellationToken cancellation = default)
+        => await ExportCoreAsync(document, null, path, cancellation).ConfigureAwait(false);
+
+    private static async Task<WaveExportResult> ExportCoreAsync(ProjectDocument document, Id<GraphAttachment>? target,
+        string path, CancellationToken cancellation)
     {
         document.CheckAvailable();
         string destination = Path.GetFullPath(path);
@@ -25,11 +33,13 @@ public static class PatternWaveExport
         finally { frozen.Close(); }
     }
 
-    private static WaveExportResult Render(ProjectDocument frozen, Id<GraphAttachment> target, string destination,
+    private static WaveExportResult Render(ProjectDocument frozen, Id<GraphAttachment>? target, string destination,
         CancellationToken cancellation)
     {
         const int framesPerPacket = 1024;
-        using var plan = GraphPreparation.Prepare(frozen, target, 48000, 2, framesPerPacket, cancellationToken: cancellation);
+        using var plan = target is { } attachment
+            ? GraphPreparation.Prepare(frozen, attachment, 48000, 2, framesPerPacket, cancellationToken: cancellation)
+            : ArrangementPreparation.Prepare(frozen, 48000, 2, framesPerPacket, cancellation);
         using var execution = plan.CreateExecution();
         long frames = plan.EndFrame - plan.StartFrame;
         long dataBytes = checked(frames * 4);

@@ -23,6 +23,8 @@ public static class HostMetrics
         ["Type.Section"] = 14, ["Type.PaneTitle"] = 13, ["Type.Numeric"] = 13,
         ["Rack.StepHeight"] = 34, ["Rack.RowHeight"] = 52, ["Rack.StepCorner"] = 4,
         ["Rail.Width"] = 52,
+        ["Playlist.LaneHeight"] = 72, ["Playlist.RulerHeight"] = 32, ["Playlist.HeaderWidth"] = 156,
+        ["Playlist.OverviewHeight"] = 28,
         ["Level.Height"] = 30, ["Level.TrackHeight"] = 8, ["Level.ThumbSize"] = 12,
         ["Level.Inset"] = 8, ["ScrollBar.Size"] = 12
     }.ToFrozenDictionary(StringComparer.Ordinal);

@@ -8,8 +8,8 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.0.0006`**, the verified SEQ-R5-MUSIC BUILD checkpoint on the
-owner-selected `0.1.0` line under
+The current product alpha is **`0.1.1.0000`**, the SEQ-R10-PLAYLIST PATCH checkpoint on the
+owner-selected `0.1` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
 
@@ -29,11 +29,27 @@ Completed rationale is cold history; current contracts stay in canonical owners.
 **R5 is in progress / partial. R5-F1 and the bounded F2/F3 musical slice are implemented:** empty
 Beat creation, independent WAV channels, 1–32 bars, continuous Play, renderer position and compatible
 live step edits, atomic channel/Pattern deletion, navigation collapse, selected-Pattern WAV export
-and Save/Open. Velocity, simultaneous Patterns, Arrangement and richer processors remain future work.
+and Save/Open. Velocity and richer processors remain future work. The separately owner-authorized
+bounded R10 Playlist below now supplies simultaneous Patterns and finite song composition/export;
+it does not complete R5, R10's wider scope or intervening stages.
 The owner reports the visual redesign complete and now prioritizes music. Full automated, actual
 window and short physical loop checks pass; long pressure/acoustic/platform acceptance stays separate.
 
 ## Implemented capability
+
+SEQ-R10-PLAYLIST adds a retained real Playlist: shared source-placement clips at absolute musical
+positions, move/Ctrl-copy/whole-Pattern repeats/Duplicate/Delete, snap, named/color fixed tracks with
+actual Mute/Solo, overview/fit/follow and stationary headings. Actual note positions/durations/pitches
+drive previews. Finite Song schedules overlaps/gaps through existing source graphs/PCM execution;
+Pattern retains independent continuous Rack. Compatible edits retain time/epoch/unchanged voices,
+with passed onsets deferred and silent completion when shortened behind the playhead. One history
+and compatible reader 1.2 preserve clip/track/source IDs and media across Undo/Save/Open; legacy files
+open with empty song, and Open stays silent. Whole-Song WAV uses the same frozen graph program.
+The five new references are outside Git under `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`;
+earlier references remain preserved. Track slots are bounded visual organization, not Mixer routes.
+Seeking, range loops, group editing, sections, variations, waveform trim/stretch and automation remain
+planned. WAV channel add/delete still stops and is recorded in TECH_DEBT. UX/audio/format/UI owners
+define exact scope; the [report](experiments/SEQ-R10-PLAYLIST_REPORT.md) owns evidence/limits.
 
 SEQ-UI-REDESIGN implements the owner's substantial instrument direction: slate/jade identity,
 layered panels, bevelled colored pads, shadows/glow, graduated Gain dial and coherent Dark/Light.
@@ -136,11 +152,12 @@ with per-action refusal explanations and dismissal/basis guards for retained men
 
 ## Current focus
 
-SEQ-R5-MUSIC completes the owner-authorized continuous rhythm workflow and selected-Pattern export.
-Users can develop a multi-bar beat while it plays and share a WAV. Next composition work needs
-Arrangement placement, simultaneous Pattern execution and song export; EQ/delay/reverb need actual
-processor/state/editor ownership. R5 still lacks richer velocity/per-channel controls. This checkpoint
-does not close prior R4 pressure acceptance or declare a release.
+SEQ-R10-PLAYLIST completes the owner-authorized first finite composition workflow and song export,
+with a reference-informed timeline instrument. Next work is bounded transport seek/ranges, multi-object
+editing, song sections/containers, explicit variants and actual waveform/audio-clip scope; R11 meters/
+automation/effects require their processing/state owners. Continuous channel topology is observed debt.
+R5 still lacks richer velocity/per-channel controls. New Playlist aesthetic acceptance belongs to the
+owner; the checkpoint does not close prior R4 pressure acceptance or declare a release.
 
 The bounded workspace and canonical intent foundations are locally ready. F2's functional execution
 passes verification, but its repeated physical pressure result is not uniformly successful.
@@ -149,7 +166,7 @@ and multi-source workflow require owner inspection under [ROADMAP](ROADMAP.md).
 Remaining [readiness recommendations](NODE_GRAPH.md#r4-implementation-readiness-recommendation) grant
 no further authorization. R4 remains partial; F2 alone cannot deliver a workstation or select an engine ABI.
 Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
-Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/song export/recovery and MIDI/capture/recording remain later work.
+Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/recovery and MIDI/capture/recording remain later work.
 
 The owner accepts DESIGN-R1 for the bounded **SEQ-NODE-EDITOR-IMPL-F1** slice, now implemented:
 one retained Node Editor with explicit lifecycle/attachment/definition/node identity, body double-click,
@@ -170,6 +187,21 @@ future composition. R4-F2 remains partial and F3-B remains pending owner review.
 acceptance remains with the owner; the earlier presentation was explicitly rejected.
 
 ## Validation baseline
+
+SEQ-R10-PLAYLIST: zero-warning/error isolated Release solution build (17.67 s); **1030/1030** automated
+tests (17.466 s CLI summary).
+Early L3 covers project reader compatibility and shared realtime continuation. Focused repaired
+feature checks pass 55 and 30 cases; metadata/layout/node-editor subset passes 90. Actual Windows
+RU/EN Dark/Light ordinary/reduced Playlist routes, rendered repeat-field alignment, captured gestures,
+Ctrl-copy, M/S/name/color editor, overview/stationary headings/fit, Save/Open, Song WAV and retained
+lifecycle pass. A real-renderer window proves 44.1 kHz / 2:2 playhead position. Images in both themes
+were inspected. Short physical Song output verifies two simultaneous Patterns, finite end/live
+publication and sticky Stop/join at 48 kHz stereo/1056 frames over 5.994 s, with zero allocation,
+processor/packet misses or padding exhaustion; this does not establish acoustic or pressure acceptance. The owner
+opened normal Desktop during work; it remains untouched, with final complete binaries under
+`.artifacts/seq-r10-playlist/release/Release/net10.0/`. After that session ended, ordinary Desktop
+outputs were synchronized in a zero-warning/error 7.87 s build; no source/test rerun was needed.
+Report owns timings, initial failures and limits.
 
 SEQ-R5-MUSIC: final full Release solution build has zero warnings/errors; **1009/1009** tests pass
 (19.233 s CLI test summary; isolated build 7.65 s, restore reused unchanged locked assets). Early
@@ -201,15 +233,15 @@ Normal output became locked by a user-launched Desktop during final refinement; 
 preserved. Complete final executables are in `.artifacts/seq-ui-redesign/release/Release/net10.0/`.
 The [report](experiments/SEQ-UI-REDESIGN_REPORT.md) records actual scope, paths, failures and commands.
 
-The current full baseline is SEQ-R5-MUSIC on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
+The current full baseline is SEQ-R10-PLAYLIST on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
 Existing three-WAV 90/120/240 BPM finite PCM evidence remains in
 [R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); prior physical pressure failures
 and platform/owner acceptance remain separate below. Historical validation belongs to reports/archive.
 
 ### Verification cadence
 
-Last successful L3: **SEQ-R5-MUSIC, 2026-10-13**, full Release solution build and 1009/1009 automated
-tests (19.233 seconds CLI summary). Completed repository tasks since that L3: **0**.
+Last successful L3: **SEQ-R10-PLAYLIST, 2026-10-13**, full Release solution build and 1030/1030 automated
+tests. Completed repository tasks since that L3: **0**.
 Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
 a focused pass does not reset it.
 

@@ -15,6 +15,9 @@ public sealed class WorkflowPresentationTests
     [InlineData("Workflow.SaveFailed", "Status.SaveFailed")]
     [InlineData("Workflow.Degraded", "Status.Degraded")]
     [InlineData("Workflow.DeviceFault", "Status.DeviceFault")]
+    [InlineData("Workflow.Exporting", "Workflow.Exporting")]
+    [InlineData("Workflow.Exported", "Workflow.Exported")]
+    [InlineData("Workflow.ExportClipped", "Workflow.ExportClipped")]
     public void NormalStatusIsCompactAndFailuresRemainPersistent(string actual, string compact)
     {
         var document = ProjectDocument.Create();

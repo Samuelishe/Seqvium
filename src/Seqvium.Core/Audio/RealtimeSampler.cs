@@ -167,6 +167,13 @@ public sealed class RealtimeSampler : IDisposable
         return new(this, document, default, voiceCapacity, repeats, default, InvalidatePreparation(), target);
     }
 
+    public SamplerPreparationRequest BeginArrangementPreparation(ProjectDocument document, bool preservePlayback = false)
+    {
+        document.CheckAvailable();
+        return new(this, document, default, ArrangementPreparation.VoiceCapacity, 1, default,
+            InvalidatePreparation(), arrangement: true) { PreservePlayback = preservePlayback };
+    }
+
     internal bool PublishGraphUpdate(long preparedExecutionId, Id<GraphAttachment> attachment,
         Guid revision, Guid equivalentRevision, float[] coefficients,
         long authority)
@@ -218,14 +225,16 @@ public sealed class RealtimeSampler : IDisposable
 
         var state = new State(plan, authority, transient, lifetimeCancellation, Volatile.Read(ref _stop));
         var active = Volatile.Read(ref _active);
-        if (preservePlayback && active is not null && plan.Loop is { } clock &&
-            active.Plan.Loop is { } previous && clock.Compatible(previous) &&
+        if (preservePlayback && active is not null &&
+            (plan.IsArrangement && active.Plan.IsArrangement || plan.Loop is { } clock &&
+                active.Plan.Loop is { } previous && clock.Compatible(previous)) &&
             plan.CanonicalBasis is { } nextBasis && active.Plan.CanonicalBasis is { } oldBasis &&
             GraphExecutionCoordinator.SameExecution(oldBasis, nextBasis, ignoreGain: true, ignoreNotes: true))
         {
             var indices = plan.Notes.Select((note, index) => (note, index)).ToDictionary(item => item.note.Occurrence);
             state.ContinuationNotes = active.Plan.Notes.Select(note => indices.TryGetValue(note.Occurrence, out var next) &&
-                next.note == note ? next.index : -1).ToArray();
+                next.note == note with { SourceIndex = next.note.SourceIndex, ContributionIndex = next.note.ContributionIndex }
+                    ? next.index : -1).ToArray();
             state.ContinuationAuthority = active.Authority;
         }
         Volatile.Write(ref _pending, state);
@@ -281,10 +290,16 @@ public sealed class RealtimeSampler : IDisposable
                 else
                 {
                     var old = _active;
-                    bool continuing = _playing && _looping && old is not null &&
+                    bool continuing = _playing && old is not null &&
+                        (_looping || old.Plan.IsArrangement && pending.Plan.IsArrangement && old.Execution.Position < pending.Plan.EndFrame) &&
                         pending.ContinuationAuthority == old.Authority && pending.ContinuationNotes is { };
                     pending.Execution.SetLooping(_looping);
                     if (continuing) pending.Execution.ContinueFrom(old!.Execution, pending.ContinuationNotes!);
+                    else if (_playing && old is not null && old.Plan.IsArrangement && pending.Plan.IsArrangement &&
+                        pending.ContinuationAuthority == old.Authority && old.Execution.Position >= pending.Plan.EndFrame)
+                    {
+                        pending.Execution.Finish(); _playing = false;
+                    }
                     else if (_playing && old?.Plan.Graph is not null && pending.Plan.Graph is not null)
                         _transitionRemaining = GraphTransitionFrames;
                     _active = pending;
@@ -445,6 +460,7 @@ public sealed class SamplerPreparationRequest : IDisposable
     private readonly int _voices, _repeats;
     private readonly MusicalPosition _start;
     private readonly Id<GraphAttachment>? _graphTarget;
+    private readonly bool _arrangement;
     private readonly string[] _roots;
     private PreparedSampler? _plan;
     private CancellationToken _cancellation;
@@ -455,7 +471,8 @@ public sealed class SamplerPreparationRequest : IDisposable
     internal bool PreservePlayback { get; set; }
 
     internal SamplerPreparationRequest(RealtimeSampler consumer, ProjectDocument document, Id<Pattern> target,
-        int voices, int repeats, MusicalPosition start, long authority, Id<GraphAttachment>? graphTarget = null)
+        int voices, int repeats, MusicalPosition start, long authority, Id<GraphAttachment>? graphTarget = null,
+        bool arrangement = false)
     {
         _consumer = consumer;
         _document = document;
@@ -465,6 +482,7 @@ public sealed class SamplerPreparationRequest : IDisposable
         _start = start;
         _authority = authority;
         _graphTarget = graphTarget;
+        _arrangement = arrangement;
         _lifecycle = document.LifecycleId;
         _generation = document.Generation;
         _revision = document.Current.Revision;
@@ -488,7 +506,9 @@ public sealed class SamplerPreparationRequest : IDisposable
             _plan = await Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var plan = _graphTarget is { } graph ? GraphPreparation.Prepare(_frozen, graph, _consumer.SampleRate,
+                var plan = _arrangement ? ArrangementPreparation.Prepare(_frozen, _consumer.SampleRate,
+                    _consumer.Channels, _consumer.MaximumPacketFrames, cancellationToken) :
+                    _graphTarget is { } graph ? GraphPreparation.Prepare(_frozen, graph, _consumer.SampleRate,
                     _consumer.Channels, _consumer.MaximumPacketFrames, _voices, _repeats,
                     cancellationToken: cancellationToken) : SamplerPreparation.PreparePattern(_frozen, _target,
                     _consumer.SampleRate, _consumer.Channels, _voices, _start, _repeats);
@@ -514,13 +534,13 @@ public sealed class SamplerPreparationRequest : IDisposable
         bool valid = !_document.IsClosed && _document.LifecycleId == _lifecycle &&
                      _document.Generation == _generation && _document.Current.Revision == _revision &&
                      _document.MediaRoots.SequenceEqual(_roots) &&
-                     (_graphTarget is { } graph ? _document.Current.State.GraphAttachments.Any(item => item.Id == graph) :
-                         _document.Current.State.Patterns.Any(pattern => pattern.Id == _target));
+                     (_arrangement || (_graphTarget is { } graph ? _document.Current.State.GraphAttachments.Any(item => item.Id == graph) :
+                         _document.Current.State.Patterns.Any(pattern => pattern.Id == _target)));
         var result = _consumer.Publish(_plan, _authority, valid,
             _cancellation.IsCancellationRequested || cancellationToken.IsCancellationRequested,
             preservePlayback: PreservePlayback);
         if (result == SamplerPublication.Accepted) _plan = null;
-        else if (result == SamplerPublication.Capacity && _graphTarget.HasValue) return result;
+        else if (result == SamplerPublication.Capacity && (_graphTarget.HasValue || _arrangement)) return result;
         else
         {
             _plan.Dispose();

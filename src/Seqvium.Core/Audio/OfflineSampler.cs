@@ -30,7 +30,8 @@ public readonly record struct ExecutionOccurrence(
     Id<MusicalPart> PartId,
     Id<NoteEvent> NoteId,
     int Iteration,
-    Id<PatternPlacement>? PlacementId = null);
+    Id<PatternPlacement>? PlacementId = null,
+    Id<ArrangementClip>? ClipId = null);
 
 public enum ExecutionEventKind
 {
@@ -78,6 +79,7 @@ public sealed class PreparedSampler : IDisposable
     public int MaximumPacketEvents { get; internal set; }
     internal LoopClock? Loop { get; set; }
     internal ProjectState? CanonicalBasis { get; set; }
+    internal bool IsArrangement { get; init; }
 
     internal PreparedSampler(Guid revision, int rate, int channels, int capacity, long start, long end, int zero,
         ImmutableArray<PreparedNote> notes, ImmutableArray<PreparedEvent> events, PcmLease[] sources,
@@ -266,7 +268,7 @@ public static class SamplerPreparation
         }
     }
 
-    private static void ValidateCapacity(ImmutableArray<PreparedEvent> events,
+    internal static void ValidateCapacity(ImmutableArray<PreparedEvent> events,
         ImmutableArray<PreparedNote>.Builder notes,
         List<PcmLease> sources, int capacity, long stop)
     {
@@ -347,6 +349,7 @@ public sealed class OfflineSampler : IDisposable
     }
 
     internal void SetLooping(bool looping) => _looping = looping && _plan.Loop is not null;
+    internal void Finish() { Stop(); Position = _plan.EndFrame; }
 
     // Mapping is constructed by the control owner, never searched/allocated in the callback.
     internal void ContinueFrom(OfflineSampler old, int[] notes)

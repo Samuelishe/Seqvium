@@ -116,6 +116,24 @@ public static class ProjectValidation
         }
         Require(state.Contexts.Where(item => item.Level == LocalProcessingLevel.Item).All(item => itemOwners.Contains(item.Id)),
             "An item-local context must have exactly one placement owner.");
+        Present(state.ArrangementClips);
+        Present(state.ArrangementTracks);
+        Unique(state.ArrangementTracks.Select(track => track.Lane));
+        foreach (var track in state.ArrangementTracks)
+        {
+            Identity(track.Id); Text(track.Name);
+            Require(track.Lane is >= 0 and < 32 && track.ColorIndex is >= 0 and < 8, "Unsupported Playlist track or color.");
+        }
+        var placements = state.Placements.ToDictionary(item => item.Id);
+        foreach (var clip in state.ArrangementClips)
+        {
+            Identity(clip.Id);
+            Require(placements.TryGetValue(clip.SourcePlacementId, out var source), "Clip references an unknown source placement.");
+            Require(clip.Lane is >= 0 and < 32 && clip.Repeats is >= 1 and <= 1024, "Unsupported clip lane or repeat count.");
+            long length = patterns[source.PatternId].Length.Ticks;
+            Require(length <= long.MaxValue / clip.Repeats && clip.Position.Ticks >= 0 &&
+                clip.Position.Ticks <= long.MaxValue - length * clip.Repeats, "Clip end exceeds musical-time range.");
+        }
         GraphStructure.Validate(state, value => Identity(new Id<GraphDefinition>(value)));
 
         void CheckContext(Id<ProcessingContext>? id, LocalProcessingLevel level)

@@ -110,6 +110,36 @@ only canonical ProjectSettings, preserving musical-time positions and stopping t
 WAV drop goes through the existing import/media acceptance owner. No DSP, scheduling, schema,
 serialization marker, executable graph, realtime thread or second document/history owner changes.
 
+## Playlist composition
+
+The owner authorizes a bounded Arrangement workflow independently of closing intervening roadmap
+stages. Core's ArrangementClip references an existing source PatternPlacement, rather than manufacturing
+more Rack placements or invisible Pattern/Part/Note copies. Its source owns canonical music/graph/media;
+the clip owns only song position, fixed spatial lane and repeat count. Optional identified
+ArrangementTrack configuration names/colors/gates one of 32 fixed lane slots, with no permanent
+instrument assignment, processing context or Mixer identity. Full dynamic containers remain future work.
+
+ProjectEdit.Arrangement uses the same document validation, equality, Undo and persistence; source
+deletion removes referring clips atomically. DesktopWorkflow.Arrangement freezes lifecycle/generation
+and serializes all clip/track commands on the existing owner. Selection of a Rack source during Song
+is separate from audio intent. Mode changes explicitly stop and select the coordinator's finite Song
+or continuous Pattern path; Open restores intent silently. There is no second transport/history owner.
+
+ArrangementPreparation derives absolute note occurrences and one combined program from eligible source
+graphs, reusing the existing offline/realtime processor, PCM leases, publication/retirement and output
+lifetime. Linear stateless programs may process summed independent voices of their shared source;
+future stateful per-occurrence processors must derive distinct execution ownership deliberately.
+Song Mute/Solo affects scheduling, not canonical notes or the Rack loop. Compatible publication maps
+stable occurrences into new tables; no UI timer supplies musical time.
+
+ArrangementPaneContent/ArrangementCanvas and ArrangementOverview are retained projections with local
+gesture/view state. Source choice, clipping/note preview, stationary headings, track settings, snap,
+fit and overview use shared host resources. WorkspacePane participates in refresh/focus/cancel/Dispose.
+Song export freezes document/media roots and invokes the same program off-thread with no device/history
+mutation. [UX](UX_CONTRACT.md#implemented-playlist-arrangement),
+[audio](AUDIO_ENGINE.md#playlist-song-preparation-and-execution) and
+[format](PROJECT_FORMAT.md#playlist-reader-12) own the exact boundaries.
+
 ## R1 canonical foundation
 
 The production foundation uses one `Seqvium.Core` library and one `Seqvium.Tests` project. Domain

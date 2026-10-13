@@ -208,9 +208,12 @@ internal sealed partial class MainWindow : Window
     private void GraphClicked(object? sender, RoutedEventArgs args) => OpenGraph();
     private void NodeEditorClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.NodeEditorId);
     private void BeatClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.BeatId);
+    private void ArrangementClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.ArrangementId);
 
     private Control CreatePaneContent(PaneDefinition definition)
     {
+        if (definition.InstanceId == WorkspaceState.ArrangementId)
+            return new ArrangementPaneContent(_session, _workflow, WorkflowActionAsync, () => _workspace.Open(WorkspaceState.BeatId));
         if (definition.InstanceId == WorkspaceState.BeatId)
             return new BeatPaneContent(_session, _workflow, ImportBeatWavAsync);
         if (definition.InstanceId == WorkspaceState.GraphId)

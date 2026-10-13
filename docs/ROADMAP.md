@@ -340,7 +340,7 @@ implemented: continuous Pattern playback, renderer position, compatible live ste
 channel/Pattern deletion, navigation collapse and selected-Pattern WAV export.
 [Current state](PROJECT_STATE.md) owns evidence and limits; [completed work](archive/WORK_LOG.md#seq-r5-music--2026-10-13)
 records the checkpoint. Richer velocity, per-channel controls and remaining musical editors still
-keep R5 partial. Bounded Pattern export does not close the later First Track/song-export stage.
+keep R5 partial. Bounded Pattern export does not close the later First Track stage.
 
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,
 several channels, velocity, and responsive live editing over extensible musical events.
@@ -420,7 +420,31 @@ detach it or create another event model.
 
 ## SEQ-R10 — Arrangement
 
-Add Playlist/Arrangement with clips in musical time, normal shared pattern references, and explicit
+**In progress / bounded Playlist implemented.** The owner explicitly authorizes composition ahead of
+closing R6–R9. SEQ-R10-PLAYLIST provides shared Pattern clips, simultaneous finite song execution,
+move/Ctrl-copy/repeat/duplicate/delete, named/color fixed tracks with actual Mute/Solo, snap, overview/
+fit/follow, renderer position, Undo/Redo, compatible Save/Open and whole-Song WAV. It does not close the
+full R10 container/audio/stretch scope or earlier R4 pressure acceptance. Current contracts belong to
+[UX](UX_CONTRACT.md#implemented-playlist-arrangement), [audio](AUDIO_ENGINE.md#playlist-song-preparation-and-execution)
+and [format](PROJECT_FORMAT.md#playlist-reader-12); [UI](UI_DESIGN.md#playlist-reference-assessment-and-visual-contract)
+owns inspected reference choices, not an independent feature list.
+
+### Reference-informed Playlist follow-up
+
+The inspected FL/SONAR/Cubase targets inform concrete next work, rather than unused toolbar controls.
+Prioritize a finished audible scenario with canonical history/persistence and proportional evidence.
+
+| Priority / bounded package | Musical/UI outcome | Required boundary / decision |
+| --- | --- | --- |
+| R10 transport navigation | Ruler seek, play from selected location, loop/range selection, bar/beat/time readout | Prepare/reconstruct in-progress voices and release ages off the callback; define seek/Stop/loop authority and source gates, avoid scanning canonical music on realtime |
+| R10 editing | Marquee/multi-selection, group move/copy/delete, clipboard, precise selected-clip position, useful context menu and tool/cursor feedback | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit |
+| R10 song structure | Named section markers, dynamic track insertion/reorder, groups/collapse and useful track height | Stable container/marker identities, lossless transition from fixed slots, separate visual organization from item/container processing and Mixer routing |
+| R10 Pattern variants | Explicit make-unique/variation and richer mini Piano Roll | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies |
+| R10 audio clips | Real cached waveform, source range, trim/split/fades, eventually local stretch/warp | Preserve media and non-destructive ranges; define actual render algorithms, finite tails, tempo relationship and safe split ownership before enabling tools |
+| R11 processing / automation | Measured stereo Master/track taps, useful meters, Mixer balance/pan/sends and automation lanes | Actual processor/measurement/tap/state ownership; no fake meters or duplicate Gain/DSP. Automation needs canonical musical-time lanes and realtime/offline equivalence |
+| R5 channel continuity | Add/delete WAV channels while music continues | [Observed topology debt](TECH_DEBT.md#continuous-channel-topology), silent/last-channel preparation and stable voice/clock/lifetime mapping; verify real sound |
+
+Expand Playlist with normal shared pattern references and explicit
 independent variations. Follow the semi-free direction: user-named structured containers, useful
 default content relationships, and compatible material reuse without permanent one-instrument
 ownership or mixer-channel identity. Resolve bounded compatibility/container-processing relationships

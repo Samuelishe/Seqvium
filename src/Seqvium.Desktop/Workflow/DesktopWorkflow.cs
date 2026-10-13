@@ -21,6 +21,8 @@ internal sealed record WorkflowState(ProjectDocument Document, OccurrenceChoice[
     internal int RedoCount { get; } = Document.RedoCount;
     internal long Generation { get; } = Document.Generation;
     internal bool IsClosed { get; } = Document.IsClosed;
+    internal bool SongMode { get; init; }
+    internal int ExecutionSampleRate { get; init; } = 48000;
 }
 
 /// <summary>Host application/session owner over the existing document, import, persistence and F2 engine.
@@ -39,6 +41,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     private WorkflowOutput? _output;
     private GraphExecutionCoordinator? _coordinator;
     private Id<GraphAttachment>? _selected;
+    private bool _songMode;
     private string _status = "Workflow.Empty";
     private string? _detail;
     private bool _busy, _closed, _disposed, _audioReady;
@@ -58,6 +61,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         _createCoordinator = createCoordinator ?? ((doc, sampler, target, owner) => new(doc, sampler, target, owner));
         _mediaDirectory = mediaDirectory;
         _selected = document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
+        _songMode = !document.Current.State.ArrangementClips.IsEmpty;
         _state = new(document, [], _selected, null, "", "", _status, null, null, false, false, false, null);
         _document.Changed += DocumentChanged;
         _poll = new(_ =>
@@ -151,8 +155,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     public Task<bool> SelectAsync(Id<GraphAttachment> target) => Command("Workflow.EditFailed", () =>
     {
         if (!_document.Current.State.GraphAttachments.Any(item => item.Id == target)) return Task.FromResult(false);
-        _playGeneration++; _coordinator?.Stop();
-        _selected = target; _coordinator?.SelectTarget(target);
+        if (!_songMode) { _playGeneration++; _coordinator?.Stop(); }
+        _selected = target;
+        if (!_songMode) _coordinator?.SelectTarget(target);
         return Task.FromResult(true);
     });
 
@@ -200,6 +205,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             _document = loaded.Document;
             _document.Changed += DocumentChanged;
             _selected = _document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
+            _songMode = !_document.Current.State.ArrangementClips.IsEmpty;
             _status = loaded.IsDegraded ? "Workflow.Degraded" : "Workflow.Opened";
             _detail = string.Join(" · ", loaded.Diagnostics.Concat(loaded.GraphReports.SelectMany(r => r.Diagnostics)
                 .Select(d => d.Reason)));
@@ -209,11 +215,13 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     public Task<bool> PlayAsync() => Command("Workflow.DeviceFault", async () =>
     {
         var attachment = SelectedAttachment();
-        if (attachment is null) return false;
-        var report = GraphDiagnostics.Inspect(_document.Current.State).Single(item => item.GraphId == attachment.GraphId);
-        if (!report.IsEligibleForPreparation)
+        if (!_songMode && attachment is null) return false;
+        var report = attachment is null ? null : GraphDiagnostics.Inspect(_document.Current.State).Single(item => item.GraphId == attachment.GraphId);
+        string? refusal = _songMode ? ArrangementPreparation.Refusal(_document.Current.State) :
+            report is { IsEligibleForPreparation: false } ? string.Join(" · ", report.Diagnostics.Select(item => item.Reason)) : null;
+        if (refusal is not null)
         {
-            _status = "Workflow.Blocked"; _detail = string.Join(" · ", report.Diagnostics.Select(item => item.Reason));
+            _status = "Workflow.Blocked"; _detail = refusal;
             return false;
         }
         // A failed rollback still owns its borrower. Confirm cleanup before opening any replacement.
@@ -229,7 +237,8 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
                 var session = new AudioDeviceSession();
                 session.AttachOutput(_output.Lifetime, _output.Sampler);
                 _deviceSession = session;
-                _coordinator = _createCoordinator(_document, _output.Sampler, attachment.Id, _owner);
+                _coordinator = _createCoordinator(_document, _output.Sampler, attachment?.Id ?? default, _owner);
+                _coordinator.SelectArrangement(_songMode);
                 _deviceSession.AttachCoordinator(_coordinator);
                 _audioReady = true;
             }
@@ -242,7 +251,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             }
         }
         _status = "Workflow.Preparing"; Publish();
-        _output!.Sampler.SetLooping(true);
+        _output!.Sampler.SetLooping(!_songMode);
         for (int wait = 0; wait < 1500 && generation == _playGeneration; wait++)
         {
             var status = _coordinator!.ReadStatus();
@@ -309,11 +318,15 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void DocumentChanged()
     {
+        if (_songMode && _document.Current.State.ArrangementClips.IsEmpty) { _playGeneration++; _coordinator?.Stop(); }
         if (SelectedAttachment() is null)
         {
             _selected = _document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
-            _coordinator?.Stop();
-            if (_selected is { } selected) _coordinator?.SelectTarget(selected);
+            if (!_songMode)
+            {
+                _coordinator?.Stop();
+                if (_selected is { } selected) _coordinator?.SelectTarget(selected);
+            }
         }
         Publish();
     }
@@ -343,6 +356,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         }));
         string chain = graph is null ? "" : DescribeGraph(graph);
         var report = graph is null ? null : GraphDiagnostics.Inspect(state).Single(item => item.GraphId == graph.Id);
+        string? songRefusal = _songMode ? ArrangementPreparation.Refusal(state) : null;
         var execution = _coordinator?.ReadStatus();
         string statusKey = _status;
         string? detail = _detail;
@@ -355,13 +369,14 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             else if (execution?.PreparationPending == true) statusKey = "Workflow.Preparing";
             else if (execution?.Execution.Playing == true) statusKey = "Workflow.Playing";
             else if (execution?.Execution.Transport == SamplerTransportState.Ended) statusKey = "Workflow.Ended";
-            if (report is { IsEligibleForPreparation: false })
+            if (_songMode && songRefusal is not null) { statusKey = "Workflow.Blocked"; detail = songRefusal; }
+            else if (!_songMode && report is { IsEligibleForPreparation: false })
             { statusKey = "Workflow.Blocked"; detail = string.Join(" · ", report.Diagnostics.Select(item => item.Reason)); }
         }
         var observation = new WorkflowState(_document, choices, _selected, gain, chain, source, statusKey,
-            detail, _output?.Description, _busy, !_busy && !_closed && report?.IsEligibleForPreparation == true &&
+            detail, _output?.Description, _busy, !_busy && !_closed && (_songMode ? songRefusal is null : report?.IsEligibleForPreparation == true) &&
             !_document.SavedMediaDiagnostics.Any() && execution?.Closed != true && execution?.Blocker is null,
-            !_closed && _output is not null, execution);
+            !_closed && _output is not null, execution) { SongMode = _songMode, ExecutionSampleRate = _output?.Sampler.SampleRate ?? 48000 };
         Volatile.Write(ref _state, observation);
         Changed?.Invoke(observation);
     }

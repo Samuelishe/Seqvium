@@ -39,6 +39,7 @@ internal sealed class WorkflowControls : Grid
     private readonly TextBlock _gainLabel = new() { VerticalAlignment = VerticalAlignment.Center, Margin = new(4, 0, 4, 0) };
     private readonly Button _information = new() { Classes = { "shell", "command" } };
     private readonly Button _overflow = new() { Classes = { "shell", "command" } };
+    private readonly Button _mode = new() { Classes = { "compact" }, MinWidth = 62 };
     private readonly TextBlock _source = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _chain = new() { Classes = { "secondary" }, TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _device = new() { Classes = { "secondary" }, TextWrapping = TextWrapping.Wrap };
@@ -64,6 +65,9 @@ internal sealed class WorkflowControls : Grid
         foreach (var key in new[] { "Import", "Open", "Save" }) _project.Children.Add(Command(key));
         commands.Children.Add(_project); commands.Children.Add(Separator());
         foreach (var key in new[] { "Play", "Stop", "Panic" }) commands.Children.Add(Command(key));
+        commands.Children.Add(_mode);
+        AutomationProperties.SetAutomationId(_mode, "Workflow.Mode");
+        _mode.Click += async (_, _) => await workflow.SetSongModeAsync(!workflow.State.SongMode);
         _tempo.Bind(TextBlock.FontSizeProperty, this.GetResourceObservable("Type.Transport"));
         _tempoAction.Content = _tempo; _musicalParameters.Children.Add(_tempoAction);
         var tempoPopup = new StackPanel { Classes = { "spaced" } };
@@ -123,7 +127,7 @@ internal sealed class WorkflowControls : Grid
         _overflow.Content = HostIcons.Create("More", _overflow);
         AutomationProperties.SetAutomationId(_information, "Workflow.SourceInfo");
         AutomationProperties.SetAutomationId(_overflow, "Workflow.More");
-        AddOverflow("SaveAs"); AddOverflow("ExportWave", "Save"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
+        AddOverflow("SaveAs"); AddOverflow("ExportWave", "Save"); AddOverflow("ExportSong", "Save"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
         _overflowBody.Children.Add(_overflowParameters);
         _overflow.Flyout = new Flyout { Content = _overflowBody };
         var body = new StackPanel { Width = 330, Classes = { "spaced" } };
@@ -179,7 +183,7 @@ internal sealed class WorkflowControls : Grid
         button.Classes.Remove("command"); button.Width = double.NaN;
         button.HorizontalAlignment = HorizontalAlignment.Stretch; button.HorizontalContentAlignment = HorizontalAlignment.Left;
         var row = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "spaced" } };
-        row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key == "ExportWave" ? "Save" : key, button, 16));
+        row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key is "ExportWave" or "ExportSong" ? "Save" : key, button, 16));
         var text = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
         _menuLabels.RemoveAll(item => item.Key == key);
         _menuLabels.Add((text, key)); row.Children.Add(text); button.Content = row;
@@ -230,6 +234,11 @@ internal sealed class WorkflowControls : Grid
         try
         {
             _tempo.Text = _shell.Tempo; _meter.Text = _shell.Meter;
+            _mode.Content = _shell[state.SongMode ? "Arrangement.Song" : "Arrangement.Pattern"];
+            _mode.Classes.Set("primary", state.SongMode);
+            _mode.IsEnabled = !interactionBlocked && !state.Busy && !state.IsClosed;
+            AutomationProperties.SetName(_mode, _shell["Arrangement.Mode"] + ": " + _mode.Content);
+            ToolTip.SetTip(_mode, _shell["Arrangement.ModeHint"]);
             ToolTip.SetTip(_tempoAction, _shell["Project.Tempo"] + " · " + _shell["Workflow.TempoHint"]);
             AutomationProperties.SetName(_tempoAction, _shell["Project.Tempo"] + ": " + _shell.Tempo + " BPM");
             _tempoAction.IsEnabled = !interactionBlocked && !state.Busy && !state.IsClosed;
@@ -242,7 +251,8 @@ internal sealed class WorkflowControls : Grid
                 button.IsVisible = key != "CancelImport" || CanCancelImport;
                 button.IsEnabled = key == "CancelImport" ? CanCancelImport : transport ? state.CanStop || state.Busy :
                     !interactionBlocked && !state.Busy && key switch
-                    { "Play" => state.CanPlay, "ExportWave" => state.Selected is not null, "Undo" => state.UndoCount > 0, "Redo" => state.RedoCount > 0, _ => true };
+                    { "Play" => state.CanPlay, "ExportWave" => state.Selected is not null,
+                        "ExportSong" => !state.Snapshot.State.ArrangementClips.IsEmpty, "Undo" => state.UndoCount > 0, "Redo" => state.RedoCount > 0, _ => true };
                 var shortcut = WorkflowPresentation.Shortcut(key); var label = _shell["Workflow." + key];
                 AutomationProperties.SetName(button, label); AutomationProperties.SetAcceleratorKey(button, shortcut);
                 ToolTip.SetTip(button, label + (shortcut.Length == 0 ? "" : " · " + shortcut) +

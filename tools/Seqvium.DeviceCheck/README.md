@@ -16,11 +16,18 @@ dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll fau
 dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll pressure 60
 dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll audition-smoke
 dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll loop-smoke
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll song-smoke
 ```
 
 `loop-smoke` plays a quiet authored continuous loop for six seconds, edits its notes through the
 real coordinator, checks retained position/epoch, Stop acknowledgment, deadlines/allocation counters
 and joined teardown. It does not replace acoustic review or the pressure protocol.
+
+`song-smoke` plays two simultaneous quiet Pattern sources in a finite six-second arrangement,
+publishes a future clip while playing, and verifies finite Ended, preserved epoch/current position,
+simultaneous voices, zero callback allocation, no deadline/padding misses and acknowledged Stop/join.
+It reuses production song preparation/renderer/WASAPI; it does not replace owner listening or pressure
+acceptance. No system volume/device settings are changed.
 
 `measure 60` runs baseline and GC/control pressure for each of 1/4/8 voices, ten fresh lifetimes,
 then stall/invalidation/unavailable-endpoint checks. Exit 0 means the requested checks passed; exit 1

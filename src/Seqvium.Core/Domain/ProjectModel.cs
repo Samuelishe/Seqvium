@@ -87,6 +87,14 @@ public sealed record PatternPlacement(Id<PatternPlacement> Id, Id<Pattern> Patte
     Id<ProcessingContext>? ItemContextId, Id<ProcessingContext>? ContainingContextId,
     Id<RouteIntent>? RouteId, ImmutableArray<PlacementPart> PartRelationships) : CanonicalData;
 
+/// <summary>A shared Rack occurrence in the song. Lane is visual organization, not an audio route.</summary>
+public sealed record ArrangementClip(Id<ArrangementClip> Id, Id<PatternPlacement> SourcePlacementId,
+    MusicalPosition Position, int Lane, int Repeats) : CanonicalData;
+
+/// <summary>Configuration of one fixed Playlist lane; it owns neither an instrument nor a mixer route.</summary>
+public sealed record ArrangementTrack(Id<ArrangementTrack> Id, int Lane, string Name, int ColorIndex,
+    bool Muted, bool Solo) : CanonicalData;
+
 public sealed record ProjectState(Id<ProjectState> Id, string? Name, ProjectSettings Settings,
     ImmutableArray<Pattern> Patterns, ImmutableArray<SoundDefinition> Sounds,
     ImmutableArray<PatternPlacement> Placements, ImmutableArray<InstrumentGroup> Groups,
@@ -96,6 +104,8 @@ public sealed record ProjectState(Id<ProjectState> Id, string? Name, ProjectSett
     // Optional properties keep historical graph-free constructor contracts intact.
     public ImmutableArray<GraphDefinition> Graphs { get; init; } = [];
     public ImmutableArray<GraphAttachment> GraphAttachments { get; init; } = [];
+    public ImmutableArray<ArrangementClip> ArrangementClips { get; init; } = [];
+    public ImmutableArray<ArrangementTrack> ArrangementTracks { get; init; } = [];
 }
 
 public sealed record ProjectSnapshot(ProjectState State, Guid Revision);
