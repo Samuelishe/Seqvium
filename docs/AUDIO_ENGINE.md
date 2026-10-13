@@ -25,9 +25,9 @@ A new step starts at `step * ticksPerQuarter / 4`, at the sound's rootPitch and 
 ordinary gate duration is `min(ticksPerQuarter, patternLengthTicks - startTicks)`: a quarter note, shortened near
 the bar end. Imported channel sounds use release 0. Short percussion reaches natural EOF; longer
 samples cut at NoteOff or the Pattern boundary. This is neither an infinite one-shot tail nor a new
-sampler policy; BPM changes its audible gate length. Dense/long overlapping notes may exceed eight
-voices and preparation refuses the plan. Channel topology, BPM and length changes stop playback;
-step edits use the compatible publication below. Last-valid, generation, readiness and joined lifetime
+sampler policy; BPM changes its audible gate length. Desktop Rack and Song source graphs admit up to
+32 concurrent voices; denser overlapping notes refuse preparation without dropping music. BPM and
+length changes stop playback; supported channel and step edits use the compatible publication below. Last-valid, generation, readiness and joined lifetime
 protections remain. [Test execution](TEST_EXECUTION.md#r5-continuous-music-verification) owns evidence.
 
 ### R5-F2/F3 continuous Pattern playback and WAV export
@@ -77,7 +77,7 @@ Original source-placement position does not offset the song clip. Preparation co
 on/off/end boundary independently and refuses incomplete sub-frame source tables rather than dropping
 their potentially audible relocated notes. Original Rack/finite/audition semantics remain available.
 
-Song admits at most 32 concurrent voices, the existing 100001-event and 128 MiB decoded limits,
+Song and each prepared source graph admit at most 32 concurrent voices, the existing 100001-event and 128 MiB decoded limits,
 16 MiB scratch and packet-work/density gates. Aggregate limits cover all prepared source graphs;
 overload refuses the entire plan. The callback reuses OfflineSampler with fixed tables/scratch/voices;
 it performs no decode, document traversal, UI work or allocation. Existing publication authority,
@@ -88,8 +88,12 @@ note mappings against the actual active plan. Source/scratch offsets may change,
 stable occurrence and musical/source configuration before transferring voice ages to new indices.
 Removed/gated/changed notes end; past new onsets are not replayed. Future onsets use the new plan.
 Shortening behind the active position finishes silently. Rack comparison excludes song-only track/clip
-metadata, so arranging while Rack loops cannot manufacture a restart. Source topology/settings changes
-remain incompatible; continuous WAV channel changes are recorded debt, not implemented continuity.
+metadata, so arranging while Rack loops cannot manufacture a restart. Settings/arbitrary topology changes remain incompatible. The bounded Rack Source/Mix/Gain/Output
+channel tree also supports continuation: canonical comparison retains existing media/sounds, settings,
+lengths, placement, Gain/Output and unrelated intent, while projecting added/deleted parts and Mix nodes.
+Unchanged occurrence mappings transfer source age/release to new scratch indices. A recognized empty
+Gain → Output Rack compiles to silence, including the last-channel boundary. Future stateful
+processors acquire no continuation guarantee from this stateless path.
 
 PatternWaveExport.ExportArrangementAsync freezes a revision/media roots and uses this same finite
 song program off-thread. It preserves leading silence and overlaps and writes 48 kHz stereo PCM16
@@ -97,10 +101,37 @@ with the existing destination protection, cancellation, RIFF/clipping and siblin
 Song export never opens a device or exports an older last-valid schedule. The render frame/sample rate
 drive Desktop's cursor; this does not claim acoustic latency correction or long pressure acceptance.
 
+### Song seek/range and sample boundary smoothing
+
+`RealtimeSampler.SeekSong` publishes a latest immutable frame/command value; the consumer reconstructs
+source age/release from its frozen bounded note table and binary-searches the next event. Seeking does
+not start transport or undo Stop/Panic. The Song cursor remains absolute musical time in Desktop and
+is converted at the actual output rate. A session-only half-open frame range wraps within the same
+packet, resets destination voices and does not add epochs at ordinary wraps. Ranges shorter than
+10 ms refuse at Core; Desktop uses at least a sixteenth. Preflight includes worst-case range seek
+scans in the existing packet-work limit. No callback allocation, media I/O or mutable document access
+is added. Stateful warm-up/scrubbing remains outside this PCM/Gain/Mix scope.
+
+Desktop output and Pattern/Song WAV export use the same short source/gate/end smoothing: a linear
+3 ms ramp finishes inside the source EOF, zero-release note gate, Pattern/Song end or range end.
+It neither extends tails nor edits source bytes/note durations. Existing declared release still
+applies. Low-level raw sampler callers may retain exact PCM by leaving boundary smoothing disabled;
+numerical comparisons/export checks explicitly choose the same policy. Explicit live seek retains
+the existing bounded fade-in. Stop/Panic remain immediate hard commands.
+
+A recoverable preparation blocker no longer permanently disables structurally eligible Desktop Play.
+Explicit Play requests fresh preparation; unchanged automatic convergence still never issues Start.
+Invalid intent/media remains visible and no failed preparation silently substitutes canonical audio.
+
 ### WAV and decoded ownership
 
-[WavDecoder](../src/Seqvium.Core/Media/WavDecoder.cs) supports little-endian RIFF/WAVE PCM16 and IEEE float32,
-mono/stereo, 44,100/48,000 Hz. Supported `fmt` representations are 16 bytes, 18 bytes with zero extension,
+[WavDecoder](../src/Seqvium.Core/Media/WavDecoder.cs) supports little-endian RIFF/WAVE PCM16/24/32 and IEEE float32,
+mono/stereo source rates from 8,000 through 192,000 Hz. Execution remains 44,100/48,000 Hz;
+linear interpolation converts the source rate, without a mastering-quality resampling claim.
+The byte limit, finite-float validation, channel ordering and lease ownership remain unchanged.
+FLAC is refused. Two narrow exporter variants are tolerated only after complete chunk validation:
+an outer RIFF size one byte larger than actual bytes, and a final mono PCM24 data size containing
+its one zero padding byte. No truncated PCM frame or arbitrary size mismatch is accepted. Supported `fmt` representations are 16 bytes, 18 bytes with zero extension,
 and 40-byte WAVE_FORMAT_EXTENSIBLE with full valid bits and PCM/float subtype GUIDs. Extensible masks
 are unspecified (0), mono front-center (4), or stereo front-left/right (3), preserving L/R ordering;
 other masks/container/valid-bit configurations are explicit refusals. These variants correspond to
@@ -108,11 +139,11 @@ ordinary [Microsoft extensible format definitions](https://learn.microsoft.com/e
 No compressed codecs, RF64/RIFX, PCM24/32, other rates/channel layouts, wavl/multiple data chunks,
 sample loops or generic codec plugins are supported.
 
-Require exact RIFF length, one prior `fmt` and one nonempty frame-aligned `data`, consistent byte rate/
+Except for the two bounded exporter variants above, require exact RIFF length, one prior `fmt` and one nonempty frame-aligned `data`, consistent byte rate/
 block alignment and valid extension/chunk bounds including odd padding. Unknown bounded chunks,
 including metadata/fact, are skipped; a fact chunk is not required for common float files. Do not use
 declared chunk lengths to allocate. Source input is limited to 16 MiB, decoded interleaved floats to
-at most 32 MiB per resource. PCM16 scales by 32768; finite float overload saturates to [-1,1]; NaN/Inf
+at most 32 MiB per resource. Signed PCM16/24/32 scales by its exact binary full-scale denominator; finite float overload saturates to [-1,1]; NaN/Inf
 refuse the resource. Decode/read/hash/storage happen outside execution. Durable source bytes are
 separate under [project format](PROJECT_FORMAT.md#r2-f1-managed-wav-layout).
 
@@ -138,7 +169,7 @@ starts a linear release of `round(releaseMilliseconds * executionRate / 1000)` f
 or immediately retires when zero. Release gains are 1, (N-1)/N, ..., 1/N over N frames. Natural EOF may
 retire earlier. One note/iteration never resets another voice using the same sound/resource.
 
-Plans explicitly support 1–8 voice slots, with tested 1/4/8 configurations; these are F1 acceptance
+Raw sampler plans explicitly support 1–8 voice slots, with tested 1/4/8 configurations; these are F1 acceptance
 bounds, not a permanent universal ceiling or mono/legato/voice-stealing policy. Preflight considers
 duration, release, EOF and stop; an over-capacity plan is rejected wholly before output. All sources,
 including zero-frame note dependencies, must be understood and available. Unsupported algorithms,
@@ -252,12 +283,13 @@ Captured lifecycle, generation, revision, target and media roots are rechecked a
 is checked between source decodes and note scheduling units, around worker execution and at publication;
 one synchronous decode/hash is bounded by the existing 16 MiB WAV limit and is not instantly interruptible.
 
-Retain 1–8 voices, 100,001 events, 128 MiB decoded PCM per plan, 64 events per frame, 1–1024 repeats,
+Graph preparation supports 1–32 voices; Desktop Rack/export and Song source graphs request 32,
+while low-level callers retain an eight-slot default. Retain 100,001 events, 128 MiB decoded PCM per plan, 64 events per frame, 1–1024 repeats,
 1–65,536 maximum packet frames, 44.1/48 kHz and mono/stereo. F1 caps remain 32 nodes, 64 connections,
 8 bound sources and 8 Mix inputs. Checked scratch accounting is producer buffers
 `bufferCount * maximumPacketFrames * channels * 4`, plus conservative node/edge/voice storage
 `nodes*256 + edges*16 + voices*128`; cap 16 MiB per state. Output aliases its input, so 32 nodes require
-at most 31 producer buffers. The verified maximum stereo packet/topology needs 16,262,640 bytes,
+at most 31 producer buffers. The eight-slot maximum stereo packet/topology fixture needs 16,262,640 bytes; 32 slots add 3,072 bytes,
 below 16,777,216. This accounting includes table/voice allowance, not an exact managed heap/RSS claim.
 
 Preflight computes the largest event window spanning a maximum packet, in addition to per-frame density.
@@ -289,7 +321,7 @@ Gain-only changes on equivalent topology/schedule/media publish an immutable lat
 at a packet boundary, preserving voice cursors, release and transport. Geometry-only changes need no
 decode, topology construction or scratch rebuild; equivalent provenance advances separately. Coalesced
 Gain then geometry carries the full current coefficients, so supersession cannot lose an unapplied Gain.
-Topology/source/tempo/length replacement restarts the prepared absolute range in a new epoch.
+Other topology/source/tempo/length replacement restarts the prepared absolute range in a new epoch.
 Compatible loop note edits retain position/voices under the R5 continuation above. Preparation/convergence never issues Start; deliberate coordinator Start
 requires the current validated publication authority. Stop/Panic remain sticky through completion/retry.
 

@@ -10,6 +10,66 @@ internal readonly record struct ArrangementEditBasis(Guid Lifecycle, long Genera
 
 internal sealed partial class DesktopWorkflow
 {
+    private long _songCursor, _loopStart, _loopEnd;
+    private bool _songLoopEnabled;
+
+    internal Task<bool> SeekSongAsync(MusicalPosition position) => Command("Workflow.EditFailed", () =>
+    {
+        _songCursor = Math.Clamp(position.Ticks, 0, ArrangementPreparation.EndTicks(_document.Current.State));
+        ApplySongTransport(seek: true);
+        return Task.FromResult(true);
+    });
+
+    internal Task<bool> SetSongLoopAsync(MusicalPosition start, MusicalPosition end, bool enabled)
+        => Command("Workflow.EditFailed", () =>
+    {
+        long songEnd = ArrangementPreparation.EndTicks(_document.Current.State);
+        long minimum = MusicalPosition.TicksPerQuarter / 4;
+        _loopStart = Math.Clamp(start.Ticks, 0, Math.Max(0, songEnd - minimum));
+        _loopEnd = Math.Clamp(end.Ticks, _loopStart, songEnd);
+        _songLoopEnabled = enabled && _loopEnd - _loopStart >= minimum;
+        ApplySongTransport();
+        return Task.FromResult(true);
+    });
+
+    private void ApplySongTransport(bool seek = false)
+    {
+        if (_output is null) return;
+        var tempo = _document.Current.State.Settings.Tempo;
+        long Frame(long ticks) => ConstantTempoConversion.ToFrames(new(ticks), tempo, _output.Sampler.SampleRate);
+        _output.Sampler.SetSongLoop(Frame(_loopStart), Frame(_loopEnd), _songLoopEnabled);
+        if (seek) _output.Sampler.SeekSong(Frame(_songCursor));
+    }
+
+    internal Task<bool> EditArrangementSelectionAsync(ArrangementEditBasis basis, IReadOnlyList<Id<ArrangementClip>> selection,
+        long tickDelta = 0, int laneDelta = 0, bool copy = false, bool delete = false, bool duplicate = false)
+    {
+        var ids = selection.Distinct().ToArray();
+        return Command("Workflow.EditFailed", () =>
+        {
+            ValidateArrangementBasis(basis);
+            var state = _document.Current.State;
+            var clips = ids.Select(id => state.ArrangementClips.Single(c => c.Id == id)).ToArray();
+            if (clips.Length == 0) return Task.FromResult(false);
+            if (duplicate)
+            {
+                long end = clips.Max(c => c.Position.Ticks + state.Patterns.Single(p => p.Id ==
+                    state.Placements.Single(s => s.Id == c.SourcePlacementId).PatternId).Length.Ticks * c.Repeats);
+                tickDelta = end - clips.Min(c => c.Position.Ticks); copy = true;
+            }
+            long delta = Math.Clamp(tickDelta, -clips.Min(c => c.Position.Ticks),
+                4095L * state.Settings.Meter.TicksPerBar - clips.Max(c => c.Position.Ticks));
+            int lanes = Math.Clamp(laneDelta, -clips.Min(c => c.Lane), 31 - clips.Max(c => c.Lane));
+            return Task.FromResult(_document.Edit(delete ? "Delete song clips" : copy ? "Copy song clips" : "Move song clips", edit =>
+            {
+                foreach (var clip in clips)
+                    if (delete) edit.DeleteArrangementClip(clip.Id);
+                    else if (copy) edit.AddArrangementClip(clip.SourcePlacementId, new(clip.Position.Ticks + delta), clip.Lane + lanes, clip.Repeats);
+                    else edit.UpdateArrangementClip(clip.Id, new(clip.Position.Ticks + delta), clip.Lane + lanes, clip.Repeats);
+            }));
+        });
+    }
+
     private void ValidateArrangementBasis(ArrangementEditBasis basis)
     {
         if (_closed || _document.LifecycleId != basis.Lifecycle || _document.Generation != basis.Generation)

@@ -35,8 +35,8 @@ opens it; the left Rack icon or **Panes** menu reopens it. Use short supported p
 
 The editor explains unsupported meter/Pattern shape or notes and preserves them. Adding channels to
 an already shared Pattern or a custom graph can be refused safely; existing shared steps still edit
-the shared musical content. Up to eight channels are offered; excessive overlapping voices/media can
-block Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
+the shared musical content. Up to eight channels and 32 simultaneous voices are offered in Rack and
+Song; excessive overlapping voices/media can block Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
 
 ## Arrange a song
 
@@ -44,17 +44,22 @@ block Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) ex
 2. Choose a source Pattern in Playlist and click a track to place it. Clips share the original notes;
    double-click a clip to return to its Rack. Overlapping clips play together, including on the same track.
 3. Drag a clip to move it. Ctrl-drag makes a shared copy; dragging the right edge changes the number
-   of whole Pattern repeats. The Duplicate button appends a copy. Delete removes only the clip.
+   of whole Pattern repeats. Shift-click adds/removes clips from a selection; the selection tool draws a box and Ctrl+A selects all.
+   Move, Ctrl-copy, Duplicate/Ctrl+D and Delete operate on the group in one Undo while retaining spacing.
+   Duplicate appends the group after its last end. Delete removes only the selected clips.
    Ctrl+Z/Y restores edits. The snap selector offers bars, beats, sixteenths or free movement;
    Shift temporarily uses beats and Alt temporarily moves freely.
 4. Click a track heading to name it or choose its color. **M** mutes that track; **S** solos it.
    Multiple solo tracks play together; Mute still silences a solo track. These are song gates,
    independent of the source Pattern's Rack loop, and are saved with the project.
-5. Playlist's Play button starts the Song from the beginning. The global **Pattern / Song** button
+5. Playlist's Play button starts at the chosen song cursor; click its ruler to seek, or drag the ruler
+   to define and enable a loop. The loop button disables/re-enables the retained range; Start returns to zero.
+   Cursor/range are session state and do not change Save, Undo or whole-Song export. The global **Pattern / Song** button
    chooses between the continuous Rack and finite Playlist; switching stops transport. Select/edit
    another Rack source during Song without switching its playback target. Compatible clip/note/Mute/Solo
    edits continue from the current time; passed new notes wait for a future occurrence.
-6. Use the overview strip to navigate, zoom or Fit song. Track headings remain visible when scrolling
+6. Use Shift+wheel for horizontal scrolling, Ctrl+wheel to zoom around the pointer, or middle-drag to pan.
+   Drag the overview viewport to navigate, its ends to zoom, or choose Fit song. Track headings remain visible when scrolling
    horizontally. Follow playback keeps the renderer's cursor in view and can be turned off.
 7. Use Playlist's export button or **… → Export song to WAV** for the whole arrangement, including
    leading gaps and overlaps, as 48 kHz stereo PCM16. Save/Open preserves the clips, tracks and samples;
@@ -63,14 +68,15 @@ block Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) ex
 The current Playlist has 32 fixed track slots and an editable view up to 4096 bars. Slots organize
 compatible musical material; they do not assign instruments or create Mixer channels. The engine
 checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
-are available now; ruler seeking, loop ranges, section markers, group selection, clip trimming and
-automation remain planned. Adding/deleting WAV channels and incompatible topology changes still
-interrupt playback. See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
+are available now; section markers, independent variations, clip trimming and automation remain planned. WAV channel
+add/delete/Undo/Redo keeps the current clock and other voices for the supported source/mix tree.
+Other incompatible topology changes retain their restart policy. See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
 
 ## Try sample processing
 
 First [build and launch the desktop](../README.md#getting-started) on Windows. Start with a short
-mono or stereo WAV at **44.1 or 48 kHz**: 16-bit PCM or 32-bit floating point, up to 16 MiB.
+mono or stereo WAV at **8–192 kHz**: 16/24/32-bit PCM or 32-bit floating point, up to 16 MiB.
+Playback still outputs at 44.1/48 kHz, with linear source resampling; FLAC is not supported.
 No samples are bundled.
 
 1. Choose **Import WAV** in the toolbar, or press Ctrl+I, and select your file. Toolbar icons have

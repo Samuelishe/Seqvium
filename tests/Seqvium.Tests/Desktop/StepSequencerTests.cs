@@ -22,11 +22,13 @@ public sealed class StepSequencerTests
         internal readonly DesktopWorkflow Workflow;
         internal RealtimeSampler? Sampler;
         internal int Opens;
+        internal bool FailNextPreparation;
         internal Fixture(ProjectDocument? document = null) => Workflow = new(document ?? ProjectDocument.Create(), () =>
         {
             Opens++; Sampler = new(48000, 2, 32);
             return new(new Borrower(), Sampler, "Test borrower", () => null);
-        }, Directory.File("owned"), (doc, sampler, target, owner) => new(doc, sampler, target, owner, 8, 1, null, true));
+        }, Directory.File("owned"), (doc, sampler, target, owner) => new(doc, sampler, target, owner, GraphPreparation.MaximumVoices, 1, _ =>
+            { if (!FailNextPreparation) return Task.CompletedTask; FailNextPreparation = false; return Task.FromException(new IOException("Controlled preparation failure")); }, true));
         internal WorkflowState State => Workflow.State;
         internal ProjectDocument Document => State.Document;
         internal Pattern Pattern => BeatSteps.Resolve(State).Pattern!;
@@ -227,6 +229,153 @@ public sealed class StepSequencerTests
     }
 
     [Fact]
+    public async Task TransientPreparationFailureAfterTempoChangeCanBeRetriedByPlay()
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Tone"); await f.Toggle(0, 0);
+        async Task Complete(Task<bool> command)
+        {
+            for (int i = 0; i < 10000 && !command.IsCompleted; i++)
+            { f.Sampler?.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+            Assert.True(await command.WaitAsync(TestContext.Current.CancellationToken), f.State.Detail);
+        }
+        await Complete(f.Workflow.PlayAsync()); f.Sampler!.Process(new float[64]);
+        f.FailNextPreparation = true;
+        Assert.True(await f.Workflow.SetTempoAsync(f.Document.LifecycleId, f.State.Generation, 145m));
+        for (int i = 0; i < 10000 && f.State.Execution?.PreparationPending == true; i++)
+        { f.Sampler.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+        Assert.Equal("graph.preparation-fault", f.State.Execution!.Blocker);
+        Assert.True(f.State.CanPlay, "A recoverable preparation failure must leave explicit Play retry available.");
+        await Complete(f.Workflow.PlayAsync()); Assert.Null(f.State.Execution!.Blocker);
+    }
+
+    [Fact]
+    public async Task TempoChangesAndReturningToOriginalRemainPlayableAfterRealPreparation()
+    {
+        await using var f = new Fixture(); await f.Create(); await f.Channel("Tone", frames: 48000);
+        foreach (int step in new[] { 0, 4, 8, 12 }) await f.Toggle(0, step);
+        async Task Play()
+        {
+            var play = f.Workflow.PlayAsync();
+            for (int i = 0; i < 10000 && !play.IsCompleted; i++)
+            { f.Sampler?.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+            Assert.True(await play.WaitAsync(TestContext.Current.CancellationToken), f.State.Detail);
+            f.Sampler!.Process(new float[64]);
+        }
+        await Play();
+        foreach (decimal bpm in new[] { 135m, 90m, 120m })
+        {
+            Assert.True(await f.Workflow.SetTempoAsync(f.Document.LifecycleId, f.State.Generation, bpm));
+            for (int i = 0; i < 10000 && f.State.Execution?.PreparationPending == true; i++)
+            { f.Sampler!.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+            Assert.True(f.State.CanPlay, f.State.Detail);
+            await Play(); Assert.True(await f.Workflow.StopAsync()); f.Sampler!.Process(Span<float>.Empty);
+        }
+    }
+
+    [Theory]
+    [InlineData(false, 9)] [InlineData(true, 9)]
+    [InlineData(false, 32)] [InlineData(true, 32)]
+    public async Task DenseFiveChannelPianoRemainsPlayableAcrossTempoChangesAndExport(bool song, int voices)
+    {
+        await using var f = new Fixture(); await f.Create();
+        for (int channel = 0; channel < 5; channel++) await f.Channel("Piano" + channel, .01f, frames: 48000);
+        Assert.True(await f.Edit(edit =>
+        {
+            for (int voice = 0; voice < voices; voice++)
+                edit.AddNote(f.Pattern.Id, f.Pattern.Parts[voice % 5].Id, default, new(960000), 60, 1);
+            if (song) edit.AddArrangementClip(f.State.Snapshot.State.Placements.Single().Id, default, 0);
+        }));
+        if (song) Assert.True(await f.Workflow.SetSongModeAsync(true));
+        foreach (decimal bpm in new[] { 120m, 135m, 90m, 120m })
+        {
+            if (f.State.Snapshot.State.Settings.Tempo.BeatsPerMinute != bpm)
+                Assert.True(await f.Workflow.SetTempoAsync(f.Document.LifecycleId, f.State.Generation, bpm));
+            var play = f.Workflow.PlayAsync();
+            for (int i = 0; i < 10000 && !play.IsCompleted; i++)
+            { f.Sampler?.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+            Assert.True(await play.WaitAsync(TestContext.Current.CancellationToken), f.State.Detail);
+            var packet = new float[64]; f.Sampler!.Process(packet);
+            Assert.All(packet, value => Assert.InRange(Math.Abs(value - voices * .0025f), 0, .000001f));
+            Assert.Null(f.State.Execution!.Blocker);
+            Assert.True(await f.Workflow.StopAsync()); f.Sampler.Process(Span<float>.Empty);
+        }
+        string wave = f.Directory.File("dense.wav");
+        if (song) await PatternWaveExport.ExportArrangementAsync(f.Document, wave, TestContext.Current.CancellationToken);
+        else await PatternWaveExport.ExportAsync(f.Document, f.Basis.Attachment, wave, TestContext.Current.CancellationToken);
+        using var decoded = WavDecoder.Decode(await File.ReadAllBytesAsync(wave, TestContext.Current.CancellationToken));
+        using var pcm = decoded.Lease();
+        Assert.InRange(Math.Abs(pcm.Samples[0] - voices * .0025f), 0, 1f / 32768);
+        Assert.True(await f.Edit(edit => edit.AddNote(f.Pattern.Id, f.Pattern.Parts[0].Id, default, new(960000), 60, 1)));
+        if (voices == 32)
+            Assert.Equal(GraphPreparationReasons.Budget, Assert.Throws<GraphPreparationException>(() =>
+                GraphPreparation.Prepare(f.Document, f.Basis.Attachment, 48000, 2, 32,
+                    voiceCapacity: GraphPreparation.MaximumVoices, cancellationToken: TestContext.Current.CancellationToken)).Reason);
+    }
+
+    [Theory]
+    [InlineData(0)] [InlineData(1)] [InlineData(2)]
+    public async Task DeletingFirstMiddleOrLastOfThreeChannelsAndUndoRedoKeepSurvivingVoiceAge(int channel)
+    {
+        await using var f = new Fixture(); await f.Create();
+        for (int index = 0; index < 3; index++) { await f.Channel("Voice" + index, frames: 48000); await f.Toggle(index, 0); }
+        var play = f.Workflow.PlayAsync();
+        for (int i = 0; i < 10000 && !play.IsCompleted; i++)
+        { f.Sampler?.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+        Assert.True(await play.WaitAsync(TestContext.Current.CancellationToken));
+        var packet = new float[64]; f.Sampler!.Process(packet); long epoch = f.Sampler.TransportEpoch;
+        var part = f.Pattern.Parts[channel].Id;
+        async Task Check()
+        {
+            for (int i = 0; i < 10000 && f.Sampler.ReadStatus().ExecutingRevision != f.State.Snapshot.Revision; i++)
+            { f.Sampler.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+            Assert.Equal(f.State.Snapshot.Revision, f.Sampler.ReadStatus().ExecutingRevision);
+            f.Sampler.Process(packet); Assert.Equal(epoch, f.Sampler.TransportEpoch);
+            Assert.All(packet, value => Assert.Equal(.2f, value)); Assert.True(f.Sampler.ReadStatus().Playing);
+        }
+        Assert.True(await f.Workflow.DeleteBeatChannelAsync(f.Basis, part)); await Check();
+        Assert.True(await f.Workflow.UndoAsync()); await Check();
+        Assert.True(await f.Workflow.UndoAsync(redo: true)); await Check();
+    }
+
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public async Task LiveChannelAddDeleteAndLastChannelSilenceRetainOtherVoicesAndTransport(bool song)
+    {
+        await using var f = new Fixture(); await f.Create();
+        string first = await f.Channel("Ramp", frames: 48000);
+        await f.Toggle(0, 0);
+        if (song)
+        {
+            Assert.True(await f.Workflow.AddArrangementClipAsync(ArrangementEditBasis.From(f.State), f.State.Selected!.Value, default, 0, 4));
+            Assert.True(await f.Workflow.SetSongModeAsync(true));
+        }
+        var play = f.Workflow.PlayAsync();
+        for (int i = 0; i < 10000 && !play.IsCompleted; i++)
+        { f.Sampler?.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+        Assert.True(await play.WaitAsync(TestContext.Current.CancellationToken));
+        var packet = new float[64]; f.Sampler!.Process(packet);
+        long epoch = f.Sampler.TransportEpoch, position = f.Sampler.RenderPosition;
+        var initialPart = f.Pattern.Parts[0].Id;
+        await f.Channel("Second", frames: 48000);
+        async Task Converge()
+        {
+            for (int i = 0; i < 10000 && f.Sampler.ReadStatus().ExecutingRevision != f.State.Snapshot.Revision; i++)
+            { f.Sampler.Process(Span<float>.Empty); await f.Workflow.ObserveAsync(); await Task.Yield(); }
+            Assert.Equal(f.State.Snapshot.Revision, f.Sampler.ReadStatus().ExecutingRevision);
+            Assert.Equal(epoch, f.Sampler.TransportEpoch); Assert.True(f.Sampler.ReadStatus().Playing);
+        }
+        await Converge(); f.Sampler.Process(packet);
+        Assert.All(packet, value => Assert.Equal(.1f, value)); Assert.Equal(position + 32, f.Sampler.RenderPosition);
+        Assert.True(await f.Workflow.DeleteBeatChannelAsync(f.Basis, f.Pattern.Parts[1].Id));
+        await Converge(); f.Sampler.Process(packet); Assert.All(packet, value => Assert.Equal(.1f, value));
+        Assert.True(await f.Workflow.DeleteBeatChannelAsync(f.Basis, initialPart));
+        await Converge(); f.Sampler.Process(packet); Assert.All(packet, value => Assert.Equal(0, value));
+        Assert.True(await f.Workflow.UndoAsync()); await Converge(); f.Sampler.Process(packet);
+        Assert.All(packet, value => Assert.Equal(0, value)); // Undo restores intent, never retriggers a past onset.
+        Assert.True(await f.Workflow.StopAsync()); f.Sampler.Process(packet); Assert.False(f.Sampler.ReadStatus().Playing);
+    }
+
+    [Fact]
     public async Task ExplicitDesktopPlayLoopsAndStepEditsContinueUntilHardStop()
     {
         await using var f = new Fixture(); await f.Create();
@@ -423,7 +572,7 @@ public sealed class StepSequencerTests
     }
 
     [Fact]
-    public async Task EighthChannelIsBoundedAndDenseLongSamplesUseExistingVoiceRefusal()
+    public async Task EighthChannelIsBoundedAndExplicitEightVoicePlansStillRefuseOverlaps()
     {
         await using var f = new Fixture(); await f.Create();
         for (int channel = 0; channel < 8; channel++) { await f.Channel("Channel" + channel, frames: 48000); await f.Toggle(channel, 0); }

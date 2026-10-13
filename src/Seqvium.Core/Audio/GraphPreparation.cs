@@ -42,8 +42,25 @@ internal sealed class PreparedGraph
 
 public static class GraphPreparation
 {
+    public const int MaximumVoices = 32;
     public const int MaximumScratchBytes = 16 * 1024 * 1024;
     public const long MaximumPacketWork = 64 * 1024 * 1024;
+
+    internal static bool IsSilentChannelGraph(ProjectState state, GraphAttachment attachment)
+    {
+        var placement = state.Placements.Single(p => p.ItemContextId == attachment.ContextId);
+        var pattern = state.Patterns.Single(p => p.Id == placement.PatternId);
+        var graph = state.Graphs.Single(g => g.Id == attachment.GraphId);
+        if (!pattern.Parts.IsEmpty || graph.Nodes.Length != 2 || graph.Nodes.Count(n => n.Type == GraphBuiltIns.Gain) != 1 ||
+            graph.Nodes.Count(n => n.Type == GraphBuiltIns.Output) != 1) return false;
+        var gain = graph.Nodes.SingleOrDefault(n => n.Type == GraphBuiltIns.Gain);
+        var output = graph.Nodes.SingleOrDefault(n => n.Type == GraphBuiltIns.Output);
+        return pattern.Parts.IsEmpty && attachment.Sources.IsEmpty && graph.Nodes.Length == 2 &&
+            gain is not null && output is not null && attachment.OutputNodeId == output.Id &&
+            graph.Connections is [var cable] && cable.FromNodeId == gain.Id && cable.ToNodeId == output.Id &&
+            GraphDiagnostics.Inspect(state).Single(r => r.GraphId == graph.Id).Diagnostics.All(d =>
+                d.Reason is GraphReasons.RequiredInput or GraphReasons.SourceCoverage);
+    }
 
     /// <summary>Prepares the current selected canonical attachment. Refusal never edits intent or substitutes last-valid music.
     /// Start is the placement's absolute position; repeats remain bounded sampler repeats, not Arrangement execution.</summary>
@@ -57,17 +74,18 @@ public static class GraphPreparation
         var attachment = state.GraphAttachments.SingleOrDefault(item => item.Id == attachmentId)
             ?? throw new GraphPreparationException(GraphPreparationReasons.Target);
         var report = GraphDiagnostics.Inspect(state).Single(item => item.GraphId == attachment.GraphId);
-        if (!report.IsEligibleForPreparation) throw new GraphPreparationException(report.Diagnostics[0].Reason);
+        bool silent = IsSilentChannelGraph(state, attachment);
+        if (!report.IsEligibleForPreparation && !silent) throw new GraphPreparationException(report.Diagnostics[0].Reason);
         if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || maximumPacketFrames is < 1 or > 65536)
             throw new GraphPreparationException(GraphPreparationReasons.Format);
-        if (voiceCapacity is < 1 or > 8 || repeats is < 1 or > 1024)
+        if (voiceCapacity is < 1 or > MaximumVoices || repeats is < 1 or > 1024)
             throw new GraphPreparationException(GraphPreparationReasons.Budget);
         var graph = state.Graphs.Single(item => item.Id == attachment.GraphId);
         if (graph.Nodes.SelectMany(item => item.Ports).Any(port => port.Layout !=
                 (channels == 1 ? GraphBuiltIns.Mono : GraphBuiltIns.Stereo)))
             throw new GraphPreparationException(GraphPreparationReasons.Format);
         var placement = state.Placements.Single(item => item.ItemContextId == attachment.ContextId);
-        var program = Compile(graph, attachment, placement.Id, channels, maximumPacketFrames, voiceCapacity);
+        var program = Compile(graph, attachment, placement.Id, channels, maximumPacketFrames, voiceCapacity, silent);
         PreparedSampler? plan = null;
         try
         {
@@ -88,7 +106,7 @@ public static class GraphPreparation
     }
 
     private static PreparedGraph Compile(GraphDefinition graph, GraphAttachment attachment,
-        Id<PatternPlacement> placement, int channels, int frames, int voices)
+        Id<PatternPlacement> placement, int channels, int frames, int voices, bool silent)
     {
         var remaining = graph.Nodes.ToDictionary(item => item.Id);
         var buffers = new Dictionary<Id<GraphNode>, int>();
@@ -100,7 +118,8 @@ public static class GraphPreparation
             var node = remaining.Values.OrderBy(item => item.Id.Value).FirstOrDefault(item =>
                 graph.Connections.Where(edge => edge.ToNodeId == item.Id).All(edge => buffers.ContainsKey(edge.FromNodeId)))
                 ?? throw new GraphPreparationException(GraphReasons.Cycle);
-            var inputs = node.Ports.Where(port => port.Direction == GraphPortDirection.Input)
+            var inputs = node.Ports.Where(port => port.Direction == GraphPortDirection.Input &&
+                    (!silent || node.Type != GraphBuiltIns.Gain))
                 .OrderBy(port => port.Id.Value).Select(port =>
                     buffers[graph.Connections.Single(edge => edge.ToPortId == port.Id).FromNodeId]).ToArray();
             if (node.Type == GraphBuiltIns.Output) buffers.Add(node.Id, inputs[0]);
@@ -161,6 +180,8 @@ public static class GraphPreparation
         }
         long work = checked((long)frames * plan.Channels * plan.VoiceCapacity * 16 +
             signalWork + (long)maximumWindow * plan.VoiceCapacity);
+        if (plan.IsArrangement)
+            work = checked(work + (long)plan.Notes.Length * 4 * (frames / Math.Max(1, plan.SampleRate / 100) + 2));
         if (work > MaximumPacketWork) throw new GraphPreparationException(GraphPreparationReasons.Budget);
         plan.MaximumPacketEvents = maximumWindow;
         plan.PacketWork = work;

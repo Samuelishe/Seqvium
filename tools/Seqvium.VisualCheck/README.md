@@ -101,7 +101,9 @@ platform/security-certified by one Windows session.
 
 The `arrangement` route renders the actual Playlist in RU/EN and Dark/Light at ordinary/reduced sizes,
 checks routed placement/move/Ctrl-copy/repeat/cancellation/stale gestures, track M/S/name/color,
-snap/overview/stationary headings/fit, Duplicate/Delete/Undo, Save/Open and graph Song WAV. It measures
+snap/overview/stationary headings/fit, group move/duplicate/Undo, ruler seek/range, pointer zoom,
+BPM popup Play availability, actual pane-edge capture, fresh maximized/normal window restoration,
+Save/Open and graph Song WAV. It measures
 the actual repeat field/label centers and opens the real track settings flyout. A second window proves
 Song cursor/bar-beat from the real 44.1 kHz renderer with a substituted physical borrower. No native
 mouse, picker, acoustic/device or broad stress claim follows from this route.
@@ -144,6 +146,16 @@ For a short real startup/joined-close check without captures or input:
 ```powershell
 dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll smoke "$PWD/.artifacts/desktop-smoke" --timeout-seconds=15
 ```
+
+## Saved project playback
+
+`project <output-directory> <project-file>` opens an explicitly supplied short saved composition through
+the production workflow and real audio output. It verifies Song to its finite end and continuous Pattern,
+each at the original tempo, changed tempo and Undo-restored tempo. The bounded fixture observes at most
+about three seconds per Play and therefore suits short regression projects such as Piano001. It captures
+renderer state/screens and restores the original snapshot without saving the supplied project. Preferences
+and verification artifacts remain isolated. This route plays actual project audio at unchanged device/system
+volume; it supplies execution evidence, not an acoustic listening judgement.
 
 ## Artifact retention
 

@@ -120,7 +120,24 @@ public sealed class WorkspaceLayoutStore(string path)
             }
 
             var active = String(root, "activePaneId");
-            return new(new(width, height, active, entries.ToImmutable()), fallback);
+            MainWindowPlacement? window = null;
+            if (root.TryGetProperty("window", out var savedWindow) && savedWindow.ValueKind != JsonValueKind.Null)
+            {
+                if (savedWindow.ValueKind != JsonValueKind.Object) fallback = true;
+                else
+                {
+                    double windowWidth = Number(savedWindow, "width", 1400, ref fallback);
+                    double windowHeight = Number(savedWindow, "height", 900, ref fallback);
+                    double x = Number(savedWindow, "x", 0, ref fallback), y = Number(savedWindow, "y", 0, ref fallback);
+                    bool maximized = false;
+                    if (savedWindow.TryGetProperty("maximized", out var max) && max.ValueKind is JsonValueKind.True or JsonValueKind.False)
+                        maximized = max.GetBoolean();
+                    else fallback = true;
+                    if (windowWidth <= 0 || windowHeight <= 0) fallback = true;
+                    else window = new((int)x, (int)y, windowWidth, windowHeight, maximized);
+                }
+            }
+            return new(new(width, height, active, entries.ToImmutable()) { Window = window }, fallback);
         }
         catch (FileNotFoundException)
         {
@@ -158,9 +175,13 @@ public sealed class WorkspaceLayoutStore(string path)
         {
             if (layout.Panes.IsDefault || layout.Panes.Length > WorkspaceState.Definitions.Length ||
                 !double.IsFinite(layout.Width) || !double.IsFinite(layout.Height)) return false;
+            if (layout.Window is { } placement && (!double.IsFinite(placement.Width) || !double.IsFinite(placement.Height) ||
+                placement.Width <= 0 || placement.Height <= 0 || placement.Width > 100000 || placement.Height > 100000)) return false;
             var bytes = JsonSerializer.SerializeToUtf8Bytes(new
             {
                 version = 1, width = layout.Width, height = layout.Height, activePaneId = layout.ActivePaneId,
+                window = layout.Window is { } window ? new { x = window.X, y = window.Y, width = window.Width,
+                    height = window.Height, maximized = window.Maximized } : null,
                 panes = layout.Panes.Select(pane => new
                 {
                     instanceId = pane.InstanceId, typeId = pane.TypeId,

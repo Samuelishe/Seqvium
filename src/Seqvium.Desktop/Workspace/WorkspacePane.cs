@@ -52,7 +52,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         Classes.Add("workspacePane");
         this.Bind(BackgroundProperty, this.GetResourceObservable("Material.Panel"));
         AutomationProperties.SetAutomationId(this, Id);
-        var body = new Grid { RowDefinitions = new("Auto,*"), Margin = new(1) };
+        var body = new Grid { RowDefinitions = new("Auto,*"), Margin = new(PaneGeometry.EdgeThickness) };
         Child = _surface;
         _surface.Children.Add(body);
         _header = new() { Classes = { "paneHeader" } };
@@ -94,10 +94,18 @@ internal sealed class WorkspacePane : Border, IDisposable
         _corner = new Border
         {
             HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom,
-            Width = 10, Height = 10, IsHitTestVisible = false,
-            Child = HostIcons.Create("Resize", _actions, 10)
+            Width = 24, Height = 24, Background = Avalonia.Media.Brushes.Transparent,
+            Child = HostIcons.Create("Resize", _actions, 18)
         };
         _surface.Children.Add(_corner);
+        // Scroll presenters can hit their wide drawing child beyond the visible content gutter.
+        // Explicit transparent frame surfaces reserve the boundary for workspace arbitration.
+        foreach (var edge in new[] { HorizontalAlignment.Left, HorizontalAlignment.Right })
+            _surface.Children.Add(new Border { Width = PaneGeometry.EdgeThickness, HorizontalAlignment = edge,
+                Background = Avalonia.Media.Brushes.Transparent });
+        foreach (var edge in new[] { VerticalAlignment.Top, VerticalAlignment.Bottom })
+            _surface.Children.Add(new Border { Height = PaneGeometry.EdgeThickness, VerticalAlignment = edge,
+                Background = Avalonia.Media.Brushes.Transparent });
         _header.PointerPressed += (_, args) => Begin(args);
         AddHandler(PointerPressedEvent, (_, _) => host.Activate(Id), RoutingStrategies.Tunnel);
         AddHandler(GotFocusEvent, (_, _) => host.Activate(Id));

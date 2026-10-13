@@ -44,7 +44,12 @@ public sealed record WorkspaceLayout(
     double Width,
     double Height,
     string? ActivePaneId,
-    ImmutableArray<PanePlacement> Panes);
+    ImmutableArray<PanePlacement> Panes)
+{
+    public MainWindowPlacement? Window { get; init; }
+}
+
+public sealed record MainWindowPlacement(int X, int Y, double Width, double Height, bool Maximized);
 
 /// <summary>
 /// Owner-thread geometry/visibility only. Ordered entries run back to front; content, focus,
@@ -175,6 +180,32 @@ public sealed class WorkspaceState : IDisposable
         Replace(pane with { Visibility = PaneVisibility.Visible });
         ResolveDockConflict(id);
         Activate(id);
+    }
+
+    public void ArrangeMusic()
+    {
+        CheckAvailable();
+        Open(BeatId); Dock(BeatId, PaneDock.Floating);
+        Open(ArrangementId); Dock(ArrangementId, PaneDock.Floating);
+        if (Height >= 640)
+        {
+            double rackHeight = Math.Clamp(Height * .38, 290, 390);
+            SetBounds(BeatId, new(0, 0, Width, rackHeight));
+            SetBounds(ArrangementId, new(0, rackHeight + 8, Width, Height - rackHeight - 8));
+        }
+        else if (Width >= 728)
+        {
+            double rackWidth = Math.Clamp(Width * .42, 360, Width - 368);
+            SetBounds(BeatId, new(0, 0, rackWidth, Height));
+            SetBounds(ArrangementId, new(rackWidth + 8, 0, Width - rackWidth - 8, Height));
+        }
+        else
+        {
+            SetBounds(BeatId, new(0, 0, Width, Height));
+            SetBounds(ArrangementId, new(0, 0, Width, Height));
+            Collapse(BeatId);
+        }
+        Activate(ArrangementId);
     }
 
     public void Activate(string id)

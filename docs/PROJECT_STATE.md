@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.1.0000`**, the SEQ-R10-PLAYLIST PATCH checkpoint on the
+The current product alpha is **`0.1.1.0001`**, the SEQ-PLAYLIST-MUSIC BUILD checkpoint on the
 owner-selected `0.1` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -37,6 +37,18 @@ window and short physical loop checks pass; long pressure/acoustic/platform acce
 
 ## Implemented capability
 
+SEQ-PLAYLIST-MUSIC extends the existing music workflow with session seek/range looping, snapped
+single-transaction clip groups and navigation, restored normal/maximized main window, adaptive Rack +
+Playlist arrangement and reserved frame resize targets. Distinct export vectors replace disk icons.
+Supported channel tree add/delete/Undo/Redo keeps time/epoch/surviving voice ages, including empty
+channel plans. Explicit eligible Play retries failed preparation. WAV source rates/depths and two
+bounded exporter padding variants now admit all 271 WAVs in the owner's inspected library; FLAC
+remains refused. Desktop/export share a short inside-boundary smoothing policy that reduces piano/808
+gate discontinuities without editing bytes or note lengths. The actual Piano001 project reproduced
+an eight-voice source-graph refusal with nine overlapping piano notes; Rack/export and Song source
+graphs now share a bounded 32-voice budget. Actual physical Song/Pattern passes 120 → 135 → 120
+without blockers, preserving project/media hashes; explicit preparation-error recovery is also repaired. See the [report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md).
+
 SEQ-R10-PLAYLIST adds a retained real Playlist: shared source-placement clips at absolute musical
 positions, move/Ctrl-copy/whole-Pattern repeats/Duplicate/Delete, snap, named/color fixed tracks with
 actual Mute/Solo, overview/fit/follow and stationary headings. Actual note positions/durations/pitches
@@ -47,15 +59,16 @@ and compatible reader 1.2 preserve clip/track/source IDs and media across Undo/S
 open with empty song, and Open stays silent. Whole-Song WAV uses the same frozen graph program.
 The five new references are outside Git under `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`;
 earlier references remain preserved. Track slots are bounded visual organization, not Mixer routes.
-Seeking, range loops, group editing, sections, variations, waveform trim/stretch and automation remain
-planned. WAV channel add/delete still stops and is recorded in TECH_DEBT. UX/audio/format/UI owners
+SEQ-PLAYLIST-MUSIC now adds ruler seek/range loops, atomic clip groups, pointer zoom/pan/scroll,
+main-window restoration/music layout/usable frame grips and continuous supported channel changes.
+Sections, variants, waveform trim/stretch and automation remain planned. UX/audio/format/UI owners
 define exact scope; the [report](experiments/SEQ-R10-PLAYLIST_REPORT.md) owns evidence/limits.
 
 SEQ-UI-REDESIGN implements the owner's substantial instrument direction: slate/jade identity,
 layered panels, bevelled colored pads, shadows/glow, graduated Gain dial and coherent Dark/Light.
 Shared HostPalette/HostMetrics/HostMaterials own colors, geometry and derived materials; original
 vector rail icons and controls introduce no dependency or borrowed asset. A pristine layout opens
-Rack; saved layout remains authoritative. Rail actions expose actual panes. A wide-window navigator
+Rack and Playlist in an adaptive music composition; saved layout remains authoritative. Rail actions expose actual panes. A wide-window navigator
 creates/selects real Patterns/occurrences with canonical rhythm thumbnails, without selection history.
 Captured row paint/erase commits once; Escape/capture loss/stale basis cancels. Fill/rotate/clear and
 single-WAV drop use the existing document/import owners. BPM commits settings once, stops playback
@@ -109,7 +122,7 @@ R1 provides immutable canonical documents, typed stable identities, shared multi
 pitch-aware notes, variations, independent sound/resource/organization/processing intent, validated
 atomic edits, bounded Undo/Redo and precise ticks/constant-tempo conversion. Versioned JSON preserves
 compatible unknown/opaque state with explicit degraded/refusal behavior.
-R2 provides bounded PCM16/float32 WAV decoding, durable unnamed import, managed Save As/reopen integrity,
+R2 provides bounded WAV decoding (now PCM16/24/32 and float32 at 8–192 kHz source rates), durable unnamed import, managed Save As/reopen integrity,
 independent PCM leases, pitched offline/realtime execution, transport/epochs and prepared-state retirement.
 External/project discovery, raw transient preview and explicit independent same-resource sound reuse
 remain separate from import/Undo. Independent logical input/output intent supports default roles or
@@ -153,9 +166,9 @@ with per-action refusal explanations and dismissal/basis guards for retained men
 ## Current focus
 
 SEQ-R10-PLAYLIST completes the owner-authorized first finite composition workflow and song export,
-with a reference-informed timeline instrument. Next work is bounded transport seek/ranges, multi-object
-editing, song sections/containers, explicit variants and actual waveform/audio-clip scope; R11 meters/
-automation/effects require their processing/state owners. Continuous channel topology is observed debt.
+with a reference-informed timeline instrument. Next work is song sections/containers,
+explicit variants, velocity/Piano Roll and actual waveform/audio-clip scope; R11 meters/
+automation/effects require their processing/state owners. Supported stateless Rack channel topology now preserves playback.
 R5 still lacks richer velocity/per-channel controls. New Playlist aesthetic acceptance belongs to the
 owner; the checkpoint does not close prior R4 pressure acceptance or declare a release.
 
@@ -187,6 +200,21 @@ future composition. R4-F2 remains partial and F3-B remains pending owner review.
 acceptance remains with the owner; the earlier presentation was explicitly rejected.
 
 ## Validation baseline
+
+SEQ-PLAYLIST-MUSIC: final isolated zero-warning/error full Release build; **1052/1052** full-suite
+pass (18.668 s CLI summary), including dense five-channel 9/32-voice Rack/Song/BPM/export regressions
+and 33-voice refusal. Earlier focused passes cover 205 and final voice subset 99 cases. Actual
+production-window RU/EN Dark/Light Playlist controls, groups/ruler/zoom/BPM-popup Play availability,
+reserved frame hit-test/capture, normal 1230×780 / position 30,25 / maximized restore, catalog and
+rendered fields pass separately, with eleven guarded native Graph/Workspace checks. The original
+Piano001 project reproduces graph.prepare-budget before repair; its final 19.374 s physical window run
+passes Song finite end and Pattern looping at 120 → 135 → 120, observing nine simultaneous voices
+and preserving SHA256 hashes of the project and all five media files. Read-only library inspection
+passes 271 WAVs; measured piano/808 gate deltas reduce about 7–99×. A 7.037 s physical Song verifies
+seek, range wrap, four channel add/delete/Undo/Redo publications, retained epoch after seek, zero
+processor/service allocation, processor/packet misses or padding exhaustion, finite end and Stop/join.
+Acoustic/pressure/wider platform acceptance is unchanged. Current evidence and failure details belong
+to the [report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md).
 
 SEQ-R10-PLAYLIST: zero-warning/error isolated Release solution build (17.67 s); **1030/1030** automated
 tests (17.466 s CLI summary).
@@ -233,14 +261,14 @@ Normal output became locked by a user-launched Desktop during final refinement; 
 preserved. Complete final executables are in `.artifacts/seq-ui-redesign/release/Release/net10.0/`.
 The [report](experiments/SEQ-UI-REDESIGN_REPORT.md) records actual scope, paths, failures and commands.
 
-The current full baseline is SEQ-R10-PLAYLIST on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
+The current full baseline is SEQ-PLAYLIST-MUSIC on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
 Existing three-WAV 90/120/240 BPM finite PCM evidence remains in
 [R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); prior physical pressure failures
 and platform/owner acceptance remain separate below. Historical validation belongs to reports/archive.
 
 ### Verification cadence
 
-Last successful L3: **SEQ-R10-PLAYLIST, 2026-10-13**, full Release solution build and 1030/1030 automated
+Last successful L3: **SEQ-PLAYLIST-MUSIC, 2026-10-13**, full Release solution build and 1052/1052 automated
 tests. Completed repository tasks since that L3: **0**.
 Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
 a focused pass does not reset it.

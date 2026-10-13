@@ -33,6 +33,41 @@ public sealed class WavDecoderTests
         Assert.Equal(0.5f, pcm.Sample(0, 0));
     }
 
+    [Theory]
+    [InlineData(22050, 24, 1)] [InlineData(44100, 24, 2)]
+    [InlineData(96000, 32, 2)] [InlineData(192000, 32, 1)]
+    public void IntegerPcmDepthsAndSourceRatesDecodeSignedExtremesWithoutChangingChannels(int rate, int bits, int channels)
+    {
+        using var bytes = new MemoryStream();
+        using (var writer = new BinaryWriter(bytes, System.Text.Encoding.ASCII, true))
+        {
+            int alignment = channels * bits / 8, size = 4 * bits / 8;
+            writer.Write("RIFF"u8); writer.Write(36 + size); writer.Write("WAVEfmt "u8);
+            writer.Write(16); writer.Write((ushort)1); writer.Write((ushort)channels);
+            writer.Write(rate); writer.Write(rate * alignment); writer.Write((ushort)alignment); writer.Write((ushort)bits);
+            writer.Write("data"u8); writer.Write(size);
+            foreach (int value in new[] { int.MinValue, -1073741824, 0, 1073741824 })
+                if (bits == 32) writer.Write(value);
+                else { int encoded = value >> 8; writer.Write((byte)encoded); writer.Write((byte)(encoded >> 8)); writer.Write((byte)(encoded >> 16)); }
+        }
+        using var pcm = WavDecoder.Decode(bytes.ToArray());
+        Assert.Equal(rate, pcm.SampleRate); Assert.Equal(channels, pcm.Channels); Assert.Equal(4 / channels, pcm.Frames);
+        foreach (var (expected, index) in new[] { -1f, -.5f, 0, .5f }.Select((value, index) => (value, index)))
+            Assert.Equal(expected, pcm.Sample(index / channels, index % channels));
+        Assert.Equal((double)rate / 48000, PcmSampler.Step(rate, 48000, 60, 60));
+    }
+
+    [Fact]
+    public void OneOuterSizePaddingErrorAcceptsOnlyCompleteChunksAndNeverTruncatedAudio()
+    {
+        byte[] bytes = WavFixtures.Create([.5f, -.5f]);
+        BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(4), (uint)(bytes.Length - 7));
+        using var decoded = WavDecoder.Decode(bytes); Assert.Equal(2, decoded.Frames);
+        Assert.Throws<WavFormatException>(() => WavDecoder.Decode(bytes.AsSpan(0, bytes.Length - 1)));
+        BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(4), (uint)(bytes.Length - 6));
+        Assert.Throws<WavFormatException>(() => WavDecoder.Decode(bytes));
+    }
+
     [Fact]
     public void EveryTruncatedPrefixIsRejectedAndForgedLengthsNeverAllocateDeclaredSizes()
     {

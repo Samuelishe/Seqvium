@@ -423,7 +423,9 @@ detach it or create another event model.
 **In progress / bounded Playlist implemented.** The owner explicitly authorizes composition ahead of
 closing R6–R9. SEQ-R10-PLAYLIST provides shared Pattern clips, simultaneous finite song execution,
 move/Ctrl-copy/repeat/duplicate/delete, named/color fixed tracks with actual Mute/Solo, snap, overview/
-fit/follow, renderer position, Undo/Redo, compatible Save/Open and whole-Song WAV. It does not close the
+fit/follow, renderer position, Undo/Redo, compatible Save/Open and whole-Song WAV.
+SEQ-PLAYLIST-MUSIC adds bounded seek/range transport, clip group editing, pointer navigation,
+restored music layout and continuous supported channel changes. It does not close the
 full R10 container/audio/stretch scope or earlier R4 pressure acceptance. Current contracts belong to
 [UX](UX_CONTRACT.md#implemented-playlist-arrangement), [audio](AUDIO_ENGINE.md#playlist-song-preparation-and-execution)
 and [format](PROJECT_FORMAT.md#playlist-reader-12); [UI](UI_DESIGN.md#playlist-reference-assessment-and-visual-contract)
@@ -436,13 +438,11 @@ Prioritize a finished audible scenario with canonical history/persistence and pr
 
 | Priority / bounded package | Musical/UI outcome | Required boundary / decision |
 | --- | --- | --- |
-| R10 transport navigation | Ruler seek, play from selected location, loop/range selection, bar/beat/time readout | Prepare/reconstruct in-progress voices and release ages off the callback; define seek/Stop/loop authority and source gates, avoid scanning canonical music on realtime |
-| R10 editing | Marquee/multi-selection, group move/copy/delete, clipboard, precise selected-clip position, useful context menu and tool/cursor feedback | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit |
+| R10 editing | Clipboard, precise selected-clip position, richer context menu and tool/cursor feedback; marquee/group move/copy/delete are implemented | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit |
 | R10 song structure | Named section markers, dynamic track insertion/reorder, groups/collapse and useful track height | Stable container/marker identities, lossless transition from fixed slots, separate visual organization from item/container processing and Mixer routing |
 | R10 Pattern variants | Explicit make-unique/variation and richer mini Piano Roll | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies |
 | R10 audio clips | Real cached waveform, source range, trim/split/fades, eventually local stretch/warp | Preserve media and non-destructive ranges; define actual render algorithms, finite tails, tempo relationship and safe split ownership before enabling tools |
 | R11 processing / automation | Measured stereo Master/track taps, useful meters, Mixer balance/pan/sends and automation lanes | Actual processor/measurement/tap/state ownership; no fake meters or duplicate Gain/DSP. Automation needs canonical musical-time lanes and realtime/offline equivalence |
-| R5 channel continuity | Add/delete WAV channels while music continues | [Observed topology debt](TECH_DEBT.md#continuous-channel-topology), silent/last-channel preparation and stable voice/clock/lifetime mapping; verify real sound |
 
 Expand Playlist with normal shared pattern references and explicit
 independent variations. Follow the semi-free direction: user-named structured containers, useful

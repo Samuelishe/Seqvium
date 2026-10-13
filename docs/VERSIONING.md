@@ -131,6 +131,21 @@ retrieved only for explicit historical tasks.
 | `0.1.0.0005` | SEQ-UI-REDESIGN | One verified BUILD for instrument UI v2, atomic row painting/actions, navigation/WAV drop, exact BPM and captured Gain dial; 435 focused tests plus final 82-case subset and actual Windows renders/guarded native checks. Existing finite musical capability, schema and DSP remain; R5 looping/live continuity and owner aesthetic acceptance stay separate. See the [report](experiments/SEQ-UI-REDESIGN_REPORT.md). |
 | `0.1.0.0006` | SEQ-R5-MUSIC | Verified continuous Pattern loop/position/live notes, 1–32 bars, atomic deletion/navigation collapse and selected-Pattern WAV export; full 1009-case Release pass, actual-window checks and short physical loop evidence under the [checkpoint](#seq-r5-music-checkpoint). R5 and R4 pressure acceptance remain partial. |
 | `0.1.1.0000` | SEQ-R10-PLAYLIST | One completed standalone Song composition capability: shared clips, simultaneous finite playback, real track Mute/Solo and whole-Song WAV, with compatible persistence and reference-informed editing/navigation. PATCH resets BUILD; zero-warning isolated full Release build, 1030 tests, actual-window RU/EN Dark/Light controls and short physical two-Pattern/live-edit output under the [report](experiments/SEQ-R10-PLAYLIST_REPORT.md). R5/R10 wider scope, owner visual acceptance and R4 pressure remain separate; no release/staging/commit/push. |
+| `0.1.1.0001` | SEQ-PLAYLIST-MUSIC | One verified BUILD for composition navigation, range transport, group edits, workspace restoration and live channel/audio usability. Evidence and limits are in the [checkpoint](#seq-playlist-music-checkpoint) and [report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md). |
+
+### SEQ-PLAYLIST-MUSIC checkpoint
+
+Identity advances once from **`0.1.1.0000` to `0.1.1.0001`**. BUILD classifies a completed extension
+of the existing Song/Rack workflow: seek/range loop, atomic clip groups, timeline navigation, restored
+main window/music layout/resize access, continuous supported WAV channel changes, Play retry and WAV
+compatibility/boundary smoothing. It does not declare a separate completed editor, R10 acceptance or
+another product line. MAJOR/MINOR/PATCH, project reader markers and dependencies remain unchanged.
+
+Early L3 is justified by shared realtime boundary and WAV decoding risk. The full 1045-case Release
+pass, later focused regressions, actual production-window checks, read-only 271-WAV library audit and
+short physical seek/range/channel/Undo/Redo output are recorded in the
+[report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md). R4 pressure/acoustic/platform acceptance stays
+separate. No staging, commit, push, tag or release occurs.
 
 ### SEQ-R5-MUSIC checkpoint
 

@@ -177,3 +177,15 @@ defaults are additionally opened without Start (silent). No system volume/defaul
 No capture stream is opened; PCM diagnostics copy render-buffer samples before submission, never
 microphone audio. It is not the full F2 performance protocol. Results/limits and complete R2 audit are
 in the [F4 report](../../docs/experiments/SEQ-R2-F4_REPORT.md).
+
+## Read-only sample library and music workflow checks
+
+`sample-check <library-directory> <verification-output>` inspects at most 4096 explicitly supplied
+files, decodes WAVs through production Core, reports FLAC separately and renders two piano/two bass
+boundaries when available. It writes only to the output directory and opens no audio device.
+The raw/smoothed gate deltas are numerical evidence, not acoustic listening or library indexing.
+
+`song-smoke` now also exercises seek, an in-packet range wrap, empty-channel graph add/delete and
+Undo/Redo through actual physical output with the production smoothing policy. The same epoch after
+seek, convergence, allocation/deadline counters, finite end, Stop acknowledgment and joined teardown
+remain asserted. This short quiet check does not replace pressure/acoustic acceptance.

@@ -19,7 +19,8 @@ The current desktop provides a small working environment for playing and process
   Play a continuous loop with a visible position, change steps while it plays, and export the selected
   Pattern to WAV. Save/reopen it with its samples and continue editing.
 - Build a song in Playlist: place shared Patterns on tracks, move and repeat clips, or Ctrl-drag a copy.
-  Name and color tracks, use Mute/Solo, choose snapping and navigate with the song overview.
+  Name and color tracks, use Mute/Solo, seek or loop a ruler range, and move or duplicate groups.
+  Navigate with the overview, pointer zoom, horizontal scrolling or middle-button pan.
   Song plays overlapping Patterns together with a moving playhead; export the whole composition to WAV.
 - Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
   and pan or zoom the canvas.
@@ -27,7 +28,8 @@ The current desktop provides a small working environment for playing and process
 - Double-click a node to open its reusable editor: adjust Gain with a physical dial, slider, exact amplitude
   and dB display, or inspect Source, Mix and Output details.
 - Undo and redo edits, save a project with its imported audio, and reopen it.
-- Arrange internal workspace panes by moving, resizing, docking or collapsing them.
+- Arrange internal workspace panes by moving, resizing, docking or collapsing them. Restore main-window
+  size/position and use the Rack + Playlist layout for composing.
 - Use the interface in English or Russian, with dark and light themes.
 
 The graph makes signal flow visible: a sample can pass through Gain to Output, or several sources
@@ -44,9 +46,11 @@ instrument and processing capabilities remain unfinished.
 
 Step sequencing supports 1–32 bars in 4/4, continuous looping and live step editing. Velocity controls,
 Piano Roll and Mixer editors are still ahead. Playlist currently arranges whole Patterns and their
-repeats; seeking, loop ranges, group selection, audio trimming/stretching and automation remain ahead.
+repeats; section markers, independent variations, audio trimming/stretching and automation remain ahead.
 WAV export covers either a selected Pattern or the whole Song, including the current processing graphs.
-Adding or deleting WAV channels still stops playback. EQ and other effects, third-party plugin hosting,
+WAV channel edits preserve the other voices in the supported Rack graph. Short boundary smoothing
+reduces sample-end clicks. WAV import supports mono/stereo PCM16/24/32 and float32 at 8–192 kHz;
+FLAC remains unavailable. EQ and other effects, third-party plugin hosting,
 MIDI input, recording and crash recovery remain missing.
 Playback can glitch under heavy system load.
 

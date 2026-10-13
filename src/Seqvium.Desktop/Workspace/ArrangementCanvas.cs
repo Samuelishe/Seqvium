@@ -25,7 +25,21 @@ internal sealed class ArrangementCanvas : Control
     private bool _copy;
     private double _barWidth = 96;
     private Rect _viewport;
+    private readonly HashSet<Id<ArrangementClip>> _selection = [];
+    private ArrangementClip[] _group = [];
+    private long _tickDelta;
+    private int _laneDelta;
+    private bool _ruler, _marquee, _panning;
+    private long _rangeAnchor;
+    private (long Start, long End)? _rangeDraft;
+    private Rect? _selectionRect;
+    internal bool SelectMode { get; set; }
+    internal Id<ArrangementClip>[] Selection => [.. _selection];
     internal Id<ArrangementClip>? Selected { get; private set; }
+    internal event Action<Vector>? PanRequested;
+    private double RulerY => Math.Max(0, _viewport.Top);
+    private long TickAt(double x) => Math.Max(0, (long)Math.Round((x - HeaderWidth) / TickPixels / SnapTicks) * SnapTicks);
+    internal double HeaderSize => HeaderWidth;
     internal bool HasGesture => _pointer is not null;
     internal double PlayheadX => HeaderWidth + (double)PositionTicks / BarTicks * _barWidth;
     internal double TotalTicks => (Width - HeaderWidth) / _barWidth * BarTicks;
@@ -36,7 +50,7 @@ internal sealed class ArrangementCanvas : Control
     internal ArrangementEditBasis Basis => ArrangementEditBasis.From(_observation);
     internal long PositionTicks => _observation.SongMode && _observation.Execution is { } execution
         ? Math.Max(0, ConstantTempoConversion.FromFrames(execution.Execution.Position, _observation.Snapshot.State.Settings.Tempo,
-            _observation.ExecutionSampleRate).Ticks) : 0;
+            _observation.ExecutionSampleRate).Ticks) : _observation.SongCursor;
     internal event Action? SelectionChanged;
     internal event Action<Task>? CommandSubmitted;
     internal event Action<Id<GraphAttachment>>? RackRequested;
@@ -58,9 +72,11 @@ internal sealed class ArrangementCanvas : Control
 
     internal void Adopt(WorkflowState observation)
     {
-        if (observation.Document.LifecycleId != _observation.Document.LifecycleId) Selected = null;
-        if (_draft is not null && (observation.Document.LifecycleId != _basis.Lifecycle || observation.Generation != _basis.Generation)) Cancel();
+        if (observation.Document.LifecycleId != _observation.Document.LifecycleId) { Selected = null; _selection.Clear(); }
+        if (HasGesture && !_panning && (observation.Document.LifecycleId != _basis.Lifecycle || observation.Generation != _basis.Generation)) Cancel();
         _observation = observation;
+        _selection.RemoveWhere(id => !observation.Snapshot.State.ArrangementClips.Any(c => c.Id == id));
+        if (!_selection.Contains(Selected ?? default)) Selected = _selection.Select(id => (Id<ArrangementClip>?)id).FirstOrDefault();
         if (!observation.Snapshot.State.ArrangementClips.Any(c => c.Id == Selected)) Selected = null;
         int lanes = Math.Max(8, observation.Snapshot.State.ArrangementClips.Select(c => c.Lane + 2).DefaultIfEmpty(0).Max());
         long bars = Math.Min(4096, Math.Max(32, ArrangementPreparation.EndTicks(observation.Snapshot.State) / BarTicks + 8));
@@ -71,14 +87,20 @@ internal sealed class ArrangementCanvas : Control
 
     internal void Zoom(bool closer)
     {
-        Cancel(); _barWidth = Math.Clamp(_barWidth * (closer ? 2 : 0.5), 24, 192); Adopt(_observation);
+        Cancel(); _barWidth = Math.Clamp(_barWidth * (closer ? 1.25 : .8), 8, 768); Adopt(_observation);
     }
 
     internal void Fit(double width)
     {
         Cancel();
         double bars = Math.Max(4, (double)ArrangementPreparation.EndTicks(_observation.Snapshot.State) / BarTicks + 1);
-        _barWidth = Math.Clamp((width - HeaderWidth) / bars, 8, 192); Adopt(_observation);
+        _barWidth = Math.Clamp((width - HeaderWidth) / bars, 8, 768); Adopt(_observation);
+    }
+
+    internal void ShowRange(double ticks, double width)
+    {
+        Cancel(); _barWidth = Math.Clamp((width - HeaderWidth) / Math.Max(1, ticks) * BarTicks, 8, 768);
+        Adopt(_observation);
     }
 
     private Pattern PatternFor(ArrangementClip clip)
@@ -107,15 +129,21 @@ internal sealed class ArrangementCanvas : Control
         {
             double x = HeaderWidth + bar * _barWidth;
             context.DrawLine(new Pen(Brush("Border.Default"), 1), new(x, RulerHeight), new(x, Bounds.Height));
-            if (_barWidth >= 48 || bar % 4 == 0) HostVisual.Caption(this, _shell, context, (bar + 1).ToString(), new(x + 6, 8));
+
             if (_barWidth >= 96)
                 for (int beat = 1; beat < _observation.Snapshot.State.Settings.Meter.Numerator; beat++)
                     context.DrawLine(grid, new(x + beat * _barWidth / _observation.Snapshot.State.Settings.Meter.Numerator, RulerHeight),
                         new(x + beat * _barWidth / _observation.Snapshot.State.Settings.Meter.Numerator, Bounds.Height));
         }
         foreach (var clip in _observation.Snapshot.State.ArrangementClips)
-            DrawClip(context, !_copy && _draft?.Id == clip.Id ? _draft : clip, clip.Id == Selected);
-        if (_copy && _draft is not null) DrawClip(context, _draft, true);
+        {
+            var shown = !_copy && _group.Any(c => c.Id == clip.Id) && !_resize
+                ? clip with { Position = new(clip.Position.Ticks + _tickDelta), Lane = clip.Lane + _laneDelta }
+                : !_copy && _draft?.Id == clip.Id ? _draft : clip;
+            DrawClip(context, shown, _selection.Contains(clip.Id));
+        }
+        if (_copy && _draft is not null)
+            foreach (var clip in _group) DrawClip(context, clip with { Position = new(clip.Position.Ticks + _tickDelta), Lane = clip.Lane + _laneDelta }, true);
         for (int lane = 0; RulerHeight + lane * LaneHeight < Bounds.Height; lane++)
         {
             double y = RulerHeight + lane * LaneHeight;
@@ -132,16 +160,39 @@ internal sealed class ArrangementCanvas : Control
             DrawTrackButton("S", track?.Solo == true, HeaderX + 48, y + 33);
             HostVisual.Caption(this, _shell, context, (lane + 1).ToString("00"), new(HeaderX + 110, y + 40));
         }
-        context.DrawRectangle(Brush("Material.Panel"), null, new Rect(HeaderX, 0, HeaderWidth, RulerHeight));
-        HostVisual.Caption(this, _shell, context, _shell["Arrangement.Tracks"], new(HeaderX + 12, 8));
-        if (_observation.SongMode && _observation.Execution is not null)
+        if (_selectionRect is { } selectionRect)
+            context.DrawRectangle(null, new Pen(Brush("Accent.Action"), 1), selectionRect);
+        var range = _rangeDraft ?? (_observation.LoopEnd > _observation.LoopStart ? (_observation.LoopStart, _observation.LoopEnd) : ((long, long)?)null);
+        if (range is { } section)
+        {
+            double left = HeaderWidth + section.Item1 * TickPixels, right = HeaderWidth + section.Item2 * TickPixels;
+            using var rangeClip = context.PushClip(new Rect(HeaderX + HeaderWidth, RulerY,
+                Math.Max(0, Bounds.Width - HeaderX - HeaderWidth), Bounds.Height - RulerY));
+            using (context.PushOpacity(.12)) context.DrawRectangle(Brush("Accent.Action"), null,
+                new Rect(left, RulerY, right - left, Bounds.Height - RulerY));
+        }
+        context.DrawRectangle(Brush("Surface.Raised"), null, new Rect(HeaderX + HeaderWidth, RulerY, Math.Max(0, Bounds.Width - HeaderX - HeaderWidth), RulerHeight));
+        if (range is { } rulerRange)
+        {
+            double left = Math.Max(HeaderX + HeaderWidth, HeaderWidth + rulerRange.Item1 * TickPixels);
+            double right = HeaderWidth + rulerRange.Item2 * TickPixels;
+            if (right > left) context.DrawRectangle(Brush("Surface.Selected"), new Pen(Brush("Accent.Action"), 1), new Rect(left, RulerY + 1, right - left, RulerHeight - 2));
+        }
+        for (int bar = Math.Max(0, (int)((visibleLeft - HeaderWidth) / _barWidth)); HeaderWidth + bar * _barWidth < visibleRight; bar++)
+        {
+            double x = HeaderWidth + bar * _barWidth;
+            if (_barWidth >= 48 || bar % 4 == 0) HostVisual.Caption(this, _shell, context, (bar + 1).ToString(), new(x + 6, RulerY + 8));
+        }
+        context.DrawRectangle(Brush("Material.Panel"), null, new Rect(HeaderX, RulerY, HeaderWidth, RulerHeight));
+        HostVisual.Caption(this, _shell, context, _shell["Arrangement.Tracks"], new(HeaderX + 12, RulerY + 8));
+        if (_observation.SongMode)
         {
             double x = PlayheadX;
             var accent = Brush("Accent.Action");
             if (x >= HeaderX + HeaderWidth)
             {
-                context.DrawLine(new Pen(accent, 2), new(x, 0), new(x, Bounds.Height));
-                context.DrawRectangle(accent, null, new Rect(x - 4, 0, 8, 6), 2, 2);
+                context.DrawLine(new Pen(accent, 2), new(x, RulerY), new(x, Bounds.Height));
+                context.DrawRectangle(accent, null, new Rect(x - 4, RulerY, 8, 6), 2, 2);
             }
         }
 
@@ -197,9 +248,17 @@ internal sealed class ArrangementCanvas : Control
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || _observation.Busy) return;
+        var properties = e.GetCurrentPoint(this).Properties;
+        if (_observation.Busy || !properties.IsLeftButtonPressed && !properties.IsMiddleButtonPressed) return;
         Focus(); var point = e.GetPosition(this); var clip = Hit(point);
         e.Handled = true;
+        if (properties.IsMiddleButtonPressed)
+        { _panning = true; _pressed = point; _pointer = e.Pointer; e.Pointer.Capture(this); return; }
+        if (point.Y >= RulerY && point.Y < RulerY + RulerHeight && point.X >= HeaderX + HeaderWidth)
+        {
+            _ruler = true; _pressed = point; _rangeAnchor = TickAt(point.X); _basis = Basis;
+            _pointer = e.Pointer; e.Pointer.Capture(this); return;
+        }
         if (point.X >= HeaderX && point.X < HeaderX + HeaderWidth && point.Y >= RulerHeight)
         {
             int lane = Math.Clamp((int)((point.Y - RulerHeight) / LaneHeight), 0, 31);
@@ -208,6 +267,19 @@ internal sealed class ArrangementCanvas : Control
                 localY >= 30 && point.X - HeaderX is >= 48 and < 78 ? "Solo" : "Edit";
             TrackRequested?.Invoke(lane, command); return;
         }
+        if (clip is not null && e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+        {
+            if (!_selection.Add(clip.Id)) _selection.Remove(clip.Id);
+            Selected = _selection.Contains(clip.Id) ? clip.Id : _selection.Select(id => (Id<ArrangementClip>?)id).FirstOrDefault();
+            SelectionChanged?.Invoke(); InvalidateVisual(); return;
+        }
+        if (clip is null && (SelectMode || e.KeyModifiers.HasFlag(KeyModifiers.Shift)))
+        {
+            _marquee = true; _pressed = point; _basis = Basis;
+            _pointer = e.Pointer; e.Pointer.Capture(this); return;
+        }
+        if (clip is null || !_selection.Contains(clip.Id))
+        { _selection.Clear(); if (clip is not null) _selection.Add(clip.Id); }
         Selected = clip?.Id; SelectionChanged?.Invoke();
         if (clip is null)
         {
@@ -225,7 +297,8 @@ internal sealed class ArrangementCanvas : Control
             RackRequested?.Invoke(attachment.Id); return;
         }
         _original = _draft = clip; _basis = ArrangementEditBasis.From(_observation); _pressed = point;
-        _resize = point.X >= ClipRect(clip).Right - 10;
+        _group = _observation.Snapshot.State.ArrangementClips.Where(c => _selection.Contains(c.Id)).ToArray();
+        _resize = _selection.Count == 1 && point.X >= ClipRect(clip).Right - 10;
         _copy = !_resize && e.KeyModifiers.HasFlag(KeyModifiers.Control);
         _pointer = e.Pointer; e.Pointer.Capture(this); InvalidateVisual();
     }
@@ -233,8 +306,21 @@ internal sealed class ArrangementCanvas : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (_original is not { } original || _pointer != e.Pointer) return;
+        if (_pointer != e.Pointer) return;
         var point = e.GetPosition(this);
+        if (_panning) { PanRequested?.Invoke(point - _pressed); e.Handled = true; return; }
+        if (_ruler)
+        {
+            if (Math.Abs(point.X - _pressed.X) >= 4)
+            { long tick = TickAt(point.X); _rangeDraft = (Math.Min(tick, _rangeAnchor), Math.Max(tick, _rangeAnchor)); }
+            InvalidateVisual(); e.Handled = true; return;
+        }
+        if (_marquee)
+        {
+            _selectionRect = new Rect(_pressed, point).Normalize();
+            InvalidateVisual(); e.Handled = true; return;
+        }
+        if (_original is not { } original) return;
         if (Math.Abs(point.X - _pressed.X) + Math.Abs(point.Y - _pressed.Y) < 4) return;
         if (_resize)
         {
@@ -247,7 +333,9 @@ internal sealed class ArrangementCanvas : Control
                 e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? _observation.Snapshot.State.Settings.Meter.TicksPerBeat : SnapTicks;
             long ticks = (long)Math.Clamp(Math.Round((original.Position.Ticks + (point.X - _pressed.X) / _barWidth * BarTicks) / snap), 0, 4095d * BarTicks / snap) * snap;
             int lane = Math.Clamp(original.Lane + (int)Math.Round((point.Y - _pressed.Y) / LaneHeight), 0, 31);
-            _draft = original with { Position = new(ticks), Lane = lane };
+            _tickDelta = Math.Clamp(ticks - original.Position.Ticks, -_group.Min(c => c.Position.Ticks), 4095L * BarTicks - _group.Max(c => c.Position.Ticks));
+            _laneDelta = Math.Clamp(lane - original.Lane, -_group.Min(c => c.Lane), 31 - _group.Max(c => c.Lane));
+            _draft = original with { Position = new(original.Position.Ticks + _tickDelta), Lane = original.Lane + _laneDelta };
         }
         InvalidateVisual(); e.Handled = true;
     }
@@ -255,11 +343,33 @@ internal sealed class ArrangementCanvas : Control
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        if (_pointer != e.Pointer || _draft is not { } draft || _original is not { } original) return;
-        var basis = _basis; bool copy = _copy; Cancel(); e.Handled = true;
-        if (draft != original) CommandSubmitted?.Invoke(copy
-            ? _workflow.CopyArrangementClipAsync(basis, draft.Id, draft.Position, draft.Lane)
-            : _workflow.UpdateArrangementClipAsync(basis, draft.Id, draft.Position, draft.Lane, draft.Repeats));
+        if (_pointer != e.Pointer) return;
+        e.Handled = true;
+        if (_ruler)
+        {
+            var range = _rangeDraft; long tick = _rangeAnchor; Cancel();
+            async Task Submit()
+            {
+                if (range is { } r && r.End > r.Start)
+                { await _workflow.SetSongLoopAsync(new(r.Start), new(r.End), true); await _workflow.SeekSongAsync(new(r.Start)); }
+                else await _workflow.SeekSongAsync(new(tick));
+            }
+            CommandSubmitted?.Invoke(Submit()); return;
+        }
+        if (_marquee)
+        {
+            var rectangle = _selectionRect; _selection.Clear();
+            if (rectangle is { } rect)
+                foreach (var clip in _observation.Snapshot.State.ArrangementClips.Where(c => ClipRect(c).Intersects(rect))) _selection.Add(clip.Id);
+            Selected = _selection.Select(id => (Id<ArrangementClip>?)id).FirstOrDefault(); Cancel(); SelectionChanged?.Invoke(); return;
+        }
+        if (_panning) { Cancel(); return; }
+        if (_draft is not { } draft || _original is not { } original) return;
+        var basis = _basis; bool copy = _copy, resize = _resize; long delta = _tickDelta; int laneDelta = _laneDelta;
+        var ids = Selection; Cancel();
+        if (draft != original) CommandSubmitted?.Invoke(resize
+            ? _workflow.UpdateArrangementClipAsync(basis, draft.Id, draft.Position, draft.Lane, draft.Repeats)
+            : _workflow.EditArrangementSelectionAsync(basis, ids, delta, laneDelta, copy));
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -267,10 +377,16 @@ internal sealed class ArrangementCanvas : Control
         base.OnKeyDown(e);
         if (e.Key == Key.Escape) { Cancel(); e.Handled = true; return; }
         if (_observation.Busy) return;
+        if (e.Key == Key.A && e.KeyModifiers == KeyModifiers.Control)
+        {
+            _selection.Clear(); foreach (var c in _observation.Snapshot.State.ArrangementClips) _selection.Add(c.Id);
+            Selected = _selection.Select(id => (Id<ArrangementClip>?)id).FirstOrDefault(); SelectionChanged?.Invoke(); InvalidateVisual(); e.Handled = true; return;
+        }
         if (e.Key is Key.Home or Key.End && !_observation.Snapshot.State.ArrangementClips.IsEmpty)
         {
             var ordered = _observation.Snapshot.State.ArrangementClips.OrderBy(c => c.Position.Ticks).ThenBy(c => c.Lane).ToArray();
             Selected = (e.Key == Key.Home ? ordered[0] : ordered[^1]).Id;
+            _selection.Clear(); _selection.Add(Selected!.Value);
             SelectionChanged?.Invoke(); e.Handled = true; return;
         }
         var clip = _observation.Snapshot.State.ArrangementClips.SingleOrDefault(c => c.Id == Selected);
@@ -285,12 +401,11 @@ internal sealed class ArrangementCanvas : Control
         }
         Task? command = e.Key switch
         {
-            Key.Delete => _workflow.DeleteArrangementClipAsync(basis, clip.Id),
-            Key.D when e.KeyModifiers == KeyModifiers.Control => _workflow.DuplicateArrangementClipAsync(basis, clip.Id),
-            Key.Left or Key.Right or Key.Up or Key.Down => _workflow.UpdateArrangementClipAsync(basis, clip.Id,
-                new(e.Key == Key.Left ? Math.Max(0, clip.Position.Ticks - BarTicks) :
-                    e.Key == Key.Right && clip.Position.Ticks <= long.MaxValue - BarTicks ? clip.Position.Ticks + BarTicks : clip.Position.Ticks),
-                Math.Clamp(clip.Lane + (e.Key == Key.Up ? -1 : e.Key == Key.Down ? 1 : 0), 0, 31), clip.Repeats),
+            Key.Delete => _workflow.EditArrangementSelectionAsync(basis, Selection, delete: true),
+            Key.D when e.KeyModifiers == KeyModifiers.Control => _workflow.EditArrangementSelectionAsync(basis, Selection, duplicate: true),
+            Key.Left or Key.Right or Key.Up or Key.Down => _workflow.EditArrangementSelectionAsync(basis, Selection,
+                e.Key == Key.Left ? -SnapTicks : e.Key == Key.Right ? SnapTicks : 0,
+                e.Key == Key.Up ? -1 : e.Key == Key.Down ? 1 : 0),
             _ => null
         };
         if (command is null) return;
@@ -300,6 +415,8 @@ internal sealed class ArrangementCanvas : Control
     internal void Cancel()
     {
         var pointer = _pointer; _pointer = null; _draft = _original = null; _copy = false;
+        _ruler = _marquee = _panning = false; _rangeDraft = null; _selectionRect = null;
+        _group = []; _tickDelta = 0; _laneDelta = 0;
         pointer?.Capture(null); InvalidateVisual();
     }
 }

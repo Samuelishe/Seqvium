@@ -38,9 +38,9 @@ public static class PatternWaveExport
     {
         const int framesPerPacket = 1024;
         using var plan = target is { } attachment
-            ? GraphPreparation.Prepare(frozen, attachment, 48000, 2, framesPerPacket, cancellationToken: cancellation)
+            ? GraphPreparation.Prepare(frozen, attachment, 48000, 2, framesPerPacket, voiceCapacity: GraphPreparation.MaximumVoices, cancellationToken: cancellation)
             : ArrangementPreparation.Prepare(frozen, 48000, 2, framesPerPacket, cancellation);
-        using var execution = plan.CreateExecution();
+        using var execution = plan.CreateExecution(smoothBoundaries: true);
         long frames = plan.EndFrame - plan.StartFrame;
         long dataBytes = checked(frames * 4);
         if (dataBytes > uint.MaxValue - 36) throw new NotSupportedException("WAV exceeds the RIFF size limit.");

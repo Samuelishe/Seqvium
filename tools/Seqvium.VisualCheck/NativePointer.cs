@@ -77,7 +77,7 @@ internal static class NativePointer
             Passed("native background pan without Undo");
             var workspaceCanvas = Program.Field<Canvas>(workspace, "_canvas");
             var free = new Point(workspaceCanvas.Bounds.Width - 20, workspaceCanvas.Bounds.Height - 20);
-            Program.Require(workspaceCanvas.InputHitTest(free) == workspaceCanvas, "Workspace test coordinate is not free background.");
+            Program.Require(window.InputHitTest(workspaceCanvas.TranslatePoint(free, window)!.Value) == workspaceCanvas, "Workspace test coordinate is not free background.");
             await Click(workspaceCanvas, free);
             Program.Require(workspace.State.ActivePaneId is null && nodeEditor.Target == target && workflow.State.Document.UndoCount == undo, "Native workspace deactivation failed.");
             Passed("native workspace click deactivates without musical mutation");

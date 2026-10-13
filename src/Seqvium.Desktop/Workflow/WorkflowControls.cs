@@ -127,7 +127,7 @@ internal sealed class WorkflowControls : Grid
         _overflow.Content = HostIcons.Create("More", _overflow);
         AutomationProperties.SetAutomationId(_information, "Workflow.SourceInfo");
         AutomationProperties.SetAutomationId(_overflow, "Workflow.More");
-        AddOverflow("SaveAs"); AddOverflow("ExportWave", "Save"); AddOverflow("ExportSong", "Save"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
+        AddOverflow("SaveAs"); AddOverflow("ExportWave", "Export"); AddOverflow("ExportSong", "Export"); AddOverflow("Graph"); AddOverflow("CancelImport", "Close");
         _overflowBody.Children.Add(_overflowParameters);
         _overflow.Flyout = new Flyout { Content = _overflowBody };
         var body = new StackPanel { Width = 330, Classes = { "spaced" } };
@@ -183,7 +183,7 @@ internal sealed class WorkflowControls : Grid
         button.Classes.Remove("command"); button.Width = double.NaN;
         button.HorizontalAlignment = HorizontalAlignment.Stretch; button.HorizontalContentAlignment = HorizontalAlignment.Left;
         var row = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "spaced" } };
-        row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key is "ExportWave" or "ExportSong" ? "Save" : key, button, 16));
+        row.Children.Add(HostIcons.Create(key == "CancelImport" ? "Close" : key is "ExportWave" or "ExportSong" ? "Export" : key, button, 16));
         var text = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
         _menuLabels.RemoveAll(item => item.Key == key);
         _menuLabels.Add((text, key)); row.Children.Add(text); button.Content = row;

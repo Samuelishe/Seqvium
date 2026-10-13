@@ -102,6 +102,12 @@ hide the swatch. Drawing uses HostVisual for track/clip identity, bevel, grid, n
 selection, overview and renderer cursor. Clip/track colors use the existing Rack palette; no new
 HEX palette, borrowed screenshot, fake waveform, meter or dormant processor control is added.
 
+Playlist now adds original Start/Selection/Loop vectors and a distinct upward-export/wave vector,
+shared with Pattern/Song export in the command overflow. Project Save retains the disk icon.
+Range highlights sit under readable ruler labels and supplement the active loop toggle; group
+selection uses the existing accent outline. Explicit pane frame hit surfaces reserve resize input
+without changing control templates, and the visible corner grip stays separate from music controls.
+
 Playlist's repeat label/actual text centers are checked in the RU/EN Dark/Light ordinary/reduced
 window route. The overview/stationary headings and minimum-size wrap are part of rendered review.
 

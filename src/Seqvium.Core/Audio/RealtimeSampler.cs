@@ -21,6 +21,9 @@ internal sealed record GraphRevisionUpdate(long PreparedExecutionId, Id<GraphAtt
     Guid Revision, Guid EquivalentRevision,
     float[] Coefficients, long Authority);
 
+internal sealed record SongSeek(long Frame, long Command);
+internal sealed record SongLoop(long Start, long End);
+
 /// <summary>One serialized control owner, one sequential consumer. Dispose only after the consumer has joined.
 /// Active, one pending and one retired execution are the only retained slots. Gain is latest-wins;
 /// Stop/Panic generations survive a subsequent Start. Musical events remain in the complete F1 plan.</summary>
@@ -67,6 +70,10 @@ public sealed class RealtimeSampler : IDisposable
     private long _rejectedPreparedExecutionId;
     private int _voices;
     private bool _looping;
+    private SongSeek? _seek;
+    private SongLoop? _songLoop;
+    private readonly bool _smoothBoundaries;
+    private long _songStart, _seenSeek;
     private Guid _revision;
     private GraphRevisionUpdate? _update;
     private int _statusSequence;
@@ -136,7 +143,7 @@ public sealed class RealtimeSampler : IDisposable
         Interlocked.Increment(ref _statusSequence);
     }
 
-    public RealtimeSampler(int sampleRate, int channels, int maximumPacketFrames)
+    public RealtimeSampler(int sampleRate, int channels, int maximumPacketFrames, bool smoothBoundaries = false)
     {
         if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || maximumPacketFrames is < 1 or > 65536)
             throw new NotSupportedException(
@@ -144,6 +151,7 @@ public sealed class RealtimeSampler : IDisposable
         SampleRate = sampleRate;
         Channels = channels;
         MaximumPacketFrames = maximumPacketFrames;
+        _smoothBoundaries = smoothBoundaries;
     }
 
     /// <summary>Invalidates pending acceptance. The identified active revision may continue. Control owner only.</summary>
@@ -229,7 +237,8 @@ public sealed class RealtimeSampler : IDisposable
             (plan.IsArrangement && active.Plan.IsArrangement || plan.Loop is { } clock &&
                 active.Plan.Loop is { } previous && clock.Compatible(previous)) &&
             plan.CanonicalBasis is { } nextBasis && active.Plan.CanonicalBasis is { } oldBasis &&
-            GraphExecutionCoordinator.SameExecution(oldBasis, nextBasis, ignoreGain: true, ignoreNotes: true))
+            (GraphExecutionCoordinator.SameExecution(oldBasis, nextBasis, ignoreGain: true, ignoreNotes: true) ||
+             GraphExecutionCoordinator.SameChannelExecution(oldBasis, nextBasis)))
         {
             var indices = plan.Notes.Select((note, index) => (note, index)).ToDictionary(item => item.note.Occurrence);
             state.ContinuationNotes = active.Plan.Notes.Select(note => indices.TryGetValue(note.Occurrence, out var next) &&
@@ -268,6 +277,21 @@ public sealed class RealtimeSampler : IDisposable
     public long Panic() => Stop();
     public void SetLooping(bool looping) => Volatile.Write(ref _looping, looping);
 
+    /// <summary>Control-owner song cursor. Seeking never starts playback or overrides Stop/Panic.</summary>
+    public void SeekSong(long frame)
+    {
+        if (frame < 0) throw new ArgumentOutOfRangeException(nameof(frame));
+        Volatile.Write(ref _songStart, frame);
+        Volatile.Write(ref _seek, new(frame, Interlocked.Increment(ref _command)));
+    }
+
+    /// <summary>Session-only half-open song loop, in execution frames. Null disables it.</summary>
+    public void SetSongLoop(long start, long end, bool enabled)
+    {
+        if (enabled && (start < 0 || end - start < SampleRate / 100)) throw new ArgumentOutOfRangeException(nameof(end));
+        Volatile.Write(ref _songLoop, enabled ? new(start, end) : null);
+    }
+
     /// <summary>Single consumer. No allocation, I/O, locks, document access or reclamation. False means invalid packet.
     /// Compatible live note edits retain loop position and unchanged voices; other publications begin a new epoch.</summary>
     public bool Process(Span<float> output)
@@ -294,6 +318,7 @@ public sealed class RealtimeSampler : IDisposable
                         (_looping || old.Plan.IsArrangement && pending.Plan.IsArrangement && old.Execution.Position < pending.Plan.EndFrame) &&
                         pending.ContinuationAuthority == old.Authority && pending.ContinuationNotes is { };
                     pending.Execution.SetLooping(_looping);
+                    pending.Execution.SetBoundarySmoothing(_smoothBoundaries);
                     if (continuing) pending.Execution.ContinueFrom(old!.Execution, pending.ContinuationNotes!);
                     else if (_playing && old is not null && old.Plan.IsArrangement && pending.Plan.IsArrangement &&
                         pending.ContinuationAuthority == old.Authority && old.Execution.Position >= pending.Plan.EndFrame)
@@ -342,6 +367,11 @@ public sealed class RealtimeSampler : IDisposable
             {
                 _seenStart = start;
                 _active?.Execution.Restart();
+                if (_active?.Plan.IsArrangement == true)
+                {
+                    _active.Execution.Seek(Volatile.Read(ref _songStart));
+                    if (Volatile.Read(ref _seek) is { } initialSeek && initialSeek.Command <= start) _seenSeek = initialSeek.Command;
+                }
                 _transitionRemaining = 0;
                 _playing = _active is not null;
                 _stopBoundary = false;
@@ -350,6 +380,12 @@ public sealed class RealtimeSampler : IDisposable
         }
 
         var active = _active;
+        var seek = Volatile.Read(ref _seek);
+        if (active?.Plan.IsArrangement == true && seek is not null && seek.Command != _seenSeek)
+        {
+            _seenSeek = seek.Command; active.Execution.Seek(seek.Frame);
+            _transitionRemaining = _playing ? GraphTransitionFrames : 0; _epoch++;
+        }
         bool cancelled = active?.Cancellation.IsCancellationRequested == true;
         if (cancelled)
         {
@@ -362,14 +398,23 @@ public sealed class RealtimeSampler : IDisposable
         if (_playing && active is not null)
         {
             active.Execution.SetLooping(_looping);
-            int frames = _looping && active.Plan.Loop is not null ? output.Length / Channels :
-                (int)Math.Max(0, Math.Min(output.Length / Channels, active.Plan.EndFrame - active.Execution.Position));
-            if (frames > 0)
+            var range = active.Plan.IsArrangement ? Volatile.Read(ref _songLoop) : null;
+            long loopEnd = Math.Min(range?.End ?? 0, active.Plan.EndFrame);
+            bool rangeLoop = range is not null && range.Start < loopEnd;
+            int remaining = output.Length / Channels;
+            while (remaining > 0)
             {
-                active.Execution.Process(output[..(frames * Channels)]);
-                renderedFrames = frames;
+                active.Execution.SetRangeBoundary(rangeLoop ? loopEnd : long.MaxValue);
+                if (rangeLoop && active.Execution.Position >= loopEnd) active.Execution.Seek(range!.Start);
+                long end = rangeLoop ? loopEnd : active.Plan.EndFrame;
+                int frames = _looping && active.Plan.Loop is not null ? remaining :
+                    (int)Math.Max(0, Math.Min(remaining, end - active.Execution.Position));
+                if (frames == 0) break;
+                active.Execution.Process(output.Slice(renderedFrames * Channels, frames * Channels));
+                renderedFrames += frames; remaining -= frames;
             }
-            if ((!_looping || active.Plan.Loop is null) && active.Execution.Position >= active.Plan.EndFrame)
+            if (rangeLoop && active.Execution.Position >= loopEnd) active.Execution.Seek(range!.Start);
+            if (!rangeLoop && (!_looping || active.Plan.Loop is null) && active.Execution.Position >= active.Plan.EndFrame)
             { active.Execution.Stop(); _playing = false; }
         }
 

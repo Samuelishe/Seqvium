@@ -116,7 +116,7 @@ internal static partial class Program
                 };
             }, key => { File.AppendAllText(Path.Combine(directory, "diagnostic.txt"), key + "\n"); });
         }
-        Require(args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement", "Unknown scenario.");
+        Require(args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project", "Unknown scenario.");
         using var run = new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
         string output = run.Directory;
         Console.WriteLine("Verification output: " + output);
@@ -134,6 +134,8 @@ internal static partial class Program
                 }
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
                 else if (args[0] == "arrangement") await ArrangementMatrixAsync(main, output);
+                else if (args[0] == "project")
+                { Require(args.Length == 3, "project <output> <project-file>"); await ProjectPlaybackAsync(main, output, args[2]); }
                 else if (args[0] == "catalog") await ComponentCatalog.VerifyAsync(app, main, output);
                 else await MatrixAsync(app, main, output, args[0] == "matrix");
             }
@@ -201,6 +203,8 @@ internal static partial class Program
         var workflow = Field<DesktopWorkflow>(main, "_workflow");
         var shell = Field<ShellSession>(main, "_session");
         var workspace = Field<WorkspaceHost>(main, "_workspace");
+        await Task.Delay(50); main.WindowState = WindowState.Normal;
+        workspace.State.Hide(WorkspaceState.BeatId); workspace.State.Hide(WorkspaceState.ArrangementId);
         var editor = Field<GraphEditorSession>(main, "_graphEditor");
         var nodeEditor = Field<NodeEditorSession>(main, "_nodeEditor");
         string source = Path.Combine(output, "fixture.wav"); WriteWav(source);
@@ -269,6 +273,7 @@ internal static partial class Program
         workspace.State.SetBounds(WorkspaceState.GraphId, new(10, 10, 650, 480));
         workspace.State.SetBounds(WorkspaceState.NodeEditorId, new(700, 10, 360, 320));
         workspace.State.Hide(WorkspaceState.InspectorId); workspace.State.Hide(WorkspaceState.AppearanceId);
+        workspace.State.Hide(WorkspaceState.BeatId); workspace.State.Hide(WorkspaceState.ArrangementId);
         workspace.State.Activate(WorkspaceState.GraphId);
         await Task.Delay(250);
         var canvas = main.GetVisualDescendants().OfType<GraphCanvas>().Single();

@@ -52,7 +52,7 @@ internal static class ArrangementCheck
                 });
             }
             document.Edit("Song", edit => { edit.AddArrangementClip(placements[0], default, 0, 12); edit.AddArrangementClip(placements[1], new(960000), 1, 8); });
-            sampler = new(facts.Rate, facts.Channels, facts.CapacityFrames);
+            sampler = new(facts.Rate, facts.Channels, facts.CapacityFrames, smoothBoundaries: true);
             async Task Publish(bool live)
             {
                 using var request = sampler.BeginArrangementPreparation(document, live);
@@ -60,12 +60,62 @@ internal static class ArrangementCheck
                 if (request.Publish() != SamplerPublication.Accepted) throw new InvalidOperationException("Song publication refused.");
             }
             await Publish(false); sampler.Start(); output.Start(sampler);
-            long epoch = 0, beforeEdit = 0; bool edited = false, converged = false, overlap = false;
+            long epoch = 0, beforeEdit = 0, previousPosition = 0, seekEpoch = 0;
+            bool edited = false, converged = false, overlap = false, sought = false, seekObserved = false, looped = false, looping = false;
+            int channelChanges = 0, channelConvergences = 0;
+            Id<MusicalPart> addedPart = default; Id<GraphNode> addedSource = default, addedMix = default;
+            Guid lastChannelRevision = Guid.Empty;
+            var firstPlacement = document.Current.State.Placements.Single(p => p.Id == placements[0]);
+            var firstAttachment = document.Current.State.GraphAttachments.Single(a => a.ContextId == firstPlacement.ItemContextId);
+            var firstGraph = document.Current.State.Graphs.Single(g => g.Id == firstAttachment.GraphId);
+            var originalSource = firstGraph.Nodes.Single(n => n.Type == GraphBuiltIns.Source);
+            var originalGain = firstGraph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
+            var originalCable = firstGraph.Connections.Single(c => c.FromNodeId == originalSource.Id);
             var timeout = Stopwatch.StartNew();
             while (timeout.Elapsed < TimeSpan.FromSeconds(9) && output.Failure == OutputFailure.None)
             {
                 sampler.RetireCompleted(); var status = sampler.ReadStatus();
                 if (epoch == 0 && status.Playing) epoch = status.Epoch;
+                if (!sought && timeout.Elapsed.TotalSeconds >= .5)
+                {
+                    sampler.SeekSong(facts.Rate / 2); sampler.SetSongLoop(facts.Rate / 2, facts.Rate * 3 / 2, true);
+                    sought = true; looping = true; seekEpoch = status.Epoch;
+                }
+                if (sought && !seekObserved && status.Epoch > seekEpoch) { epoch = status.Epoch; seekObserved = true; }
+                if (looping && status.Position < previousPosition) looped = true;
+                previousPosition = status.Position;
+                if (looping && timeout.Elapsed.TotalSeconds >= 1.8) { sampler.SetSongLoop(0, 0, false); looping = false; }
+                if (lastChannelRevision != Guid.Empty && status.ExecutingRevision == lastChannelRevision)
+                { channelConvergences++; lastChannelRevision = Guid.Empty; }
+                if (edited && status.Position >= facts.Rate * (2.5 + channelChanges * .5) && channelChanges < 4 && lastChannelRevision == Guid.Empty)
+                {
+                    if (channelChanges == 0)
+                        document.Edit("Add empty live channel", edit =>
+                        {
+                            var pattern = document.Current.State.Patterns.Single(p => p.Id == firstPlacement.PatternId);
+                            addedPart = edit.AddPart(pattern.Id, "Live channel", pattern.Parts[0].SoundId);
+                            string layout = facts.Channels == 1 ? GraphBuiltIns.Mono : GraphBuiltIns.Stereo;
+                            var source = edit.AddGraphNode(firstGraph.Id, GraphBuiltIns.Source, new(0, 120), layout); addedSource = source.Id;
+                            var mix = edit.AddGraphNode(firstGraph.Id, GraphBuiltIns.Mix, new(100, 60), layout); addedMix = mix.Id;
+                            edit.BindGraphSource(firstAttachment.Id, source.Id, firstPlacement.Id, addedPart);
+                            edit.DisconnectGraphPorts(firstGraph.Id, originalCable.Id);
+                            var inputs = mix.Ports.Where(p => p.Direction == GraphPortDirection.Input).ToArray();
+                            edit.ConnectGraphPorts(firstGraph.Id, originalSource.Id, originalCable.FromPortId, mix.Id, inputs[0].Id);
+                            edit.ConnectGraphPorts(firstGraph.Id, source.Id, source.Ports.Single().Id, mix.Id, inputs[1].Id);
+                            edit.ConnectGraphPorts(firstGraph.Id, mix.Id, mix.Ports.Single(p => p.Direction == GraphPortDirection.Output).Id, originalGain.Id, originalCable.ToPortId);
+                            edit.SetContextMix(firstAttachment.ContextId, true);
+                        });
+                    else if (channelChanges == 1)
+                        document.Edit("Delete live channel", edit =>
+                        {
+                            edit.DeleteGraphNode(firstGraph.Id, addedMix); edit.DeleteGraphNode(firstGraph.Id, addedSource);
+                            edit.ConnectGraphPorts(firstGraph.Id, originalSource.Id, originalCable.FromPortId, originalGain.Id, originalCable.ToPortId);
+                            edit.DeletePart(firstPlacement.PatternId, addedPart); edit.SetContextMix(firstAttachment.ContextId, false);
+                        });
+                    else if (channelChanges == 2) document.Undo();
+                    else document.Redo();
+                    lastChannelRevision = document.Current.Revision; await Publish(true); channelChanges++;
+                }
                 if (status.Voices >= 2) overlap = true;
                 if (!edited && status.Position >= facts.Rate * 2L)
                 {
@@ -82,11 +132,12 @@ internal static class ArrangementCheck
             while (sampler.StopAcknowledgment < stop && timeout.Elapsed < TimeSpan.FromSeconds(1)) await Task.Delay(5);
             output.Close(); sampler.TerminateExecution(); sampler.Dispose();
             bool passed = output.Failure == OutputFailure.None && final.Transport == SamplerTransportState.Ended && !final.Looping &&
-                overlap && converged && final.Epoch == epoch && final.Position == facts.Rate * 6L && final.Position > beforeEdit &&
+                overlap && converged && seekObserved && looped && channelConvergences == 4 && final.Epoch == epoch && final.Position == facts.Rate * 6L && final.Position > beforeEdit &&
                 sampler.StopAcknowledgment >= stop && output.Joined && output.ProcessorAllocatedBytes == 0 &&
                 output.NonFiniteSamples == 0 && output.ProcessorMisses == 0 && output.PacketMisses == 0;
             Console.WriteLine(JsonSerializer.Serialize(new { Mode = "song-smoke", Passed = passed, facts, final, SimultaneousVoices = overlap,
-                LiveEditConverged = converged, SameEpoch = final.Epoch == epoch, output.ElapsedSeconds, output.Failure,
+                LiveEditConverged = converged, SeekObserved = seekObserved, RangeWrapped = looped,
+                ChannelChanges = channelChanges, ChannelConvergences = channelConvergences, SameEpoch = final.Epoch == epoch, output.ElapsedSeconds, output.Failure,
                 output.ProcessorAllocatedBytes, output.ServiceAllocatedBytes, output.MaximumSampleMagnitude,
                 output.ProcessorMisses, output.PacketMisses, output.PaddingExhaustions,
                 StopAcknowledged = sampler.StopAcknowledgment >= stop, output.Joined,

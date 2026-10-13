@@ -8,6 +8,22 @@ namespace Seqvium.Tests;
 
 public sealed class WorkspaceLayoutTests
 {
+    [Fact]
+    public async Task MainWindowPlacementIsOptionalAndRoundtripsIndependentlyOfWorkspaceSize()
+    {
+        using var directory = new TemporaryDirectory();
+        using var state = new WorkspaceState(); state.Reflow(1200, 800); state.ArrangeMusic();
+        var rack = state.Bounds(WorkspaceState.BeatId); var playlist = state.Bounds(WorkspaceState.ArrangementId);
+        Assert.True(rack.Y + rack.Height < playlist.Y);
+        Assert.True(playlist.Y + playlist.Height <= state.Height);
+        var normal = new MainWindowPlacement(-1900, 40, 1400, 900, true);
+        var store = new WorkspaceLayoutStore(directory.File("layout.json"));
+        Assert.True(await store.SaveAsync(state.Capture() with { Window = normal }));
+        var restored = await new WorkspaceLayoutStore(directory.File("layout.json")).LoadAsync();
+        Assert.False(restored.UsedFallback); Assert.Equal(normal, restored.Layout!.Window);
+        Assert.Equal(1200, restored.Layout.Width);
+    }
+
     [Theory]
     [InlineData(PaneDock.Left)]
     [InlineData(PaneDock.Right)]

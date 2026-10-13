@@ -46,7 +46,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     {
         document.CheckAvailable();
         ArgumentNullException.ThrowIfNull(owner);
-        if (voices is < 1 or > 8 || repeats is < 1 or > 1024) throw new ArgumentOutOfRangeException(nameof(voices));
+        if (voices is < 1 or > GraphPreparation.MaximumVoices || repeats is < 1 or > 1024) throw new ArgumentOutOfRangeException(nameof(voices));
         _document = document; _sampler = sampler; _target = target; _owner = owner;
         _voices = voices; _repeats = repeats; _gate = gate;
         _status = new(document.Current.Revision, false, default, false, false, false, null, 0, 0, 0, target);
@@ -100,6 +100,14 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     public long Stop() { CheckOwner(); return _sampler.Stop(); }
     public long Panic() { CheckOwner(); return _sampler.Panic(); }
 
+    /// <summary>An explicit Play may retry a failed preparation; automatic convergence never starts audio.</summary>
+    public void RetryBlockedPreparation()
+    {
+        CheckOwner();
+        if (_closed || _blocker is null || _sampler.IsTerminated) return;
+        _basis = null; Refresh();
+    }
+
     private void Refresh()
     {
         CheckOwner();
@@ -113,7 +121,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         var state = _document.Current.State;
         var attachment = state.GraphAttachments.SingleOrDefault(item => item.Id == _target);
         _intent = attachment is null ? null : GraphDiagnostics.Inspect(state).Single(item => item.GraphId == attachment.GraphId);
-        _blocker = _arrangement ? ArrangementPreparation.Refusal(state) : _intent is { IsEligibleForPreparation: true } ? null :
+        _blocker = _arrangement ? ArrangementPreparation.Refusal(state) :
+            _intent is { IsEligibleForPreparation: true } || attachment is not null && GraphPreparation.IsSilentChannelGraph(state, attachment) ? null :
             _intent?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
         _dirty = _blocker is null;
         Progress();
@@ -165,7 +174,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             var snapshot = _document.Current;
             var attachment = snapshot.State.GraphAttachments.SingleOrDefault(item => item.Id == _target);
             var report = _intent;
-            if (!_arrangement && (report is null || !report.IsEligibleForPreparation))
+            if (!_arrangement && (report is null || !report.IsEligibleForPreparation) &&
+                (attachment is null || !GraphPreparation.IsSilentChannelGraph(snapshot.State, attachment)))
                 _blocker = report?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
             else if (!_arrangement && _basis is not null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
                 SameExecution(_basis.State, snapshot.State, ignoreGain: true) &&
@@ -277,6 +287,45 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 .Select(item => item with { Sources = [.. item.Sources.OrderBy(binding => binding.Id.Value)] })]
         };
         return ProjectDocument.HasSameContent(Normalize(left), Normalize(right));
+    }
+
+    // Only the Rack's stateless source/mix tree may change without restarting surviving voices.
+    // Surviving sound/media, tempo, lengths, placement, Gain/Output and all other intent stay equal.
+    internal static bool SameChannelExecution(ProjectState left, ProjectState right)
+    {
+        var commonParts = left.Patterns.SelectMany(p => p.Parts).Select(p => p.Id)
+            .Intersect(right.Patterns.SelectMany(p => p.Parts).Select(p => p.Id)).ToHashSet();
+        var commonSounds = left.Sounds.Select(s => s.Id).Intersect(right.Sounds.Select(s => s.Id)).ToHashSet();
+        var commonResources = left.Resources.Select(r => r.Id).Intersect(right.Resources.Select(r => r.Id)).ToHashSet();
+        bool Supported(ProjectState state) => state.GraphAttachments.All(a =>
+        {
+            var graph = state.Graphs.Single(g => g.Id == a.GraphId);
+            var placement = state.Placements.Single(p => p.ItemContextId == a.ContextId);
+            var pattern = state.Patterns.Single(p => p.Id == placement.PatternId);
+            return GraphPreparation.IsSilentChannelGraph(state, a) ||
+                GraphDiagnostics.Inspect(state).Single(r => r.GraphId == graph.Id).IsEligibleForPreparation &&
+                graph.Nodes.All(n => n.Type is GraphBuiltIns.Source or GraphBuiltIns.Mix or GraphBuiltIns.Gain or GraphBuiltIns.Output) &&
+                graph.Nodes.Count(n => n.Type == GraphBuiltIns.Gain) == 1 &&
+                graph.Nodes.Count(n => n.Type == GraphBuiltIns.Source) == pattern.Parts.Length &&
+                graph.Nodes.Count(n => n.Type == GraphBuiltIns.Mix) == pattern.Parts.Length - 1 &&
+                graph.Nodes.Where(n => n.Type != GraphBuiltIns.Output).All(n => graph.Connections.Count(c => c.FromNodeId == n.Id) == 1);
+        });
+        if (!Supported(left) || !Supported(right)) return false;
+        ProjectState Normalize(ProjectState state) => state with
+        {
+            Patterns = [.. state.Patterns.Select(p => p with { Parts = [.. p.Parts.Where(part => commonParts.Contains(part.Id))] })],
+            Sounds = [.. state.Sounds.Where(s => commonSounds.Contains(s.Id))],
+            Resources = [.. state.Resources.Where(r => commonResources.Contains(r.Id))],
+            Contexts = [.. state.Contexts.Select(c => c with { IntentionalMix = false })],
+            Graphs = [.. state.Graphs.Select(g => g with
+            {
+                Nodes = [.. g.Nodes.Where(n => n.Type is GraphBuiltIns.Gain or GraphBuiltIns.Output)],
+                Connections = [.. g.Connections.Where(c => g.Nodes.Any(n => n.Id == c.FromNodeId && n.Type == GraphBuiltIns.Gain))]
+            })],
+            GraphAttachments = [.. state.GraphAttachments.Select(a => a with { Sources = [] })],
+            Placements = [.. state.Placements.Select(p => p with { PartRelationships = [.. p.PartRelationships.Where(r => commonParts.Contains(r.PartId))] })]
+        };
+        return SameExecution(Normalize(left), Normalize(right), ignoreGain: true, ignoreNotes: true);
     }
 
     private void Observe() => Volatile.Write(ref _status, new(_document.Current.Revision,

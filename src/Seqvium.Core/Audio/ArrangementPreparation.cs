@@ -6,7 +6,7 @@ namespace Seqvium.Core;
 /// <summary>Finite song execution through the same PCM scheduler and item graphs as Rack playback.</summary>
 public static class ArrangementPreparation
 {
-    public const int VoiceCapacity = 32;
+    public const int VoiceCapacity = GraphPreparation.MaximumVoices;
 
     public static bool IsAudible(ProjectState state, int lane)
     {
@@ -30,7 +30,7 @@ public static class ArrangementPreparation
             var placement = state.Placements.Single(p => p.Id == id);
             var attachment = state.GraphAttachments.SingleOrDefault(a => a.ContextId == placement.ItemContextId);
             if (attachment is null) return "Arrangement.Unsupported";
-            if (!reports[attachment.GraphId].IsEligibleForPreparation)
+            if (!reports[attachment.GraphId].IsEligibleForPreparation && !GraphPreparation.IsSilentChannelGraph(state, attachment))
                 return reports[attachment.GraphId].Diagnostics[0].Reason;
         }
         return null;
@@ -61,7 +61,7 @@ public static class ArrangementPreparation
                 var placement = state.Placements.Single(p => p.Id == id);
                 var attachment = state.GraphAttachments.Single(a => a.ContextId == placement.ItemContextId);
                 var plan = GraphPreparation.Prepare(document, attachment.Id, sampleRate, channels, maximumPacketFrames,
-                    cancellationToken: cancellation);
+                    voiceCapacity: VoiceCapacity, cancellationToken: cancellation);
                 plans.Add(id, plan);
                 // Relocating sub-frame note boundaries can change audibility. Do not reuse an incomplete table.
                 if (plan.ZeroFrameNotes != 0) throw new GraphPreparationException(GraphPreparationReasons.Source);

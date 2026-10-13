@@ -28,7 +28,7 @@ pitched source and supported execution configurations. Personal Library ownershi
 
 ## R4-F3-A desktop import and musical use
 
-The native WAV picker imports supported bounded PCM16/float32 mono/stereo material using the existing
+The native WAV picker imports supported bounded PCM16/24/32 or float32 mono/stereo material at 8–192 kHz using the existing
 R2 durable protocol. `WavImport.Accept(createUse, cancellation)` invokes optional musical creation
 inside the same validated owner Edit as resource/sound acceptance. Failure/cancellation accepts no
 false occurrence; Dispose removes an unaccepted candidate. Resource retention, history and Save remain R2-owned.

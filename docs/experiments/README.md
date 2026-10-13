@@ -158,3 +158,10 @@ in [KNOWN_PROBLEMS](../KNOWN_PROBLEMS.md); remove resolved questions and preserv
 in [resolved history](../archive/RESOLVED_QUESTIONS.md). Completed experiment facts go directly to
 [archived work](../archive/WORK_LOG.md). These write destinations do not make archive routine context;
 reports retain current useful evidence, while obsolete reports/validation narratives move to cold history.
+
+## Playlist music workflow evidence
+
+The [music workflow report](SEQ-PLAYLIST-MUSIC_REPORT.md) records bounded seek/range/group editing,
+workspace restoration/frame input, continuous channel topology, WAV compatibility and measured/physical
+sample boundaries. Its raw captures/media/TRX stay local and ignored; current contracts remain in
+the musical/audio/workspace owners.

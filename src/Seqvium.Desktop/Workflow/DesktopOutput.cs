@@ -24,7 +24,7 @@ internal static class DesktopOutput
         {
             if (output.Failure != OutputFailure.None || output.Facts is not { } facts)
                 throw new IOException($"Output open failed: {output.Failure} (0x{output.HResult:X8}).");
-            sampler = new(facts.Rate, facts.Channels, facts.CapacityFrames);
+            sampler = new(facts.Rate, facts.Channels, facts.CapacityFrames, smoothBoundaries: true);
             output.Start(sampler);
             return new(output, sampler,
                 $"{resolution.Endpoint.DisplayName ?? resolution.Endpoint.Id} · {facts.Rate} Hz · {facts.Channels} ch",

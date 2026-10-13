@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:p="using:Seqvium.Desktop.Presentation" x:Class="Seqvium.Desktop.MainWindow" x:DataType="p:ShellSession"
-        Title="Seqvium" Width="1100" Height="750" MinWidth="640" MinHeight="480" CanResize="True"
+        Title="Seqvium" Width="1400" Height="900" MinWidth="640" MinHeight="480" CanResize="True"
         Background="{DynamicResource Surface.Background}" FontFamily="$Default" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ControlTheme x:Key="HostChrome" TargetType="WindowDrawnDecorations">
@@ -49,6 +49,8 @@
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight">
                                 <StackPanel Spacing="{DynamicResource Space.Small}">
+                                    <Button Classes="shell" Content="{Binding [Workspace.MusicLayout]}" Click="MusicLayoutClicked"
+                                            AutomationProperties.AutomationId="Workspace.MusicLayout" />
                                     <Button Classes="shell" Content="{Binding [Pane.Beat]}"
                                             Click="BeatClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenBeat" />

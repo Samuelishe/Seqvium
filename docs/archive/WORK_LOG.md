@@ -1584,3 +1584,16 @@ normal Desktop remains intact; complete isolated binaries and local review captu
 PATCH advances 0.1.0.0006 to 0.1.1.0000, resetting BUILD for the standalone verified Song workflow.
 R5/R10 broader scope and R4 acceptance stay partial; no release, staging, commit or push occurs.
 Cadence resets once after the final successful full build/suite.
+
+
+## SEQ-PLAYLIST-MUSIC — 2026-10-13
+
+Completed the owner-requested composition usability slice: ruler seek/range loop, atomic clip groups,
+anchored navigation, restored main window and music layout, reserved frame input, distinct exports,
+continuous supported channel changes, retryable Play preparation and broader WAV decoding/smoothing.
+BUILD 0.1.1.0001; final 1052/1052 full-suite and focused checks, actual windows and short physical
+seek/range/channel output are scoped in the [report](../experiments/SEQ-PLAYLIST-MUSIC_REPORT.md).
+The owner supplied Piano001 after the initial checks: its nine-voice piano pattern hit the eight-slot
+source-graph preflight even in Song. Rack/export and Song source graphs now admit bounded 32 voices;
+32 passes, 33 still refuses. Physical Song reaches the finite end and Pattern loops across 120 → 135 →
+120, with unchanged project/media hashes. No schema/dependency/backend decision, staging, commit or push.

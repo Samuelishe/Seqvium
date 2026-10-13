@@ -189,7 +189,6 @@ internal sealed partial class DesktopWorkflow
         var source = attachment.Sources.Single(binding => binding.PartId == partId);
         var cable = graph.Connections.Single(edge => edge.FromNodeId == source.NodeId);
         var destination = graph.Nodes.Single(node => node.Id == cable.ToNodeId);
-        _playGeneration++; _coordinator?.Stop();
         return Task.FromResult(_document.Edit("Delete WAV channel", edit =>
         {
             if (destination.Type == GraphBuiltIns.Mix)
@@ -220,7 +219,6 @@ internal sealed partial class DesktopWorkflow
         // Durable acceptance already validates bytes, WAV integrity, cancellation and generation.
         await using (var file = File.OpenRead(path)) await request.PrepareAsync(file, cancellation);
         ValidateBeatBasis(basis);
-        _playGeneration++; _coordinator?.Stop();
         request.Accept((edit, media) =>
         {
             var part = edit.AddPart(pattern.Id, name, media.SoundId);

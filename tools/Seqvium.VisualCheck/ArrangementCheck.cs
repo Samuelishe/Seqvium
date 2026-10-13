@@ -21,7 +21,8 @@ internal static partial class Program
         var workflow = Field<DesktopWorkflow>(main, "_workflow");
         var shell = Field<ShellSession>(main, "_session");
         var workspace = Field<WorkspaceHost>(main, "_workspace");
-        workspace.Open(WorkspaceState.ArrangementId); main.UpdateLayout();
+        await Task.Delay(50); main.WindowState = WindowState.Normal; main.Width = 1280; main.Height = 800;
+        await Task.Delay(50); workspace.Open(WorkspaceState.ArrangementId); main.UpdateLayout();
         var pane = main.GetVisualDescendants().OfType<ArrangementPaneContent>().Single();
         await CaptureAsync(main, output, "playlist-empty");
         var sources = new List<Id<GraphAttachment>>();
@@ -114,6 +115,7 @@ internal static partial class Program
         Require(workflow.State.Snapshot.State.ArrangementTracks.Single(t => t.Lane == 0) is { Name: "Rhythm", ColorIndex: 3 }, "Track editor did not commit name and color.");
         Require(await workflow.ConfigureArrangementTrackAsync(ArrangementEditBasis.From(workflow.State), 1, "Bass", 6, false, false), "Bass track configuration failed.");
         Require(await workflow.ConfigureArrangementTrackAsync(ArrangementEditBasis.From(workflow.State), 2, "Break", 2, false, false), "Break track configuration failed.");
+        await ArrangementMusicGesturesAsync(main, pane, workflow, output);
         Require(await workflow.SetSongModeAsync(true), "Song mode failed."); Invoke(pane, "Refresh");
         Press(canvas.ClipRect(workflow.State.Snapshot.State.ArrangementClips[0]).Center); await Release(canvas.ClipRect(workflow.State.Snapshot.State.ArrangementClips[0]).Center);
         var alignment = new List<object>();
@@ -160,6 +162,131 @@ internal static partial class Program
             Themes = "RU/EN Dark/Light ordinary/reduced", SaveOpen = true, ActualGraphWaveExport = true,
             RetainedContent = true, PhysicalAudio = false, NativeInput = false, Alignment = alignment });
         await ArrangementPlaybackControlsAsync(shell, output);
+    }
+
+    private static async Task ArrangementMusicGesturesAsync(MainWindow main, ArrangementPaneContent pane, DesktopWorkflow workflow, string output)
+    {
+        var canvas = pane.Canvas; var scroll = Field<ScrollViewer>(pane, "_scroll"); scroll.Offset = default;
+        var workspace = Field<WorkspaceHost>(main, "_workspace");
+        main.WindowState = WindowState.Normal; main.Width = 1280; main.Height = 800; await Task.Delay(40);
+        workspace.State.SetBounds(WorkspaceState.ArrangementId, new(0, 0, 1000, 520));
+        workspace.State.ArrangeMusic(); main.UpdateLayout();
+        var rackBounds = workspace.State.Bounds(WorkspaceState.BeatId); var songBounds = workspace.State.Bounds(WorkspaceState.ArrangementId);
+        Require(rackBounds.Y + rackBounds.Height <= songBounds.Y || rackBounds.X + rackBounds.Width <= songBounds.X,
+            "Music layout overlaps Rack and Playlist.");
+        await CaptureAsync(main, output, "music-layout");
+        workspace.State.SetBounds(WorkspaceState.ArrangementId, new(0, 0, 1000, 520));
+        pane.Refresh(); main.UpdateLayout();
+        var basis = workflow.State.Snapshot; int history = workflow.State.UndoCount;
+        var view = main.GetVisualDescendants().OfType<WorkspacePane>().Single(v => AutomationProperties.GetAutomationId(v) == WorkspaceState.ArrangementId);
+        var surface = Field<Canvas>(workspace, "_canvas");
+        var resizeAt = new Point(view.Bounds.Width - 3, view.Bounds.Height / 2);
+        var hit = main.InputHitTest(view.TranslatePoint(resizeAt, main)!.Value) as Visual;
+        Require(hit is not null && !WorkspacePane.IsActionSource(hit), "Reserved pane edge hit: " + (hit?.GetType().Name ?? "null") + "; view=" + view.Bounds + "; source=" + string.Join(",", hit?.GetVisualAncestors().Select(v => v.GetType().Name) ?? []));
+        using (var resizePointer = new Pointer(100086, PointerType.Mouse, true))
+        {
+            var originalBounds = workspace.State.Bounds(WorkspaceState.ArrangementId);
+            var rootAt = view.TranslatePoint(resizeAt, main)!.Value;
+            ((InputElement)hit!).RaiseEvent(new PointerPressedEventArgs(hit, resizePointer, main, rootAt, 0,
+                new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed), KeyModifiers.None, 1));
+            Require(resizePointer.Captured == surface, "Pane edge did not capture the workspace resize gesture.");
+            surface.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, surface, resizePointer, main, rootAt + new Vector(20, 0), 0,
+                new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
+            surface.RaiseEvent(new PointerReleasedEventArgs(surface, resizePointer, main, rootAt + new Vector(20, 0), 0,
+                new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased), KeyModifiers.None, MouseButton.Left));
+            Require(workspace.State.Bounds(WorkspaceState.ArrangementId).Width == originalBounds.Width + 20 && workflow.State.Snapshot == basis,
+                "Reserved pane edge did not resize without musical edits.");
+            workspace.State.SetBounds(WorkspaceState.ArrangementId, originalBounds); main.UpdateLayout();
+        }
+        using var pointer = new Pointer(100085, PointerType.Mouse, true);
+        Point Root(Point point) => canvas.TranslatePoint(point, main)!.Value;
+        void Press(Point at, KeyModifiers modifiers = KeyModifiers.None) => canvas.RaiseEvent(new PointerPressedEventArgs(canvas, pointer, main, Root(at), 0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed), modifiers, 1));
+        void Move(Point at) => canvas.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, canvas, pointer, main, Root(at), 0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
+        async Task Release(Point at)
+        {
+            canvas.RaiseEvent(new PointerReleasedEventArgs(canvas, pointer, main, Root(at), 0,
+                new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased), KeyModifiers.None, MouseButton.Left));
+            await pane.PendingCommand; await workflow.ObserveAsync(); pane.Refresh(); main.UpdateLayout();
+        }
+        canvas.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.A, KeyModifiers = KeyModifiers.Control });
+        Require(canvas.Selection.Length == basis.State.ArrangementClips.Length, "Ctrl+A did not select every clip.");
+        var clip = basis.State.ArrangementClips[0]; var rect = canvas.ClipRect(clip);
+        Press(rect.Center); Move(rect.Center + new Vector(96, 0)); await Release(rect.Center + new Vector(96, 0));
+        Require(workflow.State.UndoCount == history + 1 && workflow.State.Snapshot.State.ArrangementClips.Zip(basis.State.ArrangementClips)
+            .All(pair => pair.First.Position.Ticks - pair.Second.Position.Ticks == 3840000), "Group drag lost spacing or one-transaction history.");
+        Require(await workflow.UndoAsync(), "Group move Undo failed."); pane.Refresh();
+        var duplicate = pane.GetVisualDescendants().OfType<Button>().Single(b => AutomationProperties.GetAutomationId(b) == "Arrangement.Duplicate");
+        duplicate.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await pane.PendingCommand; pane.Refresh();
+        Require(workflow.State.Snapshot.State.ArrangementClips.Length == basis.State.ArrangementClips.Length * 2, "Duplicate did not copy the whole group.");
+        Require(await workflow.UndoAsync(), "Group duplicate Undo failed."); pane.Refresh();
+        var start = new Point(canvas.HeaderSize + 96, 12); var end = new Point(canvas.HeaderSize + 288, 12);
+        Press(start); Move(end); await Release(end);
+        Require(workflow.State.SongLoopEnabled && workflow.State.LoopStart == 3840000 && workflow.State.LoopEnd == 11520000,
+            "Ruler drag did not select a musical loop range.");
+        Require(workflow.State.Snapshot == basis && workflow.State.UndoCount == history, "Transport range edited the musical document.");
+        await CaptureAsync(main, output, "playlist-group-and-range");
+        var loop = Field<Avalonia.Controls.Primitives.ToggleButton>(pane, "_loop"); loop.IsChecked = false; await pane.PendingCommand;
+        Require(!workflow.State.SongLoopEnabled, "Loop toggle did not disable the selected range.");
+        Press(start); await Release(start); Require(workflow.State.SongCursor == 3840000, "Ruler click did not seek while stopped.");
+        double tick = (scroll.Offset.X + 400 - canvas.HeaderSize) / canvas.TickPixels;
+        canvas.RaiseEvent(new PointerWheelEventArgs(canvas, pointer, main, Root(new(400, 120)), 0,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.Other), KeyModifiers.Control, new Vector(0, 1)));
+        main.UpdateLayout();
+        double after = (scroll.Offset.X + 400 - canvas.HeaderSize) / canvas.TickPixels;
+        Require(Math.Abs(tick - after) < 1, "Pointer zoom moved the musical anchor.");
+        Invoke(pane, "FitSong"); main.UpdateLayout(); Require(scroll.Offset.X == 0, "Fit did not return the viewport to the song.");
+        var controls = Field<WorkflowControls>(main, "_workflowControls");
+        foreach (string bpm in new[] { "135", "120" })
+        {
+            var action = Field<Button>(controls, "_tempoAction"); ((Flyout)action.Flyout!).ShowAt(action); await Task.Delay(20);
+            var value = Field<TextBox>(controls, "_tempoEdit"); value.Text = bpm;
+            value.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter }); await controls.PendingTempoCommand;
+            await workflow.ObserveAsync(); await Task.Delay(20); controls.Refresh();
+            var play = main.GetVisualDescendants().OfType<Button>().Single(b => AutomationProperties.GetAutomationId(b) == "Workflow.Play");
+            Require(workflow.State.CanPlay && play.IsEnabled, "Actual Play stayed disabled after a BPM popup commit.");
+        }
+        Require(await workflow.UndoAsync() && await workflow.UndoAsync(), "BPM edits Undo failed."); pane.Refresh();
+        await MainWindowRestoreAsync(main, output);
+        Json(output, "playlist-music-gestures", new { Passed = true, GroupDrag = true, GroupDuplicate = true, MusicalRange = true,
+            StoppedSeek = true, PointerZoom = true, PaneEdgeCapture = true, TempoPopupPlayAvailable = true, Input = "Synthetic routed events on production controls", NativeInput = false });
+    }
+
+    private static async Task MainWindowRestoreAsync(MainWindow main, string output)
+    {
+        var shell = Field<ShellSession>(main, "_session"); var app = (App)Application.Current!;
+        var workspace = Field<WorkspaceHost>(main, "_workspace");
+        main.WindowState = WindowState.Normal; main.Width = 1230; main.Height = 780;
+        var area = main.Screens.Primary!.WorkingArea; main.Position = new(area.X + 30, area.Y + 25); await Task.Delay(60);
+        var normal = (WorkspaceLayout)typeof(MainWindow).GetMethod("CaptureLayout", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(main, null)!;
+        main.WindowState = WindowState.Maximized; await Task.Delay(60);
+        var maximized = (WorkspaceLayout)typeof(MainWindow).GetMethod("CaptureLayout", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(main, null)!;
+        Require(maximized.Window is { Maximized: true } saved && saved.Width == normal.Window!.Width && saved.Height == normal.Window.Height,
+            "Maximizing lost normal window dimensions.");
+        string directory = Path.Combine(output, "window-restore"); var store = new WorkspaceLayoutStore(Path.Combine(directory, "layout.json"));
+        Require(await store.SaveAsync(maximized), "Window layout write failed.");
+        var load = await new WorkspaceLayoutStore(Path.Combine(directory, "layout.json")).LoadAsync();
+        var preferences = new PreferenceStore(Path.Combine(directory, "preferences.json"));
+        var restoredShell = new ShellSession(preferences, await preferences.LoadAsync());
+        var restored = new MainWindow(restoredShell, app, store, load); var closed = new TaskCompletionSource();
+        restored.Closed += (_, _) => closed.TrySetResult(); restored.Show();
+        try
+        {
+            await Task.Delay(100); Require(restored.WindowState == WindowState.Maximized, "Maximized window state was not restored.");
+            restored.WindowState = WindowState.Normal; await Task.Delay(80);
+            Require(Math.Abs(restored.Bounds.Width - normal.Window!.Width) <= 1 && Math.Abs(restored.Bounds.Height - normal.Window.Height) <= 1,
+                "Restoring from maximized lost saved normal dimensions.");
+            Require(Math.Abs(restored.Position.X - normal.Window.X) <= 1 && Math.Abs(restored.Position.Y - normal.Window.Y) <= 1,
+                "Main window position was not restored.");
+            var restoredWorkspace = Field<WorkspaceHost>(restored, "_workspace");
+            Require(restoredWorkspace.State.Get(WorkspaceState.ArrangementId).Visibility == PaneVisibility.Visible,
+                "Fresh restored window lost Playlist visibility.");
+            await CaptureAsync(restored, output, "main-window-restored");
+            Json(output, "main-window-restore", new { Passed = true, Maximized = true, NormalWidth = restored.Bounds.Width,
+                NormalHeight = restored.Bounds.Height, Position = restored.Position.ToString(), Panes = true, UserConfiguration = "isolated" });
+        }
+        finally { restored.Close(); await closed.Task.WaitAsync(TimeSpan.FromSeconds(5)); main.WindowState = WindowState.Normal; main.Width = 1280; main.Height = 800; }
     }
 
     private static async Task ArrangementPlaybackControlsAsync(ShellSession shell, string output)

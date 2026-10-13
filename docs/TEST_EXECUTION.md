@@ -115,6 +115,20 @@ Named mutex/pipe, real MSBuild evaluation and retention process ownership checks
 an active user window or audio device. Wall time is necessary for timeout/watchdog tests and explicit
 stress/device measurements; ordinary musical time and concurrency use controlled values/gates.
 
+## Playlist music workflow verification
+
+Arrangement/StepSequencer regressions cover seek PCM at 44.1/48 kHz, in-packet range wrapping,
+zero allocation/sticky Stop, group transaction/clamping/Undo/stale authority, first/middle/last channel
+removal and Undo/Redo, silent last-channel plans and recoverable preparation retry after BPM.
+WavDecoder adds signed PCM24/32/rate cases and narrow exporter-padding validation. Actual production
+windows verify musical groups/ruler/zoom, BPM popup Play availability, frame hit-test/captured resize,
+maximized and normal rectangle restoration, retained panes, RU/EN Dark/Light, fields and Save/Open/WAV.
+Routed input and guarded native captures remain distinct. DeviceCheck `sample-check` reads an explicit
+library and measures raw/smoothed PCM boundaries without output; `song-smoke` independently opens a
+quiet physical output and proves seek, range wrap, channel add/delete/Undo/Redo, finite end and join.
+Commands, failures, timing and acceptance limits belong to the
+[report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md). Reuse sufficient green checks under normal cadence.
+
 ## Playlist verification
 
 ArrangementTests covers independently calculated absolute tick/frame PCM for pitched-independent

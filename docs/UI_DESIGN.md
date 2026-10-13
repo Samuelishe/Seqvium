@@ -54,7 +54,7 @@ Only implemented actions are offered. User-restored layout remains authoritative
 
 ## Implemented R5-F1 Channel Rack composition
 
-A pristine layout opens the Rack with a useful creation action, without inserting music. At wider
+A pristine layout opens Rack and Playlist in the adaptive music composition, without inserting music. At wider
 window sizes, a project navigator lists actual playback occurrences with canonical rhythm thumbnails;
 it creates/selects Patterns. Narrow windows reclaim that space and retain the occurrence selector.
 The compact Pattern name/header, length selector, sixteenth-note ruler and fixed row geometry make
@@ -108,10 +108,10 @@ distributed application assets; the implementation uses original vectors and sha
 
 | Reference | Strong transferable solution | Implemented / planned boundary |
 | --- | --- | --- |
-| `playlist_main.png`, annotated FL Playlist | Source picker distinct from tracks, musical ruler, overview/scroll, clip notes, clear contextual tools | Source selection, shared clips, overview, snap, Ctrl-copy, repeats, M/S and retained pane are real; range/markers/automation/audio clips are follow-up |
+| `playlist_main.png`, annotated FL Playlist | Source picker distinct from tracks, musical ruler, overview/scroll, clip notes, clear contextual tools | Source selection, shared clips, overview, snap, Ctrl-copy, repeats, M/S and retained pane are real; seek/range/group editing now work; markers/automation/audio clips are follow-up |
 | `Screenshot-2024-10-04-at-1.47.57-PM.png.webp`, FL song | Track colors and repeated clip headers connect the overview to the song; named parts make structure legible | Named/color tracks, actual duration/pitch thumbnails, stationary headings and muted dimming; dynamic groups and section markers remain planned |
 | `1.-Color.jpg`, SONAR | Strong colored track identity, substantial controls, visible editing tools and waveform/fade detail | Adapt header/material depth and real gates; waveform trim/fades require supported audio-clip semantics, not decorative waveforms |
-| `VJPS1X.jpg`, Cubase | Stable inspector/track column, musical range, organized groups, precise source editor and measured Master | Fixed headings, committed contextual track settings and scalable view now; groups/range/sample editor/Master measurement require their owners |
+| `VJPS1X.jpg`, Cubase | Stable inspector/track column, musical range, organized groups, precise source editor and measured Master | Fixed headings, committed contextual track settings and scalable view now; musical range now works; groups/sample editor/Master measurement require their owners |
 | `daw-software-editing.jpg`, stylized DAW illustration | Rapid visual distinction of musical layers and a clear primary working area | Adapt color hierarchy only; it is an illustration, not pixel/interaction authority or permission for simulated Mixer/meters |
 | Earlier Logic / Reason / Serum / FabFilter | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability |
 

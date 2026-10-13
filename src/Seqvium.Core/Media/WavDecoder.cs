@@ -62,8 +62,11 @@ public static class WavDecoder
     public static DecodedPcm Decode(ReadOnlySpan<byte> bytes)
     {
         if (bytes.Length is < 12 or > MaximumSourceBytes || !bytes[..4].SequenceEqual("RIFF"u8) ||
-            !bytes.Slice(8, 4).SequenceEqual("WAVE"u8) || U32(bytes, 4) != bytes.Length - 8)
+            !bytes.Slice(8, 4).SequenceEqual("WAVE"u8) ||
+            !(U32(bytes, 4) == bytes.Length - 8 || U32(bytes, 4) == bytes.Length - 7))
             throw new WavFormatException("Invalid or unsupported RIFF/WAVE length/header.");
+        // Some sample exporters count one nonexistent outer padding byte. Each actual chunk
+        // must still be complete and validated; this never synthesizes a missing PCM byte.
         int formatOffset = -1, formatLength = 0, dataOffset = -1, dataLength = 0;
         for (int offset = 12; offset < bytes.Length;)
         {
@@ -106,18 +109,26 @@ public static class WavDecoder
                 subformat == new Guid("00000003-0000-0010-8000-00aa00389b71") ? 3 : 0;
         }
         else if (formatLength > 18) throw new WavFormatException("Unsupported format extension.");
-        if (channels is not (1 or 2) || rate is not (44100 or 48000) ||
-            !(tag == 1 && bits == 16 || tag == 3 && bits == 32))
-            throw new WavFormatException("Supported WAV: PCM16/float32, mono/stereo, 44100/48000 Hz.");
+        if (channels is not (1 or 2) || rate is < 8000 or > 192000 ||
+            !(tag == 1 && bits is 16 or 24 or 32 || tag == 3 && bits == 32))
+            throw new WavFormatException("Supported WAV: PCM16/24/32 or float32, mono/stereo, 8–192 kHz; FLAC is not supported.");
         int alignment = channels * (bits / 8);
+        // A few mono PCM24 exporters include the terminal RIFF padding zero in data's size.
+        // Accept that exact complete-frame variant, never arbitrary partial sample data.
+        if (tag == 1 && bits == 24 && channels == 1 && dataLength % alignment == 1 &&
+            ((dataLength - 1) & 1) == 1 && dataOffset + dataLength == bytes.Length && bytes[^1] == 0)
+            dataLength--;
         if (U16(format, 12) != alignment || U32(format, 8) != rate * alignment || dataLength % alignment != 0 || dataLength == 0)
             throw new WavFormatException("Invalid rate, frame alignment or empty data.");
         var data = bytes.Slice(dataOffset, dataLength);
         var samples = new float[dataLength / (bits / 8)]; // At most 32 MiB, bounded by actual validated source bytes.
         for (int i = 0; i < samples.Length; i++)
         {
-            float value = tag == 1 ? BinaryPrimitives.ReadInt16LittleEndian(data.Slice(i * 2, 2)) / 32768f :
-                BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(data.Slice(i * 4, 4)));
+            int offset = i * (bits / 8);
+            float value = tag != 1 ? BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset, 4))) :
+                bits == 16 ? BinaryPrimitives.ReadInt16LittleEndian(data.Slice(offset, 2)) / 32768f :
+                bits == 24 ? ((data[offset] | data[offset + 1] << 8 | data[offset + 2] << 16) << 8 >> 8) / 8388608f :
+                (float)(BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset, 4)) / 2147483648d);
             if (!float.IsFinite(value)) throw new WavFormatException("Nonfinite float PCM is unsupported.");
             samples[i] = Math.Clamp(value, -1f, 1f);
         }

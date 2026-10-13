@@ -38,6 +38,10 @@ platform user configuration directory. It does not change the preference schema,
 Save, device intent, media roots or recovery. Missing layout means four optional hidden panes,
 including Node Graph and Node Editor. Older layouts initialize each missing pane hidden.
 Version 1 stores usable workspace `width`/`height`, `activePaneId`, and a back-to-front `panes` array.
+Optional `window` contains normal `x`/`y` in screen pixels, `width`/`height` in DIPs and `maximized`.
+Omission is valid for older layouts; malformed supplied values use the same preserve-original fallback.
+Maximized/minimized geometry never replaces the normal restore rectangle. Main-window movement,
+settled resize, pane commits and joined shutdown persist this independent user configuration.
 Each entry contains `instanceId`, `typeId`, `visibility` (`hidden`/`visible`/`collapsed`), floating
 `x`/`y`/`width`/`height`, `dock` (`floating`/`left`/`right`) and `allowDocking`. The optional version-1
 `dockedWidth` is independent of the retained floating rectangle and stores actual permitted dock width.

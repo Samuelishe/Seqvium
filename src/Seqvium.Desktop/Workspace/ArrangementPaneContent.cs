@@ -5,6 +5,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Seqvium.Core;
@@ -26,6 +27,8 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
         Width = 64, ShowButtonSpinner = false, FormatString = "0" };
     private readonly TextBlock _repeatLabel = new() { VerticalAlignment = VerticalAlignment.Center };
     private readonly ToggleButton _follow = new() { IsChecked = true, Classes = { "command" }, Margin = new(3, 0) };
+    private readonly ToggleButton _loop = new() { Classes = { "command" }, Margin = new(3, 0) };
+    private readonly ToggleButton _select = new() { Classes = { "command" }, Margin = new(3, 0) };
     private readonly ScrollViewer _scroll;
     private readonly ArrangementOverview _overview;
     private readonly ComboBox _snap = new() { Width = 106, Margin = new(6, 0) };
@@ -49,6 +52,9 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
         var toolbar = new WrapPanel { Orientation = Orientation.Horizontal, Margin = new(8) };
         Children.Add(toolbar);
         _canvas = new(shell, workflow);
+        _scroll = new ScrollViewer { Content = _canvas,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
         _canvas.SelectionChanged += Refresh;
         _canvas.CommandSubmitted += task => PendingCommand = task;
         _canvas.TrackRequested += (lane, command) =>
@@ -75,8 +81,21 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
         AddButton(toolbar, "Play", "Play", async () =>
         { await workflow.SetSongModeAsync(true); await workflow.PlayAsync(); });
         AddButton(toolbar, "Stop", "Stop", async () => await workflow.StopAsync());
-        AddButton(toolbar, "Duplicate", "Duplicate", () => SelectedCommand((basis, clip) => workflow.DuplicateArrangementClipAsync(basis, clip.Id)));
-        AddButton(toolbar, "Delete", "Delete", () => SelectedCommand((basis, clip) => workflow.DeleteArrangementClipAsync(basis, clip.Id)));
+        AddButton(toolbar, "Start", "Start", async () => await workflow.SeekSongAsync(default));
+        AddButton(toolbar, "Duplicate", "Duplicate", () => SelectionCommand(duplicate: true));
+        AddButton(toolbar, "Delete", "Delete", () => SelectionCommand(delete: true));
+        _select.Content = HostIcons.Create("Selection", _select); toolbar.Children.Add(_select);
+        _select.IsCheckedChanged += (_, _) => _canvas.SelectMode = _select.IsChecked == true;
+        AutomationProperties.SetAutomationId(_select, "Arrangement.Select");
+        _loop.Content = HostIcons.Create("Loop", _loop); toolbar.Children.Add(_loop);
+        _loop.IsCheckedChanged += async (_, _) =>
+        {
+            if (_refreshing) return;
+            var observation = workflow.State;
+            PendingCommand = workflow.SetSongLoopAsync(new(observation.LoopStart), new(observation.LoopEnd), _loop.IsChecked == true);
+            await PendingCommand;
+        };
+        AutomationProperties.SetAutomationId(_loop, "Arrangement.Loop");
         _snap.SelectionChanged += (_, _) => { if (!_refreshing && _snap.SelectedIndex >= 0) _canvas.Snap = (ArrangementSnap)_snap.SelectedIndex; };
         toolbar.Children.Add(_snap);
         AddButton(toolbar, "Tracks", "Playlist", () => { OpenTrack(); return Task.CompletedTask; });
@@ -88,19 +107,41 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
             if (!_refreshing && _repeats.Value is { } value && decimal.Truncate(value) == value)
                 await SelectedCommand((basis, clip) => workflow.UpdateArrangementClipAsync(basis, clip.Id, clip.Position, clip.Lane, (int)value));
         };
-        AddButton(toolbar, "ZoomOut", "Minimize", () => { _canvas.Zoom(false); return Task.CompletedTask; });
-        AddButton(toolbar, "ZoomIn", "Add", () => { _canvas.Zoom(true); return Task.CompletedTask; });
+        AddButton(toolbar, "ZoomOut", "Minimize", () => { ZoomAt(false, _scroll.Viewport.Width / 2); return Task.CompletedTask; });
+        AddButton(toolbar, "ZoomIn", "Add", () => { ZoomAt(true, _scroll.Viewport.Width / 2); return Task.CompletedTask; });
         AddButton(toolbar, "Fit", "Fit", () => { FitSong(); return Task.CompletedTask; });
         _follow.Content = HostIcons.Create("Follow", _follow, 18); toolbar.Children.Add(_follow);
         AutomationProperties.SetAutomationId(_follow, "Arrangement.Follow");
-        AddButton(toolbar, "Export", "Save", () => action("ExportSong"));
+        AddButton(toolbar, "Export", "Export", () => action("ExportSong"));
         toolbar.Children.Add(_position);
-        _scroll = new ScrollViewer { Content = _canvas,
-            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
-            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
-        _overview = new(shell, ratio => _scroll.Offset = new(Math.Max(0, ratio * _canvas.Width - _scroll.Viewport.Width / 2), _scroll.Offset.Y));
+        _overview = new(shell, ratio =>
+        {
+            _follow.IsChecked = false;
+            _scroll.Offset = new(Math.Max(0, _canvas.HeaderSize + ratio * _canvas.TotalTicks * _canvas.TickPixels - (_scroll.Viewport.Width + _canvas.HeaderSize) / 2), _scroll.Offset.Y);
+        });
+        _overview.ViewportRequested += (left, right) =>
+        {
+            _follow.IsChecked = false;
+            double total = _canvas.TotalTicks;
+            _canvas.ShowRange((right - left) * total, _scroll.Viewport.Width);
+            _scroll.Offset = new(Math.Max(0, left * total * _canvas.TickPixels), _scroll.Offset.Y);
+        };
         _overview.Margin = new(8, 0, 8, 4); SetRow(_overview, 1); Children.Add(_overview);
         _scroll.ScrollChanged += (_, _) => RefreshOverview();
+        _canvas.PanRequested += delta =>
+        { _follow.IsChecked = false; _scroll.Offset = new(Math.Max(0, _scroll.Offset.X - delta.X), Math.Max(0, _scroll.Offset.Y - delta.Y)); };
+        _scroll.AddHandler(PointerWheelChangedEvent, (_, e) =>
+        {
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+                ZoomAt(e.Delta.Y > 0, e.GetPosition(_scroll).X);
+            else if (e.KeyModifiers.HasFlag(KeyModifiers.Shift) || Math.Abs(e.Delta.X) > 0)
+            {
+                _follow.IsChecked = false;
+                _scroll.Offset = new(Math.Max(0, _scroll.Offset.X - (e.Delta.X != 0 ? e.Delta.X : e.Delta.Y) * 80), _scroll.Offset.Y);
+            }
+            else { _follow.IsChecked = false; return; }
+            e.Handled = true;
+        }, RoutingStrategies.Tunnel);
         SetRow(_scroll, 2); Children.Add(_scroll);
         _hint.Margin = new(12, 8); SetRow(_hint, 3); Children.Add(_hint);
         workflow.Changed += WorkflowChanged; shell.PropertyChanged += PreferencesChanged; Refresh();
@@ -124,6 +165,21 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
         return PendingCommand;
     }
 
+    private Task SelectionCommand(bool duplicate = false, bool delete = false)
+    {
+        PendingCommand = _workflow.EditArrangementSelectionAsync(_canvas.Basis, _canvas.Selection, duplicate: duplicate, delete: delete);
+        return PendingCommand;
+    }
+
+    private void ZoomAt(bool closer, double viewportX)
+    {
+        _follow.IsChecked = false;
+        double anchor = Math.Max(_canvas.HeaderSize, viewportX);
+        double tick = (_scroll.Offset.X + anchor - _canvas.HeaderSize) / _canvas.TickPixels;
+        _canvas.Zoom(closer);
+        _scroll.Offset = new(Math.Max(0, _canvas.HeaderSize + tick * _canvas.TickPixels - anchor), _scroll.Offset.Y);
+    }
+
     private void WorkflowChanged(WorkflowState state) => Dispatcher.UIThread.Post(() => { if (!_disposed) Refresh(); });
     private void PreferencesChanged(object? sender, PropertyChangedEventArgs args) => Refresh();
 
@@ -140,6 +196,11 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
             _snap.SelectedIndex = (int)_canvas.Snap;
             AutomationProperties.SetName(_snap, _shell["Arrangement.Snap"]); ToolTip.SetTip(_snap, _shell["Arrangement.Snap"]);
             AutomationProperties.SetName(_follow, _shell["Arrangement.Follow"]); ToolTip.SetTip(_follow, _shell["Arrangement.Follow"]);
+            AutomationProperties.SetName(_select, _shell["Arrangement.Select"]); ToolTip.SetTip(_select, _shell["Arrangement.Select"]);
+            AutomationProperties.SetName(_loop, _shell["Arrangement.Loop"]); ToolTip.SetTip(_loop, _shell["Arrangement.Loop"]);
+            _loop.IsChecked = observation.SongLoopEnabled;
+            _loop.IsEnabled = !observation.Busy && observation.LoopEnd - observation.LoopStart >= MusicalPosition.TicksPerQuarter / 4;
+            _select.IsEnabled = !observation.Busy;
             if (_follow.IsChecked == true && observation.SongMode && observation.Execution?.Execution.Playing == true && !_canvas.HasGesture)
             {
                 double x = _canvas.PlayheadX;
@@ -154,7 +215,7 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
             var selected = state.ArrangementClips.SingleOrDefault(c => c.Id == _canvas.Selected);
             _repeatLabel.Text = _shell["Arrangement.Repeats"];
             _repeats.Value = selected?.Repeats ?? 1;
-            _repeats.IsEnabled = selected is not null && !observation.Busy;
+            _repeats.IsEnabled = selected is not null && _canvas.Selection.Length == 1 && !observation.Busy;
             AutomationProperties.SetAutomationId(_repeats, "Arrangement.Repeats");
             AutomationProperties.SetName(_repeats, _repeatLabel.Text);
             foreach (var (key, button) in _buttons)
@@ -163,7 +224,7 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
                 ToolTip.SetTip(button, label); AutomationProperties.SetName(button, label);
                 button.IsEnabled = key == "Stop" ? observation.CanStop || observation.Busy : !observation.Busy && key switch
                 { "Play" => ArrangementPreparation.Refusal(state) is null, "Export" => !state.ArrangementClips.IsEmpty,
-                    "Duplicate" or "Delete" => selected is not null, _ => true };
+                    "Duplicate" or "Delete" => _canvas.Selection.Length > 0, _ => true };
             }
             _buttons["Play"].Classes.Set("active", observation.SongMode && observation.Execution?.Execution.Playing == true);
             long ticks = _canvas.PositionTicks;
@@ -184,8 +245,8 @@ internal sealed class ArrangementPaneContent : Grid, IDisposable
     internal void FocusEditor() { if (!_disposed && IsEffectivelyVisible) _canvas.Focus(); }
 
     private void RefreshOverview() => _overview.Adopt(_workflow.State, _canvas.TotalTicks,
-        _scroll.Offset.X / _canvas.TickPixels, (_scroll.Offset.X + _scroll.Viewport.Width) / _canvas.TickPixels, _canvas.PositionTicks);
-    private void FitSong() => _canvas.Fit(_scroll.Viewport.Width);
+        _scroll.Offset.X / _canvas.TickPixels, (_scroll.Offset.X + Math.Max(0, _scroll.Viewport.Width - _canvas.HeaderSize)) / _canvas.TickPixels, _canvas.PositionTicks);
+    private void FitSong() { _follow.IsChecked = false; _canvas.Fit(_scroll.Viewport.Width); _scroll.Offset = default; }
 
     private void BuildTrackEditor()
     {

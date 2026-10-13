@@ -18,6 +18,9 @@ internal sealed class ArrangementOverview : Control
     private WorkflowState? _state;
     private double _totalTicks = 1, _left, _right, _position;
     private IPointer? _pointer;
+    private double _grab;
+    private int _edge;
+    internal event Action<double, double>? ViewportRequested;
     internal ArrangementOverview(ShellSession shell, Action<double> navigate)
     {
         _shell = shell; _navigate = navigate;
@@ -59,12 +62,22 @@ internal sealed class ArrangementOverview : Control
     {
         base.OnPointerPressed(e);
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        double x = e.GetPosition(this).X, ratio = x / Math.Max(1, Bounds.Width);
+        _edge = Math.Abs(x - _left * Bounds.Width) < 8 ? -1 : Math.Abs(x - _right * Bounds.Width) < 8 ? 1 : 0;
+        _grab = ratio >= _left && ratio <= _right ? ratio - (_left + _right) / 2 : 0;
         _pointer = e.Pointer; e.Pointer.Capture(this); Navigate(e.GetPosition(this)); e.Handled = true;
     }
     protected override void OnPointerMoved(PointerEventArgs e)
     { base.OnPointerMoved(e); if (_pointer == e.Pointer) { Navigate(e.GetPosition(this)); e.Handled = true; } }
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     { base.OnPointerReleased(e); if (_pointer == e.Pointer) { Cancel(); e.Handled = true; } }
-    private void Navigate(Point point) { if (Bounds.Width > 0) _navigate(Math.Clamp(point.X / Bounds.Width, 0, 1)); }
+    private void Navigate(Point point)
+    {
+        if (Bounds.Width <= 0) return;
+        double ratio = Math.Clamp(point.X / Bounds.Width, 0, 1);
+        if (_edge == 0) _navigate(Math.Clamp(ratio - _grab, 0, 1));
+        else if (_edge < 0) ViewportRequested?.Invoke(Math.Min(ratio, _right - .005), _right);
+        else ViewportRequested?.Invoke(_left, Math.Max(ratio, _left + .005));
+    }
     internal void Cancel() { var pointer = _pointer; _pointer = null; pointer?.Capture(null); }
 }

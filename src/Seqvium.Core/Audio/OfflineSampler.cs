@@ -17,10 +17,10 @@ public static class PcmSampler
     public static double Step(int sourceRate, int executionRate, decimal rootPitch, decimal notePitch)
     {
         ValidateConfiguration(rootPitch, 0);
-        if (sourceRate is not (44100 or 48000) || executionRate is not (44100 or 48000) ||
+        if (sourceRate is < 8000 or > 192000 || executionRate is not (44100 or 48000) ||
             notePitch is < 0 or > 127 || Math.Abs(notePitch - rootPitch) > 12)
             throw new NotSupportedException(
-                "Sampler supports 44100/48000 Hz and root ±12 semitones within MIDI 0–127.");
+                "Sampler supports 8–192 kHz sources, 44.1/48 kHz output and root ±12 semitones within MIDI 0–127.");
         return (double)sourceRate / executionRate * Math.Pow(2, (double)(notePitch - rootPitch) / 12);
     }
 }
@@ -102,7 +102,10 @@ public sealed class PreparedSampler : IDisposable
     internal PcmLease[] LeaseSources() => (_sources ?? throw new ObjectDisposedException(nameof(PreparedSampler)))
         .Select(source => source.Lease()).ToArray();
 
-    public OfflineSampler CreateExecution() => new(this);
+    public OfflineSampler CreateExecution(bool smoothBoundaries = false)
+    {
+        var execution = new OfflineSampler(this); execution.SetBoundarySmoothing(smoothBoundaries); return execution;
+    }
 
     public void Dispose()
     {
@@ -147,9 +150,9 @@ public static class SamplerPreparation
         PreparedGraph? graph = null, CancellationToken cancellationToken = default)
     {
         document.CheckAvailable();
-        if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || voiceCapacity is < 1 or > 8 ||
+        if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || voiceCapacity < 1 || voiceCapacity > (graph is null ? 8 : GraphPreparation.MaximumVoices) ||
             repeats is < 1 or > 1024)
-            throw new NotSupportedException("F1 supports 44100/48000 Hz, mono/stereo, 1–8 voices, 1–1024 repeats.");
+            throw new NotSupportedException("Sampler supports 44100/48000 Hz, mono/stereo, 1–8 raw or 1–32 graph voices, 1–1024 repeats.");
         var snapshot = document.Current;
         var state = snapshot.State;
         var pattern = state.Patterns.SingleOrDefault(item => item.Id == patternId)
@@ -308,6 +311,11 @@ public sealed class OfflineSampler : IDisposable
     private int _lastSamples;
     private bool _looping;
     private long _iteration;
+    private bool _smoothBoundaries;
+    private long _rangeBoundary = long.MaxValue;
+    private int BoundaryFadeFrames => Math.Max(1, (_plan.SampleRate * 3 + 999) / 1000);
+    internal void SetBoundarySmoothing(bool enabled) => _smoothBoundaries = enabled;
+    internal void SetRangeBoundary(long end) => _rangeBoundary = end;
     public long Position { get; private set; }
     internal long LoopPositionTicks => _looping && _plan.Loop is { } clock
         ? Math.Clamp(clock.Ticks(Position) - clock.StartTicks - _iteration * clock.LengthTicks, 0, clock.LengthTicks - 1) : 0;
@@ -350,6 +358,33 @@ public sealed class OfflineSampler : IDisposable
 
     internal void SetLooping(bool looping) => _looping = looping && _plan.Loop is not null;
     internal void Finish() { Stop(); Position = _plan.EndFrame; }
+
+    /// <summary>Reconstruct stateless PCM destination context, including source age and release.
+    /// The frozen note table and voice capacity bound work; no history or allocation enters rendering.</summary>
+    internal void Seek(long frame)
+    {
+        Stop(); _stopped = false; _iteration = 0;
+        Position = Math.Clamp(frame, _plan.StartFrame, _plan.EndFrame);
+        int first = 0, last = _plan.Events.Length;
+        while (first < last)
+        {
+            int middle = first + (last - first) / 2;
+            if (_plan.Events[middle].Frame < Position) first = middle + 1;
+            else last = middle;
+        }
+        _eventIndex = first;
+        int slot = 0;
+        for (int index = 0; index < _plan.Notes.Length; index++)
+        {
+            var note = _plan.Notes[index];
+            long age = Position - note.StartFrame, release = Position - note.EndFrame;
+            if (age <= 0 || age * note.Step >= _sources![note.SourceIndex].Frames ||
+                release >= note.ReleaseFrames) continue;
+            var voice = _voices[slot++];
+            voice.Note = note; voice.NoteIndex = index; voice.Age = age;
+            voice.ReleaseAge = release < 0 ? -1 : (int)release;
+        }
+    }
 
     // Mapping is constructed by the control owner, never searched/allocated in the callback.
     internal void ContinueFrom(OfflineSampler old, int[] notes)
@@ -422,6 +457,18 @@ public sealed class OfflineSampler : IDisposable
 
                 double gain = note.Gain *
                               (voice.ReleaseAge < 0 ? 1 : 1 - (double)voice.ReleaseAge / note.ReleaseFrames);
+                if (_smoothBoundaries)
+                {
+                    // Finish inside the permitted boundary, preserving exact silence after it.
+                    // PCM source EOF, zero-release gate and the Pattern/Song end each own a boundary.
+                    double remaining = (source.Frames - cursor) / note.Step;
+                    long gateAge = note.EndFrame - note.StartFrame;
+                    if (note.ReleaseFrames == 0) remaining = Math.Min(remaining, gateAge - voice.Age);
+                    long end = _looping && _plan.Loop is { } loopClock
+                        ? loopClock.Frame(loopClock.StartTicks + (_iteration + 1) * loopClock.LengthTicks) : _plan.EndFrame;
+                    remaining = Math.Min(remaining, Math.Min(end, _rangeBoundary) - Position);
+                    gain *= Math.Clamp((remaining - 1) / BoundaryFadeFrames, 0, 1);
+                }
                 double left = Interpolate(source, cursor, 0);
                 double right = source.Channels == 1 ? left : Interpolate(source, cursor, 1);
                 Span<float> contribution = _signals is null ? interleavedOutput : _signals[note.ContributionIndex];
@@ -449,6 +496,7 @@ public sealed class OfflineSampler : IDisposable
                 var destination = _signals![operation.Buffer].AsSpan(0, _lastSamples);
                 if (operation.Kind == GraphOperationKind.Gain)
                 {
+                    if (operation.Inputs.Length == 0) continue; // Empty Channel Rack is a silent contribution.
                     var input = _signals[operation.Inputs[0]];
                     float amplitude = _coefficients![operation.Coefficient];
                     for (int index = 0; index < destination.Length; index++) destination[index] = input[index] * amplitude;

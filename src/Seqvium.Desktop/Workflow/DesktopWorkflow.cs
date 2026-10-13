@@ -23,6 +23,10 @@ internal sealed record WorkflowState(ProjectDocument Document, OccurrenceChoice[
     internal bool IsClosed { get; } = Document.IsClosed;
     internal bool SongMode { get; init; }
     internal int ExecutionSampleRate { get; init; } = 48000;
+    internal long SongCursor { get; init; }
+    internal long LoopStart { get; init; }
+    internal long LoopEnd { get; init; }
+    internal bool SongLoopEnabled { get; init; }
 }
 
 /// <summary>Host application/session owner over the existing document, import, persistence and F2 engine.
@@ -58,7 +62,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     {
         _document = document;
         _openOutput = openOutput ?? DesktopOutput.Open;
-        _createCoordinator = createCoordinator ?? ((doc, sampler, target, owner) => new(doc, sampler, target, owner));
+        _createCoordinator = createCoordinator ?? ((doc, sampler, target, owner) => new(doc, sampler, target, owner, voiceCapacity: GraphPreparation.MaximumVoices));
         _mediaDirectory = mediaDirectory;
         _selected = document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
         _songMode = !document.Current.State.ArrangementClips.IsEmpty;
@@ -206,6 +210,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             _document.Changed += DocumentChanged;
             _selected = _document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
             _songMode = !_document.Current.State.ArrangementClips.IsEmpty;
+            _songCursor = _loopStart = _loopEnd = 0; _songLoopEnabled = false;
             _status = loaded.IsDegraded ? "Workflow.Degraded" : "Workflow.Opened";
             _detail = string.Join(" · ", loaded.Diagnostics.Concat(loaded.GraphReports.SelectMany(r => r.Diagnostics)
                 .Select(d => d.Reason)));
@@ -251,7 +256,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             }
         }
         _status = "Workflow.Preparing"; Publish();
+        _coordinator!.RetryBlockedPreparation();
         _output!.Sampler.SetLooping(!_songMode);
+        ApplySongTransport(seek: _songMode);
         for (int wait = 0; wait < 1500 && generation == _playGeneration; wait++)
         {
             var status = _coordinator!.ReadStatus();
@@ -318,6 +325,10 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void DocumentChanged()
     {
+        long end = ArrangementPreparation.EndTicks(_document.Current.State);
+        _songCursor = Math.Min(_songCursor, end); _loopEnd = Math.Min(_loopEnd, end);
+        if (_loopEnd - _loopStart < MusicalPosition.TicksPerQuarter / 4) _songLoopEnabled = false;
+        ApplySongTransport();
         if (_songMode && _document.Current.State.ArrangementClips.IsEmpty) { _playGeneration++; _coordinator?.Stop(); }
         if (SelectedAttachment() is null)
         {
@@ -375,8 +386,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         }
         var observation = new WorkflowState(_document, choices, _selected, gain, chain, source, statusKey,
             detail, _output?.Description, _busy, !_busy && !_closed && (_songMode ? songRefusal is null : report?.IsEligibleForPreparation == true) &&
-            !_document.SavedMediaDiagnostics.Any() && execution?.Closed != true && execution?.Blocker is null,
-            !_closed && _output is not null, execution) { SongMode = _songMode, ExecutionSampleRate = _output?.Sampler.SampleRate ?? 48000 };
+            !_document.SavedMediaDiagnostics.Any() && execution?.Closed != true,
+            !_closed && _output is not null, execution) { SongMode = _songMode, ExecutionSampleRate = _output?.Sampler.SampleRate ?? 48000,
+                SongCursor = _songCursor, LoopStart = _loopStart, LoopEnd = _loopEnd, SongLoopEnabled = _songLoopEnabled };
         Volatile.Write(ref _state, observation);
         Changed?.Invoke(observation);
     }

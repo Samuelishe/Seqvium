@@ -27,6 +27,39 @@ internal sealed partial class MainWindow : Window
     private GraphPaneContent? _graphPane;
     private bool _closing;
     private bool _shutdownComplete;
+    private MainWindowPlacement? _normalWindow;
+
+    private WorkspaceLayout CaptureLayout() => _workspace.State.Capture() with
+    {
+        Window = _normalWindow is { } normal ? normal with { Maximized = WindowState == WindowState.Maximized ||
+            WindowState == WindowState.Minimized && normal.Maximized } : null
+    };
+
+    private void RememberWindow()
+    {
+        if (WindowState == WindowState.Normal && IsVisible)
+            _normalWindow = new(Position.X, Position.Y, Width, Height, false);
+        else if (WindowState == WindowState.Maximized && _normalWindow is { } normal)
+            _normalWindow = normal with { Maximized = true };
+    }
+
+    private void RestoreWindow(MainWindowPlacement? saved)
+    {
+        if (saved is null)
+        { _normalWindow = new(Position.X, Position.Y, Width, Height, true); WindowState = WindowState.Maximized; return; }
+        var screen = Screens.ScreenFromPoint(new(saved.X, saved.Y)) ?? Screens.Primary;
+        if (screen is not null)
+        {
+            var area = screen.WorkingArea; double scale = screen.Scaling;
+            Width = Math.Clamp(saved.Width, Math.Min(MinWidth, area.Width / scale), area.Width / scale);
+            Height = Math.Clamp(saved.Height, Math.Min(MinHeight, area.Height / scale), area.Height / scale);
+            Position = new((int)Math.Clamp(saved.X, area.X, area.Right - Width * scale),
+                (int)Math.Clamp(saved.Y, area.Y, area.Bottom - Height * scale));
+            WindowStartupLocation = WindowStartupLocation.Manual;
+            _normalWindow = new(Position.X, Position.Y, Width, Height, saved.Maximized);
+        }
+        WindowState = saved.Maximized ? WindowState.Maximized : WindowState.Normal;
+    }
 
     internal void ActivateExisting()
     {
@@ -41,6 +74,7 @@ internal sealed partial class MainWindow : Window
         _session = session;
         _app = app;
         InitializeComponent();
+        RestoreWindow(layout.Layout?.Window);
         DataContext = session;
         InitializeWorkflow();
         _layoutFallback = layout.UsedFallback;
@@ -69,11 +103,18 @@ internal sealed partial class MainWindow : Window
         };
         SizeChanged += (_, _) => AdaptNavigation(); AdaptNavigation();
         // The first workspace starts at a musical tool without creating or modifying a Pattern.
-        if (layout.Layout is null) Opened += (_, _) => _workspace.Open(WorkspaceState.BeatId);
+        Opened += (_, _) =>
+        {
+            RememberWindow();
+            if (layout.Layout is null) Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            { _workspace.State.ArrangeMusic(); _workspace.Commit(); });
+        };
+        PositionChanged += (_, _) => { RememberWindow(); if (IsVisible) _workspace.Commit(); };
+        SizeChanged += (_, _) => RememberWindow();
         _workspace.State.Changed += RefreshGainHierarchy;
         RefreshGainHierarchy();
         _workspace.LeaveRequested += () => PaneMenuAction.Focus();
-        _workspace.LayoutCommitted += () => _layoutPersistence.Request(_workspace.State.Capture());
+        _workspace.LayoutCommitted += () => _layoutPersistence.Request(CaptureLayout());
         _layoutPersistence.Completed += () => session.SetLayoutNotice(_layoutFallback ? "Workspace.LoadFallback" :
             _layoutPersistence.LastWriteSucceeded ? null : "Workspace.SaveFailed");
         if (_layoutFallback) session.SetLayoutNotice("Workspace.LoadFallback");
@@ -142,6 +183,12 @@ internal sealed partial class MainWindow : Window
     }
 
     private void MinimizeClicked(object? sender, RoutedEventArgs args) => WindowState = WindowState.Minimized;
+
+    private void MusicLayoutClicked(object? sender, RoutedEventArgs args)
+    {
+        PaneMenuAction.Flyout?.Hide(); _workspace.CancelGestures();
+        _workspace.State.ArrangeMusic(); _workspace.Commit();
+    }
 
     private void MaximizeClicked(object? sender, RoutedEventArgs args) =>
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
@@ -280,7 +327,7 @@ internal sealed partial class MainWindow : Window
         _workflow.Changed -= WorkflowChanged;
         await _workflow.DisposeAsync();
         _workspace.PrepareShutdown();
-        _layoutPersistence.Request(_workspace.State.Capture());
+        RememberWindow(); _layoutPersistence.Request(CaptureLayout());
         await _layoutPersistence.ShutdownAsync();
         await _preferenceWork;
         _shutdownComplete = true;

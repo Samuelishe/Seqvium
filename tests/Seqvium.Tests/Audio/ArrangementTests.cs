@@ -180,6 +180,105 @@ public sealed class ArrangementTests
         Assert.Equal(SamplerPublication.Accepted, request.Publish());
     }
 
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public async Task ProductionBoundarySmoothingEndsInsideGateAndSourceEofWithNoAddedTail(bool sourceEof)
+    {
+        using var f = await Fixture.Create(longPattern: !sourceEof);
+        if (sourceEof)
+            f.Document.Edit("Keep gate beyond short source EOF", edit =>
+            {
+                var pattern = f.Document.Current.State.Patterns[0]; var part = pattern.Parts[0]; var note = part.Notes[0];
+                edit.SetPatternLength(pattern.Id, new(3840000));
+                edit.UpdateNote(pattern.Id, part.Id, note.Id, note.Position, new(1920000), note.Pitch, note.Intensity);
+            });
+        f.Document.Edit("Song", edit => edit.AddArrangementClip(f.Sources[0], default, 0));
+        using var plan = ArrangementPreparation.Prepare(f.Document, 48000, 2, 256, TestContext.Current.CancellationToken);
+        using var raw = plan.CreateExecution(); using var smooth = plan.CreateExecution(smoothBoundaries: true);
+        long end = sourceEof ? 512 : plan.Events.First(e => e.Kind == ExecutionEventKind.NoteOff).Frame;
+        var original = new float[512]; var softened = new float[512];
+        while (raw.Position < end - 256)
+        {
+            int frames = (int)Math.Min(256, end - 256 - raw.Position);
+            raw.Process(original.AsSpan(0, frames * 2)); smooth.Process(softened.AsSpan(0, frames * 2));
+        }
+        raw.Process(original); smooth.Process(softened);
+        Assert.True(Math.Abs(original[^1]) > .01f);
+        Assert.Equal(0, softened[^1]);
+        float largest = Enumerable.Range(1, 255).Max(i => Math.Abs(softened[i * 2 + 1] - softened[(i - 1) * 2 + 1]));
+        Assert.True(largest < Math.Abs(original[^1]) / 50);
+        raw.Process(original.AsSpan(0, 32)); smooth.Process(softened.AsSpan(0, 32));
+        Assert.All(softened.Take(32), value => Assert.Equal(0, value));
+        Assert.Equal(raw.Position, smooth.Position);
+    }
+
+    [Theory]
+    [InlineData(44100)] [InlineData(48000)]
+    public async Task SeekRestoresDestinationPcmAndRangeLoopIsPacketInvariantAndStopStaysSticky(int rate)
+    {
+        using var f = await Fixture.Create(longPattern: true);
+        f.Document.Edit("Song", edit => edit.AddArrangementClip(f.Sources[0], default, 0));
+        using var sampler = new RealtimeSampler(rate, 2, 256);
+        await Publish(f, sampler);
+        long start = rate / 10, end = start + rate / 100;
+        sampler.SeekSong(start); sampler.SetSongLoop(start, end, true); sampler.Start();
+        var packet = new float[512];
+        sampler.Process(Span<float>.Empty); // Observe deliberate seek/start before measuring steady PCM.
+        long epoch = sampler.TransportEpoch, expectedFrame = start;
+        int[] sizes = [1, 127, 256, 47];
+        for (int block = 0; block < 100; block++)
+        {
+            int count = sizes[block % sizes.Length];
+            sampler.Process(packet.AsSpan(0, count * 2));
+            for (int sample = 0; sample < count; sample++)
+            {
+                if (expectedFrame == end) expectedFrame = start;
+                float expected = (float)(expectedFrame * 48000d / rate / 48000 * .5);
+                Assert.InRange(Math.Abs(packet[sample * 2] - expected), 0, .000001f);
+                Assert.Equal(.2f, packet[sample * 2 + 1]); expectedFrame++;
+            }
+            if (expectedFrame == end) expectedFrame = start;
+            Assert.Equal(expectedFrame, sampler.RenderPosition); Assert.Equal(epoch, sampler.TransportEpoch);
+        }
+        long allocated = GC.GetAllocatedBytesForCurrentThread();
+        for (int block = 0; block < 100; block++) sampler.Process(packet);
+        Assert.Equal(allocated, GC.GetAllocatedBytesForCurrentThread());
+        sampler.SetSongLoop(0, 0, false); sampler.SeekSong(rate / 5); sampler.Process(Span<float>.Empty);
+        sampler.Process(packet);
+        Assert.InRange(Math.Abs(packet[0] - .1f / sampler.GraphTransitionFrames), 0, .000001f);
+        var stop = sampler.Stop(); sampler.SeekSong(rate / 4); sampler.Process(packet);
+        Assert.Equal(stop, sampler.StopAcknowledgment); Assert.False(sampler.ReadStatus().Playing);
+        Assert.All(packet, sample => Assert.Equal(0, sample));
+        sampler.Start(); sampler.Process(Span<float>.Empty); sampler.Process(packet);
+        Assert.InRange(Math.Abs(packet[0] - .125f), 0, .000001f);
+    }
+
+    [Fact]
+    public async Task SelectionCommandsAreAtomicPreserveSpacingAndRejectStaleAuthority()
+    {
+        using var f = await Fixture.Create();
+        f.Document.Edit("Song", edit =>
+        { edit.AddArrangementClip(f.Sources[0], new(100), 0); edit.AddArrangementClip(f.Sources[1], new(20000), 2); });
+        await using var workflow = new DesktopWorkflow(f.Document, mediaDirectory: f.Directory.File("media"));
+        var basis = ArrangementEditBasis.From(workflow.State);
+        var clips = workflow.State.Snapshot.State.ArrangementClips;
+        var ids = clips.Select(c => c.Id).ToArray();
+        int undo = workflow.State.UndoCount;
+        Assert.True(await workflow.EditArrangementSelectionAsync(basis, ids, -50000, -10));
+        var moved = workflow.State.Snapshot.State.ArrangementClips;
+        Assert.Equal(0, moved[0].Position.Ticks); Assert.Equal(19900, moved[1].Position.Ticks);
+        Assert.Equal(2, moved[1].Lane); Assert.Equal(undo + 1, workflow.State.UndoCount);
+        Assert.False(await workflow.EditArrangementSelectionAsync(basis, ids, delete: true));
+        Assert.True(await workflow.UndoAsync()); Assert.Equal(clips, workflow.State.Snapshot.State.ArrangementClips);
+        Assert.True(await workflow.EditArrangementSelectionAsync(ArrangementEditBasis.From(workflow.State), ids, duplicate: true));
+        var copies = workflow.State.Snapshot.State.ArrangementClips.Where(c => !ids.Contains(c.Id)).OrderBy(c => c.Position.Ticks).ToArray();
+        Assert.Equal(19900, copies[1].Position.Ticks - copies[0].Position.Ticks);
+        Assert.Equal(34400, copies[0].Position.Ticks);
+        Assert.True(await workflow.EditArrangementSelectionAsync(ArrangementEditBasis.From(workflow.State), ids, delete: true));
+        Assert.Equal(2, workflow.State.Snapshot.State.ArrangementClips.Length);
+        Assert.True(await workflow.UndoAsync()); Assert.Equal(4, workflow.State.Snapshot.State.ArrangementClips.Length);
+    }
+
     [Fact]
     public async Task LiveFuturePlacementKeepsPositionVoiceAgeEpochAndStickyStopWithNoCallbackAllocation()
     {
@@ -212,7 +311,7 @@ public sealed class ArrangementTests
         string path = f.Directory.File("song.wav"); var result = await PatternWaveExport.ExportArrangementAsync(f.Document, path, TestContext.Current.CancellationToken);
         using var decoded = WavDecoder.Decode(await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken));
         using var lease = decoded.Lease();
-        using var sampler = new RealtimeSampler(48000, 2, 127); await Publish(f, sampler); sampler.Start();
+        using var sampler = new RealtimeSampler(48000, 2, 127, smoothBoundaries: true); await Publish(f, sampler); sampler.Start();
         var packet = new float[254]; long frame = 0;
         while (frame < result.Frames)
         {

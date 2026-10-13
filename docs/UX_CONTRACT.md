@@ -39,7 +39,7 @@ Explicit Play continuously cycles the selected Pattern. Note toggles, captured r
 Undo/Redo of notes preserve position and unchanged sounding voices after bounded preparation.
 Future notes take effect at publication; already passed new/restored notes wait until the next cycle.
 Deleting a sounding step stops that voice. Stop/Panic remain sticky through preparation and retries.
-Creation, selection, channel topology, length and BPM edits stop transport; Play deliberately restarts.
+Creation, selection, length and BPM edits stop transport; Play deliberately restarts.
 The current column outline and bar:beat:sixteenth display read renderer state, with up to 50 ms
 observation delay; they do not claim an output-latency-corrected audible cursor.
 
@@ -56,6 +56,34 @@ leaves transport, music and history intact. Failed/cancelled export preserves an
 Rack scope adds no effects beyond Gain, velocity or general seek editor. Playlist composition is below.
 [Audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback) owns gate/tail limits;
 [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns retained geometry/focus.
+
+## Playlist music workflow
+
+Ruler click moves the session Song cursor without starting audio; Play begins at that cursor.
+Ruler drag selects a snapped half-open range and enables looping. The loop toggle retains/disables
+its endpoints; Start returns to zero. A minimum sixteenth-note range avoids pathological loops.
+The renderer reconstructs destination PCM source age and release, and never leaves old-location voices.
+Seek does not defeat Stop/Panic. Open clears cursor/range; Pattern/Song mode changes still stop.
+Ranges and cursor do not enter document history, project JSON or whole-Song export.
+
+Shift-click toggles membership, the selection tool or Shift-drag on empty timeline selects a box,
+and Ctrl+A selects every clip. Captured group move/Ctrl-copy preserves relative positions/lanes;
+boundary saturation clamps the group together. Duplicate/Ctrl+D appends after the group's last end.
+Delete and arrows operate on the group; each accepted action is one Undo. Repeat resizing/field
+editing applies only to a single clip. Cancellation and generation/lifecycle guards retain authority.
+
+Shift+wheel scrolls horizontally, Ctrl+wheel anchors zoom to musical time under the pointer,
+and middle-drag pans. Manual navigation suspends Follow; Fit returns to the song origin.
+The overview viewport drags without a jump, its endpoints zoom, and ruler/headings remain stationary
+on their scrolling axes. These operations never edit music.
+
+Adding/deleting a WAV channel in the supported Rack source/mix tree preserves Song/Pattern time,
+epoch and unchanged voices; deleting the final channel becomes silence while other Song sources play.
+Undo restores intent without retriggering past notes. A failed preparation keeps diagnostics and
+last-valid rules, while structurally eligible Play allows an explicit retry. BPM changes stop and
+reprepare at the new tempo; returning to a prior BPM does not require reopening the project.
+Rack and Song source graphs share a bounded 32-voice budget, separate from the eight-channel limit;
+dense supported piano parts are not limited to one active voice per channel.
 
 ## Implemented Playlist Arrangement
 
@@ -81,13 +109,13 @@ clips dim. A global overview navigates the real arrangement; fit/zoom/scroll/fol
 Headings stay visible during horizontal scroll. Minimum layouts wrap tools and scroll locally.
 
 Pattern mode continuously plays the selected Rack; Song mode finitely plays all arrangement clips
-from tick zero, with overlaps/gaps and a renderer-derived playhead/bar:beat display. Playlist Play
+from the session cursor, with overlaps/gaps and a renderer-derived playhead/bar:beat display. Playlist Play
 explicitly selects Song. Switching modes stops; source selection during Song does not retarget/stop it.
 Compatible clip/note/Gain/track edits preserve time, epoch and unchanged voice ages after preparation;
 new past onsets do not retrigger. Shortening behind the playhead ends rather than restarting. Removing
 all clips stops. Incompatible topology/settings replacements retain the explicit existing interruption
-policy. Adding/deleting WAV channels still stops; [technical debt](TECH_DEBT.md#continuous-channel-topology)
-owns this observed limitation. Current cursor follows renderer time, not measured acoustic latency.
+policy. Supported WAV channel changes also retain time and surviving voices under the
+[audio continuation contract](AUDIO_ENGINE.md#playlist-song-preparation-and-execution). Current cursor follows renderer time, not measured acoustic latency.
 
 Song export freezes the current canonical arrangement and its graph/media dependencies, includes
 leading silence/overlaps and writes 48 kHz stereo PCM16 through the same executor. It never substitutes
@@ -96,7 +124,7 @@ reported; cancellation/failure preserves an existing destination and cannot over
 Save/Open preserves all music/track state; transport, selection/view and history remain session-only.
 
 This bounded editor offers whole-Pattern repeats, 32 lanes and a 4096-bar editing view. It adds no
-ruler seeking, loop-range editor, group selection, independent clip variation, audio trim/stretch,
+independent clip variation, audio trim/stretch,
 section markers, automation, velocity editor or stateful effects. Reference-informed follow-up lives
 in [R10 planning](ROADMAP.md#seq-r10--arrangement), separate from implemented controls.
 

@@ -299,7 +299,7 @@ public sealed class WavAuditionTests
         using var source = new MemoryStream(failure switch
         {
             "oversized" => new byte[WavDecoder.MaximumSourceBytes + 1],
-            "unsupported" => WavFixtures.Create([0.5f], 96000),
+            "unsupported" => WavFixtures.Create([0.5f], 384000),
             _ => [1, 2, 3]
         });
         await Assert.ThrowsAsync<WavFormatException>(() =>

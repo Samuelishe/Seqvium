@@ -117,7 +117,7 @@ owns editing/refusals. No dynamic instance registration or second transport is i
 
 `arrangement.main` / `arrangement` is the fixed Playlist pane, opened by rail or Panes. It shares
 the retained floating/docking/collapse/hide/restore lifecycle and independently stored workspace
-layout. Historical layouts add it hidden; pristine startup still opens Rack. The pane cancels clip,
+layout. Historical layouts add it hidden; pristine startup opens Rack and Playlist in a music layout. The pane cancels clip,
 overview and track-editor drafts on deactivation, hide/collapse, shutdown or invalid authority.
 Reopening retains content/view and adopts the current document. Focus returns to the timeline.
 
@@ -173,6 +173,21 @@ it hidden; a restored visible editor has no target until explicitly opened. An o
 the new entry enters its existing preserve-original fallback. A retained prior three-pane binary
 verified fallback, write refusal and exact preservation of the added entry's original bytes;
 this is not lossless downgrade editing. Dynamic per-node layout persistence is deferred.
+
+## Main window and music layout
+
+A missing main-window placement opens maximized, with a useful normal restore size. Version-1
+workspace layout optionally stores normal window dimensions in DIPs, screen position in pixels and
+maximized state, independently of the usable workspace dimensions. Minimized is never a startup state.
+Restore selects an available monitor and clamps the rectangle to its working area; saved pane order,
+docks and floating sizes retain their existing adaptation. Single-monitor Windows restoration is
+verified; mixed DPI and monitor changes remain wider evidence gaps.
+
+Pristine startup arranges Rack above Playlist when height permits, or beside it on a wide shorter
+workspace. The smallest workspace keeps Playlist visible and Rack reachable through its collapsed
+tab. Panes → Arrange Rack + Playlist deliberately reapplies this composition to existing layouts.
+It changes only these two panes' placement, docking and visibility, never musical data. A valid saved
+layout remains authoritative on later starts; shutdown joins main-window and pane storage together.
 
 ## Implemented R3-F2 internal panes
 
@@ -256,7 +271,9 @@ The visible border remains 1 DIP. Floating edge tolerance is 6 DIP inward and 6 
 actual rendered rectangle (12 DIP total); corner regions extend 12 DIP inward and 6 DIP outward on
 both axes (18x18 DIP). Corners take precedence over ordinary edges of the same pane. The workspace
 clips outward tolerance at its perimeter; controls and visible neighbours can reduce the available
-region. No extra workspace padding or larger permanent grips are introduced.
+region. The pane content now reserves the existing inward tolerance with an inset and explicit transparent
+frame hit surfaces, plus a visible corner grip. Drawing/scroll content cannot own those frame surfaces;
+ordinary controls outside the reserved frame keep their input ownership.
 
 `WorkspaceHost` resolves hover and pointer-down through one bounded resolver using actual arranged
 pane rectangles in workspace DIPs, visible state, back-to-front order and the operations available

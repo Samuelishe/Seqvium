@@ -108,7 +108,8 @@ internal static class RoutedGestures
         passed.Add("exact arrow and Shift-arrow movement / one Undo / restoration");
         var workspaceCanvas = Program.Field<Canvas>(workspace, "_canvas");
         var free = new Point(workspaceCanvas.Bounds.Width - 20, workspaceCanvas.Bounds.Height - 20);
-        Program.Require(workspaceCanvas.InputHitTest(free) == workspaceCanvas, "Workspace fixture coordinate is not free.");
+                var freeHit = ((InputElement)root).InputHitTest(workspaceCanvas.TranslatePoint(free, (Visual)root)!.Value);
+        Program.Require(freeHit == workspaceCanvas, "Workspace fixture hit=" + freeHit?.GetType().Name + "; enabled=" + workspaceCanvas.IsEffectivelyEnabled + "; bounds=" + workspaceCanvas.Bounds + "; panes=" + string.Join("|", workspace.State.Panes.Where(p => p.Visibility == PaneVisibility.Visible).Select(p => p.InstanceId + ":" + workspace.State.Bounds(p.InstanceId))));
         workspace.State.Activate(WorkspaceState.GraphId);
         var musical = workflow.State.Snapshot; var selected = editor.SelectedNode; var graphTarget = editor.Target;
         var freeRoot = workspaceCanvas.TranslatePoint(free, root) ?? throw new InvalidOperationException("Detached workspace.");
