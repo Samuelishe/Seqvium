@@ -37,6 +37,8 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     private readonly List<Channel> _channels = [];
     private readonly Dictionary<Id<MusicalPart>, (Control Steps, Button Preview)> _melodies = [];
     internal event Action<Id<MusicalPart>>? PianoRequested;
+    internal event Action<Id<MusicalPart>>? SoundRequested;
+    private readonly Button _drum = new();
     private readonly List<(MenuItem Item, string Key)> _menuLabels = [];
     private readonly ComboBox _bars = new() { MinWidth = 90 };
     private readonly Button _delete = new() { Classes = { "command", "danger" } };
@@ -123,7 +125,10 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         var footer = new Grid
             { ColumnDefinitions = new("Auto,*,Auto"), Margin = new(12, 8, 12, 8), ColumnSpacing = 16 };
         _add.Classes.Add("primary");
-        footer.Children.Add(_add);
+        var addActions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        addActions.Children.Add(_drum);
+        addActions.Children.Add(_add);
+        footer.Children.Add(addActions);
         SetColumn(_position, 2);
         footer.Children.Add(_position);
         SetRow(footer, 3);
@@ -163,6 +168,18 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         });
         AutomationProperties.SetAutomationId(_create, "Beat.Create");
         AutomationProperties.SetAutomationId(_add, "Beat.AddWav");
+        AutomationProperties.SetAutomationId(_drum, "Beat.AddDrum");
+        _drum.Click += async (_, _) =>
+        {
+            if (_basis is not { } basis || !PendingCommand.IsCompleted) return;
+            var before = _workflow.State.Snapshot.State.Patterns.SelectMany(p => p.Parts).Select(p => p.Id).ToHashSet();
+            PendingCommand = _workflow.AddDrumVoiceAsync(basis, _shell["Drum.Kick"]);
+            await PendingCommand;
+            Refresh();
+            var created = _workflow.State.Snapshot.State.Patterns.SingleOrDefault(p => p.Id == basis.Pattern)?.Parts
+                .SingleOrDefault(p => !before.Contains(p.Id));
+            if (created is not null) SoundRequested?.Invoke(created.Id);
+        };
         AutomationProperties.SetAutomationId(_target, "Beat.Target");
         AutomationProperties.SetAutomationId(_name, "Beat.Name");
         AutomationProperties.SetAutomationId(_apply, "Beat.ApplyName");
@@ -297,6 +314,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         {
             Label(_create, "Beat.Create");
             Label(_add, "Beat.AddWav");
+            Label(_drum, "Drum.Add");
             Label(_name, "Beat.Name");
             Label(_apply, "Beat.ApplyName");
             Label(_target, "Beat.Target");
@@ -343,6 +361,8 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 ? refusal
                 : DesktopWorkflow.BeatChannelRefusal(state, pattern, attachment, graph);
             _add.IsEnabled = available && channelRefusal is null && basis is not null;
+            _drum.IsEnabled = _add.IsEnabled;
+            _drum.IsVisible = pattern is not null;
             _add.IsVisible = pattern is not null;
             ToolTip.SetShowOnDisabled(_add, true);
             if (channelRefusal is not null)
@@ -469,6 +489,15 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         AutomationProperties.SetAutomationId(pianoAction, $"Beat.Piano.{part.Id}");
         _menuLabels.Add((pianoAction, "Piano.Open"));
         menu.Items.Add(pianoAction);
+        var soundAction = new MenuItem { Header = _shell["Drum.Open"] };
+        AutomationProperties.SetAutomationId(soundAction, $"Beat.Sound.{part.Id}");
+        _menuLabels.Add((soundAction, "Drum.Open"));
+        menu.Items.Add(soundAction);
+        soundAction.Click += (_, _) =>
+        {
+            CancelGesture();
+            SoundRequested?.Invoke(part.Id);
+        };
         pianoAction.Click += (_, _) =>
         {
             CancelGesture();
@@ -479,7 +508,9 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             if (e.ClickCount == 2)
             {
                 CancelGesture();
-                PianoRequested?.Invoke(part.Id);
+                var sound = _workflow.State.Snapshot.State.Sounds.Single(s => s.Id == part.SoundId);
+                if (DrumVoice.Supports(sound)) SoundRequested?.Invoke(part.Id);
+                else PianoRequested?.Invoke(part.Id);
                 e.Handled = true;
             }
         };

@@ -146,6 +146,17 @@ sets its column to zero, and queued workspace reflow invalidates arrange so visi
 state bounds after repeated actual-window reductions. This is reachability/layout repair, not music editing.
 [Piano UX](UX_CONTRACT.md#implemented-seq-r9-piano-roll) owns gestures and shared-target semantics.
 
+## Drum Voice editor placement
+
+The Drum Voice uses the existing singleton Node Editor, with a useful 720×740-DIP initial floating
+composition clamped to the available workspace. Opening a different drum target can enlarge an old
+compact Gain pane; repeated same-target opens retain the user's size. The existing 300×210 pane
+minimum remains supported through local vertical scrolling and reflow, rather than shrinking knobs
+or fields. The sound/processing target remains explicit and independent of playback selection.
+Gain's compact default/disclosure and ordinary pane lifecycle are unchanged. Layout saves geometry,
+not instrument drafts, audition pitch/velocity or a document target. See
+[interaction](UX_CONTRACT.md#drum-voice-sound-design) and [evidence](experiments/SEQ-FIRST-DRUM_REPORT.md).
+
 ## Node editor placement proposal
 
 **SEQ-NODE-EDITOR-IMPL-F1 — one reusable internal pane accepted and implemented for the first slice.**

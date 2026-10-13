@@ -2,7 +2,8 @@
 
 Role: Core signal-graph product and responsibility contract.
 Read when: Designing graph editing, nodes, ports, connections, or prepared node execution.
-Authoritative for: Graph semantics and irreversible mixing boundaries, conceptual port classes, core/contributed nodes, editable/prepared boundary.
+Authoritative for: Graph semantics and irreversible mixing boundaries, conceptual port classes, core/contributed nodes,
+editable/prepared boundary.
 Not authoritative for: Arrangement, group identity, final port ABI/compiler, DSP algorithms, or pane infrastructure.
 
 ## Accepted direction and scope
@@ -90,7 +91,8 @@ item-local and containing-container processing levels, and
 responsibilities versus sound definitions and global routes. A scope can preserve multiple paths;
 it does not imply one mixed output. R1's [canonical foundation](ARCHITECTURE.md#r1-canonical-foundation)
 implements identified item/containing contexts, per-placement/per-part route intent and atomic edits;
-it validates the two levels and explicit aggregate versus divergent-route contradiction. R4-F2 implements item-local DSP/preparation below; expanded scopes and final public
+it validates the two levels and explicit aggregate versus divergent-route contradiction. R4-F2 implements item-local
+DSP/preparation below; expanded scopes and final public
 container terminology remain open. R4-F1 adds
 canonical definitions, attachments, typed ports and eligibility diagnostics below; preparation and
 expanded scopes stay Q-019 and later stages.
@@ -117,6 +119,16 @@ Detailed editor access uses body double-click alongside single-click selection/m
 controls. The first slice uses one reusable Workspace pane. Q-032 retains independent editors and
 future composition; the [editor boundary](#full-node-editors-proposal) defines the bounded capability.
 
+## Drum Voice source editor
+
+A Source bound to a supported `core.drum-voice.kick-v1` SoundDefinition opens the substantial built-in
+instrument editor. Its graph remains Source → Gain/Mix → Output; there is no new port class, node type
+or second sequencer. Parameters address shared sound intent, with the sound name and multiple-part
+sharing count visible. Unknown/invalid sound state remains preserved and unavailable for execution.
+Graph body double-click, Open Editor and Enter retain their explicit target semantics. Rack also opens
+the same editor from its sound action or a Drum channel's identity double-click.
+[Audio](AUDIO_ENGINE.md#built-in-drum-voice) owns finite synthesis, gates/tails and publication.
+
 ## Full node editors proposal
 
 **SEQ-NODE-EDITOR-IMPL-F1 — implemented bounded owner-authorized slice of DESIGN-R1.** One retained
@@ -131,8 +143,8 @@ specialized controls independently of node size or the graph's bottom parameter 
 Workspace integration is preferred; native third-party OS windows are allowed. These requirements
 do not select placement, instance count, DSP algorithms or plugin interoperability.
 
-The host-owned `NodeEditorSession` projects a node-specific first-party presentation in
-**one reusable internal Node Editor pane**. An explicit Open Editor request
+The host-owned `NodeEditorSession` projects a node-specific first-party presentation in **one reusable internal Node
+Editor pane**. An explicit Open Editor request
 changes its target; selection alone does not. A supported built-in gets its actual controls/details;
 an unknown, missing or incompatible node gets host-owned identity/port/binding/diagnostic details
 without executing contributor code or guessing at opaque parameters. Thus opening remains available
@@ -244,11 +256,11 @@ with concrete representation/execution still open (Q-066).
 
 Connections need semantic distinctions; one untyped `object -> object` pipe is insufficient.
 
-| Class | Examples / meaning |
-| --- | --- |
-| Audio | Mono, stereo, or multichannel signals; audible paths/sends and detector inputs have distinct uses below |
-| Musical/event input | Note on/off, musical events, trigger-like events |
-| Control/modulation | Automation values, envelopes, LFO/modulation, parameter control |
+| Class               | Examples / meaning                                                                                      |
+|---------------------|---------------------------------------------------------------------------------------------------------|
+| Audio               | Mono, stereo, or multichannel signals; audible paths/sends and detector inputs have distinct uses below |
+| Musical/event input | Note on/off, musical events, trigger-like events                                                        |
+| Control/modulation  | Automation values, envelopes, LFO/modulation, parameter control                                         |
 
 Host context normally supplies sample rate, frame/block count, tempo, transport state, musical
 position, loop state, and time signature where relevant. These should not require visible cables
@@ -276,12 +288,12 @@ processing level nor a universal graph that replaces musical ownership or forces
 user-facing canvas. [ARCHITECTURE](ARCHITECTURE.md#cross-context-ownership-and-identity) owns the
 cross-boundary identity responsibilities; concrete references remain Q-019/Q-066.
 
-| Relationship | Meaning / audible consequence |
-| --- | --- |
-| Ordinary audible audio route | Carries a contribution through its intended processing to an audible destination |
-| Audio send | Deliberately branches audio toward another audible processing/mix path; convergence is intentional under the contribution contract, not implied by branching alone |
-| Sidechain detector input | Supplies a processor's detector with a signal influencing its treatment of a separate audible input; it does not add that signal to the target's audible mix |
-| Control/modulation input | Influences a parameter or other supported control behavior; it is not inherently audible audio or a detector input |
+| Relationship                 | Meaning / audible consequence                                                                                                                                      |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ordinary audible audio route | Carries a contribution through its intended processing to an audible destination                                                                                   |
+| Audio send                   | Deliberately branches audio toward another audible processing/mix path; convergence is intentional under the contribution contract, not implied by branching alone |
+| Sidechain detector input     | Supplies a processor's detector with a signal influencing its treatment of a separate audible input; it does not add that signal to the target's audible mix       |
+| Control/modulation input     | Influences a parameter or other supported control behavior; it is not inherently audible audio or a detector input                                                 |
 
 A sidechain can carry audio while having a different semantic role from the audible input. Its
 detector use is not interchangeable with parameter modulation. Actual types, compatibility,
@@ -337,14 +349,14 @@ connection/schedule. Create/change/remove is an ordinary logical document transa
 [Undo](ARCHITECTURE.md#logical-undo-transactions-and-history-scope). A source/target move or deletion
 and its necessary relationship changes form the same user-level edit, rather than runtime repair edits.
 
-| Change | Required semantic behavior |
-| --- | --- |
-| Source moves | Retain a reference to the same logical source if its specified boundary and target remain meaningful/compatible. Revalidate changed processing, timing and scope; the signal may change even if identity survives. An old-container aggregate is still that aggregate, not an automatic reference to Kick's new container. An unavailable boundary needs an explicit unresolved state or deliberate reassignment |
-| Source deleted/unavailable/replaced | Where safely representable, retain understandable unresolved intent: former logical endpoint, selected boundary and target relationship. Never bind another same-name/position object or assume a replacement is equivalent. Required unavailable input blocks affected execution; it is not valid silence. Explicit reattachment/reassignment requires compatibility and dependency validation |
-| Target moved/changed/replaced | Retain its relationship only if the same logical processor and input/control meaning survive. Revalidate the new context/capability; a replacement is not an implicit compatible destination. Otherwise retain unresolved intent where safe, or explicitly remove/reassign it |
-| Target deleted | Remove its active receiving use, without changing source audible paths or other consumers. Deliberate deletion can remove the incident relationship as part of that edit, retaining sufficient history for Undo; safely retained unresolved intent must not create a phantom receiver |
-| Undo deletion/change | Restore prior logical endpoints/relationships as canonical state where history permits; revalidate/prepare normally. Restored identity does not guarantee an available plugin/tap or revive cancelled async requests, rewind DSP, or authorize stale prepared work |
-| Safe removal | Deliberately remove the connection, or the endpoint and its known dependent relationships, as a coherent canonical edit. Expose effects on dependent targets; no hidden retargeting, unrelated source deletion or runtime-state reset |
+| Change                              | Required semantic behavior                                                                                                                                                                                                                                                                                                                                                                                       |
+|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Source moves                        | Retain a reference to the same logical source if its specified boundary and target remain meaningful/compatible. Revalidate changed processing, timing and scope; the signal may change even if identity survives. An old-container aggregate is still that aggregate, not an automatic reference to Kick's new container. An unavailable boundary needs an explicit unresolved state or deliberate reassignment |
+| Source deleted/unavailable/replaced | Where safely representable, retain understandable unresolved intent: former logical endpoint, selected boundary and target relationship. Never bind another same-name/position object or assume a replacement is equivalent. Required unavailable input blocks affected execution; it is not valid silence. Explicit reattachment/reassignment requires compatibility and dependency validation                  |
+| Target moved/changed/replaced       | Retain its relationship only if the same logical processor and input/control meaning survive. Revalidate the new context/capability; a replacement is not an implicit compatible destination. Otherwise retain unresolved intent where safe, or explicitly remove/reassign it                                                                                                                                    |
+| Target deleted                      | Remove its active receiving use, without changing source audible paths or other consumers. Deliberate deletion can remove the incident relationship as part of that edit, retaining sufficient history for Undo; safely retained unresolved intent must not create a phantom receiver                                                                                                                            |
+| Undo deletion/change                | Restore prior logical endpoints/relationships as canonical state where history permits; revalidate/prepare normally. Restored identity does not guarantee an available plugin/tap or revive cancelled async requests, rewind DSP, or authorize stale prepared work                                                                                                                                               |
+| Safe removal                        | Deliberately remove the connection, or the endpoint and its known dependent relationships, as a coherent canonical edit. Expose effects on dependent targets; no hidden retargeting, unrelated source deletion or runtime-state reset                                                                                                                                                                            |
 
 An unavailable/missing processor or unsupported detector/control capability preserves canonical
 identity, relationships and compatible opaque state where the document is understandable, under
@@ -457,12 +469,12 @@ Graph, attachment, node, port, connection and source-binding UUIDs are typed and
 Built-in type keys `core.source`, `core.gain`, `core.mix`, `core.output` use state version 1. Saved port
 declarations do not confer capability: built-in descriptors validate their exact supported shape.
 
-| Node | Version 1 ports |
-| --- | --- |
-| Source/Input | One `out`, no input; one identified source binding |
-| Gain | One required `in`, one `out` |
-| Mix | 2–8 individually identified required `slot` inputs, one `out` |
-| Output | One required `in`, no output; exactly one designated Output per supported attachment |
+| Node         | Version 1 ports                                                                      |
+|--------------|--------------------------------------------------------------------------------------|
+| Source/Input | One `out`, no input; one identified source binding                                   |
+| Gain         | One required `in`, one `out`                                                         |
+| Mix          | 2–8 individually identified required `slot` inputs, one `out`                        |
+| Output       | One required `in`, no output; exactly one designated Output per supported attachment |
 
 Directions are `input`/`output`; cardinality is `single` for input and `fanOut` for output. Output ports
 cannot be required. Connections identify both endpoint node and port UUIDs. Each input accepts one
@@ -512,7 +524,8 @@ affected graph/attachment/node/port/connection/binding identities, without local
 diagnostics block the selected attachment, including disconnected inputs, unknown capability/state,
 invalid Gain, incompatible/unsupported ports, missing/unresolved Source/Output, coverage/aggregation
 errors and every directed cycle. Unknown processing fields block conservatively while retaining data;
-graph presentation fields remain outside signal dependencies. Iterative bounded checks identify actual cycle members, including
+graph presentation fields remain outside signal dependencies. Iterative bounded checks identify actual cycle members,
+including
 self-loops and disconnected cycles; array/coordinate order cannot change results. Eligibility means
 eligibility for later preparation only, never an executable state. Intent limits are 32 nodes,
 64 connections, 8 sources and 8 Mix inputs; document bounds are larger and separate. Over-limit or
@@ -617,7 +630,8 @@ in `[0,1]`, and Escape discards input. There is no independent multiplier or sli
 `Add WAV source to current item` supplies a real second Part/Note, Sound/resource and uniquely bound
 Source under the existing atomic durable acceptance. It refuses shared Patterns before preparation,
 never creates a hidden variation or extra performance on fan-out. Pattern boundary extension uses the
-validated `SetPatternLength` operation in that same Edit. [Sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item)
+validated `SetPatternLength` operation in that same
+Edit. [Sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item)
 owns this narrow musical policy. The user manually builds independent branches into explicit Mix.
 
 Canonical, pending, executing and invalid/last-valid states have concise localized pane feedback and
@@ -643,11 +657,11 @@ The bounded first-party editor is implemented above and uses the existing retain
 history, media and execution owners. Owner review must inspect actual sparse/dense canvas interaction,
 not only green tests. No Browser, Arrangement, Mixer, export UI, R5 or automatic startup playback is implied.
 
-| Decision window | Questions / bounded disposition |
-| --- | --- |
-| F1 dependency for F2 | Consume the implemented port/attachment/binding, ownership/remapping, cycle-blocker, transaction and reader-1.1 rules above; revalidate only justified corrections with preservation/compatibility tests. |
-| Within R4, before F3 acceptance | Target retention/focus, minimal real source creation/import, document replacement/Save lifecycle, compact node/port/parameter/diagnostic interaction and real RU/EN Dark/Light GUI/audio evidence. |
-| Preserve for later stages | Q-005: tempo maps, seek/drift/recovery; Q-017: event/control execution/converters; Q-019/Q-029: containing/global outputs and intentional shared graphs; Q-020: explicit delayed feedback; Q-021: latency-bearing compensation; Q-047: mono/legato/opaque domains; Q-057: state/tails/de-click beyond declared core; Q-063: dependency-specific rebase/large history; Q-066: sends/detectors/modulation, cross-context taps and combined causality. |
+| Decision window                 | Questions / bounded disposition                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| F1 dependency for F2            | Consume the implemented port/attachment/binding, ownership/remapping, cycle-blocker, transaction and reader-1.1 rules above; revalidate only justified corrections with preservation/compatibility tests.                                                                                                                                                                                                                                           |
+| Within R4, before F3 acceptance | Target retention/focus, minimal real source creation/import, document replacement/Save lifecycle, compact node/port/parameter/diagnostic interaction and real RU/EN Dark/Light GUI/audio evidence.                                                                                                                                                                                                                                                  |
+| Preserve for later stages       | Q-005: tempo maps, seek/drift/recovery; Q-017: event/control execution/converters; Q-019/Q-029: containing/global outputs and intentional shared graphs; Q-020: explicit delayed feedback; Q-021: latency-bearing compensation; Q-047: mono/legato/opaque domains; Q-057: state/tails/de-click beyond declared core; Q-063: dependency-specific rebase/large history; Q-066: sends/detectors/modulation, cross-context taps and combined causality. |
 
 These broad questions remain open beyond bounded F1/F2. F2's numerical/device evidence establishes
 its declared execution path, without full R4 acceptance or permission to start later stages.

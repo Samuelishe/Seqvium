@@ -7,6 +7,32 @@ boundary, recording, item-local hard boundaries, manual export ranges, finite ta
 preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
+## Built-in Drum Voice
+
+`core.drum-voice.kick-v1` is a built-in electronic kick, with no external or managed sample resource.
+Its shared SoundDefinition stores Tune, Decay, Tone, Noise, pitch drop/time/shape, attack and amplitude
+shape. The fixed reference note is MIDI 36; Tune shifts its equal-tempered frequency, and every Piano
+note transposes the oscillator without changing envelope time. Velocity scales each independent hit.
+Tone changes harmonic balance and filtered noise color; deterministic noise supplies a short transient.
+Pitch and amplitude use the same analytical functions in the editor and synthesis. Parameter ranges
+and defaults belong to [DrumVoice](../src/Seqvium.Core/Audio/DrumVoice.cs).
+
+Preparation synthesizes immutable mono buffers at the actual 44.1/48 kHz host rate, once per distinct
+sound/pitch in a Pattern. These are disposable derived PCM, never saved WAVs or accepted project media.
+The existing lease, 128 MiB source, voice, event, scratch and publication budgets apply. Generation
+checks cancellation in bounded chunks; realtime reads the prepared signal through the existing Source
+contribution and Gain/Mix/Output graph, with no callback synthesis, allocation or device dependency.
+This bounded instrument is not a general realtime processor/plugin ABI.
+
+A drum note triggers a full finite percussive envelope regardless of its ordinary NoteOff. Natural
+tails overlap independently, including across Pattern loops; loop overlap is preflighted before output.
+Finite Pattern/Song export includes the latest hit's natural tail. Explicit Stop/Panic/range boundaries
+still cut voices; seek reconstructs source age from the frozen signal. Shared sound edits preserve
+transport position/epoch, retire changed voices and affect subsequent hits after publication. There is
+no continuous audible uncommitted drag preview. Solo audition uses the same synthesis and quiet pitched
+audition lifetime, bypassing downstream Gain/Mix while transport is stopped. Offline, realtime and WAV
+use the same prepared kernel and boundary policy. See [verification](experiments/SEQ-FIRST-DRUM_REPORT.md).
+
 ## R2-F1 offline sampler foundation
 
 The reviewed direction is an initial bounded C# scheduler/DSP implementation with replaceable

@@ -330,6 +330,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         var sound = _workflow.State.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == Canvas.Part?.SoundId);
         _originalRoot = sound?.Parameters.TryGetValue("rootPitch", out var root) == true ? root : 60m;
         _rootPitch.SelectedIndex = (int)_originalRoot;
+        _rootPitch.IsEnabled = sound?.Algorithm == PcmSampler.Algorithm;
         _rootHint.Text = _shell["Piano.RootHint"];
     }
 

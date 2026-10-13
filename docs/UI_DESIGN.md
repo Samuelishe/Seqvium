@@ -96,6 +96,21 @@ create new original assets only for a concrete editor need.
 [R9 planning](ROADMAP.md#seq-r9--piano-roll) and the existing later-stage follow-ups own deferred work.
 The [preparation report](experiments/SEQ-HOME-RESOURCES_REPORT.md) records actual verification limits.
 
+### Implemented Drum Voice composition
+
+The built-in kick adopts DS-03's meaningful pitch/time surface, DS-01's oscillator/noise anatomy and
+DS-02's selected-sound continuity. It uses original host drawing/materials; no private reference asset
+is shipped. One shared chassis connects primary dials, Pitch/Amplitude modes, direct curve handles,
+the actual derived waveform and envelope depth. These modes are functional, without a second rhythm
+surface, effect-bank placeholders or preset browser.
+
+Exact values stay below dials; only Tune also shows a distinct frequency. Light uses stronger
+palette-owned rim/scale ink, recessed wells and a denser waveform stroke, preserving Dark's materials.
+The frequency axis adapts to pitch-drop depth; note/Hz and ms context explain the sound. Compact
+composition reflows the sound/audition row and parameter groups, and scrolls all working content locally.
+Owner feedback on the initial actual screenshots favored this direction; final visual acceptance
+remains distinct from the [render/input evidence](experiments/SEQ-FIRST-DRUM_REPORT.md).
+
 ### Musical-editor reference proposals
 
 These are selected study directions for later design, not implemented controls, accepted input
@@ -104,12 +119,12 @@ annotations do not prove gestures. Detailed per-image judgments and identificati
 in the private catalog. The comparison uses existing R9 Dark/Light captures and the current
 Node Editor owners; this preparation does not repeat Piano Roll verification.
 
-| Area              | Strongest direction                                                                                                                                        | Seqvium comparison and capability gate                                                                                                                                                                                                           |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Drum sound design | DS-03: dominant pitch envelope with note/Hz and time context; DS-01: oscillator/noise anatomy; DS-02: selected pad identity repeated in one sound editor   | Rack remains the canonical rhythm surface. A future voice editor may use pitch/amplitude curves and a small tune/decay/noise group; actual voice DSP/state/gates/tails must precede it. DS-02 is a sample-pad machine, not evidence of synthesis |
-| Sampler           | SA-04: stereo range/loop flags and overview navigation; SA-01: slice-to-key continuity; SA-02: compact waveform-first composition; SA-05: root-key context | Root Pitch and stopped note audition already exist. Later non-destructive ranges/loops/mapping require real source-frame state and execution; waveform Playlist previews cannot be manufactured from note thumbnails                             |
-| Dynamics          | CP-02: readable physical caps and threshold/knee curve; CP-01: selected-band controls beside reduction history                                             | Gain keeps its useful compact level/optional analytical Curve. Future compression needs real stateful DSP and measured taps; history, analytical transfer and waveform must have distinct meaning                                                |
-| Control shape     | Raised cap, readable pointer, skirt/arc and recessed base; shape buttons for discrete waveform/filter choices                                              | Use the shared material/token family. Bipolar controls need meaningful center feedback, unipolar controls an endpoint, and exact values/units on demand. Comfortable targets beat miniature screenshot proportions                               |
+| Area              | Strongest direction                                                                                                                                        | Seqvium comparison and capability gate                                                                                                                                                                                                                       |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Drum sound design | DS-03: dominant pitch envelope with note/Hz and time context; DS-01: oscillator/noise anatomy; DS-02: selected identity in one sound editor                | The built-in kick implements these curves and Tune/Decay/Tone/Noise through shared Rack/Piano notes. Further voices, layers and choke/modulation still require their real DSP/state boundaries; DS-02 remains a sample-pad reference, not synthesis evidence |
+| Sampler           | SA-04: stereo range/loop flags and overview navigation; SA-01: slice-to-key continuity; SA-02: compact waveform-first composition; SA-05: root-key context | Root Pitch and stopped note audition already exist. Later non-destructive ranges/loops/mapping require real source-frame state and execution; waveform Playlist previews cannot be manufactured from note thumbnails                                         |
+| Dynamics          | CP-02: readable physical caps and threshold/knee curve; CP-01: selected-band controls beside reduction history                                             | Gain keeps its useful compact level/optional analytical Curve. Future compression needs real stateful DSP and measured taps; history, analytical transfer and waveform must have distinct meaning                                                            |
+| Control shape     | Raised cap, readable pointer, skirt/arc and recessed base; shape buttons for discrete waveform/filter choices                                              | Use the shared material/token family. Bipolar controls need meaningful center feedback, unipolar controls an endpoint, and exact values/units on demand. Comfortable targets beat miniature screenshot proportions                                           |
 
 For later rich Node Editors, let the meaningful graph own space and reveal exact selected-parameter
 depth nearby. Keep the small Gain editor small. Colored modulation context may eventually connect

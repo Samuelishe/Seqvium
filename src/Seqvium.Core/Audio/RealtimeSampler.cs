@@ -10,18 +10,42 @@ public enum SamplerPublication
     Capacity
 }
 
-public enum SamplerTransportState { Unprepared, Ready, Playing, Stopped, Ended, Terminated }
+public enum SamplerTransportState
+{
+    Unprepared,
+    Ready,
+    Playing,
+    Stopped,
+    Ended,
+    Terminated
+}
 
-public readonly record struct SamplerExecutionStatus(Guid ExecutingRevision, Guid OriginPreparedRevision,
-    Guid EquivalentCanonicalRevision, long Epoch, long Position, int Voices, bool Playing, bool Terminated,
-    long StopAcknowledgment, SamplerTransportState Transport, Id<GraphAttachment>? AttachmentId,
-    long PreparedExecutionId, bool Looping = false, long LoopPositionTicks = 0);
+public readonly record struct SamplerExecutionStatus(
+    Guid ExecutingRevision,
+    Guid OriginPreparedRevision,
+    Guid EquivalentCanonicalRevision,
+    long Epoch,
+    long Position,
+    int Voices,
+    bool Playing,
+    bool Terminated,
+    long StopAcknowledgment,
+    SamplerTransportState Transport,
+    Id<GraphAttachment>? AttachmentId,
+    long PreparedExecutionId,
+    bool Looping = false,
+    long LoopPositionTicks = 0);
 
-internal sealed record GraphRevisionUpdate(long PreparedExecutionId, Id<GraphAttachment> Attachment,
-    Guid Revision, Guid EquivalentRevision,
-    float[] Coefficients, long Authority);
+internal sealed record GraphRevisionUpdate(
+    long PreparedExecutionId,
+    Id<GraphAttachment> Attachment,
+    Guid Revision,
+    Guid EquivalentRevision,
+    float[] Coefficients,
+    long Authority);
 
 internal sealed record SongSeek(long Frame, long Command);
+
 internal sealed record SongLoop(long Start, long End);
 
 /// <summary>One serialized control owner, one sequential consumer. Dispose only after the consumer has joined.
@@ -99,18 +123,29 @@ public sealed class RealtimeSampler : IDisposable
     public int PreparedStatesReleased { get; private set; }
     public int LivePreparedStates => PreparedStatesCreated - PreparedStatesReleased;
     public int ConsumerStaleRejections { get; private set; }
+
     public int TerminationBoundaries { get; private set; }
+
     // Four slots include the sole reserved candidate. Event/note object allowance is separate from DSP scratch.
-    public const long MaximumRetainedPcmAndScratchBytes = 4L * (SamplerPreparation.MaximumDecodedBytes + GraphPreparation.MaximumScratchBytes);
+    public const long MaximumRetainedPcmAndScratchBytes =
+        4L * (SamplerPreparation.MaximumDecodedBytes + GraphPreparation.MaximumScratchBytes);
+
     public const long MaximumPreparedTableAllowanceBytes = 4L * SamplerPreparation.MaximumEvents * 256;
+
     public long RetainedPcmAndScratchBytes => StateBytes(Volatile.Read(ref _active)) +
-        StateBytes(Volatile.Read(ref _pending)) + StateBytes(Volatile.Read(ref _retired));
+                                              StateBytes(Volatile.Read(ref _pending)) +
+                                              StateBytes(Volatile.Read(ref _retired));
+
     /// <summary>Conservative total includes the worker's sole reserved candidate even while its decode is in progress.</summary>
-    public long ReservedPcmAndScratchBytes => RetainedPcmAndScratchBytes + (Volatile.Read(ref _preparing) == 0 ? 0 :
-        (long)SamplerPreparation.MaximumDecodedBytes + GraphPreparation.MaximumScratchBytes);
+    public long ReservedPcmAndScratchBytes => RetainedPcmAndScratchBytes + (Volatile.Read(ref _preparing) == 0
+        ? 0
+        : (long)SamplerPreparation.MaximumDecodedBytes + GraphPreparation.MaximumScratchBytes);
+
     public bool HasPending => Volatile.Read(ref _pending) is not null;
     internal long RejectedPreparedExecutionId => Volatile.Read(ref _rejectedPreparedExecutionId);
-    private static long StateBytes(State? state) => state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes;
+
+    private static long StateBytes(State? state) =>
+        state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes;
 
     /// <summary>Thread-safe value observation. The reader may retry while the single consumer finishes its short status write.</summary>
     public SamplerExecutionStatus ReadStatus()
@@ -125,6 +160,7 @@ public sealed class RealtimeSampler : IDisposable
                 Thread.MemoryBarrier();
                 if (sequence == Volatile.Read(ref _statusSequence)) return snapshot;
             }
+
             spin.SpinOnce();
         }
     }
@@ -135,9 +171,11 @@ public sealed class RealtimeSampler : IDisposable
         _status = new(_active?.Revision ?? _revision, _active?.Plan.Revision ?? _revision,
             _active?.EquivalentRevision ?? _revision, _epoch, _position, _voices, _playing, _terminated,
             _acknowledgedStop, _terminated ? SamplerTransportState.Terminated :
-                _stopBoundary ? SamplerTransportState.Stopped : _playing ? SamplerTransportState.Playing :
-                    _active is null ? SamplerTransportState.Unprepared :
-                        _active.Execution.Position == _active.Plan.EndFrame ? SamplerTransportState.Ended : SamplerTransportState.Ready,
+            _stopBoundary ? SamplerTransportState.Stopped :
+            _playing ? SamplerTransportState.Playing :
+            _active is null ? SamplerTransportState.Unprepared :
+            _active.Execution.Position == _active.Plan.EndFrame ? SamplerTransportState.Ended :
+            SamplerTransportState.Ready,
             _active?.Plan.GraphAttachmentId, _active?.Authority ?? 0, _looping && _active?.Plan.Loop is not null,
             _active?.Execution.LoopPositionTicks ?? 0);
         Interlocked.Increment(ref _statusSequence);
@@ -175,7 +213,8 @@ public sealed class RealtimeSampler : IDisposable
         return new(this, document, default, voiceCapacity, repeats, default, InvalidatePreparation(), target);
     }
 
-    public SamplerPreparationRequest BeginArrangementPreparation(ProjectDocument document, bool preservePlayback = false)
+    public SamplerPreparationRequest BeginArrangementPreparation(ProjectDocument document,
+        bool preservePlayback = false)
     {
         document.CheckAvailable();
         return new(this, document, default, ArrangementPreparation.VoiceCapacity, 1, default,
@@ -190,7 +229,8 @@ public sealed class RealtimeSampler : IDisposable
         var active = Volatile.Read(ref _active);
         if (active is null || active.Authority != preparedExecutionId ||
             active.Plan.GraphAttachmentId != attachment || active.Plan.Graph is null) return false;
-        Volatile.Write(ref _update, new(preparedExecutionId, attachment, revision, equivalentRevision, coefficients, authority));
+        Volatile.Write(ref _update,
+            new(preparedExecutionId, attachment, revision, equivalentRevision, coefficients, authority));
         return true;
     }
 
@@ -241,11 +281,18 @@ public sealed class RealtimeSampler : IDisposable
              GraphExecutionCoordinator.SameChannelExecution(oldBasis, nextBasis)))
         {
             var indices = plan.Notes.Select((note, index) => (note, index)).ToDictionary(item => item.note.Occurrence);
-            state.ContinuationNotes = active.Plan.Notes.Select(note => indices.TryGetValue(note.Occurrence, out var next) &&
-                next.note == note with { SourceIndex = next.note.SourceIndex, ContributionIndex = next.note.ContributionIndex }
-                    ? next.index : -1).ToArray();
+            state.ContinuationNotes = active.Plan.Notes.Select(note =>
+                indices.TryGetValue(note.Occurrence, out var next) &&
+                next.note == note with
+                {
+                    SourceIndex = next.note.SourceIndex, ContributionIndex = next.note.ContributionIndex
+                } &&
+                (!note.OneShot || SameDrumSound(oldBasis, nextBasis, note.Occurrence))
+                    ? next.index
+                    : -1).ToArray();
             state.ContinuationAuthority = active.Authority;
         }
+
         Volatile.Write(ref _pending, state);
         PreparedStatesCreated++;
         return SamplerPublication.Accepted;
@@ -255,6 +302,18 @@ public sealed class RealtimeSampler : IDisposable
     {
         if (!float.IsFinite(gain) || gain is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(gain));
         Volatile.Write(ref _gain, gain);
+    }
+
+    private static bool SameDrumSound(ProjectState left, ProjectState right, ExecutionOccurrence occurrence)
+    {
+        var oldPart = left.Patterns.Single(p => p.Id == occurrence.PatternId).Parts
+            .Single(p => p.Id == occurrence.PartId);
+        var newPart = right.Patterns.Single(p => p.Id == occurrence.PatternId).Parts
+            .Single(p => p.Id == occurrence.PartId);
+        if (oldPart.SoundId != newPart.SoundId) return false;
+        var oldSound = left.Sounds.Single(s => s.Id == oldPart.SoundId);
+        var newSound = right.Sounds.Single(s => s.Id == newPart.SoundId);
+        return oldSound.Parameters.OrderBy(p => p.Key).SequenceEqual(newSound.Parameters.OrderBy(p => p.Key));
     }
 
     internal bool TryBeginWork() => Interlocked.CompareExchange(ref _preparing, 1, 0) == 0;
@@ -288,7 +347,8 @@ public sealed class RealtimeSampler : IDisposable
     /// <summary>Session-only half-open song loop, in execution frames. Null disables it.</summary>
     public void SetSongLoop(long start, long end, bool enabled)
     {
-        if (enabled && (start < 0 || end - start < SampleRate / 100)) throw new ArgumentOutOfRangeException(nameof(end));
+        if (enabled && (start < 0 || end - start < SampleRate / 100))
+            throw new ArgumentOutOfRangeException(nameof(end));
         Volatile.Write(ref _songLoop, enabled ? new(start, end) : null);
     }
 
@@ -315,18 +375,23 @@ public sealed class RealtimeSampler : IDisposable
                 {
                     var old = _active;
                     bool continuing = _playing && old is not null &&
-                        (_looping || old.Plan.IsArrangement && pending.Plan.IsArrangement && old.Execution.Position < pending.Plan.EndFrame) &&
-                        pending.ContinuationAuthority == old.Authority && pending.ContinuationNotes is { };
+                                      (_looping || old.Plan.IsArrangement && pending.Plan.IsArrangement &&
+                                          old.Execution.Position < pending.Plan.EndFrame) &&
+                                      pending.ContinuationAuthority == old.Authority &&
+                                      pending.ContinuationNotes is { };
                     pending.Execution.SetLooping(_looping);
                     pending.Execution.SetBoundarySmoothing(_smoothBoundaries);
                     if (continuing) pending.Execution.ContinueFrom(old!.Execution, pending.ContinuationNotes!);
                     else if (_playing && old is not null && old.Plan.IsArrangement && pending.Plan.IsArrangement &&
-                        pending.ContinuationAuthority == old.Authority && old.Execution.Position >= pending.Plan.EndFrame)
+                             pending.ContinuationAuthority == old.Authority &&
+                             old.Execution.Position >= pending.Plan.EndFrame)
                     {
-                        pending.Execution.Finish(); _playing = false;
+                        pending.Execution.Finish();
+                        _playing = false;
                     }
                     else if (_playing && old?.Plan.Graph is not null && pending.Plan.Graph is not null)
                         _transitionRemaining = GraphTransitionFrames;
+
                     _active = pending;
                     _revision = pending.Plan.Revision;
                     if (!continuing) _epoch++;
@@ -370,8 +435,10 @@ public sealed class RealtimeSampler : IDisposable
                 if (_active?.Plan.IsArrangement == true)
                 {
                     _active.Execution.Seek(Volatile.Read(ref _songStart));
-                    if (Volatile.Read(ref _seek) is { } initialSeek && initialSeek.Command <= start) _seenSeek = initialSeek.Command;
+                    if (Volatile.Read(ref _seek) is { } initialSeek && initialSeek.Command <= start)
+                        _seenSeek = initialSeek.Command;
                 }
+
                 _transitionRemaining = 0;
                 _playing = _active is not null;
                 _stopBoundary = false;
@@ -383,9 +450,12 @@ public sealed class RealtimeSampler : IDisposable
         var seek = Volatile.Read(ref _seek);
         if (active?.Plan.IsArrangement == true && seek is not null && seek.Command != _seenSeek)
         {
-            _seenSeek = seek.Command; active.Execution.Seek(seek.Frame);
-            _transitionRemaining = _playing ? GraphTransitionFrames : 0; _epoch++;
+            _seenSeek = seek.Command;
+            active.Execution.Seek(seek.Frame);
+            _transitionRemaining = _playing ? GraphTransitionFrames : 0;
+            _epoch++;
         }
+
         bool cancelled = active?.Cancellation.IsCancellationRequested == true;
         if (cancelled)
         {
@@ -407,15 +477,22 @@ public sealed class RealtimeSampler : IDisposable
                 active.Execution.SetRangeBoundary(rangeLoop ? loopEnd : long.MaxValue);
                 if (rangeLoop && active.Execution.Position >= loopEnd) active.Execution.Seek(range!.Start);
                 long end = rangeLoop ? loopEnd : active.Plan.EndFrame;
-                int frames = _looping && active.Plan.Loop is not null ? remaining :
-                    (int)Math.Max(0, Math.Min(remaining, end - active.Execution.Position));
+                int frames = _looping && active.Plan.Loop is not null
+                    ? remaining
+                    : (int)Math.Max(0, Math.Min(remaining, end - active.Execution.Position));
                 if (frames == 0) break;
                 active.Execution.Process(output.Slice(renderedFrames * Channels, frames * Channels));
-                renderedFrames += frames; remaining -= frames;
+                renderedFrames += frames;
+                remaining -= frames;
             }
+
             if (rangeLoop && active.Execution.Position >= loopEnd) active.Execution.Seek(range!.Start);
-            if (!rangeLoop && (!_looping || active.Plan.Loop is null) && active.Execution.Position >= active.Plan.EndFrame)
-            { active.Execution.Stop(); _playing = false; }
+            if (!rangeLoop && (!_looping || active.Plan.Loop is null) &&
+                active.Execution.Position >= active.Plan.EndFrame)
+            {
+                active.Execution.Stop();
+                _playing = false;
+            }
         }
 
         // Finite new-topology fade-in only. Hard Stop/Panic never emit an old-state tail.
@@ -426,6 +503,7 @@ public sealed class RealtimeSampler : IDisposable
                 for (int channel = 0; channel < Channels; channel++) output[frame * Channels + channel] *= amplitude;
                 _transitionRemaining--;
             }
+
         if (!_playing) _transitionRemaining = 0;
         float gain = Volatile.Read(ref _gain);
         for (int i = 0; i < output.Length; i++) output[i] *= gain;
@@ -552,11 +630,11 @@ public sealed class SamplerPreparationRequest : IDisposable
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var plan = _arrangement ? ArrangementPreparation.Prepare(_frozen, _consumer.SampleRate,
-                    _consumer.Channels, _consumer.MaximumPacketFrames, cancellationToken) :
+                        _consumer.Channels, _consumer.MaximumPacketFrames, cancellationToken) :
                     _graphTarget is { } graph ? GraphPreparation.Prepare(_frozen, graph, _consumer.SampleRate,
-                    _consumer.Channels, _consumer.MaximumPacketFrames, _voices, _repeats,
-                    cancellationToken: cancellationToken) : SamplerPreparation.PreparePattern(_frozen, _target,
-                    _consumer.SampleRate, _consumer.Channels, _voices, _start, _repeats);
+                        _consumer.Channels, _consumer.MaximumPacketFrames, _voices, _repeats,
+                        cancellationToken: cancellationToken) : SamplerPreparation.PreparePattern(_frozen, _target,
+                        _consumer.SampleRate, _consumer.Channels, _voices, _start, _repeats);
                 if (cancellationToken.IsCancellationRequested)
                 {
                     plan.Dispose();
@@ -579,8 +657,9 @@ public sealed class SamplerPreparationRequest : IDisposable
         bool valid = !_document.IsClosed && _document.LifecycleId == _lifecycle &&
                      _document.Generation == _generation && _document.Current.Revision == _revision &&
                      _document.MediaRoots.SequenceEqual(_roots) &&
-                     (_arrangement || (_graphTarget is { } graph ? _document.Current.State.GraphAttachments.Any(item => item.Id == graph) :
-                         _document.Current.State.Patterns.Any(pattern => pattern.Id == _target)));
+                     (_arrangement || (_graphTarget is { } graph
+                         ? _document.Current.State.GraphAttachments.Any(item => item.Id == graph)
+                         : _document.Current.State.Patterns.Any(pattern => pattern.Id == _target)));
         var result = _consumer.Publish(_plan, _authority, valid,
             _cancellation.IsCancellationRequested || cancellationToken.IsCancellationRequested,
             preservePlayback: PreservePlayback);

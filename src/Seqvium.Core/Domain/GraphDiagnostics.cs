@@ -247,11 +247,7 @@ public static class GraphDiagnostics
             if (part is not null)
             {
                 var sound = references.Sounds[part.SoundId];
-                if (sound.Algorithm != PcmSampler.Algorithm || sound.Extension is not null ||
-                    sound.ResourceIds.Length != 1 ||
-                    sound.Parameters.Count != 2 || !sound.Parameters.TryGetValue("rootPitch", out var root) ||
-                    root is < 0 or > 127 ||
-                    !sound.Parameters.TryGetValue("releaseMilliseconds", out var release) || release is < 0 or > 1000)
+                if (!BuiltInSound.Supports(sound))
                     Add(GraphReasons.MissingCapability, binding.NodeId, binding: binding.Id);
                 if (!sound.AdditionalData.IsEmpty || !part.AdditionalData.IsEmpty ||
                     part.Notes.Any(note => !note.AdditionalData.IsEmpty))

@@ -2,8 +2,19 @@
 
 Role: Optional-capability and extension lifecycle contract.
 Read when: Designing extension boundaries, packages, removal, or missing-capability behavior.
-Authoritative for: Categories, base-versus-optional policy, preset-source versus project-state boundaries, compatibility/fallback, lifecycle/removal safety, degraded availability and dependency blockers.
+Authoritative for: Categories, base-versus-optional policy, preset-source versus project-state boundaries,
+compatibility/fallback, lifecycle/removal safety, degraded availability and dependency blockers.
 Not authoritative for: A final public API, package format, project container, DSP implementation, or store.
+
+## First built-in instrument boundary
+
+The first Drum Voice is a host-shipped, versioned sound algorithm with a first-party editor. It uses
+existing canonical sound parameters and derived audio preparation, without package discovery, an
+optional install/uninstall lifecycle or a plugin SDK. It is not the removable creative sample generator:
+R6/R7 retain their identity/package/exploration/acceptance direction. A later instrument provider must
+separately establish execution/state/lifetime compatibility; this bounded implementation does not
+publish a universal instrument ABI. [Architecture](ARCHITECTURE.md#built-in-instrument-ownership)
+and [Audio](AUDIO_ENGINE.md#built-in-drum-voice) own its actual boundaries.
 
 ## Base and optional capabilities
 
@@ -17,15 +28,15 @@ Plugins are attached guests of this platform. They consume host contracts/servic
 project integrity, transport, graph engine, or audio-device ownership. Core modules may have replaceable
 internal implementations; an audio-device adapter is not automatically a public user plugin mechanism.
 
-| Candidate category | Boundary direction |
-| --- | --- |
-| Sample/content packs | May contain data only, with no executable code |
-| Presets | Data tied to a capability; compatibility needs identity/version handling |
-| Creative sample generators | Bounded asynchronous work outside realtime audio |
-| Instruments | Realtime sound production with a stricter processing/lifetime contract |
-| Realtime effects | Realtime processing with a stricter processing/lifetime contract |
-| Specialized node types | Contribute generators/processors/modulation to the core host graph; do not own its engine |
-| Future external plugin bridges | Separate hosting/integration concern; CLAP/VST3 strategy remains open |
+| Candidate category             | Boundary direction                                                                        |
+|--------------------------------|-------------------------------------------------------------------------------------------|
+| Sample/content packs           | May contain data only, with no executable code                                            |
+| Presets                        | Data tied to a capability; compatibility needs identity/version handling                  |
+| Creative sample generators     | Bounded asynchronous work outside realtime audio                                          |
+| Instruments                    | Realtime sound production with a stricter processing/lifetime contract                    |
+| Realtime effects               | Realtime processing with a stricter processing/lifetime contract                          |
+| Specialized node types         | Contribute generators/processors/modulation to the core host graph; do not own its engine |
+| Future external plugin bridges | Separate hosting/integration concern; CLAP/VST3 strategy remains open                     |
 
 Categories need not share an identical runtime contract. Do not create a universal API to cover
 unproven needs. Early extension infrastructure should support honest first-party optional modules:
@@ -74,7 +85,8 @@ rules below. The final resolver, manifest/schema, and compatibility paths are no
 
 ## Independent execution capability
 
-Future instrument hosting must honor the [execution-domain contract](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains).
+Future instrument hosting must honor
+the [execution-domain contract](ARCHITECTURE.md#shared-sound-definitions-and-execution-domains).
 A source exposing only one aggregate output per execution instance cannot provide independently
 processable overlapping A/B through that output. Divergent required routes may need multiple execution
 instances initialized from the same durable sound definition, or another genuine separation capability
@@ -269,7 +281,8 @@ remain Q-010/Q-024/Q-067 obligations; an OS window itself provides no crash cont
 Contributor-scoped editor lookup/availability, host resources/fallback and resource contract evolution
 must wait for actual R6 modules and [UI contribution lifecycle](#ui-resource-contribution-lifecycle).
 External-native hosting is **later than, and not a required deliverable of, R6 Extension Foundation**.
-Its state exchange must use the [single canonical state boundary](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal),
+Its state exchange must use
+the [single canonical state boundary](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal),
 not an independent plugin/editor Save or Undo model.
 
 ## Security boundary

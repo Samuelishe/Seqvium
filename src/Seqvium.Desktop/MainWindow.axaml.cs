@@ -8,6 +8,7 @@ using Avalonia.Controls.Chrome;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Seqvium.Desktop.Presentation;
+using Seqvium.Core;
 using Seqvium.Desktop.Workspace;
 using Seqvium.Desktop.Workflow;
 
@@ -304,6 +305,15 @@ internal sealed partial class MainWindow : Window
         if (definition.InstanceId == WorkspaceState.BeatId)
         {
             var rack = new BeatPaneContent(_session, _workflow, ImportBeatWavAsync);
+            rack.SoundRequested += part =>
+            {
+                var state = _workflow.State.Snapshot.State;
+                var attachment = state.GraphAttachments.SingleOrDefault(a => a.Id == _workflow.State.Selected);
+                var source = attachment?.Sources.SingleOrDefault(s => s.PartId == part);
+                if (source is not null)
+                    OpenNodeEditor(new(_workflow.State.Document.LifecycleId,
+                        attachment!.Id, attachment.GraphId, source.NodeId));
+            };
             rack.PianoRequested += part =>
             {
                 _workspace.Open(WorkspaceState.PianoId);
@@ -331,8 +341,23 @@ internal sealed partial class MainWindow : Window
 
     private void OpenNodeEditor(NodeEditorTarget target)
     {
+        bool differentTarget = _nodeEditor.Target != target;
         if (_closing || !_nodeEditor.Open(_workflow.State, target)) return;
         _workspace.Open(WorkspaceState.NodeEditorId);
+        var sound = DrumEditorSession.Resolve(_workflow.State.Snapshot.State, target);
+        if (differentTarget && sound is not null && DrumVoice.Supports(sound) &&
+            _workspace.State.Get(WorkspaceState.NodeEditorId).Dock == PaneDock.Floating)
+        {
+            var bounds = _workspace.State.Bounds(WorkspaceState.NodeEditorId);
+            if (bounds.Width < 640 || bounds.Height < 700)
+            {
+                _workspace.State.SetBounds(WorkspaceState.NodeEditorId, bounds with
+                {
+                    Width = Math.Max(720, bounds.Width), Height = Math.Max(740, bounds.Height)
+                });
+                _workspace.Commit();
+            }
+        }
     }
 
     private void RefreshGainHierarchy()

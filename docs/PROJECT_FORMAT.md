@@ -10,6 +10,16 @@ SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated ma
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
 
+## Drum Voice persistence
+
+The built-in kick stores algorithm `core.drum-voice.kick-v1` and validated decimal parameters in the
+existing shared SoundDefinition, with empty ResourceIds and no opaque ExtensionState. Notes, Source
+bindings and song clips keep their existing identities. No PCM buffers, waveform cache, editor drafts
+or audition state are serialized; synthesis reconstructs sound without files on Open. The JSON shape,
+writer and reader minor remain unchanged. An older host can preserve this unknown algorithm as
+unavailable sound intent rather than discard it; no executable downgrade compatibility is promised.
+Unknown/additional state remains preserved and refuses this bounded processor instead of being guessed.
+
 ## R4-F3-A desktop persistence lifecycle
 
 Desktop Save/Save As/Open use ProjectPersistence and the existing managed media layout unchanged.

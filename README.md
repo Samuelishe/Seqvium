@@ -11,9 +11,12 @@ the wider direction.
 
 ## What you can do today
 
-The current desktop provides a small working environment for playing and processing samples. You can:
+The current desktop provides a small working environment for samples, synthesized drums and music. You can:
 
 - Import WAV samples and play the selected sample item.
+- Add a built-in Drum Voice kick with no samples. Shape Tune, Decay, Tone, Noise and pitch/amplitude
+  envelopes in a spacious sound editor, drag curve points or enter exact values, and audition a hit.
+  Rack and Piano notes trigger it; the same sound participates in Song, Undo/Redo, Save/Open and WAV export.
 - Create a Pattern in Channel Rack, add or drop WAV sounds, and paint/erase sixteenth-note steps.
   Choose 1–32 bars; fill, shift or clear a row, and delete channels or Patterns with Undo.
   Play a continuous loop with a visible position, change steps while it plays, and export the selected
@@ -30,7 +33,7 @@ The current desktop provides a small working environment for playing and process
   and pan or zoom the canvas.
 - Adjust sample levels and mix independent WAV sources within the same graph.
 - Double-click a node to open its reusable editor: adjust Gain with a physical dial, slider, exact amplitude
-  and dB display, or inspect Source, Mix and Output details.
+  and dB display, shape a Drum Voice source, or inspect Source, Mix and Output details.
 - Undo and redo edits, save a project with its imported audio, and reopen it.
 - Arrange internal workspace panes by moving, resizing, docking or collapsing them. Restore main-window
   size/position and use the Rack + Playlist layout for composing.
@@ -57,6 +60,8 @@ WAV channel edits preserve the other voices in the supported Rack graph. Short b
 reduces sample-end clicks. WAV import supports mono/stereo PCM16/24/32 and float32 at 8–192 kHz;
 FLAC remains unavailable. EQ and other effects, third-party plugin hosting,
 MIDI input, recording and crash recovery remain missing.
+Drum Voice currently provides one electronic kick with independent finite hits; other drums, presets,
+choke groups and advanced modulation are still ahead. Sound parameters are shared across its uses.
 Sampler pitching uses linear resampling, changing sample playback speed and natural duration; it is
 not time stretching or a multisample instrument. The shared graph has a 32-voice budget.
 Playback can glitch under heavy system load.

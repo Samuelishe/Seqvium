@@ -221,6 +221,25 @@ contains no previous runtime fallback. Repair converges automatically through th
 and [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item) own exact bounds. Actual owner
 canvas/interaction review remains required independently of pure tests and a quiet physical smoke.
 
+## Drum Voice sound design
+
+Rack's Add Drum Voice creates one empty kick channel and opens its sound editor; it adds no preset
+rhythm. Channel identity double-click and Open sound editor return to that explicit Source target;
+Open Piano Roll remains a separate channel action. The editor shapes sound, Rack writes rhythm and
+Piano writes pitch/duration/velocity. Shared Pattern/Song/history/Save/Open/export use the same intent.
+
+Tune/Decay/Tone/Noise have physical dials and convenient exact fields. Repeated numbers are omitted
+inside dials; Tune retains useful Hz alongside its semitone field. Pitch and Amplitude modes expose
+editable start/shape/end points and the applicable exact envelope parameters. Captured drag/fine
+adjustment, arrows/Home/End, default reset, Enter/focus-loss commit and Escape/capture-loss cancellation
+produce at most one logical edit. Uncommitted curves are dashed; intervening edits invalidate drafts.
+Audition selects a note/velocity and plays a quiet solo hit while transport is stopped, without history.
+Parameter commits during playback affect subsequent hits without restarting the rhythm.
+
+The time/frequency graph is analytical; its waveform is derived from the actual synthesized signal,
+not a live meter. Compact panes reflow audition/knobs and scroll locally, keeping every exact parameter
+reachable. [Workspace](WORKSPACE.md#drum-voice-editor-placement) owns retained sizing.
+
 ## Detailed node editor access
 
 **SEQ-NODE-EDITOR-IMPL-F1 — implemented bounded access accepted for the first slice.**

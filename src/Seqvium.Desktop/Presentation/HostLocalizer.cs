@@ -40,6 +40,15 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> English { get; } = new Dictionary<string, string>
     {
+        ["Drum.Title"] = "Drum Voice", ["Drum.Kick"] = "Kick", ["Drum.Add"] = "Add Drum Voice",
+        ["Drum.Open"] = "Open sound editor", ["Drum.Pitch"] = "Pitch", ["Drum.Amplitude"] = "Amplitude",
+        ["Drum.Audition"] = "Audition", ["Drum.Note"] = "Audition note", ["Drum.Velocity"] = "Audition velocity",
+        ["Drum.Shared"] = "Shared sound · parts", ["Drum.Waveform"] = "Synthesized waveform",
+        ["Drum.tune"] = "Tune", ["Drum.decay"] = "Decay", ["Drum.tone"] = "Tone", ["Drum.noise"] = "Noise",
+        ["Drum.pitchAmount"] = "Pitch drop", ["Drum.pitchDecay"] = "Drop time", ["Drum.pitchCurve"] = "Pitch shape",
+        ["Drum.attack"] = "Attack", ["Drum.amplitudeCurve"] = "Amp shape",
+        ["Drum.DialHint"] = "Drag to shape · Shift: fine · double-click: default · arrows: adjust",
+        ["Drum.EnvelopeHint"] = "Drag a point to shape the envelope · Escape: cancel · exact values below",
         ["Pane.Piano"] = "Piano Roll",
         ["Piano.Pattern"] = "Shared Pattern",
         ["Piano.Part"] = "Channel",
@@ -363,6 +372,15 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> Russian { get; } = new Dictionary<string, string>
     {
+        ["Drum.Title"] = "Drum Voice", ["Drum.Kick"] = "Бочка", ["Drum.Add"] = "Добавить Drum Voice",
+        ["Drum.Open"] = "Открыть редактор звука", ["Drum.Pitch"] = "Высота", ["Drum.Amplitude"] = "Амплитуда",
+        ["Drum.Audition"] = "Прослушать", ["Drum.Note"] = "Нота прослушивания", ["Drum.Velocity"] = "Сила удара",
+        ["Drum.Shared"] = "Общий звук · партии", ["Drum.Waveform"] = "Синтезированная волна",
+        ["Drum.tune"] = "Tune", ["Drum.decay"] = "Decay", ["Drum.tone"] = "Tone", ["Drum.noise"] = "Noise",
+        ["Drum.pitchAmount"] = "Спад высоты", ["Drum.pitchDecay"] = "Время спада", ["Drum.pitchCurve"] = "Форма высоты",
+        ["Drum.attack"] = "Атака", ["Drum.amplitudeCurve"] = "Форма амплитуды",
+        ["Drum.DialHint"] = "Потяните · Shift: точно · двойной щелчок: по умолчанию · стрелки: настройка",
+        ["Drum.EnvelopeHint"] = "Потяните точку огибающей · Escape: отмена · точные значения ниже",
         ["Pane.Piano"] = "Ноты · Piano Roll",
         ["Piano.Pattern"] = "Общий паттерн",
         ["Piano.Part"] = "Канал",

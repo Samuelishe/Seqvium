@@ -7,13 +7,15 @@ workflow and points to the detailed sources for each subject.
 ## Create a drum pattern
 
 After [building and launching](../README.md#getting-started), use **Channel Rack**. A pristine layout
-opens it; the left Rack icon or **Panes** menu reopens it. Use short supported percussion WAVs (the formats below
-apply).
+opens it; the left Rack icon or **Panes** menu reopens it. You can begin without any sample files.
 
 1. Click **New pattern**. It creates an empty bar with 16 sixteenth-note steps in the current
    4/4 project; it does not change BPM or add preset hits.
-2. Click **Add sound**, or drop one WAV into the Rack, for your Kick, Snare and Hi-Hat. Each adds a row;
-   source mixing is connected automatically for this initial graph.
+2. Click **Add Drum Voice** for a synthesized kick. Its editor opens automatically: Tune sets pitch,
+   Decay sets length, Tone shapes harmonics and Noise adds a transient. Drag Pitch/Amplitude curve
+   points or use the exact fields; one completed adjustment is one Undo. Audition plays a quiet hit
+   at the selected note/velocity. Double-click its channel name or use **… → Open sound editor** to return. **Add
+   sound** or a dropped WAV adds other sounds, such as Snare/Hi-Hat. Sources mix automatically.
 3. Enable Kick steps 1/9, Snare 5/13 and Hi-Hat 1/3/5/7/9/11/13/15. Click again to remove a hit.
    Drag across a row to paint or erase; release commits the whole gesture, Escape cancels. The row's **…** menu fills
    every four/two steps, shifts or clears. Arrows navigate; Space/Enter toggles;
@@ -23,7 +25,8 @@ apply).
 4. Press **Play** (F5) for a continuous cycle; Stop ends it. The outlined column and bar:beat:sixteenth
    display follow the audio renderer. Change steps while it plays: future steps update after preparation,
    and already passed steps are heard next time around. Unchanged sounding notes keep their position.
-   Long samples still cut at a quarter-note gate or the Pattern end, so short drums work best.
+   The synthesized kick plays its full finite envelope and its tails can overlap across the bar.
+   Long WAV samples still cut at a quarter-note gate or the Pattern end, so short sampled drums work best.
 5. Choose the number of bars in the Pattern header (1–32). Added bars start empty. Clear late steps
    before shortening; length and BPM changes stop playback. The row **…** menu deletes a channel,
    and the header × deletes the Pattern and its occurrences; Undo restores them. The top left **…**

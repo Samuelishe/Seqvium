@@ -7,6 +7,18 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Drum Voice verification
+
+`DrumVoiceTests` covers actual parameter-to-signal differences, host rates/pitch/envelope time,
+velocity, short-note one-shot tails, loop overlap/preflight, seek, partition/consumer allocation,
+live publication/Stop, shared graph mixing, history/stale targets and media-free Save/Open/export.
+Use the installed MTP route with `--filter-class "*DrumVoiceTests"`; related sampler/graph/Rack/Song
+classes protect unchanged boundaries. The developer `VisualCheck drum <output> [delivery-directory]`
+opens physical output deliberately: actual GUI edits, both themes/languages, compact field reachability,
+guarded native dial/pitch/amp handles, quiet audition, looping/live edits, finite Song and WAV.
+It labels routed controls, native input and physical output separately; it does not claim acoustic
+listening or pressure acceptance. [Report](experiments/SEQ-FIRST-DRUM_REPORT.md) owns completed evidence.
+
 ## Required verification levels
 
 Check enough to justify confidence in the change. Remove redundant work without weakening meaningful

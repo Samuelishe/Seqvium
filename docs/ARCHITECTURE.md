@@ -236,6 +236,21 @@ under [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item).
 The only new Core edit is validated Pattern length adjustment for a longer accepted source; no new
 graph model/history, DSP, assembly, plugin registry or docking framework is introduced.
 
+## Built-in instrument ownership
+
+The first Drum Voice is a built-in SoundDefinition capability, not the removable R7 creative generator.
+Canonical decimal parameters and algorithm identity use existing document history/serialization.
+`DrumVoice` owns synthesis and envelope functions; `BuiltInSound` recognizes the two implemented sound
+capabilities without introducing a public registry. Derived host-rate signals enter the existing
+source/lease scheduler under [Audio](AUDIO_ENGINE.md#built-in-drum-voice).
+
+The bound Source node opens `DrumVoicePaneContent` in the retained Node Editor. `DrumEditorSession`
+captures lifecycle/attachment/graph/node plus sound ID, generation and starting values; workflow commits
+revalidate all of them. Controls edit the shared sound, not a graph-local duplicate or physical voice.
+Any intervening generation cancels drafts, including ABA; exact deletion Undo can restore the target,
+while project replacement retires its lifecycle. Preview curves/waveforms and audition controls are
+session presentation, not canonical music. Rack and Piano retain the only note model.
+
 ## Node editor state and lifetime proposal
 
 **SEQ-NODE-EDITOR-IMPL-F1 — implemented internal Desktop boundary accepted for the first slice.**

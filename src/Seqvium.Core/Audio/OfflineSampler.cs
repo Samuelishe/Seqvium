@@ -55,7 +55,8 @@ internal sealed record PreparedNote(
     long StartFrame,
     long EndFrame,
     int ReleaseFrames,
-    int ContributionIndex = 0);
+    int ContributionIndex = 0,
+    bool OneShot = false);
 
 /// <summary>Frozen single-Pattern execution, bounded repeats and source leases. Derived state, never persistent musical truth.</summary>
 public sealed class PreparedSampler : IDisposable
@@ -188,6 +189,7 @@ public static class SamplerPreparation
         var events = new List<PreparedEvent>();
         var sources = new List<PcmLease>();
         var resourceIndices = new Dictionary<Id<ResourceDescriptor>, int>();
+        var drumIndices = new Dictionary<(Id<SoundDefinition>, decimal), int>();
         int decodedBytes = 0, zero = 0, maximumRelease = 0;
         try
         {
@@ -195,13 +197,29 @@ public static class SamplerPreparation
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var sound = state.Sounds.Single(item => item.Id == part.SoundId);
-                if (sound.Algorithm != PcmSampler.Algorithm || sound.Extension is not null ||
-                    sound.ResourceIds.Length != 1 ||
-                    sound.Parameters.Count != 2 || !sound.Parameters.ContainsKey("rootPitch") ||
-                    !sound.Parameters.ContainsKey("releaseMilliseconds") ||
-                    !sound.AdditionalData.IsEmpty || !part.AdditionalData.IsEmpty)
+                if (!BuiltInSound.Supports(sound) || !part.AdditionalData.IsEmpty)
                     throw new NotSupportedException(
                         "Offline sampler requires one core PCM resource, explicit root/release and understood sound/part dependencies.");
+                if (sound.Algorithm == DrumVoice.Algorithm)
+                {
+                    foreach (decimal pitch in part.Notes.Select(n => n.Pitch).Distinct())
+                    {
+                        var key = (sound.Id, pitch);
+                        if (drumIndices.ContainsKey(key)) continue;
+                        int bytes = checked((int)decimal.Ceiling(sound.Parameters["decay"] * sampleRate / 1000) *
+                                            sizeof(float));
+                        if (decodedBytes > MaximumDecodedBytes - bytes)
+                            throw new NotSupportedException("Synthesized source budget exceeded.");
+                        using var synthesized =
+                            DrumVoice.Render(sound.Parameters, sampleRate, pitch, cancellationToken);
+                        drumIndices.Add(key, sources.Count);
+                        sources.Add(synthesized.Lease());
+                        decodedBytes += bytes;
+                    }
+
+                    continue;
+                }
+
                 PcmSampler.ValidateConfiguration(sound.Parameters["rootPitch"],
                     sound.Parameters["releaseMilliseconds"]);
                 var resource = sound.ResourceIds[0];
@@ -238,9 +256,13 @@ public static class SamplerPreparation
                     var note = item.Note;
                     if (!note.AdditionalData.IsEmpty)
                         throw new NotSupportedException("Unknown note dependencies are not executable.");
-                    int sourceIndex = resourceIndices[sound.ResourceIds[0]];
-                    double step = PcmSampler.Step(sources[sourceIndex].Rate, sampleRate, sound.Parameters["rootPitch"],
-                        note.Pitch);
+                    bool drum = sound.Algorithm == DrumVoice.Algorithm;
+                    int sourceIndex =
+                        drum ? drumIndices[(sound.Id, note.Pitch)] : resourceIndices[sound.ResourceIds[0]];
+                    double step = drum
+                        ? 1
+                        : PcmSampler.Step(sources[sourceIndex].Rate, sampleRate,
+                            sound.Parameters["rootPitch"], note.Pitch);
                     var position = new MusicalPosition(checked(start.Ticks + checked(iteration * pattern.Length.Ticks) +
                                                                note.Position.Ticks));
                     var end = position.Add(note.Duration);
@@ -253,15 +275,17 @@ public static class SamplerPreparation
                         continue;
                     } // Positive canonical duration; explicitly inaudible, no orphan release.
 
-                    int release = checked((int)decimal.Round(
-                        sound.Parameters["releaseMilliseconds"] * sampleRate / 1000m, 0,
-                        MidpointRounding.AwayFromZero));
+                    int release = drum
+                        ? 0
+                        : checked((int)decimal.Round(
+                            sound.Parameters["releaseMilliseconds"] * sampleRate / 1000m, 0,
+                            MidpointRounding.AwayFromZero));
                     maximumRelease = Math.Max(maximumRelease, release);
                     var occurrence =
                         new ExecutionOccurrence(patternId, part.Id, note.Id, iteration, graph?.PlacementId);
                     int index = notes.Count;
                     notes.Add(new(occurrence, sourceIndex, step, (float)note.Intensity, on, off, release,
-                        graph?.SourceBuffer(part.Id) ?? 0));
+                        graph?.SourceBuffer(part.Id) ?? 0, drum));
                     events.Add(new(on, position, ExecutionEventKind.NoteOn, occurrence, index));
                     events.Add(new(off, end, ExecutionEventKind.NoteOff, occurrence, index));
                 }
@@ -270,6 +294,9 @@ public static class SamplerPreparation
             var stopTicks = stop ?? new MusicalPosition(musicalEnd);
             long last = ConstantTempoConversion.ToFrames(stopTicks, state.Settings.Tempo, sampleRate);
             if (stop is null) last = checked(last + maximumRelease);
+            if (stop is null && notes.Any(n => n.OneShot))
+                last = Math.Max(last,
+                    notes.Where(n => n.OneShot).Max(n => checked(n.StartFrame + sources[n.SourceIndex].Frames)));
             events.RemoveAll(item => item.Frame >= last);
             events.Add(new(last, stopTicks, ExecutionEventKind.Stop, null, -1));
             // Conflict precedence is semantic before identity: Stop, release old voices, start new voices.
@@ -285,6 +312,8 @@ public static class SamplerPreparation
             bool loopable = repeats == 1 && zero == 0 && clock.SpansFrame(pattern.Length.Ticks) &&
                             boundaries.Zip(boundaries.Skip(1), (left, right) => clock.SpansFrame(right - left))
                                 .All(distinct => distinct);
+            if (loopable && notes.Any(n => n.OneShot))
+                ValidateDrumLoopCapacity(notes, sources, voiceCapacity, clock);
             return new(snapshot.Revision, sampleRate, channels, voiceCapacity, first, last, zero, notes.ToImmutable(),
                 sorted, [.. sources], graph) { Loop = loopable ? clock : null, CanonicalBasis = state };
         }
@@ -306,11 +335,39 @@ public static class SamplerPreparation
             ends.RemoveAll(end => end <= item.Frame);
             var note = notes[item.NoteIndex];
             long eof = checked(note.StartFrame + (long)Math.Ceiling(sources[note.SourceIndex].Frames / note.Step));
-            long end = Math.Min(stop, Math.Min(eof, checked(note.EndFrame + note.ReleaseFrames)));
+            long end = Math.Min(stop, note.OneShot ? eof : Math.Min(eof, checked(note.EndFrame + note.ReleaseFrames)));
             if (end > item.Frame) ends.Add(end);
             if (ends.Count > capacity)
                 throw new NotSupportedException("Voice capacity exceeded; no notes were dropped.");
         }
+    }
+
+    private static void ValidateDrumLoopCapacity(ImmutableArray<PreparedNote>.Builder notes, List<PcmLease> sources,
+        int capacity, LoopClock clock)
+    {
+        long cycle = clock.Frame(clock.StartTicks + clock.LengthTicks) - clock.Frame(clock.StartTicks);
+        long longest = notes.Where(n => n.OneShot).Select(n => (long)sources[n.SourceIndex].Frames).Max();
+        // Cover warm-up and the following complete cycle, using the shortest fractional cycle.
+        long shortest = Math.Max(1, cycle - 1);
+        long history = longest / shortest + 2;
+        if (history * notes.Count > MaximumEvents)
+            throw new NotSupportedException("Drum loop overlap budget exceeded.");
+        var boundaries = new List<(long Frame, int Delta)>();
+        for (long iteration = 0; iteration <= history; iteration++)
+            foreach (var note in notes)
+            {
+                long shift = iteration * shortest;
+                long end = note.OneShot
+                    ? note.StartFrame + sources[note.SourceIndex].Frames
+                    : Math.Min(note.EndFrame + note.ReleaseFrames, clock.Frame(clock.StartTicks) + shortest);
+                boundaries.Add((note.StartFrame + shift, 1));
+                boundaries.Add((end + shift, -1));
+            }
+
+        int active = 0;
+        foreach (var boundary in boundaries.OrderBy(b => b.Frame).ThenBy(b => b.Delta))
+            if ((active += boundary.Delta) > capacity)
+                throw new NotSupportedException("Drum loop voice capacity exceeded; no hits were dropped.");
     }
 }
 
@@ -415,12 +472,12 @@ public sealed class OfflineSampler : IDisposable
             var note = _plan.Notes[index];
             long age = Position - note.StartFrame, release = Position - note.EndFrame;
             if (age <= 0 || age * note.Step >= _sources![note.SourceIndex].Frames ||
-                release >= note.ReleaseFrames) continue;
+                !note.OneShot && release >= note.ReleaseFrames) continue;
             var voice = _voices[slot++];
             voice.Note = note;
             voice.NoteIndex = index;
             voice.Age = age;
-            voice.ReleaseAge = release < 0 ? -1 : (int)release;
+            voice.ReleaseAge = note.OneShot || release < 0 ? -1 : (int)release;
         }
     }
 
@@ -484,7 +541,9 @@ public sealed class OfflineSampler : IDisposable
                 Position >= clock.Frame(clock.StartTicks + (_iteration + 1) * clock.LengthTicks))
             {
                 // Source gates end at the musical boundary; the next sample starts in this same packet.
-                foreach (var voice in _voices) voice.Note = null;
+                foreach (var voice in _voices)
+                    if (voice.Note is not { OneShot: true })
+                        voice.Note = null;
                 _iteration++;
                 _eventIndex = 0;
             }
@@ -509,10 +568,12 @@ public sealed class OfflineSampler : IDisposable
                     // PCM source EOF, zero-release gate and the Pattern/Song end each own a boundary.
                     double remaining = (source.Frames - cursor) / note.Step;
                     long gateAge = note.EndFrame - note.StartFrame;
-                    if (note.ReleaseFrames == 0) remaining = Math.Min(remaining, gateAge - voice.Age);
-                    long end = _looping && _plan.Loop is { } loopClock
-                        ? loopClock.Frame(loopClock.StartTicks + (_iteration + 1) * loopClock.LengthTicks)
-                        : _plan.EndFrame;
+                    if (!note.OneShot && note.ReleaseFrames == 0) remaining = Math.Min(remaining, gateAge - voice.Age);
+                    long end = _looping && note.OneShot
+                        ? long.MaxValue
+                        : _looping && _plan.Loop is { } loopClock
+                            ? loopClock.Frame(loopClock.StartTicks + (_iteration + 1) * loopClock.LengthTicks)
+                            : _plan.EndFrame;
                     remaining = Math.Min(remaining, Math.Min(end, _rangeBoundary) - Position);
                     gain *= Math.Clamp((remaining - 1) / BoundaryFadeFrames, 0, 1);
                 }
@@ -588,7 +649,7 @@ public sealed class OfflineSampler : IDisposable
             if (item.Kind == ExecutionEventKind.NoteOff)
             {
                 foreach (var voice in _voices)
-                    if (voice.Note is { } active && active.Occurrence == item.Occurrence)
+                    if (voice.Note is { OneShot: false } active && active.Occurrence == item.Occurrence)
                     {
                         if (active.ReleaseFrames == 0) voice.Note = null;
                         else voice.ReleaseAge = 0;

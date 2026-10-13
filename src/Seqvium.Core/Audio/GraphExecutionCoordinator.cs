@@ -1,11 +1,21 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Immutable;
 
 namespace Seqvium.Core;
 
-public sealed record GraphExecutionStatus(Guid CanonicalRevision, bool PreparationPending,
-    SamplerExecutionStatus Execution, bool InvalidCanonical, bool LastValidPlaying, bool Closed,
-    string? Blocker, int Preparations, int Supersessions, int CapacityRetries, Id<GraphAttachment> Target);
+public sealed record GraphExecutionStatus(
+    Guid CanonicalRevision,
+    bool PreparationPending,
+    SamplerExecutionStatus Execution,
+    bool InvalidCanonical,
+    bool LastValidPlaying,
+    bool Closed,
+    string? Blocker,
+    int Preparations,
+    int Supersessions,
+    int CapacityRetries,
+    Id<GraphAttachment> Target);
 
 /// <summary>Serialized application owner. All public operations/mutations run on the supplied owner context.
 /// At most one worker/candidate is retained; timer progress is coalesced into one owner callback.
@@ -38,7 +48,9 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
 
     public GraphExecutionCoordinator(ProjectDocument document, RealtimeSampler sampler,
         Id<GraphAttachment> target, SynchronizationContext owner, int voiceCapacity = 8, int repeats = 1)
-        : this(document, sampler, target, owner, voiceCapacity, repeats, null, true) { }
+        : this(document, sampler, target, owner, voiceCapacity, repeats, null, true)
+    {
+    }
 
     internal GraphExecutionCoordinator(ProjectDocument document, RealtimeSampler sampler,
         Id<GraphAttachment> target, SynchronizationContext owner, int voices, int repeats,
@@ -46,9 +58,15 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     {
         document.CheckAvailable();
         ArgumentNullException.ThrowIfNull(owner);
-        if (voices is < 1 or > GraphPreparation.MaximumVoices || repeats is < 1 or > 1024) throw new ArgumentOutOfRangeException(nameof(voices));
-        _document = document; _sampler = sampler; _target = target; _owner = owner;
-        _voices = voices; _repeats = repeats; _gate = gate;
+        if (voices is < 1 or > GraphPreparation.MaximumVoices || repeats is < 1 or > 1024)
+            throw new ArgumentOutOfRangeException(nameof(voices));
+        _document = document;
+        _sampler = sampler;
+        _target = target;
+        _owner = owner;
+        _voices = voices;
+        _repeats = repeats;
+        _gate = gate;
         _status = new(document.Current.Revision, false, default, false, false, false, null, 0, 0, 0, target);
         CheckOwner();
         document.Changed += Refresh;
@@ -63,6 +81,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         var execution = _sampler.ReadStatus();
         return status with { Execution = execution, LastValidPlaying = status.InvalidCanonical && execution.Playing };
     }
+
     internal RealtimeSampler Sampler => _sampler;
 
     /// <summary>Mode changes end the old transport intent and prepare a finite song or continuous Rack target.</summary>
@@ -72,7 +91,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         ObjectDisposedException.ThrowIf(_closed, this);
         if (_arrangement == arrangement) return;
         _sampler.Stop();
-        _arrangement = arrangement; _basis = null;
+        _arrangement = arrangement;
+        _basis = null;
         Refresh();
     }
 
@@ -97,15 +117,25 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         return true;
     }
 
-    public long Stop() { CheckOwner(); return _sampler.Stop(); }
-    public long Panic() { CheckOwner(); return _sampler.Panic(); }
+    public long Stop()
+    {
+        CheckOwner();
+        return _sampler.Stop();
+    }
+
+    public long Panic()
+    {
+        CheckOwner();
+        return _sampler.Panic();
+    }
 
     /// <summary>An explicit Play may retry a failed preparation; automatic convergence never starts audio.</summary>
     public void RetryBlockedPreparation()
     {
         CheckOwner();
         if (_closed || _blocker is null || _sampler.IsTerminated) return;
-        _basis = null; Refresh();
+        _basis = null;
+        Refresh();
     }
 
     private void Refresh()
@@ -117,12 +147,16 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         _sampler.InvalidatePreparation();
         if (_busy) _supersessions++;
         _cancellation?.Cancel();
-        _candidate?.Dispose(); _candidate = null;
+        _candidate?.Dispose();
+        _candidate = null;
         var state = _document.Current.State;
         var attachment = state.GraphAttachments.SingleOrDefault(item => item.Id == _target);
-        _intent = attachment is null ? null : GraphDiagnostics.Inspect(state).Single(item => item.GraphId == attachment.GraphId);
+        _intent = attachment is null
+            ? null
+            : GraphDiagnostics.Inspect(state).Single(item => item.GraphId == attachment.GraphId);
         _blocker = _arrangement ? ArrangementPreparation.Refusal(state) :
-            _intent is { IsEligibleForPreparation: true } || attachment is not null && GraphPreparation.IsSilentChannelGraph(state, attachment) ? null :
+            _intent is { IsEligibleForPreparation: true } ||
+            attachment is not null && GraphPreparation.IsSilentChannelGraph(state, attachment) ? null :
             _intent?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
         _dirty = _blocker is null;
         Progress();
@@ -131,35 +165,65 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     private void QueueProgress()
     {
         if (Interlocked.CompareExchange(ref _queued, 1, 0) != 0) return;
-        _owner.Post(_ => { Volatile.Write(ref _queued, 0); if (!_disposed) Progress(); }, null);
+        _owner.Post(_ =>
+        {
+            Volatile.Write(ref _queued, 0);
+            if (!_disposed) Progress();
+        }, null);
     }
 
     internal void Progress()
     {
         CheckOwner();
-        if (_closed) { Observe(); return; }
+        if (_closed)
+        {
+            Observe();
+            return;
+        }
+
         _sampler.RetireCompleted();
         if (_sampler.IsTerminated)
         {
             _blocker = "graph.execution-terminated";
             _cancellation?.Cancel();
-            _candidate?.Dispose(); _candidate = null;
+            _candidate?.Dispose();
+            _candidate = null;
             _dirty = false;
-            Observe(); return;
+            Observe();
+            return;
         }
-        if (!_document.MediaRoots.SequenceEqual(_desiredRoots)) { Refresh(); return; }
-        if (_busy) { Observe(); return; }
+
+        if (!_document.MediaRoots.SequenceEqual(_desiredRoots))
+        {
+            Refresh();
+            return;
+        }
+
+        if (_busy)
+        {
+            Observe();
+            return;
+        }
+
         if (_candidate is { } candidate)
         {
             var result = candidate.Publish();
-            if (result == SamplerPublication.Capacity) { _retries++; Observe(); return; }
+            if (result == SamplerPublication.Capacity)
+            {
+                _retries++;
+                Observe();
+                return;
+            }
+
             if (result == SamplerPublication.Accepted) Accepted(candidate, _document.Current);
-            candidate.Dispose(); _candidate = null;
+            candidate.Dispose();
+            _candidate = null;
             if (result != SamplerPublication.Accepted) _dirty = true;
         }
+
         var execution = _sampler.ReadStatus();
         bool ownsExecution = _basis is not null && execution.PreparedExecutionId == _startAuthority &&
-            execution.AttachmentId == _target;
+                             execution.AttachmentId == _target;
         // Publication reserves a pending slot, not an accepted consumer handoff. A rejected target
         // must be prepared again even when its document revision equals the last-valid active plan.
         if (_basis is not null && _sampler.RejectedPreparedExecutionId == _startAuthority &&
@@ -168,6 +232,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             _basis = null;
             _dirty = true;
         }
+
         if (_dirty)
         {
             _dirty = false;
@@ -178,17 +243,19 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 (attachment is null || !GraphPreparation.IsSilentChannelGraph(snapshot.State, attachment)))
                 _blocker = report?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
             else if (!_arrangement && _basis is not null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
-                SameExecution(_basis.State, snapshot.State, ignoreGain: true) &&
-                ownsExecution && !_sampler.HasPending)
+                     SameExecution(_basis.State, snapshot.State, ignoreGain: true) &&
+                     ownsExecution && !_sampler.HasPending)
             {
                 bool geometry = SameExecution(_basis.State, snapshot.State, ignoreGain: false);
                 var graph = snapshot.State.Graphs.Single(item => item.Id == attachment!.GraphId);
                 // No source decoding, scratch allocation or topology construction for geometry/Gain edits.
                 float[] coefficients = _gainNodes.Select(id =>
-                    (float)graph.Nodes.Single(node => node.Id == id).Parameters[GraphBuiltIns.GainAmplitude].GetDecimal()).ToArray();
+                    (float)graph.Nodes.Single(node => node.Id == id).Parameters[GraphBuiltIns.GainAmplitude]
+                        .GetDecimal()).ToArray();
                 long authority = _sampler.InvalidatePreparation();
                 Guid executingRevision = geometry ? _executionRevision : snapshot.Revision;
-                if (_sampler.PublishGraphUpdate(_startAuthority, _target, executingRevision, snapshot.Revision, coefficients, authority))
+                if (_sampler.PublishGraphUpdate(_startAuthority, _target, executingRevision, snapshot.Revision,
+                        coefficients, authority))
                 {
                     _basis = snapshot;
                     _executionRevision = executingRevision;
@@ -199,15 +266,18 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             {
                 _cancellation?.Dispose();
                 _cancellation = new();
-                _request = _arrangement ? _sampler.BeginArrangementPreparation(_document) :
-                    _sampler.BeginGraphPreparation(_document, _target, _voices, _repeats);
+                _request = _arrangement
+                    ? _sampler.BeginArrangementPreparation(_document)
+                    : _sampler.BeginGraphPreparation(_document, _target, _voices, _repeats);
                 // The sampler compares against its actual active basis, including superseded pending handoffs.
                 _request.PreservePlayback = _repeats == 1;
                 _request.PreparationGate = _gate;
-                _busy = true; _preparations++;
+                _busy = true;
+                _preparations++;
                 _work = PrepareAsync(_request, snapshot, _desired, _cancellation.Token);
             }
         }
+
         Observe();
     }
 
@@ -225,12 +295,16 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 if (result == SamplerPublication.Accepted) Accepted(request, snapshot);
                 else if (result == SamplerPublication.Capacity)
                 {
-                    _candidate = request; retained = true; _retries++;
+                    _candidate = request;
+                    retained = true;
+                    _retries++;
                 }
                 else _dirty = true;
             }
         }
-        catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+        }
         catch (GraphPreparationException error)
         {
             if (!_closed && desired == _desired) _blocker = error.Reason;
@@ -242,7 +316,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         finally
         {
             if (!retained) request.Dispose();
-            _request = null; _busy = false;
+            _request = null;
+            _busy = false;
             Observe();
             QueueProgress();
         }
@@ -257,9 +332,12 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
 
     private void Accepted(SamplerPreparationRequest request, ProjectSnapshot snapshot)
     {
-        _basis = snapshot; _basisRoots = [.. _document.MediaRoots];
+        _basis = snapshot;
+        _basisRoots = [.. _document.MediaRoots];
         _gainNodes = _candidateGainNodes;
-        _executionRevision = snapshot.Revision; _startAuthority = request.Authority; _blocker = null;
+        _executionRevision = snapshot.Revision;
+        _startAuthority = request.Authority;
+        _blocker = null;
     }
 
     internal static bool SameExecution(ProjectState left, ProjectState right, bool ignoreGain, bool ignoreNotes = false)
@@ -268,24 +346,48 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         {
             ArrangementClips = [],
             ArrangementTracks = [],
-            Patterns = ignoreNotes ? [.. state.Patterns.Select(pattern => pattern with
-            {
-                Name = "", Parts = [.. pattern.Parts.Select(part => part with { Notes = [] })]
-            })] : state.Patterns,
-            Graphs = [.. state.Graphs.OrderBy(item => item.Id.Value).Select(graph => graph with
-            {
-                Nodes = [.. graph.Nodes.OrderBy(item => item.Id.Value).Select(node => node with
+            Sounds = ignoreNotes
+                ?
+                [
+                    .. state.Sounds.Select(sound => DrumVoice.Supports(sound)
+                        ? sound with { Parameters = DrumVoice.Defaults }
+                        : sound)
+                ]
+                : state.Sounds,
+            Patterns = ignoreNotes
+                ?
+                [
+                    .. state.Patterns.Select(pattern => pattern with
+                    {
+                        Name = "", Parts = [.. pattern.Parts.Select(part => part with { Notes = [] })]
+                    })
+                ]
+                : state.Patterns,
+            Graphs =
+            [
+                .. state.Graphs.OrderBy(item => item.Id.Value).Select(graph => graph with
                 {
-                    Position = node.Position with { X = 0, Y = 0 },
-                    Parameters = ignoreGain && node.Type == GraphBuiltIns.Gain
-                        ? ImmutableDictionary<string, System.Text.Json.JsonElement>.Empty : node.Parameters,
-                    Ports = [.. node.Ports.OrderBy(port => port.Id.Value)]
-                })],
-                Connections = [.. graph.Connections.OrderBy(edge => edge.Id.Value)]
-            })],
-            GraphAttachments = [.. state.GraphAttachments.OrderBy(item => item.Id.Value)
-                .Select(item => item with { Sources = [.. item.Sources.OrderBy(binding => binding.Id.Value)] })]
+                    Nodes =
+                    [
+                        .. graph.Nodes.OrderBy(item => item.Id.Value).Select(node => node with
+                        {
+                            Position = node.Position with { X = 0, Y = 0 },
+                            Parameters = ignoreGain && node.Type == GraphBuiltIns.Gain
+                                ? ImmutableDictionary<string, System.Text.Json.JsonElement>.Empty
+                                : node.Parameters,
+                            Ports = [.. node.Ports.OrderBy(port => port.Id.Value)]
+                        })
+                    ],
+                    Connections = [.. graph.Connections.OrderBy(edge => edge.Id.Value)]
+                })
+            ],
+            GraphAttachments =
+            [
+                .. state.GraphAttachments.OrderBy(item => item.Id.Value)
+                    .Select(item => item with { Sources = [.. item.Sources.OrderBy(binding => binding.Id.Value)] })
+            ]
         };
+
         return ProjectDocument.HasSameContent(Normalize(left), Normalize(right));
     }
 
@@ -297,34 +399,58 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             .Intersect(right.Patterns.SelectMany(p => p.Parts).Select(p => p.Id)).ToHashSet();
         var commonSounds = left.Sounds.Select(s => s.Id).Intersect(right.Sounds.Select(s => s.Id)).ToHashSet();
         var commonResources = left.Resources.Select(r => r.Id).Intersect(right.Resources.Select(r => r.Id)).ToHashSet();
+
         bool Supported(ProjectState state) => state.GraphAttachments.All(a =>
         {
             var graph = state.Graphs.Single(g => g.Id == a.GraphId);
             var placement = state.Placements.Single(p => p.ItemContextId == a.ContextId);
             var pattern = state.Patterns.Single(p => p.Id == placement.PatternId);
             return GraphPreparation.IsSilentChannelGraph(state, a) ||
-                GraphDiagnostics.Inspect(state).Single(r => r.GraphId == graph.Id).IsEligibleForPreparation &&
-                graph.Nodes.All(n => n.Type is GraphBuiltIns.Source or GraphBuiltIns.Mix or GraphBuiltIns.Gain or GraphBuiltIns.Output) &&
-                graph.Nodes.Count(n => n.Type == GraphBuiltIns.Gain) == 1 &&
-                graph.Nodes.Count(n => n.Type == GraphBuiltIns.Source) == pattern.Parts.Length &&
-                graph.Nodes.Count(n => n.Type == GraphBuiltIns.Mix) == pattern.Parts.Length - 1 &&
-                graph.Nodes.Where(n => n.Type != GraphBuiltIns.Output).All(n => graph.Connections.Count(c => c.FromNodeId == n.Id) == 1);
+                   GraphDiagnostics.Inspect(state).Single(r => r.GraphId == graph.Id).IsEligibleForPreparation &&
+                   graph.Nodes.All(n =>
+                       n.Type is GraphBuiltIns.Source or GraphBuiltIns.Mix or GraphBuiltIns.Gain
+                           or GraphBuiltIns.Output) &&
+                   graph.Nodes.Count(n => n.Type == GraphBuiltIns.Gain) == 1 &&
+                   graph.Nodes.Count(n => n.Type == GraphBuiltIns.Source) == pattern.Parts.Length &&
+                   graph.Nodes.Count(n => n.Type == GraphBuiltIns.Mix) == pattern.Parts.Length - 1 &&
+                   graph.Nodes.Where(n => n.Type != GraphBuiltIns.Output)
+                       .All(n => graph.Connections.Count(c => c.FromNodeId == n.Id) == 1);
         });
+
         if (!Supported(left) || !Supported(right)) return false;
+
         ProjectState Normalize(ProjectState state) => state with
         {
-            Patterns = [.. state.Patterns.Select(p => p with { Parts = [.. p.Parts.Where(part => commonParts.Contains(part.Id))] })],
+            Patterns =
+            [
+                .. state.Patterns.Select(p =>
+                    p with { Parts = [.. p.Parts.Where(part => commonParts.Contains(part.Id))] })
+            ],
             Sounds = [.. state.Sounds.Where(s => commonSounds.Contains(s.Id))],
             Resources = [.. state.Resources.Where(r => commonResources.Contains(r.Id))],
             Contexts = [.. state.Contexts.Select(c => c with { IntentionalMix = false })],
-            Graphs = [.. state.Graphs.Select(g => g with
-            {
-                Nodes = [.. g.Nodes.Where(n => n.Type is GraphBuiltIns.Gain or GraphBuiltIns.Output)],
-                Connections = [.. g.Connections.Where(c => g.Nodes.Any(n => n.Id == c.FromNodeId && n.Type == GraphBuiltIns.Gain))]
-            })],
+            Graphs =
+            [
+                .. state.Graphs.Select(g => g with
+                {
+                    Nodes = [.. g.Nodes.Where(n => n.Type is GraphBuiltIns.Gain or GraphBuiltIns.Output)],
+                    Connections =
+                    [
+                        .. g.Connections.Where(c =>
+                            g.Nodes.Any(n => n.Id == c.FromNodeId && n.Type == GraphBuiltIns.Gain))
+                    ]
+                })
+            ],
             GraphAttachments = [.. state.GraphAttachments.Select(a => a with { Sources = [] })],
-            Placements = [.. state.Placements.Select(p => p with { PartRelationships = [.. p.PartRelationships.Where(r => commonParts.Contains(r.PartId))] })]
+            Placements =
+            [
+                .. state.Placements.Select(p => p with
+                {
+                    PartRelationships = [.. p.PartRelationships.Where(r => commonParts.Contains(r.PartId))]
+                })
+            ]
         };
+
         return SameExecution(Normalize(left), Normalize(right), ignoreGain: true, ignoreNotes: true);
     }
 
@@ -337,12 +463,14 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     {
         CheckOwner();
         if (_closed) return;
-        _closed = true; _dirty = false;
+        _closed = true;
+        _dirty = false;
         _progress?.Dispose();
         _sampler.InvalidatePreparation();
         _cancellation?.Cancel();
         _sampler.Stop();
-        _candidate?.Dispose(); _candidate = null;
+        _candidate?.Dispose();
+        _candidate = null;
         Observe();
     }
 
@@ -363,7 +491,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         await CloseAsync();
         if (_progress is not null) await _progress.DisposeAsync();
         _disposed = true;
-        _document.Changed -= Refresh; _document.Closed -= BeginClose;
+        _document.Changed -= Refresh;
+        _document.Closed -= BeginClose;
         _cancellation?.Dispose();
         _basis = null;
     }

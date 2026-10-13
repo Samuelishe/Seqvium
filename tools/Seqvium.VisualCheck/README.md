@@ -21,6 +21,18 @@ Output directories should be absolute and task-owned, inside ignored `.artifacts
 The `gestures` command runs a shorter matrix for focused input/alignment verification, including
 committed toolbar Gain fractional drafts, Enter/Escape, invalid input, focus loss and stale authority.
 
+## First Drum Voice musical check
+
+`drum <absolute-output> [delivery-directory]` creates a seven-hit synthesized kick through actual
+production Rack controls, edits exact values and a captured fine dial, and verifies both editable
+envelopes through foreground-guarded native input. RU/EN Dark/Light ordinary and compact renders
+check real text/unit alignment and reachability of every parameter through local scrolling.
+The same workflow verifies Undo/Redo, media-free Save/Open, quiet audition, continuous Pattern/live
+sound changes, finite Song and both WAV exports. **This command plays sound on the current default
+output.** Parameters are restored after input probes. It changes no system/user preferences and uses
+isolated project/layout state; optional delivery preserves the authored example outside rolling artifacts.
+No subjective listening, long pressure or native file-picker acceptance follows from this route.
+
 ## Catalog and central-change demonstration
 
 `catalog` opens real standard/primary/compact/icon/danger buttons, sliders, drawn Gain levels,

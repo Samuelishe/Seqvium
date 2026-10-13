@@ -10,6 +10,7 @@ public sealed class NoteAuditionRequest : IDisposable
     private readonly ProjectDocument _document, _frozen;
     private readonly Id<ResourceDescriptor> _resource;
     private readonly decimal _root, _pitch, _intensity;
+    private readonly Id<SoundDefinition>? _sound;
     private readonly long _generation, _authority;
     private PreparedSampler? _plan;
     private bool _started, _ended, _reserved;
@@ -42,9 +43,12 @@ public sealed class NoteAuditionRequest : IDisposable
             _plan = await Task.Run(() =>
             {
                 cancellation.ThrowIfCancellationRequested();
-                using var pcm = ProjectMedia.Decode(_frozen, _resource);
+                var sound = _sound is { } id ? _frozen.Current.State.Sounds.Single(s => s.Id == id) : null;
+                using var pcm = sound is null
+                    ? ProjectMedia.Decode(_frozen, _resource)
+                    : DrumVoice.Render(sound.Parameters, _consumer.SampleRate, _pitch, cancellation);
                 return SamplerPreparation.PrepareNoteAudition(pcm, _consumer.SampleRate, _consumer.Channels, _root,
-                    _pitch, _intensity);
+                    sound is null ? _pitch : _root, _intensity);
             }, cancellation).ConfigureAwait(false);
         }
         catch
@@ -52,6 +56,15 @@ public sealed class NoteAuditionRequest : IDisposable
             Release();
             throw;
         }
+    }
+
+    public NoteAuditionRequest(RealtimeSampler consumer, ProjectDocument document, Id<SoundDefinition> drumSound,
+        decimal pitch, decimal intensity) : this(consumer, document, default(Id<ResourceDescriptor>),
+        DrumVoice.RootPitch, pitch, intensity)
+    {
+        var sound = _frozen.Current.State.Sounds.Single(s => s.Id == drumSound);
+        if (!DrumVoice.Supports(sound)) throw new NotSupportedException("Unsupported drum audition.");
+        _sound = drumSound;
     }
 
     public SamplerPublication Publish()

@@ -104,6 +104,18 @@ The pre-GUI Single Instance failure uses a narrow native Windows diagnostic (std
 exclusive ownership failed before Avalonia/document initialization, so the secondary must not construct
 the regular application just to report that failure. It is a lifecycle exception, not another component palette.
 
+## Drum instrument components
+
+`DrumVoicePaneContent` composes the shared Panel/Recess material, standard fields/buttons and
+`GainDialControl` with parameter-specific normalization/defaults. Dial center text, accent/track roles
+and a recessed well are optional host variants; default Gain presentation remains unchanged. Drum
+uses exact values once, retaining the distinct Tune frequency. Light well/scale and waveform choices
+derive from existing semantic roles, without local HEX colors or another palette.
+`DrumEnvelopePlot` uses HostVisual for the editable analytical curves and actual derived waveform.
+The shared chassis, responsive audition/knob groups and local ScrollViewer preserve comfortable
+input dimensions. Rendered exact-text/unit centers and reachability are verified in both languages
+and themes under [the instrument report](experiments/SEQ-FIRST-DRUM_REPORT.md).
+
 ## Field and row alignment
 
 Playlist composes standard source/snap selectors, icon commands, repeat NumericUpDown, Follow toggle

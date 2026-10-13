@@ -41,6 +41,7 @@ internal sealed partial class DesktopWorkflow
             var part = pattern.Parts.Single(p => p.Id == partId);
             var sound = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId);
             if (PianoNotes.SoundRefusal(sound) is { } refusal) throw new InvalidOperationException(refusal);
+            if (sound.Algorithm != PcmSampler.Algorithm) throw new InvalidOperationException("Beat.SoundUnsupported");
             PcmSampler.ValidateConfiguration(root, sound.Parameters["releaseMilliseconds"]);
             bool changed = _document.Edit("Set sample root pitch",
                 edit => edit.SetSoundParameters(sound.Id, sound.Parameters.SetItem("rootPitch", root)));
@@ -58,7 +59,9 @@ internal sealed partial class DesktopWorkflow
             var sound = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId);
             if (PianoNotes.SoundRefusal(sound) is { } refusal) throw new InvalidOperationException(refusal);
             if (string.IsNullOrWhiteSpace(name)) throw new InvalidOperationException("Piano.NameRequired");
-            PcmSampler.ValidateConfiguration(root, sound.Parameters["releaseMilliseconds"]);
+            if (sound.Algorithm == PcmSampler.Algorithm)
+                PcmSampler.ValidateConfiguration(root, sound.Parameters["releaseMilliseconds"]);
+            else if (root != DrumVoice.RootPitch) throw new InvalidOperationException("Beat.SoundUnsupported");
             bool changed = _document.Edit("Configure Piano Roll channel", edit =>
             {
                 edit.RenamePart(pattern.Id, part.Id, name);
@@ -86,8 +89,10 @@ internal sealed partial class DesktopWorkflow
                 _noteSession = new();
                 _noteSession.AttachOutput(_noteOutput.Lifetime, _noteOutput.Sampler);
                 _noteOutput.Sampler.SetGain(0.12f);
-                using var request = new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.ResourceIds.Single(),
-                    sound.Parameters["rootPitch"], pitch, intensity);
+                using var request = sound.Algorithm == DrumVoice.Algorithm
+                    ? new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, pitch, intensity)
+                    : new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.ResourceIds.Single(),
+                        sound.Parameters["rootPitch"], pitch, intensity);
                 await request.PrepareAsync();
                 ValidateBeatBasis(basis, requireGrid: false);
                 if (auditionGeneration != _playGeneration)

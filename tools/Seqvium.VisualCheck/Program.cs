@@ -159,7 +159,7 @@ internal static partial class Program
 
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
-                or "piano" or "piano-music", "Unknown scenario.");
+                or "piano" or "piano-music" or "drum", "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
         string output = run.Directory;
@@ -178,6 +178,7 @@ internal static partial class Program
                     Json(output, "smoke", new { WindowOpened = true, NativeInput = false, AudioStarted = false });
                 }
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
+                else if (args[0] == "drum") await DrumMusicAsync(main, output, args.Length > 2 ? args[2] : null);
                 else if (args[0] == "piano") await PianoMatrixAsync(main, output);
                 else if (args[0] == "piano-music")
                 {

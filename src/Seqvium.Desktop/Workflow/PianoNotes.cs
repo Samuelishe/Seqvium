@@ -24,16 +24,7 @@ internal static class PianoNotes
         return SoundRefusal(state.Sounds.SingleOrDefault(s => s.Id == part.SoundId));
     }
 
-    internal static string? SoundRefusal(SoundDefinition? sound) => sound is null ||
-                                                                    sound.Algorithm != PcmSampler.Algorithm ||
-                                                                    sound.Extension is not null ||
-                                                                    !sound.AdditionalData.IsEmpty ||
-                                                                    sound.ResourceIds.Length != 1 ||
-                                                                    sound.Parameters.Count != 2 ||
-                                                                    !sound.Parameters.TryGetValue("rootPitch",
-                                                                        out var root) || root is < 0 or > 127 ||
-                                                                    !sound.Parameters.TryGetValue("releaseMilliseconds",
-                                                                        out var release) || release is < 0 or > 1000
+    internal static string? SoundRefusal(SoundDefinition? sound) => sound is null || !BuiltInSound.Supports(sound)
         ? "Beat.SoundUnsupported"
         : null;
 

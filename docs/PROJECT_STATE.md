@@ -8,7 +8,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology, or
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.2.0000`**, the SEQ-R9 Piano Roll PATCH checkpoint on the
+The current product alpha is **`0.1.3.0000`**, the SEQ-FIRST-DRUM PATCH checkpoint on the
 owner-selected `0.1` line under
 [VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
 metadata. This identity does not close R4 acceptance or declare a production release.
@@ -37,6 +37,16 @@ The owner reports the visual redesign complete and now prioritizes music. Full a
 window and short physical loop checks pass; long pressure/acoustic/platform acceptance stays separate.
 
 ## Implemented capability
+
+SEQ-FIRST-DRUM adds one built-in electronic kick without external samples: Tune/Decay/Tone/Noise,
+pitch drop/time/shape and attack/amplitude shape, directly editable envelope points and actual derived
+waveform. Rack creates/opens the same explicitly bound Source editor; Piano notes transpose it with
+velocity and unchanged envelope time. Shared sound state uses existing Undo/Save/Open and Song/WAV
+graphs. Preparation generates disposable host-rate PCM; full one-shot tails overlap across loops,
+seek reconstructs them, finite exports retain them and sound commits preserve rhythm position/epoch.
+The spacious Dark/Light editor uses shared materials, exact values once and reflow/local scrolling.
+R6/R7 packages/exploration, other drums, presets/choke/modulation remain future scope.
+[Owners](AUDIO_ENGINE.md#built-in-drum-voice) and [report](experiments/SEQ-FIRST-DRUM_REPORT.md) define limits.
 
 SEQ-R9 implements a retained real Piano Roll: shared Pattern/Part notes, chords, mixed duration/
 velocity, draw/select/group move/Ctrl-copy/resize/delete, clipboard/exact properties, keyboard editing,
@@ -196,9 +206,9 @@ into contextual help. [UI design](UI_DESIGN.md#reference-library-and-next-editor
 Browser and wider Mixer/effect stages remain unimplemented; private resources are optional inputs.
 The musical-editor assessment adds synth/drum/sampler/browser/dynamics study and future existing-tool
 refinements under [UI design](UI_DESIGN.md#musical-editor-reference-proposals) and
-[planning](ROADMAP.md#musical-editor-reference-follow-ups). A bounded Drum Voice is the recommended
-next candidate, pending owner selection and instrument/generator ownership; no new implementation
-or stage reordering follows. New inbox images were copied with hashes/provenance and retained originals.
+[planning](ROADMAP.md#musical-editor-reference-follow-ups). The first Drum Voice is now built-in;
+optional generator/package direction and further percussion remain separate. New inbox images were
+copied with hashes/provenance and retained originals.
 
 SEQ-R10-PLAYLIST completes the owner-authorized first finite composition workflow and song export,
 with a reference-informed timeline instrument. Next work is song sections/containers,
@@ -237,6 +247,16 @@ future composition. R4-F2 remains partial and F3-B remains pending owner review.
 acceptance remains with the owner; the earlier presentation was explicitly rejected.
 
 ## Validation baseline
+
+SEQ-FIRST-DRUM: isolated full Release solution build passes with zero warnings/errors (6.72 s), **1092/1092 tests
+pass**, no skips (8.572 s runner summary); focused L1/L2 passes 225 cases.
+Actual production-window RU/EN × Dark/Light ordinary/300×210 minimum editor and field checks pass, including
+all nine fields reachable through scrolling. Guarded native dial and both envelope modes commit once
+and Undo exactly. Seven GUI-authored hits pass solo audition, physical Pattern looping/live sound
+edits, finite Song, Save/Open and Pattern/Song WAV. Song export has 215760 stereo frames at 48 kHz,
+peak 0.301605 and no saturated samples. Catalog/shared field regressions pass separately. A reusable
+Jade Pulse example is preserved outside Git; subjectively judged sound, long pressure and broader
+platform acceptance remain unevidenced. [Report](experiments/SEQ-FIRST-DRUM_REPORT.md) owns paths/failures.
 
 SEQ-R9: Windows 11 x64, SDK 10.0.401/runtime 10.0.12; final full Release solution build passes with
 zero warnings/errors and **1073/1073 tests pass**, no skips. Focused L1/L2, actual production-window
@@ -327,15 +347,15 @@ Normal output became locked by a user-launched Desktop during final refinement; 
 preserved. Complete final executables are in `.artifacts/seq-ui-redesign/release/Release/net10.0/`.
 The [report](experiments/SEQ-UI-REDESIGN_REPORT.md) records actual scope, paths, failures and commands.
 
-The current full baseline is SEQ-PLAYLIST-MUSIC on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
+The current full baseline is SEQ-FIRST-DRUM on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
 Existing three-WAV 90/120/240 BPM finite PCM evidence remains in
 [R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); prior physical pressure failures
 and platform/owner acceptance remain separate below. Historical validation belongs to reports/archive.
 
 ### Verification cadence
 
-Last successful L3: **SEQ-R9, 2026-10-13**, full Release solution build and 1073/1073 automated
-tests. Completed repository tasks since that L3: **1**.
+Last successful L3: **SEQ-FIRST-DRUM, 2026-10-13**, full Release solution build and 1092/1092 automated
+tests. Completed repository tasks since that L3: **0**.
 Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
 a focused pass does not reset it.
 
