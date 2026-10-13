@@ -188,12 +188,17 @@ with per-action refusal explanations and dismissal/basis guards for retained men
 
 ## Current focus
 
-The home machine has a private WAV library and searchable reference catalog outside Git;
+The home machine has a private WAV library and 34 inspected, searchable design references outside Git;
 [development](DEVELOPMENT.md#local-development-resources) owns entry points. Light now has stronger
 musical color/material depth while Dark values are preserved; populated Rack/Playlist move tutorials
 into contextual help. [UI design](UI_DESIGN.md#reference-library-and-next-editor-direction) and
 [R9 follow-ups](ROADMAP.md#seq-r9--piano-roll) retain advanced tools beyond the implemented bounded editor.
 Browser and wider Mixer/effect stages remain unimplemented; private resources are optional inputs.
+The musical-editor assessment adds synth/drum/sampler/browser/dynamics study and future existing-tool
+refinements under [UI design](UI_DESIGN.md#musical-editor-reference-proposals) and
+[planning](ROADMAP.md#musical-editor-reference-follow-ups). A bounded Drum Voice is the recommended
+next candidate, pending owner selection and instrument/generator ownership; no new implementation
+or stage reordering follows. New inbox images were copied with hashes/provenance and retained originals.
 
 SEQ-R10-PLAYLIST completes the owner-authorized first finite composition workflow and song export,
 with a reference-informed timeline instrument. Next work is song sections/containers,
@@ -330,7 +335,7 @@ and platform/owner acceptance remain separate below. Historical validation belon
 ### Verification cadence
 
 Last successful L3: **SEQ-R9, 2026-10-13**, full Release solution build and 1073/1073 automated
-tests. Completed repository tasks since that L3: **0**.
+tests. Completed repository tasks since that L3: **1**.
 Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
 a focused pass does not reset it.
 

@@ -80,3 +80,19 @@ Promotion condition: Real external plugin hosting demonstrates enough practical 
 to justify IPC, lifecycle, resource, performance, and editor-integration complexity. No process-per-plugin,
 vendor grouping, IPC design, or roadmap commitment is selected. Process separation alone does not
 provide a security sandbox; malicious-code containment would need a separately justified explicit model.
+
+## I-006 — Expressive synthesis and modulation surfaces
+
+Status: Exploring; longer-term musical capability, not a required first Drum Voice feature.
+Origin / owner: The private synth/drum references assessed in
+[UI design](UI_DESIGN.md#musical-editor-reference-proposals); [graph](NODE_GRAPH.md),
+[audio](AUDIO_ENGINE.md) and [extensions](EXTENSIONS.md) own any resulting execution/state boundary.
+Value: Wavetable or granular sound exploration, musical macro morphs and envelope/LFO/path surfaces
+could make sound transformation legible and enjoyable. Show an active waveform slice or selected
+source/destination/depth instead of a permanent modulation inventory; pitch curves can show both
+note and Hz. Static screenshots establish composition, not algorithms or source gestures.
+Promotion condition: A concrete musical scenario justifies the processor/voice model, reproducible
+persisted state, parameter/modulation identities, bounded preparation/measurement and realtime/offline
+equivalence, with purposeful Dark/Light editors. Macro mapping needs explicit ownership; graphics must
+describe actual supported modulation. A renderer waveform, analytical curve and live measured trace
+must remain distinguishable. No inactive tabs, copied assets, synth engine/ABI or timeline is selected.

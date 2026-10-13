@@ -1641,3 +1641,16 @@ outside Git. Full zero-warning Release build and 1073 tests, actual RU/EN Dark/L
 eleven shared native checks and short physical Pattern/Song/live-edit/Undo pass, scoped in the
 [report](../experiments/SEQ-R9_REPORT.md). PATCH 0.1.2.0000 resets BUILD/cadence; no schema/dependencies,
 release, staging, commit, push or tag. Advanced tools/sampler features and prior R4 pressure remain separate.
+
+## SEQ-DESIGN-REFERENCES-MUSIC — 2026-10-13
+
+Inspected all 15 recursively supplied synth/drum/sampler/browser/compressor images and copied them
+to the private reference library, extending 19 earlier records to 34 with stable IDs, original
+paths/names, SHA-256, bytes/dimensions, identification confidence and per-image observations/limits.
+Retained every inbox source unchanged and backed up previous metadata; new copy receipt distinguishes
+this import from the earlier relocation. Updated offline bilingual search/category filtering,
+private brief and musical-editor comparison. Public UI/planning/state owners retain transferable
+directions and a bounded Drum Voice recommendation; advanced synthesis/modulation stays exploratory.
+Static document links/diff, library/source integrity and gallery search were checked; no product
+code/resources/version change, Piano Roll rerun, new musical editor, build/full-suite claim, staging,
+commit, push or tag. Existing R9 validation and R4 pressure limits remain unchanged.

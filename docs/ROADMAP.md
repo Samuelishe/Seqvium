@@ -480,6 +480,36 @@ processing such as basic EQ/compression. Foundational engine mixing/routing and 
 nodes may already exist. Mixer channels remain distinct from arrangement tracks; deeper sends/routing
 should follow demonstrated need. A usable base must not require optional processing downloads.
 
+### Musical-editor reference follow-ups
+
+The new privately catalogued synth/drum/sampler/browser/dynamics images inform the following **proposed bounded
+follow-ups**. They retain useful ideas beyond current technical capability;
+they do not authorize implementation, change stage order or require a whole-interface redesign.
+[UI design](UI_DESIGN.md#musical-editor-reference-proposals) owns their visual assessment;
+[sample workflow](SAMPLE_WORKFLOW.md), [graph](NODE_GRAPH.md) and [workspace](WORKSPACE.md) retain
+behavior/state/lifetime ownership. Piano Roll is the completed bounded baseline, not a task to repeat.
+
+| Candidate / applicable area                | Useful musical outcome                                                                                                                                            | Prerequisite before implementation                                                                                                                                                                                         |
+|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Drum Voice / instrument processing         | One oscillator/noise voice, small Tune/Decay/Tone/Noise group, meaningful pitch/amplitude curves, velocity response and audition through current Rack/Piano notes | Choose built-in instrument versus optional R6/R7 generator ownership; define canonical sound/node scope, voice DSP, retrigger/gate/tail behavior, Undo/persistence and playback/export parity. No second Pattern sequencer |
+| Sampler / source editing                   | Dominant waveform, source/loop bounds and overview; later slicing, key/velocity mapping, sustain loops and fine tuning                                            | Non-destructive canonical source-frame ranges, derived waveform cache and actual voice execution; Root Pitch/audition already exist. Stretch independent of pitch needs separate algorithms/state                          |
+| Browser / R7 integration and R12 usability | Local source/project search, duration/waveform results, one selected preview player and explicit use/drop; later contextual tempo/key audition                    | Bounded discovery/decode/cancellation/preview borrowing and metadata confidence. Contextual substitution must restore safely; audition does not import or silently replace a sound. No store/cloud prerequisite            |
+| EQ/compression / R11                       | Large editable curve and contextual exact controls, readable tactile caps, useful measured levels/reduction history                                               | Actual parameters and stateful DSP, reset/tails, bounded measured taps and realtime/offline equivalence; multiband crossovers/sidechain require their routing/execution boundaries                                         |
+| Existing Rack/Piano/Playlist               | Rack opens one targeted Sound editor; optional visual root-key context; later expression lanes and real waveform range/fade/overview for audio clips              | Preserve canonical shared notes, existing navigation and explicit targets. Controller lanes and waveform clips wait for event/source/placement ownership; sample frames and musical ticks remain distinct                  |
+| Rich Node Editor / graph and workspace     | Resizable graph-led sound/effect composition; selected parameter depth; optional simple-chain view or independent comparisons                                     | Compact Gain remains useful. A chain must project the same canonical graph; branching stays explicit. Multiple editors require instance/target/focus/layout/resource retirement under Q-032                                |
+
+**Recommended next candidate:** a bounded Drum Voice sound-design slice would add direct sound
+creation after the completed melodic editor, using the existing Rack/Piano trigger workflow. Start
+with one audible voice and a real small parameter set; defer full drum machines, layered click banks,
+Mixer and effects. This is a recommendation for owner selection, not a scheduled stage or a decision
+to bypass extension/generator ownership. Local Browser/find/audition/use is a practical alternative
+if convenient access to existing WAV material is the nearer priority.
+
+Wavetable/granular voices, path/LFO modulation and macro morphs remain exploratory under
+[I-006](IDEAS.md#i-006--expressive-synthesis-and-modulation-surfaces), beyond this initial candidate.
+All future editors require equal Dark/Light expressive quality, shared materials, economical text
+and meaningful icons alongside supported parameters; dark appearance must not regress for Light.
+
 ## SEQ-R12 — First Track Release
 
 Reach a version in which a user can reasonably finish a small track: strengthened save/load,
