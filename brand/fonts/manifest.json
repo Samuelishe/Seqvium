@@ -1,0 +1,92 @@
+[
+  {
+    "path": "brand/fonts/sources/Onest/Onest[wght].ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/4c1db3aec83c67dd223dd82a68c039cab30917a9/ofl/onest/Onest[wght].ttf",
+    "sha256": "966c5c29b4755da84b6854d5c21dd4eaa2420225d0e9874de602de176d4a9f31"
+  },
+  {
+    "path": "brand/fonts/sources/Onest/OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/4c1db3aec83c67dd223dd82a68c039cab30917a9/ofl/onest/OFL.txt",
+    "sha256": "071195d8806e226faeee60259c28ca67b458227af5195a73f5cfcab06e3003bc"
+  },
+  {
+    "path": "brand/fonts/sources/Onest/METADATA.pb",
+    "source": "https://raw.githubusercontent.com/google/fonts/4c1db3aec83c67dd223dd82a68c039cab30917a9/ofl/onest/METADATA.pb",
+    "sha256": "4cdcb62dc6cce7746ef080848a352e8ff7ac37fe543b4bde0aec6ab478e4123a"
+  },
+  {
+    "path": "src/Seqvium.Desktop/Assets/Fonts/Onest/Onest-Regular.ttf",
+    "derived_from": "brand/fonts/sources/Onest/Onest[wght].ttf",
+    "weight": 400,
+    "sha256": "f0e4d021985ed335338483420006ff5fa48608f260ca5149ce66d38841245c91"
+  },
+  {
+    "path": "src/Seqvium.Desktop/Assets/Fonts/Onest/Onest-SemiBold.ttf",
+    "derived_from": "brand/fonts/sources/Onest/Onest[wght].ttf",
+    "weight": 600,
+    "sha256": "40055625328eecc57e0e3600952628cd187b0322a932815afc7ff8638cb54f53"
+  },
+  {
+    "path": "src/Seqvium.Desktop/Assets/Fonts/Onest/Onest-Black.ttf",
+    "derived_from": "brand/fonts/sources/Onest/Onest[wght].ttf",
+    "weight": 900,
+    "sha256": "b2f8265eaed6468bd7bb5aa35e2d2517870d43d818194845ce601d11a964a6e7"
+  },
+  {
+    "path": "brand/fonts/sources/Manrope/Manrope[wght].ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/b31870aff700ab7a1d74fa0c6887d95beb9e0037/ofl/manrope/Manrope[wght].ttf",
+    "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+  },
+  {
+    "path": "brand/fonts/sources/Manrope/OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/b31870aff700ab7a1d74fa0c6887d95beb9e0037/ofl/manrope/OFL.txt",
+    "sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b"
+  },
+  {
+    "path": "brand/fonts/sources/Manrope/METADATA.pb",
+    "source": "https://raw.githubusercontent.com/google/fonts/b31870aff700ab7a1d74fa0c6887d95beb9e0037/ofl/manrope/METADATA.pb",
+    "sha256": "fb204147a7c16d009d4fa53248b6075bc941d7adfa450a825bc5d4cef2f9ded9"
+  },
+  {
+    "path": "brand/fonts/sources/JetBrainsMono/JetBrainsMono[wght].ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/6e4b84c976cadb3c49a40fd9a1c203e4f7fcf2da/ofl/jetbrainsmono/JetBrainsMono[wght].ttf",
+    "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda"
+  },
+  {
+    "path": "brand/fonts/sources/JetBrainsMono/OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/6e4b84c976cadb3c49a40fd9a1c203e4f7fcf2da/ofl/jetbrainsmono/OFL.txt",
+    "sha256": "b2fe5e8987594e9ffd1d2ca52a2f5d73eb8335243893c5d6254b5ad69269591d"
+  },
+  {
+    "path": "brand/fonts/sources/JetBrainsMono/METADATA.pb",
+    "source": "https://raw.githubusercontent.com/google/fonts/6e4b84c976cadb3c49a40fd9a1c203e4f7fcf2da/ofl/jetbrainsmono/METADATA.pb",
+    "sha256": "220f22dd4d2a3d9c77183fbbcb250779267725d90d9be673b403dc6bcfada0af"
+  },
+  {
+    "path": "src/Seqvium.Desktop/Assets/Fonts/JetBrainsMono/JetBrainsMono-Regular.ttf",
+    "derived_from": "brand/fonts/sources/JetBrainsMono/JetBrainsMono[wght].ttf",
+    "weight": 400,
+    "sha256": "616c5375deeac87e6342b162981ef6939c7debaa79c5f3fc83bb127e131168ea"
+  },
+  {
+    "path": "brand/fonts/sources/NotoSansSymbols/NotoSansSymbols[wght].ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/notosanssymbols/NotoSansSymbols[wght].ttf",
+    "sha256": "f7e7e04b4a24b6c78893d50cbfd2b2f6cae49617ab047bfef668d252adb128f7"
+  },
+  {
+    "path": "brand/fonts/sources/NotoSansSymbols/OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/notosanssymbols/OFL.txt",
+    "sha256": "b118dd41337806a5d4797052c77caf3bd096aed783e5eb21b4d11154351e1ac0"
+  },
+  {
+    "path": "brand/fonts/sources/NotoSansSymbols/METADATA.pb",
+    "source": "https://raw.githubusercontent.com/google/fonts/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/notosanssymbols/METADATA.pb",
+    "sha256": "821336fcf91e165c33f5baa9fff910ddb8ba7ce8b046b90d512cc9fa1e5bd540"
+  },
+  {
+    "path": "src/Seqvium.Desktop/Assets/Fonts/NotoSansSymbols/NotoSansSymbols-Music.ttf",
+    "derived_from": "brand/fonts/sources/NotoSansSymbols/NotoSansSymbols[wght].ttf",
+    "subset": "U+2669\u2013U+266F",
+    "sha256": "ac01dc2c5842147d9a639791cd0689c98a08d55a82e843575d4e8274eb6ca604"
+  }
+]

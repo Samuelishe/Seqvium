@@ -1,0 +1,36 @@
+[
+  {
+    "path": "brand/publication/workspace-dark.webp",
+    "source_image": "workspace-English-Dark.png",
+    "source_sha256": "89116f480f541bc7544662fee3c6b85e874a6f60117ef77bd174b2c71ded9796",
+    "sha256": "db2d24f55f30aa144359879d8a4260f66a2b9f9d1956d4fbc422cb3c39f67006",
+    "pixels": [
+      1920,
+      1040
+    ],
+    "conversion": "lossless WebP, no crop or compositing",
+    "origin": "Actual Seqvium MainWindow, isolated VisualCheck identity route",
+    "project": "examples/Neon Orchard/Neon Orchard.seqvium",
+    "version": "0.1.7.0003",
+    "language": "English",
+    "theme": "Dark",
+    "native_input": false
+  },
+  {
+    "path": "brand/publication/workspace-light.webp",
+    "source_image": "workspace-English-Light.png",
+    "source_sha256": "3d0c86bbb76d864b6084e23978c95d071082c94902c3f3c60e06808e5caaf981",
+    "sha256": "03d5e411de5b0685509eaf10eb91c0c4bb0e2bef8f95adc058e866d602062d84",
+    "pixels": [
+      1920,
+      1040
+    ],
+    "conversion": "lossless WebP, no crop or compositing",
+    "origin": "Actual Seqvium MainWindow, isolated VisualCheck identity route",
+    "project": "examples/Neon Orchard/Neon Orchard.seqvium",
+    "version": "0.1.7.0003",
+    "language": "English",
+    "theme": "Light",
+    "native_input": false
+  }
+]

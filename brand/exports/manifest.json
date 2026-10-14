@@ -1,0 +1,156 @@
+{
+  "generator": "tools/branding/export.py",
+  "ico_frames": [
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    128,
+    256
+  ],
+  "outputs": [
+    {
+      "path": "brand/alternatives/01/icon-512.png",
+      "sha256": "2d1ec1a7ecb8605f7d42551f92c60f4ff9f5d104989dda655e94a51f71670688"
+    },
+    {
+      "path": "brand/alternatives/07/icon-512.png",
+      "sha256": "fa4e81e24a94d9f4d362fbcde5fda56cccedca7826c1098af7bba325dd834e36"
+    },
+    {
+      "path": "brand/exports/lockup-chalk.png",
+      "sha256": "52b440019477929fa26178562695db89facf78b7ba70e11882a7cfb2fed1a4e4"
+    },
+    {
+      "path": "brand/exports/lockup-chalk.svg",
+      "sha256": "6773cd530f3cd9fcda1b4c9891ac4beaa9bfa739b6474c26cb1150fb51b97fb3"
+    },
+    {
+      "path": "brand/exports/lockup-ink.png",
+      "sha256": "d25eaf172479077035bf84cb85f35e0a233a8449aa5109a8c43329742afda924"
+    },
+    {
+      "path": "brand/exports/lockup-ink.svg",
+      "sha256": "6622b2329d2a5517f7dbf448b762f674096056eefa31a08ed51b2716b7138946"
+    },
+    {
+      "path": "brand/exports/seqvium.icns",
+      "sha256": "82411413993da341c3d572e6a504f5c1e8919fce08d8cef2d4e4dee99b14bb5c"
+    },
+    {
+      "path": "brand/exports/seqvium.svg",
+      "sha256": "77d3dbb3885ec44b153e762741b3fc06872683c4b26b0e351680725e3adf6f42"
+    },
+    {
+      "path": "brand/exports/symbol-1024.png",
+      "sha256": "0d376301c31442e298c93685dd9d35790e330c0103a95831275f0224f6f4936f"
+    },
+    {
+      "path": "brand/exports/symbol.svg",
+      "sha256": "9aef4cc84559e83755873da92bdaff4bf744b85b050352367fb43c2db76ef064"
+    },
+    {
+      "path": "brand/exports/wordmark-chalk.png",
+      "sha256": "e197ba8c088b8afa1ea55978a6cb59ede12f408e212bbac7bf11ef8c4e12ae15"
+    },
+    {
+      "path": "brand/exports/wordmark-chalk.svg",
+      "sha256": "acba84a28f8e11502dd54b80810b3409d5b92f5992a2dbade5fe928129716c56"
+    },
+    {
+      "path": "brand/exports/wordmark-ink.png",
+      "sha256": "05386e85eb71d78bd319cabfa272ce05149ad85ddcaffb156006394efe05bd17"
+    },
+    {
+      "path": "brand/exports/wordmark-ink.svg",
+      "sha256": "6ce26983a3bec6276e2378332133fe039a0886cf5b242841f6dab57e9a33cef8"
+    },
+    {
+      "path": "brand/publication/directions.png",
+      "sha256": "c860548a3ca22d6d1d70db4f0259691e531ed46845dbd1d33625219374e5dd59"
+    },
+    {
+      "path": "brand/publication/directions.svg",
+      "sha256": "a3edb2aeb3eea44d38843dd948bc68ad8a75d40b12d5c4005d6b1b9c375731d4"
+    },
+    {
+      "path": "brand/publication/icon-sizes.png",
+      "sha256": "5bd0936b8ecf8eab9a4a9331048b264ca927b7990f74cb6f4954312a53bc2285"
+    },
+    {
+      "path": "brand/publication/readme-header.png",
+      "sha256": "8509b45caa8f2055ed0fc8c21c0352d26dac6690116305b4d43d7a7acd709bb6"
+    },
+    {
+      "path": "brand/publication/readme-header.svg",
+      "sha256": "3ca16a97a1d51fb6b8d05bdbd2dcb5f99d0900cab2a002b11bd3a0a1a16fe9a7"
+    },
+    {
+      "path": "brand/publication/social-preview.png",
+      "sha256": "e6633900b56e53323651222559c70c708d646455b5c197b591cf09a4bdbe8e40"
+    },
+    {
+      "path": "brand/publication/social-preview.svg",
+      "sha256": "651ebe4538229d2104579407084f9af329852feda9a98953af67c5c010284a34"
+    },
+    {
+      "path": "brand/publication/typography-comparison.png",
+      "sha256": "46e810691a19cbe095868310eda82c16c93d5252e95f82e27c9057420efdc5ba"
+    },
+    {
+      "path": "brand/publication/typography-comparison.svg",
+      "sha256": "712046d61811a129c5712b55f1a0aff2bface7c21a682671cc4fe8e6b74f66cb"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-1024.png",
+      "sha256": "93a070dc8eff3e68098166385a5970ce98cc9086d2f394257a2a180fe67d52b6"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-128.png",
+      "sha256": "2f45720550692df5e33286cea876ab1784fad12b7b131205523a56a5fa1f7090"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-16.png",
+      "sha256": "94b7ffe93d78668835167da2927d23ba86918f9ff640bdf006e74b15915e63c2"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-20.png",
+      "sha256": "a0c0ec81a984b51cd5655d4e4701119a712e67b4f3e1a86beb40cfdc4dd0da8d"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-24.png",
+      "sha256": "b3c4c8a82dc1088b5d44d799047bdc71616c13d34e96785579bc04edf0526a86"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-256.png",
+      "sha256": "b97cb63cc173f21d91606240c40bc4aded3859da1039e6db2a2424d07f0d2952"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-32.png",
+      "sha256": "e3a2a4b6b113efc3d8fca0138fb8cef74836dfd46e6fa22b6f77d633cce562e9"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-40.png",
+      "sha256": "c181ef21737210b5425d78906a62ef899b6521164ae99f55712d1f462fae1935"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-48.png",
+      "sha256": "051004d871b20a9ba707c2e197fd05d67181de09b7c737a00bad79850dcc1ea0"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-512.png",
+      "sha256": "3ddaba796d760478599b74c38a2ae0d03df8fd201238631d93a9861332dcceaa"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/Icons/seqvium-64.png",
+      "sha256": "68dcae4a3db4c6b047f440c5f1471ff6b782fe5a4d60529fd480413fb6f5dbe7"
+    },
+    {
+      "path": "src/Seqvium.Desktop/Assets/Brand/seqvium.ico",
+      "sha256": "136a8224c46cdfbd9c88499aefdd66de0935909e905518118dd0ed2de1442f86"
+    }
+  ]
+}

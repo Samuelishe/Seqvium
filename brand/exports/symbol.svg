@@ -1,0 +1,19 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <ns0:title>Seqvium 09 — arranged fragments</ns0:title>
+  <ns0:desc>Hand-reconstructed vector interpretation of the owner's raster concept. Intentional opposing slopes, displaced overlaps, no tracing or embedded bitmap.</ns0:desc>
+  <ns0:defs>
+    <ns0:linearGradient id="chassis" x2=".8" y2="1"><ns0:stop stop-color="#192021" /><ns0:stop offset="1" stop-color="#090D0E" /></ns0:linearGradient>
+    <ns0:linearGradient id="cyan" x2="1" y2=".3"><ns0:stop stop-color="#00F1E3" /><ns0:stop offset="1" stop-color="#00D3C5" /></ns0:linearGradient>
+    <ns0:linearGradient id="teal" x2="1" y2=".6"><ns0:stop stop-color="#33EBCD" /><ns0:stop offset="1" stop-color="#14B8A6" /></ns0:linearGradient>
+    <ns0:linearGradient id="mint" x2="1" y2=".3"><ns0:stop stop-color="#A7F3D0" /><ns0:stop offset="1" stop-color="#65E7B6" /></ns0:linearGradient>
+    <ns0:linearGradient id="slate" x2="1"><ns0:stop stop-color="#345C5B" /><ns0:stop offset="1" stop-color="#5B6B70" /></ns0:linearGradient>
+  </ns0:defs>
+  <ns0:g id="fragments">
+    <ns0:path id="late-mint" d="M188 304 Q188 290 203 292 L359 306 Q375 307 375 324 L375 382 Q375 399 359 397 L204 384 Q188 383 188 367Z" fill="url(#mint)" />
+    <ns0:path id="early-teal" d="M99 222 L259 219 Q275 219 275 235 L275 328 Q275 344 260 343 L188 339 L188 307 L99 307 Q83 307 83 291 L83 239 Q83 223 99 222Z" fill="url(#teal)" />
+    <ns0:path id="mint-overlap" d="M188 307 L275 307 L275 328 Q275 344 260 343 L188 339Z" fill="#087F76" opacity=".56" />
+    <ns0:path id="slate-tail" d="M234 194 L415 194 Q431 194 431 210 L431 254 Q431 270 415 270 L234 270 Q218 270 218 254 L218 210 Q218 194 234 194Z" fill="url(#slate)" opacity=".77" />
+    <ns0:path id="dark-overlap" d="M234 194 L343 194 L343 270 L234 270 Q218 270 218 254 L218 210 Q218 194 234 194Z" fill="#0B4542" opacity=".76" />
+    <ns0:path id="first-cyan" d="M188 126 L326 118 Q343 117 343 134 L343 178 Q343 194 327 194 L188 194 Q172 194 172 178 L172 143 Q172 127 188 126Z" fill="url(#cyan)" />
+  </ns0:g>
+</ns0:svg>

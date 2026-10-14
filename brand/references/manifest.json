@@ -1,0 +1,44 @@
+[
+  {
+    "concept": "09",
+    "provided_by": "project owner, 2026-10-14",
+    "kind": "generated raster design reference, not production artwork",
+    "original_filename": "f0a1ee58-ef8b-4a73-b6df-ed5499a9445f.png",
+    "original_sha256": "805b2a692f556832fb0d758cb9a3f196269ee3845314762fa146f67c263346c9",
+    "original_pixels": [
+      1122,
+      1402
+    ],
+    "retained": "brand/references/concept-09.webp",
+    "transformation": "WebP quality 92, no crop, original dimensions",
+    "retained_sha256": "17909fe8c7fff40e46a8d81ace361c8596290e524e38a76906c98be3eac18dbe"
+  },
+  {
+    "concept": "01",
+    "provided_by": "project owner, 2026-10-14",
+    "kind": "generated raster design reference, not production artwork",
+    "original_filename": "Изображение ChatGPT 14 окт. 2026 г., 15_42_45.png",
+    "original_sha256": "1fbccf5211bcdef6eedac87bd8593a8b2c50191a4acf9426ae49098106a357dd",
+    "original_pixels": [
+      1122,
+      1402
+    ],
+    "retained": "brand/references/concept-01.webp",
+    "transformation": "WebP quality 92, no crop, original dimensions",
+    "retained_sha256": "90f0f91d0c47bff9143347202f57332660a5eed64e92530f1864783ad9ef2873"
+  },
+  {
+    "concept": "07",
+    "provided_by": "project owner, 2026-10-14",
+    "kind": "generated raster design reference, not production artwork",
+    "original_filename": "f091da38-f07c-4621-8e3a-58c2f6d53f49.png",
+    "original_sha256": "27f98131fc1778658d473000742bc2ace8d08ffffad4bf31a6a0f40bc283b054",
+    "original_pixels": [
+      1122,
+      1402
+    ],
+    "retained": "brand/references/concept-07.webp",
+    "transformation": "WebP quality 92, no crop, original dimensions",
+    "retained_sha256": "a7edca6de3d625048c00aa122783b69de66483950b5a09e5b7a4d205c8d6da0d"
+  }
+]
