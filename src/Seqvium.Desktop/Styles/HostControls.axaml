@@ -39,12 +39,21 @@
     </Style>
     <Style Selector="TextBlock.paneTitle">
         <Setter Property="FontSize" Value="{DynamicResource Type.PaneTitle}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.brand">
+        <Setter Property="FontFamily" Value="{DynamicResource Type.BrandFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Type.Brand}" />
+        <Setter Property="FontWeight" Value="Black" />
+        <Setter Property="LetterSpacing" Value="{DynamicResource Type.BrandTracking}" />
     </Style>
     <Style Selector="TextBlock.numeric">
         <Setter Property="FontSize" Value="{DynamicResource Type.Numeric}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Type.MonospaceFamily}" />
     </Style>
     <Style Selector="TextBox.numeric, NumericUpDown">
         <Setter Property="FontSize" Value="{DynamicResource Type.Numeric}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Type.MonospaceFamily}" />
     </Style>
     <Style Selector="TextBlock.monospace">
         <Setter Property="FontFamily" Value="{DynamicResource Type.MonospaceFamily}" />

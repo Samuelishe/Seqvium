@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Seqvium 01 — layered sequence, retained alternative</title>
+  <desc>Editable reconstruction from the owner's concept; four displaced sequencer lanes and a stepped cyan phrase.</desc>
+  <defs>
+    <linearGradient id="base" x2="1" y2="1"><stop stop-color="#192021"/><stop offset="1" stop-color="#090D0E"/></linearGradient>
+    <linearGradient id="teal" x2="1" y2=".6"><stop stop-color="#0CA89A"/><stop offset="1" stop-color="#06737B"/></linearGradient>
+    <linearGradient id="cyan" x2="1" y2=".4"><stop stop-color="#00D8CE"/><stop offset="1" stop-color="#00F0E6"/></linearGradient>
+    <linearGradient id="slate" x2="1"><stop stop-color="#5B747A"/><stop offset="1" stop-color="#3B4754"/></linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="106" fill="url(#base)"/>
+  <rect x="78" y="112" width="198" height="82" rx="17" fill="url(#teal)"/>
+  <path d="M218 192 H425 Q442 192 442 209 V278 Q442 295 425 295 H333 Q316 295 316 278 V268 H218 Q201 268 201 251 V209 Q201 192 218 192Z" fill="url(#cyan)"/>
+  <rect x="78" y="286" width="225" height="78" rx="17" fill="url(#slate)"/>
+  <rect x="262" y="359" width="180" height="73" rx="17" fill="url(#teal)"/>
+</svg>

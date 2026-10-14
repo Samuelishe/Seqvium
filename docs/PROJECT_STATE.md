@@ -7,8 +7,9 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.7.0002**, SEQ-DAILY-WORKFLOW: one BUILD for playing Pattern navigation,
-direct/remembered musical editors, New project and a calm empty workspace that retains musical layout.
+Product alpha **0.1.7.0003**, SEQ-VISUAL-IDENTITY: one BUILD for the integrated 09 brand, embedded
+typography, optical EXE/window icons and reproducible publication kit. The preceding daily workflow
+adds playing Pattern navigation, direct/remembered editors, New and remembered musical layout.
 The preceding shared WAV replacement preserves musical/processing/Mixer intent. The preceding
 SEQ-R10-SONG-STRUCTURE PATCH introduced section arranging, variations and mixed clip editing.
 [Versioning](VERSIONING.md) owns identity;
@@ -32,6 +33,13 @@ in Rack; explicit editor/Part choices persist per Pattern for this document sess
 offers named Piano channels; wider two-line cards improve long-name access. Playlist uses the same
 editor decision. New/Ctrl+N implements Save/Discard/Cancel and creates a pristine silent document.
 Empty startup/New shows only a compact Rack; previous musical layout returns when music is opened.
+
+The [brand kit](../brand/README.md) supplies primary 09, retained 01/07 alternatives, reconstructed
+SVG/optical masters, exports and font/reference provenance. Title/About use the new identity;
+Onest Regular/SemiBold/Black and JetBrains Mono load from application resources with a bundled music
+symbol fallback. Both themes retain musical colors and density. README uses real demo captures;
+Social Preview awaits the owner's GitHub settings upload. [UI design](UI_DESIGN.md) and
+[Design System](DESIGN_SYSTEM.md) own the corresponding visual/technical rules.
 
 Rack's **Replace WAV…** command updates a shared PCM sampler source across all Patterns with one
 Undo entry; known catalog Root Pitch is adopted, otherwise previous tuning remains. Notes, release,
@@ -75,7 +83,14 @@ zero warnings/errors; **1235/1235 tests pass**, zero skips (51.042 s CLI summary
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **2**. Daily workflow passes **353/353 focused tests**
+Completed repository tasks since this L3: **3**. Visual identity passes **60/60 focused tests**
+(15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
+FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell
+shortcut and live 16/24 px window icon extraction pass. Foreground guard refused taskbar/Alt+Tab
+screen input; other-platform/high-DPI and owner aesthetic acceptance remain unestablished.
+[Identity report](experiments/SEQ-VISUAL-IDENTITY_REPORT.md) owns the bounded observations/limits.
+
+Daily workflow passes **353/353 focused tests**
 (24.732 s CLI, one test thread) and affected Release builds with zero warnings/errors; this is L1/L2,
 not a full suite. It adds transport/lifecycle/editor/layout regressions; real-window routed checks
 on an independent demo cover New Cancel/Save, direct

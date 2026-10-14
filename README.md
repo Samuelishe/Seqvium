@@ -1,13 +1,27 @@
+![Seqvium — chaos into structure.](brand/publication/readme-header.png)
+
 # Seqvium
 
 Seqvium is a free, open-source desktop music workstation in early alpha. Start with a drum pattern,
-a melody or an audio recording, arrange it in Playlist, and mix it through shared instruments and
+a melody or an audio file, arrange it in Playlist, and mix it through shared instruments and
 processing. The workflow draws inspiration from FL Studio while developing its own compact,
 flexible workspace and node-based sound design.
 
 Windows 11 is the currently tested desktop platform. This is a working alpha, not a finished
 replacement for an established DAW. Linux and macOS remain architectural targets, not validated
 UI/audio platforms.
+
+![Seqvium running the bundled Neon Orchard demo in Dark theme](brand/publication/workspace-dark.webp)
+
+<details>
+<summary>Light theme</summary>
+
+![The same real Seqvium workspace in Light theme](brand/publication/workspace-light.webp)
+
+</details>
+
+Actual application captures, using the included demo. Explore the [visual identity kit](brand/README.md)
+for the logo, typography, alternative directions and publication resources.
 
 ## What you can do today
 

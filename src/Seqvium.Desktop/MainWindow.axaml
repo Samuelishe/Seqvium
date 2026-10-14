@@ -1,7 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:p="using:Seqvium.Desktop.Presentation" x:Class="Seqvium.Desktop.MainWindow" x:DataType="p:ShellSession"
         Title="Seqvium" Width="1400" Height="900" MinWidth="640" MinHeight="480" CanResize="True"
-        Background="{DynamicResource Surface.Background}" FontFamily="$Default" WindowStartupLocation="CenterScreen">
+        Background="{DynamicResource Surface.Background}" WindowStartupLocation="CenterScreen"
+        Icon="avares://Seqvium.Desktop/Assets/Brand/seqvium.ico">
     <Window.Resources>
         <ControlTheme x:Key="HostChrome" TargetType="WindowDrawnDecorations">
             <Setter Property="Template">
@@ -17,7 +18,12 @@
             <Grid ColumnDefinitions="*,Auto">
                 <Grid x:Name="TitleRegion" ColumnDefinitions="Auto,*,Auto" Background="Transparent"
                       Margin="{DynamicResource Padding.Control}">
-                    <TextBlock x:Name="BrandName" Text="Seqvium" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space.Small}" VerticalAlignment="Center">
+                        <Image Source="avares://Seqvium.Desktop/Assets/Brand/Icons/seqvium-32.png"
+                               Width="{DynamicResource Brand.ChromeSize}" Height="{DynamicResource Brand.ChromeSize}"
+                               IsHitTestVisible="False" />
+                        <TextBlock x:Name="BrandName" Text="Seqvium" Classes="brand" VerticalAlignment="Center" />
+                    </StackPanel>
                     <TextBlock Grid.Column="1" Text="{Binding ProjectName}" TextTrimming="CharacterEllipsis"
                                Margin="12,0,6,0" VerticalAlignment="Center" ToolTip.Tip="{Binding ProjectName}" />
                     <TextBlock Grid.Column="2" Text="{Binding ProjectStatus}" Classes="caption"
@@ -93,9 +99,15 @@
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight">
                                 <StackPanel Width="280" Spacing="{DynamicResource Space.Medium}">
-                                    <TextBlock Text="Seqvium" Classes="section" />
+                                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space.Medium}">
+                                        <Image Source="avares://Seqvium.Desktop/Assets/Brand/Icons/seqvium-128.png"
+                                               Width="{DynamicResource Brand.AboutSize}" Height="{DynamicResource Brand.AboutSize}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Seqvium" Classes="brand" FontSize="{DynamicResource Type.BrandDisplay}" />
+                                            <TextBlock Text="chaos into structure." Classes="caption" />
+                                        </StackPanel>
+                                    </StackPanel>
                                     <TextBlock Text="{Binding Version}" />
-                                    <TextBlock Text="SEQ-R9" Classes="caption" />
                                     <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
                                 </StackPanel>
                             </Flyout>

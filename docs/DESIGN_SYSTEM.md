@@ -27,6 +27,29 @@ Application resource replacement synchronizes aliases; theme changes retain exis
 
 ## Token catalog
 
+### Brand and embedded typography
+
+The [brand kit](../brand/README.md) owns the manually reconstructed 09 SVG, separate 16/20–40 px
+optical masters, retained 01/07 alternatives and offline exports. Desktop owns runtime resources in
+`Assets/Brand` and `Assets/Fonts`. `ApplicationIcon` embeds the multi-frame ICO in the apphost;
+MainWindow uses the same ICO as its native icon and the small PNG in title chrome.
+
+`HostMetrics.FontFamilyName` and `MonospaceFamilyName` are explicit `avares://` font locations.
+Application default, Window styles and detached HostVisual drawing use those bundled families.
+Onest has static 400/600/900 faces; JetBrains Mono has static 400. `Program.FontOptions` registers
+the embedded music-symbol subset for U+2669–U+266F, including Piano's sharp sign. This bounded fallback
+does not promise every script or arbitrary user glyph without a platform font.
+
+`Type.BrandFamily`, `Type.Brand`, `Type.BrandDisplay`, `Type.BrandTracking`, `Brand.ChromeSize` and
+`Brand.AboutSize` support title/About. The `brand` TextBlock variant selects Black; `paneTitle` and
+`section` use SemiBold. Ordinary text/commands remain regular. Numeric TextBlock/TextBox/NumericUpDown
+use the embedded mono family. Keep existing dimensions and actual presenter alignment.
+
+The [identity verifier](../tools/Seqvium.VisualCheck/IdentityCheck.cs) compares resolved glyph-stream
+hashes with embedded bytes, checks real weights without simulations and RU/EN coverage, verifies
+musical-symbol fallback, renders both themes/languages with the demo and measures toolbar fields.
+Shared-style changes still require the catalog and broader existing field matrix below.
+
 Playlist's section band uses `Playlist.SectionHeight` beneath the existing ruler. Its tint, name,
 boundaries and selected edge reuse channel, surface, caption and accent roles; no private palette is
 introduced. Track M/S fit inside each shared lane using the existing compact status-height metric.

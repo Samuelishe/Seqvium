@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <title>Seqvium 09 — small optical master</title>
+  <desc>Four deliberately offset fragments; opaque high-contrast overlaps and broader negative space for 20–40 pixel use.</desc>
+  <rect x="1" y="1" width="30" height="30" rx="7" fill="#101617"/>
+  <path d="M12 19 L23 20 Q24 20 24 21 L24 25 Q24 26 23 26 L13 25 Q12 25 12 24Z" fill="#A7F3D0"/>
+  <path d="M6 14 L16 14 Q17 14 17 15 L17 21 L12 21 L12 19 L6 19 Q5 19 5 18 L5 15 Q5 14 6 14Z" fill="#24DCC2"/>
+  <path d="M15 12 L26 12 Q27 12 27 13 L27 16 Q27 17 26 17 L15 17 Q14 17 14 16 L14 13 Q14 12 15 12Z" fill="#4E7777"/>
+  <path d="M14 14 L21 14 L21 17 L15 17 Q14 17 14 16Z" fill="#145651"/>
+  <path d="M12 8 L20 7 Q21 7 21 8 L21 11 Q21 12 20 12 L12 12 Q11 12 11 11 L11 9 Q11 8 12 8Z" fill="#00E5D1"/>
+</svg>

@@ -9,9 +9,14 @@ namespace Seqvium.Desktop.Presentation;
 /// <summary>Design System v2 geometry and typography; DIP values and typed Avalonia resources.</summary>
 public static class HostMetrics
 {
+    public const string FontFamilyName = "avares://Seqvium.Desktop/Assets/Fonts/Onest#Onest";
+    public const string MonospaceFamilyName = "avares://Seqvium.Desktop/Assets/Fonts/JetBrainsMono#JetBrains Mono";
+    public const string MusicSymbolFamilyName = "avares://Seqvium.Desktop/Assets/Fonts/NotoSansSymbols#Noto Sans Symbols";
+
     public static IReadOnlyDictionary<string, double> Values { get; } = new Dictionary<string, double>
     {
         ["Type.Body"] = 12, ["Type.Caption"] = 11, ["Type.Transport"] = 16,
+        ["Type.Brand"] = 17, ["Type.BrandDisplay"] = 30, ["Brand.ChromeSize"] = 22, ["Brand.AboutSize"] = 52,
         ["Chrome.Height"] = 30, ["Toolbar.Height"] = 40, ["Status.Height"] = 20,
         ["Control.Height"] = 26, ["Control.Corner"] = 3, ["Space.Gap"] = 4,
         ["Control.InputHeight"] = 26, ["Control.ComfortableHeight"] = 30,
@@ -58,8 +63,10 @@ public static class HostMetrics
         resources["Padding.Icon"] = new Thickness(3);
         resources["Rack.BarPadding"] = new Thickness(0, 0, Values["Space.Medium"], 0);
         resources["Navigation.ScrollGutter"] = new Thickness(0, 0, Values["ScrollBar.Size"] + Values["Space.Small"], 0);
-        resources["Type.FontFamily"] = FontFamily.Default;
-        resources["Type.MonospaceFamily"] = new FontFamily("Cascadia Mono,Consolas,monospace");
+        resources["Type.FontFamily"] = new FontFamily(FontFamilyName);
+        resources["Type.BrandFamily"] = resources["Type.FontFamily"];
+        resources["Type.BrandTracking"] = -.4d;
+        resources["Type.MonospaceFamily"] = new FontFamily(MonospaceFamilyName);
         return resources.ToFrozenDictionary(StringComparer.Ordinal);
     }
 }

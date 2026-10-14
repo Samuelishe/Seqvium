@@ -7,6 +7,34 @@ entry fields.
 Not authoritative for: Authoritative license text, final technical choices, subsystem design, or installed-version
 locks.
 
+## Visual identity fonts and reference material
+
+The [brand kit](../brand/README.md) retains owner-supplied generated raster references for concepts
+09, 01 and 07 as optimized WebP. The [reference manifest](../brand/references/manifest.json) records
+original/retained hashes and transformations. Boards are design context, not production icons,
+shipped UI screenshots or evidence of platform/website ownership. New manually reconstructed SVG
+geometry, export tooling and publication composition are Seqvium contribution material under the
+root Apache-2.0 license. No third-party DAW graphics are extracted or unknown original vectors claimed.
+
+These font binaries retain **SIL Open Font License 1.1** independently of the application's license.
+Each full upstream OFL/copyright stays with its source; each runtime family has a license copied
+into build/publish output. The [font manifest](../brand/fonts/manifest.json) owns pinned Google Fonts
+revisions, source URLs, SHA-256 and transformations.
+
+| Font / authors | Actual distributed material and official source |
+| --- | --- |
+| Onest / The Onest Project Authors | [Official source](https://github.com/simpals/onest); variable source plus derived static 400/600/900 faces in Desktop |
+| Manrope / The Manrope Project Authors, Mikhail Sharanda and contributors | [Official source](https://github.com/googlefonts/manrope); variable source retained for comparison, not an application dependency |
+| JetBrains Mono / The JetBrains Mono Project Authors | [Official source](https://github.com/JetBrains/JetBrainsMono); variable source plus derived static Regular 400 in Desktop |
+| Noto Sans Symbols / The Noto Project Authors | [Official source](https://github.com/notofonts/symbols); variable source instantiated at 400 and subset to U+2669–U+266F for embedded music symbols |
+
+[prepare-fonts.py](../tools/branding/prepare-fonts.py) reproduces the static instances/subset;
+[export.py](../tools/branding/export.py) creates outlined lettering and artwork. No fonts are
+installed globally and no paid/proprietary typeface is copied. The unknown generated wordmark is
+not attributed to a guessed font. Font software retains OFL with its complete bundled terms;
+the application retains its separate license. fontTools, Pillow and resvg-py are optional local
+artwork tooling, not redistributed application libraries. Normal .NET builds use checked-in exports.
+
 ## Project license and material boundaries
 
 Seqvium-authored work is licensed under **Apache License, Version 2.0** (`Apache-2.0`) unless a

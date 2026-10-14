@@ -167,7 +167,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
-                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow",
+                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -185,6 +185,11 @@ internal static partial class Program
                     await Task.Delay(100);
                     Require(main.IsVisible, "Isolated Desktop window did not open.");
                     Json(output, "smoke", new { WindowOpened = true, NativeInput = false, AudioStarted = false });
+                }
+                else if (args[0] == "identity")
+                {
+                    Require(args.Length == 3, "identity <output> <project-file>");
+                    await IdentityAsync(main, output, Path.GetFullPath(args[2]));
                 }
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
                 else if (args[0] == "daily-workflow")

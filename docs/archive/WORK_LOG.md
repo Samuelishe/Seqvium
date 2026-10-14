@@ -8,6 +8,23 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-VISUAL-IDENTITY — 2026-10-14
+
+Integrated the owner's primary 09 direction as manually reconstructed SVG/optical masters, Windows
+EXE/window icons and title/About identity. Preserved 01/07 as editable alternatives with selected
+optimized source boards. Chose Onest Black over the visually compared Manrope ExtraBold; regular/
+semibold Onest, JetBrains Mono and a Noto musical-symbol subset remove installed-font dependence
+for the declared UI repertoire. Retained OFL licenses, pinned source/derived hashes, offline tooling,
+README artwork, real demo captures and a ready Social Preview. The asymmetry stays authored rather
+than automatically aligned; functional music colors and compact geometry remain intact.
+
+One BUILD to 0.1.7.0003; 60 focused tests, affected zero-warning builds, actual glyph-byte hashes,
+RU/EN Dark/Light populated/Piano/About/catalog/field checks and real EXE/window/shortcut extraction
+pass. Foreground refused taskbar/Alt+Tab screen input. [Report](../experiments/SEQ-VISUAL-IDENTITY_REPORT.md)
+retains evidence/limits; [brand kit](../../brand/README.md) and visual owners retain current contracts.
+No new musical capability, full regression, platform/DPI/acoustic or owner aesthetic acceptance is
+claimed. No Git index/history/publication mutation.
+
 ## SEQ-R5-MUSIC — 2026-10-13
 
 Completed the owner's musical follow-up: continuous selected-Pattern Play and actual renderer phase,

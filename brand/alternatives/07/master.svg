@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Seqvium 07 — structured flow, retained alternative</title>
+  <desc>Editable reconstruction of a continuous S ribbon, with a displaced rear lane. A development alternative, not the application icon.</desc>
+  <defs>
+    <linearGradient id="base" x2="1" y2="1"><stop stop-color="#192021"/><stop offset="1" stop-color="#090D0E"/></linearGradient>
+    <linearGradient id="flow" x2="1" y2=".6"><stop stop-color="#00E5C9"/><stop offset="1" stop-color="#0F8F7E"/></linearGradient>
+    <linearGradient id="lower" x2="1"><stop stop-color="#00E5D1"/><stop offset="1" stop-color="#08736F"/></linearGradient>
+    <linearGradient id="rear" x2="1"><stop stop-color="#446F70"/><stop offset="1" stop-color="#274346"/></linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="106" fill="url(#base)"/>
+  <rect x="77" y="218" width="226" height="79" rx="16" fill="url(#rear)"/>
+  <path d="M250 106 H418 Q434 106 434 122 V170 Q434 185 418 185 H250 C209 185 180 205 180 234 C157 214 161 184 176 155 C192 122 217 106 250 106Z" fill="url(#flow)"/>
+  <path d="M180 234 C180 213 202 218 250 218 H315 C383 218 422 269 412 323 C409 345 400 361 387 373 C398 336 366 297 315 297 H250 C207 297 180 274 180 234Z" fill="url(#flow)"/>
+  <path d="M387 373 C387 342 359 329 315 329 H94 Q78 329 78 345 V393 Q78 409 94 409 H312 C345 409 373 397 387 373Z" fill="url(#lower)"/>
+</svg>

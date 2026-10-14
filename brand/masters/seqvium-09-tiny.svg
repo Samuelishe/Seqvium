@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <title>Seqvium 09 — 16 pixel optical master</title>
+  <desc>Pixel-fitted optical reduction. Slopes and translucency yield to four readable solid fragments.</desc>
+  <rect width="16" height="16" rx="4" fill="#101617"/>
+  <path d="M6 10 H12 V13 H6Z" fill="#A7F3D0"/>
+  <path d="M3 7 H8 V11 H6 V10 H3Z" fill="#24DCC2"/>
+  <path d="M7 6 H14 V9 H7Z" fill="#4E7777"/>
+  <path d="M7 7 H10 V9 H7Z" fill="#145651"/>
+  <path d="M6 4 H11 V6 H6Z" fill="#00E5D1"/>
+</svg>

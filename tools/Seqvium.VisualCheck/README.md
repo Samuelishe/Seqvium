@@ -1,5 +1,22 @@
 # Desktop visual and lifecycle verification
 
+## Visual identity review
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll identity "$PWD/.artifacts/identity/gui" "$PWD/examples/Neon Orchard/Neon Orchard.seqvium"
+```
+
+Uses isolated preferences/layout and opens the supplied project read-only, without Play. Compares
+resolved font streams against embedded SHA-256, verifies static weights without simulations,
+Russian/English letters and the musical-symbol fallback. Captures real Playlist/Rack/Mixer, Piano
+and About in RU/EN × Dark/Light at FullHD and reduced size and measures toolbar field alignment.
+Asserts unchanged music/history. Setup is programmatic; native screen captures have separate receipts.
+The existing `catalog` and `matrix` routes cover wider shared-control/field boundaries.
+
+`tools/branding/check-windows-icons.py <Desktop-exe> <ignored-output>` captures actual OS-extracted
+icons, with optional `--window <HWND>` / `--shortcut <lnk>`. See the
+[identity report](../../docs/experiments/SEQ-VISUAL-IDENTITY_REPORT.md) for observations and limits.
+
 ## Daily musical workflow check
 
 Use an **independent project copy** with at least three Patterns and melodic notes. The scenario

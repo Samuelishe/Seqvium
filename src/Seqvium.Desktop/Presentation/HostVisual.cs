@@ -16,7 +16,7 @@ internal static class HostVisual
     public static double Metric(Control owner, string role) =>
         owner.TryFindResource(role, out var value) ? value switch
         { double metric => metric, CornerRadius radius => radius.TopLeft, _ => HostMetrics.Values[role] } : HostMetrics.Values[role];
-    public static Typeface Typeface(Control owner) => new(owner.TryFindResource("Type.FontFamily", out var value) && value is FontFamily family ? family : FontFamily.Default);
+    public static Typeface Typeface(Control owner) => new(owner.TryFindResource("Type.FontFamily", out var value) && value is FontFamily family ? family : (FontFamily)HostMetrics.Resources["Type.FontFamily"]);
     public static void Caption(Control owner, ShellSession shell, DrawingContext context, string text, Point at) =>
         context.DrawText(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
             Typeface(owner), Metric(owner, "Type.Caption"), Brush(owner, shell.Preferences.Theme, "Text.Secondary")), at);

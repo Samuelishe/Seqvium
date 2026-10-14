@@ -147,6 +147,18 @@ retrieved only for explicit historical tasks.
 | `0.1.7.0000` | SEQ-R10-SONG-STRUCTURE | One PATCH for section arranging, independent Pattern variations and atomic mixed clip editing/clipboard. BUILD resets. 1235 full-suite cases, native musical authoring and whole-Song/export pass; official demo unchanged. [Checkpoint](#seq-r10-song-structure-checkpoint) and [report](experiments/SEQ-R10-SONG-STRUCTURE_REPORT.md) retain bounded scope and limits. |
 | `0.1.7.0001` | SEQ-SHARED-WAV-REPLACEMENT | One BUILD for a native Channel Rack shared WAV swap, preserving notes/graphs/release/Mixer with durable media and Undo. 91 focused cases and independent cover GUI verification; no new algorithm/schema or full-suite claim. |
 | `0.1.7.0002` | SEQ-DAILY-WORKFLOW | One BUILD for playing Pattern selection, direct/session-remembered editors, New/Ctrl+N and calm empty workspace with preserved musical layout. Focused production transport/lifecycle/editor/layout tests and RU/EN Dark/Light actual-window routed evidence; native input refused by covered foreground, physical output attempt failed with Starvation. No schema/DSP redesign, PATCH or full-suite claim. |
+| `0.1.7.0003` | SEQ-VISUAL-IDENTITY | One BUILD for integrated 09 identity, optical native icons, bundled typography and reproducible publication resources. 60/60 focused cases, zero-warning affected builds, actual embedded-font hashes, both-theme localized catalog/field/workspace renders and EXE/window/shortcut extraction. Taskbar/Alt+Tab visual capture refused by foreground guard; platform/DPI/aesthetic limits remain. No new musical capability, PATCH, L3 or release. |
+
+### SEQ-VISUAL-IDENTITY checkpoint
+
+Identity advances once **0.1.7.0002 → 0.1.7.0003**, one BUILD for a verified presentation/product-resource
+checkpoint: primary 09 mark, optical system icons, embedded RU/EN typography, semantic brand accents
+and reproducible publication kit. No independent music-creation capability qualifies for PATCH;
+MAJOR/MINOR remain unchanged. Zero-warning affected Release builds, 60/60 focused tests, actual font
+stream hashes, RU/EN × Dark/Light workspace/About/Piano/catalog/field renders and native EXE/window/
+shortcut extraction are in the [report](experiments/SEQ-VISUAL-IDENTITY_REPORT.md). Taskbar/Alt+Tab
+screen capture was foreground-refused; cross-platform/high-DPI and owner aesthetic acceptance remain
+separate. No release, stage, commit, push or tag; no L3 claim.
 
 ### SEQ-DAILY-WORKFLOW checkpoint
 

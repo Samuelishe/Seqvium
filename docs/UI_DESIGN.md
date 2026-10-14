@@ -8,6 +8,21 @@ Not authoritative for: Workflow semantics, pane lifecycle, graph execution, or i
 
 ## Design intent and scope
 
+Seqvium's identity is **chaos into structure**: musical fragments acquire a sequence while retaining
+their creative energy. Direction 09 supplies the cyan/teal/mint mark, intentional offsets and opposing
+slopes; 01 and 07 are retained alternatives, not competing runtime themes. The [brand kit](../brand/README.md)
+owns artwork, optical masters and reproduction; this guide owns their relationship to the instrument.
+
+Title and About pair the 09 sign with Onest Black lettering. Labels, commands and dialogs use embedded
+Onest Regular, headings SemiBold, exact numeric fields and technical fixed columns JetBrains Mono.
+Musical symbols have an explicit bundled fallback. Heavy brand lettering does not justify bold body
+text or enlarged controls. [DESIGN_SYSTEM](DESIGN_SYSTEM.md) owns the shared implementation roles.
+
+Cyan actions and focus connect the slate/jade instrument to the brand. Light uses deeper teal ink
+for contrast. Source/channel, meter, warning/error and transport colors retain their meanings.
+Preserve tactile materials, FullHD density, both themes and RU/EN reachability. Review actual small
+icons and populated editor pixels after typography changes.
+
 Seqvium should feel like a creative instrument: substantial, tactile and enjoyable to manipulate.
 The owner explicitly requests expressive instrument design, including volume, complex controls,
 shadows, gradients, lighting and meaningful visualizations. Implementation difficulty is not a
