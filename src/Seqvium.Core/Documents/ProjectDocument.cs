@@ -159,6 +159,7 @@ public sealed class ProjectDocument
                 Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes,
                 Graphs = right.Graphs, GraphAttachments = right.GraphAttachments,
                 ArrangementClips = right.ArrangementClips,
+                ArrangementSections = right.ArrangementSections,
                 AudioClips = right.AudioClips,
                 ArrangementTracks = right.ArrangementTracks, Mixer = right.Mixer
             } == right && MixerValidation.Same(left.Mixer, right.Mixer)
@@ -178,6 +179,7 @@ public sealed class ProjectDocument
                        && left.Resources.SequenceEqual(right.Resources) && left.Contexts.SequenceEqual(right.Contexts)
                        && left.Routes.SequenceEqual(right.Routes) &&
                        left.ArrangementClips.SequenceEqual(right.ArrangementClips)
+                       && left.ArrangementSections.SequenceEqual(right.ArrangementSections)
                        && left.AudioClips.SequenceEqual(right.AudioClips)
                        && left.ArrangementTracks.SequenceEqual(right.ArrangementTracks)
                        && GraphContent.Same(left.Graphs, right.Graphs) &&

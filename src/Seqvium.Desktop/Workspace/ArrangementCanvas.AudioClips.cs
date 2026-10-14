@@ -107,12 +107,12 @@ internal sealed partial class ArrangementCanvas
         foreach (var clip in _observation.Snapshot.State.AudioClips)
         {
             var shown = _audioDraft?.Id == clip.Id && !_copy ? _audioDraft : clip;
-            if (_audioOriginal is not null && _audioGesture == 0 && !_copy && _audioGroup.Any(c => c.Id == clip.Id))
+            if (_audioGesture == 0 && !_resize && !_copy && _audioGroup.Any(c => c.Id == clip.Id))
                 shown = clip with { Position = new(clip.Position.Ticks + _tickDelta), Lane = clip.Lane + _laneDelta };
             DrawAudioClip(context, shown, _audioSelection.Contains(clip.Id));
         }
 
-        if (_audioOriginal is not null && _copy)
+        if (_copy)
             foreach (var clip in _audioGroup)
                 DrawAudioClip(context,
                     clip with { Position = new(clip.Position.Ticks + _tickDelta), Lane = clip.Lane + _laneDelta },
@@ -239,14 +239,10 @@ internal sealed partial class ArrangementCanvas
         var clip = AudioHit(point);
         if (clip is null)
         {
-            _audioSelection.Clear();
-            SelectedAudio = null;
             return false;
         }
 
         e.Handled = true;
-        _selection.Clear();
-        Selected = null;
         if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
         {
             if (!_audioSelection.Add(clip.Id)) _audioSelection.Remove(clip.Id);
@@ -259,6 +255,8 @@ internal sealed partial class ArrangementCanvas
         if (!_audioSelection.Contains(clip.Id))
         {
             _audioSelection.Clear();
+            _selection.Clear();
+            Selected = null;
             _audioSelection.Add(clip.Id);
         }
 
@@ -279,7 +277,8 @@ internal sealed partial class ArrangementCanvas
         _audioOriginal = _audioDraft = clip;
         _basis = Basis;
         _pressed = point;
-        _audioGesture = _audioSelection.Count == 1 ? AudioGestureAt(clip, point) : 0;
+        _audioGesture = _audioSelection.Count + _selection.Count == 1 ? AudioGestureAt(clip, point) : 0;
+        _group = _observation.Snapshot.State.ArrangementClips.Where(c => _selection.Contains(c.Id)).ToArray();
         _audioGroup = _observation.Snapshot.State.AudioClips.Where(c => _audioSelection.Contains(c.Id)).ToArray();
         _copy = _audioGesture == 0 && e.KeyModifiers.HasFlag(KeyModifiers.Control);
         _pointer = e.Pointer;
@@ -365,9 +364,7 @@ internal sealed partial class ArrangementCanvas
         }
         else
         {
-            _tickDelta = Math.Max(position - clip.Position.Ticks, -_audioGroup.Min(c => c.Position.Ticks));
-            _laneDelta = Math.Clamp((int)Math.Round((point.Y - _pressed.Y) / LaneHeight), -_audioGroup.Min(c => c.Lane),
-                31 - _audioGroup.Max(c => c.Lane));
+            SetGroupDelta(position - clip.Position.Ticks, (int)Math.Round((point.Y - _pressed.Y) / LaneHeight));
             _audioDraft = clip with { Position = new(clip.Position.Ticks + _tickDelta), Lane = clip.Lane + _laneDelta };
         }
 
@@ -381,6 +378,7 @@ internal sealed partial class ArrangementCanvas
         var draft = _audioDraft!;
         var basis = _basis;
         var ids = AudioSelection;
+        var patternIds = Selection;
         bool copy = _copy;
         int gesture = _audioGesture;
         long delta = _tickDelta;
@@ -389,7 +387,7 @@ internal sealed partial class ArrangementCanvas
         e.Handled = true;
         if (draft != original)
             CommandSubmitted?.Invoke(gesture == 0
-                ? _workflow.EditAudioSelectionAsync(basis, ids, delta, lanes, copy)
+                ? CommitGroupAsync(basis, patternIds, ids, delta, lanes, copy)
                 : _workflow.EditAudioClipAsync(basis, draft));
         return true;
     }
@@ -430,5 +428,6 @@ internal sealed partial class ArrangementCanvas
     {
         _audioOriginal = _audioDraft = null;
         _audioGroup = [];
+        _audioGesture = 0;
     }
 }

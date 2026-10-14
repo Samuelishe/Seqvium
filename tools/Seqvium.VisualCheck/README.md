@@ -21,6 +21,23 @@ Output directories should be absolute and task-owned, inside ignored `.artifacts
 The `gestures` command runs a shorter matrix for focused input/alignment verification, including
 committed toolbar Gain fractional drafts, Enter/Escape, invalid input, focus loss and stale authority.
 
+## Native song structure check
+
+`song-structure <output-root> <independent-project> <audio-source>` authors a bounded musical study
+through guarded native Windows input. Supply an independent Neon Orchard copy with its managed media
+outside `examples`, and a stereo WAV at least four seconds long. The published demo is never the target.
+The scenario creates named ranges, swaps Pattern/Audio sections, inserts a repeated Groove, detaches
+one keys clip, edits its octave phrase through Rack/Piano and tests mixed drag/Cut/Paste/Duplicate,
+crossing refusal/reveal, exact history and native Save/Open/Play. Dark/Light EN/RU fields are measured
+against their real text presenters. Source and routing assertions remain canonical and hardware
+playback is separate from subjective musical/acoustic judgement.
+
+Start with the check window visible and leave it active. A one-time normal Z-order raise and title
+activation click must pass exact OS hit testing; it neither uses TopMost nor clicks through another
+application. Every musical input retains the exact foreground guard. A covered window or lost focus
+stops the scenario. Use `--timeout-seconds=240` for this longer authoring route. Native screen/render
+captures and failed attempts remain ignored local evidence under the normal retention policy.
+
 ## Native Audio Clip check
 
 `audio-fixtures <new-independent-directory>` copies the official Neon Orchard project and its media

@@ -62,6 +62,9 @@ public sealed record Pattern(
     MusicalDuration Length,
     ImmutableArray<MusicalPart> Parts) : CanonicalData
 {
+    /// <summary>Informational ancestry; it neither inherits notes nor prevents deletion of the source Pattern.</summary>
+    public Id<Pattern>? VariationOf { get; init; }
+
     /// <summary>Stable equal-position ordering: part UUID then note UUID; not insertion order or pitch.</summary>
     public IEnumerable<(Id<MusicalPart> PartId, NoteEvent Note)> OrderedNotes() =>
         Parts.SelectMany(part => part.Notes.Select(note => (PartId: part.Id, Note: note)))
@@ -154,6 +157,10 @@ public sealed record ArrangementTrack(
     bool Muted,
     bool Solo) : CanonicalData;
 
+/// <summary>A named, non-overlapping musical range. Organization only; no processing or routing ownership.</summary>
+public sealed record ArrangementSection(Id<ArrangementSection> Id, string Name,
+    MusicalPosition Position, MusicalDuration Length, int ColorIndex) : CanonicalData;
+
 public sealed record ProjectState(
     Id<ProjectState> Id,
     string? Name,
@@ -171,6 +178,7 @@ public sealed record ProjectState(
     public ImmutableArray<GraphAttachment> GraphAttachments { get; init; } = [];
     public ImmutableArray<ArrangementClip> ArrangementClips { get; init; } = [];
     public ImmutableArray<ArrangementTrack> ArrangementTracks { get; init; } = [];
+    public ImmutableArray<ArrangementSection> ArrangementSections { get; init; } = [];
     public ImmutableArray<AudioClip> AudioClips { get; init; } = [];
     public MixerState? Mixer { get; init; }
 }

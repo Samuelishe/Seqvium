@@ -60,7 +60,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
     {
         _shell = shell;
         _workflow = workflow;
-        RowDefinitions = new("Auto,Auto,*,Auto");
+        RowDefinitions = new("Auto,Auto,Auto,*,Auto");
         this.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Background"));
         var toolbar = new WrapPanel { Orientation = Orientation.Horizontal, Margin = new(8) };
         Children.Add(toolbar);
@@ -118,6 +118,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
         });
         AddButton(toolbar, "Split", "Split", () => _canvas.SplitSelectedAudio());
         _canvas.AudioPropertiesRequested += OpenAudioProperties;
+        BuildSongStructure();
         _slice.Content = HostIcons.Create("Split", _slice);
         AutomationProperties.SetAutomationId(_slice, "Arrangement.Slice");
         _slice.IsCheckedChanged += (_, _) => _canvas.SliceMode = _slice.IsChecked == true;
@@ -215,7 +216,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
             _scroll.Offset = new(Math.Max(0, left * total * _canvas.TickPixels), _scroll.Offset.Y);
         };
         _overview.Margin = new(8, 0, 8, 4);
-        SetRow(_overview, 1);
+        SetRow(_overview, 2);
         Children.Add(_overview);
         _scroll.ScrollChanged += (_, _) =>
         {
@@ -245,10 +246,10 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
 
             e.Handled = true;
         }, RoutingStrategies.Tunnel);
-        SetRow(_scroll, 2);
+        SetRow(_scroll, 3);
         Children.Add(_scroll);
         _hint.Margin = new(12, 8);
-        SetRow(_hint, 3);
+        SetRow(_hint, 4);
         Children.Add(_hint);
         workflow.Changed += WorkflowChanged;
         shell.PropertyChanged += PreferencesChanged;
@@ -280,11 +281,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
 
     private Task SelectionCommand(bool duplicate = false, bool delete = false)
     {
-        PendingCommand = _canvas.AudioSelection.Length > 0
-            ? _workflow.EditAudioSelectionAsync(_canvas.Basis, _canvas.AudioSelection, duplicate: duplicate,
-                delete: delete)
-            : _workflow.EditArrangementSelectionAsync(_canvas.Basis, _canvas.Selection, duplicate: duplicate,
-                delete: delete);
+        PendingCommand = _canvas.EditSelection(duplicate, delete);
         return PendingCommand;
     }
 
@@ -313,6 +310,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
             var observation = _workflow.State;
             var state = observation.Snapshot.State;
             _canvas.Adopt(observation);
+            RefreshSongStructure();
             var snapLabels = new[]
             {
                 _shell["Arrangement.SnapBar"], _shell["Arrangement.SnapBeat"], _shell["Arrangement.SnapSixteenth"],
@@ -354,8 +352,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
             _repeatLabel.Text = _shell["Arrangement.Repeats"];
             _repeats.Value = audio?.Repeats ?? selected?.Repeats ?? 1;
             _repeats.IsEnabled =
-                (audio is not null && _canvas.AudioSelection.Length == 1 ||
-                 selected is not null && _canvas.Selection.Length == 1) && !observation.Busy;
+                _canvas.AudioSelection.Length + _canvas.Selection.Length == 1 && !observation.Busy;
             AutomationProperties.SetAutomationId(_repeats, "Arrangement.Repeats");
             AutomationProperties.SetName(_repeats, _repeatLabel.Text);
             foreach (var (key, button) in _buttons)
@@ -419,6 +416,8 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
         _trackBasis = null;
         _trackFlyout.Hide();
         _audioFlyout?.Hide();
+        _sectionFlyout.Hide();
+        _clipFlyout.Hide();
     }
 
     internal void FocusEditor()

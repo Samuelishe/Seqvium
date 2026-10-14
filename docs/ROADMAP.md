@@ -453,6 +453,10 @@ restored music layout and continuous supported channel changes. It does not clos
 full R10 container/stretch scope or earlier R4 pressure acceptance. Standalone Audio Clips now add
 Explorer WAV/MP3/FLAC import, real cached waveforms, source-frame trim/split/fades, fixed-speed repeats,
 shared Mixer routes, history/managed media/portable Save As and mixed realtime/offline Song export.
+SEQ-R10-SONG-STRUCTURE adds named/color ranges, adjacent-section swaps and repeat insertion,
+explicit one-clip Pattern variations with visible ancestry, mixed Pattern/Audio selection, clipboard,
+precise placement and boundary-conflict reveal. These use canonical history, shared sounds/routes and
+reader 1.5. They do not close dynamic containers, cross-boundary phrase handling or stretch.
 Resident-media limits and Windows-only compressed decoding remain explicit. Current contracts belong to
 [UX](UX_CONTRACT.md#implemented-playlist-arrangement), [audio](AUDIO_ENGINE.md#playlist-song-preparation-and-execution)
 and [format](PROJECT_FORMAT.md#playlist-reader-12); [UI](UI_DESIGN.md#playlist-reference-assessment-and-visual-contract)
@@ -465,14 +469,13 @@ Prioritize a finished audible scenario with canonical history/persistence and pr
 
 | Priority / bounded package  | Musical/UI outcome                                                                                                                      | Required boundary / decision                                                                                                                                           |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| R10 editing                 | Clipboard, precise selected-clip position, richer context menu and tool/cursor feedback; marquee/group move/copy/delete are implemented | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit                                           |
-| R10 song structure          | Named section markers, dynamic track insertion/reorder, groups/collapse and useful track height                                         | Stable container/marker identities, lossless transition from fixed slots, separate visual organization from item/container processing and Mixer routing                |
-| R10 Pattern variants        | Explicit make-unique/variation and richer mini Piano Roll                                                                               | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies                                                   |
+| R10 editing                 | Mixed selection, clipboard, exact placement, context actions and variation cues are implemented; continue with richer trim/unfold tools | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit                                           |
+| R10 song structure          | Named ranges/navigation/swap/repeat are implemented; continue with dynamic tracks, groups/collapse and flexible boundary handling                                         | Stable container/marker identities, lossless transition from fixed slots, separate visual organization from item/container processing and Mixer routing                |
+| R10 Pattern variants        | Explicit one-clip variations and visible ancestry are implemented; continue with richer mini Piano Roll and unfolding repeat cycles                                                                               | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies                                                   |
 | R10 advanced audio          | Explicit local stretch/warp, broader channel/codec support and a justified large-media streaming path                                   | Fixed-speed standalone audio/range/fades are implemented; any stretch must remain opt-in and use a real shared realtime/offline algorithm                              |
 | R11 processing / automation | Measured stereo Master/track taps, useful meters, Mixer balance/pan/sends and automation lanes                                          | Actual processor/measurement/tap/state ownership; no fake meters or duplicate Gain/DSP. Automation needs canonical musical-time lanes and realtime/offline equivalence |
 
-Expand Playlist with normal shared pattern references and explicit
-independent variations. Follow the semi-free direction: user-named structured containers, useful
+Extend the implemented shared clips and independent variations through the semi-free direction: user-named structured containers, useful
 default content relationships, and compatible material reuse without permanent one-instrument
 ownership or mixer-channel identity. Resolve bounded compatibility/container-processing relationships
 and audio-clip scope rather than assuming a final Track schema or full DAW timeline.

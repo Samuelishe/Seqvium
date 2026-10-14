@@ -108,6 +108,7 @@ or Delete deletes. Shift-click toggles membership, Shift-drag/selection tool box
 selects all. Velocity stems align with time, with staggered chord handles. Exact properties offer
 pitch/start/duration/velocity; group pitch/start moves relatively and only changed duration/intensity
 fields apply. Boundary clamping preserves group spacing. Clipboard commands refuse an oversized span.
+After exact note properties commit, the editor reveals the selected note within its retained view.
 Ctrl+C/X/V/D copies/cuts/pastes/duplicates; arrows nudge snap/pitch, Shift horizontal arrows resize,
 Shift vertical arrows transpose an octave, Alt horizontal arrows select individual notes, Enter auditions.
 
@@ -201,14 +202,59 @@ reported; cancellation/failure preserves an existing destination and cannot over
 Save/Open preserves all music/track state; transport, selection/view and history remain session-only.
 
 This bounded editor offers whole-Pattern repeats and 32 lanes. The view expands for long Audio Clips;
-Pattern placement retains its 4096-bar bound. All 32 lanes
+timeline presentation and exact bar fields extend up to one million bars. Canonical checked Int64
+time remains the persistence boundary. All 32 lanes
 are available by vertical scrolling even before they contain clips. The timeline anchors at TOP + LEFT;
 its horizontal extent fills an expanded viewport with editable bars up to the existing limit. It adds no
-independent Pattern variation, audio stretch, section markers, automation or an in-clip velocity editor.
+audio stretch, automation or an in-clip velocity editor. Sections and explicit variations are below.
 Audio range/trim/split/fades are implemented below; stateful global processing belongs to Mixer.
 Shared velocity edits are in Piano Roll.
 Reference-informed follow-up lives
 in [R10 planning](ROADMAP.md#seq-r10--arrangement), separate from implemented controls.
+
+## Implemented shared WAV replacement
+
+Channel Rack's row menu replaces the supported WAV sampler's source with one native file choice.
+The action updates all uses of the shared instrument, including musical variations, with one Undo
+transaction. Notes, placement and processing identities, release and Mixer routes/settings remain.
+A contextual hint makes shared scope and tuning behavior explicit. Known hash-verified catalog Root
+Pitch is adopted; otherwise existing tuning remains. This does not normalize level or switch sampler
+algorithms; Piano source tuning and Mixer trim remain explicit controls. Cancel/error/stale selection
+accept no partial edit. [Sample workflow](SAMPLE_WORKFLOW.md#shared-wav-replacement) owns durability.
+
+## Implemented Playlist song structure
+
+A stationary named/color section band sits below the bar ruler. Click a section or choose it in the
+section navigator to seek without starting playback; double-click edits its name, exact start/length
+in bars and color. Add section starts with the retained musical range. Sections are non-overlapping
+organization, independent of routing and clip ownership. Context actions select wholly contained
+clips, loop the range or remove its label; removal leaves the music intact.
+
+Earlier/Later swaps adjacent ranges and their musical content, preserving the intervening gap.
+Repeat section inserts shared Pattern/Audio uses immediately after it and shifts all later music and
+section labels by its length. Every accepted structure operation is one Undo. A clip crossing any
+affected boundary refuses the whole operation, with a visible reason, source name, track/start and
+Show crossing clip navigation. It never implicitly splits, stretches or truncates a sustained phrase.
+The user can explicitly split audio or adjust section boundaries, then retry. This bounded operation
+does not provide arranger chains, nested sections or automatic treatment of cross-section tails.
+
+Pattern and Audio Clips participate in the same Shift selection, marquee and Ctrl+A. Captured move/
+Ctrl-copy, arrows, Duplicate, Delete and Ctrl+C/X/V retain relative time, tracks, silence between items
+and original source references. Boundary saturation moves the whole group together. Duplicate appends
+after the full mixed span; paste starts at the Song cursor on the last targeted track. Clipboard is
+local to this document lifecycle, retaining frozen clip intent after Cut; missing sources or an
+oversized track span refuse paste atomically. Copies/pastes become selected for immediate development.
+Clip properties give an exact earliest start in bars and track; mixed groups move relatively.
+Repeats, audio trim and fades remain single-item actions. No-op, stale, Escape/capture/lifecycle
+cancellation rules and canonical history apply equally to both clip kinds.
+
+Shared Pattern uses show a shared symbol. Editing through Rack/Piano still changes that Pattern's
+notes for all uses. Make variation is explicit for one Pattern clip: fresh notes/parts and supported
+item processing belong to its new placement, while instruments/resources and Mixer routes stay
+shared. An arrow and source ancestry distinguish the variation, including after rename/Save/Open;
+the Rack opens its actual new target. Unknown identity-bearing processing/data refuses safe detachment.
+A repeated clip becomes one independent Pattern whose internal repeats still share that variation;
+individual repeat cycles are not automatically unfolded. Copying a variation shares the variation.
 
 ## Implemented Audio Clip workflow
 
@@ -224,7 +270,7 @@ display fits source amplitude for readability, not audio normalization. Body dra
 copies; Shift selects audio groups. Edge drag trims a single occurrence; upper waveform corners edit
 linear fades. Resize/fade cursors identify the active gesture. Snap/temporary modifiers and Escape/
 capture/stale-basis cancellation retain existing owner semantics. Delete, Ctrl+D and arrow movement
-operate on selected audio. Audio and Pattern group selection are currently separate.
+operate on the common Pattern/Audio selection described above.
 
 Slice clicks or Split at cursor split only a single-repeat range. Source range and original fade
 envelope survive split without an artificial seam. Repeats loop that range at natural speed, not BPM.

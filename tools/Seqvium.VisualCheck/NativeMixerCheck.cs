@@ -489,6 +489,9 @@ internal static partial class Program
         internal async Task PlayExport()
         {
             Require(State.Mixer is not null, "Play requires a saved Mixer.");
+            long expectedFrames = ConstantTempoConversion.ToFrames(new(ArrangementPreparation.EndTicks(State)),
+                State.Settings.Tempo, 48000);
+            int checks = checked((int)Math.Ceiling(expectedFrames / 48000d / .03) + 300);
             var reopened = State.Mixer;
             await ShowMixer();
             await Click(WorkspaceState.ArrangementId + ".open");
@@ -501,7 +504,7 @@ internal static partial class Program
             float peak = 0, reduction = 0;
             bool measured = false;
             for (int i = 0;
-                 i < 2800 && Workflow.State.Execution?.Execution.Transport != SamplerTransportState.Ended;
+                 i < checks && Workflow.State.Execution?.Execution.Transport != SamplerTransportState.Ended;
                  i++)
             {
                 await Task.Delay(30);
@@ -543,7 +546,7 @@ internal static partial class Program
                 if (Math.Abs(l) >= .9999 || Math.Abs(r) >= .9999) clipped++;
             }
 
-            Require(pcm.Frames == 3291429 && clipped == 0 && actualPeak > .1,
+            Require(pcm.Frames == expectedFrames && clipped == 0 && actualPeak > .1,
                 "Mixed WAV duration/clipping/signal failed.");
             Json(output, "mixed-song", new
             {

@@ -512,6 +512,45 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         AutomationProperties.SetAutomationId(soundAction, $"Beat.Sound.{part.Id}");
         _menuLabels.Add((soundAction, "Drum.Open"));
         menu.Items.Add(soundAction);
+        var replaceAction = new MenuItem { Header = _shell["Beat.ReplaceWav"] };
+        AutomationProperties.SetAutomationId(replaceAction, $"Beat.ReplaceWav.{part.Id}");
+        _menuLabels.Add((replaceAction, "Beat.ReplaceWav"));
+        menu.Items.Add(replaceAction);
+        BeatEditBasis? replaceBasis = null;
+        menu.Opened += (_, _) =>
+        {
+            replaceBasis = _basis;
+            var sound = _workflow.State.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == part.SoundId);
+            replaceAction.IsEnabled = !_workflow.State.Busy && replaceBasis is not null &&
+                sound is { Algorithm: PcmSampler.Algorithm, Extension: null } && sound.AdditionalData.IsEmpty;
+            ToolTip.SetTip(replaceAction, _shell["Beat.ReplaceWavHint"]);
+        };
+        replaceAction.Click += async (_, _) =>
+        {
+            if (_disposed || !IsEffectivelyVisible || replaceBasis is not { } basis ||
+                TopLevel.GetTopLevel(this) is not { } top) return;
+            CancelGesture();
+            IReadOnlyList<IStorageFile> files = [];
+            try
+            {
+                files = await top.StorageProvider.OpenFilePickerAsync(new()
+                {
+                    Title = _shell["Beat.ReplaceWav"], AllowMultiple = false,
+                    FileTypeFilter = [new("WAV") { Patterns = ["*.wav"] }]
+                });
+                if (files.FirstOrDefault()?.TryGetLocalPath() is { } path && !_disposed)
+                {
+                    PendingCommand = _workflow.ReplaceBeatWavAsync(basis, part.Id, path);
+                    await PendingCommand;
+                }
+            }
+            catch (Exception error)
+            {
+                if (!_disposed) await _workflow.ReportFailureAsync(error.Message);
+            }
+            finally { foreach (var file in files) file.Dispose(); }
+            Refresh();
+        };
         var mixerAction = new MenuItem { Header = _shell["Pane.Mixer"] };
         _menuLabels.Add((mixerAction, "Pane.Mixer"));
         AutomationProperties.SetAutomationId(mixerAction, $"Beat.Mixer.{part.Id}");

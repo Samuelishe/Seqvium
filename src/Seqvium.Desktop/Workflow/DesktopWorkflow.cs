@@ -169,7 +169,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             _busy = true;
             _detail = null;
             Publish();
-            return await operation();
+            bool accepted = await operation();
+            if (accepted && _status == failureKey) _status = "Workflow.Ready";
+            return accepted;
         }
         catch (OperationCanceledException)
         {

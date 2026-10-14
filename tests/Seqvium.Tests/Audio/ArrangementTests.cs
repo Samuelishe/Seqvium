@@ -293,9 +293,13 @@ public sealed class ArrangementTests
         Assert.InRange(Math.Abs(packet[0] - 256 / 48000f * .5f), 0, .000001f); Assert.True(sampler.ReadStatus().Playing);
         sampler.RetireCompleted();
         for (int i = 0; i < 20; i++) sampler.Process(packet);
+        // Keep assertion infrastructure outside the callback allocation measurement.
+        int processed = 0;
         long before = GC.GetAllocatedBytesForCurrentThread();
-        for (int i = 0; i < 20; i++) Assert.True(sampler.Process(packet));
-        Assert.Equal(before, GC.GetAllocatedBytesForCurrentThread());
+        for (int i = 0; i < 20; i++) if (sampler.Process(packet)) processed++;
+        long after = GC.GetAllocatedBytesForCurrentThread();
+        Assert.Equal(20, processed);
+        Assert.Equal(before, after);
         long stop = sampler.Stop(); sampler.Process(packet); Assert.Equal(stop, sampler.StopAcknowledgment);
         await Publish(f, sampler, true); sampler.Process(packet);
         Assert.All(packet, value => Assert.Equal(0, value)); Assert.False(sampler.ReadStatus().Playing);

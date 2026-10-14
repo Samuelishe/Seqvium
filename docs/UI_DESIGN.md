@@ -17,6 +17,15 @@ Visual quality and musical correctness are complementary requirements.
 
 ## Compact studio instrument direction
 
+Playlist now separates form from events: a quiet named/color band directly beneath the bar ruler
+makes sections legible across a dense mixed arrangement. The section navigator gives precise access;
+its small command row and item context menus expose actual structural editing rather than an
+independent arrangement manager. Selected musical content retains the stronger outline. A shared
+glyph and variation arrow make content relationships visible without inventing inherited note state.
+Boundary refusal appears beside the editor with the real source/track and a direct reveal action.
+Names, note thumbnails and stereo waveforms remain the main visual content. Track switches fit within
+their lane, leaving grid rhythm and unselected clips readable in both themes.
+
 Playlist Audio Clips use a thin source-colored outline, compact beveled name strip, readable actual
 mono/stereo envelopes and restrained fade handles. Long sources retain detail through min/max levels;
 waveform visual amplitude fitting is not source normalization. Editing tools and exact properties

@@ -27,6 +27,13 @@ Application resource replacement synchronizes aliases; theme changes retain exis
 
 ## Token catalog
 
+Playlist's section band uses `Playlist.SectionHeight` beneath the existing ruler. Its tint, name,
+boundaries and selected edge reuse channel, surface, caption and accent roles; no private palette is
+introduced. Track M/S fit inside each shared lane using the existing compact status-height metric.
+Shared/variation glyphs supplement names and explanatory tooltips rather than acting as selection.
+Section navigation/commands and an occasional boundary-conflict message remain contextual. Exact
+section/clip fields use ordinary `parameterRow`/`numeric` controls and actual presenter alignment.
+
 Playlist Audio Clip drawing uses the existing surface, bevel, channel-identity, accent and text roles,
 shared Playlist metrics and HostVisual captions. Draw min/max waveform bands separately for mono/stereo;
 fit visual amplitude without altering audio gain or claiming a meter. Contextual source-frame/fade/gain
@@ -65,7 +72,7 @@ Geometry and typography resources are declared in `HostMetrics.Values` and its t
 | Typography       | `Type.Body`, `Type.Caption`, `Type.Section`, `Type.PaneTitle`, `Type.Numeric`, `Type.Transport`, `Type.FontFamily`, `Type.MonospaceFamily`                                             | Body/caption/section/pane/numeric/transport emphasis; monospace for technical or fixed-column content |
 | Level/scroll     | `Level.Height`, `Level.TrackHeight`, `Level.ThumbSize`, `Level.Inset`, `ScrollBar.Size`                                                                                                | Real hit area, drawn/templated geometry, visible local scrolling                                      |
 | Rack/navigation  | `Rack.StepHeight`, `Rack.RowHeight`, `Rack.StepCorner`, `Rail.Width`                                                                                                                   | Pad hit geometry, rhythmic row and navigation rail                                                    |
-| Playlist         | `Playlist.LaneHeight`, `Playlist.RulerHeight`, `Playlist.HeaderWidth`, `Playlist.OverviewHeight`                                                                                       | Musical lane/header hit geometry and the derived song overview                                        |
+| Playlist         | `Playlist.LaneHeight`, `Playlist.RulerHeight`, `Playlist.HeaderWidth`, `Playlist.OverviewHeight`, `Playlist.SectionHeight`                                                                                       | Musical lane/header hit geometry and the derived song overview                                        |
 | Piano Roll       | `Piano.KeyWidth`, `Piano.RowHeight`, `Piano.RulerHeight`, `Piano.VelocityHeight`, `Piano.NoteCorner`                                                                                   | Keyboard/grid alignment, velocity lane and bevelled note geometry                                     |
 | Numeric template | `Control.NumericInnerHeight`                                                                                                                                                           | Derived inner height respecting outer control/border; do not set a second local template minimum      |
 

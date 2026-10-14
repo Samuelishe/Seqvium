@@ -10,6 +10,23 @@ SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated ma
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
 
+## Playlist sections and Pattern ancestry (reader 1.5)
+
+`state.arrangementSections` contains identified, named/color ranges in canonical musical ticks.
+Ranges are positive, ordered geometrically and non-overlapping; array ordering is not musical order.
+History/Save/Open retain identities and optional unknown fields. A section label owns no clips, media,
+processing context or Mixer route. Selection, clipboard, cursor and navigation remain session-only.
+
+`Pattern.variationOf` optionally records the source Pattern UUID used at explicit detachment. It is
+informational ancestry, not inheritance or a strong ownership reference: an ancestor may later be
+removed while the variation's own notes and graphs remain valid. Empty/self ancestry is invalid.
+Existing Patterns are not assigned guessed ancestry merely on Open.
+
+Sections or non-null Pattern ancestry require `minor >= 5` and `minimumReaderMinor >= 5`; older
+projects retain their applicable gates when these features are absent. Save never lowers a loaded
+gate. Reader 1.4 must refuse these new projects rather than preserve unread labels while discarding
+their meaning. Weak ancestry and organizational labels introduce no media format or renderer version.
+
 ## Audio clips (reader 1.4)
 
 `state.audioClips` stores stable clip/source IDs, musical position/lane, native-frame offset/length,

@@ -71,6 +71,8 @@ public static class ProjectValidation
         {
             Identity(pattern.Id);
             Text(pattern.Name);
+            Require(pattern.VariationOf is null || pattern.VariationOf.Value.Value != Guid.Empty && pattern.VariationOf != pattern.Id,
+                "Invalid Pattern variation ancestry.");
             Present(pattern.Parts);
             Require(pattern.Length.Ticks > 0, "Pattern length must be positive.");
             foreach (var part in pattern.Parts)
@@ -159,6 +161,17 @@ public static class ProjectValidation
             "An item-local context must have exactly one placement owner.");
         Present(state.ArrangementClips);
         Present(state.ArrangementTracks);
+        Present(state.ArrangementSections);
+        long sectionEnd = 0;
+        foreach (var section in state.ArrangementSections.OrderBy(s => s.Position.Ticks))
+        {
+            Identity(section.Id);
+            Text(section.Name);
+            Require(section.ColorIndex is >= 0 and < 8 && section.Position.Ticks >= sectionEnd &&
+                    section.Length.Ticks > 0 && section.Position.Ticks <= long.MaxValue - section.Length.Ticks,
+                "Playlist sections must have positive, non-overlapping ranges and a supported color.");
+            sectionEnd = section.Position.Ticks + section.Length.Ticks;
+        }
         Unique(state.ArrangementTracks.Select(track => track.Lane));
         foreach (var track in state.ArrangementTracks)
         {

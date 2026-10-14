@@ -9,6 +9,20 @@ progress.
 
 ## Audio Clip verification
 
+`SongStructureTests` covers non-overlap/reader gates and unknown fields, section swaps with gaps,
+shared repeat insertion, crossing refusal, mixed clamping/clipboard geometry, and exact history.
+Variation cases check declared graph identity remapping, source isolation, opaque-state refusal,
+shared Mixer/resources, equal PCM before note changes and Save/Open after a local phrase change.
+Allocation measurements exclude test assertions from the measured callback loop.
+Use the focused `*SongStructureTests` plus affected `*ArrangementTests`, `*AudioClipTests`,
+`*PersistenceTests`, `*GraphEditingTests`, `*DocumentTests` and `*DesktopWorkflowTests` classes;
+`*ProductVersionTests` covers the distinct current reader/metadata gates.
+
+The [VisualCheck song-structure route](../tools/Seqvium.VisualCheck/README.md#native-song-structure-check)
+uses a caller-supplied independent composition and real audio source, production fields/pickers,
+native pointer gestures, actual Rack/Piano targets and both-theme localized section alignment.
+Foreground/hit-test refusal is a failed native attempt, never a passing mouse claim.
+
 `AudioClipTests` covers independent native-frame/resampling/fade/repeat oracles, shared-source PCM
 and Save As leases, range/history/reader/portable media, missing managed files, Mixer assignment,
 source duration vs BPM, packet invariance, seek/loop allocation and compatible live-edit continuation.
@@ -887,6 +901,12 @@ Use them only with declared evidence and material limits, not as ceremony for tr
 accumulating individual runs in [PROJECT_STATE](PROJECT_STATE.md).
 
 ## Native composing workflow verification
+
+Shared sampler replacement uses `SampleReplacementTests` plus `PianoRollTests`, `ManagedMediaTests`,
+`SongStructureTests` and built `ProductVersionTests`: the bounded 91-case Release pass covers shared
+music/processing/Mixer preservation, tuning, history/media, cancellation/errors and stale authority.
+The [replacement report](experiments/SEQ-SHARED-WAV-REPLACEMENT_REPORT.md) distinguishes native
+musical observations, complete inspection and old harness failures from a full regression claim.
 
 The [SEQ-TRACK-GUI report](experiments/SEQ-TRACK-GUI_REPORT.md) separates native authoring in ordinary
 Desktop from the automated VisualCheck fixtures. The `gestures` route now checks committed toolbar

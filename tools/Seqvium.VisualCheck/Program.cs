@@ -167,7 +167,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
-                or "native-track" or "native-mixer" or "native-audio",
+                or "native-track" or "native-mixer" or "native-audio" or "song-structure",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -221,6 +221,11 @@ internal static partial class Program
                     await PianoMusicAsync(main, output, args[2], args.Length == 4 ? args[3] : null);
                 }
                 else if (args[0] == "arrangement") await ArrangementMatrixAsync(main, output);
+                else if (args[0] == "song-structure")
+                {
+                    Require(args.Length == 4, "song-structure <output> <independent-project> <audio-source>");
+                    await SongStructureAsync(main, output, Path.GetFullPath(args[2]), Path.GetFullPath(args[3]));
+                }
                 else if (args[0] == "project")
                 {
                     Require(args.Length == 3, "project <output> <project-file>");
@@ -241,13 +246,13 @@ internal static partial class Program
                     var workflow = Field<DesktopWorkflow>(main, "_workflow");
                     if (workflow.State.IsDirty)
                     {
-                        Require(args[0] is not ("native-track" or "native-mixer" or "native-audio"),
+                        Require(args[0] is not ("native-track" or "native-mixer" or "native-audio" or "song-structure"),
                             "Native composer stopped with unsaved edits; checkpoint file is preserved.");
                         Require(await workflow.SaveAsync(Path.Combine(output, "final-fixture.seqvium")),
                             "Shutdown fixture save failed.");
                     }
 
-                    if (args[0] is "native-track" or "native-mixer" or "native-audio")
+                    if (args[0] is "native-track" or "native-mixer" or "native-audio" or "song-structure")
                         Dispatcher.UIThread.Post(() => new NativePointer.DrumInput(main).Key(0x73, modifier: 0x12));
                     else main.Close();
                 }

@@ -107,36 +107,7 @@ internal sealed partial class DesktopWorkflow
 
     internal Task<bool> EditAudioSelectionAsync(ArrangementEditBasis basis, IReadOnlyList<Id<AudioClip>> selection,
         long tickDelta = 0, int laneDelta = 0, bool copy = false, bool delete = false, bool duplicate = false)
-    {
-        var ids = selection.Distinct().ToArray();
-        return Command("Workflow.EditFailed", () =>
-        {
-            ValidateArrangementBasis(basis);
-            var state = _document.Current.State;
-            var clips = ids.Select(id => state.AudioClips.Single(c => c.Id == id)).ToArray();
-            if (clips.Length == 0) return Task.FromResult(false);
-            if (duplicate)
-            {
-                tickDelta = clips.Max(c => AudioClipSource.EndTicks(state, c)) - clips.Min(c => c.Position.Ticks);
-                copy = true;
-            }
-
-            long delta = Math.Max(tickDelta, -clips.Min(c => c.Position.Ticks));
-            int lanes = Math.Clamp(laneDelta, -clips.Min(c => c.Lane), 31 - clips.Max(c => c.Lane));
-            return Task.FromResult(_document.Edit(
-                delete ? "Delete Playlist audio" : copy ? "Copy Playlist audio" : "Move Playlist audio", edit =>
-                {
-                    foreach (var clip in clips)
-                        if (delete) edit.DeleteAudioClip(clip.Id);
-                        else if (copy) edit.CopyAudioClip(clip.Id, new(clip.Position.Ticks + delta), clip.Lane + lanes);
-                        else
-                            edit.UpdateAudioClip(clip with
-                            {
-                                Position = new(clip.Position.Ticks + delta), Lane = clip.Lane + lanes
-                            });
-                }));
-        });
-    }
+        => EditPlaylistSelectionAsync(basis, [], selection, tickDelta, laneDelta, copy, delete, duplicate);
 
     internal Task<bool> SplitAudioClipAsync(ArrangementEditBasis basis, Id<AudioClip> id, MusicalPosition position)
         => Command("Workflow.EditFailed", () =>

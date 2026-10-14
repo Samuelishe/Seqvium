@@ -43,32 +43,7 @@ internal sealed partial class DesktopWorkflow
 
     internal Task<bool> EditArrangementSelectionAsync(ArrangementEditBasis basis, IReadOnlyList<Id<ArrangementClip>> selection,
         long tickDelta = 0, int laneDelta = 0, bool copy = false, bool delete = false, bool duplicate = false)
-    {
-        var ids = selection.Distinct().ToArray();
-        return Command("Workflow.EditFailed", () =>
-        {
-            ValidateArrangementBasis(basis);
-            var state = _document.Current.State;
-            var clips = ids.Select(id => state.ArrangementClips.Single(c => c.Id == id)).ToArray();
-            if (clips.Length == 0) return Task.FromResult(false);
-            if (duplicate)
-            {
-                long end = clips.Max(c => c.Position.Ticks + state.Patterns.Single(p => p.Id ==
-                    state.Placements.Single(s => s.Id == c.SourcePlacementId).PatternId).Length.Ticks * c.Repeats);
-                tickDelta = end - clips.Min(c => c.Position.Ticks); copy = true;
-            }
-            long delta = Math.Clamp(tickDelta, -clips.Min(c => c.Position.Ticks),
-                4095L * state.Settings.Meter.TicksPerBar - clips.Max(c => c.Position.Ticks));
-            int lanes = Math.Clamp(laneDelta, -clips.Min(c => c.Lane), 31 - clips.Max(c => c.Lane));
-            return Task.FromResult(_document.Edit(delete ? "Delete song clips" : copy ? "Copy song clips" : "Move song clips", edit =>
-            {
-                foreach (var clip in clips)
-                    if (delete) edit.DeleteArrangementClip(clip.Id);
-                    else if (copy) edit.AddArrangementClip(clip.SourcePlacementId, new(clip.Position.Ticks + delta), clip.Lane + lanes, clip.Repeats);
-                    else edit.UpdateArrangementClip(clip.Id, new(clip.Position.Ticks + delta), clip.Lane + lanes, clip.Repeats);
-            }));
-        });
-    }
+        => EditPlaylistSelectionAsync(basis, selection, [], tickDelta, laneDelta, copy, delete, duplicate);
 
     private void ValidateArrangementBasis(ArrangementEditBasis basis)
     {

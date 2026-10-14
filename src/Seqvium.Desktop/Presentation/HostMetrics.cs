@@ -25,6 +25,7 @@ public static class HostMetrics
         ["Rail.Width"] = 44,
         ["Playlist.LaneHeight"] = 52, ["Playlist.RulerHeight"] = 26, ["Playlist.HeaderWidth"] = 128,
         ["Playlist.OverviewHeight"] = 22,
+        ["Playlist.SectionHeight"] = 26,
         ["Mixer.ChannelWidth"] = 60, ["Mixer.MasterWidth"] = 72, ["Mixer.StripHeight"] = 292,
         ["Mixer.FaderHeight"] = 112, ["Mixer.PanSize"] = 34, ["Mixer.ControlHeight"] = 20,
         ["Piano.KeyWidth"] = 76, ["Piano.RowHeight"] = 20, ["Piano.RulerHeight"] = 32,

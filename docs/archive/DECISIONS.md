@@ -1645,3 +1645,28 @@ recordings retain CC0. Resource identities survive while identical audio shares 
 The current [demo guide](../../examples/Neon%20Orchard/README.md) owns creative maintenance and use;
 [Third-party](../THIRD_PARTY.md#neon-orchard-demo-media) owns redistribution provenance. This bounded
 resource checkpoint grants no new engine stage, release or repository publication authority.
+
+## SEQ-R10-SONG-STRUCTURE — bounded musical organization, 2026-10-14
+
+Sections own named timeline ranges without gaining sound, processing, routing or track-container
+ownership. Reordering preserves gaps and refuses crossing phrases atomically; showing the named
+clip makes that bounded safety contract actionable for sustained pads/transitions. Splitting remains
+explicit instead of silently rewriting musical sources. Mixed groups capture one geometry and commit
+one transaction so Pattern/audio timing, silence and source intent survive move/copy/history.
+
+A one-clip variation clones musical content and supported local graph identities while retaining
+shared instrument/resources/Mixer. Informational ancestry communicates origin without inheritance
+or hidden overrides. Unknown identity-bearing state refuses cloning rather than corrupting opaque
+extension data. Shared-use/variation cues distinguish source editing from independent development.
+These choices finish a coherent arrangement workflow while leaving dynamic groups/containers,
+stretch and inherited variations to their separately scoped roadmap work.
+
+## SEQ-SHARED-WAV-REPLACEMENT — resource swap retains instrument identity, 2026-10-14
+
+A musical recording change belongs to the existing shared SoundDefinition. Rebuilding each Pattern
+or creating another Mixer channel would change musical ownership for a source-choice operation.
+The Rack command therefore exposes existing durable target import and leaves notes, local graphs,
+release and Mixer intent intact. Verified catalog tuning can differ with the new recorded note;
+without that evidence, retaining the prior root avoids inventing pitch from filenames/audio.
+Recording level is an explicit Mixer trim decision rather than hidden normalization. This bounded
+command changes WAV material, not algorithms, extension state or sampler architecture.

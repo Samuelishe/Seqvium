@@ -34,6 +34,7 @@ internal sealed partial class ArrangementCanvas : Control
     private double _viewportWidth;
     private Rect _viewport;
     private readonly HashSet<Id<ArrangementClip>> _selection = [];
+    private Dictionary<Id<Pattern>, int> _patternUses = [];
     private ArrangementClip[] _group = [];
     private long _tickDelta;
     private int _laneDelta;
@@ -76,7 +77,9 @@ internal sealed partial class ArrangementCanvas : Control
     internal event Action<Id<GraphAttachment>>? RackRequested;
     internal event Action<int, string>? TrackRequested;
     private double LaneHeight => HostVisual.Metric(this, "Playlist.LaneHeight");
-    private double RulerHeight => HostVisual.Metric(this, "Playlist.RulerHeight");
+    private double BeatRulerHeight => HostVisual.Metric(this, "Playlist.RulerHeight");
+    private double SectionHeight => HostVisual.Metric(this, "Playlist.SectionHeight");
+    private double RulerHeight => BeatRulerHeight + SectionHeight;
     private double HeaderWidth => HostVisual.Metric(this, "Playlist.HeaderWidth");
     private long BarTicks => _observation.Snapshot.State.Settings.Meter.TicksPerBar;
     private double HeaderX => Math.Max(0, _viewport.Left);
@@ -104,11 +107,18 @@ internal sealed partial class ArrangementCanvas : Control
         {
             Selected = null;
             _selection.Clear();
+            _audioSelection.Clear();
+            SelectedAudio = null;
+            _clipboard = null;
+            SelectedSection = null;
         }
 
         if (HasGesture && !_panning && (observation.Document.LifecycleId != _basis.Lifecycle ||
                                         observation.Generation != _basis.Generation)) Cancel();
         _observation = observation;
+        var placementPatterns = observation.Snapshot.State.Placements.ToDictionary(p => p.Id, p => p.PatternId);
+        _patternUses = observation.Snapshot.State.ArrangementClips.GroupBy(c => placementPatterns[c.SourcePlacementId])
+            .ToDictionary(g => g.Key, g => g.Count());
         AdoptAudioClips(observation);
         _selection.RemoveWhere(id => !observation.Snapshot.State.ArrangementClips.Any(c => c.Id == id));
         if (!_selection.Contains(Selected ?? default))
@@ -117,7 +127,8 @@ internal sealed partial class ArrangementCanvas : Control
         long viewportBars = (long)Math.Ceiling(Math.Max(0, _viewportWidth - HeaderWidth) / _barWidth);
         long bars = Math.Min(1000000,
             Math.Max(viewportBars,
-                Math.Max(32, ArrangementPreparation.EndTicks(observation.Snapshot.State) / BarTicks + 8)));
+                Math.Max(32, Math.Max(ArrangementPreparation.EndTicks(observation.Snapshot.State),
+                    observation.Snapshot.State.ArrangementSections.Select(s => s.Position.Ticks + s.Length.Ticks).DefaultIfEmpty().Max()) / BarTicks + 8)));
         Width = HeaderWidth + bars * _barWidth;
         Height = RulerHeight + 32 * LaneHeight;
         AutomationProperties.SetName(this, _shell["Arrangement.Hint"]);
@@ -141,7 +152,8 @@ internal sealed partial class ArrangementCanvas : Control
     internal void Fit(double width)
     {
         Cancel();
-        double bars = Math.Max(4, (double)ArrangementPreparation.EndTicks(_observation.Snapshot.State) / BarTicks + 1);
+        double bars = Math.Max(4, (double)Math.Max(ArrangementPreparation.EndTicks(_observation.Snapshot.State),
+            _observation.Snapshot.State.ArrangementSections.Select(s => s.Position.Ticks + s.Length.Ticks).DefaultIfEmpty().Max()) / BarTicks + 1);
         _barWidth = Math.Clamp((width - HeaderWidth) / bars, 8, 768);
         Adopt(_observation);
     }
@@ -203,7 +215,7 @@ internal sealed partial class ArrangementCanvas : Control
             DrawClip(context, shown, _selection.Contains(clip.Id));
         }
 
-        if (_copy && _draft is not null)
+        if (_copy && (_draft is not null || _audioOriginal is not null))
             foreach (var clip in _group)
                 DrawClip(context,
                     clip with { Position = new(clip.Position.Ticks + _tickDelta), Lane = clip.Lane + _laneDelta },
@@ -222,9 +234,9 @@ internal sealed partial class ArrangementCanvas : Control
                     System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                     HostVisual.Typeface(this),
                     HostVisual.Metric(this, "Type.Body"), Brush("Text.Primary")), new(HeaderX + 12, y + 8));
-            DrawTrackButton("M", track?.Muted == true, HeaderX + 12, y + 33);
-            DrawTrackButton("S", track?.Solo == true, HeaderX + 48, y + 33);
-            HostVisual.Caption(this, _shell, context, (lane + 1).ToString("00"), new(HeaderX + 110, y + 40));
+            DrawTrackButton("M", track?.Muted == true, HeaderX + 12, y + 28);
+            DrawTrackButton("S", track?.Solo == true, HeaderX + 42, y + 28);
+            HostVisual.Caption(this, _shell, context, (lane + 1).ToString("00"), new(HeaderX + 104, y + 30));
         }
 
         if (_selectionRect is { } selectionRect)
@@ -264,6 +276,7 @@ internal sealed partial class ArrangementCanvas : Control
 
         context.DrawRectangle(Brush("Material.Panel"), null, new Rect(HeaderX, RulerY, HeaderWidth, RulerHeight));
         HostVisual.Caption(this, _shell, context, _shell["Arrangement.Tracks"], new(HeaderX + 12, RulerY + 8));
+        DrawSections(context);
         if (_observation.SongMode)
         {
             double x = PlayheadX;
@@ -279,9 +292,9 @@ internal sealed partial class ArrangementCanvas : Control
         {
             context.DrawRectangle(Brush(active ? "Surface.Selected" : "Material.Button"),
                 new Pen(Brush(active ? "Accent.Action" : "Border.Default"), 1),
-                new Rect(x, y, 30, 30), HostVisual.Metric(this, "Control.Corner"),
+                new Rect(x, y, 24, HostVisual.Metric(this, "Control.StatusHeight")), HostVisual.Metric(this, "Control.Corner"),
                 HostVisual.Metric(this, "Control.Corner"));
-            HostVisual.Caption(this, _shell, context, text, new(x + 10, y + 7));
+            HostVisual.Caption(this, _shell, context, text, new(x + 8, y + 3));
         }
     }
 
@@ -305,7 +318,9 @@ internal sealed partial class ArrangementCanvas : Control
             context.DrawRectangle(HostVisual.Brush(this, theme, "Material.Bevel"), null,
                 new Rect(rect.X, rect.Y, rect.Width, 22));
             context.DrawRectangle(color, null, new Rect(rect.X, rect.Y, 4, rect.Height));
-            context.DrawText(new FormattedText(pattern.Name + (clip.Repeats > 1 ? $"  ×{clip.Repeats}" : ""),
+            bool shared = _patternUses.GetValueOrDefault(pattern.Id) > 1;
+            context.DrawText(new FormattedText((pattern.VariationOf is not null ? "↗ " : shared ? "≋ " : "") +
+                    pattern.Name + (clip.Repeats > 1 ? $"  ×{clip.Repeats}" : ""),
                     System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                     HostVisual.Typeface(this),
                     HostVisual.Metric(this, "Type.Body"), HostVisual.Brush(this, theme, "Text.Primary")),
@@ -343,9 +358,17 @@ internal sealed partial class ArrangementCanvas : Control
     {
         base.OnPointerPressed(e);
         var properties = e.GetCurrentPoint(this).Properties;
+        if (!_observation.Busy && properties.IsRightButtonPressed)
+        {
+            OpenContextMenu(e.GetPosition(this));
+            e.Handled = true;
+            return;
+        }
         if (_observation.Busy || !properties.IsLeftButtonPressed && !properties.IsMiddleButtonPressed) return;
         Focus();
         var point = e.GetPosition(this);
+        if (point.Y >= RulerHeight) _pasteLane = Math.Clamp((int)((point.Y - RulerHeight) / LaneHeight), 0, 31);
+        if (SectionPressed(e, point)) return;
         var clip = Hit(point);
         if (AudioPressed(e, point)) return;
         e.Handled = true;
@@ -373,8 +396,8 @@ internal sealed partial class ArrangementCanvas : Control
         {
             int lane = Math.Clamp((int)((point.Y - RulerHeight) / LaneHeight), 0, 31);
             double localY = (point.Y - RulerHeight) % LaneHeight;
-            string command = localY >= 30 && point.X - HeaderX is >= 12 and < 42 ? "Mute" :
-                localY >= 30 && point.X - HeaderX is >= 48 and < 78 ? "Solo" : "Edit";
+            string command = localY is >= 28 and < 48 && point.X - HeaderX is >= 12 and < 36 ? "Mute" :
+                localY is >= 28 and < 48 && point.X - HeaderX is >= 42 and < 66 ? "Solo" : "Edit";
             TrackRequested?.Invoke(lane, command);
             return;
         }
@@ -403,6 +426,8 @@ internal sealed partial class ArrangementCanvas : Control
         if (clip is null || !_selection.Contains(clip.Id))
         {
             _selection.Clear();
+            _audioSelection.Clear();
+            SelectedAudio = null;
             if (clip is not null) _selection.Add(clip.Id);
         }
 
@@ -432,7 +457,8 @@ internal sealed partial class ArrangementCanvas : Control
         _basis = ArrangementEditBasis.From(_observation);
         _pressed = point;
         _group = _observation.Snapshot.State.ArrangementClips.Where(c => _selection.Contains(c.Id)).ToArray();
-        _resize = _selection.Count == 1 && point.X >= ClipRect(clip).Right - 10;
+        _audioGroup = _observation.Snapshot.State.AudioClips.Where(c => _audioSelection.Contains(c.Id)).ToArray();
+        _resize = _selection.Count + _audioSelection.Count == 1 && point.X >= ClipRect(clip).Right - 10;
         _copy = !_resize && e.KeyModifiers.HasFlag(KeyModifiers.Control);
         _pointer = e.Pointer;
         e.Pointer.Capture(this);
@@ -443,6 +469,17 @@ internal sealed partial class ArrangementCanvas : Control
     {
         base.OnPointerMoved(e);
         if (AudioMoved(e)) return;
+        if (_pointer is null && Hit(e.GetPosition(this)) is { } hovered)
+        {
+            var pattern = PatternFor(hovered);
+            string origin = pattern.VariationOf is { } source
+                ? _shell["Arrangement.VariationFrom"] + " " +
+                  (_observation.Snapshot.State.Patterns.SingleOrDefault(p => p.Id == source)?.Name ?? _shell["Arrangement.SourceUnavailable"])
+                : _shell["Arrangement.SharedEditHint"];
+            ToolTip.SetTip(this, pattern.Name + " · " + origin + " · " + _shell["Arrangement.VariationSharedTools"]);
+            Cursor = new Cursor(e.GetPosition(this).X >= ClipRect(hovered).Right - 10
+                ? StandardCursorType.SizeWestEast : StandardCursorType.SizeAll);
+        }
         if (_pointer != e.Pointer) return;
         var point = e.GetPosition(this);
         if (_panning)
@@ -492,11 +529,9 @@ internal sealed partial class ArrangementCanvas : Control
             long ticks =
                 (long)Math.Clamp(
                     Math.Round((original.Position.Ticks + (point.X - _pressed.X) / _barWidth * BarTicks) / snap), 0,
-                    4095d * BarTicks / snap) * snap;
+                    1000000d * BarTicks / snap) * snap;
             int lane = Math.Clamp(original.Lane + (int)Math.Round((point.Y - _pressed.Y) / LaneHeight), 0, 31);
-            _tickDelta = Math.Clamp(ticks - original.Position.Ticks, -_group.Min(c => c.Position.Ticks),
-                4095L * BarTicks - _group.Max(c => c.Position.Ticks));
-            _laneDelta = Math.Clamp(lane - original.Lane, -_group.Min(c => c.Lane), 31 - _group.Max(c => c.Lane));
+            SetGroupDelta(ticks - original.Position.Ticks, lane - original.Lane);
             _draft = original with
             {
                 Position = new(original.Position.Ticks + _tickDelta), Lane = original.Lane + _laneDelta
@@ -537,10 +572,15 @@ internal sealed partial class ArrangementCanvas : Control
         {
             var rectangle = _selectionRect;
             _selection.Clear();
+            _audioSelection.Clear();
             if (rectangle is { } rect)
                 foreach (var clip in _observation.Snapshot.State.ArrangementClips.Where(c =>
                              ClipRect(c).Intersects(rect)))
                     _selection.Add(clip.Id);
+            if (rectangle is { } audioRect)
+                foreach (var clip in _observation.Snapshot.State.AudioClips.Where(c => AudioRect(c).Intersects(audioRect)))
+                    _audioSelection.Add(clip.Id);
+            SelectedAudio = _audioSelection.Select(id => (Id<AudioClip>?)id).FirstOrDefault();
             Selected = _selection.Select(id => (Id<ArrangementClip>?)id).FirstOrDefault();
             Cancel();
             SelectionChanged?.Invoke();
@@ -559,11 +599,12 @@ internal sealed partial class ArrangementCanvas : Control
         long delta = _tickDelta;
         int laneDelta = _laneDelta;
         var ids = Selection;
+        var audioIds = AudioSelection;
         Cancel();
         if (draft != original)
             CommandSubmitted?.Invoke(resize
                 ? _workflow.UpdateArrangementClipAsync(basis, draft.Id, draft.Position, draft.Lane, draft.Repeats)
-                : _workflow.EditArrangementSelectionAsync(basis, ids, delta, laneDelta, copy));
+                : CommitGroupAsync(basis, ids, audioIds, delta, laneDelta, copy));
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -577,6 +618,7 @@ internal sealed partial class ArrangementCanvas : Control
         }
 
         if (_observation.Busy) return;
+        if (PlaylistKey(e)) return;
         if (AudioKey(e)) return;
         if (e.Key == Key.A && e.KeyModifiers == KeyModifiers.Control)
         {

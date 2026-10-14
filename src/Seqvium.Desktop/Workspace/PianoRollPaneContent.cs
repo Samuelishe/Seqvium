@@ -389,6 +389,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             await PendingCommand;
             _noteFlyout.Hide();
             Refresh();
+            Canvas.RevealSelection();
             Canvas.Focus();
         };
         _noteFlyout.Content = body;

@@ -69,6 +69,22 @@ This is one-shot occurrence preview, not Pattern/Arrangement editing, Browser or
 
 ## R5-F1 Add WAV Channel
 
+### Shared WAV replacement
+
+Channel Rack's channel menu offers **Replace WAV…** for a supported first-party PCM sampler.
+One command and native file choice replace the shared SoundDefinition's resource in every Pattern,
+including independent musical variations. Sound/part/note/placement/graph identities, musical timing,
+velocity, release and Mixer assignments/settings remain. The replacement uses verified catalog Root
+Pitch when available; otherwise it keeps the instrument's previous Root Pitch. It does not infer pitch
+from filenames/audio or normalize the new recording's level. Piano source tuning and Mixer trim remain
+explicit musician controls. This changes a sample, not the sampler algorithm or processing graph.
+
+Frozen lifecycle/generation/selected occurrence/part authority is checked before preparation and
+durable acceptance. Cancel, malformed WAV, stale authority and unsupported sources accept no partial
+edit. Successful acceptance is one Undo entry; retained old media remains available to history.
+The existing `BeginImport → PrepareAsync → Accept(target)` contract owns resource durability; Save/
+Open/Save As use the existing managed layout and introduce no format gate.
+
 Channel Rack's direct Add WAV Channel freezes lifecycle/generation/Pattern/attachment before its
 native picker. It validates supported Pattern and safe expansion first, then uses the same durable
 `BeginImport → PrepareAsync → Accept(createUse)` with cancellation, integrity and target revalidation.

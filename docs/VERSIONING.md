@@ -144,6 +144,34 @@ retrieved only for explicit historical tasks.
 | `0.1.5.0000` | SEQ-R11-MIXER              | One verified PATCH for canonical musical channels/buses/Master, amplification/balance, real meters, routes/sends, EQ/compression and compact studio instrument UI. BUILD resets; full 1196-case Release pass, native musical Save/Open/physical Song/WAV and same-rate PCM parity are scoped in the [checkpoint](#seq-r11-mixer-checkpoint) and [report](experiments/SEQ-R11-MIXER_REPORT.md). No release or prior pressure/platform/acoustic acceptance follows.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `0.1.5.0001` | SEQ-NEON-ORCHARD           | One BUILD for the complete official editable demo, licensed managed media, frozen musical baseline and independent-copy verification. Zero-warning isolated Release build, 33 focused demo/metadata cases and native full Song/WAV pass; see the [checkpoint](#seq-neon-orchard-checkpoint). No engine stage, release, full regression or prior pressure/platform/acoustic acceptance claim.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `0.1.6.0000` | SEQ-R10-AUDIO-CLIPS        | One PATCH for standalone fixed-speed Audio Clips with native import/editing, real waveforms, shared Mixer, portable history/media and Song playback/export. BUILD resets. Evidence and bounded resident/Windows-codec limits are in the [checkpoint](#seq-r10-audio-clips-checkpoint) and [report](experiments/SEQ-R10-AUDIO-CLIPS_REPORT.md); wider R10/pressure/platform/acoustic acceptance remains separate.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `0.1.7.0000` | SEQ-R10-SONG-STRUCTURE | One PATCH for section arranging, independent Pattern variations and atomic mixed clip editing/clipboard. BUILD resets. 1235 full-suite cases, native musical authoring and whole-Song/export pass; official demo unchanged. [Checkpoint](#seq-r10-song-structure-checkpoint) and [report](experiments/SEQ-R10-SONG-STRUCTURE_REPORT.md) retain bounded scope and limits. |
+| `0.1.7.0001` | SEQ-SHARED-WAV-REPLACEMENT | One BUILD for a native Channel Rack shared WAV swap, preserving notes/graphs/release/Mixer with durable media and Undo. 91 focused cases and independent cover GUI verification; no new algorithm/schema or full-suite claim. |
+
+### SEQ-SHARED-WAV-REPLACEMENT checkpoint
+
+Identity advances once from **0.1.7.0000 to 0.1.7.0001** for the owner-requested compiled Rack
+workflow repair discovered while making a private cover. One native command exposes existing durable
+shared-sampler replacement, with known catalog tuning, unchanged musical/graph/Mixer identities,
+release and one Undo entry. Six preservation/failure cases join 91 passing focused checks; affected
+Release builds have zero warnings/errors. The [report](experiments/SEQ-SHARED-WAV-REPLACEMENT_REPORT.md)
+separates complete native inspection from legacy harness failures. This extends the current composing
+line, not another PATCH,
+new sampler algorithm, schema gate or full-suite checkpoint. L3 cadence advances to one completed
+task. [Sample workflow](SAMPLE_WORKFLOW.md#shared-wav-replacement) owns behavior; the private cover
+and its inputs remain outside Git. No staging, commit, push or tag.
+
+### SEQ-R10-SONG-STRUCTURE checkpoint
+
+Identity advances once from **0.1.6.0000 to 0.1.7.0000** under delegated PATCH authority for a
+completed substantial composition workflow: named section arranging/ripple repeats, independent
+one-clip Pattern variations with shared instrument/Mixer ownership, and atomic mixed clip editing/
+clipboard. BUILD resets; MAJOR/MINOR retain owner-selected values. Reader 1.5 is an independent gate.
+The [report](experiments/SEQ-R10-SONG-STRUCTURE_REPORT.md) records zero-warning Release builds,
+1235 passing full-suite cases, actual component/native RU/EN Dark/Light fields, guarded independent
+Neon Orchard authoring and full 85.714-second physical Song/native WAV with zero clipped frames.
+Official demo/publication hashes are unchanged. Crossing-clip refusal, fixed tracks, weak ancestry,
+wider R10, acoustic/pressure/platform and prior R4 acceptance remain separate. One PATCH consumes
+no intermediate BUILD; no release, staging, commit, push or tag occurs.
 
 ### SEQ-R10-AUDIO-CLIPS checkpoint
 
@@ -327,7 +355,7 @@ extension ABI, .NET SDK/runtime, dependencies/packages, device IDs, or audio for
 [Project format](PROJECT_FORMAT.md) retains independent major/minor/minimum-reader gates and unknown
 data preservation. The codec writer marker `0.2.0-r2-f1` identifies its implementation lineage,
 not the current product. The initial foundation retained reader 1.1 requirements; later Mixer and
-Audio Clip checkpoints add independent essential-intent gates (currently reader 1.4). Writer lineage
+Audio Clip and Song structure checkpoints add independent essential-intent gates (currently reader 1.5). Writer lineage
 does not substitute for those gates. Future codec changes require an
 independent compatibility decision; product PATCH/BUILD are never reader gates.
 

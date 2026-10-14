@@ -1781,3 +1781,38 @@ actual supported functionality/limits. The official musical demo/publication and
 remain unchanged. Outside-Git musical project and ignored selected raw evidence remain for review;
 permanent source/tests/native tools are retained. No staging, commit, push, tag or acoustic/platform/
 prior pressure acceptance is implied.
+
+## SEQ-R10-SONG-STRUCTURE — 2026-10-14
+
+Completed named/color section navigation, gap-preserving adjacent swaps and ripple repeat insertion;
+atomic mixed Pattern/Audio move/copy/clipboard/exact placement/history; explicit one-clip variations
+with fresh musical/graph identities and shared sounds/Mixer. Crossing clips refuse with a named
+cause/reveal. Shared section band/source cues, compact forms and Piano exact-edit reveal complete
+the bounded workflow. Reader 1.5 gates essential sections/ancestry; product PATCH advances once
+0.1.6.0000 → 0.1.7.0000 with BUILD reset, without closing wider R10.
+
+Locked isolated Release build and 1235/1235 full-suite cases pass, zero skips/warnings/errors;
+L3 cadence resets to zero. Native mouse authoring develops an outside-Git Neon Orchard study to
+40 bars/six sections/16 Patterns/207 notes/104 Pattern clips/one stereo Audio Clip. Original demo
+and publication inventory is unchanged. Actual RU/EN Dark/Light section alignment, Save/Open,
+full 85.714-second physical 48-kHz Song and production WAV pass with zero clipped frames.
+The [report](../experiments/SEQ-R10-SONG-STRUCTURE_REPORT.md) preserves failed harness/fixture attempts,
+allocation observations, measurements and limits. Study/media/WAV remain outside Git; ignored
+current raw evidence and reusable source/tests/tools remain. No staging, commit, push or tag.
+
+## SEQ-SHARED-WAV-REPLACEMENT — 2026-10-14
+
+The owner finds an unsuitable bass recording during a private composition and asks for easy instrument
+replacement without rebuilding music. Existing Core target import already owns durable replacement;
+Rack lacked the user command. A contextual Replace WAV entry now retains shared sound, musical and
+processing identities, release/Mixer, and one Undo entry. Hash-verified catalog tuning is adopted;
+unknown tuning retains the prior root. Six new boundary/preservation cases join 91 green focused
+Release tests (14.773 s CLI); affected builds have zero warnings/errors. Full L3 is not repeated.
+
+Native picker cancellation/replacement/history/preservation assertions reach production Save on an
+independent 84-bar project. The old mixer-only final guard incorrectly rejects changed sound/resource
+intent; subsequent input guards refuse foreground loss. A separate complete native source/Rack/Piano/
+Playlist/Mixer inspection is green. The [report](../experiments/SEQ-SHARED-WAV-REPLACEMENT_REPORT.md)
+preserves those distinctions and explicit tuning/level/algorithm limits. Musical material and helpers
+remain outside Git. BUILD advances once 0.1.7.0000 → 0.1.7.0001; cadence advances to one after the
+previous L3. No staging, commit, push or tag occurs; official demo/publication remain unchanged.

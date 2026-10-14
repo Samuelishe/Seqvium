@@ -16,10 +16,15 @@ UI/audio platforms.
   source ranges, split them, adjust fades and gain, and repeat the selected range at its natural speed.
 - Compose in Channel Rack and Piano Roll using shared notes, pitch, duration and velocity. Patterns
   can span 1–32 bars; draw steps, melodies and chords, resize notes and audition pitches.
+  Replace a shared WAV instrument from its channel menu while retaining notes, processing and Mixer routing.
 - Use built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim, editable envelopes and sound presets,
   or pitched WAV samples. Linked hats can choke each other.
 - Arrange overlapping Patterns and Audio Clips together. Name/color the 32 organizational tracks,
   use track Mute/Solo, snap, zoom, overview navigation, seek and ruler-range loops.
+- Name composition sections, navigate their ranges, move adjacent sections or insert a repeat with
+  all their Pattern/Audio material. Mixed selections support move/copy, clipboard and exact placement.
+  Make a variation of one Pattern clip for a fill or changed phrase while keeping shared instruments
+  and Mixer routes. Other uses of the original Pattern keep their notes.
 - Mix shared sound sources through channels, buses and pre/post sends, with level, stereo balance,
   Mute/Solo, real meters, high-pass/three-band EQ, linked compression and optional Master sample-peak
   protection. Playlist tracks do not automatically become Mixer channels.
@@ -54,8 +59,9 @@ temporary files also consume memory or disk. Playback shares a 32-voice budget w
 refuses overload instead of silently dropping music. Heavy system load can still cause glitches.
 
 Audio split currently operates on a single occurrence; set repeats to one before splitting.
-Audio and Pattern group-selection workflows remain separate. Dynamic track insertion, section
-markers, automation, delay/reverb, plugin hosting, MIDI input, recording and crash recovery are not
+Section rearrangement refuses clips that cross its boundaries, shows the source/track and offers
+direct navigation; explicitly split audio or adjust the section first. Dynamic track insertion,
+groups, automation, delay/reverb, plugin hosting, MIDI input, recording and crash recovery are not
 implemented. Sampler pitching uses linear resampling, not time stretching. Mixer stereo pan is
 balance; its peak ceiling is sample-peak protection, not true-peak mastering.
 

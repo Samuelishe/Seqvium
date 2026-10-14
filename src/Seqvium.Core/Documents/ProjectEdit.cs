@@ -260,7 +260,7 @@ public sealed partial class ProjectEdit
         var partIds = source.Parts.ToDictionary(part => part.Id, _ => Id<MusicalPart>.New());
         var variation = source with
         {
-            Id = Id<Pattern>.New(), Name = name,
+            Id = Id<Pattern>.New(), Name = name, VariationOf = source.Id,
             Parts =
             [
                 .. source.Parts.Select(part => part with

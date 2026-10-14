@@ -105,6 +105,11 @@ step pads; open Piano Roll to edit it. Root changes affect every use of the shar
 stored note pitches or WAV bytes. Linear sample pitching changes natural duration; there is no
 sustain loop, time stretching, MIDI recording or automatic pitch detector yet.
 
+To try another recording for an existing instrument, choose **Replace WAV…** from its Rack row
+menu. It updates every Pattern using that instrument while keeping notes, local processing and Mixer
+routing. Undo restores the original sample. Verified library tuning is used when available; otherwise
+Root Pitch stays unchanged. Check source tuning and Mixer trim when the new recording differs.
+
 ## Arrange a song
 
 1. Create the Patterns you need in Channel Rack. Open **Playlist** from its rail icon or **Panes**.
@@ -113,7 +118,9 @@ sustain loop, time stretching, MIDI recording or automatic pitch detector yet.
 3. Drag a clip to move it. Ctrl-drag makes a shared copy; dragging the right edge changes the number
    of whole Pattern repeats. Shift-click adds/removes clips from a selection; the selection tool draws a box and Ctrl+A
    selects all.
-   Move, Ctrl-copy, Duplicate/Ctrl+D and Delete operate on the group in one Undo while retaining spacing.
+   Patterns and Audio Clips share this selection. Move, Ctrl-copy, Duplicate/Ctrl+D and Delete operate
+   on the group in one Undo while retaining spacing and pauses. Ctrl+C/X/V copies/cuts/pastes at the
+   Song cursor on the last targeted track. Clip properties set the group's earliest bar and track exactly.
    Duplicate appends the group after its last end. Delete removes only the selected clips.
    Ctrl+Z/Y restores edits. The snap selector offers bars, beats, sixteenths or free movement;
    Shift temporarily uses beats and Alt temporarily moves freely.
@@ -135,12 +142,25 @@ sustain loop, time stretching, MIDI recording or automatic pitch detector yet.
    leading gaps and overlaps, as 48 kHz stereo PCM16. Save/Open preserves the clips, tracks and samples;
    Open stays silent. Keep the `.seqvium.media` directory with the project.
 
-The current Playlist has 32 fixed track slots and a view that expands for long audio. Pattern placement
-retains its 4096-bar editing bound. Slots organize
+8. Add named sections using **+ Section**. The retained ruler range initializes the range; exact fields
+   use one-based bars and lengths in bars. Click a section or choose its name to seek without playback;
+   double-click edits it. Earlier/Later swaps adjacent sections; Repeat section inserts a copy of its
+   musical material and shifts later music. The context menu selects its clips, loops it or removes
+   only the label. A crossing clip blocks restructuring with its name/track and **Show crossing clip**;
+   adjust the range or explicitly split audio, then retry. Every accepted edit is one Undo.
+9. Shared clips show **≋**. Their Rack/Piano edits affect the shared Pattern. Select one clip and choose
+   **Make variation** for a fill or altered phrase: it opens an independent Pattern target in Rack,
+   with **↗** ancestry and its own notes/processing. Instruments and Mixer routes remain shared.
+   Rename it and edit through Piano Roll; other uses retain their original notes. Copying that variation
+   shares its new Pattern. A clip's internal repeats still use one Pattern; separate the desired
+   occurrence into its own clip before making only the final repetition a fill.
+
+The current Playlist has 32 fixed track slots and a view that expands for long audio, with timeline
+presentation/exact bar entry up to one million bars. Slots organize
 compatible musical material; they do not assign instruments or create Mixer channels. The engine
 checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
-are available now; Audio Clips have separate range/trim/split/fade controls. Section markers, independent
-Pattern variations, stretch and automation remain planned. WAV channel
+are available now; Audio Clips have separate range/trim/split/fade controls. Nested sections, flexible
+cross-boundary rearrangement, dynamic track groups, stretch and automation remain planned. WAV channel
 add/delete/Undo/Redo keeps the current clock and other voices for the supported source/mix tree.
 Other incompatible topology changes retain their restart policy.
 See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).

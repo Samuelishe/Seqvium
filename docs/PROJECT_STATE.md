@@ -7,8 +7,11 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.6.0000**, SEQ-R10-AUDIO-CLIPS: one PATCH for standalone audio arrangement,
-resetting BUILD. [Versioning](VERSIONING.md) owns identity; reader 1.4 is a separate format gate.
+Product alpha **0.1.7.0001**, SEQ-SHARED-WAV-REPLACEMENT: one BUILD for a native Rack command
+that swaps the shared sampler recording while retaining musical/processing/Mixer intent. The preceding
+SEQ-R10-SONG-STRUCTURE PATCH introduced section arranging, variations and mixed clip editing.
+[Versioning](VERSIONING.md) owns identity;
+reader 1.5 is a separate format gate for sections/Pattern ancestry.
 No release, staging, commit, push or tag is performed. R1–R3 remain complete in their bounded scopes.
 R4 remains partial: F1 accepted-ready, F2 pressure acceptance unresolved, F3-A conditionally accepted,
 F3-B owner interaction/visual review pending. R5 Rack/music, R9 Piano, bounded R10 Playlist/audio and
@@ -21,6 +24,11 @@ Desktop has Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and inf
 panes. Compact studio-instrument resources, movable/resizable/docked panes, English/Russian and
 Dark/Light share preferences and workspace persistence. Normal startup and project Open stay silent;
 user-wide Single Instance and scoped device/output lifetime remain unchanged.
+
+Rack's **Replace WAV…** command updates a shared PCM sampler source across all Patterns with one
+Undo entry; known catalog Root Pitch is adopted, otherwise previous tuning remains. Notes, release,
+local graphs and Mixer routes/settings persist. [Sample workflow](SAMPLE_WORKFLOW.md#shared-wav-replacement)
+owns cancellation, durable media and explicit tuning/level limits.
 
 Rack/Piano provide shared pitch/duration/velocity, 1–32-bar Patterns, continuous playback/live edits,
 steps, chords, move/copy/resize, exact properties, ghosts and explicit sample Root Pitch. Seven
@@ -38,6 +46,14 @@ stretch/pitch. Musical ticks and native PCM frames remain distinct; split preser
 [architecture](ARCHITECTURE.md#implemented-standalone-audio-clip-boundary) and
 [UX](UX_CONTRACT.md#implemented-audio-clip-workflow) own the actual contracts.
 
+Named/color sections navigate, swap adjacent ranges and insert shared repeats with ripple movement.
+Crossing clips refuse restructuring atomically with a named cause and direct reveal. Mixed Pattern/
+Audio selection supports captured group move/copy, session clipboard, duplicate/delete and exact
+placement with common history. One-clip variations receive independent notes/supported local graphs
+and weak ancestry while keeping shared sounds/resources/Mixer routes. Shared-use/variation cues and
+compact section forms reuse the visual system. [UX](UX_CONTRACT.md#implemented-playlist-song-structure)
+and [architecture](ARCHITECTURE.md#song-structure-and-explicit-variations) own these boundaries.
+
 Mixer retains explicit sound assignments, channels/buses/Master, level/trim/stereo balance,
 Mute/Solo, measured levels/reduction, acyclic output/pre/post sends, high-pass/three-band EQ,
 linked compression and optional sample-peak protection. Audio Clip contributions use this same
@@ -46,14 +62,18 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L3: **SEQ-R10-AUDIO-CLIPS, 2026-10-14**. Locked isolated full Release solution build has
-zero warnings/errors; **1224/1224 tests pass**, zero skips (19.046 s CLI summary).
+Latest L3: **SEQ-R10-SONG-STRUCTURE, 2026-10-14**. Locked isolated full Release solution build has
+zero warnings/errors; **1235/1235 tests pass**, zero skips (51.042 s CLI summary, four test threads).
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. Focused Audio Clip cases pass 25/25, including exact
-split/resampling/fade/BPM boundaries, 25 shared-source uses and Save As, cancellation/missing media,
-Mixer and allocation-free seek/loop/live-edit. Pristine audio-only Desktop workflow also passes.
+Completed repository tasks since this L3: **1**. The follow-up shared WAV replacement passes 91
+focused cases, including six new preservation/tuning/cancel/error/stale cases; it is not another L3.
+Native shared sample/picker/history observations and complete private-project Rack/Piano/Playlist/
+Mixer inspection are scoped in the [replacement report](experiments/SEQ-SHARED-WAV-REPLACEMENT_REPORT.md).
+Focused section/variation/mixed-edit checks and the
+component catalog pass. Native independent musical authoring verifies mouse groups/clipboard,
+sections, isolated Rack/Piano variation editing, visible crossing refusal, history and Save/Open.
 
 Independent Neon Orchard copies receive native imports/move/range/fades/split/history/Mixer edits,
 real Explorer drop, cancellation/error tests, Save As/reopen without original sources, ruler
@@ -65,7 +85,12 @@ retained evidence and limits. This does not imply acoustic judgement or general 
 
 Official [Neon Orchard](../examples/Neon%20Orchard/README.md) and publication-01 remain musically
 unchanged: 112 BPM, 32 bars, 15 Patterns, 191 notes, nine tracks/78 Pattern clips and licensed media.
-Only an independent outside-Git exam adds audio. Existing permanent demo tests participate in L3.
+An independent outside-Git study has 40 bars, six sections, 16 Patterns/207 notes, 104 Pattern clips
+and one private Audio Clip. Native full Song through Samsung USB C Earphones at 48 kHz and production
+WAV export pass: 85.714292 seconds, 13 peak voices, zero clipped frames. Actual section fields pass
+RU/EN Dark/Light alignment. [Song structure report](experiments/SEQ-R10-SONG-STRUCTURE_REPORT.md)
+distinguishes these observations from subjective listening, callback/pressure and platform claims.
+Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
@@ -73,7 +98,9 @@ Finish wider Playlist/container/stretch and compact editor work only through the
 Audio is resident, not streamed: 512 MiB per source/unique audible Audio Clip PCM, separate 128 MiB
 Pattern PCM, shared 32 voices. Old prepared states, waveforms/codec/UI and managed-media/history disk
 consume more; no global media quota. MP3/FLAC use Windows-only Media Foundation via NAudio, not a
-portable universal decoder. Surround, time stretch/warp and mixed audio/Pattern marquee are absent.
+portable universal decoder. Surround and time stretch/warp are absent. Sections are organization,
+not processing containers; crossing clips need explicit split/range adjustment. Variations do not
+inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachment remain absent.
 
 Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Browser/
 Personal Library, Sample Lab, MIDI, recording and recovery remain future work. Cold seek/range wrap

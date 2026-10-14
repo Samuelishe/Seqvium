@@ -715,6 +715,17 @@ internal sealed class PianoRollCanvas : Control
         InvalidateVisual();
     }
 
+    internal void RevealSelection()
+    {
+        var note = _part?.Notes.FirstOrDefault(n => _selection.Contains(n.Id));
+        if (note is null) return;
+        var rect = NoteRect(note);
+        SetView(_offsetX + (rect.Left < KeyWidth ? rect.Left - KeyWidth :
+                rect.Right > Bounds.Width ? rect.Right - Bounds.Width : 0),
+            _offsetY + (rect.Top < RulerHeight ? rect.Top - RulerHeight :
+                rect.Bottom > NoteBottom ? rect.Bottom - NoteBottom : 0));
+    }
+
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);

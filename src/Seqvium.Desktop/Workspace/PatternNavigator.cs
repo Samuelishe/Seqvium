@@ -133,7 +133,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
             var body = new Grid { RowDefinitions = new("Auto,*"), RowSpacing = 3 };
             body.Children.Add(new TextBlock
             {
-                Text = pattern?.Name ?? choice.Label, FontWeight = FontWeight.SemiBold,
+                Text = pattern?.VariationOf is not null ? "↗ " + pattern.Name : pattern?.Name ?? choice.Label, FontWeight = FontWeight.SemiBold,
                 TextTrimming = TextTrimming.CharacterEllipsis
             });
             if (pattern is not null)

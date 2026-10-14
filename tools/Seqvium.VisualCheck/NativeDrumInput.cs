@@ -18,6 +18,27 @@ internal static partial class NativePointer
     {
         private nint Handle => window.TryGetPlatformHandle()?.Handle ?? 0;
 
+        internal async Task ActivateVisibleWindow()
+        {
+            // Raise this explicitly launched check once in normal Z order, without TopMost or activation.
+            // The following mouse click must still pass exact OS hit testing before any input is sent.
+            Program.Require(SetWindowPos(Handle, 0, 0, 0, 0, 0, 0x13), "Native startup raise failed.");
+            await Task.Delay(80);
+            var point = window.PointToScreen(new(80, 12));
+            nint hit = WindowFromPoint(new(point.X, point.Y));
+            // A startup activation click is permitted only if OS hit testing proves this exact window
+            // is already visible at the title point. Never click through another foreground application.
+            Program.Require(Handle != 0 && GetAncestor(hit, 2) == Handle,
+                $"Native startup window is covered; no activation input sent. Target={Handle}; point={point}; hit={hit}; root={GetAncestor(hit, 2)}; foreground={GetForegroundWindow()}");
+            Program.Require(SetCursorPos(point.X, point.Y), "Native activation cursor failed.");
+            Program.Require(GetAncestor(WindowFromPoint(new(point.X, point.Y)), 2) == Handle,
+                "Native startup target changed; no activation input sent.");
+            SendInput(2, [new() { Type = 0, Data = new() { Mouse = new() { Flags = 2 } } },
+                new() { Type = 0, Data = new() { Mouse = new() { Flags = 4 } } }], Marshal.SizeOf<Input>());
+            await Task.Delay(120);
+            Guard();
+        }
+
         private void Guard(bool dialog = false)
         {
             nint foreground = GetForegroundWindow();
@@ -48,6 +69,20 @@ internal static partial class NativePointer
             await Task.Delay(40);
             Guard(allowOwnedDialog);
             SendInput(1, [new() { Type = 0, Data = new() { Mouse = new() { Flags = 4 } } }], Marshal.SizeOf<Input>());
+            await Task.Delay(150);
+        }
+
+        internal async Task RightClick(Control control, Point point)
+        {
+            await Task.Delay(80); Guard();
+            var screen = control.PointToScreen(point);
+            var hit = window.InputHitTest(window.PointToClient(screen)) as Visual;
+            Program.Require(control.IsEffectivelyVisible && control.IsEnabled && hit is not null &&
+                (hit == control || hit.GetVisualAncestors().Contains(control)), "Native context target is occluded.");
+            Program.Require(SetCursorPos(screen.X, screen.Y), "Native context cursor failed.");
+            SendInput(1, [new() { Type = 0, Data = new() { Mouse = new() { Flags = 8 } } }], Marshal.SizeOf<Input>());
+            await Task.Delay(40); Guard(true);
+            SendInput(1, [new() { Type = 0, Data = new() { Mouse = new() { Flags = 16 } } }], Marshal.SizeOf<Input>());
             await Task.Delay(150);
         }
 
@@ -222,6 +257,13 @@ internal static partial class NativePointer
 
     [DllImport("user32.dll")]
     private static extern nint GetAncestor(nint window, uint flags);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private readonly record struct NativeScreenPoint(int X, int Y);
+    [DllImport("user32.dll")]
+    private static extern nint WindowFromPoint(NativeScreenPoint point);
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(nint window, nint after, int x, int y, int width, int height, uint flags);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct WindowRect

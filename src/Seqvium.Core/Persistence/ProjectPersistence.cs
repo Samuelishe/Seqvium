@@ -37,13 +37,16 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 4;
+    public const int ReaderMinor = 5;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     private static bool HasAudio(ProjectState state) => !state.AudioClips.IsEmpty ||
                                                         state.Sounds.Any(s =>
                                                             s.Algorithm == AudioClipSource.Algorithm) ||
                                                         state.Resources.Any(AudioMedia.IsManaged);
+
+    private static bool HasSongStructure(ProjectState state) => !state.ArrangementSections.IsEmpty ||
+        state.Patterns.Any(p => p.VariationOf is not null);
 
     public static byte[] Encode(ProjectDocument document)
     {
@@ -55,7 +58,7 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = HasAudio(snapshot.State) ? 4 :
+        int required = HasSongStructure(snapshot.State) ? 5 : HasAudio(snapshot.State) ? 4 :
             snapshot.State.Mixer is not null ? 3 :
             !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
             hasGraphs ? 1 : 0;
@@ -102,6 +105,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (HasSongStructure(file.State) && file.MinimumReaderMinor < 5)
+                throw new ProjectFormatException("Playlist sections and Pattern ancestry require minimumReaderMinor >= 5.");
             if (HasAudio(file.State) && file.MinimumReaderMinor < 4)
                 throw new ProjectFormatException("Audio clips require minimumReaderMinor >= 4.");
             if (file.State.Mixer is not null && file.MinimumReaderMinor < 3)
@@ -215,6 +220,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (HasSongStructure(snapshot.State))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(5, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(5, document.Compatibility.MinimumReaderMinor)
+                };
             if (HasAudio(snapshot.State))
                 document.Compatibility = document.Compatibility with
                 {

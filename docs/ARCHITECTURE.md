@@ -152,6 +152,29 @@ serialization marker, executable graph, realtime thread or second document/histo
 
 ## Playlist composition
 
+### Song structure and explicit variations
+
+`ArrangementSection` is a stable named/color musical range, separate from processing containers,
+Playlist lanes and Mixer channels. Sections cannot overlap. Moving a section swaps it with its
+adjacent section, preserving the intervening gap; duplicating inserts shared clip uses immediately
+after the range and shifts later music/labels by its length. Both operations inspect every Pattern
+and Audio Clip boundary and refuse an unsplit crossing before publication. Label deletion removes
+only organization. Core owns these transformations and their validation in `ProjectEdit.SongStructure`.
+
+Pattern and Audio Clip selections use one transaction, common relative movement/clamping, clipboard
+geometry and duplicate span. Audio copies retain source-frame ranges, envelope clocks, fades, gain
+and shared Mixer assignments. A copied Pattern clip retains its placement reference and opaque data;
+there are no hidden note copies. Clipboard/view state remains Desktop session data.
+
+Make variation is an explicit exception to shared placement reuse: it clones a supported placement's
+item context and built-in graph with fresh context/node/port/connection/binding identities, then uses
+the existing Pattern variation remapping and retargets only the selected clip. New parts/notes have
+fresh identities; sound/resources, containing context, routes and performance intent remain shared.
+Unknown identity-bearing Pattern/placement/graph/context intent refuses detachment without mutation.
+`Pattern.VariationOf` records informational ancestry, without note inheritance or source-deletion
+ownership. Deleting an ancestor leaves the independent variation valid. Reader 1.5 owns persistence;
+the renderer continues to consume ordinary canonical Patterns, placements and clips.
+
 The owner authorizes a bounded Arrangement workflow independently of closing intervening roadmap
 stages. Core's ArrangementClip references an existing source PatternPlacement, rather than manufacturing
 more Rack placements or invisible Pattern/Part/Note copies. Its source owns canonical music/graph/media;

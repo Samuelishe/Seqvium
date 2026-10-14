@@ -10,6 +10,9 @@ namespace Seqvium.Desktop.Workflow;
 internal static class SampleRootMetadata
 {
     internal static decimal Read(string sourcePath, byte[] bytes)
+        => ReadKnown(sourcePath, bytes) ?? 60m;
+
+    internal static decimal? ReadKnown(string sourcePath, byte[] bytes)
     {
         string fullPath = Path.GetFullPath(sourcePath);
         var directory = new DirectoryInfo(Path.GetDirectoryName(fullPath)!);
@@ -45,6 +48,6 @@ internal static class SampleRootMetadata
             }
         }
 
-        return 60m;
+        return null;
     }
 }
