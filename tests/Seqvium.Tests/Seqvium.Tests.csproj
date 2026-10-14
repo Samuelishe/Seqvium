@@ -13,4 +13,12 @@
         <ProjectReference Include="../../tools/Seqvium.Tools.ProjectStats/Seqvium.Tools.ProjectStats.csproj"/>
         <ProjectReference Include="../../tools/Seqvium.VisualCheck/Seqvium.VisualCheck.csproj"/>
     </ItemGroup>
+    <ItemGroup>
+        <None Include="../../examples/Neon Orchard/Neon Orchard.seqvium;../../examples/Neon Orchard/MEDIA.json"
+              Link="Examples/Neon Orchard/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
+        <None Include="../../examples/Neon Orchard/Neon Orchard.seqvium.media/**/*.wav"
+              Link="Examples/Neon Orchard/Neon Orchard.seqvium.media/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
+        <None Include="../../examples/Neon Orchard/checkpoints/*.json"
+              Link="Examples/Neon Orchard/checkpoints/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
 </Project>

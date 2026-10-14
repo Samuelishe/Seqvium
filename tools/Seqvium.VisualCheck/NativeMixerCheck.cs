@@ -35,7 +35,8 @@ internal static partial class Program
         if (phase == "mix") await c.Mix();
         else if (phase == "play") await c.PlayExport();
         else if (phase == "review") await c.Review();
-        else throw new ArgumentException("native-mixer phase must be mix, review or play.");
+        else if (phase == "inspect") await c.InspectDemo();
+        else throw new ArgumentException("native-mixer phase must be mix, review, play or inspect.");
         await c.Save();
         Json(output, "native-mixer", new
         {
@@ -401,6 +402,88 @@ internal static partial class Program
             await Value("Mixer.Detail.Makeup dB", 1);
             await Save();
             await Review();
+        }
+
+        internal async Task InspectDemo()
+        {
+            var inspected = new List<object>();
+            var instruments = new HashSet<string>();
+            var rack = main.GetVisualDescendants().OfType<BeatPaneContent>().Single();
+
+            async Task ShowOnly(string id)
+            {
+                foreach (var pane in Workspace.State.Panes.Where(p => p.InstanceId != id &&
+                                                                      p.Visibility == PaneVisibility.Visible).ToArray())
+                {
+                    await Click(pane.InstanceId + ".open");
+                    await Click(pane.InstanceId + ".hide");
+                }
+
+                await ArrangePane(id, new(24, 0, Workspace.State.Width - 24, Workspace.State.Height));
+                await Task.Delay(100);
+            }
+
+            foreach (var pattern in State.Patterns)
+            {
+                await ShowOnly(WorkspaceState.BeatId);
+                var placement = State.Placements.Single(p => p.PatternId == pattern.Id);
+                var attachment = State.GraphAttachments.Single(a => a.ContextId == placement.ItemContextId);
+                await _input.Select((ComboBox)Id("Beat.Target"),
+                    Workflow.State.Occurrences.Select(o => o.Id).ToList().IndexOf(attachment.Id));
+                await rack.PendingCommand;
+                await Wait(() => BeatSteps.Resolve(Workflow.State).Pattern?.Id == pattern.Id,
+                    "Native demo Pattern selection failed.");
+                await CaptureAsync(main, output, "demo-pattern-" + pattern.Name![..2]);
+                inspected.Add(new
+                {
+                    pattern.Name, Parts = pattern.Parts.Length,
+                    Notes = pattern.Parts.Sum(p => p.Notes.Length), NativeSelection = true
+                });
+                foreach (var part in pattern.Parts)
+                {
+                    var sound = State.Sounds.Single(s => s.Id == part.SoundId);
+                    if (!instruments.Add(sound.Algorithm + ":" + sound.Name)) continue;
+                    await ShowOnly(WorkspaceState.BeatId);
+                    await Click("Beat.Actions." + part.Id);
+                    await _input.Click(((Button)Id("Beat.Actions." + part.Id)).ContextMenu!.Items
+                        .OfType<MenuItem>().Single(i => AutomationProperties.GetAutomationId(i) ==
+                                                        "Beat.Sound." + part.Id));
+                    await Task.Delay(100);
+                    await ShowOnly(WorkspaceState.NodeEditorId);
+                    if (DrumVoice.Supports(sound))
+                        Require(main.GetVisualDescendants().OfType<DrumVoicePaneContent>().Any(),
+                            "Native demo drum editor did not open.");
+                    await CaptureAsync(main, output, "demo-instrument-" + instruments.Count);
+                }
+
+                if (pattern.Parts.Any(p => State.Sounds.Single(s => s.Id == p.SoundId).ResourceIds.Length > 0))
+                {
+                    await ShowOnly(WorkspaceState.BeatId);
+                    var part = pattern.Parts.First();
+                    await Click("Beat.Actions." + part.Id);
+                    await _input.Click(((Button)Id("Beat.Actions." + part.Id)).ContextMenu!.Items
+                        .OfType<MenuItem>().Single(i => AutomationProperties.GetAutomationId(i) ==
+                                                        "Beat.Piano." + part.Id));
+                    await ShowOnly(WorkspaceState.PianoId);
+                    await CaptureAsync(main, output, "demo-piano-" + pattern.Name![..2]);
+                }
+            }
+
+            await ShowOnly(WorkspaceState.ArrangementId);
+            await Click("Arrangement.Fit");
+            await CaptureAsync(main, output, "demo-playlist");
+            await ShowMixer();
+            await CaptureAsync(main, output, "demo-mixer");
+            Require(State == _original && !Workflow.State.IsDirty, "Demo inspection changed canonical music.");
+            Require(Workflow.State.CanPlay, "Demo inspection left a playback blocker: " + Workflow.State.Detail);
+            Json(output, "demo-inspection", new
+            {
+                NativeInput = true, MusicalMutation = false, Patterns = inspected,
+                Instruments = instruments.Order().ToArray(), Tracks = State.ArrangementTracks.Length,
+                Clips = State.ArrangementClips.Length, Resources = State.Resources.Length,
+                MixerChannels = State.Mixer!.Channels.Length, Workflow.State.CanPlay,
+                SubjectiveListening = false
+            });
         }
 
         internal async Task PlayExport()

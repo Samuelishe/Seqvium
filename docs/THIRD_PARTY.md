@@ -53,6 +53,36 @@ remains the primary license artifact.
 
 ## Introduced
 
+### Neon Orchard demo media
+
+The official [editable demo](../examples/Neon%20Orchard/README.md) distributes six unique WAVs.
+The complete per-file [inventory](../examples/Neon%20Orchard/MEDIA.json) owns relative locators,
+byte counts, SHA-256, source members and transformations; no private absolute library paths are
+required. Its project and original synthesis are Seqvium contribution material under Apache-2.0.
+
+Four WAVs are VSCO 2 **Community Edition**, recorded by Sam Gossner and Simon Dalzell, with sample
+cutting by Elan Hickler / Soundemote. The [official publisher](https://versilian-studios.com/vsco-community/)
+permits reuse and redistribution under CC0-1.0. Each distributed file was downloaded independently
+from [upstream revision 440300901dfe9275fd84e0b7763af1f8443ae62e](https://github.com/sgossner/VSCO-2-CE/tree/440300901dfe9275fd84e0b7763af1f8443ae62e)
+on 2026-10-14 and its SHA-256 matched the managed source copy exactly. Members are upright piano
+`Player_dyn1_rr1_018.wav`, flute `LDFlute_expvib_A3_v1_1.wav`, and solo violin
+`LLVln_Pizz_A3_p_RR1.wav` / `LLVln_Pizz_A3_f_RR1.wav`. The unchanged pinned upstream
+[CC0 text](../examples/Neon%20Orchard/licenses/VSCO2-CE-CC0.txt) is bundled. CC0 permits separate
+WAV redistribution and modification; these recordings retain CC0 and are not Apache-relicensed.
+
+MusicRadar's [bass synth pack](https://www.musicradar.com/music-tech/samples/sampleradar-250-free-bass-synth-samples)
+and [DnB FX pack](https://www.musicradar.com/news/tech/sampleradar-100-free-drum-n-bass-fx-samples-444650)
+permit musical use but prohibit sample redistribution. The source's `BassSynth_Moe-Dee_Multi_A1.wav`
+and `DNB_FX_13.wav`, including duplicate managed copies, are excluded. Merely placing them inside
+an editable project or converting/resampling them would not establish redistribution permission.
+They are replaced by original harmonic bass and noise/chirp transition WAVs from the bundled
+[generator](../examples/Neon%20Orchard/generate-sounds.py), which reads no source audio. No MusicRadar
+audio, pack, private mix, reference image or personal catalog is distributed with this demo.
+
+Future additions/replacements require the same per-file provenance and redistribution review.
+The demo is intentionally musical product content; its managed WAVs and frozen project snapshot
+are permanent repository resources, not disposable verification output.
+
 ### Mixer DSP and original instrument graphics
 
 Mixer introduces no package, vendored code or external bitmap/icon/texture. Filter coefficients and

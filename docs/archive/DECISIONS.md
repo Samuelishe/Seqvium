@@ -1632,3 +1632,16 @@ Fixed narrow channels, pinned Master and contextual side processing therefore su
 composition; shared desktop density/material tokens change coherently. Original code-drawn materials
 avoid proprietary asset extraction. Current owners define implemented behavior, the report evidence,
 and Roadmap/Technical Debt the remaining editor passes and cold-seek processing compromise.
+
+## SEQ-NEON-ORCHARD — permanent editable demo, 2026-10-14
+
+The owner selects Neon Orchard as the official evolving creative composition, instrument/DSP/Mixer/
+editor exercise and cross-version playback/export reference. One main project develops toward a full
+track; deliberate frozen musical checkpoints retain comparison points before substantial revisions.
+The first public edition preserves notes, Pattern/Playlist/graph intent and the saved Mixer. MusicRadar
+bass/FX are excluded because musical-use permission does not permit redistributing the underlying
+WAVs; independent mathematical synthesis replaces their roles. Four upstream-hash-verified VSCO2-CE
+recordings retain CC0. Resource identities survive while identical audio shares immutable locators.
+The current [demo guide](../../examples/Neon%20Orchard/README.md) owns creative maintenance and use;
+[Third-party](../THIRD_PARTY.md#neon-orchard-demo-media) owns redistribution provenance. This bounded
+resource checkpoint grants no new engine stage, release or repository publication authority.

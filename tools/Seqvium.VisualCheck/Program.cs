@@ -188,7 +188,7 @@ internal static partial class Program
                 }
                 else if (args[0] == "native-mixer")
                 {
-                    Require(args.Length == 4, "native-mixer <output> <independent-project> <mix|review|play>");
+                    Require(args.Length == 4, "native-mixer <output> <independent-project> <mix|review|play|inspect>");
                     await NativeMixerAsync(main, output, args[2], args[3]);
                 }
                 else if (args[0] == "drum") await DrumMusicAsync(main, output, args.Length > 2 ? args[2] : null);

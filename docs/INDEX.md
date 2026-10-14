@@ -15,10 +15,11 @@ maps and future default RAG/index corpora. Current and historical retrieval are 
 historical retrieval explicitly opts in only for history/provenance/why/supersession/reconstruction.
 
 | Owner | Subject / read when |
-| --- | --- |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [AGENTS](../AGENTS.md) | Operational startup, safety, task routing, and verification |
 | [PROJECT_STATE](PROJECT_STATE.md) | Current checkpoint, implemented capability, focus, validation baseline, blockers/evidence gaps |
 | [PROJECT_VISION](PROJECT_VISION.md) | Product identity, audience, creative philosophy, non-goals |
+| [Neon Orchard](../examples/Neon%20Orchard/README.md) | Official demo composition, opening/export, musical development and checkpoint policy; media provenance remains in THIRD_PARTY and the demo inventory |
 | [UX_CONTRACT](UX_CONTRACT.md) | Mouse-first, keyboard-efficient input, command composition/bindings, focus/target safety, baseline accessibility, discoverability and general workflow semantics |
 | [UI_DESIGN](UI_DESIGN.md) | Evolving visual/interaction guide: hierarchy, usable responsive layout, chrome, density, indicators, restrained feedback; shared Dark/Light semantic roles and safe theme fallback |
 | [DESIGN_SYSTEM](DESIGN_SYSTEM.md) | Implemented Desktop token/component API, theme/template integration, parameter-row alignment, drawing resources, exceptions and shared-style checks |

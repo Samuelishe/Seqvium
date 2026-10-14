@@ -7,6 +7,35 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Official demo verification
+
+`OfficialDemoTests` uses build-copied repository assets, never a private library or Desktop folder.
+It relocates the current project and publication-01 into fresh Temp directories with their required
+media, verifies the inventory hashes/licenses, decodes all resources, renders every Pattern with
+finite nonzero PCM, and checks canonical Save As/reopen plus full Song PCM16 export without clipping.
+Frozen baseline counts/duration are checked only for the checkpoint; the main demo can grow.
+
+```powershell
+dotnet build tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*OfficialDemoTests" --filter-class "*ProductVersionTests"
+```
+
+If an open user Desktop locks the ordinary outputs, use `--artifacts-path .artifacts/neon-orchard/build`
+on both commands; initially build with `-p:RestoreLockedMode=true` instead of `--no-restore` for
+that new output tree. Never close/kill user work to make the build pass. The focused demo/metadata
+run passes 33 cases in 18.025 s; an isolated incremental Release build takes 1.79 s, zero warnings/errors.
+
+Native `VisualCheck native-mixer <output> <independent-project> inspect` opens through the real
+picker, selects all Patterns, opens drum/Source and Piano editors, then checks Playlist and Mixer
+with foreground-guarded Windows input and captures. `play` checks full finite physical Song, real
+meters, native WAV export and Save. Both use the real production Desktop with an isolated user
+configuration and only explicitly supplied
+**copies**. [VisualCheck](../tools/Seqvium.VisualCheck/README.md#official-demo-inspection)
+owns invocation details. A normal clone needs neither tool to open the demo.
+
+The bounded Windows UR12/native evidence establishes relocation/execution/export; it does not
+establish acoustic approval, other-platform support, heavy-load stability or a full regression pass.
+
 ## Mixer verification
 
 `MixerTests` protects legacy unity, amplification/balance/Mute/Solo, aggregate channel compression,

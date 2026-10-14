@@ -53,6 +53,10 @@ For pitched music, follow [Compose a melody](docs/README.md#compose-a-melody).
 For balance and processing, follow [Mix your music](docs/README.md#mix-your-music).
 The [sample processing guide](docs/README.md#try-sample-processing) covers graph editing.
 
+For an editable composition, open [Neon Orchard](examples/Neon%20Orchard/README.md), the official
+evolving demo included with its licensed media. Its 32-bar arrangement is the starting point for
+a track we will develop alongside Seqvium.
+
 ## Current state and limitations
 
 Seqvium is an **early alpha**, not yet a ready replacement for FL Studio or Ableton Live.
@@ -91,8 +95,9 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 ```
 
 The application opens an empty project and stays silent until you press Play.
-Channel Rack opens in a pristine layout: create a Pattern and add built-in drums or your own WAVs; no sample library is
-bundled. Save
+Channel Rack opens in a pristine layout: create a Pattern and add built-in drums or your own WAVs,
+or open the included [Neon Orchard project](examples/Neon%20Orchard/README.md#open-play-and-export).
+The demo includes its own media; a general sample library is not bundled. Save
 projects you want to keep.
 Launching it again brings the existing window forward where the OS allows, instead of opening
 another workspace. If the running application does not respond, the new launch reports this and exits.

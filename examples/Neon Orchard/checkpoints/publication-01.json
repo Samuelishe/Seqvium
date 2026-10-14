@@ -1,0 +1,5492 @@
+{
+  "format": "seqvium-project",
+  "major": 1,
+  "minor": 3,
+  "minimumReaderMinor": 3,
+  "writerVersion": "0.2.0-r2-f1",
+  "revision": "caaf008f-5c38-41b3-a94d-5fe9e2fc1f3f",
+  "state": {
+    "id": "f2e8b383-9745-4a1d-9efa-fdf34c326ba6",
+    "name": null,
+    "settings": {
+      "tempo": 112,
+      "meter": {
+        "numerator": 4,
+        "denominator": 4
+      }
+    },
+    "patterns": [
+      {
+        "id": "2eb60fff-059b-4f93-86df-f7d2b5ac5526",
+        "name": "01 \u00B7 Pulse",
+        "length": 3840000,
+        "parts": [
+          {
+            "id": "7caba086-93e1-420e-ace7-98f902058ed0",
+            "name": "Kick",
+            "soundId": "f0ff8448-cb5b-45c1-bcfa-455280a5ad1e",
+            "notes": [
+              {
+                "id": "24b19bf4-4a5a-4e16-9973-aad5c92ebd9a",
+                "position": 0,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "829c9e48-7f14-4114-9aa1-8e32df05d6b5",
+                "position": 960000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "9bf79320-d208-4935-9788-528e9f5fb747",
+                "position": 1920000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "ae989d71-f69c-4da7-b4b2-93fd17c38525",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "fe5a2073-f239-47fb-8f2b-4ed6071d1fd5",
+        "name": "02 \u00B7 Pulse variation",
+        "length": 7680000,
+        "parts": [
+          {
+            "id": "e4a4b13e-03cc-44b0-b35c-7b2bc023d6eb",
+            "name": "Kick",
+            "soundId": "e84ca1c2-ca70-4741-8410-c998bafa8a28",
+            "notes": [
+              {
+                "id": "d5b4c370-1ec6-4e03-82f7-e2c2fa755029",
+                "position": 0,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "e9ef3194-901d-48db-b078-eb594775f428",
+                "position": 960000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "446ba2d0-7961-464b-98db-f4341ffe3f2a",
+                "position": 1920000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "055ef50a-6907-465d-a36f-4406893f531b",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "7bcd13b8-23b6-4c8a-9683-ace57b5e6bdc",
+                "position": 3840000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "91a7f877-7ad6-4c26-a2ee-5ea64b9c4bb2",
+                "position": 4800000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "c5a68baf-dd8f-4ce9-8784-4266e72955e1",
+                "position": 5520000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "7efc31ae-b354-4a63-bf3b-84c0895f8684",
+                "position": 5760000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "46381794-75a1-42ee-8663-4a51df61755e",
+                "position": 6720000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "755f30cb-1834-4ad9-be00-143359d4ba12",
+                "position": 7200000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "f5a6e024-90e4-4692-9b1b-89bada14dcd0",
+        "name": "03 \u00B7 Backbeat",
+        "length": 7680000,
+        "parts": [
+          {
+            "id": "43a72b78-7a3f-4653-8b89-808e9f77a3fb",
+            "name": "Snare",
+            "soundId": "e5d1f559-88a8-4a2f-bdb6-8ca79a7c74a6",
+            "notes": [
+              {
+                "id": "96847200-935a-4c91-987d-350a0f051add",
+                "position": 960000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "176f3b82-1fda-4445-8be4-7c6983fe2ae2",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "b137b9e3-5c2d-4f6a-88d6-e48cc85a557d",
+                "position": 4800000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "4297ab29-cf51-463b-bff2-65b79d4fbacb",
+                "position": 6720000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          },
+          {
+            "id": "e6a3231b-3741-4763-9d9f-e91fe464a25a",
+            "name": "Clap",
+            "soundId": "76451ab3-2767-471f-9d3e-2781e794565f",
+            "notes": [
+              {
+                "id": "a306d744-c5fd-4b74-a715-aad7bd661fe6",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "c4414ba4-d6d5-4d5f-9cb1-5c3e3e19b1ef",
+                "position": 6720000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dd111cdb-6c42-483b-b4db-9eefb085948d",
+        "name": "04 \u00B7 Hats",
+        "length": 7680000,
+        "parts": [
+          {
+            "id": "ef6c3c7c-adf4-4a2a-8728-ca4e0e96256e",
+            "name": "Closed Hat",
+            "soundId": "2fe085fc-670a-422a-a577-f0e5aa209c5e",
+            "notes": [
+              {
+                "id": "b13f29e3-5560-4cc3-b74c-8597f556eb55",
+                "position": 0,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "3d0fe94d-1f8f-4207-b66e-edd53376ac7f",
+                "position": 480000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "c0cba8a1-b54e-48c0-96b5-4608c40254fc",
+                "position": 960000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "63f15d00-ac15-459a-90f9-8ac3a9a1ff30",
+                "position": 1440000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "72141c6c-82ce-4a9a-b99c-3e78c4858a9a",
+                "position": 1920000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "73619dcc-b65d-4083-8d17-466018a2346c",
+                "position": 2400000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "a80246a1-6111-441a-94fc-0dc4ca072993",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "78fd78b7-0590-4e19-ae75-e771c64f963f",
+                "position": 3360000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "8ea0758f-f9fe-425d-9f2b-1631a601dbdd",
+                "position": 3840000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "47f5855d-13f4-42bc-ae0b-cb8ad88c6af4",
+                "position": 4320000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "8c73674c-d754-4ff6-8e4d-8cbcdcff88d6",
+                "position": 4800000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "d4cac5ae-713f-4f7b-a79e-b2e7ce2d151d",
+                "position": 5280000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "9fb16317-68bc-4b3f-bfd7-331137f60759",
+                "position": 5760000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "8ebc8cbe-ad4c-4e76-9c04-5217d5669691",
+                "position": 6240000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "559794a5-023f-440d-82f1-3a7ce7a7b821",
+                "position": 6720000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "59e5754e-1693-4056-9857-3a3a122ab3eb",
+                "position": 7200000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          },
+          {
+            "id": "aec7cb0f-f0a1-4713-a5b0-49437f72bd55",
+            "name": "Open Hat",
+            "soundId": "52a6e5f4-30dc-4f2f-93b7-7e8b6aa883e9",
+            "notes": [
+              {
+                "id": "fcd328cf-2b27-4067-b412-501bf5f6a09e",
+                "position": 1680000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "0eb42824-4491-40f6-9c25-c19ed8e2b844",
+                "position": 3600000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "0a71d2d6-28cf-4bcb-b4ef-83746582e647",
+                "position": 5520000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "7e1ab829-869f-4eb5-9b77-9427e920e76c",
+                "position": 7440000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1ff6b9d2-d19e-461d-aaa5-73c6ed8cddcb",
+        "name": "05 \u00B7 Hats variation",
+        "length": 7680000,
+        "parts": [
+          {
+            "id": "6bfc95f9-9b3c-467d-b257-2710eed856c3",
+            "name": "Closed Hat",
+            "soundId": "85261d79-2336-4552-b110-ae1638178a3b",
+            "notes": [
+              {
+                "id": "f4f5e9ce-ab93-4f51-bc11-476d031bb5d1",
+                "position": 0,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "8b5b2734-6346-49ee-b8b2-42f28fc8ef7c",
+                "position": 480000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "10ddb972-95a5-4065-a52e-77a61f342af5",
+                "position": 960000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "29587751-48a1-490d-b380-78cff7bd0d84",
+                "position": 1440000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "e6a59726-50b2-426d-b5d5-a0a9d17f863e",
+                "position": 1920000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "94f069e3-cb5e-4c81-a86f-ad08eb205599",
+                "position": 2160000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "2c914915-ae09-4d1a-b42e-8962a3726fe2",
+                "position": 2400000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "b1f6c1bc-d52f-47f3-8b39-bfd5ff1f4115",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "ca823c53-9675-444e-bc97-9565caef3f89",
+                "position": 3360000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "606a1b2c-cc30-4980-af02-948ee4834af7",
+                "position": 3840000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "a7e23dce-af5f-4dc1-ae6c-eb7b87b1d6f1",
+                "position": 4320000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "f92b43e9-2379-4dc3-a61f-9df4a361f103",
+                "position": 4800000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "ce3fefa3-75d6-4221-9aa9-5e6faeb2c756",
+                "position": 5280000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "2830fd17-422e-455d-958f-8d1f9aa86c01",
+                "position": 5760000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "db807cf3-b2f5-4760-adc6-7e626eaf56ab",
+                "position": 6000000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "0caf6e68-9536-477b-aa12-11fa28317fa9",
+                "position": 6240000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "21c98f51-2140-4efd-9926-ba79385c32b0",
+                "position": 6720000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "c6d1e3de-c4a7-45db-92c1-f64c8166a474",
+                "position": 7200000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          },
+          {
+            "id": "b6203f08-56c3-47d0-92a5-24da117fded4",
+            "name": "Open Hat",
+            "soundId": "1e6454c9-8d21-4a64-ac9f-7179f67b03df",
+            "notes": [
+              {
+                "id": "35bb22f3-5dae-4ccb-9d83-9f51eb2534dd",
+                "position": 720000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "8089be2e-04dc-4dca-a987-82ced635ca1f",
+                "position": 2640000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "d68d9f2d-1385-4c73-930a-dd148fe5a0b2",
+                "position": 4560000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "275fab5b-279f-4047-b521-55d2d25abed7",
+                "position": 6480000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "75c6b7eb-8c06-4a71-b835-37e7d76d8af8",
+                "position": 7440000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ee364bd0-8342-4419-bd51-3ed4cca4b8ae",
+        "name": "06 \u00B7 Wooden pulse",
+        "length": 7680000,
+        "parts": [
+          {
+            "id": "ec611dcb-6b7f-4c4f-806b-c01f2b153b4e",
+            "name": "Rim",
+            "soundId": "1495e0bd-62c5-453e-a551-8b4087ef43c8",
+            "notes": [
+              {
+                "id": "9243f149-cc1b-4ffb-b640-483f770c6bf2",
+                "position": 720000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "12f5e8a4-9024-4be9-883c-b094ab644a88",
+                "position": 1680000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "4fd3bce5-37e3-497d-8f96-9a230bc5a146",
+                "position": 2640000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "7c641712-4811-4e9f-9c46-1abe573f8f89",
+                "position": 3600000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "e60c81d7-ebb1-4190-8619-ec0bf779133a",
+                "position": 4320000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "ec8c071c-10a0-4d3c-897e-2c20d04ad75c",
+                "position": 5520000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "9156efae-b418-4bc0-8260-c06541018cd3",
+                "position": 6480000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "84d6dd0b-95a9-4888-8239-020e1d2f1e37",
+                "position": 7440000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "5fdaf329-a092-402f-ab23-19849e123868",
+        "name": "07 \u00B7 Falling toms",
+        "length": 3840000,
+        "parts": [
+          {
+            "id": "16a61dfc-63eb-40fa-855e-6c46dc44bd31",
+            "name": "Tom",
+            "soundId": "9c2ddd14-bdb7-47fc-b6a8-9916ee204a9a",
+            "notes": [
+              {
+                "id": "f1d5828b-cbf7-42de-8a94-cbb62c7bcd0a",
+                "position": 1920000,
+                "duration": 240000,
+                "pitch": 43,
+                "intensity": 0.75
+              },
+              {
+                "id": "79a8e08a-372b-4274-8ed1-28a4ca676d3e",
+                "position": 2400000,
+                "duration": 240000,
+                "pitch": 41,
+                "intensity": 0.75
+              },
+              {
+                "id": "165e2f5a-3d31-4409-80c3-6b6728d456d7",
+                "position": 2880000,
+                "duration": 240000,
+                "pitch": 38,
+                "intensity": 0.75
+              },
+              {
+                "id": "f52e908c-d694-4623-bd1a-40d3df58c9c1",
+                "position": 3120000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 0.75
+              },
+              {
+                "id": "1bd7d512-dd39-4759-bdf7-837d53f6e901",
+                "position": 3360000,
+                "duration": 240000,
+                "pitch": 34,
+                "intensity": 0.75
+              },
+              {
+                "id": "189726f2-99aa-4371-be4b-20445b83daeb",
+                "position": 3600000,
+                "duration": 240000,
+                "pitch": 31,
+                "intensity": 0.75
+              }
+            ]
+          },
+          {
+            "id": "b3bbd3c7-4cf1-46a4-9f21-198657f45236",
+            "name": "Snare",
+            "soundId": "bdb26f14-90df-4c95-8889-5d449c80656f",
+            "notes": [
+              {
+                "id": "4efb9d85-8e4c-4ad9-87be-d672f5694340",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "d614d018-9278-45fc-b11c-b0da1e6515b0",
+                "position": 3360000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 1
+              },
+              {
+                "id": "4b29b6f6-4444-4307-92a2-6458cdaa554b",
+                "position": 3600000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "d6cf1943-f51d-4021-8a22-789f98b6ef5d",
+        "name": "08 \u00B7 Root motion",
+        "length": 15360000,
+        "parts": [
+          {
+            "id": "41022d95-87c3-4d72-8a42-5a043487e073",
+            "name": "Bass",
+            "soundId": "60b32edc-92da-42d8-974a-47e416a9e993",
+            "notes": [
+              {
+                "id": "617a3868-969d-4b30-a4db-a92884a88d1d",
+                "position": 0,
+                "duration": 720000,
+                "pitch": 33,
+                "intensity": 0.68
+              },
+              {
+                "id": "f33c31b5-ba92-49de-be87-7d0ee258ea7d",
+                "position": 1440000,
+                "duration": 480000,
+                "pitch": 33,
+                "intensity": 0.68
+              },
+              {
+                "id": "1f2fb6f1-2a4f-4ca1-b5a5-899c8bc9e2a6",
+                "position": 2400000,
+                "duration": 480000,
+                "pitch": 40,
+                "intensity": 0.68
+              },
+              {
+                "id": "ff293e56-23be-44d5-ac9e-9ea0b393096f",
+                "position": 3360000,
+                "duration": 240000,
+                "pitch": 33,
+                "intensity": 0.68
+              },
+              {
+                "id": "8a87c6b4-9700-4f6f-97e0-a7f34034c1c4",
+                "position": 3840000,
+                "duration": 720000,
+                "pitch": 29,
+                "intensity": 0.68
+              },
+              {
+                "id": "c067a946-6c3d-47d0-8815-3aea1fb57325",
+                "position": 5280000,
+                "duration": 480000,
+                "pitch": 29,
+                "intensity": 0.68
+              },
+              {
+                "id": "20858987-3d09-4b54-90cb-025505620eda",
+                "position": 6240000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 0.68
+              },
+              {
+                "id": "6548095e-a2fa-4aa1-9533-f1476177ae8b",
+                "position": 7200000,
+                "duration": 240000,
+                "pitch": 29,
+                "intensity": 0.68
+              },
+              {
+                "id": "1925a7f9-8ee7-49f4-8d50-3b805b30a5b6",
+                "position": 7680000,
+                "duration": 720000,
+                "pitch": 36,
+                "intensity": 0.68
+              },
+              {
+                "id": "e8aea64e-5c61-472d-a38e-8ac3923f339e",
+                "position": 9120000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 0.68
+              },
+              {
+                "id": "57dc7d38-39b4-437c-ae96-bd24593f6ab5",
+                "position": 10080000,
+                "duration": 480000,
+                "pitch": 43,
+                "intensity": 0.68
+              },
+              {
+                "id": "839ca87c-415b-4b64-9df3-bfe104c856b6",
+                "position": 11040000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 0.68
+              },
+              {
+                "id": "284f33f7-17f8-44b4-af37-1f4f9dc12eba",
+                "position": 11520000,
+                "duration": 720000,
+                "pitch": 31,
+                "intensity": 0.68
+              },
+              {
+                "id": "4bc7f6e1-719c-4eed-8616-9605178d0330",
+                "position": 12960000,
+                "duration": 480000,
+                "pitch": 31,
+                "intensity": 0.68
+              },
+              {
+                "id": "dd80881f-bde4-4dd7-b086-62e15c99533d",
+                "position": 13920000,
+                "duration": 480000,
+                "pitch": 38,
+                "intensity": 0.68
+              },
+              {
+                "id": "44d09c85-93c5-4f0f-93bb-2e57e5b7db47",
+                "position": 14880000,
+                "duration": 240000,
+                "pitch": 31,
+                "intensity": 0.68
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2137b7bd-ddb2-4a2f-9820-e156aaa3ae79",
+        "name": "09 \u00B7 Root variation",
+        "length": 15360000,
+        "parts": [
+          {
+            "id": "d4f38867-2d30-4afe-9c24-3c2d8f0b59ea",
+            "name": "Bass",
+            "soundId": "5d788729-e7be-4e40-bfe4-8ae3e7b99d10",
+            "notes": [
+              {
+                "id": "da5bcb66-75b8-46ac-9e7a-11f6c97eca16",
+                "position": 0,
+                "duration": 480000,
+                "pitch": 33,
+                "intensity": 0.64
+              },
+              {
+                "id": "d6a58ec2-c586-41fe-be86-582feb6cf353",
+                "position": 960000,
+                "duration": 240000,
+                "pitch": 40,
+                "intensity": 0.64
+              },
+              {
+                "id": "86dc06df-ef83-47ab-b17c-6f67870fa7f9",
+                "position": 1680000,
+                "duration": 240000,
+                "pitch": 33,
+                "intensity": 0.64
+              },
+              {
+                "id": "a71d9bc1-4040-4bd3-bd8b-29ca581a2653",
+                "position": 2400000,
+                "duration": 480000,
+                "pitch": 33,
+                "intensity": 0.64
+              },
+              {
+                "id": "ed721968-98d2-43b4-8499-af9efd6f7a1b",
+                "position": 3120000,
+                "duration": 240000,
+                "pitch": 45,
+                "intensity": 0.64
+              },
+              {
+                "id": "29413721-8ecf-4c1d-9824-4d6b2f5f6bfa",
+                "position": 3840000,
+                "duration": 480000,
+                "pitch": 29,
+                "intensity": 0.64
+              },
+              {
+                "id": "dca7c014-5c32-4ef4-94b8-2ae630918f80",
+                "position": 4800000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 0.64
+              },
+              {
+                "id": "2115888e-6bf8-4147-8781-a030b56a735f",
+                "position": 5520000,
+                "duration": 240000,
+                "pitch": 29,
+                "intensity": 0.64
+              },
+              {
+                "id": "2015778e-7076-4cc6-8a48-63fb28c54994",
+                "position": 6240000,
+                "duration": 480000,
+                "pitch": 29,
+                "intensity": 0.64
+              },
+              {
+                "id": "605b6a17-3646-4873-90bd-414d818c27b2",
+                "position": 6960000,
+                "duration": 240000,
+                "pitch": 41,
+                "intensity": 0.64
+              },
+              {
+                "id": "7e448712-0248-4849-b10e-486cf73f13c7",
+                "position": 7680000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 0.64
+              },
+              {
+                "id": "4f077c1d-3643-4154-8bb3-9867e5f18b1c",
+                "position": 8640000,
+                "duration": 240000,
+                "pitch": 43,
+                "intensity": 0.64
+              },
+              {
+                "id": "a9e2f889-5d14-40bf-be8a-15bd57da57b1",
+                "position": 9360000,
+                "duration": 240000,
+                "pitch": 36,
+                "intensity": 0.64
+              },
+              {
+                "id": "6288e696-d372-46b8-b811-4b6d2b38e19f",
+                "position": 10080000,
+                "duration": 480000,
+                "pitch": 36,
+                "intensity": 0.64
+              },
+              {
+                "id": "1686ce77-8d22-4b18-8780-b7f07170a3e3",
+                "position": 10800000,
+                "duration": 240000,
+                "pitch": 48,
+                "intensity": 0.64
+              },
+              {
+                "id": "5bc31649-a46d-46b9-8c04-3aee0c9f7d81",
+                "position": 11520000,
+                "duration": 480000,
+                "pitch": 31,
+                "intensity": 0.64
+              },
+              {
+                "id": "fad1f3ec-ba66-4090-96bc-af4b2ffca853",
+                "position": 12480000,
+                "duration": 240000,
+                "pitch": 38,
+                "intensity": 0.64
+              },
+              {
+                "id": "0b3a14fc-de66-49de-913f-566267934144",
+                "position": 13200000,
+                "duration": 240000,
+                "pitch": 31,
+                "intensity": 0.64
+              },
+              {
+                "id": "d05327ed-059f-42e0-a106-290e3952e318",
+                "position": 13920000,
+                "duration": 480000,
+                "pitch": 31,
+                "intensity": 0.64
+              },
+              {
+                "id": "04fbcd98-1946-4de6-b209-b15944f87735",
+                "position": 14640000,
+                "duration": 240000,
+                "pitch": 43,
+                "intensity": 0.64
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "f537cafa-3e82-455d-8f29-7a6086a461c7",
+        "name": "10 \u00B7 Orchard keys",
+        "length": 15360000,
+        "parts": [
+          {
+            "id": "87e4a691-52da-40a3-a0da-71fcc22c8ac2",
+            "name": "Keys",
+            "soundId": "eb16903f-deb9-4a63-b9ae-58ea615ba0f2",
+            "notes": [
+              {
+                "id": "f826eca1-ab48-457c-bee3-b05cafd65594",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 57,
+                "intensity": 0.46
+              },
+              {
+                "id": "0b96c1a0-50bb-49f4-a4bf-4ef6cdbf304a",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 60,
+                "intensity": 0.46
+              },
+              {
+                "id": "c31acdbd-80bd-4004-a133-ece5bd2040aa",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 64,
+                "intensity": 0.46
+              },
+              {
+                "id": "7181b3da-f7f5-44e5-a897-1ff5e9a34f80",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 67,
+                "intensity": 0.46
+              },
+              {
+                "id": "14da392d-d284-4c73-88b4-1724f819bfef",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 53,
+                "intensity": 0.46
+              },
+              {
+                "id": "d07c5f0e-c04e-4a3b-bc99-e21847afb035",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 57,
+                "intensity": 0.46
+              },
+              {
+                "id": "1c6180d0-d450-414f-8151-ae23cb8da171",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 60,
+                "intensity": 0.46
+              },
+              {
+                "id": "4d2f4a9e-43fb-418d-b3ce-ae2bdfb29ac2",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 64,
+                "intensity": 0.46
+              },
+              {
+                "id": "803d49c3-6127-46ce-837f-732e36555edf",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 55,
+                "intensity": 0.46
+              },
+              {
+                "id": "1fd53586-a1db-489d-815a-95abdd3129ab",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 60,
+                "intensity": 0.46
+              },
+              {
+                "id": "d84d3423-c60a-4629-9003-80d0a0b39b1f",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 64,
+                "intensity": 0.46
+              },
+              {
+                "id": "6350ecf5-1e1c-4a75-9ce5-2ebaaebe963e",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 67,
+                "intensity": 0.46
+              },
+              {
+                "id": "b1853d53-0422-48b7-a9cb-8ace90a015f2",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 55,
+                "intensity": 0.46
+              },
+              {
+                "id": "6b1de55b-d145-49e8-a521-d3ea920913f4",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 59,
+                "intensity": 0.46
+              },
+              {
+                "id": "dd7a5aa7-b101-48ba-b75b-2d9c2d703c54",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 62,
+                "intensity": 0.46
+              },
+              {
+                "id": "82920b12-fc1e-415f-9cfd-5f489cd39f8a",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 65,
+                "intensity": 0.46
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "8f6a45b7-9558-4bdf-a385-4f318e0459a3",
+        "name": "11 \u00B7 Open voicings",
+        "length": 15360000,
+        "parts": [
+          {
+            "id": "25c379fd-3895-40cd-87b8-a8ed4f13054f",
+            "name": "Keys",
+            "soundId": "d8e9c644-6f6b-405e-a21e-0f6e8203eab1",
+            "notes": [
+              {
+                "id": "41fdc4b1-f329-403b-b601-444a27475f81",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 57,
+                "intensity": 0.42
+              },
+              {
+                "id": "cf0cc9b5-12be-4123-9b5f-d79b583c3f85",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 64,
+                "intensity": 0.42
+              },
+              {
+                "id": "762a22d6-bf7d-43a5-98dc-6dbab60ec487",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 67,
+                "intensity": 0.42
+              },
+              {
+                "id": "f73f89f5-8012-460d-a3e9-e646a6566409",
+                "position": 0,
+                "duration": 2400000,
+                "pitch": 72,
+                "intensity": 0.42
+              },
+              {
+                "id": "c5e069eb-c92f-44cd-aabd-05eb02aafb20",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 53,
+                "intensity": 0.42
+              },
+              {
+                "id": "9d9ede01-cd63-432f-a327-02bffb711bba",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 60,
+                "intensity": 0.42
+              },
+              {
+                "id": "2cf101fe-e553-4501-b57f-608efbfcc2ba",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 64,
+                "intensity": 0.42
+              },
+              {
+                "id": "1409762a-c686-4d75-8193-5234cc26802b",
+                "position": 3840000,
+                "duration": 2400000,
+                "pitch": 69,
+                "intensity": 0.42
+              },
+              {
+                "id": "67701b23-045e-4747-8057-3a3dc4c0c2e7",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 55,
+                "intensity": 0.42
+              },
+              {
+                "id": "3d66b977-4167-42fa-bed6-19bd989b4b96",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 60,
+                "intensity": 0.42
+              },
+              {
+                "id": "8904a5f9-19c4-4341-851d-fa3b49960c7a",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 64,
+                "intensity": 0.42
+              },
+              {
+                "id": "853c960b-d160-4e74-b11b-7f2ba2f27448",
+                "position": 7680000,
+                "duration": 2400000,
+                "pitch": 71,
+                "intensity": 0.42
+              },
+              {
+                "id": "7c51c83a-a42e-4654-b3b2-139bde1af40d",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 55,
+                "intensity": 0.42
+              },
+              {
+                "id": "48f20a06-75ab-450a-889a-f2edb86865ef",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 62,
+                "intensity": 0.42
+              },
+              {
+                "id": "5890a046-cc84-4cea-82c7-ecaf90ed951c",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 65,
+                "intensity": 0.42
+              },
+              {
+                "id": "bb6838ce-8562-406f-ab31-1ae1176cc3d4",
+                "position": 11520000,
+                "duration": 2400000,
+                "pitch": 69,
+                "intensity": 0.42
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "18987d1a-ddee-46bc-9323-58399cc694ba",
+        "name": "12 \u00B7 Glass seeds",
+        "length": 15360000,
+        "parts": [
+          {
+            "id": "2035031a-0661-44ec-9704-395b057aa72c",
+            "name": "Pizz forte",
+            "soundId": "cb79b45a-724b-4dec-b586-1867f8dbec0e",
+            "notes": [
+              {
+                "id": "9f84a270-baa3-4a87-ac92-5111d9db330e",
+                "position": 480000,
+                "duration": 480000,
+                "pitch": 69,
+                "intensity": 0.85
+              },
+              {
+                "id": "bbe7b8f4-fb22-483d-81f0-75e2d7fa88bb",
+                "position": 1440000,
+                "duration": 480000,
+                "pitch": 72,
+                "intensity": 0.85
+              },
+              {
+                "id": "93f00f53-21fa-44c7-ac91-cb8a8f5ba175",
+                "position": 2400000,
+                "duration": 480000,
+                "pitch": 76,
+                "intensity": 0.85
+              },
+              {
+                "id": "03e9254e-a5e7-4f91-b6b5-a97ffaf7c7ae",
+                "position": 3360000,
+                "duration": 480000,
+                "pitch": 72,
+                "intensity": 0.85
+              },
+              {
+                "id": "ec0b1d0e-c012-4aa8-b395-0f9d3901ca9a",
+                "position": 4320000,
+                "duration": 480000,
+                "pitch": 69,
+                "intensity": 0.85
+              },
+              {
+                "id": "c994b17e-28b5-4dd5-8bde-ab1e961452f3",
+                "position": 5280000,
+                "duration": 480000,
+                "pitch": 72,
+                "intensity": 0.85
+              },
+              {
+                "id": "b819cf70-6ebf-42f0-be65-3875f984168d",
+                "position": 6240000,
+                "duration": 480000,
+                "pitch": 77,
+                "intensity": 0.85
+              },
+              {
+                "id": "ed66324d-2c8b-4029-b286-291d7dd0dabb",
+                "position": 7200000,
+                "duration": 480000,
+                "pitch": 76,
+                "intensity": 0.85
+              },
+              {
+                "id": "096a9270-38d4-4671-aaa1-1973047d1005",
+                "position": 8160000,
+                "duration": 480000,
+                "pitch": 67,
+                "intensity": 0.85
+              },
+              {
+                "id": "c4df482f-a628-4067-8db8-6c09b0c3ffdd",
+                "position": 9120000,
+                "duration": 480000,
+                "pitch": 72,
+                "intensity": 0.85
+              },
+              {
+                "id": "6b04008d-ea39-477d-b705-dbe70a34236c",
+                "position": 10080000,
+                "duration": 480000,
+                "pitch": 76,
+                "intensity": 0.85
+              },
+              {
+                "id": "ca16e998-752b-4f95-8964-d5a0c23827fe",
+                "position": 11040000,
+                "duration": 480000,
+                "pitch": 79,
+                "intensity": 0.85
+              },
+              {
+                "id": "ae675dff-5888-4ae4-8e5d-6a48951db6b4",
+                "position": 12000000,
+                "duration": 480000,
+                "pitch": 67,
+                "intensity": 0.85
+              },
+              {
+                "id": "dac951db-d787-40d3-964a-2a829714d1c7",
+                "position": 12960000,
+                "duration": 480000,
+                "pitch": 71,
+                "intensity": 0.85
+              },
+              {
+                "id": "d5c904d7-1d3d-4932-a79b-f245496a77d9",
+                "position": 13920000,
+                "duration": 480000,
+                "pitch": 74,
+                "intensity": 0.85
+              },
+              {
+                "id": "a2618946-3323-463b-a4da-79edb5eee77f",
+                "position": 14880000,
+                "duration": 480000,
+                "pitch": 71,
+                "intensity": 0.85
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "e19d3cca-f0ca-4929-85ce-653754af2f0f",
+        "name": "13 \u00B7 Night air",
+        "length": 15360000,
+        "parts": [
+          {
+            "id": "943c34c8-d812-4209-a351-620c0ec5b4d2",
+            "name": "Flute",
+            "soundId": "e67a8a55-fbf5-470d-bde4-c400df40aa48",
+            "notes": [
+              {
+                "id": "1becdaad-a343-4727-8946-200661c19e34",
+                "position": 0,
+                "duration": 1440000,
+                "pitch": 69,
+                "intensity": 0.46
+              },
+              {
+                "id": "8fac435f-3749-4f43-9225-7d10945c58ac",
+                "position": 1920000,
+                "duration": 960000,
+                "pitch": 72,
+                "intensity": 0.46
+              },
+              {
+                "id": "062da21b-760e-4bae-a589-3d7adad67b64",
+                "position": 2880000,
+                "duration": 960000,
+                "pitch": 76,
+                "intensity": 0.46
+              },
+              {
+                "id": "4444fddf-c3a2-4122-b488-eae4839734e7",
+                "position": 3840000,
+                "duration": 1920000,
+                "pitch": 77,
+                "intensity": 0.46
+              },
+              {
+                "id": "5e661ec3-7459-4fe4-8f0e-76d379538c3d",
+                "position": 6240000,
+                "duration": 960000,
+                "pitch": 76,
+                "intensity": 0.46
+              },
+              {
+                "id": "070242e9-7046-4d41-aa2a-de95c663aaae",
+                "position": 7680000,
+                "duration": 1440000,
+                "pitch": 72,
+                "intensity": 0.46
+              },
+              {
+                "id": "e4c7a443-006f-4765-8d73-817eae0360a6",
+                "position": 9600000,
+                "duration": 960000,
+                "pitch": 67,
+                "intensity": 0.46
+              },
+              {
+                "id": "fdac8e7e-49c5-4a80-87f2-ee0abaf273d7",
+                "position": 10560000,
+                "duration": 960000,
+                "pitch": 69,
+                "intensity": 0.46
+              },
+              {
+                "id": "f84b2eb9-4708-4187-83f4-581fb566ae18",
+                "position": 11520000,
+                "duration": 1920000,
+                "pitch": 71,
+                "intensity": 0.46
+              },
+              {
+                "id": "7209c122-4412-4be1-866a-5bd4f577f6d5",
+                "position": 13920000,
+                "duration": 960000,
+                "pitch": 67,
+                "intensity": 0.46
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "95bb4760-6cf6-4a8b-b3c4-54e0416fba4b",
+        "name": "14 \u00B7 Spark",
+        "length": 7680000,
+        "parts": [
+          {
+            "id": "83da19a4-d0fb-452b-ab48-fea1a51099a8",
+            "name": "FX",
+            "soundId": "71861420-ed3d-488b-b699-12645eb42765",
+            "notes": [
+              {
+                "id": "94751df7-7c3e-42f8-b6fc-4b491d2aaf2f",
+                "position": 0,
+                "duration": 5760000,
+                "pitch": 60,
+                "intensity": 0.24
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "fd3d74a1-c965-4707-9fd9-b7f398e5e9e2",
+        "name": "15 \u00B7 Coda",
+        "length": 15360000,
+        "parts": [
+          {
+            "id": "2f8b1de2-487f-4bac-8c9a-ad9c8891e8c9",
+            "name": "Keys",
+            "soundId": "e807526f-e734-4fc8-b55e-43747f16f78e",
+            "notes": [
+              {
+                "id": "76449813-e027-47bf-bbe7-f75e9196a713",
+                "position": 0,
+                "duration": 1920000,
+                "pitch": 57,
+                "intensity": 0.32
+              },
+              {
+                "id": "3d72c641-7ea6-4a22-88a3-654534a686ce",
+                "position": 0,
+                "duration": 1920000,
+                "pitch": 60,
+                "intensity": 0.32
+              },
+              {
+                "id": "df946082-eb11-40af-88c6-f81adab40e09",
+                "position": 0,
+                "duration": 1920000,
+                "pitch": 64,
+                "intensity": 0.32
+              },
+              {
+                "id": "58a84ce5-b758-441d-90d1-027da6f8ece2",
+                "position": 0,
+                "duration": 1920000,
+                "pitch": 71,
+                "intensity": 0.32
+              },
+              {
+                "id": "a2886704-3dce-4fb7-adde-7ffa040a0cb9",
+                "position": 3840000,
+                "duration": 1920000,
+                "pitch": 53,
+                "intensity": 0.32
+              },
+              {
+                "id": "092ff816-069e-4fac-b085-41f0273cd37e",
+                "position": 3840000,
+                "duration": 1920000,
+                "pitch": 57,
+                "intensity": 0.32
+              },
+              {
+                "id": "893f237d-f7d7-4366-821d-90288b0794fc",
+                "position": 3840000,
+                "duration": 1920000,
+                "pitch": 60,
+                "intensity": 0.32
+              },
+              {
+                "id": "13026289-6397-4409-8631-3fde4cc7b6c4",
+                "position": 3840000,
+                "duration": 1920000,
+                "pitch": 67,
+                "intensity": 0.32
+              },
+              {
+                "id": "fe481224-83a0-4d97-b44e-e88da8ff7d30",
+                "position": 7680000,
+                "duration": 1920000,
+                "pitch": 52,
+                "intensity": 0.32
+              },
+              {
+                "id": "1cacadc7-8dff-4317-80ad-26fbff830671",
+                "position": 7680000,
+                "duration": 1920000,
+                "pitch": 55,
+                "intensity": 0.32
+              },
+              {
+                "id": "57a27418-5432-4687-ba39-9104d4b81297",
+                "position": 7680000,
+                "duration": 1920000,
+                "pitch": 59,
+                "intensity": 0.32
+              },
+              {
+                "id": "537c47f5-cdbb-45a0-b32e-9d49dcb98eeb",
+                "position": 7680000,
+                "duration": 1920000,
+                "pitch": 64,
+                "intensity": 0.32
+              },
+              {
+                "id": "f8972927-f92f-404e-9bda-d93d289ebca5",
+                "position": 11520000,
+                "duration": 3360000,
+                "pitch": 57,
+                "intensity": 0.32
+              },
+              {
+                "id": "fcaf0680-803e-4093-9e5e-551c0aa4201d",
+                "position": 11520000,
+                "duration": 3360000,
+                "pitch": 60,
+                "intensity": 0.32
+              },
+              {
+                "id": "d5c4a116-e091-4dc7-9cf8-8c1fae87c071",
+                "position": 11520000,
+                "duration": 3360000,
+                "pitch": 64,
+                "intensity": 0.32
+              },
+              {
+                "id": "aeb01529-66cc-4b26-945c-a0ad17de8567",
+                "position": 11520000,
+                "duration": 3360000,
+                "pitch": 69,
+                "intensity": 0.32
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "sounds": [
+      {
+        "id": "f0ff8448-cb5b-45c1-bcfa-455280a5ad1e",
+        "name": "Kick",
+        "algorithm": "core.drum-voice.kick-v1",
+        "parameters": {
+          "tone": 0.55,
+          "pitchDecay": 65,
+          "tune": -3,
+          "noise": 0.09,
+          "attack": 0.8,
+          "amplitudeCurve": 2.6,
+          "pitchCurve": 2.4,
+          "decay": 260,
+          "rootPitch": 36,
+          "pitchAmount": 38
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "e84ca1c2-ca70-4741-8410-c998bafa8a28",
+        "name": "Kick",
+        "algorithm": "core.drum-voice.kick-v1",
+        "parameters": {
+          "tone": 0.55,
+          "pitchDecay": 65,
+          "tune": -3,
+          "noise": 0.09,
+          "attack": 0.8,
+          "amplitudeCurve": 2.6,
+          "pitchCurve": 2.4,
+          "decay": 260,
+          "rootPitch": 36,
+          "pitchAmount": 38
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "e5d1f559-88a8-4a2f-bdb6-8ca79a7c74a6",
+        "name": "Snare",
+        "algorithm": "core.drum-voice.snare-v1",
+        "parameters": {
+          "body": 0.7,
+          "tune": 0,
+          "brightness": 0.55,
+          "attack": 0.5,
+          "amplitudeCurve": 2.2,
+          "snappy": 0.48,
+          "decay": 130,
+          "rootPitch": 36
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "76451ab3-2767-471f-9d3e-2781e794565f",
+        "name": "Clap",
+        "algorithm": "core.drum-voice.clap-v1",
+        "parameters": {
+          "tail": 0.2,
+          "tune": 0,
+          "brightness": 0.5,
+          "attack": 0.4,
+          "amplitudeCurve": 2,
+          "spread": 8,
+          "decay": 150,
+          "rootPitch": 36
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "2fe085fc-670a-422a-a577-f0e5aa209c5e",
+        "name": "Closed Hat",
+        "algorithm": "core.drum-voice.closedhat-v1",
+        "parameters": {
+          "tune": 0,
+          "brightness": 0.9,
+          "attack": 0.3,
+          "choke": 1,
+          "amplitudeCurve": 2.4,
+          "decay": 38,
+          "rootPitch": 36,
+          "metal": 0.9
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "52a6e5f4-30dc-4f2f-93b7-7e8b6aa883e9",
+        "name": "Open Hat",
+        "algorithm": "core.drum-voice.openhat-v1",
+        "parameters": {
+          "tune": 0,
+          "brightness": 0.4,
+          "attack": 0.8,
+          "choke": 1,
+          "amplitudeCurve": 1.7,
+          "decay": 330,
+          "rootPitch": 36,
+          "metal": 0.5
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "85261d79-2336-4552-b110-ae1638178a3b",
+        "name": "Closed Hat",
+        "algorithm": "core.drum-voice.closedhat-v1",
+        "parameters": {
+          "tune": 0,
+          "brightness": 0.3,
+          "attack": 0.3,
+          "choke": 1,
+          "amplitudeCurve": 2.4,
+          "decay": 130,
+          "rootPitch": 36,
+          "metal": 0.35
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "1e6454c9-8d21-4a64-ac9f-7179f67b03df",
+        "name": "Open Hat",
+        "algorithm": "core.drum-voice.openhat-v1",
+        "parameters": {
+          "tune": 0,
+          "brightness": 0.65,
+          "attack": 0.8,
+          "choke": 1,
+          "amplitudeCurve": 1.7,
+          "decay": 620,
+          "rootPitch": 36,
+          "metal": 0.75
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "1495e0bd-62c5-453e-a551-8b4087ef43c8",
+        "name": "Rim",
+        "algorithm": "core.drum-voice.rim-v1",
+        "parameters": {
+          "tune": 0,
+          "brightness": 0.3,
+          "attack": 0.25,
+          "wood": 0.95,
+          "amplitudeCurve": 2.7,
+          "click": 0.05,
+          "decay": 160,
+          "rootPitch": 36
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "9c2ddd14-bdb7-47fc-b6a8-9916ee204a9a",
+        "name": "Tom",
+        "algorithm": "core.drum-voice.tom-v1",
+        "parameters": {
+          "pitchDecay": 85,
+          "tune": -7,
+          "resonance": 0.65,
+          "noise": 0.08,
+          "attack": 0.6,
+          "amplitudeCurve": 2,
+          "pitchCurve": 2,
+          "decay": 650,
+          "rootPitch": 36,
+          "pitchAmount": 9
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "bdb26f14-90df-4c95-8889-5d449c80656f",
+        "name": "Snare",
+        "algorithm": "core.drum-voice.snare-v1",
+        "parameters": {
+          "body": 0.7,
+          "tune": 0,
+          "brightness": 0.55,
+          "attack": 0.5,
+          "amplitudeCurve": 2.2,
+          "snappy": 0.48,
+          "decay": 130,
+          "rootPitch": 36
+        },
+        "resourceIds": [],
+        "extension": null
+      },
+      {
+        "id": "60b32edc-92da-42d8-974a-47e416a9e993",
+        "name": "Neon Bass A1",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 33,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "31022086-b6f6-463f-ba3e-03792aba216a"
+        ],
+        "extension": null
+      },
+      {
+        "id": "5d788729-e7be-4e40-bfe4-8ae3e7b99d10",
+        "name": "Neon Bass A1",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 33,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "970736a6-0f5d-4838-8f71-4ce15d4781d2"
+        ],
+        "extension": null
+      },
+      {
+        "id": "eb16903f-deb9-4a63-b9ae-58ea615ba0f2",
+        "name": "VSCO2-CE__Player_dyn1_rr1_018__695ea1",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 57,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "085546fa-0c21-4f48-a8e9-39b054da74f7"
+        ],
+        "extension": null
+      },
+      {
+        "id": "d8e9c644-6f6b-405e-a21e-0f6e8203eab1",
+        "name": "VSCO2-CE__Player_dyn1_rr1_018__695ea1",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 57,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "6e516511-f825-4c27-b0fc-60f9861c9e7b"
+        ],
+        "extension": null
+      },
+      {
+        "id": "e67a8a55-fbf5-470d-bde4-c400df40aa48",
+        "name": "VSCO2-CE__LDFlute_expvib_A3_v1_1__e6ee80",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 57,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "fbd5685b-4896-4f31-a644-8ae292b7d962"
+        ],
+        "extension": null
+      },
+      {
+        "id": "71861420-ed3d-488b-b699-12645eb42765",
+        "name": "Neon Transition FX",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 60,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "57161bd0-de13-45bf-9c0a-baa8f4f708d7"
+        ],
+        "extension": null
+      },
+      {
+        "id": "e807526f-e734-4fc8-b55e-43747f16f78e",
+        "name": "VSCO2-CE__Player_dyn1_rr1_018__695ea1",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 57,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "f977f673-3a3f-485f-b00f-8e13830a3e37"
+        ],
+        "extension": null
+      },
+      {
+        "id": "cb79b45a-724b-4dec-b586-1867f8dbec0e",
+        "name": "VSCO2-CE__LLVln_Pizz_A3_f_RR1__78a34d",
+        "algorithm": "core.pcm-sampler.linear-v1",
+        "parameters": {
+          "rootPitch": 57,
+          "releaseMilliseconds": 0
+        },
+        "resourceIds": [
+          "1b515d2a-f1e5-48c1-a323-a0f0d87cb82f"
+        ],
+        "extension": null
+      }
+    ],
+    "placements": [
+      {
+        "id": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "patternId": "2eb60fff-059b-4f93-86df-f7d2b5ac5526",
+        "position": 0,
+        "itemContextId": "66db4a6f-2d24-4998-bb48-a9b82646e4a9",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "9ea5f6eb-f027-493c-b53f-31058b321064",
+        "patternId": "fe5a2073-f239-47fb-8f2b-4ed6071d1fd5",
+        "position": 0,
+        "itemContextId": "e8c2dbc3-14e3-4f24-9421-8860487db386",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "patternId": "f5a6e024-90e4-4692-9b1b-89bada14dcd0",
+        "position": 0,
+        "itemContextId": "089272cc-bccb-4fef-b2fe-44bc56207b58",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "patternId": "dd111cdb-6c42-483b-b4db-9eefb085948d",
+        "position": 0,
+        "itemContextId": "83a19726-8041-45d9-b679-4c0340f2ce3b",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+        "patternId": "1ff6b9d2-d19e-461d-aaa5-73c6ed8cddcb",
+        "position": 0,
+        "itemContextId": "64c24647-36b8-451f-8e7a-bce1474712ff",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "patternId": "ee364bd0-8342-4419-bd51-3ed4cca4b8ae",
+        "position": 0,
+        "itemContextId": "2bf86aa8-c089-4681-829b-4e3e5efcdaaa",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "22935998-2b36-4f94-aeed-392d30e8805d",
+        "patternId": "5fdaf329-a092-402f-ab23-19849e123868",
+        "position": 0,
+        "itemContextId": "7fc8ee9b-5de3-48a7-981b-debc6a2014c4",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "2cd9b151-0963-4aca-b8a4-366b49d2af44",
+        "patternId": "d6cf1943-f51d-4021-8a22-789f98b6ef5d",
+        "position": 0,
+        "itemContextId": "fa78091c-925b-48ee-9a73-1795675fd9d7",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "bbff9336-0932-4e2f-adfe-3891606de77c",
+        "patternId": "2137b7bd-ddb2-4a2f-9820-e156aaa3ae79",
+        "position": 0,
+        "itemContextId": "8b6790bd-0ef5-4576-97b7-dbe238b0b634",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "bd4f5b8a-e998-449c-a869-5a9be846ece9",
+        "patternId": "f537cafa-3e82-455d-8f29-7a6086a461c7",
+        "position": 0,
+        "itemContextId": "135e2df1-6c7d-49a7-9391-06ec2f602260",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "048a572d-8003-4b6b-8b94-280ce06cdfd8",
+        "patternId": "8f6a45b7-9558-4bdf-a385-4f318e0459a3",
+        "position": 0,
+        "itemContextId": "8d2081d6-16b8-4530-80a0-dbb4896c40b1",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "fafc9448-193b-415c-832c-2643ec5a3585",
+        "patternId": "18987d1a-ddee-46bc-9323-58399cc694ba",
+        "position": 0,
+        "itemContextId": "01379d94-1fcb-4bc6-ae01-866d68a9dc32",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "6b3eee77-ea84-423f-b551-fc776e56622c",
+        "patternId": "e19d3cca-f0ca-4929-85ce-653754af2f0f",
+        "position": 0,
+        "itemContextId": "ef8f5527-aa37-4c2b-b04e-7a5f11654eef",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "b360546c-9dd5-4333-8e5d-c4c6429a8f57",
+        "patternId": "95bb4760-6cf6-4a8b-b3c4-54e0416fba4b",
+        "position": 0,
+        "itemContextId": "c87586a8-9847-4d7c-bc6b-e9c626ed83d7",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      },
+      {
+        "id": "c03be41d-4ce2-4e4e-a45f-a75543096de1",
+        "patternId": "fd3d74a1-c965-4707-9fd9-b7f398e5e9e2",
+        "position": 0,
+        "itemContextId": "5e6ee49c-03ca-4dd8-a702-dad9220cdc4c",
+        "containingContextId": null,
+        "routeId": null,
+        "partRelationships": []
+      }
+    ],
+    "groups": [],
+    "resources": [
+      {
+        "id": "31022086-b6f6-463f-ba3e-03792aba216a",
+        "name": "Neon Bass A1",
+        "managedLocator": "wav/663c86c3fb244e84b482b6690a4c9356-a36929620d5b4db0899af6f4ec33b21d83c273b5090c982222f11379cb7e9a75.wav",
+        "origin": "Seqvium original synthesis; Apache-2.0; generate-sounds.py"
+      },
+      {
+        "id": "970736a6-0f5d-4838-8f71-4ce15d4781d2",
+        "name": "Neon Bass A1",
+        "managedLocator": "wav/663c86c3fb244e84b482b6690a4c9356-a36929620d5b4db0899af6f4ec33b21d83c273b5090c982222f11379cb7e9a75.wav",
+        "origin": "Seqvium original synthesis; Apache-2.0; generate-sounds.py"
+      },
+      {
+        "id": "085546fa-0c21-4f48-a8e9-39b054da74f7",
+        "name": "VSCO2-CE__Player_dyn1_rr1_018__695ea1",
+        "managedLocator": "wav/1948c3d700a746d29bff07225fb77f10-01387cb5318c5abf11410ae8e2f4ef6aa83ec03254b4bccfe865aba262a2e412.wav",
+        "origin": "VSCO 2 Community Edition; CC0-1.0; MEDIA.json"
+      },
+      {
+        "id": "6e516511-f825-4c27-b0fc-60f9861c9e7b",
+        "name": "VSCO2-CE__Player_dyn1_rr1_018__695ea1",
+        "managedLocator": "wav/1948c3d700a746d29bff07225fb77f10-01387cb5318c5abf11410ae8e2f4ef6aa83ec03254b4bccfe865aba262a2e412.wav",
+        "origin": "VSCO 2 Community Edition; CC0-1.0; MEDIA.json"
+      },
+      {
+        "id": "84bbfe2a-f548-43c0-97ab-2d47df7b077d",
+        "name": "VSCO2-CE__LLVln_Pizz_A3_p_RR1__79e373",
+        "managedLocator": "wav/8020f4b956d0402f85a6fcc91a7e7281-9a7cc4d7c6c848e6302f1a35e499781240ccf66c5acf72779f0da03b91bf73e9.wav",
+        "origin": "VSCO 2 Community Edition; CC0-1.0; MEDIA.json"
+      },
+      {
+        "id": "fbd5685b-4896-4f31-a644-8ae292b7d962",
+        "name": "VSCO2-CE__LDFlute_expvib_A3_v1_1__e6ee80",
+        "managedLocator": "wav/018f587652954a8da0aaa144c77cec00-6f7566797c5ac37172189ab375d28f0068232b74f5611e16da217055d3da6420.wav",
+        "origin": "VSCO 2 Community Edition; CC0-1.0; MEDIA.json"
+      },
+      {
+        "id": "57161bd0-de13-45bf-9c0a-baa8f4f708d7",
+        "name": "Neon Transition FX",
+        "managedLocator": "wav/9424a130ce1049a88fe2a9adcd927637-5e4507445f186f5485b7001f7daa1f37f9cc27488c50303faa34406c77676a16.wav",
+        "origin": "Seqvium original synthesis; Apache-2.0; generate-sounds.py"
+      },
+      {
+        "id": "f977f673-3a3f-485f-b00f-8e13830a3e37",
+        "name": "VSCO2-CE__Player_dyn1_rr1_018__695ea1",
+        "managedLocator": "wav/1948c3d700a746d29bff07225fb77f10-01387cb5318c5abf11410ae8e2f4ef6aa83ec03254b4bccfe865aba262a2e412.wav",
+        "origin": "VSCO 2 Community Edition; CC0-1.0; MEDIA.json"
+      },
+      {
+        "id": "1b515d2a-f1e5-48c1-a323-a0f0d87cb82f",
+        "name": "VSCO2-CE__LLVln_Pizz_A3_f_RR1__78a34d",
+        "managedLocator": "wav/364460a0da2446d883770beca1f14dc1-8f400b390219271d04eb9fc0247493d92089f2ca982b9a23be682bec18b7972d.wav",
+        "origin": "VSCO 2 Community Edition; CC0-1.0; MEDIA.json"
+      }
+    ],
+    "contexts": [
+      {
+        "id": "66db4a6f-2d24-4998-bb48-a9b82646e4a9",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "e8c2dbc3-14e3-4f24-9421-8860487db386",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "089272cc-bccb-4fef-b2fe-44bc56207b58",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": true,
+        "extension": null
+      },
+      {
+        "id": "83a19726-8041-45d9-b679-4c0340f2ce3b",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": true,
+        "extension": null
+      },
+      {
+        "id": "64c24647-36b8-451f-8e7a-bce1474712ff",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": true,
+        "extension": null
+      },
+      {
+        "id": "2bf86aa8-c089-4681-829b-4e3e5efcdaaa",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "7fc8ee9b-5de3-48a7-981b-debc6a2014c4",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": true,
+        "extension": null
+      },
+      {
+        "id": "fa78091c-925b-48ee-9a73-1795675fd9d7",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "8b6790bd-0ef5-4576-97b7-dbe238b0b634",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "135e2df1-6c7d-49a7-9391-06ec2f602260",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "8d2081d6-16b8-4530-80a0-dbb4896c40b1",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "01379d94-1fcb-4bc6-ae01-866d68a9dc32",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "ef8f5527-aa37-4c2b-b04e-7a5f11654eef",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "c87586a8-9847-4d7c-bc6b-e9c626ed83d7",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      },
+      {
+        "id": "5e6ee49c-03ca-4dd8-a702-dad9220cdc4c",
+        "name": "Item processing",
+        "level": "item",
+        "intentionalMix": false,
+        "extension": null
+      }
+    ],
+    "routes": [],
+    "graphs": [
+      {
+        "id": "7400c37e-9f8f-438d-9023-6df36e3853b9",
+        "nodes": [
+          {
+            "id": "c1bd56d0-20d7-4d59-bf60-d1558f2417c9",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "c36fe432-21a6-4915-969c-9164f265c010",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "1792b796-4998-40e4-9c7c-213c5f5c29b0",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.32
+            }
+          },
+          {
+            "id": "46b366bc-7fa8-4a8e-abb3-6d2a1122c3a8",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "b2be1301-365d-402b-98ea-fdab2dbc98d8",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "bcb52783-3792-4e5c-82a9-0e9864d396a3",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "19e74008-fec7-46a5-8f08-76a076a7b825",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "13486839-1ce0-46d1-b57c-7ddccce9c67d",
+            "fromNodeId": "c1bd56d0-20d7-4d59-bf60-d1558f2417c9",
+            "fromPortId": "1792b796-4998-40e4-9c7c-213c5f5c29b0",
+            "toNodeId": "46b366bc-7fa8-4a8e-abb3-6d2a1122c3a8",
+            "toPortId": "b2be1301-365d-402b-98ea-fdab2dbc98d8"
+          },
+          {
+            "id": "59ea6b00-c16e-48c3-8068-4182f89fd3a6",
+            "fromNodeId": "bcb52783-3792-4e5c-82a9-0e9864d396a3",
+            "fromPortId": "19e74008-fec7-46a5-8f08-76a076a7b825",
+            "toNodeId": "c1bd56d0-20d7-4d59-bf60-d1558f2417c9",
+            "toPortId": "c36fe432-21a6-4915-969c-9164f265c010"
+          }
+        ]
+      },
+      {
+        "id": "57d7a803-86ff-409b-87c1-4fa0d3edc769",
+        "nodes": [
+          {
+            "id": "115a3664-264e-416d-914e-4c8e98083b81",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "747d5893-6ee0-48d1-8247-fb4d81e463de",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "2faefff2-957d-4211-bb53-045ceb152cc6",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.32
+            }
+          },
+          {
+            "id": "d6734a55-7e40-4cd9-a834-f073494be992",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "6e2c5745-9e0f-40fe-8de6-88d6b6dfbaa3",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "ed1a1306-7a5b-4002-ab1d-c1dfac150df7",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "07a55a59-aae0-4a88-8d1d-728534432967",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "75cf60d2-2162-45d3-9ec2-3a9ab58acf93",
+            "fromNodeId": "115a3664-264e-416d-914e-4c8e98083b81",
+            "fromPortId": "2faefff2-957d-4211-bb53-045ceb152cc6",
+            "toNodeId": "d6734a55-7e40-4cd9-a834-f073494be992",
+            "toPortId": "6e2c5745-9e0f-40fe-8de6-88d6b6dfbaa3"
+          },
+          {
+            "id": "dcdc8c0d-0b8a-451e-9877-8adac34b7df5",
+            "fromNodeId": "ed1a1306-7a5b-4002-ab1d-c1dfac150df7",
+            "fromPortId": "07a55a59-aae0-4a88-8d1d-728534432967",
+            "toNodeId": "115a3664-264e-416d-914e-4c8e98083b81",
+            "toPortId": "747d5893-6ee0-48d1-8247-fb4d81e463de"
+          }
+        ]
+      },
+      {
+        "id": "016bcb98-727c-45df-ab41-ac9ce9e29938",
+        "nodes": [
+          {
+            "id": "29670d2a-b9a7-4d04-ad5e-8ad3d2e30f85",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "aeba710f-33fc-415a-a3ee-2f9d7c2de27a",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "5632aaf8-af64-4fd1-818c-e6bb6848f4b3",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.32
+            }
+          },
+          {
+            "id": "bb675843-53c1-4bdc-9dc5-e84ad6b5d67c",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "1fbc0b5c-7275-42c7-9e70-d573c6bc0730",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "dba27091-4559-40c1-b688-ef077a49358b",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "e10671a3-62c9-42f1-b31d-8348e2a62b61",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "c7c230cc-5971-424e-8133-2e5c4d640b69",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "d46aceb0-0db9-4e73-ac28-71518768db73",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "1d3faaca-b1af-4bfd-82ce-96abba57aed6",
+            "type": "core.mix",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "0f74c1ea-bef6-4ae5-a818-7c7c7742b9cf",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "adc7a0c4-47f4-4451-986c-d6d70c1d4cc3",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "ba8e9cb5-aeb0-4858-b671-2cb7bfcbd68d",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 180,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "8c95905a-c96c-4611-bc88-13c8e5f230de",
+            "fromNodeId": "29670d2a-b9a7-4d04-ad5e-8ad3d2e30f85",
+            "fromPortId": "5632aaf8-af64-4fd1-818c-e6bb6848f4b3",
+            "toNodeId": "bb675843-53c1-4bdc-9dc5-e84ad6b5d67c",
+            "toPortId": "1fbc0b5c-7275-42c7-9e70-d573c6bc0730"
+          },
+          {
+            "id": "c1e403e3-f783-41ac-9c20-f32570cb5e75",
+            "fromNodeId": "dba27091-4559-40c1-b688-ef077a49358b",
+            "fromPortId": "e10671a3-62c9-42f1-b31d-8348e2a62b61",
+            "toNodeId": "1d3faaca-b1af-4bfd-82ce-96abba57aed6",
+            "toPortId": "0f74c1ea-bef6-4ae5-a818-7c7c7742b9cf"
+          },
+          {
+            "id": "e398a12e-48d2-4c78-82ab-6f2d02b191cf",
+            "fromNodeId": "c7c230cc-5971-424e-8133-2e5c4d640b69",
+            "fromPortId": "d46aceb0-0db9-4e73-ac28-71518768db73",
+            "toNodeId": "1d3faaca-b1af-4bfd-82ce-96abba57aed6",
+            "toPortId": "adc7a0c4-47f4-4451-986c-d6d70c1d4cc3"
+          },
+          {
+            "id": "74a211b2-5d96-475b-8a51-d0fc4a0f2e46",
+            "fromNodeId": "1d3faaca-b1af-4bfd-82ce-96abba57aed6",
+            "fromPortId": "ba8e9cb5-aeb0-4858-b671-2cb7bfcbd68d",
+            "toNodeId": "29670d2a-b9a7-4d04-ad5e-8ad3d2e30f85",
+            "toPortId": "aeba710f-33fc-415a-a3ee-2f9d7c2de27a"
+          }
+        ]
+      },
+      {
+        "id": "70ffb0e7-5f52-463e-b092-b7c3ce1adacb",
+        "nodes": [
+          {
+            "id": "e9c86f22-29db-4f69-8b15-4eefa5fda987",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "ca905dc8-6aa2-4c75-a940-d98ed8369145",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "96adc657-2644-49d7-b430-70772467a525",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.30
+            }
+          },
+          {
+            "id": "536467e4-fd4f-4bf5-9726-853ec18c24f2",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "2af651dc-cb9c-4200-9250-c6cb8e531536",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "1b64f696-f3ea-4263-9a1c-f4c7e7ccd3ae",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "f63e2318-eb3c-4222-bc8e-bf768d4eaae5",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "f5a4b141-7458-47cd-b0b5-ab6bce813134",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "98398929-f2af-4d5e-b50d-91a67632622c",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "cdd2aa7a-e100-435b-a304-5e2cd49cdd88",
+            "type": "core.mix",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "d98f9382-5ab7-4a29-8e27-653dbcb6fe71",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "8b41e761-926f-4dcf-b65b-23259ff578ad",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "0dfb83e8-f12a-43be-ac9b-ed4d2b7ccdb9",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 180,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "bfdccb7a-6a68-4cc8-9160-30a9397afe43",
+            "fromNodeId": "e9c86f22-29db-4f69-8b15-4eefa5fda987",
+            "fromPortId": "96adc657-2644-49d7-b430-70772467a525",
+            "toNodeId": "536467e4-fd4f-4bf5-9726-853ec18c24f2",
+            "toPortId": "2af651dc-cb9c-4200-9250-c6cb8e531536"
+          },
+          {
+            "id": "abefa285-a686-4eac-a213-065b4b91f150",
+            "fromNodeId": "1b64f696-f3ea-4263-9a1c-f4c7e7ccd3ae",
+            "fromPortId": "f63e2318-eb3c-4222-bc8e-bf768d4eaae5",
+            "toNodeId": "cdd2aa7a-e100-435b-a304-5e2cd49cdd88",
+            "toPortId": "d98f9382-5ab7-4a29-8e27-653dbcb6fe71"
+          },
+          {
+            "id": "11523b11-dedf-4e22-949e-c6dbead35a07",
+            "fromNodeId": "f5a4b141-7458-47cd-b0b5-ab6bce813134",
+            "fromPortId": "98398929-f2af-4d5e-b50d-91a67632622c",
+            "toNodeId": "cdd2aa7a-e100-435b-a304-5e2cd49cdd88",
+            "toPortId": "8b41e761-926f-4dcf-b65b-23259ff578ad"
+          },
+          {
+            "id": "c6f7cd1a-34bb-4be9-a45f-d5e0731d45dd",
+            "fromNodeId": "cdd2aa7a-e100-435b-a304-5e2cd49cdd88",
+            "fromPortId": "0dfb83e8-f12a-43be-ac9b-ed4d2b7ccdb9",
+            "toNodeId": "e9c86f22-29db-4f69-8b15-4eefa5fda987",
+            "toPortId": "ca905dc8-6aa2-4c75-a940-d98ed8369145"
+          }
+        ]
+      },
+      {
+        "id": "e457e2bc-d3c4-45ec-a04c-31fadd705697",
+        "nodes": [
+          {
+            "id": "bb17ffcb-b747-4eda-b17c-aeab9fdd081c",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "5e4a13ba-8d3a-45e3-80b1-2f0b34f7ae45",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "3ddc30fb-edf6-4e36-a9c7-be6009e64fd7",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.30
+            }
+          },
+          {
+            "id": "146758d9-3a4b-4e38-9324-bf1249a0cd14",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "10743591-c2b3-449e-93b2-cfd2bdf879f8",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "daf709eb-0da1-4a36-8a93-946229f8abab",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "764b747c-3ecd-4557-b764-d4457f5664ea",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "a37530fd-2e75-4022-8623-de069421b894",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "b945069f-4f5d-4a93-9a09-a6e75c528250",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "465648bc-44fd-40ba-a5af-33532929fcc5",
+            "type": "core.mix",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "93ac0482-27f0-4521-af64-d9f5d8acf0c6",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "32d09db5-9c09-4b98-9a6b-b9b2471f7e51",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "2658225a-7a64-4f49-8b4a-6f04b4c88b76",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 180,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "7a6d90e1-eb21-40fc-bb9b-f213bbf42105",
+            "fromNodeId": "bb17ffcb-b747-4eda-b17c-aeab9fdd081c",
+            "fromPortId": "3ddc30fb-edf6-4e36-a9c7-be6009e64fd7",
+            "toNodeId": "146758d9-3a4b-4e38-9324-bf1249a0cd14",
+            "toPortId": "10743591-c2b3-449e-93b2-cfd2bdf879f8"
+          },
+          {
+            "id": "98349588-cfa1-4589-89a1-146e7816a596",
+            "fromNodeId": "daf709eb-0da1-4a36-8a93-946229f8abab",
+            "fromPortId": "764b747c-3ecd-4557-b764-d4457f5664ea",
+            "toNodeId": "465648bc-44fd-40ba-a5af-33532929fcc5",
+            "toPortId": "93ac0482-27f0-4521-af64-d9f5d8acf0c6"
+          },
+          {
+            "id": "4fe8bb82-0b48-49a4-a309-b150887766dc",
+            "fromNodeId": "a37530fd-2e75-4022-8623-de069421b894",
+            "fromPortId": "b945069f-4f5d-4a93-9a09-a6e75c528250",
+            "toNodeId": "465648bc-44fd-40ba-a5af-33532929fcc5",
+            "toPortId": "32d09db5-9c09-4b98-9a6b-b9b2471f7e51"
+          },
+          {
+            "id": "e650b339-c826-4fa8-9b5e-ffc421182901",
+            "fromNodeId": "465648bc-44fd-40ba-a5af-33532929fcc5",
+            "fromPortId": "2658225a-7a64-4f49-8b4a-6f04b4c88b76",
+            "toNodeId": "bb17ffcb-b747-4eda-b17c-aeab9fdd081c",
+            "toPortId": "5e4a13ba-8d3a-45e3-80b1-2f0b34f7ae45"
+          }
+        ]
+      },
+      {
+        "id": "da5298fe-038a-4a8a-8f64-3f8ad86abfec",
+        "nodes": [
+          {
+            "id": "60c08f22-e1ab-4618-ade7-0ba772c63e99",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "f002bcb9-b083-466e-a188-d0b086c60951",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "dc4344e1-79c4-4aba-8765-9eaac24946c3",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.32
+            }
+          },
+          {
+            "id": "905f1ca1-6b6f-4a3b-903f-d2feb97af56a",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "d8f9bd3d-b144-47c5-ab41-fc19926c15d0",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "076712d9-58d1-44ab-9aa1-999792b47671",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "33881bf4-2062-4b65-8635-852aac32aff1",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "dcce1a83-c152-4dab-b9b8-e71cf2524c17",
+            "fromNodeId": "60c08f22-e1ab-4618-ade7-0ba772c63e99",
+            "fromPortId": "dc4344e1-79c4-4aba-8765-9eaac24946c3",
+            "toNodeId": "905f1ca1-6b6f-4a3b-903f-d2feb97af56a",
+            "toPortId": "d8f9bd3d-b144-47c5-ab41-fc19926c15d0"
+          },
+          {
+            "id": "f1cd47de-44a9-48a3-bf04-bf3ef2dc0218",
+            "fromNodeId": "076712d9-58d1-44ab-9aa1-999792b47671",
+            "fromPortId": "33881bf4-2062-4b65-8635-852aac32aff1",
+            "toNodeId": "60c08f22-e1ab-4618-ade7-0ba772c63e99",
+            "toPortId": "f002bcb9-b083-466e-a188-d0b086c60951"
+          }
+        ]
+      },
+      {
+        "id": "c3e7fb3a-b9af-411c-8cec-e48c61695454",
+        "nodes": [
+          {
+            "id": "f6b6e522-60a9-466a-a3f9-58b98f6e7276",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "d6fd4ae2-5a80-4cca-af82-c80ab7c085fe",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "ad3ea131-d7e4-4ba2-82d7-168959b04d56",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.32
+            }
+          },
+          {
+            "id": "c5229285-1975-4401-8f7b-4b13b5913fd8",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "aadc7dca-88db-4e14-875f-64d1973929ed",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "546abfa6-7542-4e22-96e6-51c7c512e528",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "2b8833b7-e098-44f0-93fb-0905df293d1f",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "593de6c8-aca0-4554-ac32-a6e2fe222081",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "3d153657-0d39-4a5f-be2a-c5b3130a5c97",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "402275da-6cd7-4694-9a4f-7d832da0aa50",
+            "type": "core.mix",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "6ff6cbf1-bee8-471b-9922-46951490fdfe",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "e27f7f1a-d655-40a1-848f-4a2c73ef6c2a",
+                "role": "slot",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "85303e4d-3f06-4324-9b01-e8bf850d6ad8",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 180,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "dda4604d-ba1d-48f9-8338-a71ccfe39d2c",
+            "fromNodeId": "f6b6e522-60a9-466a-a3f9-58b98f6e7276",
+            "fromPortId": "ad3ea131-d7e4-4ba2-82d7-168959b04d56",
+            "toNodeId": "c5229285-1975-4401-8f7b-4b13b5913fd8",
+            "toPortId": "aadc7dca-88db-4e14-875f-64d1973929ed"
+          },
+          {
+            "id": "b6329aae-c0f2-4a71-bb81-17748f581ee9",
+            "fromNodeId": "546abfa6-7542-4e22-96e6-51c7c512e528",
+            "fromPortId": "2b8833b7-e098-44f0-93fb-0905df293d1f",
+            "toNodeId": "402275da-6cd7-4694-9a4f-7d832da0aa50",
+            "toPortId": "6ff6cbf1-bee8-471b-9922-46951490fdfe"
+          },
+          {
+            "id": "af05b3ac-e387-4124-9045-8e51ca44f28c",
+            "fromNodeId": "593de6c8-aca0-4554-ac32-a6e2fe222081",
+            "fromPortId": "3d153657-0d39-4a5f-be2a-c5b3130a5c97",
+            "toNodeId": "402275da-6cd7-4694-9a4f-7d832da0aa50",
+            "toPortId": "e27f7f1a-d655-40a1-848f-4a2c73ef6c2a"
+          },
+          {
+            "id": "f00417ec-3ab0-4a7e-aba9-1749ec592b9a",
+            "fromNodeId": "402275da-6cd7-4694-9a4f-7d832da0aa50",
+            "fromPortId": "85303e4d-3f06-4324-9b01-e8bf850d6ad8",
+            "toNodeId": "f6b6e522-60a9-466a-a3f9-58b98f6e7276",
+            "toPortId": "d6fd4ae2-5a80-4cca-af82-c80ab7c085fe"
+          }
+        ]
+      },
+      {
+        "id": "2e646097-b76e-48fa-a629-ce2c9fcee700",
+        "nodes": [
+          {
+            "id": "821533c2-4a1a-4692-9285-3697b1766ce9",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "f9394b0e-0139-4784-8459-d9304b2530f5",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "2fc69b1a-0623-44a0-9000-a8bd3ffe5fb6",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.34
+            }
+          },
+          {
+            "id": "d1a928dd-669c-4a14-83ef-e647615b0e7d",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "78a33f84-6846-4645-9fdd-b9ad5d05fa3c",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "3b1010a2-833c-4ff6-aefe-a8d919fded80",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "08e7ef60-3061-407d-9481-2a2b38eb24fd",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "f5aa8ef2-3e24-4ac5-89ab-48fe71bcadcc",
+            "fromNodeId": "821533c2-4a1a-4692-9285-3697b1766ce9",
+            "fromPortId": "2fc69b1a-0623-44a0-9000-a8bd3ffe5fb6",
+            "toNodeId": "d1a928dd-669c-4a14-83ef-e647615b0e7d",
+            "toPortId": "78a33f84-6846-4645-9fdd-b9ad5d05fa3c"
+          },
+          {
+            "id": "5ccea655-71c8-4225-9f67-45003bf3a797",
+            "fromNodeId": "3b1010a2-833c-4ff6-aefe-a8d919fded80",
+            "fromPortId": "08e7ef60-3061-407d-9481-2a2b38eb24fd",
+            "toNodeId": "821533c2-4a1a-4692-9285-3697b1766ce9",
+            "toPortId": "f9394b0e-0139-4784-8459-d9304b2530f5"
+          }
+        ]
+      },
+      {
+        "id": "a031199b-b68d-4cb0-85b7-02aa5abdeb33",
+        "nodes": [
+          {
+            "id": "30b28c6f-2def-4274-bf34-43da6421b57a",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "a944454c-bfcd-40ea-a65d-e88f21ba751f",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "9e6a9b2b-33bb-4cc6-bf27-6988bf5ce683",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.34
+            }
+          },
+          {
+            "id": "1d2e7bf5-ea34-4915-a2b9-81d5b007ae70",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "75bf54bc-8e18-4af5-bdc3-54fffc72d0c1",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "d4728ae9-1975-40bf-a718-c16595065eb4",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "bb057b8d-5315-42f9-827a-01eb9e859911",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "f0dcc3f0-bf41-43a7-8bae-379fa617a39c",
+            "fromNodeId": "30b28c6f-2def-4274-bf34-43da6421b57a",
+            "fromPortId": "9e6a9b2b-33bb-4cc6-bf27-6988bf5ce683",
+            "toNodeId": "1d2e7bf5-ea34-4915-a2b9-81d5b007ae70",
+            "toPortId": "75bf54bc-8e18-4af5-bdc3-54fffc72d0c1"
+          },
+          {
+            "id": "7f8d12ad-2c93-49a4-b0fc-25f308582e35",
+            "fromNodeId": "d4728ae9-1975-40bf-a718-c16595065eb4",
+            "fromPortId": "bb057b8d-5315-42f9-827a-01eb9e859911",
+            "toNodeId": "30b28c6f-2def-4274-bf34-43da6421b57a",
+            "toPortId": "a944454c-bfcd-40ea-a65d-e88f21ba751f"
+          }
+        ]
+      },
+      {
+        "id": "3dc19b63-bd34-48cd-b14d-4207b44d3958",
+        "nodes": [
+          {
+            "id": "a5cc9a4d-e591-40e3-8e15-4cec28798ec3",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "1ffad881-e736-4136-8ed1-9da5dbec3722",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "3b4c1a46-6c3e-4583-855f-ab056c85a2a5",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.45
+            }
+          },
+          {
+            "id": "f628b3bb-b0c3-420e-a8bc-ea50e73c42f9",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "a031149b-b655-4241-a2f1-eac3d07e8ee9",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "69c9f8a8-4440-4572-b3be-ccfc5a606e4f",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "fa326592-505c-45a0-8a69-e23d1f223cb4",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "4a0de3a3-71cd-4061-b877-efa0ef29e7d6",
+            "fromNodeId": "a5cc9a4d-e591-40e3-8e15-4cec28798ec3",
+            "fromPortId": "3b4c1a46-6c3e-4583-855f-ab056c85a2a5",
+            "toNodeId": "f628b3bb-b0c3-420e-a8bc-ea50e73c42f9",
+            "toPortId": "a031149b-b655-4241-a2f1-eac3d07e8ee9"
+          },
+          {
+            "id": "fc1cddf8-e1a3-4ee7-8333-61f1f3829d8f",
+            "fromNodeId": "69c9f8a8-4440-4572-b3be-ccfc5a606e4f",
+            "fromPortId": "fa326592-505c-45a0-8a69-e23d1f223cb4",
+            "toNodeId": "a5cc9a4d-e591-40e3-8e15-4cec28798ec3",
+            "toPortId": "1ffad881-e736-4136-8ed1-9da5dbec3722"
+          }
+        ]
+      },
+      {
+        "id": "90d529bc-f006-40b6-9a58-49d2044e2c1a",
+        "nodes": [
+          {
+            "id": "dae6e992-fea4-4906-add0-2938a27cc32a",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "423de1bb-4b5a-4d0a-9335-dadf9505aae0",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "31fdceb5-bd91-4fae-9dd2-d8e18d860939",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.45
+            }
+          },
+          {
+            "id": "cb65cf20-79af-4973-bea9-4f628a0081c6",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "aff1b7c0-84e0-495e-8301-92e5f2cfe76e",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "5b878c57-7ac0-4ba6-ba3b-55105fe73591",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "04b96603-69ab-49f2-b8ee-329d4e37f0dc",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "563fc621-0707-4a32-b31e-bf7a1d1129b8",
+            "fromNodeId": "dae6e992-fea4-4906-add0-2938a27cc32a",
+            "fromPortId": "31fdceb5-bd91-4fae-9dd2-d8e18d860939",
+            "toNodeId": "cb65cf20-79af-4973-bea9-4f628a0081c6",
+            "toPortId": "aff1b7c0-84e0-495e-8301-92e5f2cfe76e"
+          },
+          {
+            "id": "1380737d-3a8e-451e-86bc-a145c0cec5c2",
+            "fromNodeId": "5b878c57-7ac0-4ba6-ba3b-55105fe73591",
+            "fromPortId": "04b96603-69ab-49f2-b8ee-329d4e37f0dc",
+            "toNodeId": "dae6e992-fea4-4906-add0-2938a27cc32a",
+            "toPortId": "423de1bb-4b5a-4d0a-9335-dadf9505aae0"
+          }
+        ]
+      },
+      {
+        "id": "42f80bb0-90be-4aff-a34f-3d7409746028",
+        "nodes": [
+          {
+            "id": "77ee814c-2910-4874-a088-ad7f8eed1719",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "a272ed05-cffc-4777-8114-2e2771e585d0",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "fc4319c1-77e7-455e-a07f-00fb6a2e808e",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.90
+            }
+          },
+          {
+            "id": "4b03968d-ac69-4520-b1fd-5cb61606c299",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "c0b643b1-38ec-4b08-a8fa-016b4b947c71",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "4ca85816-e461-43c0-a964-9670ede29c0e",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "04ca6e63-fbef-45d6-bde6-c11a7e18bc26",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 120
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "d3cac422-8e2d-4a04-86ea-057137735d53",
+            "fromNodeId": "77ee814c-2910-4874-a088-ad7f8eed1719",
+            "fromPortId": "fc4319c1-77e7-455e-a07f-00fb6a2e808e",
+            "toNodeId": "4b03968d-ac69-4520-b1fd-5cb61606c299",
+            "toPortId": "c0b643b1-38ec-4b08-a8fa-016b4b947c71"
+          },
+          {
+            "id": "193752d5-6bc9-4d3c-9c99-f30ac6050238",
+            "fromNodeId": "4ca85816-e461-43c0-a964-9670ede29c0e",
+            "fromPortId": "04ca6e63-fbef-45d6-bde6-c11a7e18bc26",
+            "toNodeId": "77ee814c-2910-4874-a088-ad7f8eed1719",
+            "toPortId": "a272ed05-cffc-4777-8114-2e2771e585d0"
+          }
+        ]
+      },
+      {
+        "id": "e11ad84f-979d-4fc0-a7e2-0b556077be69",
+        "nodes": [
+          {
+            "id": "7e7674db-cfbf-439c-a4f1-94f8226a993b",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "1ea141ec-8b81-4cfc-a68c-0d6c761f259d",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "e16ebf0a-7fc3-4fff-8d34-eab01e9cab76",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.48
+            }
+          },
+          {
+            "id": "0bf0b788-8535-4829-b284-5d5c12114361",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "3994e412-a8f8-47d1-9d06-53f0faa66660",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "10cf18a7-4116-41b3-84a9-a23eb2ba83e3",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "beb928ac-70a3-4f7e-83ee-c6ef5a3088b8",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "8b97c10e-d42a-480e-82d0-2dc4fe37f10f",
+            "fromNodeId": "7e7674db-cfbf-439c-a4f1-94f8226a993b",
+            "fromPortId": "e16ebf0a-7fc3-4fff-8d34-eab01e9cab76",
+            "toNodeId": "0bf0b788-8535-4829-b284-5d5c12114361",
+            "toPortId": "3994e412-a8f8-47d1-9d06-53f0faa66660"
+          },
+          {
+            "id": "7776a3ed-aae7-4361-9f0a-3ff684e05a9b",
+            "fromNodeId": "10cf18a7-4116-41b3-84a9-a23eb2ba83e3",
+            "fromPortId": "beb928ac-70a3-4f7e-83ee-c6ef5a3088b8",
+            "toNodeId": "7e7674db-cfbf-439c-a4f1-94f8226a993b",
+            "toPortId": "1ea141ec-8b81-4cfc-a68c-0d6c761f259d"
+          }
+        ]
+      },
+      {
+        "id": "aeb0f1ff-b584-4fc6-bbb7-e9f3d73cdee5",
+        "nodes": [
+          {
+            "id": "7e509dd4-06af-4d9b-aef4-1ef3a1345186",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "c5aa54d7-13da-4a49-8e88-06f74049c1af",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "9ac59b7c-40ba-49ab-a094-49652e4d991e",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.36
+            }
+          },
+          {
+            "id": "882ded8a-b4ab-4676-b36c-ffb63f377e1d",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "62632b27-bbbf-484f-85be-e2ca288639aa",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "03ee3730-33fb-40ab-b800-014cf27259ab",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "d76c788e-b8c5-48e5-a546-d95d8d16ce4b",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "14843ec4-d3bd-4395-9a21-ef412b9bf25a",
+            "fromNodeId": "7e509dd4-06af-4d9b-aef4-1ef3a1345186",
+            "fromPortId": "9ac59b7c-40ba-49ab-a094-49652e4d991e",
+            "toNodeId": "882ded8a-b4ab-4676-b36c-ffb63f377e1d",
+            "toPortId": "62632b27-bbbf-484f-85be-e2ca288639aa"
+          },
+          {
+            "id": "7af40bd5-998c-4de6-b603-e4da143692d4",
+            "fromNodeId": "03ee3730-33fb-40ab-b800-014cf27259ab",
+            "fromPortId": "d76c788e-b8c5-48e5-a546-d95d8d16ce4b",
+            "toNodeId": "7e509dd4-06af-4d9b-aef4-1ef3a1345186",
+            "toPortId": "c5aa54d7-13da-4a49-8e88-06f74049c1af"
+          }
+        ]
+      },
+      {
+        "id": "60737b40-d1d5-4e10-87eb-232db4265b91",
+        "nodes": [
+          {
+            "id": "11b728eb-a63a-42a2-a882-3e8d47bd3177",
+            "type": "core.gain",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "73729257-0b3e-41bb-883c-ccd447da3322",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              },
+              {
+                "id": "c7a9a454-975a-4427-b49b-8fa05a017552",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 360,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {
+              "linearAmplitude": 0.45
+            }
+          },
+          {
+            "id": "d4f1c3f4-3552-4c26-96a6-6cadef038514",
+            "type": "core.output",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "90b10e3a-0c7e-4696-bf52-339465c41901",
+                "role": "in",
+                "direction": "input",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "single",
+                "required": true
+              }
+            ],
+            "position": {
+              "x": 540,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          },
+          {
+            "id": "e883dea5-bb66-4a07-9f21-526baa4186e6",
+            "type": "core.source",
+            "stateVersion": 1,
+            "ports": [
+              {
+                "id": "2370c82e-943a-409d-8575-14d6a5493390",
+                "role": "out",
+                "direction": "output",
+                "signalClass": "audio",
+                "use": "audible",
+                "layout": "stereo-lr",
+                "ratePolicy": "host",
+                "cardinality": "fanOut",
+                "required": false
+              }
+            ],
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "extension": null,
+            "parameters": {}
+          }
+        ],
+        "connections": [
+          {
+            "id": "8b7f8894-6008-4a26-85a5-69f78bfd1d95",
+            "fromNodeId": "11b728eb-a63a-42a2-a882-3e8d47bd3177",
+            "fromPortId": "c7a9a454-975a-4427-b49b-8fa05a017552",
+            "toNodeId": "d4f1c3f4-3552-4c26-96a6-6cadef038514",
+            "toPortId": "90b10e3a-0c7e-4696-bf52-339465c41901"
+          },
+          {
+            "id": "c02318bc-188e-41b2-833f-53c9d31c6d3b",
+            "fromNodeId": "e883dea5-bb66-4a07-9f21-526baa4186e6",
+            "fromPortId": "2370c82e-943a-409d-8575-14d6a5493390",
+            "toNodeId": "11b728eb-a63a-42a2-a882-3e8d47bd3177",
+            "toPortId": "73729257-0b3e-41bb-883c-ccd447da3322"
+          }
+        ]
+      }
+    ],
+    "graphAttachments": [
+      {
+        "id": "ca631ae3-9353-428f-abf0-47ab0a07c08c",
+        "graphId": "7400c37e-9f8f-438d-9023-6df36e3853b9",
+        "contextId": "66db4a6f-2d24-4998-bb48-a9b82646e4a9",
+        "outputNodeId": "46b366bc-7fa8-4a8e-abb3-6d2a1122c3a8",
+        "sources": [
+          {
+            "id": "2057cbef-b069-4fdb-8b4d-51fa908441c7",
+            "nodeId": "bcb52783-3792-4e5c-82a9-0e9864d396a3",
+            "placementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+            "partId": "7caba086-93e1-420e-ace7-98f902058ed0",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "bc658f14-4715-4f8f-87cc-14e01301c563",
+        "graphId": "57d7a803-86ff-409b-87c1-4fa0d3edc769",
+        "contextId": "e8c2dbc3-14e3-4f24-9421-8860487db386",
+        "outputNodeId": "d6734a55-7e40-4cd9-a834-f073494be992",
+        "sources": [
+          {
+            "id": "348ef092-50b1-4053-b142-fe503e7f99c7",
+            "nodeId": "ed1a1306-7a5b-4002-ab1d-c1dfac150df7",
+            "placementId": "9ea5f6eb-f027-493c-b53f-31058b321064",
+            "partId": "e4a4b13e-03cc-44b0-b35c-7b2bc023d6eb",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "013424b3-68f5-4a5c-9626-d792ef766323",
+        "graphId": "016bcb98-727c-45df-ab41-ac9ce9e29938",
+        "contextId": "089272cc-bccb-4fef-b2fe-44bc56207b58",
+        "outputNodeId": "bb675843-53c1-4bdc-9dc5-e84ad6b5d67c",
+        "sources": [
+          {
+            "id": "6a1f1e87-b0d6-4f06-a699-07a74b22e7fe",
+            "nodeId": "dba27091-4559-40c1-b688-ef077a49358b",
+            "placementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+            "partId": "43a72b78-7a3f-4653-8b89-808e9f77a3fb",
+            "boundary": "part.pre-item"
+          },
+          {
+            "id": "5a16bc8b-acc7-4951-9626-9bbf201a9c95",
+            "nodeId": "c7c230cc-5971-424e-8133-2e5c4d640b69",
+            "placementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+            "partId": "e6a3231b-3741-4763-9d9f-e91fe464a25a",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "7b6f3b74-89eb-4d37-9852-407f389e217a",
+        "graphId": "70ffb0e7-5f52-463e-b092-b7c3ce1adacb",
+        "contextId": "83a19726-8041-45d9-b679-4c0340f2ce3b",
+        "outputNodeId": "536467e4-fd4f-4bf5-9726-853ec18c24f2",
+        "sources": [
+          {
+            "id": "f90c076c-f3b5-4194-8df1-de5ab9e32d02",
+            "nodeId": "1b64f696-f3ea-4263-9a1c-f4c7e7ccd3ae",
+            "placementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+            "partId": "ef6c3c7c-adf4-4a2a-8728-ca4e0e96256e",
+            "boundary": "part.pre-item"
+          },
+          {
+            "id": "62af5b63-ceb7-4624-9cb2-be42ad0e5442",
+            "nodeId": "f5a4b141-7458-47cd-b0b5-ab6bce813134",
+            "placementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+            "partId": "aec7cb0f-f0a1-4713-a5b0-49437f72bd55",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "3e0d83d4-0e6a-4d78-98ce-e857226e6367",
+        "graphId": "e457e2bc-d3c4-45ec-a04c-31fadd705697",
+        "contextId": "64c24647-36b8-451f-8e7a-bce1474712ff",
+        "outputNodeId": "146758d9-3a4b-4e38-9324-bf1249a0cd14",
+        "sources": [
+          {
+            "id": "f88530ea-55dd-44aa-8f50-5a17256d1795",
+            "nodeId": "daf709eb-0da1-4a36-8a93-946229f8abab",
+            "placementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+            "partId": "6bfc95f9-9b3c-467d-b257-2710eed856c3",
+            "boundary": "part.pre-item"
+          },
+          {
+            "id": "7afcca3d-e409-4d9e-bbaa-b626644a9716",
+            "nodeId": "a37530fd-2e75-4022-8623-de069421b894",
+            "placementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+            "partId": "b6203f08-56c3-47d0-92a5-24da117fded4",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "f2c397dd-f3db-4fae-988d-ab2d70122335",
+        "graphId": "da5298fe-038a-4a8a-8f64-3f8ad86abfec",
+        "contextId": "2bf86aa8-c089-4681-829b-4e3e5efcdaaa",
+        "outputNodeId": "905f1ca1-6b6f-4a3b-903f-d2feb97af56a",
+        "sources": [
+          {
+            "id": "65208a23-7fc4-4692-acb8-f0fc9097de4f",
+            "nodeId": "076712d9-58d1-44ab-9aa1-999792b47671",
+            "placementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+            "partId": "ec611dcb-6b7f-4c4f-806b-c01f2b153b4e",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "0a465cdf-a082-4c1d-9a97-6d974ed9aab6",
+        "graphId": "c3e7fb3a-b9af-411c-8cec-e48c61695454",
+        "contextId": "7fc8ee9b-5de3-48a7-981b-debc6a2014c4",
+        "outputNodeId": "c5229285-1975-4401-8f7b-4b13b5913fd8",
+        "sources": [
+          {
+            "id": "2ea55438-b92e-405e-8fb5-8fe665dbdbda",
+            "nodeId": "546abfa6-7542-4e22-96e6-51c7c512e528",
+            "placementId": "22935998-2b36-4f94-aeed-392d30e8805d",
+            "partId": "16a61dfc-63eb-40fa-855e-6c46dc44bd31",
+            "boundary": "part.pre-item"
+          },
+          {
+            "id": "d6be82a1-07a6-4b0e-8e89-49cc9ae5de58",
+            "nodeId": "593de6c8-aca0-4554-ac32-a6e2fe222081",
+            "placementId": "22935998-2b36-4f94-aeed-392d30e8805d",
+            "partId": "b3bbd3c7-4cf1-46a4-9f21-198657f45236",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "e4c08289-1667-4d64-937b-02080ae19ff8",
+        "graphId": "2e646097-b76e-48fa-a629-ce2c9fcee700",
+        "contextId": "fa78091c-925b-48ee-9a73-1795675fd9d7",
+        "outputNodeId": "d1a928dd-669c-4a14-83ef-e647615b0e7d",
+        "sources": [
+          {
+            "id": "75386fe1-67de-4a3a-a3a9-1a775f10f787",
+            "nodeId": "3b1010a2-833c-4ff6-aefe-a8d919fded80",
+            "placementId": "2cd9b151-0963-4aca-b8a4-366b49d2af44",
+            "partId": "41022d95-87c3-4d72-8a42-5a043487e073",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "f35a65ad-734e-4c93-abd8-b23fb9576c62",
+        "graphId": "a031199b-b68d-4cb0-85b7-02aa5abdeb33",
+        "contextId": "8b6790bd-0ef5-4576-97b7-dbe238b0b634",
+        "outputNodeId": "1d2e7bf5-ea34-4915-a2b9-81d5b007ae70",
+        "sources": [
+          {
+            "id": "813e3464-c8d2-469c-97ed-0860b6df0a50",
+            "nodeId": "d4728ae9-1975-40bf-a718-c16595065eb4",
+            "placementId": "bbff9336-0932-4e2f-adfe-3891606de77c",
+            "partId": "d4f38867-2d30-4afe-9c24-3c2d8f0b59ea",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "95f82364-58a0-41e2-93c5-e2a9083f8062",
+        "graphId": "3dc19b63-bd34-48cd-b14d-4207b44d3958",
+        "contextId": "135e2df1-6c7d-49a7-9391-06ec2f602260",
+        "outputNodeId": "f628b3bb-b0c3-420e-a8bc-ea50e73c42f9",
+        "sources": [
+          {
+            "id": "4d897fb8-e616-4c60-91d6-c40d339ccd2c",
+            "nodeId": "69c9f8a8-4440-4572-b3be-ccfc5a606e4f",
+            "placementId": "bd4f5b8a-e998-449c-a869-5a9be846ece9",
+            "partId": "87e4a691-52da-40a3-a0da-71fcc22c8ac2",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "eac416f4-c79b-443d-967a-eb1d76e50048",
+        "graphId": "90d529bc-f006-40b6-9a58-49d2044e2c1a",
+        "contextId": "8d2081d6-16b8-4530-80a0-dbb4896c40b1",
+        "outputNodeId": "cb65cf20-79af-4973-bea9-4f628a0081c6",
+        "sources": [
+          {
+            "id": "d71360ba-6779-49fd-a4d8-cdd802dfaa6c",
+            "nodeId": "5b878c57-7ac0-4ba6-ba3b-55105fe73591",
+            "placementId": "048a572d-8003-4b6b-8b94-280ce06cdfd8",
+            "partId": "25c379fd-3895-40cd-87b8-a8ed4f13054f",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "b87e170a-e752-4ed5-b7d8-c52b92bbc44c",
+        "graphId": "42f80bb0-90be-4aff-a34f-3d7409746028",
+        "contextId": "01379d94-1fcb-4bc6-ae01-866d68a9dc32",
+        "outputNodeId": "4b03968d-ac69-4520-b1fd-5cb61606c299",
+        "sources": [
+          {
+            "id": "a90da06a-5825-4986-8893-1fad66af17a1",
+            "nodeId": "4ca85816-e461-43c0-a964-9670ede29c0e",
+            "placementId": "fafc9448-193b-415c-832c-2643ec5a3585",
+            "partId": "2035031a-0661-44ec-9704-395b057aa72c",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "5baea732-4c76-43ed-a4ac-d8138997ade3",
+        "graphId": "e11ad84f-979d-4fc0-a7e2-0b556077be69",
+        "contextId": "ef8f5527-aa37-4c2b-b04e-7a5f11654eef",
+        "outputNodeId": "0bf0b788-8535-4829-b284-5d5c12114361",
+        "sources": [
+          {
+            "id": "f2f4f490-3498-4a89-aa30-a0a84726eca3",
+            "nodeId": "10cf18a7-4116-41b3-84a9-a23eb2ba83e3",
+            "placementId": "6b3eee77-ea84-423f-b551-fc776e56622c",
+            "partId": "943c34c8-d812-4209-a351-620c0ec5b4d2",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "af4221c3-dcc6-4ee2-871d-3b9c74745f74",
+        "graphId": "aeb0f1ff-b584-4fc6-bbb7-e9f3d73cdee5",
+        "contextId": "c87586a8-9847-4d7c-bc6b-e9c626ed83d7",
+        "outputNodeId": "882ded8a-b4ab-4676-b36c-ffb63f377e1d",
+        "sources": [
+          {
+            "id": "52d65bb1-1d93-4656-9ec0-51725fd06acc",
+            "nodeId": "03ee3730-33fb-40ab-b800-014cf27259ab",
+            "placementId": "b360546c-9dd5-4333-8e5d-c4c6429a8f57",
+            "partId": "83da19a4-d0fb-452b-ab48-fea1a51099a8",
+            "boundary": "part.pre-item"
+          }
+        ]
+      },
+      {
+        "id": "6a36671b-8594-4cf3-bf1b-14b49224831f",
+        "graphId": "60737b40-d1d5-4e10-87eb-232db4265b91",
+        "contextId": "5e6ee49c-03ca-4dd8-a702-dad9220cdc4c",
+        "outputNodeId": "d4f1c3f4-3552-4c26-96a6-6cadef038514",
+        "sources": [
+          {
+            "id": "f9ec7298-c648-457f-a2e8-85c222f18378",
+            "nodeId": "e883dea5-bb66-4a07-9f21-526baa4186e6",
+            "placementId": "c03be41d-4ce2-4e4e-a45f-a75543096de1",
+            "partId": "2f8b1de2-487f-4bac-8c9a-ad9c8891e8c9",
+            "boundary": "part.pre-item"
+          }
+        ]
+      }
+    ],
+    "arrangementClips": [
+      {
+        "id": "61b63951-6149-43d6-b7a8-a8901938ab88",
+        "sourcePlacementId": "bd4f5b8a-e998-449c-a869-5a9be846ece9",
+        "position": 0,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "23386d17-a060-47ce-81cf-4217601f2bb5",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 7680000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "b9eaf59f-d703-4c07-a3fc-30e124e6b828",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 7680000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "00c89a41-87f7-423f-8a7a-0bd6dcf7fc02",
+        "sourcePlacementId": "b360546c-9dd5-4333-8e5d-c4c6429a8f57",
+        "position": 7680000,
+        "lane": 8,
+        "repeats": 1
+      },
+      {
+        "id": "2987297c-545c-435d-b26a-6e805148850c",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 15360000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "1b3ea2db-178b-4874-9c6f-21c38861b4f9",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 19200000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "0c2c09ee-6fc2-4895-9eee-0e6c9511ec43",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 23040000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "20cfb2cc-3c56-448e-9eb3-ebfa4479eade",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 26880000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "7afd15ab-5316-4f73-8722-67651a8a904f",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 30720000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "4a2f217f-964a-4d39-b0bf-6b5fc9f668ad",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 34560000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "ea5a94ae-1663-4470-8f85-c89f10e92289",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 38400000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "4796ccb0-e853-4036-b6ff-43b4cb1751cc",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 42240000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "9b8d83ec-63e1-411b-b9ce-cd93100a371b",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 15360000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "61720ad4-8704-4511-8a01-c97eead731bc",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 23040000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "19e98f93-a711-4397-9235-1ac4df89eb18",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 30720000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "6b991097-9bd3-4385-afde-5c1950b38ad2",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 38400000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "f20ff002-4274-43c6-a9de-9863e9cebdbe",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 15360000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "6a5a834a-e0c5-466f-b5d3-9652cb29026f",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 23040000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "1bffa7a4-184b-41b1-8b1f-3e3081622b68",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 30720000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "b6ad8181-708b-48c6-a031-c8f078fb6869",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 38400000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "ca7710d9-cb1d-4903-abe3-1ba5bee68983",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 15360000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "a1f2c20e-7202-491f-8f61-b9a48c805e7f",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 23040000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "547e3180-10ff-4ab3-84c2-0b241ef789e8",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 30720000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "75b5a5cf-bc0f-463c-91ce-06ffe6323189",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 38400000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "bfdc44da-9f4f-4b81-9926-c0b9bd04b199",
+        "sourcePlacementId": "2cd9b151-0963-4aca-b8a4-366b49d2af44",
+        "position": 15360000,
+        "lane": 5,
+        "repeats": 1
+      },
+      {
+        "id": "be84d35f-f076-4aa5-a504-4451ca3c14cd",
+        "sourcePlacementId": "2cd9b151-0963-4aca-b8a4-366b49d2af44",
+        "position": 30720000,
+        "lane": 5,
+        "repeats": 1
+      },
+      {
+        "id": "f8fb1244-807d-4ecb-951c-aafd50ebff0e",
+        "sourcePlacementId": "bd4f5b8a-e998-449c-a869-5a9be846ece9",
+        "position": 15360000,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "6373fd89-67ac-4141-a432-eecd1db131f0",
+        "sourcePlacementId": "bd4f5b8a-e998-449c-a869-5a9be846ece9",
+        "position": 30720000,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "0bf77b51-922d-492d-8714-4c40d2699ffd",
+        "sourcePlacementId": "fafc9448-193b-415c-832c-2643ec5a3585",
+        "position": 30720000,
+        "lane": 7,
+        "repeats": 1
+      },
+      {
+        "id": "ba6bbc30-8000-4235-b12f-30effa8bed1b",
+        "sourcePlacementId": "22935998-2b36-4f94-aeed-392d30e8805d",
+        "position": 42240000,
+        "lane": 4,
+        "repeats": 1
+      },
+      {
+        "id": "712623e8-b6a2-442d-9ace-397aa8212de9",
+        "sourcePlacementId": "048a572d-8003-4b6b-8b94-280ce06cdfd8",
+        "position": 46080000,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "1c66801a-6d0b-4af3-af64-d47900e85489",
+        "sourcePlacementId": "6b3eee77-ea84-423f-b551-fc776e56622c",
+        "position": 46080000,
+        "lane": 8,
+        "repeats": 1
+      },
+      {
+        "id": "a1502b5c-d7d6-4ad1-9ed7-74cba927fd3c",
+        "sourcePlacementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+        "position": 46080000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "1483bcbb-731b-4aa0-8241-3d01d7b2e8d9",
+        "sourcePlacementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+        "position": 53760000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "2baea8ec-eb26-4ca5-838d-6d7394727145",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 46080000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "8c33b344-5ec7-4bd9-8ce1-87d55aff97ee",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 53760000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "4d4cba40-9c05-48c0-9d93-272ac574c6b4",
+        "sourcePlacementId": "b360546c-9dd5-4333-8e5d-c4c6429a8f57",
+        "position": 53760000,
+        "lane": 4,
+        "repeats": 1
+      },
+      {
+        "id": "61027cc7-bf00-40e8-9c6e-c9253a6ce05a",
+        "sourcePlacementId": "9ea5f6eb-f027-493c-b53f-31058b321064",
+        "position": 61440000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "df51204c-7dd8-4258-8dda-e080ea51904f",
+        "sourcePlacementId": "9ea5f6eb-f027-493c-b53f-31058b321064",
+        "position": 69120000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "bf4f3022-d0fd-4d55-aa68-79157ba6a5b8",
+        "sourcePlacementId": "9ea5f6eb-f027-493c-b53f-31058b321064",
+        "position": 76800000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "e838a66b-c7b2-468a-90c6-7a8395ac8d1f",
+        "sourcePlacementId": "9ea5f6eb-f027-493c-b53f-31058b321064",
+        "position": 84480000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "b26b832a-4e6a-41d9-becf-ab8daa37f81e",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 61440000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "decc9448-f6e9-4b12-ba9b-aa67a7ffd5bd",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 69120000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "9e75b34b-9f3c-4bd2-8837-403125ee51f0",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 76800000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "76d62df9-9efd-4513-95dc-a84e40fe5cc0",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 84480000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "81a8376e-fb65-464a-99e2-00f425456026",
+        "sourcePlacementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+        "position": 61440000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "05cd8f21-3472-450c-9775-ff932fd6ec55",
+        "sourcePlacementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+        "position": 69120000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "2174a0f0-8f3f-419d-bd0d-94a57f4110a3",
+        "sourcePlacementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+        "position": 76800000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "c93010fe-568e-4fa8-b932-4c2b36e0e529",
+        "sourcePlacementId": "2bea5c3c-6ae2-42a4-a521-3ef96b0c862e",
+        "position": 84480000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "68d28471-67cc-4b08-9126-f7b7d12627d2",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 61440000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "15081a98-68ce-442c-ab19-d55404c6d96b",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 69120000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "9961dffc-813a-45ba-83b0-91783bf7fceb",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 76800000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "cad982a6-3045-417b-bba5-3ea8aec8878b",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 84480000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "b91f918b-b27b-47da-be04-8c8532f224ee",
+        "sourcePlacementId": "bbff9336-0932-4e2f-adfe-3891606de77c",
+        "position": 61440000,
+        "lane": 5,
+        "repeats": 1
+      },
+      {
+        "id": "f674f439-0588-4ef4-8ca0-011c3b58b3d2",
+        "sourcePlacementId": "bbff9336-0932-4e2f-adfe-3891606de77c",
+        "position": 76800000,
+        "lane": 5,
+        "repeats": 1
+      },
+      {
+        "id": "c32eb4d2-f649-41ac-8b2a-ec0901fbc8e1",
+        "sourcePlacementId": "048a572d-8003-4b6b-8b94-280ce06cdfd8",
+        "position": 61440000,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "09ca0f8c-686c-43a8-8a91-89c44cd0dfb8",
+        "sourcePlacementId": "048a572d-8003-4b6b-8b94-280ce06cdfd8",
+        "position": 76800000,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "cacf1ae6-4fee-4375-b415-b1b161fbc259",
+        "sourcePlacementId": "fafc9448-193b-415c-832c-2643ec5a3585",
+        "position": 61440000,
+        "lane": 7,
+        "repeats": 1
+      },
+      {
+        "id": "2d90747f-389a-4fdd-95ab-30dabfe1c868",
+        "sourcePlacementId": "fafc9448-193b-415c-832c-2643ec5a3585",
+        "position": 76800000,
+        "lane": 7,
+        "repeats": 1
+      },
+      {
+        "id": "0e9584f9-e469-4ec9-be0b-faaf9ccbafae",
+        "sourcePlacementId": "22935998-2b36-4f94-aeed-392d30e8805d",
+        "position": 88320000,
+        "lane": 4,
+        "repeats": 1
+      },
+      {
+        "id": "f1f10b44-3a12-42e2-a474-6d97512b2a13",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 92160000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "bd7bb80a-2c52-4686-a388-2eef4be6e73e",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 96000000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "9bbf2699-ff87-4554-9299-5c960a13a23c",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 99840000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "a232dbd3-9462-413c-86c6-bf0b6cc1a4ce",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 103680000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "4d3b6eff-8807-48fd-98f8-34221d4be03a",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 92160000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "a489c81f-fcc3-42be-a815-159fa539ecc8",
+        "sourcePlacementId": "55cbfffd-7a76-4722-a32b-ad2d8a8a20ee",
+        "position": 99840000,
+        "lane": 1,
+        "repeats": 1
+      },
+      {
+        "id": "4cff520d-0107-4f7f-b088-dc1ccea5bc26",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 92160000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "d6d5371b-4ada-43a2-bcad-966051a0502d",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 99840000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "17bbe7ea-53ec-4946-be0a-64c9a22c80ec",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 92160000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "09f740dd-cb76-4d10-864f-fdd55a037384",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 99840000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "86fc015d-1138-4785-8695-6c339b4886d0",
+        "sourcePlacementId": "2cd9b151-0963-4aca-b8a4-366b49d2af44",
+        "position": 92160000,
+        "lane": 5,
+        "repeats": 1
+      },
+      {
+        "id": "d6f629c8-22f4-4678-8b31-38de22e0a3d0",
+        "sourcePlacementId": "bd4f5b8a-e998-449c-a869-5a9be846ece9",
+        "position": 92160000,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "20a24f02-b747-4635-81c7-4b35f6b20956",
+        "sourcePlacementId": "6b3eee77-ea84-423f-b551-fc776e56622c",
+        "position": 92160000,
+        "lane": 8,
+        "repeats": 1
+      },
+      {
+        "id": "a776d282-441f-4d73-9c75-1c90b1afe242",
+        "sourcePlacementId": "c03be41d-4ce2-4e4e-a45f-a75543096de1",
+        "position": 107520000,
+        "lane": 6,
+        "repeats": 1
+      },
+      {
+        "id": "ba75cb68-c7aa-4d53-81f0-ccf2e91c5b51",
+        "sourcePlacementId": "f6a7b3cc-dcae-4857-bbc7-b87e2756e4f4",
+        "position": 107520000,
+        "lane": 3,
+        "repeats": 1
+      },
+      {
+        "id": "05ef0d40-2c2f-4dea-b33f-36d9172a6951",
+        "sourcePlacementId": "2f573d23-8147-4cab-98d5-9c2a5fb51d39",
+        "position": 107520000,
+        "lane": 2,
+        "repeats": 1
+      },
+      {
+        "id": "e80c1b65-b95c-4093-97ac-f046bbb06b0e",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 107520000,
+        "lane": 0,
+        "repeats": 1
+      },
+      {
+        "id": "624cb10f-5c09-47b8-b011-164a4ba5d4f8",
+        "sourcePlacementId": "45285c25-4400-48c6-8f6e-a61e2ba7f60b",
+        "position": 111360000,
+        "lane": 0,
+        "repeats": 1
+      }
+    ],
+    "arrangementTracks": [
+      {
+        "id": "bc55c398-4672-434e-8dbf-50ca9fcbbb92",
+        "lane": 0,
+        "name": "Pulse",
+        "colorIndex": 0,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "7bffdc31-8159-4fcd-987a-b231aadcd70a",
+        "lane": 1,
+        "name": "Backbeat",
+        "colorIndex": 1,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "32228d55-559e-492c-aaa0-0d769edd5654",
+        "lane": 2,
+        "name": "Cymbals",
+        "colorIndex": 2,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "4ae0fce8-b234-4e75-8be5-8723acc83424",
+        "lane": 3,
+        "name": "Wood",
+        "colorIndex": 3,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "15af9d1b-1487-4ef5-b850-d23b22df27fb",
+        "lane": 4,
+        "name": "Transitions",
+        "colorIndex": 4,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "599e9236-1da4-41d6-933a-39d81643eb75",
+        "lane": 5,
+        "name": "Bass",
+        "colorIndex": 5,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "8b46b819-5801-4280-9339-61dc3ee6e29c",
+        "lane": 6,
+        "name": "Keys",
+        "colorIndex": 6,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "1574f168-1e17-4b7b-84cc-b756f8977d11",
+        "lane": 7,
+        "name": "Seeds",
+        "colorIndex": 7,
+        "muted": false,
+        "solo": false
+      },
+      {
+        "id": "eae30026-b059-4f51-bcfd-0ac570ca4394",
+        "lane": 8,
+        "name": "Air / sparks",
+        "colorIndex": 0,
+        "muted": false,
+        "solo": false
+      }
+    ],
+    "mixer": {
+      "channels": [
+        {
+          "id": "13b8666d-e5df-4bd3-9f1f-7fc876613c17",
+          "name": "Kick",
+          "colorIndex": 0,
+          "soundIds": [
+            "f0ff8448-cb5b-45c1-bcfa-455280a5ad1e",
+            "e84ca1c2-ca70-4741-8410-c998bafa8a28"
+          ],
+          "output": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": 0,
+            "pan": 0,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "1206ed19-54a5-4fa0-bf8f-c3eb090e4756",
+          "name": "Snare",
+          "colorIndex": 1,
+          "soundIds": [
+            "e5d1f559-88a8-4a2f-bdb6-8ca79a7c74a6",
+            "bdb26f14-90df-4c95-8889-5d449c80656f"
+          ],
+          "output": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -1,
+            "pan": 0,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": true,
+              "highPassHz": 100,
+              "lowDb": -1,
+              "midHz": 2000,
+              "midDb": 1,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "9b92fd2b-9293-477b-a5bf-c18e7b6b668b",
+          "name": "Clap",
+          "colorIndex": 2,
+          "soundIds": [
+            "76451ab3-2767-471f-9d3e-2781e794565f"
+          ],
+          "output": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -4,
+            "pan": 0.12,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "e6bf3280-51ce-4639-871c-47b14a9fffe3",
+          "name": "Closed Hat",
+          "colorIndex": 3,
+          "soundIds": [
+            "2fe085fc-670a-422a-a577-f0e5aa209c5e",
+            "85261d79-2336-4552-b110-ae1638178a3b"
+          ],
+          "output": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -2,
+            "pan": -0.32,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "e7f88bc2-dd8b-460f-b891-aa35b121b1cd",
+          "name": "Open Hat",
+          "colorIndex": 4,
+          "soundIds": [
+            "52a6e5f4-30dc-4f2f-93b7-7e8b6aa883e9",
+            "1e6454c9-8d21-4a64-ac9f-7179f67b03df"
+          ],
+          "output": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -3,
+            "pan": 0.28,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "58cf9ec5-5d2a-437f-aa2b-3776715e0bb6",
+          "name": "Rim",
+          "colorIndex": 5,
+          "soundIds": [
+            "1495e0bd-62c5-453e-a551-8b4087ef43c8"
+          ],
+          "output": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -2,
+            "pan": -0.22,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "7ddb3f74-1a6b-4ebe-bd75-0a2548eeee13",
+          "name": "Tom",
+          "colorIndex": 6,
+          "soundIds": [
+            "9c2ddd14-bdb7-47fc-b6a8-9916ee204a9a"
+          ],
+          "output": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -1,
+            "pan": 0.2,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "c00f977c-b6ec-49b9-babd-24e32d402fed",
+          "name": "Bass",
+          "colorIndex": 7,
+          "soundIds": [
+            "60b32edc-92da-42d8-974a-47e416a9e993",
+            "5d788729-e7be-4e40-bfe4-8ae3e7b99d10"
+          ],
+          "output": null,
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": 1,
+            "pan": 0,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": true,
+              "highPassHz": 30,
+              "lowDb": 1,
+              "midHz": 350,
+              "midDb": -2,
+              "midQ": 1,
+              "highDb": -1
+            },
+            "compressor": {
+              "enabled": true,
+              "thresholdDb": -24,
+              "ratio": 3,
+              "attackMs": 18,
+              "releaseMs": 160,
+              "kneeDb": 6,
+              "makeupDb": 1
+            }
+          }
+        },
+        {
+          "id": "242dc8c6-3b02-4e11-8ce6-eeaa10adb7ec",
+          "name": "Keys",
+          "colorIndex": 0,
+          "soundIds": [
+            "eb16903f-deb9-4a63-b9ae-58ea615ba0f2",
+            "d8e9c644-6f6b-405e-a21e-0f6e8203eab1",
+            "e807526f-e734-4fc8-b55e-43747f16f78e"
+          ],
+          "output": null,
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -1,
+            "pan": -0.14,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": true,
+              "highPassHz": 140,
+              "lowDb": -2,
+              "midHz": 900,
+              "midDb": -1.5,
+              "midQ": 1,
+              "highDb": 1
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "66149f3e-6049-4ca4-8caf-de63c34fc20c",
+          "name": "Pizz forte",
+          "colorIndex": 1,
+          "soundIds": [
+            "cb79b45a-724b-4dec-b586-1867f8dbec0e"
+          ],
+          "output": null,
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": 4,
+            "pan": 0.27,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": true,
+              "highPassHz": 180,
+              "lowDb": -2,
+              "midHz": 2500,
+              "midDb": 2,
+              "midQ": 1,
+              "highDb": 1
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "34a90410-c637-476a-aa38-f0e3111f703f",
+          "name": "Flute",
+          "colorIndex": 2,
+          "soundIds": [
+            "e67a8a55-fbf5-470d-bde4-c400df40aa48"
+          ],
+          "output": null,
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": 2,
+            "pan": -0.3,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": true,
+              "highPassHz": 180,
+              "lowDb": -1,
+              "midHz": 1200,
+              "midDb": 1,
+              "midQ": 1,
+              "highDb": 1
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "526b1c33-cb24-4e17-93e6-712b69e081cf",
+          "name": "FX",
+          "colorIndex": 3,
+          "soundIds": [
+            "71861420-ed3d-488b-b699-12645eb42765"
+          ],
+          "output": null,
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": -3,
+            "pan": 0.38,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": false,
+              "thresholdDb": -18,
+              "ratio": 3,
+              "attackMs": 10,
+              "releaseMs": 120,
+              "kneeDb": 6,
+              "makeupDb": 0
+            }
+          }
+        },
+        {
+          "id": "b325c888-8beb-4e3e-be19-730fc094e64f",
+          "name": "Drums",
+          "colorIndex": 4,
+          "soundIds": [],
+          "output": null,
+          "sends": [],
+          "settings": {
+            "trimDb": 0,
+            "levelDb": 0,
+            "pan": 0,
+            "muted": false,
+            "solo": false,
+            "eq": {
+              "enabled": false,
+              "highPassHz": 0,
+              "lowDb": 0,
+              "midHz": 1000,
+              "midDb": 0,
+              "midQ": 1,
+              "highDb": 0
+            },
+            "compressor": {
+              "enabled": true,
+              "thresholdDb": -22,
+              "ratio": 2,
+              "attackMs": 25,
+              "releaseMs": 130,
+              "kneeDb": 6,
+              "makeupDb": 1
+            }
+          }
+        }
+      ],
+      "master": {
+        "trimDb": 0,
+        "levelDb": 3,
+        "pan": 0,
+        "muted": false,
+        "solo": false,
+        "eq": {
+          "enabled": false,
+          "highPassHz": 0,
+          "lowDb": 0,
+          "midHz": 1000,
+          "midDb": 0,
+          "midQ": 1,
+          "highDb": 0
+        },
+        "compressor": {
+          "enabled": false,
+          "thresholdDb": -18,
+          "ratio": 3,
+          "attackMs": 10,
+          "releaseMs": 120,
+          "kneeDb": 6,
+          "makeupDb": 0
+        }
+      },
+      "protectOutput": true
+    }
+  }
+}

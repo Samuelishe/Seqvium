@@ -7,8 +7,8 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-The product alpha is **0.1.5.0000**, SEQ-R11-MIXER, one substantial musical Mixer PATCH on the
-owner-selected 0.1 line. BUILD resets; production assembly identity is canonical under
+The product alpha is **0.1.5.0001**, SEQ-NEON-ORCHARD, one BUILD for the complete official editable
+demo and reusable independent-copy checks after the Mixer PATCH. Production identity is canonical under
 [VERSIONING](VERSIONING.md). No release, staging, commit, push or tag is performed.
 
 R1/R2/R3 are complete within their bounded foundations; R3 workspace acceptance is owner-confirmed.
@@ -52,42 +52,44 @@ Light is cool steel/colored ink; Dark is slate/jade. Framework tab templates use
 [design system](DESIGN_SYSTEM.md#mixer-and-chassis-components) own current norms; this is not a claim
 that every editor's full radical redesign is complete.
 
-## Musical result and validation baseline
+## Demo and validation baseline
 
-An independent Neon Orchard project **and all managed media** are preserved in the owner's new
-Desktop Mixer folder. All musical balance/EQ/compression/bus edits, Save/Open and final WAV export
-used actual native GUI input, not musical JSON/internal APIs. Excluding only Mixer, its canonical
-music/graphs/resources match the original exactly. SHA-256 audit of 1255 protected original/library/
-reference files finds zero changes; all 379 Ready WAVs pass actual decoder inspection.
+[Neon Orchard](../examples/Neon%20Orchard/README.md) is the official permanent developing demo:
+112 BPM, 32 bars, 15 Patterns, 191 notes, nine Playlist tracks, 78 clips and the saved Mixer.
+Six unique WAVs include four hash-verified upstream VSCO2-CE recordings under CC0 and two original
+Apache-2.0 synthesized bass/FX replacements. MusicRadar audio is excluded. Canonical music, graphs,
+instrument parameters and Mixer match the protected private source; only resource metadata/locators
+and replacement sound names change. One main project plus publication-01 and a restoration script
+support future creative development and cross-version comparison without duplicating media.
 
-The mixed WAV is 68.5714375 s, 3,291,429 stereo frames at 48 kHz, peak .8408203125 (about -1.51 dBFS),
-zero saturated samples and RMS difference .02218978 from the original. Full saved Song runs through
-Steinberg UR12 at 44.1 kHz stereo with real meters and up to 13 voices. A separate read-only physical
-diagnostic compares submitted float PCM with same-rate/same-partition offline output: maximum error
-zero. Native 48-kHz PCM16 WAV differs from 48-kHz float execution only by rounding. Callback/service/
-worker allocations, processor/service/packet misses, padding exhaustions and nonfinite counts are zero;
-Stop acknowledgment and joined teardown pass. No subjective listening/quality judgment is claimed.
+Independent Temp copies open through native production GUI, all 15 Patterns and 12 distinct
+instrument/source editors are inspected, and full Song plays on UR12 at 44.1 kHz with real meters.
+Native WAV is 48 kHz stereo PCM16, 3,291,429 frames / 68.5714375 s, peak .8588256836, zero saturated
+frames. No acoustic or other-platform acceptance is claimed. The focused isolated Release build
+has zero warnings/errors; **33/33 demo/metadata cases pass**, including both relocated current and
+frozen projects, every Pattern, media integrity, Save As/reopen and full Song export. This is L0/L1/L2
+plus requested native L4 evidence, not a full regression
+pass. [Test execution](TEST_EXECUTION.md#official-demo-verification)
+owns reproducible commands; [the musical checkpoint](../examples/Neon%20Orchard/checkpoints/README.md)
+owns the reference render conditions.
 
-Full Release solution build is zero-warning/error; **1196/1196 automated tests pass**, zero skips (9.123 s CLI summary).
-New Mixer subset passes 17 cases, affected presentation/version/Mixer subset
-
-68. Production-window catalog/shared field/Graph matrix passes; native FullHD coexisting tools,
-    normal Dark/Light bank/processing, compact RU/EN × Dark/Light inspector fields and fader/pan/EQ
-    single-transaction Undo/Redo pass. Early failures, commands, signal measurements and evidence retention
-    are recorded in [the report](experiments/SEQ-R11-MIXER_REPORT.md), not hidden by this summary.
+The latest L3 remains the Mixer full Release solution build and **1196/1196 tests**, zero skips (9.123 s CLI summary).
+Its native presentation/history and physical PCM parity evidence remains
+scoped in [the Mixer report](experiments/SEQ-R11-MIXER_REPORT.md).
 
 ### Verification cadence
 
 Last successful L3: **SEQ-R11-MIXER, 2026-10-14**, full Release build and 1196/1196 tests.
-Completed repository tasks since that L3: **0**. Focused final presentation/metadata checks and native
-review complement this baseline; they do not imply another full-suite run.
+Completed repository tasks since that L3: **1**. Official-demo focused checks and native review
+complement this baseline; they do not imply another full-suite run.
 
 ## Current focus and remaining gaps
 
 Continue the owner-authorized coherent, reference-led compact instrument language across Piano/
 Graph/Drum/source editors, preserving meaningful curves and musical interaction. Concrete follow-ups
 are in [desktop design continuation](ROADMAP.md#desktop-design-continuation). Private design and WAV
-resources remain outside Git; no third-party bitmap/icon/texture or new dependency was introduced.
+references and the general sample library remain outside Git; only the reviewed official-demo subset
+is distributed. No third-party bitmap/icon/texture or new dependency was introduced.
 
 Mixer's processing order is fixed; delay/reverb, arbitrary FX racks, sidechain, automation, true-peak/
 LUFS analysis and latency compensation are not implemented. Source projection covers actual linear

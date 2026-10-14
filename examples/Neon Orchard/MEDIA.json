@@ -1,0 +1,62 @@
+{
+  "description": "Complete redistribution inventory for Neon Orchard; paths are relative to Neon Orchard.seqvium.media.",
+  "verifiedOn": "2026-10-14",
+  "vscoRevision": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+  "vscoSource": "https://github.com/sgossner/VSCO-2-CE/tree/440300901dfe9275fd84e0b7763af1f8443ae62e",
+  "files": [
+    {
+      "path": "wav/663c86c3fb244e84b482b6690a4c9356-a36929620d5b4db0899af6f4ec33b21d83c273b5090c982222f11379cb7e9a75.wav",
+      "name": "Neon Bass A1",
+      "sha256": "a36929620d5b4db0899af6f4ec33b21d83c273b5090c982222f11379cb7e9a75",
+      "bytes": 1288574,
+      "license": "Apache-2.0",
+      "source": "generate-sounds.py: bass",
+      "transformation": "Original mathematical synthesis, no input recording; MIDI root 33."
+    },
+    {
+      "path": "wav/9424a130ce1049a88fe2a9adcd927637-5e4507445f186f5485b7001f7daa1f37f9cc27488c50303faa34406c77676a16.wav",
+      "name": "Neon Transition FX",
+      "sha256": "5e4507445f186f5485b7001f7daa1f37f9cc27488c50303faa34406c77676a16",
+      "bytes": 821222,
+      "license": "Apache-2.0",
+      "source": "generate-sounds.py: effect",
+      "transformation": "Original mathematical synthesis with deterministic noise, no input recording; nominal sampler root 60."
+    },
+    {
+      "path": "wav/1948c3d700a746d29bff07225fb77f10-01387cb5318c5abf11410ae8e2f4ef6aa83ec03254b4bccfe865aba262a2e412.wav",
+      "name": "Upright piano A3",
+      "sha256": "01387cb5318c5abf11410ae8e2f4ef6aa83ec03254b4bccfe865aba262a2e412",
+      "bytes": 3002200,
+      "license": "CC0-1.0",
+      "source": "Keys/Upright Piano/Player_dyn1_rr1_018.wav",
+      "transformation": "None; exact upstream bytes, verified against the pinned revision."
+    },
+    {
+      "path": "wav/8020f4b956d0402f85a6fcc91a7e7281-9a7cc4d7c6c848e6302f1a35e499781240ccf66c5acf72779f0da03b91bf73e9.wav",
+      "name": "Solo violin pizzicato A3 piano (retained unused project resource)",
+      "sha256": "9a7cc4d7c6c848e6302f1a35e499781240ccf66c5acf72779f0da03b91bf73e9",
+      "bytes": 252226,
+      "license": "CC0-1.0",
+      "source": "Strings/Solo Violin/Pizz/LLVln_Pizz_A3_p_RR1.wav",
+      "transformation": "None; exact upstream bytes, verified against the pinned revision."
+    },
+    {
+      "path": "wav/364460a0da2446d883770beca1f14dc1-8f400b390219271d04eb9fc0247493d92089f2ca982b9a23be682bec18b7972d.wav",
+      "name": "Solo violin pizzicato A3 forte",
+      "sha256": "8f400b390219271d04eb9fc0247493d92089f2ca982b9a23be682bec18b7972d",
+      "bytes": 455042,
+      "license": "CC0-1.0",
+      "source": "Strings/Solo Violin/Pizz/LLVln_Pizz_A3_f_RR1.wav",
+      "transformation": "None; exact upstream bytes, verified against the pinned revision."
+    },
+    {
+      "path": "wav/018f587652954a8da0aaa144c77cec00-6f7566797c5ac37172189ab375d28f0068232b74f5611e16da217055d3da6420.wav",
+      "name": "Flute expressive vibrato A3",
+      "sha256": "6f7566797c5ac37172189ab375d28f0068232b74f5611e16da217055d3da6420",
+      "bytes": 2837844,
+      "license": "CC0-1.0",
+      "source": "Woodwinds/Flute/expvib/LDFlute_expvib_A3_v1_1.wav",
+      "transformation": "None; exact upstream bytes, verified against the pinned revision."
+    }
+  ]
+}

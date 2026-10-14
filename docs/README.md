@@ -4,6 +4,10 @@ Start here to try Seqvium or find the developer documentation. The [project over
 describes what is available today and what is still planned. This guide explains a first sample
 workflow and points to the detailed sources for each subject.
 
+To start with a complete editable example, open [Neon Orchard](../examples/Neon%20Orchard/README.md).
+It includes all required media and saved Mixer processing, with instructions for Song playback,
+WAV export and personal Save As copies. The composition will grow with the application.
+
 ## Create a drum pattern
 
 After [building and launching](../README.md#getting-started), use **Channel Rack**. A pristine layout

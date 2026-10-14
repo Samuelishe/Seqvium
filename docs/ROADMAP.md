@@ -40,6 +40,13 @@ acceptance follows from this conclusion; each implementation stage requires sepa
 
 ## First Track scenario and acceptance boundary
 
+[Neon Orchard](../examples/Neon%20Orchard/README.md) is the permanent developing official demo and
+musical reference for instruments, DSP, Mixer and editors. Its current 32 bars are a starting point,
+not a finished track or R12 acceptance. Continue one main project toward a fuller composition, with
+deliberate frozen checkpoints before major musical revisions. Use the same checkpoint to compare
+playback/export across application versions; preserve media rights and independent-copy verification
+as the demo changes. This ongoing creative work does not authorize a new engine stage.
+
 The bounded R12 acceptance direction is a short composition with distinct sections, rhythm and pitched
 music, rather than a tone or one looping Pattern. A representative case is 16 bars in 4/4 at a chosen
 tempo: imported Kick/Snare/Hat WAVs, a known-pitch short tonal WAV played by the core sampler for bass

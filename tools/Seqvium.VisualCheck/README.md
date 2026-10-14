@@ -172,6 +172,29 @@ users/logon sessions, elevated-versus-unelevated launches, high DPI and Linux/ma
 runtime evidence. Current-user access and user-wide lease scope are implemented, not exhaustively
 platform/security-certified by one Windows session.
 
+## Official demo inspection
+
+`native-mixer <output> <independent-project> inspect` uses the real Open picker and guarded Windows
+input to select all saved Patterns, open the drum/Source and Piano editors, and inspect Playlist and
+Mixer. It reads canonical state only as an oracle and requires unchanged music plus Play readiness.
+The `play` phase plays the complete finite Song on the physical output, checks real meters and
+exports `Neon Orchard - Mixed.wav` beside the supplied project through the native picker.
+Both phases save through production GUI: always supply an independent project **with its media**,
+never a protected original. The existing `play` phase is specific to the 32-bar publication baseline.
+
+```powershell
+& 'examples/Neon Orchard/Restore-Checkpoint.ps1' -Snapshot 'examples/Neon Orchard/checkpoints/publication-01.json' -Destination 'C:/Temp/Neon Orchard check'
+tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.exe native-mixer "$PWD/.artifacts/neon-orchard/inspect" 'C:/Temp/Neon Orchard check/Neon Orchard.seqvium' inspect --timeout-seconds=180
+tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.exe native-mixer "$PWD/.artifacts/neon-orchard/play" 'C:/Temp/Neon Orchard check/Neon Orchard.seqvium' play --timeout-seconds=150
+```
+
+Start with a fresh output WAV destination to avoid overwrite prompts. Full Song lasts 68.571 seconds;
+the explicit deadline also covers native pickers, captures, Save and joined shutdown. Initial
+inspect takes about 101 seconds and all 15 Patterns plus 12 distinct sound editors are captured at
+FullHD. Evidence is native input plus production screen/render captures, not subjective listening.
+These artifacts remain ignored and follow normal retention. Use the matching executable under a
+custom `--artifacts-path` build when ordinary application DLLs are locked.
+
 ## Evidence and maintenance
 
 The `arrangement` route renders the actual Playlist in RU/EN and Dark/Light at ordinary/reduced sizes,
