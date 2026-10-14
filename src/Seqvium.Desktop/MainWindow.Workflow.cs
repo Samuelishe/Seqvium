@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -46,14 +47,18 @@ internal sealed partial class MainWindow
         // Read latest observation; do not replay stale queued states after a document replacement.
         var latest = _workflow.State;
         _session.ObserveAudio(WorkflowPresentation.CompactStatus(latest));
-        if (_observedLifecycle != latest.Document.LifecycleId || _observedRevision != latest.Snapshot.Revision || _observedPath != latest.SavedPath ||
+        if (_observedLifecycle != latest.Document.LifecycleId || _observedRevision != latest.Snapshot.Revision ||
+            _observedPath != latest.SavedPath ||
             _observedDirty != latest.IsDirty)
         {
             _observedLifecycle = latest.Document.LifecycleId;
-            _observedRevision = latest.Snapshot.Revision; _observedPath = latest.SavedPath;
+            _observedRevision = latest.Snapshot.Revision;
+            _observedPath = latest.SavedPath;
             _observedDirty = latest.IsDirty;
-            _session.ObserveDocument(latest.Document, latest.Snapshot, latest.SavedPath, latest.IsDirty, latest.HasSaved);
+            _session.ObserveDocument(latest.Document, latest.Snapshot, latest.SavedPath, latest.IsDirty,
+                latest.HasSaved);
         }
+
         _workflowControls.Refresh(_closing || _workflowActionBusy);
         RefreshGainHierarchy();
     });
@@ -61,9 +66,21 @@ internal sealed partial class MainWindow
     private Task WorkflowActionAsync(string action)
     {
         if (_closing) return Task.CompletedTask;
-        if (action == "Graph") { OpenGraph(); return Task.CompletedTask; }
+        if (action == "Graph")
+        {
+            OpenGraph();
+            return Task.CompletedTask;
+        }
+
         if (action is "Stop" or "Panic") return _workflow.StopAsync(action == "Panic");
-        if (action == "CancelImport") { _importCancellation?.Cancel(); return Task.CompletedTask; }
+        if (action == "CancelImport")
+        {
+            _importCancellation?.Cancel();
+            foreach (var pane in this.GetVisualDescendants().OfType<ArrangementPaneContent>())
+                pane.Canvas.CancelAudioImport();
+            return Task.CompletedTask;
+        }
+
         if (_workflowActionBusy) return Task.CompletedTask;
         _workflowWork = RunWorkflowActionAsync(action);
         return _workflowWork;
@@ -85,38 +102,56 @@ internal sealed partial class MainWindow
 
     private async Task RunBeatImportAsync(BeatEditBasis basis, Func<bool> current)
     {
-        _workflowActionBusy = true; _workflowControls.Refresh(true);
+        _workflowActionBusy = true;
+        _workflowControls.Refresh(true);
         try
         {
             var path = await PickOpenAsync(true);
             if (path is null || _closing || !current()) return;
-            _importCancellation = new(); _workflowControls.CanCancelImport = true; _workflowControls.Refresh(true);
+            _importCancellation = new();
+            _workflowControls.CanCancelImport = true;
+            _workflowControls.Refresh(true);
             await _workflow.AddBeatWavAsync(basis, path, _importCancellation.Token);
         }
-        catch (Exception error) { await _workflow.ReportFailureAsync(error.Message); }
+        catch (Exception error)
+        {
+            await _workflow.ReportFailureAsync(error.Message);
+        }
         finally
         {
-            _importCancellation?.Dispose(); _importCancellation = null; _workflowControls.CanCancelImport = false;
-            _workflowActionBusy = false; _workflowControls.Refresh(_closing);
+            _importCancellation?.Dispose();
+            _importCancellation = null;
+            _workflowControls.CanCancelImport = false;
+            _workflowActionBusy = false;
+            _workflowControls.Refresh(_closing);
             if (!_closing) _workspace.FocusPane(WorkspaceState.BeatId);
         }
     }
 
     private async Task RunGraphImportAsync(GraphEditBasis basis, GraphPosition position)
     {
-        _workflowActionBusy = true; _workflowControls.Refresh(true);
+        _workflowActionBusy = true;
+        _workflowControls.Refresh(true);
         try
         {
             var path = await PickOpenAsync(true);
             if (path is null || _closing) return;
-            _importCancellation = new(); _workflowControls.CanCancelImport = true; _workflowControls.Refresh(true);
+            _importCancellation = new();
+            _workflowControls.CanCancelImport = true;
+            _workflowControls.Refresh(true);
             await _workflow.AddGraphWavAsync(basis, path, position, _importCancellation.Token);
         }
-        catch (Exception error) { await _workflow.ReportFailureAsync(error.Message); }
+        catch (Exception error)
+        {
+            await _workflow.ReportFailureAsync(error.Message);
+        }
         finally
         {
-            _importCancellation?.Dispose(); _importCancellation = null; _workflowControls.CanCancelImport = false;
-            _workflowActionBusy = false; _workflowControls.Refresh(_closing);
+            _importCancellation?.Dispose();
+            _importCancellation = null;
+            _workflowControls.CanCancelImport = false;
+            _workflowActionBusy = false;
+            _workflowControls.Refresh(_closing);
             if (!_closing) _workspace.FocusPane(WorkspaceState.GraphId);
         }
     }
@@ -129,6 +164,30 @@ internal sealed partial class MainWindow
         {
             switch (action)
             {
+                case "ImportAudio":
+                    var audioFiles = await StorageProvider.OpenFilePickerAsync(new()
+                    {
+                        Title = _session["Arrangement.ImportAudio"], AllowMultiple = true,
+                        FileTypeFilter = [new("WAV / MP3 / FLAC") { Patterns = ["*.wav", "*.mp3", "*.flac"] }]
+                    });
+                    try
+                    {
+                        var paths = audioFiles.Select(f =>
+                                f.TryGetLocalPath() ?? throw new IOException(_session["Workflow.LocalFileRequired"]))
+                            .ToArray();
+                        if (paths.Length > 0 && !_closing)
+                        {
+                            _workflowControls.CanCancelImport = true;
+                            await this.GetVisualDescendants().OfType<ArrangementPaneContent>().Single()
+                                .ImportAudioAsync(paths);
+                        }
+                    }
+                    finally
+                    {
+                        foreach (var audioFile in audioFiles) audioFile.Dispose();
+                    }
+
+                    break;
                 case "Import":
                     var wav = await PickOpenAsync(true);
                     if (wav is null || _closing) break;
@@ -153,37 +212,45 @@ internal sealed partial class MainWindow
                 case "ExportSong":
                     var songBasis = ArrangementEditBasis.From(_workflow.State);
                     using (var songFile = await StorageProvider.SaveFilePickerAsync(new()
-                    {
-                        Title = _session["Workflow.ExportSong"], DefaultExtension = "wav", SuggestedFileName = "Song.wav",
-                        FileTypeChoices = [new("WAV") { Patterns = ["*.wav"] }], ShowOverwritePrompt = true
-                    }))
+                           {
+                               Title = _session["Workflow.ExportSong"], DefaultExtension = "wav",
+                               SuggestedFileName = "Song.wav",
+                               FileTypeChoices = [new("WAV") { Patterns = ["*.wav"] }], ShowOverwritePrompt = true
+                           }))
                     {
                         if (songFile?.TryGetLocalPath() is { } songPath && !_closing)
                             await _workflow.ExportSongAsync(songBasis, songPath);
                     }
+
                     break;
                 case "ExportWave":
                     var exportBasis = BeatSteps.Resolve(_workflow.State).Basis;
                     if (exportBasis is null) break;
                     using (var exportFile = await StorageProvider.SaveFilePickerAsync(new()
-                    {
-                        Title = _session["Workflow.ExportWave"], DefaultExtension = "wav",
-                        SuggestedFileName = "Pattern.wav", FileTypeChoices = [new("WAV") { Patterns = ["*.wav"] }],
-                        ShowOverwritePrompt = true
-                    }))
+                           {
+                               Title = _session["Workflow.ExportWave"], DefaultExtension = "wav",
+                               SuggestedFileName = "Pattern.wav",
+                               FileTypeChoices = [new("WAV") { Patterns = ["*.wav"] }],
+                               ShowOverwritePrompt = true
+                           }))
                     {
                         if (exportFile?.TryGetLocalPath() is { } exportPath && !_closing)
                             await _workflow.ExportWaveAsync(exportBasis, exportPath);
                     }
+
                     break;
                 case "Undo": await _workflow.UndoAsync(); break;
                 case "Redo": await _workflow.UndoAsync(true); break;
             }
         }
-        catch (Exception error) { await _workflow.ReportFailureAsync(error.Message); }
+        catch (Exception error)
+        {
+            await _workflow.ReportFailureAsync(error.Message);
+        }
         finally
         {
-            _importCancellation?.Dispose(); _importCancellation = null;
+            _importCancellation?.Dispose();
+            _importCancellation = null;
             _workflowControls.CanCancelImport = false;
             _workflowActionBusy = false;
             _workflowControls.Refresh(_closing);
@@ -211,8 +278,10 @@ internal sealed partial class MainWindow
             SuggestedFileName = Path.GetFileName(_workflow.State.SavedPath ?? "Project.seqvium"),
             FileTypeChoices = [new("Seqvium") { Patterns = ["*.seqvium"] }], ShowOverwritePrompt = true
         });
-        return file is null ? null : file.TryGetLocalPath() ??
-            throw new IOException(_session["Workflow.LocalFileRequired"]);
+        return file is null
+            ? null
+            : file.TryGetLocalPath() ??
+              throw new IOException(_session["Workflow.LocalFileRequired"]);
     }
 
     private async Task<(UnsavedDecision Decision, string? SavePath)> ReplacementDecisionAsync()
@@ -244,6 +313,7 @@ internal sealed partial class MainWindow
         if (args.Key == Key.F5 && args.KeyModifiers is KeyModifiers.None or KeyModifiers.Shift)
             action = args.KeyModifiers == KeyModifiers.Shift ? "Stop" : "Play";
         if (action is null) return;
-        args.Handled = true; await WorkflowActionAsync(action);
+        args.Handled = true;
+        await WorkflowActionAsync(action);
     }
 }

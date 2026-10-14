@@ -9,8 +9,8 @@
     <PropertyGroup>
         <SeqviumVersionMajor>0</SeqviumVersionMajor>
         <SeqviumVersionMinor>1</SeqviumVersionMinor>
-        <SeqviumVersionPatch>5</SeqviumVersionPatch>
-        <SeqviumVersionBuild>1</SeqviumVersionBuild>
+        <SeqviumVersionPatch>6</SeqviumVersionPatch>
+        <SeqviumVersionBuild>0</SeqviumVersionBuild>
         <SeqviumDisplayVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$([System.Int32]::Parse('$(SeqviumVersionBuild)').ToString('D4'))</SeqviumDisplayVersion>
         <SeqviumNumericVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$(SeqviumVersionBuild)</SeqviumNumericVersion>
         <!-- Both name and location delimit production identity; tools/tests cannot opt in by name alone. -->

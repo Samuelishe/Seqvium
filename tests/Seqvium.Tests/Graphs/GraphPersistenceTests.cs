@@ -101,7 +101,7 @@ public sealed class GraphPersistenceTests
         f.Document.Edit("Remove after save", edit => edit.DeleteGraph(f.Attachment.GraphId));
         ProjectPersistence.Save(f.Document, directory.File("without-graph.json"));
         Assert.Equal(1, GraphFixture.Json(f.Document)["minimumReaderMinor"]!.GetValue<int>());
-        json["minimumReaderMinor"] = 4;
+        json["minimumReaderMinor"] = 6;
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
     }
 

@@ -9,6 +9,11 @@ triggers.
 
 ## Product target and current evidence
 
+Playlist MP3/FLAC import currently uses Windows Media Foundation through a worker-only NAudio
+adapter and available system codecs. This is explicitly Windows-specific, not a cross-platform media
+backend. PCM WAV normalization and Core Audio Clip storage/scheduling have no Windows codec types.
+Linux/macOS compressed import and real desktop/audio parity remain unimplemented/unverified.
+
 **Seqvium targets Windows, Linux, and macOS.** Windows is the primary early development/runtime
 environment. Linux and macOS are first-class architectural targets from the start, not accidental
 later ports. R3-F1 has a runnable desktop foundation, not a supported product release. The bounded Windows audio probe

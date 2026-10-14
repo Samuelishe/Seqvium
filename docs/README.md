@@ -8,6 +8,34 @@ To start with a complete editable example, open [Neon Orchard](../examples/Neon%
 It includes all required media and saved Mixer processing, with instructions for Song playback,
 WAV export and personal Save As copies. The composition will grow with the application.
 
+## Work with audio clips
+
+Open **Playlist** from the left rail. Drop WAV, MP3 or FLAC from Explorer onto a lane, or use Playlist's **Import
+audio** button. You do not need a Pattern or Channel Rack. Launch Seqvium without elevation;
+Windows prevents Explorer from dropping files into an administrator process.
+
+1. The clip shows the actual mono/stereo waveform. Drag its body to move it; Ctrl-drag copies it.
+   Snap controls placement. Moving a clip or changing BPM does not change source pitch or speed.
+2. Drag either edge to trim a single occurrence, or double-click/Enter to edit exact source offset,
+   duration, fade times and gain. Drag the upper waveform-corner handles for fades. Escape cancels
+   unfinished gestures; Ctrl+Z/Y undo/redo completed edits.
+3. Use **Slice** and click inside a clip, or **Split at cursor**. Splitting preserves the original
+   fade envelope and source continuity. Set repeats to one before splitting. **Repeats** repeats the
+   selected source range; it is not tempo stretching. Ctrl+D duplicates the selected audio group.
+4. Clip properties choose the shared source's Mixer route or create an explicit channel. Copies share
+   this route. Playlist track Mute/Solo gates occurrences, while Mixer Mute/Solo affects routed audio.
+5. Use Playlist Play, ruler seek/range loop and Song WAV export just as with Patterns. Mixed audio and
+   Patterns pass through the existing Mixer. Save As creates an independent project and managed media;
+   keep the associated `.seqvium.media` folder with it. Original imports can subsequently be unavailable.
+
+Import runs off the UI/audio threads and can be cancelled from Playlist. Errors leave the project and
+Undo history unchanged. WAV PCM16/24/32 and float32, MP3 and FLAC are accepted at 8–192 kHz, mono/stereo
+only. MP3/FLAC require available Windows Media Foundation codecs. Audio is resident, not disk-streamed:
+one source and a prepared Song's unique Audio Clip PCM each have a 512 MiB decoded limit (about
+23:18 at 48 kHz stereo). Copies do not multiply source PCM; other preparation/UI/history memory remains.
+Pattern media has a separate budget and all playback shares 32 voices. No time stretch/warp is available.
+See [audio execution limits](AUDIO_ENGINE.md#standalone-audio-clips).
+
 ## Create a drum pattern
 
 After [building and launching](../README.md#getting-started), use **Channel Rack**. A pristine layout
@@ -107,10 +135,12 @@ sustain loop, time stretching, MIDI recording or automatic pitch detector yet.
    leading gaps and overlaps, as 48 kHz stereo PCM16. Save/Open preserves the clips, tracks and samples;
    Open stays silent. Keep the `.seqvium.media` directory with the project.
 
-The current Playlist has 32 fixed track slots and an editable view up to 4096 bars. Slots organize
+The current Playlist has 32 fixed track slots and a view that expands for long audio. Pattern placement
+retains its 4096-bar editing bound. Slots organize
 compatible musical material; they do not assign instruments or create Mixer channels. The engine
 checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
-are available now; section markers, independent variations, clip trimming and automation remain planned. WAV channel
+are available now; Audio Clips have separate range/trim/split/fade controls. Section markers, independent
+Pattern variations, stretch and automation remain planned. WAV channel
 add/delete/Undo/Redo keeps the current clock and other voices for the supported source/mix tree.
 Other incompatible topology changes retain their restart policy.
 See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
@@ -146,8 +176,9 @@ There is currently no delay/reverb, automation, plugin rack or sidechain. See th
 
 First [build and launch the desktop](../README.md#getting-started) on Windows. Start with a short
 mono or stereo WAV at **8–192 kHz**: 16/24/32-bit PCM or 32-bit floating point, up to 16 MiB.
-Playback still outputs at 44.1/48 kHz, with linear source resampling; FLAC is not supported.
-No samples are bundled.
+Playback still outputs at 44.1/48 kHz, with linear source resampling. This Rack/graph import route is
+WAV-only; [Playlist Audio Clips](#work-with-audio-clips) also accept MP3/FLAC. No general sample library
+is bundled; the official demo includes its own reviewed media.
 
 1. Choose **Import WAV** in the toolbar, or press Ctrl+I, and select your file. Toolbar icons have
    tooltips; secondary actions may move into the overflow menu in a narrow window.

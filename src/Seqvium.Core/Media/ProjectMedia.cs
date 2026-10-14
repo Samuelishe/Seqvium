@@ -150,6 +150,23 @@ public sealed class WavImport : IDisposable
 /// <summary>Project-owned source files, separate from decoded caches and Personal Library. No automatic accepted-file GC.</summary>
 public static partial class ProjectMedia
 {
+    private static readonly AsyncLocal<Dictionary<Id<ResourceDescriptor>, PcmLease>?> DecodeBatch = new();
+
+    private sealed class Batch : IDisposable
+    {
+        private readonly Dictionary<Id<ResourceDescriptor>, PcmLease>? _previous = DecodeBatch.Value;
+        private readonly Dictionary<Id<ResourceDescriptor>, PcmLease> _sources = [];
+        internal Batch() => DecodeBatch.Value = _sources;
+
+        public void Dispose()
+        {
+            DecodeBatch.Value = _previous;
+            foreach (var source in _sources.Values) source.Dispose();
+        }
+    }
+
+    internal static IDisposable BeginDecodeBatch() => new Batch();
+
     public static WavResourceReuse BeginReuse(ProjectDocument document, Id<ResourceDescriptor> resource, string name,
         decimal rootPitch = 60m, decimal releaseMilliseconds = 5m) =>
         new(document, resource, name, rootPitch, releaseMilliseconds);
@@ -186,6 +203,15 @@ public static partial class ProjectMedia
         document.CheckAvailable();
         var resource = document.Current.State.Resources.SingleOrDefault(item => item.Id == resourceId)
                        ?? throw new InvalidOperationException("Resource does not belong to the current document.");
+        if (DecodeBatch.Value is { } batch)
+        {
+            if (batch.TryGetValue(resourceId, out var retained))
+                return new(retained.Rate, retained.Channels, retained.Samples);
+            var pcm = DecodeStoredCopy(document, resource).Pcm;
+            batch.Add(resourceId, pcm.Lease());
+            return pcm;
+        }
+
         return DecodeStoredCopy(document, resource).Pcm;
     }
 
@@ -250,8 +276,24 @@ public static partial class ProjectMedia
     {
         string root = destination + ".media";
         var diagnostics = ImmutableArray.CreateBuilder<string>();
-        foreach (var resource in snapshot.State.Resources.Where(resource => !IsManagedWav(resource)))
+        foreach (var resource in snapshot.State.Resources.Where(resource =>
+                     !IsManagedWav(resource) && !AudioMedia.IsManaged(resource)))
             diagnostics.Add($"Resource {resource.Id} is unavailable or has not been validated.");
+        foreach (var resource in snapshot.State.Resources.Where(AudioMedia.IsManaged))
+        {
+            try
+            {
+                AudioMedia.Resolve(document, resource);
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+                diagnostics.Add($"Managed audio {resource.Id} is unavailable or corrupt: {error.Message}");
+                continue;
+            }
+
+            AudioMedia.CopyForSave(document, resource, root);
+        }
+
         foreach (var resource in snapshot.State.Resources.Where(IsManagedWav))
         {
             string source;

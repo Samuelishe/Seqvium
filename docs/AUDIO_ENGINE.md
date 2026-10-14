@@ -7,6 +7,47 @@ boundary, recording, item-local hard boundaries, manual export ranges, finite ta
 preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
+## Standalone audio clips
+
+Playlist Audio Clips use the same prepared sampler, realtime publication/seek/range loop and offline
+Song exporter as Patterns. They schedule native mono/stereo PCM at a fixed `sourceRate/outputRate`
+step; placement/BPM never imply pitch or stretch. Output remains 44.1/48 kHz in the current adapter.
+Clip gain and linear source-frame fades precede the shared Mixer; source assignments, buses, sends,
+Mute/Solo, EQ/compression and Master protection retain the existing processing chain.
+
+Lengths/ranges use native frames; repeated boundaries convert absolute cumulative frame counts,
+not repeatedly rounded musical durations. Split pieces preserve original envelope offset/length and
+a common virtual source clock, maintaining interpolation phase at 44.1→48 kHz. Adjacent audible
+pieces with matching source, envelope, level and exact output boundary suppress only the artificial
+internal de-click ramp. Independent trim/EOF, Song/range edges and seek publication retain their
+existing smoothing. Explicitly editing a piece's range/fades establishes its independent envelope.
+Compatible live range/gain/split edits reconstruct active Audio Clip destination context at the current
+clock using the fixed voice slots; unrelated Pattern voices remain continuous.
+
+Import normalizes WAV PCM16/24/32 or float32, MP3/FLAC to mono/stereo float32 managed WAV at the
+native 8–192 kHz rate. Surround/multichannel is explicitly rejected, not silently downmixed. MP3/FLAC
+use available Windows Media Foundation codecs via a Desktop-only adapter; WAV and Core media do not
+depend on Windows codecs. Malformed/nonfinite/empty sources fail before canonical acceptance.
+Cancellation is cooperative between worker decode/copy stages; a stalled OS codec cannot be forcibly
+interrupted. There is no disk streaming, stretch/warp or input recording.
+
+One source and aggregate unique audible Audio Clip PCM per prepared Song are bounded to **512 MiB**.
+Duration is bounded by `512*1024*1024 / (rate*channels*4)` seconds: ~1398 s at 48 kHz stereo,
+~349 s at 192 kHz stereo; mono doubles these durations. Source frame counts remain Int32-bounded.
+Pattern media retains its separate 128 MiB preparation budget; graph scratch remains 16 MiB and
+all occurrences share 32 simultaneous voices and existing event/packet-work gates. A muted source is
+not decoded for Song, though its media/waveform can remain in the document.
+
+Copy/duplicate/split do not decode or retain one PCM array per clip. Decode batches share legacy WAV
+arrays across Pattern plans; AudioMedia's document-scoped weak cache uses immutable managed locators
+and validated file metadata. Frozen preparation/export and relocated Save As reuse array references
+after integrity checks. Cached arrays may be collected when no prepared lease survives; subsequent
+preparation can decode again. The expanded conservative realtime retained-state reservation is not
+an allocated PCM arena or a total working-set guarantee. Distinct sources/old versions, pyramidal
+waveforms, native decoder buffers and UI consume additional memory. Managed media/history/import
+temporary disk space has no global project quota yet. All file/codec/hash/waveform work stays outside
+the callback; execution performs bounded allocation-free PCM reads and existing Mixer processing.
+
 ## Project Mixer execution
 
 Optional project Mixer processing is shared by Pattern, finite Song, realtime and offline execution.
@@ -223,7 +264,8 @@ Invalid intent/media remains visible and no failed preparation silently substitu
 mono/stereo source rates from 8,000 through 192,000 Hz. Execution remains 44,100/48,000 Hz;
 linear interpolation converts the source rate, without a mastering-quality resampling claim.
 The byte limit, finite-float validation, channel ordering and lease ownership remain unchanged.
-FLAC is refused. Two narrow exporter variants are tolerated only after complete chunk validation:
+This legacy Rack decoder refuses FLAC; Playlist compressed import is separate above. Two narrow
+exporter variants are tolerated only after complete chunk validation:
 an outer RIFF size one byte larger than actual bytes, and a final mono PCM24 data size containing
 its one zero padding byte. No truncated PCM frame or arbitrary size mismatch is accepted. Supported `fmt`
 representations are 16 bytes, 18 bytes with zero extension,

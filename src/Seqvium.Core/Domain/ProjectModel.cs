@@ -171,6 +171,7 @@ public sealed record ProjectState(
     public ImmutableArray<GraphAttachment> GraphAttachments { get; init; } = [];
     public ImmutableArray<ArrangementClip> ArrangementClips { get; init; } = [];
     public ImmutableArray<ArrangementTrack> ArrangementTracks { get; init; } = [];
+    public ImmutableArray<AudioClip> AudioClips { get; init; } = [];
     public MixerState? Mixer { get; init; }
 }
 

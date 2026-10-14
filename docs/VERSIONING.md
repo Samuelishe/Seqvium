@@ -143,6 +143,19 @@ retrieved only for explicit historical tasks.
 | `0.1.4.0001` | SEQ-CHANNEL-RACK-MUSIC     | One BUILD for compact fixed Rack pads, preserved rich previews, navigator scrollbar gutter and unchanged Gain focus-loss repair. Native Neon Orchard authoring/reopen/full Song/WAV and bounded GUI/tests are in the [report](experiments/SEQ-CHANNEL-RACK-MUSIC_REPORT.md); no release or prior pressure acceptance follows.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `0.1.5.0000` | SEQ-R11-MIXER              | One verified PATCH for canonical musical channels/buses/Master, amplification/balance, real meters, routes/sends, EQ/compression and compact studio instrument UI. BUILD resets; full 1196-case Release pass, native musical Save/Open/physical Song/WAV and same-rate PCM parity are scoped in the [checkpoint](#seq-r11-mixer-checkpoint) and [report](experiments/SEQ-R11-MIXER_REPORT.md). No release or prior pressure/platform/acoustic acceptance follows.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `0.1.5.0001` | SEQ-NEON-ORCHARD           | One BUILD for the complete official editable demo, licensed managed media, frozen musical baseline and independent-copy verification. Zero-warning isolated Release build, 33 focused demo/metadata cases and native full Song/WAV pass; see the [checkpoint](#seq-neon-orchard-checkpoint). No engine stage, release, full regression or prior pressure/platform/acoustic acceptance claim.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `0.1.6.0000` | SEQ-R10-AUDIO-CLIPS        | One PATCH for standalone fixed-speed Audio Clips with native import/editing, real waveforms, shared Mixer, portable history/media and Song playback/export. BUILD resets. Evidence and bounded resident/Windows-codec limits are in the [checkpoint](#seq-r10-audio-clips-checkpoint) and [report](experiments/SEQ-R10-AUDIO-CLIPS_REPORT.md); wider R10/pressure/platform/acoustic acceptance remains separate.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+
+### SEQ-R10-AUDIO-CLIPS checkpoint
+
+Identity advances once from **0.1.5.0001 to 0.1.6.0000** for the independently significant verified
+standalone audio-arrangement workflow: native WAV/MP3/FLAC Playlist import, waveform/range/split/fades,
+fixed-speed repeats, existing Mixer, history/portable media and mixed Song playback/export. PATCH
+resets BUILD; MAJOR/MINOR remain owner-selected. Reader 1.4 is an independent essential-intent gate;
+NAudio codec dependency and Windows-only compressed import are separately documented. Final Release,
+native input/codec/cancel/portable presentation and full physical/offline/export evidence belong to
+the [Audio Clip report](experiments/SEQ-R10-AUDIO-CLIPS_REPORT.md). This does not finish wider R10
+stretch/container scope, streaming/surround support or prior pressure/acoustic/platform acceptance.
+No release, staging, commit, push or tag occurs, and no intermediate BUILD is consumed.
 
 ### SEQ-NEON-ORCHARD checkpoint
 
@@ -313,8 +326,9 @@ Product version does not determine `.seqvium` format acceptance, graph schema/no
 extension ABI, .NET SDK/runtime, dependencies/packages, device IDs, or audio format.
 [Project format](PROJECT_FORMAT.md) retains independent major/minor/minimum-reader gates and unknown
 data preservation. The codec writer marker `0.2.0-r2-f1` identifies its implementation lineage,
-not the current product. This checkpoint leaves writer metadata, JSON shape, reader 1.1 requirements,
-canonical/document identity and persistence semantics unchanged. Future codec changes require an
+not the current product. The initial foundation retained reader 1.1 requirements; later Mixer and
+Audio Clip checkpoints add independent essential-intent gates (currently reader 1.4). Writer lineage
+does not substitute for those gates. Future codec changes require an
 independent compatibility decision; product PATCH/BUILD are never reader gates.
 
 ### SEQ-DESKTOP-FOUNDATIONS-F1-FINALIZE

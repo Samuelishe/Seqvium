@@ -23,7 +23,8 @@ public sealed record AudioContribution(
     Id<PatternPlacement> PlacementId,
     Id<MusicalPart> PartId,
     Id<GraphSourceBinding> BindingId,
-    Id<GraphNode> NodeId);
+    Id<GraphNode> NodeId,
+    Id<SoundDefinition>? AudioSoundId = null);
 
 internal enum GraphOperationKind
 {

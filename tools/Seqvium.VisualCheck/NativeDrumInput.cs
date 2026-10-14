@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -165,7 +167,51 @@ internal static partial class NativePointer
             for (int i = 0; i < 50 && GetForegroundWindow() == Handle; i++) await Task.Delay(40);
             Guard(true);
             Program.Require(GetForegroundWindow() != Handle, "Native file dialog did not open.");
-            Key(0x4E, true, 0x12); // Common file dialog: focus File name.
+            // Native access keys vary with the Windows display language. Locate the rendered filename
+            // Edit in this exact owned dialog and focus it with actual mouse input.
+            nint dialog = GetForegroundWindow();
+            WindowRect fieldRect;
+            {
+                var start = new ProcessStartInfo("powershell.exe")
+                {
+                    UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+                foreach (string argument in new[]
+                         {
+                             "-NoProfile", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-File",
+                             Path.GetFullPath("tools/Seqvium.VisualCheck/Read-NativeElements.ps1"), "-WindowHandle",
+                             dialog.ToString()
+                         }) start.ArgumentList.Add(argument);
+                using var process = Process.Start(start) ?? throw new IOException("Native UI reader did not start.");
+                string json = await process.StandardOutput.ReadToEndAsync();
+                await process.WaitForExitAsync();
+                Program.Require(process.ExitCode == 0,
+                    "Native UI reader failed: " + await process.StandardError.ReadToEndAsync());
+                using var elements = JsonDocument.Parse(json);
+                var element = elements.RootElement.EnumerateArray()
+                    .Where(e => e.GetProperty("Id").GetString() == "1148" ||
+                                e.GetProperty("Id").GetString()
+                                    ?.Contains("FileName", StringComparison.OrdinalIgnoreCase) == true ||
+                                e.GetProperty("Name").GetString() is "Имя файла:" or "File name:")
+                    .OrderByDescending(e => e.GetProperty("Y").GetDouble()).FirstOrDefault();
+                Program.Require(element.ValueKind != JsonValueKind.Undefined,
+                    "Owned native filename Edit unavailable: " + json);
+                int left = (int)element.GetProperty("X").GetDouble(), top = (int)element.GetProperty("Y").GetDouble();
+                fieldRect = new()
+                {
+                    Left = left, Top = top, Right = left + (int)element.GetProperty("Width").GetDouble(),
+                    Bottom = top + (int)element.GetProperty("Height").GetDouble()
+                };
+            }
+
+            Guard(true);
+            SetCursorPos((fieldRect.Left + fieldRect.Right) / 2, (fieldRect.Top + fieldRect.Bottom) / 2);
+            SendInput(2, [
+                new() { Type = 0, Data = new() { Mouse = new() { Flags = 2 } } },
+                new() { Type = 0, Data = new() { Mouse = new() { Flags = 4 } } }
+            ], Marshal.SizeOf<Input>());
+            await Task.Delay(60);
             Key(0x41, true, 0x11);
             Text(path, true);
             Key(0x0D, true);
@@ -176,4 +222,10 @@ internal static partial class NativePointer
 
     [DllImport("user32.dll")]
     private static extern nint GetAncestor(nint window, uint flags);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WindowRect
+    {
+        internal int Left, Top, Right, Bottom;
+    }
 }

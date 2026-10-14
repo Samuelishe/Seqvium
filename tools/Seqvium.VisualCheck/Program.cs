@@ -103,6 +103,13 @@ internal static partial class Program
                 instance.RequestActivationAsync(TimeSpan.FromSeconds(1)).GetAwaiter().GetResult() ? 0 : 2;
         }
 
+        if (args[0] == "audio-fixtures")
+        {
+            Require(args.Length == 2, "audio-fixtures <new-independent-directory>");
+            CreateAudioClipFixtures(Path.GetFullPath(args[1]));
+            return 0;
+        }
+
         if (args[0] is "lease" or "noipc" or "stalled")
         {
             Require(args.Length == 3, "Lease requires identity and output.");
@@ -160,7 +167,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
-                or "native-track" or "native-mixer",
+                or "native-track" or "native-mixer" or "native-audio",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -190,6 +197,11 @@ internal static partial class Program
                 {
                     Require(args.Length == 4, "native-mixer <output> <independent-project> <mix|review|play|inspect>");
                     await NativeMixerAsync(main, output, args[2], args[3]);
+                }
+                else if (args[0] == "native-audio")
+                {
+                    Require(args.Length == 4, "native-audio <output> <independent-project> <author|review|play>");
+                    await NativeAudioClipsAsync(main, output, Path.GetFullPath(args[2]), args[3]);
                 }
                 else if (args[0] == "drum") await DrumMusicAsync(main, output, args.Length > 2 ? args[2] : null);
                 else if (args[0] == "drum-kit")
@@ -229,13 +241,13 @@ internal static partial class Program
                     var workflow = Field<DesktopWorkflow>(main, "_workflow");
                     if (workflow.State.IsDirty)
                     {
-                        Require(args[0] is not ("native-track" or "native-mixer"),
+                        Require(args[0] is not ("native-track" or "native-mixer" or "native-audio"),
                             "Native composer stopped with unsaved edits; checkpoint file is preserved.");
                         Require(await workflow.SaveAsync(Path.Combine(output, "final-fixture.seqvium")),
                             "Shutdown fixture save failed.");
                     }
 
-                    if (args[0] is "native-track" or "native-mixer")
+                    if (args[0] is "native-track" or "native-mixer" or "native-audio")
                         Dispatcher.UIThread.Post(() => new NativePointer.DrumInput(main).Key(0x73, modifier: 0x12));
                     else main.Close();
                 }

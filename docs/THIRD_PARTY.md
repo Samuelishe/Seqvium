@@ -53,6 +53,23 @@ remains the primary license artifact.
 
 ## Introduced
 
+### Audio Clip codec adapter
+
+Desktop references [NAudio.Wasapi 2.2.1](https://www.nuget.org/packages/NAudio.Wasapi/2.2.1), with
+transitive NAudio.Core 2.2.1, by Mark Heath and contributors. The Desktop manifest and lock file own
+versions and package hashes; Tests/VisualCheck inherit the same graph. The adapter uses WaveFileReader
+for PCM WAV and MediaFoundationReader for MP3/FLAC normalization on a worker. Core stays BCL-only,
+and the existing Seqvium WASAPI output/Mixer remain the realtime path; this does not introduce a
+second output system. No upstream source or codec executable is vendored.
+
+The [tagged MIT license](https://github.com/naudio/NAudio/blob/v2.2.1/license.txt) carries Copyright
+2020 Mark Heath. Preserve that copyright and the complete permission/warranty text with redistributed
+NAudio binaries. The packages retain MIT, not Seqvium's Apache license; actual delivered notice
+bundles remain a distribution gate. Media Foundation is an installed **Windows** service, not a
+universal cross-platform decoder. MP3/FLAC availability depends on the Windows edition/components
+and installed codecs. No Microsoft DLL, FFmpeg, private recording or sample pack is redistributed.
+Local original pad fixtures and private-library copies are outside Git and are not shipped content.
+
 ### Neon Orchard demo media
 
 The official [editable demo](../examples/Neon%20Orchard/README.md) distributes six unique WAVs.
@@ -187,13 +204,13 @@ These are candidates or product directions, not dependencies, adoption decisions
 SEQ-R0's bounded evaluation is recorded in its [protocol](experiments/SEQ-R0_PROTOCOL.md) and report;
 it does not adopt a portable audio dependency or production engine.
 
-| Candidate / direction             | Intended evaluation boundary                                                                                                                                                                                                                                                  |
-|-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Further .NET application delivery | Managed canonical foundation and a framework-dependent desktop host are adopted; self-contained/native packaging and distribution remain unevaluated                                                                                                                          |
-| miniaudio or comparable backend   | Still a portable candidate. Official miniaudio license offers public-domain or MIT-0 terms; PortAudio has an MIT-style license. Neither is downloaded, built, redistributed or device-tested here; concrete revisions/transitive/backend/distribution checks remain necessary |
-| Future ASIO integration           | Desired later device capability, not an R0 requirement or adopted SDK/backend; evaluate concrete implementation source, licensing and redistribution when its stage approaches                                                                                                |
-| CLAP / VST3 hosting               | Later possibility; evaluate concrete SDK terms, bridges, distribution and product need when justified                                                                                                                                                                         |
-| WAV / FLAC support                | Planned/candidate media capabilities; evaluate actual codec/library choices separately                                                                                                                                                                                        |
+| Candidate / direction                            | Intended evaluation boundary                                                                                                                                                                                                                                                  |
+|--------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Further .NET application delivery                | Managed canonical foundation and a framework-dependent desktop host are adopted; self-contained/native packaging and distribution remain unevaluated                                                                                                                          |
+| miniaudio or comparable backend                  | Still a portable candidate. Official miniaudio license offers public-domain or MIT-0 terms; PortAudio has an MIT-style license. Neither is downloaded, built, redistributed or device-tested here; concrete revisions/transitive/backend/distribution checks remain necessary |
+| Future ASIO integration                          | Desired later device capability, not an R0 requirement or adopted SDK/backend; evaluate concrete implementation source, licensing and redistribution when its stage approaches                                                                                                |
+| CLAP / VST3 hosting                              | Later possibility; evaluate concrete SDK terms, bridges, distribution and product need when justified                                                                                                                                                                         |
+| Additional codecs / portable compressed decoding | Playlist WAV/MP3/FLAC import is implemented as described above; other codecs and a Linux/macOS compressed-source backend remain unevaluated                                                                                                                                   |
 
 A native realtime engine, its implementation language (possibly C++), exact native ABI, and
 package/plugin mechanisms remain open architectural choices. **C++ is a language choice, not a

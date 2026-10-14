@@ -17,6 +17,11 @@ Visual quality and musical correctness are complementary requirements.
 
 ## Compact studio instrument direction
 
+Playlist Audio Clips use a thin source-colored outline, compact beveled name strip, readable actual
+mono/stereo envelopes and restrained fade handles. Long sources retain detail through min/max levels;
+waveform visual amplitude fitting is not source normalization. Editing tools and exact properties
+remain contextual; no compulsory Rack panel or separate mixing surface is introduced.
+
 The accepted direction is a dense desktop instrument, not a spacious settings application. The owner
 authorizes substantial recomposition of the interface and its guidelines when reference study and
 actual rendered usability justify it. Previous generous editor proportions are not immutable constraints.

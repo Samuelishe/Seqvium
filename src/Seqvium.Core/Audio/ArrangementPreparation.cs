@@ -20,11 +20,20 @@ public static class ArrangementPreparation
                                                                            state.Placements.Single(p =>
                                                                                    p.Id == clip.SourcePlacementId)
                                                                                .PatternId).Length.Ticks * clip.Repeats))
-        .DefaultIfEmpty(0).Max();
+        .Concat(state.AudioClips.Select(clip => AudioClipSource.EndTicks(state, clip))).DefaultIfEmpty(0).Max();
 
     public static string? Refusal(ProjectState state)
     {
-        if (state.ArrangementClips.IsEmpty) return "Arrangement.Empty";
+        if (state.ArrangementClips.IsEmpty && state.AudioClips.IsEmpty) return "Arrangement.Empty";
+        if (state.AudioClips.Any(c => !c.AdditionalData.IsEmpty)) return "Arrangement.Unsupported";
+        foreach (var clip in state.AudioClips)
+        {
+            var sound = state.Sounds.Single(s => s.Id == clip.SoundId);
+            if (sound.Extension is not null || !sound.AdditionalData.IsEmpty ||
+                sound.Parameters.Count != 3 ||
+                !sound.Parameters.ContainsKey("channels")) return "Arrangement.Unsupported";
+        }
+
         if (state.ArrangementClips.Any(clip => !clip.AdditionalData.IsEmpty)) return "Arrangement.Unsupported";
         if (state.ArrangementTracks.Any(track => !track.AdditionalData.IsEmpty)) return "Arrangement.Unsupported";
         var reports = GraphDiagnostics.Inspect(state).ToDictionary(report => report.GraphId);
@@ -48,6 +57,7 @@ public static class ArrangementPreparation
         var state = document.Current.State;
         if (Refusal(state) is { } refusal) throw new GraphPreparationException(refusal);
         var plans = new Dictionary<Id<PatternPlacement>, PreparedSampler>();
+        using var decodeBatch = ProjectMedia.BeginDecodeBatch();
         var sources = new List<PcmLease>();
         try
         {
@@ -71,11 +81,11 @@ public static class ArrangementPreparation
                 plans.Add(id, plan);
                 // Relocating sub-frame note boundaries can change audibility. Do not reuse an incomplete table.
                 if (plan.ZeroFrameNotes != 0) throw new GraphPreparationException(GraphPreparationReasons.Source);
-                decodedBytes = checked(decodedBytes + plan.DecodedBytes);
-                if (decodedBytes > SamplerPreparation.MaximumDecodedBytes)
-                    throw new GraphPreparationException(GraphPreparationReasons.Budget);
                 offsets.Add(id, (sources.Count, bufferCount));
                 sources.AddRange(plan.LeaseSources());
+                decodedBytes = sources.DistinctBy(source => source.Samples).Sum(source => source.Bytes);
+                if (decodedBytes > SamplerPreparation.MaximumDecodedBytes)
+                    throw new GraphPreparationException(GraphPreparationReasons.Budget);
                 var graph = plan.Graph!;
                 foreach (var operation in graph.Operations)
                     operations.Add(operation with
@@ -92,6 +102,83 @@ public static class ArrangementPreparation
             }
 
             long endTicks = EndTicks(state);
+            var audioSources = new Dictionary<Id<ResourceDescriptor>, int>();
+            long audioBytes = 0;
+            foreach (var group in state.AudioClips.Where(c => IsAudible(state, c.Lane)).GroupBy(c => c.SoundId))
+            {
+                cancellation.ThrowIfCancellationRequested();
+                var sound = state.Sounds.Single(s => s.Id == group.Key);
+                int rate = AudioClipSource.Rate(sound);
+                if (!audioSources.TryGetValue(sound.ResourceIds[0], out int sourceIndex))
+                {
+                    long expected = AudioClipSource.Frames(sound) * (long)sound.Parameters["channels"] * sizeof(float);
+                    if (audioBytes + expected > AudioMedia.MaximumDecodedBytes)
+                        throw new GraphPreparationException(GraphPreparationReasons.Budget);
+                    using var decoded = AudioMedia.Decode(document, sound.ResourceIds[0]);
+                    if (decoded.SampleRate != rate || decoded.Frames != AudioClipSource.Frames(sound) ||
+                        decoded.Channels != sound.Parameters["channels"])
+                        throw new GraphPreparationException(GraphPreparationReasons.Media);
+                    sourceIndex = sources.Count;
+                    sources.Add(decoded.Lease());
+                    audioSources.Add(sound.ResourceIds[0], sourceIndex);
+                    audioBytes += expected;
+                }
+
+                int buffer = bufferCount++;
+                var node = new Id<GraphNode>(sound.Id.Value);
+                buffers.Add(node, buffer);
+                outputs.Add(buffer);
+                operations.Add(new(node, GraphOperationKind.Source, buffer, [], -1));
+                contributions.Add(new(default, default, default, node, sound.Id));
+                var continuations = group.Where(c => c.Repeats == 1 && c.EnvelopeLengthFrames > 0)
+                    .ToLookup(c => (c.OffsetFrames, c.EnvelopeOffsetFrames));
+                foreach (var clip in group)
+                {
+                    if (events.Count + clip.Repeats * 2L + 1 > SamplerPreparation.MaximumEvents)
+                        throw new GraphPreparationException(GraphPreparationReasons.Budget);
+                    var bounds = AudioClipSource.ExecutionBounds(clip, state.Settings.Tempo, rate, sampleRate);
+                    long start = bounds.Start;
+                    bool joined = clip.Repeats == 1 && clip.EnvelopeLengthFrames > 0 &&
+                                  continuations[
+                                          (clip.OffsetFrames + clip.LengthFrames,
+                                              clip.EnvelopeOffsetFrames + clip.LengthFrames)]
+                                      .Any(next =>
+                                          next.GainDb == clip.GainDb && next.FadeInFrames == clip.FadeInFrames &&
+                                          next.FadeOutFrames == clip.FadeOutFrames &&
+                                          next.EnvelopeLengthFrames == clip.EnvelopeLengthFrames &&
+                                          AudioClipSource.ExecutionBounds(next, state.Settings.Tempo, rate, sampleRate)
+                                              .Start == bounds.End);
+                    for (int repeat = 0; repeat < clip.Repeats; repeat++)
+                    {
+                        long on = start + AudioClipSource.ConvertFrames(clip.LengthFrames * repeat, rate, sampleRate);
+                        long off = bounds.Origin is not null
+                            ? bounds.End
+                            : start +
+                              AudioClipSource.ConvertFrames(clip.LengthFrames * (repeat + 1), rate, sampleRate);
+                        if (on == off)
+                        {
+                            zero++;
+                            continue;
+                        }
+
+                        int index = notes.Count;
+                        var occurrence =
+                            new ExecutionOccurrence(default, default, default, repeat, AudioClipId: clip.Id);
+                        notes.Add(new(occurrence, sourceIndex, (double)rate / sampleRate,
+                            clip.GainDb == -90 ? 0 : (float)Math.Pow(10, (double)clip.GainDb / 20), on, off, 0, buffer,
+                            SourceOffset: clip.OffsetFrames, SourceLength: clip.LengthFrames,
+                            FadeIn: clip.FadeInFrames, FadeOut: clip.FadeOutFrames,
+                            EnvelopeOffset: clip.EnvelopeOffsetFrames,
+                            EnvelopeLength: AudioClipSource.EnvelopeLength(clip),
+                            SourceClockStart: bounds.Origin, SmoothSourceEnd: !joined));
+                        events.Add(new(on, ConstantTempoConversion.FromFrames(on, state.Settings.Tempo, sampleRate),
+                            ExecutionEventKind.NoteOn, occurrence, index));
+                        events.Add(new(off, ConstantTempoConversion.FromFrames(off, state.Settings.Tempo, sampleRate),
+                            ExecutionEventKind.NoteOff, occurrence, index));
+                    }
+                }
+            }
+
             foreach (var clip in state.ArrangementClips.OrderBy(c => c.Position.Ticks).ThenBy(c => c.Id.Value))
             {
                 if (!IsAudible(state, clip.Lane)) continue;
@@ -134,8 +221,21 @@ public static class ArrangementPreparation
                 }
             }
 
-            long last = checked(ConstantTempoConversion.ToFrames(new(endTicks), state.Settings.Tempo, sampleRate) +
+            long patternEnd = state.ArrangementClips.Select(c => checked(c.Position.Ticks +
+                                                                         state.Patterns.Single(p =>
+                                                                                 p.Id == state.Placements.Single(s =>
+                                                                                         s.Id == c.SourcePlacementId)
+                                                                                     .PatternId)
+                                                                             .Length.Ticks * c.Repeats))
+                .DefaultIfEmpty(0)
+                .Max();
+            long last = checked(ConstantTempoConversion.ToFrames(new(patternEnd), state.Settings.Tempo, sampleRate) +
                                 release);
+            last = Math.Max(last,
+                state.AudioClips.Select(c =>
+                        AudioClipSource.ExecutionBounds(c, state.Settings.Tempo,
+                            AudioClipSource.Rate(state.Sounds.Single(s => s.Id == c.SoundId)), sampleRate).End)
+                    .DefaultIfEmpty(0).Max());
             if (notes.Any(n => n.OneShot))
                 last = Math.Max(last,
                     notes.Where(n => n.OneShot).Max(n => checked(n.StartFrame + sources[n.SourceIndex].Frames)));

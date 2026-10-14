@@ -149,7 +149,8 @@ public sealed class RealtimeSampler : IDisposable
 
     // Four slots include the sole reserved candidate. Event/note object allowance is separate from DSP scratch.
     public const long MaximumRetainedPcmAndScratchBytes =
-        4L * (SamplerPreparation.MaximumDecodedBytes + GraphPreparation.MaximumScratchBytes);
+        4L * (SamplerPreparation.MaximumDecodedBytes + AudioMedia.MaximumDecodedBytes +
+              GraphPreparation.MaximumScratchBytes);
 
     public const long MaximumPreparedTableAllowanceBytes = 4L * SamplerPreparation.MaximumEvents * 256;
 
@@ -160,7 +161,8 @@ public sealed class RealtimeSampler : IDisposable
     /// <summary>Conservative total includes the worker's sole reserved candidate even while its decode is in progress.</summary>
     public long ReservedPcmAndScratchBytes => RetainedPcmAndScratchBytes + (Volatile.Read(ref _preparing) == 0
         ? 0
-        : (long)SamplerPreparation.MaximumDecodedBytes + GraphPreparation.MaximumScratchBytes);
+        : (long)SamplerPreparation.MaximumDecodedBytes + AudioMedia.MaximumDecodedBytes +
+          GraphPreparation.MaximumScratchBytes);
 
     public bool HasPending => Volatile.Read(ref _pending) is not null;
     internal long RejectedPreparedExecutionId => Volatile.Read(ref _rejectedPreparedExecutionId);
@@ -647,6 +649,7 @@ public sealed class SamplerPreparationRequest : IDisposable
         _generation = document.Generation;
         _revision = document.Current.Revision;
         _frozen = ProjectDocument.Reopen(document.Current);
+        AudioMedia.ShareCache(document, _frozen);
         _frozen.MediaRoots.AddRange(document.MediaRoots);
         _roots = [.. document.MediaRoots];
     }

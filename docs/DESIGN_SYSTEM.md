@@ -27,6 +27,12 @@ Application resource replacement synchronizes aliases; theme changes retain exis
 
 ## Token catalog
 
+Playlist Audio Clip drawing uses the existing surface, bevel, channel-identity, accent and text roles,
+shared Playlist metrics and HostVisual captions. Draw min/max waveform bands separately for mono/stereo;
+fit visual amplitude without altering audio gain or claiming a meter. Contextual source-frame/fade/gain
+fields use shared `parameterRow`/`numeric` styles, including actual TextPresenter vertical alignment.
+Do not introduce a private audio-clip palette or locally stretched control templates.
+
 All color roles exist in Dark and Light. `HostPalette.For` is also the fallback for a detached
 drawing control; application resources are the live authority after attachment.
 

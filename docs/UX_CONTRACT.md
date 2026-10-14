@@ -200,13 +200,43 @@ last-valid audio for invalid intent, edits history or changes live transport. Sa
 reported; cancellation/failure preserves an existing destination and cannot overwrite managed media.
 Save/Open preserves all music/track state; transport, selection/view and history remain session-only.
 
-This bounded editor offers whole-Pattern repeats, 32 lanes and a 4096-bar editing view. All 32 lanes
+This bounded editor offers whole-Pattern repeats and 32 lanes. The view expands for long Audio Clips;
+Pattern placement retains its 4096-bar bound. All 32 lanes
 are available by vertical scrolling even before they contain clips. The timeline anchors at TOP + LEFT;
 its horizontal extent fills an expanded viewport with editable bars up to the existing limit. It adds no
-independent clip variation, audio trim/stretch,
-section markers, automation, in-clip velocity editor or stateful effects. Shared velocity edits are in Piano Roll.
+independent Pattern variation, audio stretch, section markers, automation or an in-clip velocity editor.
+Audio range/trim/split/fades are implemented below; stateful global processing belongs to Mixer.
+Shared velocity edits are in Piano Roll.
 Reference-informed follow-up lives
 in [R10 planning](ROADMAP.md#seq-r10--arrangement), separate from implemented controls.
+
+## Implemented Audio Clip workflow
+
+Native Explorer WAV/MP3/FLAC drop directly targets Playlist time/lane with a snapped insertion ghost
+and Copy effect. The Playlist import picker offers the same standalone route. Neither requires Rack
+or creates a Pattern. Unsupported drops refuse the target; the picker reports localized format/channel/
+rate/size/decode failures. A crossed-out cursor can also mean Windows elevation blocks the OS drop.
+Import is worker-prepared, cancellable from Playlist, and one history edit per accepted file. Failure/
+cancellation leaves that candidate absent; prior accepted files from a multi-drop stay undoable.
+
+Actual mono/stereo min/max waveform envelopes distinguish audio from Pattern previews. Waveform
+display fits source amplitude for readability, not audio normalization. Body drag moves, Ctrl-drag
+copies; Shift selects audio groups. Edge drag trims a single occurrence; upper waveform corners edit
+linear fades. Resize/fade cursors identify the active gesture. Snap/temporary modifiers and Escape/
+capture/stale-basis cancellation retain existing owner semantics. Delete, Ctrl+D and arrow movement
+operate on selected audio. Audio and Pattern group selection are currently separate.
+
+Slice clicks or Split at cursor split only a single-repeat range. Source range and original fade
+envelope survive split without an artificial seam. Repeats loop that range at natural speed, not BPM.
+Double-click/Enter opens compact exact offset/duration/fade/gain fields and the shared source's Mixer
+route; creating a Mixer channel is explicit. Route/gain/range edit uses existing project/history, and
+copies share route but own range/fades/gain. Moving/BPM changes never silently stretch or transpose.
+
+Audio and Patterns play/export together through the existing Mixer. Track Mute/Solo gates occurrences;
+Mixer Mute/Solo/effects/routing operate on summed shared sources. Save/Open/Save As preserve media and
+intent, with unavailable waveform/status for damaged managed media and no unsafe fallback export.
+The external original is unnecessary after accepted managed import. Limits are in
+[audio](AUDIO_ENGINE.md#standalone-audio-clips); no stretch/warp, surround downmix or recording is implied.
 
 ## Implemented R4-F3-A bounded workflow
 

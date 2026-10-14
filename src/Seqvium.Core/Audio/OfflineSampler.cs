@@ -31,7 +31,8 @@ public readonly record struct ExecutionOccurrence(
     Id<NoteEvent> NoteId,
     int Iteration,
     Id<PatternPlacement>? PlacementId = null,
-    Id<ArrangementClip>? ClipId = null);
+    Id<ArrangementClip>? ClipId = null,
+    Id<AudioClip>? AudioClipId = null);
 
 public enum ExecutionEventKind
 {
@@ -61,7 +62,15 @@ internal sealed record PreparedNote(
     int ChokePriority = 0,
     long ChokeFrames = long.MaxValue,
     long ChokeTicks = long.MaxValue,
-    long ChokeStartTicks = 0);
+    long ChokeStartTicks = 0,
+    long SourceOffset = 0,
+    long SourceLength = long.MaxValue,
+    long FadeIn = 0,
+    long FadeOut = 0,
+    long EnvelopeOffset = 0,
+    long EnvelopeLength = 0,
+    long? SourceClockStart = null,
+    bool SmoothSourceEnd = true);
 
 /// <summary>Frozen single-Pattern execution, bounded repeats and source leases. Derived state, never persistent musical truth.</summary>
 public sealed class PreparedSampler : IDisposable
@@ -105,7 +114,7 @@ public sealed class PreparedSampler : IDisposable
         Events = events;
         _sources = sources;
         Graph = graph;
-        DecodedBytes = sources.Sum(source => source.Bytes);
+        DecodedBytes = sources.DistinctBy(source => source.Samples).Sum(source => source.Bytes);
     }
 
     internal PcmLease[] LeaseSources() => (_sources ?? throw new ObjectDisposedException(nameof(PreparedSampler)))
@@ -497,7 +506,9 @@ public sealed class OfflineSampler : IDisposable
         {
             var note = _plan.Notes[index];
             long age = Position - note.StartFrame, release = Position - note.EndFrame;
-            if (age <= 0 || age * note.Step >= _sources![note.SourceIndex].Frames ||
+            double cursor = SourceCursor(note, age, Position);
+            if (age <= 0 || cursor >= note.SourceOffset + (double)note.SourceLength ||
+                cursor >= _sources![note.SourceIndex].Frames ||
                 age >= note.ChokeFrames || !note.OneShot && release >= note.ReleaseFrames) continue;
             var voice = _voices[slot++];
             voice.Note = note;
@@ -509,7 +520,8 @@ public sealed class OfflineSampler : IDisposable
         }
     }
 
-    // Mapping is constructed by the control owner, never searched/allocated in the callback.
+    // Occurrence mapping is owner-prepared. Audio destination reconstruction scans the frozen table
+    // once at publication, using existing fixed voice slots, just as an explicit Song seek does.
     internal void ContinueFrom(OfflineSampler old, int[] notes)
     {
         if (old._mixer is { } mixer) _mixer?.ContinueFrom(mixer);
@@ -537,7 +549,38 @@ public sealed class OfflineSampler : IDisposable
             destination.StartIteration = source.StartIteration;
             destination.ChokeAge = ChokeAge(destination.Note, destination.StartIteration);
         }
+
+        if (_plan.IsArrangement && !_stopped)
+            for (int index = 0; index < _plan.Notes.Length; index++)
+            {
+                var note = _plan.Notes[index];
+                if (note.Occurrence.AudioClipId is null) continue;
+                long age = Position - note.StartFrame;
+                double cursor = SourceCursor(note, age, Position);
+                if (age <= 0 || Position >= note.EndFrame || cursor >= note.SourceOffset + (double)note.SourceLength ||
+                    cursor >= _sources![note.SourceIndex].Frames) continue;
+                bool retained = false;
+                Voice? available = null;
+                foreach (var voice in _voices)
+                {
+                    if (voice.Note is not null && voice.NoteIndex == index) retained = true;
+                    if (voice.Note is null) available ??= voice;
+                }
+
+                if (retained || available is null) continue; // Complete preparation already proves capacity.
+                available.Note = note;
+                available.NoteIndex = index;
+                available.Age = age;
+                available.ReleaseAge = -1;
+                available.ChokeAge = long.MaxValue;
+                available.StartIteration = 0;
+            }
     }
+
+    private static double SourceCursor(PreparedNote note, long age, long position) =>
+        note.SourceClockStart is { } origin
+            ? note.SourceOffset - note.EnvelopeOffset + (position - origin) * note.Step
+            : note.SourceOffset + age * note.Step;
 
     private long EventFrame(PreparedEvent item) => _looping && _plan.Loop is { } clock
         ? clock.Frame(item.Position.Ticks + _iteration * clock.LengthTicks)
@@ -590,8 +633,10 @@ public sealed class OfflineSampler : IDisposable
             {
                 if (voice.Note is not { } note) continue;
                 var source = _sources![note.SourceIndex];
-                double cursor = voice.Age * note.Step; // Derive from age; block partitions cannot change accumulation.
-                if (cursor >= source.Frames || voice.Age >= voice.ChokeAge)
+                double sourceAge = voice.Age * note.Step;
+                double cursor = SourceCursor(note, voice.Age, Position);
+                if (cursor >= source.Frames || cursor >= note.SourceOffset + (double)note.SourceLength ||
+                    voice.Age >= voice.ChokeAge)
                 {
                     voice.Note = null;
                     continue;
@@ -599,6 +644,13 @@ public sealed class OfflineSampler : IDisposable
 
                 double gain = note.Gain *
                               (voice.ReleaseAge < 0 ? 1 : 1 - (double)voice.ReleaseAge / note.ReleaseFrames);
+                double envelopeAge = note.SourceClockStart is { } origin
+                    ? (Position - origin) * note.Step
+                    : sourceAge + note.EnvelopeOffset;
+                long envelopeLength = note.EnvelopeLength == 0 ? note.SourceLength : note.EnvelopeLength;
+                if (note.FadeIn > 0) gain *= Math.Clamp(envelopeAge / note.FadeIn, 0, 1);
+                if (note.FadeOut > 0)
+                    gain *= Math.Clamp((envelopeLength - envelopeAge - note.Step) / note.FadeOut, 0, 1);
                 if (voice.ChokeAge != long.MaxValue)
                     gain *= Math.Clamp((voice.ChokeAge - voice.Age - 1d) / BoundaryFadeFrames, 0, 1);
                 if (_smoothBoundaries)
@@ -606,8 +658,12 @@ public sealed class OfflineSampler : IDisposable
                     // Finish inside the permitted boundary, preserving exact silence after it.
                     // PCM source EOF, zero-release gate and the Pattern/Song end each own a boundary.
                     double remaining = (source.Frames - cursor) / note.Step;
+                    if (note.SmoothSourceEnd)
+                        remaining = Math.Min(remaining,
+                            (note.SourceOffset + (double)note.SourceLength - cursor) / note.Step);
                     long gateAge = note.EndFrame - note.StartFrame;
-                    if (!note.OneShot && note.ReleaseFrames == 0) remaining = Math.Min(remaining, gateAge - voice.Age);
+                    if (note.SmoothSourceEnd && !note.OneShot && note.ReleaseFrames == 0)
+                        remaining = Math.Min(remaining, gateAge - voice.Age);
                     long end = _looping && note.OneShot
                         ? long.MaxValue
                         : _looping && _plan.Loop is { } loopClock

@@ -75,6 +75,11 @@ dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-
 ```
 
 Alternatively launch `src/Seqvium.Desktop/bin/Release/net10.0/Seqvium.Desktop.exe` directly.
+Use an ordinary, non-administrator desktop process for Explorer drag-and-drop. Windows UIPI rejects
+medium-integrity Explorer drops into an elevated application. Do not disable OS security to test this.
+Playlist MP3/FLAC decoding uses NAudio's Windows Media Foundation adapter on a worker; available
+system codecs are required. WAV normalization and Core managed PCM remain separate from that backend.
+No FFmpeg executable or OS codec DLL is bundled. See [provenance](THIRD_PARTY.md#audio-clip-codec-adapter).
 Installed .NET 10 is needed; no global Avalonia template/tool/workload, server or browser is needed.
 Launching creates an empty unnamed project and loads user preferences and workspace layout.
 It stays silent until explicit Play and does not run DeviceCheck, open capture or change system

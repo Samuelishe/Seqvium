@@ -16,6 +16,7 @@ internal static class HostIcons
     internal static IReadOnlyDictionary<string, string> Paths { get; } = new Dictionary<string, string>
     {
         ["Import"] = "M4 14V20H20V14 M12 3V15 M7 10L12 15L17 10",
+        ["Split"] = "M12 3V21 M3 7H9V17H3Z M15 7H21V17H15Z",
         ["Open"] = "M3 19V6H9L11 8H20V11 M3 19L6 11H22L19 19Z",
         ["Save"] = "M5 3H17L21 7V21H3V3H5Z M7 3V9H16V3 M7 21V14H17V21",
         ["Export"] = "M4 15V21H20V15 M12 16V3 M7 8L12 3L17 8 M4 12L6 10L8 12L10 10",

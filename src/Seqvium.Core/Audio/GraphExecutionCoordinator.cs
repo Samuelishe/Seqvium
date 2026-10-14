@@ -360,6 +360,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         {
             Mixer = ignoreGain ? null : state.Mixer,
             ArrangementClips = [],
+            AudioClips = [],
             ArrangementTracks = [],
             Sounds = ignoreNotes
                 ?

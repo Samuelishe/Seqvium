@@ -184,6 +184,38 @@ public static class ProjectValidation
 
         GraphStructure.Validate(state, value => Identity(new Id<GraphDefinition>(value)));
 
+        Present(state.AudioClips);
+        foreach (var clip in state.AudioClips)
+        {
+            Identity(clip.Id);
+            Require(sounds.TryGetValue(clip.SoundId, out var sound) && sound.Algorithm == AudioClipSource.Algorithm,
+                "Audio clip references an unknown audio source.");
+            Require(sound.ResourceIds.Length == 1 && sound.Parameters.TryGetValue("sampleRate", out var rate) &&
+                    rate is >= 8000 and <= 192000 && decimal.Truncate(rate) == rate &&
+                    sound.Parameters.TryGetValue("frames", out var frames) && frames > 0 && frames <= int.MaxValue &&
+                    decimal.Truncate(frames) == frames && sound.Parameters.TryGetValue("channels", out var channels) &&
+                    channels is 1 or 2, "Invalid audio source metadata.");
+            Require(clip.Lane is >= 0 and < 32 && clip.Repeats is >= 1 and <= 1024 && clip.OffsetFrames >= 0 &&
+                    clip.LengthFrames > 0 && clip.OffsetFrames <= AudioClipSource.Frames(sound) - clip.LengthFrames &&
+                    clip.FadeInFrames >= 0 && clip.FadeOutFrames >= 0 &&
+                    clip.EnvelopeOffsetFrames >= 0 && clip.EnvelopeLengthFrames >= 0 &&
+                    clip.EnvelopeOffsetFrames <= clip.OffsetFrames &&
+                    clip.EnvelopeOffsetFrames <= AudioClipSource.EnvelopeLength(clip) - clip.LengthFrames &&
+                    AudioClipSource.EnvelopeLength(clip) <= AudioClipSource.Frames(sound) &&
+                    clip.FadeInFrames <= AudioClipSource.EnvelopeLength(clip) &&
+                    clip.FadeOutFrames <= AudioClipSource.EnvelopeLength(clip) &&
+                    clip.GainDb is >= -90 and <= 24 && clip.Position.Ticks >= 0,
+                "Invalid audio clip range, fade, level or lane.");
+            try
+            {
+                _ = AudioClipSource.EndTicks(state, clip);
+            }
+            catch (OverflowException)
+            {
+                throw new ProjectValidationException("Audio clip end exceeds musical-time range.");
+            }
+        }
+
         void CheckContext(Id<ProcessingContext>? id, LocalProcessingLevel level)
         {
             if (id is { } value)

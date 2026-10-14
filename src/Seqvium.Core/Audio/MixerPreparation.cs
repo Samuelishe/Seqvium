@@ -52,7 +52,8 @@ internal static class MixerPreparation
                 weights[op.Buffer] = op.Inputs.Sum(input => weights[input]) * gain;
             }
 
-            taps.Add(new(source, sounds.GetValueOrDefault(partSounds[contribution.PartId], master),
+            taps.Add(new(source,
+                sounds.GetValueOrDefault(contribution.AudioSoundId ?? partSounds[contribution.PartId], master),
                 weights[graph.OutputBuffer]));
         }
 

@@ -12,6 +12,23 @@ SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed 
 offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
 output adapter; graph, presentation and permanent engine choices remain separate.
 
+## Implemented standalone Audio Clip boundary
+
+`AudioClip` is canonical Playlist intent, not a synthetic Pattern, Part or Rack item. Position/lane
+are musical organization; offset, length and fades are native PCM frames. A shared SoundDefinition
+identifies the imported source and its explicit Mixer assignment. Copies/split pieces share it;
+Playlist lanes remain independent of Mixer channels. Gain/fades/range/repeats belong to occurrences.
+
+Desktop's worker codec adapter normalizes supported sources to immutable managed float WAV. Core
+owns portable metadata, validation, history, media integrity and prepared PCM/waveform derivations.
+Windows Media Foundation is confined to compressed-source import, never the realtime callback.
+Arrangement preparation leases each unique resource once, schedules unpitched PCM through the
+existing sampler, and contributes it to the existing global Mixer. No parallel transport/mixing owner
+or obligatory Channel Rack editor is introduced. Frozen preparation/export documents share the
+document's weak PCM cache; prepared states own strong leases. Save As revalidates relocated bytes
+before reusing those arrays. [Audio](AUDIO_ENGINE.md#standalone-audio-clips) owns limits/clocks;
+[format](PROJECT_FORMAT.md#audio-clips-reader-14) owns persistence.
+
 ## Implemented project Mixer boundary
 
 The project owns optional canonical `MixerState`, stable channels/buses, explicit SoundDefinition

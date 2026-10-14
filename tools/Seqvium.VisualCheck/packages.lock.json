@@ -152,6 +152,19 @@
         "resolved": "0.11.6",
         "contentHash": "NdNWGDiZ6eS/Mf/9+QHR91cj1K7Hy+PX9yrHI/zM7xFYuj9IWT2uxtB6sCHjrnxAeLV9fut1R6zHDUGKX6f9lQ=="
       },
+      "NAudio.Core": {
+        "type": "Transitive",
+        "resolved": "2.2.1",
+        "contentHash": "GgkdP6K/7FqXFo7uHvoqGZTJvW4z8g2IffhOO4JHaLzKCdDOUEzVKtveoZkCuUX8eV2HAINqi7VFqlFndrnz/g=="
+      },
+      "NAudio.Wasapi": {
+        "type": "Transitive",
+        "resolved": "2.2.1",
+        "contentHash": "lFfXoqacZZe0WqNChJgGYI+XV/n/61LzPHT3C1CJp4khoxeo2sziyX5wzNYWeCMNbsWxFvT3b3iXeY1UYjBhZw==",
+        "dependencies": {
+          "NAudio.Core": "2.2.1"
+        }
+      },
       "SkiaSharp": {
         "type": "Transitive",
         "resolved": "3.119.4",
@@ -189,7 +202,7 @@
       "seqvium.audio.windows": {
         "type": "Project",
         "dependencies": {
-          "Seqvium.Core": "[0.1.0.2, )"
+          "Seqvium.Core": "[0.1.5.1, )"
         }
       },
       "seqvium.core": {
@@ -200,8 +213,9 @@
         "dependencies": {
           "Avalonia.Desktop": "[12.1.3, )",
           "Avalonia.Themes.Fluent": "[12.1.3, )",
-          "Seqvium.Audio.Windows": "[0.1.0.2, )",
-          "Seqvium.Core": "[0.1.0.2, )"
+          "NAudio.Wasapi": "[2.2.1, )",
+          "Seqvium.Audio.Windows": "[0.1.5.1, )",
+          "Seqvium.Core": "[0.1.5.1, )"
         }
       }
     }

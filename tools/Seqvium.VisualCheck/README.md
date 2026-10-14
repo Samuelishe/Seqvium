@@ -21,6 +21,32 @@ Output directories should be absolute and task-owned, inside ignored `.artifacts
 The `gestures` command runs a shorter matrix for focused input/alignment verification, including
 committed toolbar Gain fractional drafts, Enter/Escape, invalid input, focus loss and stale authority.
 
+## Native Audio Clip check
+
+`audio-fixtures <new-independent-directory>` copies the official Neon Orchard project and its media
+outside the repository, then generates original 180-second/short pad WAVs and Windows-encoded MP3/FLAC
+source fixtures. It never edits the official demo or authors musical JSON. Fixture encoding requires
+the installed Windows codecs; codec failure is not a successful fixture set.
+
+`native-audio <absolute-ignored-output> <independent-project> <author|drop|check|edit|review|mixer|play>`
+uses guarded SendInput and production pickers/controls. `author` imports/edits/routes/splits/saves;
+`drop` performs actual Explorer drag of `Sources/Library piano.wav` (supply only a task-owned copy).
+`check` exercises cancellation/errors/BPM/12 source aliases/history and native portable Save As;
+`edit` exercises actual left/right trim and corner-fade pointer gestures with Undo; `review` renders
+RU/EN Dark/Light and exact field alignment in maximized/restored windows; `mixer`
+checks the Audio Clip source's real Mixer meter, Mute/Solo and Undo/Redo; `play` exercises physical
+seek/range loop and native whole-Song WAV. Internal musical observations are read-only, not authoring.
+The check phase creates large original silence fixtures inside the independent Sources directory;
+keep adequate temporary disk space. It never changes device/system volume settings.
+
+Explorer is normally medium-integrity. If the verification terminal is elevated, use
+`Start-NativeUserCheck.ps1 -Executable <built-VisualCheck.exe> -Arguments <quoted-native-command>
+-WorkingDirectory <repo>` to launch the isolated host with the **same user's interactive Explorer
+token**. This deliberately lowers verification privilege; it does not change security settings,
+grant administrator access or bypass Windows' cross-integrity drop protection. Ordinary app users
+should simply launch Seqvium without elevation. `Read-NativeElements.ps1` reads geometry only from
+the specified native dialog/Explorer window; typing and drag remain actual native input.
+
 ## Native Mixer check
 
 `native-mixer <absolute-output> <independent-project> <mix|review|play>` uses guarded Windows

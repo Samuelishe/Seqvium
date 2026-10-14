@@ -10,7 +10,10 @@ Use the repository's issue tracker. For a bug, include:
 
 - What you were trying to do, the steps to reproduce it, and what you expected instead.
 - The version shown in About, or the source revision if you built it yourself.
-- Your operating system; for audio problems, the output device and relevant settings.
+- Your operating system; for audio problems, the output device and relevant settings. For Audio Clips,
+  include format, sample rate, channels, duration, BPM, trim/fade/repeat settings and whether the issue
+  occurs in playback, seek/loop or Song WAV export. Mention elevated application launch when reporting
+  a crossed-out Explorer drop cursor.
 - A small example project or sample, when useful and when you can share it.
 
 Remove private paths and personal information from logs or screenshots. Share only audio and other

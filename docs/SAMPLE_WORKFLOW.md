@@ -7,6 +7,23 @@ Lab exploration/reference/locks/history, candidate acceptance, durable audio, ob
 Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing,
 or final resource file format.
 
+## Playlist audio import
+
+Playlist accepts WAV/MP3/FLAC as independent Audio Clips, by Explorer drop or its native picker.
+It does not create a Pattern, Part or Rack channel. A worker normalizes to project-owned mono/stereo
+float WAV and prepares the real waveform; owner acceptance adds resource, shared sound and occurrence
+as one Undo edit only after lifecycle/generation/cancellation checks. Cancelling an unaccepted candidate
+cleans only its own temporary media. A multiple-file drop accepts files in order onto successive lanes;
+if a later import fails/cancels, earlier completed imports remain individually undoable.
+
+Copies reuse source resource and Mixer identity; trim/split/fades change occurrence intent without
+rewriting media. Save As owns portable media rather than the external original. The legacy Rack/graph
+WAV workflow below remains a separate pitched sampler with smaller input limits. Playlist compressed
+decode is Windows-only, codec-dependent; surround, unsupported formats and oversized decoded sources
+are rejected explicitly. [Audio execution](AUDIO_ENGINE.md#standalone-audio-clips) owns duration/memory
+limits, [format](PROJECT_FORMAT.md#audio-clips-reader-14) owns durable layout, and
+[UX](UX_CONTRACT.md#implemented-audio-clip-workflow) owns gestures and error/cancel feedback.
+
 ## R2-F1 minimum import and use
 
 The first bounded implementation exposes `ProjectMedia.BeginImport` / `WavImport.PrepareAsync` /

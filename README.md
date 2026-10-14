@@ -1,92 +1,67 @@
 # Seqvium
 
-Seqvium is a free and open-source desktop music workstation in early alpha development.
-It aims to make it easy to start with a sound or a musical idea, then discover deeper editing,
-processing and sound design as the music takes shape.
+Seqvium is a free, open-source desktop music workstation in early alpha. Start with a drum pattern,
+a melody or an audio recording, arrange it in Playlist, and mix it through shared instruments and
+processing. The workflow draws inspiration from FL Studio while developing its own compact,
+flexible workspace and node-based sound design.
 
-The workflow takes inspiration from FL Studio: direct manipulation, reusable musical ideas and
-flexible working surfaces. Seqvium is developing its own approach, with sample exploration and
-node-based sound processing at its center. See the [project vision](docs/PROJECT_VISION.md) for
-the wider direction.
+Windows 11 is the currently tested desktop platform. This is a working alpha, not a finished
+replacement for an established DAW. Linux and macOS remain architectural targets, not validated
+UI/audio platforms.
 
 ## What you can do today
 
-The current desktop provides a small working environment for samples, synthesized drums and music. You can:
+- Drop **WAV, MP3 or FLAC from Windows Explorer directly onto Playlist**. Audio Clips are independent
+  of Patterns and Channel Rack. See real mono/stereo waveforms, move or Ctrl-copy clips, trim their
+  source ranges, split them, adjust fades and gain, and repeat the selected range at its natural speed.
+- Compose in Channel Rack and Piano Roll using shared notes, pitch, duration and velocity. Patterns
+  can span 1–32 bars; draw steps, melodies and chords, resize notes and audition pitches.
+- Use built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim, editable envelopes and sound presets,
+  or pitched WAV samples. Linked hats can choke each other.
+- Arrange overlapping Patterns and Audio Clips together. Name/color the 32 organizational tracks,
+  use track Mute/Solo, snap, zoom, overview navigation, seek and ruler-range loops.
+- Mix shared sound sources through channels, buses and pre/post sends, with level, stereo balance,
+  Mute/Solo, real meters, high-pass/three-band EQ, linked compression and optional Master sample-peak
+  protection. Playlist tracks do not automatically become Mixer channels.
+- Edit Source → Gain → Mix → Output graphs, reuse sound editors, and arrange movable/resizable panes.
+- Undo/redo musical edits, save/reopen projects with managed media, and export a Pattern or the full
+  Song to 48 kHz stereo PCM16 WAV using the same audio processing.
+- Work in English or Russian, with Dark and Light themes.
 
-- Import WAV samples and play the selected sample item.
-- Add built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim without sample files. Each has its own
-  synthesis, useful parameters and three starting presets. Shape envelopes, audition repeatedly,
-  save/load your own sound presets, and link hats for natural choke. Rack and Piano notes trigger the
-  same sounds in Pattern/Song, Undo/Redo, Save/Open and WAV export.
-- Create a Pattern in Channel Rack, add or drop WAV sounds, and paint/erase sixteenth-note steps.
-  Choose 1–32 bars; fill, shift or clear a row, and delete channels or Patterns with Undo.
-  Play a continuous loop with a visible position, change steps while it plays, and export the selected
-  Pattern to WAV. Save/reopen it with its samples and continue editing.
-- Build a song in Playlist: place shared Patterns on tracks, move and repeat clips, or Ctrl-drag a copy.
-  Name and color tracks, use Mute/Solo, seek or loop a ruler range, and move or duplicate groups.
-  Navigate with the overview, pointer zoom, horizontal scrolling or middle-button pan.
-  Song plays overlapping Patterns together with a moving playhead; export the whole composition to WAV.
-- Compose melodies, chords and bass in Piano Roll: draw, select, move/copy, resize and delete notes,
-  edit velocity or exact properties, and audition pitches. Snap, zoom, scrolling and ghost parts keep
-  editing musical. Rack and Playlist use the same notes; richer Rack rows show a safe melody preview.
-  Set a WAV's source Root Pitch explicitly; matching, hash-verified catalog metadata can initialize it.
-- Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
-  and pan or zoom the canvas.
-- Adjust sample levels and mix independent WAV sources within the same graph.
-- Mix instruments across Patterns and Song in a compact Mixer: amplify quiet sources, set stereo
-  balance and Mute/Solo, read real stereo levels, and route channels through buses or pre/post sends.
-  Use built-in high-pass/three-band EQ and linked compression on channels or Master, with optional
-  Master sample-peak protection. Mixer settings share Undo/Redo, Save/Open and WAV export.
-- Double-click a node to open its reusable editor: adjust Gain with a physical dial, slider, exact amplitude
-  and dB display, shape a Drum Voice source, or inspect Source, Mix and Output details.
-- Undo and redo edits, save a project with its imported audio, and reopen it.
-- Arrange internal workspace panes by moving, resizing, docking or collapsing them. Restore main-window
-  size/position and use the Rack + Playlist layout for composing.
-- Use the interface in English or Russian, with dark and light themes.
+Audio Clips do not change pitch or speed when moved or when BPM changes. Their start positions use
+musical time; their lengths, trims and fades use source frames. There is **no time stretch or warp**.
+Copies reuse a source and its Mixer assignment rather than duplicating decoded audio.
 
-The graph makes signal flow visible: a sample can pass through Gain to Output, or several sources
-can meet at a Mix node. The project Mixer adds global mixing and EQ/compression downstream of those
-local graphs; Playlist tracks organize clips rather than automatically defining Mixer channels.
+Try [Audio Clips](docs/README.md#work-with-audio-clips),
+[a drum pattern](docs/README.md#create-a-drum-pattern),
+[a melody](docs/README.md#compose-a-melody), or [the Mixer](docs/README.md#mix-your-music).
+For an editable song with licensed media, open [Neon Orchard](examples/Neon%20Orchard/README.md).
+Use Save As before experimenting with the demo.
 
-For a first rhythm, follow [Create a drum pattern](docs/README.md#create-a-drum-pattern).
-For pitched music, follow [Compose a melody](docs/README.md#compose-a-melody).
-For balance and processing, follow [Mix your music](docs/README.md#mix-your-music).
-The [sample processing guide](docs/README.md#try-sample-processing) covers graph editing.
+## Current limits
 
-For an editable composition, open [Neon Orchard](examples/Neon%20Orchard/README.md), the official
-evolving demo included with its licensed media. Its 32-bar arrangement is the starting point for
-a track we will develop alongside Seqvium.
+Playlist import accepts mono/stereo sources at 8–192 kHz. WAV supports PCM16/24/32 and float32;
+MP3/FLAC import uses **Windows Media Foundation and the codecs available on that Windows installation**.
+It is not a cross-platform decoder. Unsupported, corrupt or multichannel sources are rejected without
+adding a clip. Channel Rack's separate WAV-sampler workflow retains its smaller 16 MiB input limit.
 
-## Current state and limitations
+Audio is prepared in memory, not streamed from disk. An Audio Clip source and the unique audible
+Audio Clip sources in one prepared Song are each bounded to **512 MiB of decoded float PCM**.
+At 48 kHz stereo that is about 23 minutes 18 seconds for one source; higher rates allow less time,
+mono allows more. Pattern-source PCM has a separate 128 MiB budget. These are preparation limits,
+not a total-process memory guarantee: waveforms, old prepared states, Undo-retained media and import
+temporary files also consume memory or disk. Playback shares a 32-voice budget with Patterns and
+refuses overload instead of silently dropping music. Heavy system load can still cause glitches.
 
-Seqvium is an **early alpha**, not yet a ready replacement for FL Studio or Ableton Live.
-It supports rhythm creation and a first working song arrangement workflow. Many advanced editing,
-instrument and processing capabilities remain unfinished.
-
-Step sequencing supports 1–32 bars in 4/4, continuous looping and live step editing. Piano Roll edits
-the shared pitch/duration/velocity data. Playlist arranges whole Patterns and their
-repeats; section markers, independent variations, audio trimming/stretching and automation remain ahead.
-WAV export covers either a selected Pattern or the whole Song, including the current processing graphs.
-WAV channel edits preserve the other voices in the supported Rack graph. Short boundary smoothing
-reduces sample-end clicks. WAV import supports mono/stereo PCM16/24/32 and float32 at 8–192 kHz;
-FLAC remains unavailable. Delay/reverb, automation, third-party plugin hosting,
-MIDI input, recording and crash recovery remain missing.
-Built-in drums use finite mono hits and shared sound parameters. Linked hats share one choke group
-across channels and audible Song clips; advanced modulation, user-defined groups and stereo layers
-remain ahead. Mixer currently uses a fixed EQ/compression chain; stereo pan is
-balance, not a stereo-width processor. Its protection is sample-peak, not true-peak mastering.
-Sampler pitching uses linear resampling, changing sample playback speed and natural duration; it is
-not time stretching or a multisample instrument. The shared graph has a 32-voice budget.
-Playback can glitch under heavy system load.
-
-Windows 11 is the current development and tested desktop platform. Linux and macOS are intended
-targets, but their application UI and audio operation have not been validated. Build instructions
-below are for trying the application from source on Windows.
+Audio split currently operates on a single occurrence; set repeats to one before splitting.
+Audio and Pattern group-selection workflows remain separate. Dynamic track insertion, section
+markers, automation, delay/reverb, plugin hosting, MIDI input, recording and crash recovery are not
+implemented. Sampler pitching uses linear resampling, not time stretching. Mixer stereo pan is
+balance; its peak ceiling is sample-peak protection, not true-peak mastering.
 
 ## Getting started
 
-Install a .NET 10 SDK that matches [global.json](global.json), then open a terminal at the root
-of your local checkout:
+Install the .NET 10 SDK selected by [global.json](global.json). From a local checkout on Windows:
 
 ```text
 dotnet restore Seqvium.sln --locked-mode
@@ -94,41 +69,27 @@ dotnet build Seqvium.sln -c Release --no-restore
 dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-build --no-restore
 ```
 
-The application opens an empty project and stays silent until you press Play.
-Channel Rack opens in a pristine layout: create a Pattern and add built-in drums or your own WAVs,
-or open the included [Neon Orchard project](examples/Neon%20Orchard/README.md#open-play-and-export).
-The demo includes its own media; a general sample library is not bundled. Save
-projects you want to keep.
-Launching it again brings the existing window forward where the OS allows, instead of opening
-another workspace. If the running application does not respond, the new launch reports this and exits.
+The app opens an empty project and stays silent until Play. Open Playlist from the rail to drop
+audio, create a Pattern in Channel Rack, or open the included demo. Run the app with normal user
+permissions: Windows blocks Explorer drops into an elevated application. No general sample library
+is bundled beyond the demo's reviewed media.
 
-The [development guide](docs/DEVELOPMENT.md#current-environment-and-entry-points) covers the SDK,
-project layout and local tools. The [documentation guide](docs/README.md) provides a first-use
-walkthrough and routes to more detailed material.
+Keep `Song.seqvium` and its associated `Song.seqvium.media` directory together when copying a
+project. Imports create managed media, so saved projects no longer depend on the original source
+file. Save As copies the required media to the new project location. Reopening never starts playback.
 
-## Where the project is heading
+See the [first-use guide](docs/README.md) and [development guide](docs/DEVELOPMENT.md) for practical
+steps and setup. A second launch normally brings the existing workspace forward.
 
-The next musical editing work can build on continuous Pattern playback and live edits. The longer-term
-direction includes advanced note tools, richer Playlist editing, deeper mixing, sample generation and resampling,
-detailed
-effect and instrument editors, and optional extensions. Recording and external plugin hosting
-are later goals.
+## Development and contributions
 
-These are planned capabilities, not features in the current build. The
-[engineering roadmap](docs/ROADMAP.md) describes their scope and dependencies; it is not a release
-schedule.
-
-## Contributing
-
-Bug reports, usability feedback, documentation improvements and focused code contributions are
-welcome. Reports about sample playback or graph editing are especially useful while those workflows
-are taking shape.
-
-Read [Contributing](CONTRIBUTING.md) for reporting and development guidance, or use the
-[documentation guide](docs/README.md#understand-the-design) to explore the architecture.
+The [roadmap](docs/ROADMAP.md) describes the wider direction, not a release schedule or a list of
+already available features. Bug reports, musical-workflow feedback, documentation and focused code
+contributions are welcome; start with [Contributing](CONTRIBUTING.md). Share only audio you have
+permission to distribute, and keep private libraries out of Git.
 
 ## License
 
-Seqvium is licensed under the [Apache License 2.0](LICENSE).
-Third-party components and assets retain their own licenses; see the
+Seqvium-authored code and content use the [Apache License 2.0](LICENSE), unless explicitly identified
+otherwise. Dependencies and demo recordings retain their own licenses; see
 [third-party notices and provenance](docs/THIRD_PARTY.md).

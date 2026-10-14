@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using Seqvium.Core;
 using Seqvium.Desktop.Workflow;
 using Seqvium.Desktop.Presentation;
@@ -18,6 +19,7 @@ public sealed class DesktopWorkflowTests
         public bool Disposed;
         public int CloseAttempts;
         public Action BeforeJoin = () => { };
+
         public void Close()
         {
             CloseAttempts++;
@@ -26,7 +28,12 @@ public sealed class DesktopWorkflowTests
             if (UnconfirmedJoin) return;
             Joined = true;
         }
-        public void Dispose() { Assert.True(Joined); Disposed = true; }
+
+        public void Dispose()
+        {
+            Assert.True(Joined);
+            Disposed = true;
+        }
     }
 
     private sealed class Fixture : IAsyncDisposable
@@ -40,13 +47,16 @@ public sealed class DesktopWorkflowTests
         internal int Opens;
         internal Action<RealtimeSampler, Borrower>? Opened;
         internal bool FailNextCoordinator;
+
         internal Fixture(ProjectDocument? document = null,
             Func<CancellationToken, Task>? gate = null)
         {
             Document = document ?? ProjectDocument.Create();
             Workflow = new(Document, () =>
             {
-                Opens++; Sampler = new(48000, 2, 32); Output = new();
+                Opens++;
+                Sampler = new(48000, 2, 32);
+                Output = new();
                 Opened?.Invoke(Sampler, Output);
                 return new(Output, Sampler, "Deterministic borrower", () => Fault);
             }, Directory.File("owned"), (doc, sampler, target, owner) =>
@@ -56,9 +66,11 @@ public sealed class DesktopWorkflowTests
                     FailNextCoordinator = false;
                     throw new IOException("Injected coordinator factory failure");
                 }
+
                 return new(doc, sampler, target, owner, 8, 1, gate, true);
             });
         }
+
         internal async Task<string> Source(float[]? samples = null, int rate = 48000, bool floating = true)
         {
             var path = Directory.File(Guid.NewGuid() + ".wav");
@@ -66,7 +78,9 @@ public sealed class DesktopWorkflowTests
                 rate, floating: floating), TestContext.Current.CancellationToken);
             return path;
         }
+
         internal async Task Import() => Assert.True(await Workflow.ImportAsync(await Source()));
+
         internal async Task Drive(Task<bool> task)
         {
             // Explicit owner barriers and one sequential consumer, no physical device or timing sleeps.
@@ -76,22 +90,61 @@ public sealed class DesktopWorkflowTests
                 Sampler?.Process(new float[64]);
                 await Task.Yield();
             }
+
             Assert.True(await task.WaitAsync(TestContext.Current.CancellationToken));
             // Play acknowledges the owner command; its Start still needs a consumer packet.
             // The loop may observe completion before consuming that final publication.
             Sampler?.Process(new float[64]);
         }
+
         public async ValueTask DisposeAsync()
         {
-            if (Output is not null) { Output.FailJoin = false; Output.UnconfirmedJoin = false; }
+            if (Output is not null)
+            {
+                Output.FailJoin = false;
+                Output.UnconfirmedJoin = false;
+            }
+
             await Workflow.DisposeAsync();
             // Also release a borrower leaked by the unfixed startup path when reproducing regressions.
             if (Output is { Joined: false })
             {
-                Output.Close(); Sampler!.TerminateExecution(); Output.Dispose(); Sampler.Dispose();
+                Output.Close();
+                Sampler!.TerminateExecution();
+                Output.Dispose();
+                Sampler.Dispose();
             }
+
             Directory.Dispose();
         }
+    }
+
+    [Fact]
+    public async Task PristinePlaylistAudioNeedsNoPatternRackOrGraphAndRestoresAfterSaveOpen()
+    {
+        await using var fixture = new Fixture();
+        await fixture.Workflow.ObserveAsync();
+        Assert.True(await fixture.Workflow.ImportAudioClipAsync(ArrangementEditBasis.From(fixture.Workflow.State),
+            await fixture.Source(), default, 0, TestContext.Current.CancellationToken));
+        Assert.Empty(fixture.Document.Current.State.Patterns);
+        Assert.Empty(fixture.Document.Current.State.GraphAttachments);
+        Assert.Single(fixture.Document.Current.State.AudioClips);
+        Assert.True(fixture.Workflow.State.SongMode);
+        Assert.True(fixture.Workflow.State.CanPlay);
+        await fixture.Drive(fixture.Workflow.PlayAsync());
+        Assert.True(fixture.Sampler!.ReadStatus().Playing);
+        var packet = new float[64];
+        fixture.Sampler.Process(packet);
+        Assert.Contains(packet, value => value != 0);
+        await fixture.Drive(fixture.Workflow.StopAsync());
+        string path = fixture.Directory.File("audio-only.seqvium");
+        Assert.True(await fixture.Workflow.SaveAsync(path));
+        Assert.True(await fixture.Workflow.OpenAsync(path, UnsavedDecision.Discard));
+        Assert.Single(fixture.Workflow.State.Snapshot.State.AudioClips);
+        Assert.True(fixture.Workflow.State.CanPlay);
+        await fixture.Drive(fixture.Workflow.PlayAsync());
+        fixture.Sampler!.Process(packet);
+        Assert.Contains(packet, value => value != 0);
     }
 
     private static void SeedStartupPcm(Fixture fixture, RealtimeSampler sampler)
@@ -109,7 +162,8 @@ public sealed class DesktopWorkflowTests
     [InlineData(false)]
     public async Task PartialStartupFailureJoinsBeforeReleaseAndAllowsFreshExplicitPlay(bool failAttachment)
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         var snapshot = fixture.Document.Current;
         int history = fixture.Document.UndoCount;
         fixture.FailNextCoordinator = !failAttachment;
@@ -126,21 +180,31 @@ public sealed class DesktopWorkflowTests
             };
         };
         Assert.False(await fixture.Workflow.PlayAsync());
-        var oldSampler = fixture.Sampler!; var oldOutput = fixture.Output!;
+        var oldSampler = fixture.Sampler!;
+        var oldOutput = fixture.Output!;
         Assert.Equal("Workflow.DeviceFault", fixture.Workflow.State.StatusKey);
-        Assert.Contains(failAttachment ? "fresh unborrowed lifetime" : "coordinator factory failure", fixture.Workflow.State.Detail!);
-        Assert.True(oldOutput.Joined); Assert.True(oldOutput.Disposed);
+        Assert.Contains(failAttachment ? "fresh unborrowed lifetime" : "coordinator factory failure",
+            fixture.Workflow.State.Detail!);
+        Assert.True(oldOutput.Joined);
+        Assert.True(oldOutput.Disposed);
         Assert.Equal(1, oldOutput.CloseAttempts);
-        Assert.Equal(0, oldSampler.LivePreparedStates); Assert.Equal(0, oldSampler.ReservedPcmAndScratchBytes);
+        Assert.Equal(0, oldSampler.LivePreparedStates);
+        Assert.Equal(0, oldSampler.ReservedPcmAndScratchBytes);
         Assert.Equal(0, oldSampler.StopAcknowledgment);
         var observation = await fixture.Workflow.ObserveAsync();
-        Assert.Null(observation.Device); Assert.Null(observation.Execution); Assert.True(observation.CanPlay);
-        Assert.Equal(1, fixture.Opens); Assert.Same(snapshot, fixture.Document.Current);
-        Assert.Equal(history, fixture.Document.UndoCount); Assert.False(fixture.Document.IsClosed);
+        Assert.Null(observation.Device);
+        Assert.Null(observation.Execution);
+        Assert.True(observation.CanPlay);
+        Assert.Equal(1, fixture.Opens);
+        Assert.Same(snapshot, fixture.Document.Current);
+        Assert.Equal(history, fixture.Document.UndoCount);
+        Assert.False(fixture.Document.IsClosed);
 
         await fixture.Drive(fixture.Workflow.PlayAsync());
-        Assert.Equal(2, fixture.Opens); Assert.NotSame(oldSampler, fixture.Sampler);
-        Assert.False(fixture.Output!.Joined); Assert.True(fixture.Sampler!.ReadStatus().Playing);
+        Assert.Equal(2, fixture.Opens);
+        Assert.NotSame(oldSampler, fixture.Sampler);
+        Assert.False(fixture.Output!.Joined);
+        Assert.True(fixture.Sampler!.ReadStatus().Playing);
         Assert.Equal(snapshot.Revision, fixture.Sampler.ReadStatus().OriginPreparedRevision);
         Assert.Equal(fixture.Workflow.State.Selected, fixture.Sampler.ReadStatus().AttachmentId);
         Assert.True(fixture.Sampler.ReadStatus().PreparedExecutionId > 0);
@@ -151,9 +215,11 @@ public sealed class DesktopWorkflowTests
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(false, false)]
-    public async Task PartialStartupFailedJoinRetainsPcmAndOwnershipUntilConfirmedRetry(bool failAttachment, bool throwOnJoin)
+    public async Task PartialStartupFailedJoinRetainsPcmAndOwnershipUntilConfirmedRetry(bool failAttachment,
+        bool throwOnJoin)
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         var snapshot = fixture.Document.Current;
         fixture.FailNextCoordinator = !failAttachment;
         fixture.Opened = (sampler, output) =>
@@ -161,50 +227,73 @@ public sealed class DesktopWorkflowTests
             fixture.Opened = null;
             SeedStartupPcm(fixture, sampler);
             if (failAttachment) sampler.TerminateExecution();
-            output.FailJoin = throwOnJoin; output.UnconfirmedJoin = !throwOnJoin;
+            output.FailJoin = throwOnJoin;
+            output.UnconfirmedJoin = !throwOnJoin;
             output.BeforeJoin = () => Assert.Equal(1, sampler.LivePreparedStates);
         };
         Assert.False(await fixture.Workflow.PlayAsync());
-        var sampler = fixture.Sampler!; var output = fixture.Output!;
+        var sampler = fixture.Sampler!;
+        var output = fixture.Output!;
         Assert.Equal("Workflow.DeviceFault", fixture.Workflow.State.StatusKey);
-        Assert.Contains(failAttachment ? "fresh unborrowed lifetime" : "coordinator factory failure", fixture.Workflow.State.Detail!);
+        Assert.Contains(failAttachment ? "fresh unborrowed lifetime" : "coordinator factory failure",
+            fixture.Workflow.State.Detail!);
         Assert.Contains(throwOnJoin ? "Injected join failure" : "Output did not join", fixture.Workflow.State.Detail!);
-        Assert.False(output.Joined); Assert.False(output.Disposed); Assert.Equal(1, output.CloseAttempts);
-        Assert.Equal(1, sampler.LivePreparedStates); Assert.True(sampler.ReservedPcmAndScratchBytes > 0);
-        Assert.NotNull(fixture.Workflow.State.Device); Assert.False(fixture.Document.IsClosed);
+        Assert.False(output.Joined);
+        Assert.False(output.Disposed);
+        Assert.Equal(1, output.CloseAttempts);
+        Assert.Equal(1, sampler.LivePreparedStates);
+        Assert.True(sampler.ReservedPcmAndScratchBytes > 0);
+        Assert.NotNull(fixture.Workflow.State.Device);
+        Assert.False(fixture.Document.IsClosed);
         Assert.Same(snapshot, fixture.Document.Current);
         long identity = sampler.ReadStatus().PreparedExecutionId;
         Assert.True(identity > 0);
 
-        Assert.True(await fixture.Workflow.StopAsync()); Assert.True(await fixture.Workflow.StopAsync(true));
+        Assert.True(await fixture.Workflow.StopAsync());
+        Assert.True(await fixture.Workflow.StopAsync(true));
         Assert.False(await fixture.Workflow.PlayAsync());
         Assert.False(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
-        Assert.Equal(3, output.CloseAttempts); Assert.Equal(1, fixture.Opens);
-        Assert.False(output.Joined); Assert.False(output.Disposed); Assert.False(fixture.Document.IsClosed);
-        Assert.Equal(1, sampler.LivePreparedStates); Assert.Equal(identity, sampler.ReadStatus().PreparedExecutionId);
+        Assert.Equal(3, output.CloseAttempts);
+        Assert.Equal(1, fixture.Opens);
+        Assert.False(output.Joined);
+        Assert.False(output.Disposed);
+        Assert.False(fixture.Document.IsClosed);
+        Assert.Equal(1, sampler.LivePreparedStates);
+        Assert.Equal(identity, sampler.ReadStatus().PreparedExecutionId);
         if (!failAttachment)
         {
-            var pcm = new float[64]; Assert.True(sampler.Process(pcm));
-            Assert.All(pcm, value => Assert.Equal(0f, value)); Assert.False(sampler.ReadStatus().Playing);
+            var pcm = new float[64];
+            Assert.True(sampler.Process(pcm));
+            Assert.All(pcm, value => Assert.Equal(0f, value));
+            Assert.False(sampler.ReadStatus().Playing);
             Assert.False(sampler.IsTerminated);
         }
+
         long acknowledgment = sampler.StopAcknowledgment;
-        output.FailJoin = false; output.UnconfirmedJoin = false;
+        output.FailJoin = false;
+        output.UnconfirmedJoin = false;
         if (throwOnJoin)
         {
             await fixture.Drive(fixture.Workflow.PlayAsync());
-            Assert.Equal(2, fixture.Opens); Assert.Same(snapshot, fixture.Document.Current);
+            Assert.Equal(2, fixture.Opens);
+            Assert.Same(snapshot, fixture.Document.Current);
             Assert.True(fixture.Sampler!.ReadStatus().Playing);
         }
         else
         {
             Assert.True(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
-            Assert.Equal(1, fixture.Opens); Assert.True(fixture.Document.IsClosed);
-            Assert.Null(fixture.Workflow.State.Device); Assert.Null(fixture.Workflow.State.Execution);
+            Assert.Equal(1, fixture.Opens);
+            Assert.True(fixture.Document.IsClosed);
+            Assert.Null(fixture.Workflow.State.Device);
+            Assert.Null(fixture.Workflow.State.Execution);
         }
-        Assert.True(output.Joined); Assert.True(output.Disposed);
-        Assert.Equal(4, output.CloseAttempts); Assert.Equal(0, sampler.LivePreparedStates);
-        Assert.Equal(0, sampler.ReservedPcmAndScratchBytes); Assert.Equal(acknowledgment, sampler.StopAcknowledgment);
+
+        Assert.True(output.Joined);
+        Assert.True(output.Disposed);
+        Assert.Equal(4, output.CloseAttempts);
+        Assert.Equal(0, sampler.LivePreparedStates);
+        Assert.Equal(0, sampler.ReservedPcmAndScratchBytes);
+        Assert.Equal(acknowledgment, sampler.StopAcknowledgment);
     }
 
     [Theory]
@@ -220,13 +309,15 @@ public sealed class DesktopWorkflowTests
         var pattern = Assert.Single(state.Patterns);
         var part = Assert.Single(pattern.Parts);
         var note = Assert.Single(part.Notes);
-        Assert.Equal(60m, note.Pitch); Assert.Equal(default, note.Position);
+        Assert.Equal(60m, note.Pitch);
+        Assert.Equal(default, note.Position);
         Assert.Equal(pattern.Length, note.Duration);
         Assert.True(ConstantTempoConversion.ToFrames(new(pattern.Length.Ticks), state.Settings.Tempo, rate) >= 3);
         var placement = Assert.Single(state.Placements);
         var attachment = Assert.Single(state.GraphAttachments);
         var binding = Assert.Single(attachment.Sources);
-        Assert.Equal(placement.Id, binding.PlacementId); Assert.Equal(part.Id, binding.PartId);
+        Assert.Equal(placement.Id, binding.PlacementId);
+        Assert.Equal(part.Id, binding.PartId);
         Assert.Equal(Assert.Single(state.Sounds).Id, part.SoundId);
         Assert.Equal(3, Assert.Single(state.Graphs).Nodes.Length);
         Assert.Equal(2, Assert.Single(state.Graphs).Connections.Length);
@@ -247,7 +338,8 @@ public sealed class DesktopWorkflowTests
         var pattern = Assert.Single(fixture.Document.Current.State.Patterns);
         Assert.True(pattern.Length.Ticks > MusicalPosition.TicksPerQuarter * 4);
         using var plan = GraphPreparation.Prepare(fixture.Document,
-            fixture.Workflow.State.Selected!.Value, 48000, 2, 32, cancellationToken: TestContext.Current.CancellationToken);
+            fixture.Workflow.State.Selected!.Value, 48000, 2, 32,
+            cancellationToken: TestContext.Current.CancellationToken);
         using var execution = plan.CreateExecution();
         var pcm = new float[plan.EndFrame * 2];
         for (int offset = 0; offset < pcm.Length; offset += 64)
@@ -287,15 +379,18 @@ public sealed class DesktopWorkflowTests
     [Fact]
     public async Task GainEditChangesPcmWithoutRestartingPreparedIdentityOrVoices()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         await fixture.Drive(fixture.Workflow.PlayAsync());
         var sampler = fixture.Sampler!;
         var before = sampler.ReadStatus();
-        var pcm = new float[64]; sampler.Process(pcm);
+        var pcm = new float[64];
+        sampler.Process(pcm);
         Assert.All(pcm, value => Assert.Equal(0.125f, value));
         int prepared = sampler.PreparedStatesCreated;
         Assert.True(await fixture.Workflow.SetGainAsync(0.5m));
-        await fixture.Workflow.ObserveAsync(); sampler.Process(pcm);
+        await fixture.Workflow.ObserveAsync();
+        sampler.Process(pcm);
         Assert.All(pcm, value => Assert.Equal(0.25f, value));
         var after = sampler.ReadStatus();
         Assert.Equal(before.PreparedExecutionId, after.PreparedExecutionId);
@@ -303,45 +398,57 @@ public sealed class DesktopWorkflowTests
         Assert.Equal(before.OriginPreparedRevision, after.OriginPreparedRevision);
         Assert.Equal(fixture.Document.Current.Revision, after.EquivalentCanonicalRevision);
         Assert.Equal(prepared, sampler.PreparedStatesCreated);
-        Assert.Equal(1, after.Voices); Assert.True(after.Position > before.Position);
+        Assert.Equal(1, after.Voices);
+        Assert.True(after.Position > before.Position);
     }
 
     [Fact]
     public async Task UndoRedoKeepsAtomicCanonicalUseAndRetainedMedia()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         var original = fixture.Document.Current;
         Assert.True(await fixture.Workflow.SetGainAsync(0.7m));
-        Assert.True(await fixture.Workflow.UndoAsync()); Assert.Same(original, fixture.Document.Current);
         Assert.True(await fixture.Workflow.UndoAsync());
-        Assert.Empty(fixture.Document.Current.State.Resources); Assert.Empty(fixture.Workflow.State.Occurrences);
-        Assert.True(await fixture.Workflow.UndoAsync(true)); Assert.Same(original, fixture.Document.Current);
+        Assert.Same(original, fixture.Document.Current);
+        Assert.True(await fixture.Workflow.UndoAsync());
+        Assert.Empty(fixture.Document.Current.State.Resources);
+        Assert.Empty(fixture.Workflow.State.Occurrences);
+        Assert.True(await fixture.Workflow.UndoAsync(true));
+        Assert.Same(original, fixture.Document.Current);
         using var pcm = ProjectMedia.Decode(fixture.Document, original.State.Resources.Single().Id);
         Assert.Equal(0.5f, pcm.Sample(0, 0));
-        Assert.True(await fixture.Workflow.UndoAsync(true)); Assert.Equal(0.7m, fixture.Workflow.State.Gain);
+        Assert.True(await fixture.Workflow.UndoAsync(true));
+        Assert.Equal(0.7m, fixture.Workflow.State.Gain);
     }
 
     [Fact]
     public async Task SaveSaveAsReopenPreservesIdsMediaAndRequiresNewExplicitPlay()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         var identity = fixture.Document.Current;
-        var first = fixture.Directory.File("first.seqvium"); var second = fixture.Directory.File("second.seqvium");
+        var first = fixture.Directory.File("first.seqvium");
+        var second = fixture.Directory.File("second.seqvium");
         Assert.True(await fixture.Workflow.SaveAsync(first));
         Assert.True(await fixture.Workflow.SaveAsync(second));
-        Assert.Equal(second, fixture.Document.SavedPath); Assert.False(fixture.Document.IsDirty);
+        Assert.Equal(second, fixture.Document.SavedPath);
+        Assert.False(fixture.Document.IsDirty);
         await fixture.Drive(fixture.Workflow.PlayAsync());
         var oldSampler = fixture.Sampler!;
         Assert.True(await fixture.Workflow.OpenAsync(second, UnsavedDecision.Discard));
-        Assert.True(fixture.Document.IsClosed); Assert.True(fixture.Output!.Joined);
-        Assert.Equal(0, oldSampler.LivePreparedStates); Assert.Equal(0, oldSampler.ReservedPcmAndScratchBytes);
+        Assert.True(fixture.Document.IsClosed);
+        Assert.True(fixture.Output!.Joined);
+        Assert.Equal(0, oldSampler.LivePreparedStates);
+        Assert.Equal(0, oldSampler.ReservedPcmAndScratchBytes);
         Assert.Null(fixture.Workflow.State.Execution);
         Assert.Equal(identity.Revision, fixture.Workflow.State.Document.Current.Revision);
         Assert.Equal(identity.State.GraphAttachments.Single().Id, fixture.Workflow.State.Selected);
         using var pcm = ProjectMedia.Decode(fixture.Workflow.State.Document, identity.State.Resources.Single().Id);
         Assert.Equal(0.5f, pcm.Sample(0, 0));
         Assert.Equal(1, fixture.Opens);
-        await fixture.Drive(fixture.Workflow.PlayAsync()); Assert.Equal(2, fixture.Opens);
+        await fixture.Drive(fixture.Workflow.PlayAsync());
+        Assert.Equal(2, fixture.Opens);
     }
 
     [Theory]
@@ -353,29 +460,34 @@ public sealed class DesktopWorkflowTests
         var snapshot = fixture.Document.Current;
         var path = await fixture.Source();
         if (!cancel) await File.WriteAllTextAsync(path, "invalid", TestContext.Current.CancellationToken);
-        using var cancellation = new CancellationTokenSource(); if (cancel) cancellation.Cancel();
+        using var cancellation = new CancellationTokenSource();
+        if (cancel) cancellation.Cancel();
         Assert.False(await fixture.Workflow.ImportAsync(path, cancellation.Token));
-        Assert.Same(snapshot, fixture.Document.Current); Assert.Equal(0, fixture.Document.UndoCount);
+        Assert.Same(snapshot, fixture.Document.Current);
+        Assert.Equal(0, fixture.Document.UndoCount);
         Assert.Empty(fixture.Workflow.State.Occurrences);
         var owned = fixture.Directory.File("owned");
-        Assert.True(!Directory.Exists(owned) || Directory.GetFiles(owned, "*.wav", SearchOption.AllDirectories).Length == 0);
+        Assert.True(!Directory.Exists(owned) ||
+                    Directory.GetFiles(owned, "*.wav", SearchOption.AllDirectories).Length == 0);
     }
 
     [Fact]
     public async Task FailedAtomicUseCallbackLeavesNoAcceptedMediaOrPartialMusic()
     {
-        using var directory = new TemporaryDirectory(); var document = ProjectDocument.Create();
+        using var directory = new TemporaryDirectory();
+        var document = ProjectDocument.Create();
         var initial = document.Current;
         using (var request = ProjectMedia.BeginImport(document, "Sample", ownedMediaDirectory: directory.File("owned")))
         {
             using var input = new MemoryStream(WavFixtures.Create([0.5f]));
             await request.PrepareAsync(input, TestContext.Current.CancellationToken);
-            Assert.Throws<ProjectValidationException>(() => request.Accept((edit, media) =>
-            {
-                edit.AddPattern("Invalid", default);
-            }, TestContext.Current.CancellationToken));
+            Assert.Throws<ProjectValidationException>(() =>
+                request.Accept((edit, media) => { edit.AddPattern("Invalid", default); },
+                    TestContext.Current.CancellationToken));
         }
-        Assert.Same(initial, document.Current); Assert.Equal(0, document.UndoCount);
+
+        Assert.Same(initial, document.Current);
+        Assert.Equal(0, document.UndoCount);
         Assert.Empty(Directory.GetFiles(directory.File("owned"), "*.wav", SearchOption.AllDirectories));
     }
 
@@ -384,15 +496,19 @@ public sealed class DesktopWorkflowTests
     [InlineData(0)]
     public async Task CancelAndFailedSavePreserveDirtyDocumentBeforeReplacement(int decisionValue)
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         var snapshot = fixture.Document.Current;
         var incoming = fixture.Directory.File("incoming.seqvium");
         ProjectPersistence.Save(ProjectDocument.Create(), incoming);
-        var blocked = fixture.Directory.File("directory-target"); Directory.CreateDirectory(blocked);
+        var blocked = fixture.Directory.File("directory-target");
+        Directory.CreateDirectory(blocked);
         Assert.False(await fixture.Workflow.OpenAsync(incoming, (UnsavedDecision)decisionValue, blocked));
         Assert.Same(fixture.Document, fixture.Workflow.State.Document);
-        Assert.Same(snapshot, fixture.Document.Current); Assert.True(fixture.Document.IsDirty);
-        Assert.False(fixture.Document.IsClosed); Assert.Null(fixture.Document.SavedPath);
+        Assert.Same(snapshot, fixture.Document.Current);
+        Assert.True(fixture.Document.IsDirty);
+        Assert.False(fixture.Document.IsClosed);
+        Assert.Null(fixture.Document.SavedPath);
         if ((UnsavedDecision)decisionValue == UnsavedDecision.Save)
             Assert.Equal("Workflow.SaveFailed", fixture.Workflow.State.StatusKey);
     }
@@ -400,13 +516,16 @@ public sealed class DesktopWorkflowTests
     [Fact]
     public async Task SaveDecisionPublishesOldWorkBeforeOpeningCandidate()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
-        var incoming = fixture.Directory.File("incoming.seqvium"); var outgoing = fixture.Directory.File("outgoing.seqvium");
+        await using var fixture = new Fixture();
+        await fixture.Import();
+        var incoming = fixture.Directory.File("incoming.seqvium");
+        var outgoing = fixture.Directory.File("outgoing.seqvium");
         ProjectPersistence.Save(ProjectDocument.Create(), incoming);
         Assert.True(await fixture.Workflow.OpenAsync(incoming, UnsavedDecision.Save, outgoing));
         Assert.True(fixture.Document.IsClosed);
         var saved = ProjectPersistence.Open(outgoing);
-        Assert.Single(saved.Document.Current.State.Graphs); Assert.False(saved.IsDegraded);
+        Assert.Single(saved.Document.Current.State.Graphs);
+        Assert.False(saved.IsDegraded);
         saved.Document.Close();
         Assert.Empty(fixture.Workflow.State.Document.Current.State.Graphs);
     }
@@ -414,40 +533,52 @@ public sealed class DesktopWorkflowTests
     [Fact]
     public async Task FailedSaveDuringCloseRetainsStoppedDocumentAndBorrowerUntilRetry()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         await fixture.Drive(fixture.Workflow.PlayAsync());
         var snapshot = fixture.Document.Current;
-        var blocked = fixture.Directory.File("directory-target"); Directory.CreateDirectory(blocked);
+        var blocked = fixture.Directory.File("directory-target");
+        Directory.CreateDirectory(blocked);
         Assert.False(await fixture.Workflow.CloseAsync(UnsavedDecision.Save, blocked));
         Assert.Equal("Workflow.SaveFailed", fixture.Workflow.State.StatusKey);
-        Assert.Same(snapshot, fixture.Document.Current); Assert.False(fixture.Document.IsClosed);
-        Assert.False(fixture.Output!.Joined); Assert.True(fixture.Sampler!.LivePreparedStates > 0);
+        Assert.Same(snapshot, fixture.Document.Current);
+        Assert.False(fixture.Document.IsClosed);
+        Assert.False(fixture.Output!.Joined);
+        Assert.True(fixture.Sampler!.LivePreparedStates > 0);
         Assert.True(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
-        Assert.True(fixture.Output.Joined); Assert.Equal(0, fixture.Sampler.LivePreparedStates);
+        Assert.True(fixture.Output.Joined);
+        Assert.Equal(0, fixture.Sampler.LivePreparedStates);
     }
 
     [Fact]
     public async Task FailedOpenPreservesCurrentDocumentAndPlayback()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         await fixture.Drive(fixture.Workflow.PlayAsync());
         var snapshot = fixture.Document.Current;
-        Assert.False(await fixture.Workflow.OpenAsync(fixture.Directory.File("missing.seqvium"), UnsavedDecision.Discard));
-        Assert.Same(snapshot, fixture.Document.Current); Assert.False(fixture.Document.IsClosed);
-        Assert.True(fixture.Sampler!.ReadStatus().Playing); Assert.False(fixture.Output!.Joined);
+        Assert.False(await fixture.Workflow.OpenAsync(fixture.Directory.File("missing.seqvium"),
+            UnsavedDecision.Discard));
+        Assert.Same(snapshot, fixture.Document.Current);
+        Assert.False(fixture.Document.IsClosed);
+        Assert.True(fixture.Sampler!.ReadStatus().Playing);
+        Assert.False(fixture.Output!.Joined);
         Assert.Equal("Workflow.OpenFailed", fixture.Workflow.State.StatusKey);
     }
 
     [Fact]
     public async Task FailedSaveRemainsVisibleWhileExistingPlaybackContinues()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         await fixture.Drive(fixture.Workflow.PlayAsync());
-        var blocked = fixture.Directory.File("directory-target"); Directory.CreateDirectory(blocked);
+        var blocked = fixture.Directory.File("directory-target");
+        Directory.CreateDirectory(blocked);
         Assert.False(await fixture.Workflow.SaveAsync(blocked));
         Assert.Equal("Workflow.SaveFailed", fixture.Workflow.State.StatusKey);
         Assert.True(fixture.Workflow.State.Execution!.Execution.Playing);
-        Assert.True(fixture.Document.IsDirty); Assert.Null(fixture.Document.SavedPath);
+        Assert.True(fixture.Document.IsDirty);
+        Assert.Null(fixture.Document.SavedPath);
     }
 
     [Theory]
@@ -455,7 +586,8 @@ public sealed class DesktopWorkflowTests
     [InlineData(false)]
     public async Task InvalidGraphOrMissingMediaReopensHonestlyWithoutOldAudio(bool invalidGraph)
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         var graph = fixture.Document.Current.State.Graphs.Single();
         if (invalidGraph)
         {
@@ -464,7 +596,9 @@ public sealed class DesktopWorkflowTests
             var other = ProjectPersistence.Read(stream).Document;
             other.Edit("Invalid Gain", edit => edit.SetGraphGain(graph.Id,
                 graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain).Id, 2m));
-            var path = fixture.Directory.File("invalid.seqvium"); ProjectPersistence.Save(other, path); other.Close();
+            var path = fixture.Directory.File("invalid.seqvium");
+            ProjectPersistence.Save(other, path);
+            other.Close();
             Assert.True(await fixture.Workflow.OpenAsync(path, UnsavedDecision.Discard));
             Assert.Equal("Workflow.Blocked", fixture.Workflow.State.StatusKey);
             Assert.False(await fixture.Workflow.PlayAsync());
@@ -472,27 +606,34 @@ public sealed class DesktopWorkflowTests
         }
         else
         {
-            var path = fixture.Directory.File("missing.seqvium"); Assert.True(await fixture.Workflow.SaveAsync(path));
+            var path = fixture.Directory.File("missing.seqvium");
+            Assert.True(await fixture.Workflow.SaveAsync(path));
             File.Delete(Directory.GetFiles(path + ".media", "*.wav", SearchOption.AllDirectories).Single());
             Assert.True(await fixture.Workflow.OpenAsync(path, UnsavedDecision.Discard));
             Assert.Equal("Workflow.Degraded", fixture.Workflow.State.StatusKey);
             Assert.False(fixture.Workflow.State.CanPlay);
         }
-        Assert.Null(fixture.Workflow.State.Execution); Assert.Equal(0, fixture.Opens);
+
+        Assert.Null(fixture.Workflow.State.Execution);
+        Assert.Equal(0, fixture.Opens);
     }
 
     [Fact]
     public async Task StopAndPanicStayStickyAfterCanonicalGainEdit()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         await fixture.Drive(fixture.Workflow.PlayAsync());
         foreach (bool panic in new[] { false, true })
         {
-            await fixture.Workflow.StopAsync(panic); fixture.Sampler!.Process(new float[64]);
+            await fixture.Workflow.StopAsync(panic);
+            fixture.Sampler!.Process(new float[64]);
             Assert.True(await fixture.Workflow.SetGainAsync(panic ? 0.6m : 0.5m));
             await fixture.Workflow.ObserveAsync();
-            var pcm = new float[64]; fixture.Sampler.Process(pcm);
-            Assert.All(pcm, value => Assert.Equal(0f, value)); Assert.False(fixture.Sampler.ReadStatus().Playing);
+            var pcm = new float[64];
+            fixture.Sampler.Process(pcm);
+            Assert.All(pcm, value => Assert.Equal(0f, value));
+            Assert.False(fixture.Sampler.ReadStatus().Playing);
         }
     }
 
@@ -501,30 +642,44 @@ public sealed class DesktopWorkflowTests
     {
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         bool exited = false;
+
         async Task Gate(CancellationToken cancellation)
         {
             entered.TrySetResult();
-            try { await Task.Delay(Timeout.Infinite, cancellation); }
-            finally { exited = true; }
+            try
+            {
+                await Task.Delay(Timeout.Infinite, cancellation);
+            }
+            finally
+            {
+                exited = true;
+            }
         }
-        await using var fixture = new Fixture(gate: Gate); await fixture.Import();
+
+        await using var fixture = new Fixture(gate: Gate);
+        await fixture.Import();
         var play = fixture.Workflow.PlayAsync();
         await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
         fixture.Output!.BeforeJoin = () => Assert.True(exited);
         Assert.True(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
-        Assert.False(await play); Assert.True(fixture.Output.Joined); Assert.True(exited);
+        Assert.False(await play);
+        Assert.True(fixture.Output.Joined);
+        Assert.True(exited);
         Assert.Equal(0, fixture.Sampler!.LivePreparedStates);
-        Assert.Equal(0, fixture.Sampler.ReservedPcmAndScratchBytes); Assert.True(fixture.Document.IsClosed);
+        Assert.Equal(0, fixture.Sampler.ReservedPcmAndScratchBytes);
+        Assert.True(fixture.Document.IsClosed);
     }
 
     [Fact]
     public async Task FailedJoinKeepsDocumentAndPcmUntilExplicitRetry()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         await fixture.Drive(fixture.Workflow.PlayAsync());
         fixture.Output!.FailJoin = true;
         Assert.False(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
-        Assert.False(fixture.Document.IsClosed); Assert.True(fixture.Sampler!.LivePreparedStates > 0);
+        Assert.False(fixture.Document.IsClosed);
+        Assert.True(fixture.Sampler!.LivePreparedStates > 0);
         fixture.Output.FailJoin = false;
         Assert.True(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
         Assert.Equal(0, fixture.Sampler.LivePreparedStates);
@@ -533,21 +688,28 @@ public sealed class DesktopWorkflowTests
     [Fact]
     public async Task OutputFaultIsVisibleAndNeverAutomaticallyReopens()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
-        await fixture.Drive(fixture.Workflow.PlayAsync()); fixture.Fault = "Injected device loss";
+        await using var fixture = new Fixture();
+        await fixture.Import();
+        await fixture.Drive(fixture.Workflow.PlayAsync());
+        fixture.Fault = "Injected device loss";
         // The real host poll observes the fault. State notification is the completion barrier.
         var observed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         fixture.Workflow.Changed += state =>
-        { if (state.StatusKey == "Workflow.DeviceFault" && state.Device is null) observed.TrySetResult(); };
+        {
+            if (state.StatusKey == "Workflow.DeviceFault" && state.Device is null) observed.TrySetResult();
+        };
         await observed.Task.WaitAsync(TestContext.Current.CancellationToken);
-        Assert.Equal(1, fixture.Opens); Assert.True(fixture.Output!.Joined);
-        Assert.Equal(0, fixture.Sampler!.LivePreparedStates); Assert.False(fixture.Document.IsClosed);
+        Assert.Equal(1, fixture.Opens);
+        Assert.True(fixture.Output!.Joined);
+        Assert.Equal(0, fixture.Sampler!.LivePreparedStates);
+        Assert.False(fixture.Document.IsClosed);
     }
 
     [Fact]
     public void AllWorkflowLabelsHaveBothLanguages()
     {
-        var keys = HostLocalizer.English.Keys.Where(key => key.StartsWith("Workflow.", StringComparison.Ordinal)).ToArray();
+        var keys = HostLocalizer.English.Keys.Where(key => key.StartsWith("Workflow.", StringComparison.Ordinal))
+            .ToArray();
         Assert.True(keys.Length >= 30);
         Assert.All(keys, key => Assert.True(HostLocalizer.Russian.ContainsKey(key), key));
     }
@@ -556,12 +718,16 @@ public sealed class DesktopWorkflowTests
     public async Task ExistingBranchingGraphAndInvalidNumericGainRemainInspectableAndRepairable()
     {
         var graph = new GraphFixture();
-        graph.Document.Edit("Invalid preserved Gain", edit => edit.SetGraphGain(graph.Attachment.GraphId, graph.Gain.Id, 2m));
+        graph.Document.Edit("Invalid preserved Gain",
+            edit => edit.SetGraphGain(graph.Attachment.GraphId, graph.Gain.Id, 2m));
         await using var fixture = new Fixture(graph.Document);
         var state = await fixture.Workflow.ObserveAsync();
-        Assert.Contains("Mix", state.Chain); Assert.DoesNotContain("→", state.Chain);
-        Assert.Equal(2m, state.Gain); Assert.Equal("Workflow.Blocked", state.StatusKey);
-        Assert.False(state.CanPlay); Assert.Contains(GraphReasons.InvalidGain, state.Detail!);
+        Assert.Contains("Mix", state.Chain);
+        Assert.DoesNotContain("→", state.Chain);
+        Assert.Equal(2m, state.Gain);
+        Assert.Equal("Workflow.Blocked", state.StatusKey);
+        Assert.False(state.CanPlay);
+        Assert.Contains(GraphReasons.InvalidGain, state.Detail!);
         Assert.True(await fixture.Workflow.SetGainAsync(0.5m));
         Assert.Equal(0.5m, fixture.Workflow.State.Gain);
         Assert.True(Assert.Single(GraphDiagnostics.Inspect(graph.Document.Current.State)).IsEligibleForPreparation);
@@ -572,28 +738,43 @@ public sealed class DesktopWorkflowTests
     {
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         bool exited = false;
+
         async Task Gate(CancellationToken cancellation)
         {
             entered.TrySetResult();
-            try { await Task.Delay(Timeout.Infinite, cancellation); }
-            finally { exited = true; }
+            try
+            {
+                await Task.Delay(Timeout.Infinite, cancellation);
+            }
+            finally
+            {
+                exited = true;
+            }
         }
-        await using var fixture = new Fixture(gate: Gate); await fixture.Import();
-        var incoming = fixture.Directory.File("empty.seqvium"); ProjectPersistence.Save(ProjectDocument.Create(), incoming);
+
+        await using var fixture = new Fixture(gate: Gate);
+        await fixture.Import();
+        var incoming = fixture.Directory.File("empty.seqvium");
+        ProjectPersistence.Save(ProjectDocument.Create(), incoming);
         var play = fixture.Workflow.PlayAsync();
         await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
         await fixture.Workflow.StopAsync();
         fixture.Output!.BeforeJoin = () => Assert.True(exited);
         Assert.True(await fixture.Workflow.OpenAsync(incoming, UnsavedDecision.Discard));
-        Assert.False(await play); Assert.True(exited); Assert.True(fixture.Output.Joined);
-        Assert.True(fixture.Document.IsClosed); Assert.Null(fixture.Workflow.State.Execution);
-        Assert.Equal(1, fixture.Opens); Assert.Equal(0, fixture.Sampler!.ReservedPcmAndScratchBytes);
+        Assert.False(await play);
+        Assert.True(exited);
+        Assert.True(fixture.Output.Joined);
+        Assert.True(fixture.Document.IsClosed);
+        Assert.Null(fixture.Workflow.State.Execution);
+        Assert.Equal(1, fixture.Opens);
+        Assert.Equal(0, fixture.Sampler!.ReservedPcmAndScratchBytes);
     }
 
     [Fact]
     public async Task ImportDuringPlaybackSelectsNewUseAndStopsUntilExplicitPlay()
     {
-        await using var fixture = new Fixture(); await fixture.Import();
+        await using var fixture = new Fixture();
+        await fixture.Import();
         await fixture.Drive(fixture.Workflow.PlayAsync());
         var first = fixture.Workflow.State.Selected;
         await fixture.Import();
@@ -601,11 +782,13 @@ public sealed class DesktopWorkflowTests
         for (int pass = 0; pass < 200; pass++)
         {
             await fixture.Workflow.ObserveAsync();
-            var pcm = new float[64]; fixture.Sampler!.Process(pcm);
+            var pcm = new float[64];
+            fixture.Sampler!.Process(pcm);
             Assert.All(pcm, value => Assert.Equal(0f, value));
             Assert.False(fixture.Sampler.ReadStatus().Playing);
             if (fixture.Sampler.ReadStatus().AttachmentId == fixture.Workflow.State.Selected) break;
         }
+
         Assert.Equal(fixture.Workflow.State.Selected, fixture.Sampler!.ReadStatus().AttachmentId);
     }
 }

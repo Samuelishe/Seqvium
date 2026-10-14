@@ -10,9 +10,33 @@ SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated ma
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
 
+## Audio clips (reader 1.4)
+
+`state.audioClips` stores stable clip/source IDs, musical position/lane, native-frame offset/length,
+linear fade lengths, gain and repeats. Optional envelope offset/length preserve a split source's
+original envelope and resampling clock. Default zero envelope length means the current clip range.
+These are musical intent; PCM arrays, waveform pyramids, codec objects, selection and transport are
+derived/session state and are not serialized. Audio sources use `core.audio-clip.fixed-v1` with native
+sampleRate/frame/channel metadata and one immutable managed resource.
+
+Audio Clips, their source definitions or `audio/` managed resources require `minor >= 4` and
+`minimumReaderMinor >= 4`. Save raises but never lowers essential reader gates; older projects without
+audio keep their applicable gates and are not migrated merely by opening. Unknown clip fields survive
+history/persistence but block unsupported execution instead of silently losing musical intent.
+
+Managed audio resides under `<project>.media/audio/<identity>-<sha256>.wav`, normalized float32 WAV.
+Locators remain relative, bounded and hash-verified. Save As copies required media atomically to the
+new associated directory; the imported original is not needed afterward. Missing/corrupt managed
+media preserves clip intent and diagnostics on Open, displays unavailable audio and refuses unsafe
+playback/export. The original source and managed resource are different ownership boundaries.
+Imports accept source/resource/clip together as one Undo edit; cancellation/failure commits none.
+Source bounds, envelope/fade lengths, metadata, identities and musical overflow are validated.
+See [execution limits](AUDIO_ENGINE.md#standalone-audio-clips); the legacy Rack WAV limit below does
+not apply to normalized Audio Clip media. Global durable-media disk quota remains unselected.
+
 ## Mixer persistence
 
-The current reader understands major 1 / minor 3. Optional `state.mixer` requires both `minor >= 3`
+The current reader understands major 1 / minor 4. Optional `state.mixer` requires both `minor >= 3`
 and `minimumReaderMinor >= 3`; Save raises those markers when Mixer is present. Files without Mixer
 retain their applicable older gate and legacy sound, with no silent creation/migration on Open.
 An older reader must refuse essential Mixer intent instead of opening an apparently compatible dry mix.
@@ -283,7 +307,8 @@ across Save As, pending requests own their candidate, and live decoded leases ow
 No accepted-file GC is implemented: even history eviction/Close retains bytes, favoring protection over
 premature cleanup. Disk growth, orphan reconciliation, relink/repair, general owner tracking and recovery
 remain Q-059/Q-058. Disposable unaccepted request files and exclusively owned write temporaries may be
-removed after their operation ends. Each WAV is bounded to 16 MiB; total durable disk quota is unselected.
+removed after their operation ends. Each legacy sampler WAV is bounded to 16 MiB; Audio Clip media
+uses its separate decoded limit above. Total durable disk quota is unselected.
 
 F3 adds no persisted fields/schema change. Discovery/preview are nonpersistent; preview creates no
 accepted descriptor or project-owned source bytes. Explicit project reuse creates a fresh SoundId
@@ -525,7 +550,7 @@ from normal trim/split; edit-structure changes do not inherently modify source m
 Ordinary media import/drag-and-drop creates a project-managed durable resource at successful acceptance,
 including in an unnamed/unsaved working project. Normal continued use must not depend on the original
 external file: moving/deleting `D:\Samples\kick.wav` after successful import must not break that resource.
-This covers ordinary WAV/MP3 imports, FLAC if later supported, accepted Sample Lab output, recordings,
+This covers ordinary supported WAV/MP3/FLAC imports, accepted future Sample Lab output, recordings,
 used content-pack material and other accepted audio. These examples do not select supported codecs;
 format support remains roadmap/implementation work. Using one library file must not copy unused
 portions of the entire library. A normally saved project is self-contained with respect to used audio.

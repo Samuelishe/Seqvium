@@ -7,6 +7,28 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Audio Clip verification
+
+`AudioClipTests` covers independent native-frame/resampling/fade/repeat oracles, shared-source PCM
+and Save As leases, range/history/reader/portable media, missing managed files, Mixer assignment,
+source duration vs BPM, packet invariance, seek/loop allocation and compatible live-edit continuation.
+Split regression cases include crossing fades, 44.1→48 kHz and nonzero musical placement.
+`DesktopWorkflowTests` additionally verifies pristine audio-only import/play/save/reopen without
+Patterns, Rack items or graph attachments. Codec error tests do not imply compressed decoding on
+every Windows edition or another OS.
+
+```text
+dotnet build tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*AudioClipTests" --filter-class "*DesktopWorkflowTests"
+```
+
+Requested native musical evidence uses
+the [VisualCheck Audio Clip routes](../tools/Seqvium.VisualCheck/README.md#native-audio-clip-check)
+on independent demo copies and actual Explorer/pickers. Whole-Song submitted PCM/offline/native-WAV
+comparison uses read-only `DeviceCheck mixer-project`; native GUI remains the author/export owner.
+The [report](experiments/SEQ-R10-AUDIO-CLIPS_REPORT.md) separates deterministic, rendered, native,
+physical and acoustic claim limits, including failed verification attempts and their fixes.
+
 ## Official demo verification
 
 `OfficialDemoTests` uses build-copied repository assets, never a private library or Desktop folder.

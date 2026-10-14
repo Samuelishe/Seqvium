@@ -25,6 +25,12 @@ Mixer processing. Use **Save As** outside the checkout for personal experiments;
 media and leaves the official project available for comparison. The demonstrated desktop/audio
 environment is Windows 11; Linux/macOS runtime support remains unverified.
 
+To test standalone audio, first Save As into an independent directory outside the checkout, then
+drop your own WAV/MP3/FLAC onto Playlist. Audio Clips mix alongside the existing Patterns without
+rewriting them; clip properties can assign the shared source to the existing Mixer. Keep personal
+imports and exports outside Git. This guide does not add audio to the official composition or change
+publication-01. See [Audio Clips](../../docs/README.md#work-with-audio-clips) for tools and limits.
+
 ## Current composition
 
 The publication baseline is 112 BPM, 4/4, 32 bars (about 68.571 seconds), 15 Patterns, 19 Parts,

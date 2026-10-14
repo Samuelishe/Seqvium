@@ -37,8 +37,13 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 3;
+    public const int ReaderMinor = 4;
     private static readonly JsonSerializerOptions Options = CreateOptions();
+
+    private static bool HasAudio(ProjectState state) => !state.AudioClips.IsEmpty ||
+                                                        state.Sounds.Any(s =>
+                                                            s.Algorithm == AudioClipSource.Algorithm) ||
+                                                        state.Resources.Any(AudioMedia.IsManaged);
 
     public static byte[] Encode(ProjectDocument document)
     {
@@ -50,7 +55,8 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = snapshot.State.Mixer is not null ? 3 :
+        int required = HasAudio(snapshot.State) ? 4 :
+            snapshot.State.Mixer is not null ? 3 :
             !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
             hasGraphs ? 1 : 0;
         var file = new ProjectFile("seqvium-project", 1, Math.Max(compatibility.Minor, required),
@@ -96,6 +102,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (HasAudio(file.State) && file.MinimumReaderMinor < 4)
+                throw new ProjectFormatException("Audio clips require minimumReaderMinor >= 4.");
             if (file.State.Mixer is not null && file.MinimumReaderMinor < 3)
                 throw new ProjectFormatException("Mixer requires minimumReaderMinor >= 3.");
             if ((!file.State.Graphs.IsEmpty || !file.State.GraphAttachments.IsEmpty) && file.MinimumReaderMinor < 1)
@@ -136,6 +144,19 @@ public static class ProjectPersistence
         var result = Read(stream, availableExtensions, availableResources);
         result.Document.MediaRoots.Add(fullPath + ".media");
         var diagnostics = result.Diagnostics.ToBuilder();
+        foreach (var resource in result.Document.Current.State.Resources.Where(AudioMedia.IsManaged))
+        {
+            diagnostics.Remove($"Resource {resource.Id} is unavailable or has not been validated.");
+            try
+            {
+                AudioMedia.Resolve(result.Document, resource);
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+                diagnostics.Add($"Managed audio {resource.Id} is unavailable or corrupt: {error.Message}");
+            }
+        }
+
         foreach (var resource in result.Document.Current.State.Resources.Where(ProjectMedia.IsManagedWav))
         {
             diagnostics.Remove($"Resource {resource.Id} is unavailable or has not been validated.");
@@ -194,6 +215,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (HasAudio(snapshot.State))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(4, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(4, document.Compatibility.MinimumReaderMinor)
+                };
             if (snapshot.State.Mixer is not null)
                 document.Compatibility = document.Compatibility with
                 {

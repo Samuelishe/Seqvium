@@ -10,6 +10,7 @@
         <InternalsVisibleTo Include="Seqvium.VisualCheck"/>
         <PackageReference Include="Avalonia.Desktop" Version="12.1.3"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.3"/>
+        <PackageReference Include="NAudio.Wasapi" Version="2.2.1"/>
         <ProjectReference Include="../Seqvium.Core/Seqvium.Core.csproj"/>
         <ProjectReference Include="../Seqvium.Audio.Windows/Seqvium.Audio.Windows.csproj"/>
     </ItemGroup>

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Text;
 
 namespace Seqvium.Core;
@@ -24,13 +25,22 @@ public static class PatternWaveExport
         if (!Path.GetExtension(destination).Equals(".wav", StringComparison.OrdinalIgnoreCase))
             throw new IOException("Export requires a .wav destination.");
         foreach (string root in document.MediaRoots)
-            if (destination.StartsWith(Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar,
-                OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
+            if (destination.StartsWith(
+                    Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar,
+                    OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
                 throw new IOException("Export cannot overwrite project media.");
         var frozen = ProjectDocument.Reopen(document.Current);
+        AudioMedia.ShareCache(document, frozen);
         frozen.MediaRoots.AddRange(document.MediaRoots);
-        try { return await Task.Run(() => Render(frozen, target, destination, cancellation), cancellation).ConfigureAwait(false); }
-        finally { frozen.Close(); }
+        try
+        {
+            return await Task.Run(() => Render(frozen, target, destination, cancellation), cancellation)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            frozen.Close();
+        }
     }
 
     private static WaveExportResult Render(ProjectDocument frozen, Id<GraphAttachment>? target, string destination,
@@ -38,7 +48,8 @@ public static class PatternWaveExport
     {
         const int framesPerPacket = 1024;
         using var plan = target is { } attachment
-            ? GraphPreparation.Prepare(frozen, attachment, 48000, 2, framesPerPacket, voiceCapacity: GraphPreparation.MaximumVoices, cancellationToken: cancellation)
+            ? GraphPreparation.Prepare(frozen, attachment, 48000, 2, framesPerPacket,
+                voiceCapacity: GraphPreparation.MaximumVoices, cancellationToken: cancellation)
             : ArrangementPreparation.Prepare(frozen, 48000, 2, framesPerPacket, cancellation);
         using var execution = plan.CreateExecution(smoothBoundaries: true);
         long frames = plan.EndFrame - plan.StartFrame;
@@ -53,10 +64,18 @@ public static class PatternWaveExport
             {
                 ownsTemporary = true;
                 using var writer = new BinaryWriter(stream, Encoding.ASCII, leaveOpen: true);
-                writer.Write("RIFF"u8); writer.Write((uint)(dataBytes + 36)); writer.Write("WAVEfmt "u8);
-                writer.Write(16u); writer.Write((ushort)1); writer.Write((ushort)2); writer.Write(48000u);
-                writer.Write(192000u); writer.Write((ushort)4); writer.Write((ushort)16);
-                writer.Write("data"u8); writer.Write((uint)dataBytes);
+                writer.Write("RIFF"u8);
+                writer.Write((uint)(dataBytes + 36));
+                writer.Write("WAVEfmt "u8);
+                writer.Write(16u);
+                writer.Write((ushort)1);
+                writer.Write((ushort)2);
+                writer.Write(48000u);
+                writer.Write(192000u);
+                writer.Write((ushort)4);
+                writer.Write((ushort)16);
+                writer.Write("data"u8);
+                writer.Write((uint)dataBytes);
                 var packet = new float[framesPerPacket * 2];
                 var encoded = new byte[framesPerPacket * 4];
                 while (execution.Position < plan.EndFrame)
@@ -68,17 +87,26 @@ public static class PatternWaveExport
                     {
                         float value = packet[index];
                         if (value is < -1 or > 1) clipped++;
-                        short sample = (short)Math.Clamp((int)Math.Round(Math.Clamp(value, -1, 1) * 32768), short.MinValue, short.MaxValue);
-                        System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(encoded.AsSpan(index * 2, 2), sample);
+                        short sample = (short)Math.Clamp((int)Math.Round(Math.Clamp(value, -1, 1) * 32768),
+                            short.MinValue, short.MaxValue);
+                        System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(encoded.AsSpan(index * 2, 2),
+                            sample);
                     }
+
                     stream.Write(encoded.AsSpan(0, count * 4));
                 }
+
                 stream.Flush(flushToDisk: true);
             }
+
             cancellation.ThrowIfCancellationRequested();
-            File.Move(temporary, destination, overwrite: true); ownsTemporary = false;
+            File.Move(temporary, destination, overwrite: true);
+            ownsTemporary = false;
             return new(frames, clipped);
         }
-        finally { if (ownsTemporary) File.Delete(temporary); }
+        finally
+        {
+            if (ownsTemporary) File.Delete(temporary);
+        }
     }
 }

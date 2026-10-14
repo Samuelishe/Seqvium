@@ -48,6 +48,13 @@ internal sealed record WorkflowState(
     internal bool SongLoopEnabled { get; init; }
     internal long TransportGeneration { get; init; }
 
+    internal System.Collections.Immutable.ImmutableDictionary<Id<SoundDefinition>, AudioWaveform> AudioWaveforms
+    {
+        get;
+        init;
+    } =
+        System.Collections.Immutable.ImmutableDictionary<Id<SoundDefinition>, AudioWaveform>.Empty;
+
     internal System.Collections.Immutable.ImmutableDictionary<Guid, MixerMeter> MixerMeters { get; init; } =
         System.Collections.Immutable.ImmutableDictionary<Guid, MixerMeter>.Empty;
 }
@@ -91,7 +98,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             new(doc, sampler, target, owner, voiceCapacity: GraphPreparation.MaximumVoices));
         _mediaDirectory = mediaDirectory;
         _selected = document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
-        _songMode = !document.Current.State.ArrangementClips.IsEmpty;
+        _songMode = !document.Current.State.ArrangementClips.IsEmpty || !document.Current.State.AudioClips.IsEmpty;
         _state = new(document, [], _selected, null, "", "", _status, null, null, false, false, false, null);
         _document.Changed += DocumentChanged;
         _poll = new(_ =>
@@ -301,7 +308,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
                 _document = loaded.Document;
                 _document.Changed += DocumentChanged;
                 _selected = _document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
-                _songMode = !_document.Current.State.ArrangementClips.IsEmpty;
+                _songMode = !_document.Current.State.ArrangementClips.IsEmpty ||
+                            !_document.Current.State.AudioClips.IsEmpty;
+                await LoadAudioWaveformsAsync();
                 _songCursor = _loopStart = _loopEnd = 0;
                 _songLoopEnabled = false;
                 _status = loaded.IsDegraded ? "Workflow.Degraded" : "Workflow.Opened";
@@ -463,7 +472,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         _loopEnd = Math.Min(_loopEnd, end);
         if (_loopEnd - _loopStart < MusicalPosition.TicksPerQuarter / 4) _songLoopEnabled = false;
         ApplySongTransport();
-        if (_songMode && _document.Current.State.ArrangementClips.IsEmpty)
+        if (_songMode && _document.Current.State.ArrangementClips.IsEmpty && _document.Current.State.AudioClips.IsEmpty)
         {
             _playGeneration++;
             _coordinator?.Stop();
@@ -556,6 +565,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             SongMode = _songMode, ExecutionSampleRate = _output?.Sampler.SampleRate ?? 48000,
             SongCursor = _songCursor, LoopStart = _loopStart, LoopEnd = _loopEnd, SongLoopEnabled = _songLoopEnabled,
             TransportGeneration = _playGeneration,
+            AudioWaveforms = _audioWaveforms,
             MixerMeters = state.Mixer is { } mixer
                 ? System.Collections.Immutable.ImmutableDictionary.ToImmutableDictionary(
                     mixer.Channels.Select(c => c.Id.Value).Append(Guid.Empty), id => id,
