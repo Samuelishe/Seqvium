@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Chrome;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using Seqvium.Desktop.Presentation;
 using Seqvium.Core;
 using Seqvium.Desktop.Workspace;
@@ -296,15 +297,23 @@ internal sealed partial class MainWindow : Window
     private void BeatClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.BeatId);
     private void PianoClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.PianoId);
     private void ArrangementClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.ArrangementId);
+    private void MixerClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.MixerId);
 
     private Control CreatePaneContent(PaneDefinition definition)
     {
+        if (definition.InstanceId == WorkspaceState.MixerId)
+            return new MixerPaneContent(_session, _workflow);
         if (definition.InstanceId == WorkspaceState.ArrangementId)
             return new ArrangementPaneContent(_session, _workflow, WorkflowActionAsync,
                 () => _workspace.Open(WorkspaceState.BeatId));
         if (definition.InstanceId == WorkspaceState.BeatId)
         {
             var rack = new BeatPaneContent(_session, _workflow, ImportBeatWavAsync);
+            rack.MixerRequested += sound =>
+            {
+                _workspace.Open(WorkspaceState.MixerId);
+                this.GetVisualDescendants().OfType<MixerPaneContent>().Single().OpenSound(sound);
+            };
             rack.SoundRequested += part =>
             {
                 var state = _workflow.State.Snapshot.State;

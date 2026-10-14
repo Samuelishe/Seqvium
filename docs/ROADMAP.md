@@ -342,8 +342,8 @@ implemented: continuous Pattern playback, renderer position, compatible live ste
 channel/Pattern deletion, navigation collapse and selected-Pattern WAV export.
 [Current state](PROJECT_STATE.md) owns evidence and
 limits; [completed work](archive/WORK_LOG.md#seq-r5-music--2026-10-13)
-records the checkpoint. SEQ-R9 now provides shared per-note velocity and melodic editing; per-channel
-mix controls and remaining integration still keep R5 partial. Pattern export does not close First Track.
+records the checkpoint. SEQ-R9 supplies shared per-note velocity/melodic editing and R11 supplies
+independent project mixing. Wider Pattern integration still keeps R5 partial; export does not close First Track.
 
 Create the first genuinely musical editing workflow: Channel Rack, Step Sequencer, pattern looping,
 several channels, velocity, and responsive live editing over extensible musical events.
@@ -475,10 +475,38 @@ algorithms, gestures, and the implemented scope need bounded design rather than 
 
 ## SEQ-R11 — Mixer / Core Processing
 
-Add the user-facing Mixer workflow with channels, master, gain, pan, mute, solo, and bounded common
-processing such as basic EQ/compression. Foundational engine mixing/routing and structural graph
-nodes may already exist. Mixer channels remain distinct from arrangement tracks; deeper sends/routing
-should follow demonstrated need. A usable base must not require optional processing downloads.
+The owner-authorized musical Mixer is implemented: source assignments, independent gain/trim/balance,
+Mute/Solo, real stereo peak/RMS/hold/reduction, channel/bus/Master processing, acyclic output routes,
+pre/post sends, HP/three-band EQ and linked compressor, plus explicit Master sample-peak protection.
+Shared canonical history/persistence and realtime/offline execution are in the actual owners.
+The independent Neon Orchard copy was mixed, saved/reopened, physically played and exported using
+native GUI controls. [Report](experiments/SEQ-R11-MIXER_REPORT.md) owns evidence, not subjective quality.
+Mixer channels remain distinct from Playlist tracks; local graph transfer is preserved before global
+stateful channel processing. The compact bank is a working instrument, not a deferred decorative shell.
+
+Further processing remains planned, not part of the implemented chain: a reorderable processor rack,
+delay/reverb, arbitrary parametric bands, sidechains, automation and latency compensation. Each needs
+canonical state, lifetime/reset/tail and measured execution tests; no speculative generic FX framework
+is required before a useful processor. FX seek preroll and a future stateful graph/source split require
+explicit execution boundaries. Long-pressure/platform and owner aesthetic/acoustic acceptance remain
+separate from this checkpoint.
+
+### Desktop design continuation
+
+The owner authorizes reference-led significant interface changes. The accepted
+[compact studio direction](UI_DESIGN.md#compact-studio-instrument-direction) now replaces oversized
+Mixer/default-form proportions. Shared chrome, cards, Rack/Playlist rows and Mixer controls are denser;
+both themes use original tactile materials and semantic resource aliases.
+
+Next passes should extend that language across Piano Roll, Graph/Node editors and Drum/source editors
+without shrinking their meaningful curves or copying proprietary assets. Evaluate each with populated
+FullHD composition, narrow panes, real mouse gestures, exact-field alignment and RU/EN Dark/Light.
+Prioritize timeline heading layout, clearer selected-band EQ depth, instrument/source identity and
+consistent compact controls. Preserve separate focus/selection/play states and local scrolling.
+The current pass does not claim a completed radical redesign of every window. Richer materials/icons
+may be authored directly or generated when useful; imported assets need free/open licenses and
+[Third-party](THIRD_PARTY.md) provenance. This is a product direction, not permission to hide unfinished
+DSP behind attractive controls.
 
 ### Musical-editor reference follow-ups
 

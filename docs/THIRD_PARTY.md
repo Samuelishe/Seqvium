@@ -53,6 +53,18 @@ remains the primary license artifact.
 
 ## Introduced
 
+### Mixer DSP and original instrument graphics
+
+Mixer introduces no package, vendored code or external bitmap/icon/texture. Filter coefficients and
+analytical response are independently implemented in Core; the mathematical reference is the
+[W3C Audio EQ Cookbook](https://www.w3.org/TR/audio-eq-cookbook/). This is algorithm-reference
+provenance, not a claim that third-party source or assets were distributed. Mixer vectors, metal-cap
+gradients and bounded chassis grain are Seqvium-authored under the root license. Private reference
+screenshots and the user's music/sample library remain outside Git and are not product content.
+
+Installed Avalonia Fluent templates remain the existing dependency. Resource aliases customize their
+rendering/input affordances; no theme source is vendored or new UI framework introduced.
+
 R1 adopts the installed .NET 10 SDK/runtime for its framework-dependent canonical library and managed
 tests. Core production code remains BCL-only; R3-F1 Desktop dependencies are recorded separately below.
 The test project uses the components below;

@@ -11,23 +11,25 @@ public static class HostMetrics
 {
     public static IReadOnlyDictionary<string, double> Values { get; } = new Dictionary<string, double>
     {
-        ["Type.Body"] = 13, ["Type.Caption"] = 11, ["Type.Transport"] = 18,
-        ["Chrome.Height"] = 34, ["Toolbar.Height"] = 48, ["Status.Height"] = 24,
-        ["Control.Height"] = 30, ["Control.Corner"] = 5, ["Space.Gap"] = 6,
-        ["Control.InputHeight"] = 30, ["Control.ComfortableHeight"] = 34,
-        ["Control.IconWidth"] = 32, ["Control.StatusHeight"] = 22,
-        ["Pane.HeaderHeight"] = 32, ["Pane.Corner"] = 8, ["Chrome.ButtonWidth"] = 42,
+        ["Type.Body"] = 12, ["Type.Caption"] = 11, ["Type.Transport"] = 16,
+        ["Chrome.Height"] = 30, ["Toolbar.Height"] = 40, ["Status.Height"] = 20,
+        ["Control.Height"] = 26, ["Control.Corner"] = 3, ["Space.Gap"] = 4,
+        ["Control.InputHeight"] = 26, ["Control.ComfortableHeight"] = 30,
+        ["Control.IconWidth"] = 28, ["Control.StatusHeight"] = 20,
+        ["Pane.HeaderHeight"] = 26, ["Pane.Corner"] = 4, ["Chrome.ButtonWidth"] = 38,
         ["Border.Width"] = 1, ["Focus.Width"] = 2,
         ["Space.XSmall"] = 2, ["Space.Small"] = 4, ["Space.Medium"] = 8,
-        ["Space.Large"] = 12, ["Space.Section"] = 16,
-        ["Type.Section"] = 14, ["Type.PaneTitle"] = 13, ["Type.Numeric"] = 13,
-        ["Rack.StepHeight"] = 26, ["Rack.RowHeight"] = 44, ["Rack.StepCorner"] = 4,
-        ["Rail.Width"] = 52,
-        ["Playlist.LaneHeight"] = 72, ["Playlist.RulerHeight"] = 32, ["Playlist.HeaderWidth"] = 156,
-        ["Playlist.OverviewHeight"] = 28,
+        ["Space.Large"] = 10, ["Space.Section"] = 12,
+        ["Type.Section"] = 13, ["Type.PaneTitle"] = 12, ["Type.Numeric"] = 12,
+        ["Rack.StepHeight"] = 24, ["Rack.RowHeight"] = 36, ["Rack.StepCorner"] = 3,
+        ["Rail.Width"] = 44,
+        ["Playlist.LaneHeight"] = 52, ["Playlist.RulerHeight"] = 26, ["Playlist.HeaderWidth"] = 128,
+        ["Playlist.OverviewHeight"] = 22,
+        ["Mixer.ChannelWidth"] = 60, ["Mixer.MasterWidth"] = 72, ["Mixer.StripHeight"] = 292,
+        ["Mixer.FaderHeight"] = 112, ["Mixer.PanSize"] = 34, ["Mixer.ControlHeight"] = 20,
         ["Piano.KeyWidth"] = 76, ["Piano.RowHeight"] = 20, ["Piano.RulerHeight"] = 32,
         ["Piano.VelocityHeight"] = 92, ["Piano.NoteCorner"] = 3,
-        ["Level.Height"] = 30, ["Level.TrackHeight"] = 8, ["Level.ThumbSize"] = 12,
+        ["Level.Height"] = 26, ["Level.TrackHeight"] = 6, ["Level.ThumbSize"] = 10,
         ["Level.Inset"] = 8, ["ScrollBar.Size"] = 12
     }.ToFrozenDictionary(StringComparer.Ordinal);
 

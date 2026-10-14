@@ -242,7 +242,21 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             if (!_arrangement && (report is null || !report.IsEligibleForPreparation) &&
                 (attachment is null || !GraphPreparation.IsSilentChannelGraph(snapshot.State, attachment)))
                 _blocker = report?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
-            else if (!_arrangement && _basis is not null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
+            else if (_basis is not null && ownsExecution && !_sampler.HasPending &&
+                     _basisRoots.SequenceEqual(_document.MediaRoots) &&
+                     MixerPreparation.SameTopology(_basis.State.Mixer, snapshot.State.Mixer) &&
+                     ProjectDocument.HasSameContent(_basis.State with { Mixer = null },
+                         snapshot.State with { Mixer = null }))
+            {
+                if (_sampler.PublishMixerUpdate(snapshot, _startAuthority))
+                {
+                    _basis = snapshot;
+                    _executionRevision = snapshot.Revision;
+                }
+                else _dirty = true;
+            }
+            else if (!_arrangement && snapshot.State.Mixer is null && _basis is not null &&
+                     _basisRoots.SequenceEqual(_document.MediaRoots) &&
                      SameExecution(_basis.State, snapshot.State, ignoreGain: true) &&
                      ownsExecution && !_sampler.HasPending)
             {
@@ -344,6 +358,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     {
         ProjectState Normalize(ProjectState state) => state with
         {
+            Mixer = ignoreGain ? null : state.Mixer,
             ArrangementClips = [],
             ArrangementTracks = [],
             Sounds = ignoreNotes

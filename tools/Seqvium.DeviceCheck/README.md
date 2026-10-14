@@ -23,6 +23,14 @@ dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll son
 real coordinator, checks retained position/epoch, Stop acknowledgment, deadlines/allocation counters
 and joined teardown. It does not replace acoustic review or the pressure protocol.
 
+`mixer-project <project> <native-mixed-wave> <original-wave> <report-directory>` runs a saved Mixer
+Song on the default physical stereo output without changing any supplied file. It captures submitted
+float PCM only in bounded memory, compares same-rate/same-partition offline processing, then compares
+the GUI-produced 48-kHz PCM16 WAV to its own 48-kHz float render within quantization tolerance.
+It reports signal difference, duration/clipping, real meters, allocation/deadline counters and Stop/join
+as JSON. The route never creates a musical project or WAV; native GUI authors/export remain separate.
+Physical output is not acoustic listening. See [Mixer evidence](../../docs/experiments/SEQ-R11-MIXER_REPORT.md).
+
 `song-smoke` plays two simultaneous quiet Pattern sources in a finite six-second arrangement,
 publishes a future clip while playing, and verifies finite Ended, preserved epoch/current position,
 simultaneous voices, zero callback allocation, no deadline/padding misses and acknowledged Stop/join.
@@ -97,15 +105,15 @@ Duration is 1–120 seconds; repeat count is 1–3. The optional endpoint ID sel
 without fallback. Omit `gc-trace` for a comparison without native runtime event delivery. Declare the
 series before running, retain every failure, and avoid concurrent builds/tests or other injected loads.
 
-| Variant | CPU worker | 16 × 32 KiB allocations / cycle | Canonical edits | Forced compacting Gen2 / 100 cycles | PCM path |
-| --- | --- | --- | --- | --- | --- |
-| full | 1 | yes | Gain / 10, source / 50 cycles | yes | original 32-node graph |
-| natural | 1 | yes | same | no | same graph |
-| forced | 0 | no | no | yes | fixed same graph |
-| legacy | 1 | yes | same external graph/source edits | yes | graph-free existing sampler |
-| cpu | 1 | no | no | no | fixed graph |
-| allocations | 0 | yes | no | no | fixed graph |
-| edits | 0 | no | same | no | graph |
+| Variant     | CPU worker | 16 × 32 KiB allocations / cycle | Canonical edits                  | Forced compacting Gen2 / 100 cycles | PCM path                    |
+|-------------|------------|---------------------------------|----------------------------------|-------------------------------------|-----------------------------|
+| full        | 1          | yes                             | Gain / 10, source / 50 cycles    | yes                                 | original 32-node graph      |
+| natural     | 1          | yes                             | same                             | no                                  | same graph                  |
+| forced      | 0          | no                              | no                               | yes                                 | fixed same graph            |
+| legacy      | 1          | yes                             | same external graph/source edits | yes                                 | graph-free existing sampler |
+| cpu         | 1          | no                              | no                               | no                                  | fixed graph                 |
+| allocations | 0          | yes                             | no                               | no                                  | fixed graph                 |
+| edits       | 0          | no                              | same                             | no                                  | graph                       |
 
 The original `graph-measure` baseline/pressure/fault workload and acceptance requirements remain in
 force. `natural` removes only explicit collections; natural GC still runs. `cpu` and `edits` are secondary

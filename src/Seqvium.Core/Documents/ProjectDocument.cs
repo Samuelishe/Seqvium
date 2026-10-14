@@ -18,6 +18,7 @@ public sealed class ProjectDocument
 
     // Owner-thread lifetime notification, never called from execution or preparation workers.
     internal event Action? Closed;
+
     /// <summary>Owner-thread notification after an accepted logical transaction; Save and net-zero edits do not notify.</summary>
     public event Action? Changed;
 
@@ -153,28 +154,32 @@ public sealed class ProjectDocument
     {
         if (left == right) return true;
         return left with
-               {
-                   Patterns = right.Patterns, Sounds = right.Sounds, Placements = right.Placements,
-                   Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes,
-                   Graphs = right.Graphs, GraphAttachments = right.GraphAttachments, ArrangementClips = right.ArrangementClips,
-                   ArrangementTracks = right.ArrangementTracks
-               } == right
-               && SameSequence(left.Patterns, right.Patterns, (a, b) =>
-                   a with { Parts = b.Parts } == b && SameSequence(a.Parts, b.Parts, (partA, partB) =>
-                       partA with { Notes = partB.Notes } == partB && partA.Notes.SequenceEqual(partB.Notes)))
-               && SameSequence(left.Sounds, right.Sounds, (a, b) =>
-                   a with { Parameters = b.Parameters, ResourceIds = b.ResourceIds } == b &&
-                   a.ResourceIds.SequenceEqual(b.ResourceIds) && a.Parameters.Count == b.Parameters.Count &&
-                   a.Parameters.All(pair => b.Parameters.TryGetValue(pair.Key, out var value) && value == pair.Value))
-               && SameSequence(left.Placements, right.Placements, (a, b) =>
-                   a with { PartRelationships = b.PartRelationships } == b &&
-                   a.PartRelationships.SequenceEqual(b.PartRelationships))
-               && SameSequence(left.Groups, right.Groups, (a, b) =>
-                   a with { SoundIds = b.SoundIds } == b && a.SoundIds.SequenceEqual(b.SoundIds))
-               && left.Resources.SequenceEqual(right.Resources) && left.Contexts.SequenceEqual(right.Contexts)
-               && left.Routes.SequenceEqual(right.Routes) && left.ArrangementClips.SequenceEqual(right.ArrangementClips)
-               && left.ArrangementTracks.SequenceEqual(right.ArrangementTracks)
-               && GraphContent.Same(left.Graphs, right.Graphs) && GraphContent.Same(left.GraphAttachments, right.GraphAttachments);
+            {
+                Patterns = right.Patterns, Sounds = right.Sounds, Placements = right.Placements,
+                Groups = right.Groups, Resources = right.Resources, Contexts = right.Contexts, Routes = right.Routes,
+                Graphs = right.Graphs, GraphAttachments = right.GraphAttachments,
+                ArrangementClips = right.ArrangementClips,
+                ArrangementTracks = right.ArrangementTracks, Mixer = right.Mixer
+            } == right && MixerValidation.Same(left.Mixer, right.Mixer)
+                       && SameSequence(left.Patterns, right.Patterns, (a, b) =>
+                           a with { Parts = b.Parts } == b && SameSequence(a.Parts, b.Parts, (partA, partB) =>
+                               partA with { Notes = partB.Notes } == partB && partA.Notes.SequenceEqual(partB.Notes)))
+                       && SameSequence(left.Sounds, right.Sounds, (a, b) =>
+                           a with { Parameters = b.Parameters, ResourceIds = b.ResourceIds } == b &&
+                           a.ResourceIds.SequenceEqual(b.ResourceIds) && a.Parameters.Count == b.Parameters.Count &&
+                           a.Parameters.All(pair =>
+                               b.Parameters.TryGetValue(pair.Key, out var value) && value == pair.Value))
+                       && SameSequence(left.Placements, right.Placements, (a, b) =>
+                           a with { PartRelationships = b.PartRelationships } == b &&
+                           a.PartRelationships.SequenceEqual(b.PartRelationships))
+                       && SameSequence(left.Groups, right.Groups, (a, b) =>
+                           a with { SoundIds = b.SoundIds } == b && a.SoundIds.SequenceEqual(b.SoundIds))
+                       && left.Resources.SequenceEqual(right.Resources) && left.Contexts.SequenceEqual(right.Contexts)
+                       && left.Routes.SequenceEqual(right.Routes) &&
+                       left.ArrangementClips.SequenceEqual(right.ArrangementClips)
+                       && left.ArrangementTracks.SequenceEqual(right.ArrangementTracks)
+                       && GraphContent.Same(left.Graphs, right.Graphs) &&
+                       GraphContent.Same(left.GraphAttachments, right.GraphAttachments);
     }
 
     private static bool SameSequence<T>(System.Collections.Immutable.ImmutableArray<T> left,

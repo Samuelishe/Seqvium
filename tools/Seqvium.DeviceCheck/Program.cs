@@ -82,11 +82,20 @@ internal static class DeviceCheck
     internal static async Task<int> Run(string[] args)
     {
         string mode = args.Length == 0 ? "smoke" : args[0];
+        if (mode == "mixer-project")
+        {
+            if (args.Length != 5)
+                throw new ArgumentException(
+                    "mixer-project <independent-project> <native-mixed-wave> <original-wave> <report-directory>");
+            return await MixerCheck.Run(args[1], args[2], args[3], args[4]);
+        }
+
         if (mode == "sample-check")
         {
             if (args.Length != 3) throw new ArgumentException("sample-check <library-directory> <verification-output>");
             return await SampleCheck.Run(args[1], args[2]);
         }
+
         if (mode == "endpoints") return EndpointCheck.Enumerate();
         if (mode == "endpoint-session")
         {

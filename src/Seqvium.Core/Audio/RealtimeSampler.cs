@@ -46,6 +46,8 @@ internal sealed record GraphRevisionUpdate(
 
 internal sealed record SongSeek(long Frame, long Command);
 
+internal sealed record MixerRevisionUpdate(long ExecutionId, Guid Revision, PreparedMixer Mixer, long Authority);
+
 internal sealed record SongLoop(long Start, long End);
 
 /// <summary>One serialized control owner, one sequential consumer. Dispose only after the consumer has joined.
@@ -100,6 +102,25 @@ public sealed class RealtimeSampler : IDisposable
     private long _songStart, _seenSeek;
     private Guid _revision;
     private GraphRevisionUpdate? _update;
+    private MixerRevisionUpdate? _mixerUpdate;
+    private long _meterReset, _seenMeterReset;
+    public void ResetMixerMeters() => Interlocked.Increment(ref _meterReset);
+
+    public MixerMeter ReadMixerMeter(Id<MixerChannel>? channel = null) =>
+        Volatile.Read(ref _active)?.Execution.ReadMixerMeter(channel) ?? default;
+
+    internal bool PublishMixerUpdate(ProjectSnapshot snapshot, long executionId)
+    {
+        var active = Volatile.Read(ref _active);
+        if (_disposed || IsTerminated || HasPending || active is null || active.Authority != executionId ||
+            active.Plan.Graph is not { } graph || graph.Mixer is null) return false;
+        var mixer = MixerPreparation.Compile(snapshot.State, graph, SampleRate);
+        if (mixer is null) return false;
+        long authority = InvalidatePreparation();
+        Volatile.Write(ref _mixerUpdate, new(executionId, snapshot.Revision, mixer, authority));
+        return true;
+    }
+
     private int _statusSequence;
     private SamplerExecutionStatus _status;
     public int SampleRate { get; }
@@ -409,6 +430,22 @@ public sealed class RealtimeSampler : IDisposable
             _active.Revision = update.Revision;
             _active.EquivalentRevision = update.EquivalentRevision;
             _revision = _active.Revision;
+        }
+
+        long reset = Volatile.Read(ref _meterReset);
+        if (reset != _seenMeterReset)
+        {
+            _active?.Execution.ResetMixerMeters();
+            _seenMeterReset = reset;
+        }
+
+        var mixerUpdate = Interlocked.Exchange(ref _mixerUpdate, null);
+        if (mixerUpdate is not null && mixerUpdate.Authority == Volatile.Read(ref _authority) &&
+            _active is { } mixed && mixed.Authority == mixerUpdate.ExecutionId)
+        {
+            mixed.Execution.UpdateMixer(mixerUpdate.Mixer);
+            mixed.Revision = mixed.EquivalentRevision = mixerUpdate.Revision;
+            _revision = mixed.Revision;
         }
 
         long stop = Volatile.Read(ref _stop);

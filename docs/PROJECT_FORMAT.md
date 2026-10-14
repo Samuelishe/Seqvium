@@ -10,6 +10,26 @@ SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated ma
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
 
+## Mixer persistence
+
+The current reader understands major 1 / minor 3. Optional `state.mixer` requires both `minor >= 3`
+and `minimumReaderMinor >= 3`; Save raises those markers when Mixer is present. Files without Mixer
+retain their applicable older gate and legacy sound, with no silent creation/migration on Open.
+An older reader must refuse essential Mixer intent instead of opening an apparently compatible dry mix.
+
+Mixer stores stable channel IDs, name/color, SoundDefinition assignments, output/send edges, trim,
+level, balance, Mute/Solo, EQ/compression settings, Master and its peak protection. Validation covers
+global identity uniqueness, source membership/unique assignment, ranges, send capacity and acyclic
+routes. Removing a channel returns its sources/incoming outputs to Master and removes incoming sends;
+deleting a sound removes its assignment atomically. Existing document history stores the entire
+canonical edit. No buffers, DSP histories, meters, pane placement or device identity are serialized.
+
+Unknown properties are retained at every nested Mixer boundary. A Mixer with additional unsupported
+state is preserved but refused for execution/overwriting, rather than guessed or flattened. Essential
+future semantics still need the format gate. Mixer adds no resource container: copying a project
+requires its associated `.seqvium.media` folder with the same basename, or use normal Save As to
+establish its managed media. Never treat a lone JSON copy as an independent musical backup.
+
 ## Drum Voice persistence
 
 Built-in drums store their versioned algorithm and validated decimal parameters in the
@@ -133,7 +153,7 @@ identified sound uses without defining runtime instances. `additionalData` is a 
 name, never emitted as a format field. Extension payloads and optional unknown values are opaque JSON.
 
 Only major 1 is understood. Higher compatible minor documents are retained at their original minor
-when `minimumReaderMinor <= 1`; unsupported major/required minor is refused. Graph-free 1.0 remains
+when `minimumReaderMinor <= 3`; unsupported major/required minor is refused. Graph-free 1.0 remains
 supported; the graph-aware gate below applies to meaningful graph intent. No legacy migration is
 claimed. Unknown JSON properties at envelope, state, settings and every entity/nested part/note are
 preserved semantically at the same object boundary, including through edits/Undo/Save. Reserved known

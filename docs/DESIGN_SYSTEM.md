@@ -1,4 +1,4 @@
-# Design System v2
+# Design System — compact studio instruments
 
 Role: Technical catalog for the implemented first-party Desktop visual API.
 Read when: Creating or changing any first-party control, window, pane, drawing, or shared style.
@@ -76,6 +76,32 @@ then compensate with a separate local palette. The current Dark values are unaff
 preparation; actual values remain source-owned.
 
 ## Standard controls and variants
+
+### Mixer and chassis components
+
+The compact studio direction in [UI design](UI_DESIGN.md#compact-studio-instrument-direction) supersedes
+the initial oversized Mixer. `Mixer.ChannelWidth`, `MasterWidth`, `StripHeight`, `FaderHeight`, `PanSize`
+and `ControlHeight` own its fixed bank geometry. `Mixer.Channel`, `Well`, `Cap` and `CapShade` supply
+theme-specific strip/recess/metal depth; `Material.MixerChannel`, `FaderCap` and `Header` derive brushes.
+`HostChassisTexture` draws original bounded low-contrast grain behind pane content, without input authority.
+It is never drawn over musical grids or signal plots. No raster/third-party asset is required.
+
+`MixerFader` combines a nonlinear dB track and real stereo peak/RMS ladder, with a held-overload light.
+`GainDialControl.Compact` is the shared compact pan variant; its default instrument variant is unchanged.
+`MixerResponsePlot` draws calibrated analytical EQ/transfer curves, not measured spectral analysis.
+The side inspector uses standard controls, host-owned tabs and local scrolling. Its disclosure is a
+ToggleButton, not an empty expanded content region. The bank stays narrow as the pane grows.
+
+`mixerControl` and `mixerValue` are deliberate small strip variants. The strip field height is below
+the ordinary field-alignment minimum: its narrow single-line readout belongs to a mouse-oriented
+channel strip, with the fader/dial and exact entry available separately. Do not apply that exception
+to forms or contextual processing fields. `mixerValueRow` aligns the readout without extra label air.
+Unselected strip buttons are quiet; thin source bands carry identity. Framework tab resource aliases
+must use host typography, colors and dimensions, including selected pipes and disabled states.
+
+Shared density changes require catalog, field-alignment and populated workspace checks in both themes.
+Keep normal exact-field text/unit centers aligned, review small-strip readability separately, and verify
+RU/EN inspector reachability through scrolling. Source remains the single numeric/color authority.
 
 Rack pads use `Rack.StepHeight` for fixed width/minimum/maximum and height, with Auto-sized beat cells.
 `Rack.BarPadding` derives the additional bar gap from shared spacing. Rich-note previews still stretch.

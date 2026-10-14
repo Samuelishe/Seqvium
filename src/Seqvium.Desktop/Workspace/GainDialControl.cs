@@ -22,6 +22,7 @@ internal sealed class GainDialControl(ShellSession shell) : Control
     public string AccentRole { get; set; } = "Control.Fill";
     public string TrackRole { get; set; } = "Control.Track";
     public bool HasRecessedWell { get; set; }
+    public bool Compact { get; set; }
     public bool HasGesture => _pointer is not null;
     public Func<bool>? Begin { get; set; }
     public event Action<decimal>? Preview;
@@ -108,20 +109,21 @@ internal sealed class GainDialControl(ShellSession shell) : Control
     {
         IBrush Brush(string role) => HostVisual.Brush(this, shell.Preferences.Theme, role);
         context.DrawRectangle(Brushes.Transparent, null, new Rect(Bounds.Size));
-        double radius = Math.Min(Bounds.Width, Bounds.Height) / 2 - 10;
-        if (radius < 12) return;
+        double radius = Math.Min(Bounds.Width, Bounds.Height) / 2 - (Compact ? 3 : 10);
+        if (radius < (Compact ? 9 : 12)) return;
         var center = new Point(Bounds.Width / 2, Bounds.Height / 2);
         Point At(double angle, double r) => center + new Vector(Math.Cos(angle) * r, Math.Sin(angle) * r);
         const double start = Math.PI * .75, sweep = Math.PI * 1.5;
-        for (int tick = 0; tick <= 32; tick++)
+        int ticks = Compact ? 12 : 32;
+        for (int tick = 0; tick <= ticks; tick++)
         {
-            double angle = start + tick / 32d * sweep;
-            bool lit = IsEnabled && Amplitude is >= 0 and <= 1 && tick / 32m <= Amplitude;
+            double angle = start + tick / (double)ticks * sweep;
+            bool lit = IsEnabled && Amplitude is >= 0 and <= 1 && tick / (decimal)ticks <= Amplitude;
             context.DrawLine(new Pen(Brush(lit ? AccentRole : TrackRole), tick % 8 == 0 ? 2.5 : 1.5),
-                At(angle, radius), At(angle, radius + (tick % 8 == 0 ? 6 : 3)));
+                At(angle, radius), At(angle, radius + (Compact ? 2 : tick % 8 == 0 ? 6 : 3)));
         }
 
-        double knob = radius - 5;
+        double knob = radius - (Compact ? 3 : 5);
         if (HasRecessedWell)
         {
             context.DrawEllipse(Brush("Material.Shade"), null, center + new Vector(0, 1), knob + 4, knob + 4);
@@ -141,7 +143,7 @@ internal sealed class GainDialControl(ShellSession shell) : Control
                 CenterText ?? ((double)Amplitude.Value * 100).ToString("0", CultureInfo.InvariantCulture),
                 CultureInfo.InvariantCulture, FlowDirection.LeftToRight, HostVisual.Typeface(this),
                 HostVisual.Metric(this, "Type.Body"), Brush(IsEnabled ? "Text.Primary" : "State.Unavailable"));
-            context.DrawText(value, new(center.X - value.Width / 2, center.Y - value.Height / 2));
+            if (!Compact) context.DrawText(value, new(center.X - value.Width / 2, center.Y - value.Height / 2));
         }
 
         if (IsFocused) context.DrawEllipse(null, new Pen(Brush("Focus.Active"), 2), center, radius + 9, radius + 9);

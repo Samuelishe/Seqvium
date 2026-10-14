@@ -9,6 +9,33 @@ Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or cur
 These are intended requirements except the explicitly implemented bounded R3 host, F3-A/F3-B workflows
 and the implemented Rack, Playlist and Piano Roll sections below; broader capabilities remain future work.
 
+## Implemented Mixer workflow
+
+Mixer opens independently of Playlist. Existing projects start without it; explicit Create Mixer
+creates unity strips grouped by equal Part names, with visible editable sound assignments. A shared
+sound routes consistently across its Pattern/Playlist occurrences. Newly unassigned sounds feed Master;
+creating a bus does not silently reroute anything. Rack's Open Mixer action targets its sound channel.
+Output/send selectors expose real routes; cyclic intent fails without history or partial publication.
+
+The bank offers dB faders (-90 silence through +12), bipolar stereo balance, Mute/Solo, measured stereo
+levels/peak hold and a compact EQ/compression summary. Master stays locatable. Contextual inspector
+provides trim (-24 through +36), editable EQ response, exact filter/dynamics controls, output, pre/post
+sends, name, assignments and channel deletion. Curve means analytical response, not live spectrum.
+Peak/GR readouts derive from the audio engine; stopped meters are not animated. Reset peaks does not
+alter music or consume Undo. Master sample-peak protection is explicit and saved.
+
+Fader/dial/EQ handle drag previews visually and commits once on release. Fader/dial offer Shift fine adjustment;
+double-click level/pan restores unity/center. Keyboard fader arrows/Home/End and exact numeric fields
+provide precise access. Enter/focus loss commits a changed valid field, Escape cancels, invalid values
+stay repairable and never reach DSP. Any intervening generation/lifecycle expires the gesture; retained
+fields must not overwrite a newer project. Processing changes become audible after commit, not through
+unowned mouse-move APIs. Undo/Redo uses the same canonical document as Rack, Piano and Playlist.
+
+Use local bank/inspector scrolling at small sizes; do not enlarge strip controls to fill an empty pane.
+Source names remain available in tooltips when truncated. Solo opens upstream/downstream bus paths;
+Mute still wins, including pre-fader sends. Playlist Mute/Solo independently removes occurrences before
+Mixer input. Original note/rhythm editing and quiet source audition retain their established behavior.
+
 ## Implemented R5-F1 step sequencing
 
 Step pads keep a compact fixed square geometry at every pane width; insufficient room scrolls

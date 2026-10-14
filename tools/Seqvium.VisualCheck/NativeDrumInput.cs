@@ -23,7 +23,7 @@ internal static partial class NativePointer
                 throw new ForegroundLostException();
         }
 
-        internal async Task Click(Control control, Point? point = null)
+        internal async Task Click(Control control, Point? point = null, bool allowOwnedDialog = false)
         {
             await Task.Delay(80); // Input hit testing uses the rendered scene after a layout publication.
             Guard();
@@ -44,7 +44,7 @@ internal static partial class NativePointer
                     Marshal.SizeOf<Input>()) == 1,
                 "Native drum press failed.");
             await Task.Delay(40);
-            Guard();
+            Guard(allowOwnedDialog);
             SendInput(1, [new() { Type = 0, Data = new() { Mouse = new() { Flags = 4 } } }], Marshal.SizeOf<Input>());
             await Task.Delay(150);
         }

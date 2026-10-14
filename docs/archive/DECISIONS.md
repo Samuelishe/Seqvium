@@ -1620,3 +1620,15 @@ content, tactile controls and contextual selected-band depth; retain Seqvium ide
 capability boundaries. Samples/source licenses stay separate from distributed product provenance.
 No source graphics or audio are bundled. Deferred root-pitch/Rack/Piano Roll/controller/Mixer/EQ work
 stays in current planning; this decision implements no future editor and closes no prior audio gap.
+
+## SEQ-R11-MIXER — aggregate DSP and compact studio direction, 2026-10-14
+
+Mixer identity follows explicit shared SoundDefinition assignments, not Playlist track position.
+All audible occurrences aggregate before one channel's stateful DSP; item-local supported linear
+graph transfer remains before that boundary. This supplies musical buses/processing without rewriting
+the sampler/backend or pretending arbitrary future stateful graphs are decomposable.
+The owner authorizes significant reference-led visual changes and rejects touch-sized/oversized strips.
+Fixed narrow channels, pinned Master and contextual side processing therefore supersede the initial
+composition; shared desktop density/material tokens change coherently. Original code-drawn materials
+avoid proprietary asset extraction. Current owners define implemented behavior, the report evidence,
+and Roadmap/Technical Debt the remaining editor passes and cold-seek processing compromise.

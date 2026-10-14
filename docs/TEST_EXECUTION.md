@@ -7,6 +7,23 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Mixer verification
+
+`MixerTests` protects legacy unity, amplification/balance/Mute/Solo, aggregate channel compression,
+actual EQ calibration, bus/send/cycle semantics, unsupported-state preservation/refusal, Save/Open,
+Undo/Redo, partition equivalence, zero callback allocation, fast publication/Stop and restart after
+updated coefficients. Use the installed xUnit MTP class filter `--filter-class "*MixerTests"`.
+Related persistence, graph, arrangement, sampler, drum and Desktop classes protect the shared boundaries.
+Reader/DSP/shared style changes justify L3 independently of the ordinary cadence.
+
+Native musical edits/export and the separately read-only physical PCM diagnostic have different
+purposes. Commands/scope are in [VisualCheck](../tools/Seqvium.VisualCheck/README.md#native-mixer-check).
+Compare realtime/offline at the actual device rate; compare the native PCM16 export at its export rate.
+Measured signal/parity and physical output do not establish subjective acoustic quality, true peaks,
+long-pressure stability or another OS. [Report](experiments/SEQ-R11-MIXER_REPORT.md) records completed
+checks, failures and limitations. Shared density/material changes require the existing catalog/matrix
+plus actual populated Mixer/Playlist/Rack captures, not just geometry constants.
+
 ## Drum Voice verification
 
 `rack-pads` verifies fixed square geometry/scroll reachability at three pane widths in RU/EN ×

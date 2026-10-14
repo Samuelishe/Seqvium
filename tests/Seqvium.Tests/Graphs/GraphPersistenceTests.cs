@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
@@ -17,7 +18,8 @@ public sealed class GraphPersistenceTests
         f.Document.Edit("Large precise time", edit => edit.MovePlacement(f.Placements[0], new(9_007_199_254_740_993)));
         var json = GraphFixture.Json(f.Document);
         var state = json["state"]!.AsObject();
-        state.Remove("graphs"); state.Remove("graphAttachments");
+        state.Remove("graphs");
+        state.Remove("graphAttachments");
         Assert.Equal(0, json["minor"]!.GetValue<int>());
         var loaded = GraphFixture.Read(json).Document;
         Assert.Empty(loaded.Current.State.Graphs);
@@ -28,7 +30,8 @@ public sealed class GraphPersistenceTests
         ProjectPersistence.Save(loaded, path);
         var reopened = ProjectPersistence.Open(path).Document;
         var encoded = GraphFixture.Json(reopened);
-        encoded["state"]!.AsObject().Remove("graphs"); encoded["state"]!.AsObject().Remove("graphAttachments");
+        encoded["state"]!.AsObject().Remove("graphs");
+        encoded["state"]!.AsObject().Remove("graphAttachments");
         Assert.True(JsonNode.DeepEquals(json, encoded));
         Assert.Equal(0, encoded["minimumReaderMinor"]!.GetValue<int>());
     }
@@ -75,7 +78,8 @@ public sealed class GraphPersistenceTests
         Assert.False(GraphFixture.Read(json).GraphReports.Single().IsEligibleForPreparation);
         json["minimumReaderMinor"] = 0;
         Assert.True(BaselineReader10AcceptsEnvelope(json));
-        Assert.Contains("Graph intent requires", Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json)).Message);
+        Assert.Contains("Graph intent requires",
+            Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json)).Message);
         Assert.True(BaselineReader10AcceptsEnvelope(GraphFixture.Json(ProjectDocument.Create())));
     }
 
@@ -97,7 +101,7 @@ public sealed class GraphPersistenceTests
         f.Document.Edit("Remove after save", edit => edit.DeleteGraph(f.Attachment.GraphId));
         ProjectPersistence.Save(f.Document, directory.File("without-graph.json"));
         Assert.Equal(1, GraphFixture.Json(f.Document)["minimumReaderMinor"]!.GetValue<int>());
-        json["minimumReaderMinor"] = 3;
+        json["minimumReaderMinor"] = 4;
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
     }
 
@@ -109,26 +113,36 @@ public sealed class GraphPersistenceTests
         var state = json["state"]!;
         var graph = state["graphs"]![0]!;
         var attachment = state["graphAttachments"]![0]!;
-        var boundaries = new List<JsonNode> { graph, attachment, attachment["sources"]![0]!, graph["connections"]![0]! };
+        var boundaries = new List<JsonNode>
+            { graph, attachment, attachment["sources"]![0]!, graph["connections"]![0]! };
         foreach (var node in graph["nodes"]!.AsArray().OfType<JsonObject>())
         {
-            boundaries.Add(node); boundaries.Add(node["position"]!);
+            boundaries.Add(node);
+            boundaries.Add(node["position"]!);
             boundaries.AddRange(node["ports"]!.AsArray().OfType<JsonObject>());
         }
-        foreach (var boundary in boundaries) boundary["futureOptional"] = JsonNode.Parse("{\"nested\":[null,1,\"keep\"]}");
-        var gain = graph["nodes"]!.AsArray().OfType<JsonObject>().Single(node => node["type"]!.GetValue<string>() == GraphBuiltIns.Gain);
+
+        foreach (var boundary in boundaries)
+            boundary["futureOptional"] = JsonNode.Parse("{\"nested\":[null,1,\"keep\"]}");
+        var gain = graph["nodes"]!.AsArray().OfType<JsonObject>()
+            .Single(node => node["type"]!.GetValue<string>() == GraphBuiltIns.Gain);
         gain["type"] = "org.example.fx";
         gain["stateVersion"] = 12;
         gain["parameters"]!["foreign"] = JsonNode.Parse("{\"units\":\"future\",\"data\":[1,2]}");
-        gain["extension"] = JsonNode.Parse("{\"extensionId\":\"org.example.fx\",\"stateVersion\":9,\"payload\":{\"blob\":\"keep\"},\"futureOptional\":true}");
+        gain["extension"] =
+            JsonNode.Parse(
+                "{\"extensionId\":\"org.example.fx\",\"stateVersion\":9,\"payload\":{\"blob\":\"keep\"},\"futureOptional\":true}");
         // New reader recognizes graph properties formerly unknown to reader 1.0; no duplicated shadow keys.
         var result = GraphFixture.Read(json);
         Assert.True(JsonNode.DeepEquals(json, GraphFixture.Json(result.Document)));
-        Assert.Contains(result.GraphReports.Single().Diagnostics, diagnostic => diagnostic.Reason == GraphReasons.MissingCapability && diagnostic.NodeId == f.Gain.Id);
+        Assert.Contains(result.GraphReports.Single().Diagnostics,
+            diagnostic => diagnostic.Reason == GraphReasons.MissingCapability && diagnostic.NodeId == f.Gain.Id);
         var before = result.Document.Current;
-        result.Document.Edit("Geometry only", edit => edit.MoveGraphNode(f.Attachment.GraphId, f.Gain.Id, new(123, 456)));
+        result.Document.Edit("Geometry only",
+            edit => edit.MoveGraphNode(f.Attachment.GraphId, f.Gain.Id, new(123, 456)));
         json["revision"] = result.Document.Current.Revision.ToString();
-        gain["position"]!["x"] = 123; gain["position"]!["y"] = 456;
+        gain["position"]!["x"] = 123;
+        gain["position"]!["y"] = 456;
         Assert.True(JsonNode.DeepEquals(json, GraphFixture.Json(result.Document)));
         result.Document.Undo();
         Assert.Same(before, result.Document.Current);
@@ -157,17 +171,24 @@ public sealed class GraphPersistenceTests
         switch (failure)
         {
             case "disconnected": graph["connections"] = new JsonArray(); break;
-            case "cycle": edge["fromNodeId"] = gain["id"]!.DeepClone(); edge["fromPortId"] = gain["ports"]![1]!["id"]!.DeepClone(); break;
+            case "cycle":
+                edge["fromNodeId"] = gain["id"]!.DeepClone();
+                edge["fromPortId"] = gain["ports"]![1]!["id"]!.DeepClone();
+                break;
             case "unknown-node": gain["type"] = "org.example.absent"; break;
             case "invalid-gain": gain["parameters"]![GraphBuiltIns.GainAmplitude] = 2; break;
-            case "unresolved-binding": json["state"]!["graphAttachments"]![0]!["sources"]![0]!["partId"] = unresolved; break;
+            case "unresolved-binding":
+                json["state"]!["graphAttachments"]![0]!["sources"]![0]!["partId"] = unresolved; break;
             case "unresolved-edge": edge["fromNodeId"] = unresolved; break;
             case "unsupported-port": gain["ports"]![0]!["signalClass"] = "future.signal"; break;
             case "duplicate-edge":
-                var duplicate = edge.DeepClone(); duplicate["id"] = unresolved;
-                graph["connections"]!.AsArray().Add(duplicate); break;
+                var duplicate = edge.DeepClone();
+                duplicate["id"] = unresolved;
+                graph["connections"]!.AsArray().Add(duplicate);
+                break;
             default: throw new InvalidOperationException();
         }
+
         var loaded = GraphFixture.Read(json);
         Assert.True(loaded.IsDegraded);
         Assert.False(loaded.GraphReports.Single().IsEligibleForPreparation);
@@ -226,7 +247,8 @@ public sealed class GraphPersistenceTests
             case "duplicate-port-id": graph["nodes"]![1]!["ports"]![0]!["id"] = port["id"]!.DeepClone(); break;
             case "duplicate-edge-id": graph["connections"]![1]!["id"] = edge["id"]!.DeepClone(); break;
             case "duplicate-attachment-id": state["graphAttachments"]!.AsArray().Add(attachment.DeepClone()); break;
-            case "duplicate-binding-id": attachment["sources"]![1]!["id"] = attachment["sources"]![0]!["id"]!.DeepClone(); break;
+            case "duplicate-binding-id":
+                attachment["sources"]![1]!["id"] = attachment["sources"]![0]!["id"]!.DeepClone(); break;
             case "cross-kind-id": port["id"] = state["sounds"]![0]!["id"]!.DeepClone(); break;
             case "missing-node-type": node.Remove("type"); break;
             case "missing-port-role": port.Remove("role"); break;
@@ -244,12 +266,17 @@ public sealed class GraphPersistenceTests
             case "missing-context-owner": attachment["contextId"] = Guid.NewGuid().ToString(); break;
             case "missing-graph-owner": attachment["graphId"] = Guid.NewGuid().ToString(); break;
             case "shared-graph-ownership":
-                var extra = attachment.DeepClone(); extra["id"] = Guid.NewGuid().ToString();
-                extra["sources"] = new JsonArray(); state["graphAttachments"]!.AsArray().Add(extra); break;
+                var extra = attachment.DeepClone();
+                extra["id"] = Guid.NewGuid().ToString();
+                extra["sources"] = new JsonArray();
+                state["graphAttachments"]!.AsArray().Add(extra);
+                break;
             case "reserved-extra": node["additionalData"] = new JsonObject(); break;
-            case "oversized-semantic-key": port["signalClass"] = new string('x', ProjectValidation.MaximumTextLength + 1); break;
+            case "oversized-semantic-key":
+                port["signalClass"] = new string('x', ProjectValidation.MaximumTextLength + 1); break;
             default: throw new InvalidOperationException();
         }
+
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
     }
 
@@ -258,12 +285,19 @@ public sealed class GraphPersistenceTests
     {
         var f = new GraphFixture(false);
         var state = f.Document.Current.State;
-        var node = f.Gain with { Ports = [.. Enumerable.Range(0, 257).Select(_ => f.Gain.Ports[0] with { Id = Id<GraphPort>.New() })] };
-        Assert.Throws<ProjectValidationException>(() => ProjectValidation.Validate(state with { Graphs = [f.Graph with { Nodes = [node] }] }));
-        var graphs = Enumerable.Range(0, ProjectValidation.MaximumEntities).Select(_ => new GraphDefinition(Id<GraphDefinition>.New(), [], [])).ToImmutableArray();
-        Assert.Throws<ProjectValidationException>(() => ProjectValidation.Validate(state with { Graphs = graphs, GraphAttachments = [] }));
+        var node = f.Gain with
+        {
+            Ports = [.. Enumerable.Range(0, 257).Select(_ => f.Gain.Ports[0] with { Id = Id<GraphPort>.New() })]
+        };
+        Assert.Throws<ProjectValidationException>(() =>
+            ProjectValidation.Validate(state with { Graphs = [f.Graph with { Nodes = [node] }] }));
+        var graphs = Enumerable.Range(0, ProjectValidation.MaximumEntities)
+            .Select(_ => new GraphDefinition(Id<GraphDefinition>.New(), [], [])).ToImmutableArray();
+        Assert.Throws<ProjectValidationException>(() =>
+            ProjectValidation.Validate(state with { Graphs = graphs, GraphAttachments = [] }));
         var json = GraphFixture.Json(f.Document);
-        json["state"]!["graphs"]![0]!["nodes"]![0]!["parameters"]!["deep"] = JsonNode.Parse(new string('[', 60) + "0" + new string(']', 60));
+        json["state"]!["graphs"]![0]!["nodes"]![0]!["parameters"]!["deep"] =
+            JsonNode.Parse(new string('[', 60) + "0" + new string(']', 60));
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
         using var oversized = new MemoryStream(new byte[ProjectPersistence.MaximumBytes + 1]);
         Assert.Throws<ProjectFormatException>(() => ProjectPersistence.Read(oversized));
@@ -310,9 +344,11 @@ public sealed class GraphPersistenceTests
         Assert.Same(before, f.Document.Current);
         f.Document.Edit("Delete graph", edit => edit.DeleteGraph(f.Attachment.GraphId));
         var removed = f.Document.Current;
-        Assert.Throws<ProjectValidationException>(() => f.Document.Edit("Stale graph", edit => edit.MoveGraphNode(f.Attachment.GraphId, f.Gain.Id, new(0, 0))));
+        Assert.Throws<ProjectValidationException>(() =>
+            f.Document.Edit("Stale graph", edit => edit.MoveGraphNode(f.Attachment.GraphId, f.Gain.Id, new(0, 0))));
         Assert.Same(removed, f.Document.Current);
         f.Document.Close();
-        Assert.Throws<InvalidOperationException>(() => f.Document.Edit("Closed", edit => edit.CreateItemGraph(f.Placement)));
+        Assert.Throws<InvalidOperationException>(() =>
+            f.Document.Edit("Closed", edit => edit.CreateItemGraph(f.Placement)));
     }
 }

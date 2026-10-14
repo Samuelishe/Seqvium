@@ -233,7 +233,7 @@
         <Setter Property="Height" Value="{DynamicResource Control.Height}" />
         <Setter Property="Padding" Value="{DynamicResource Padding.ComboBox}" />
         <Setter Property="FontSize" Value="{DynamicResource Type.Body}" />
-        <Setter Property="Background" Value="{DynamicResource Surface.Selected}" />
+        <Setter Property="Background" Value="{DynamicResource Surface.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource Text.Primary}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Border.Default}" />
         <Setter Property="CornerRadius" Value="{DynamicResource Control.Corner}" />
@@ -333,8 +333,8 @@
         <Setter Property="Opacity" Value="0.5" />
     </Style>
     <Style Selector="Button.rail">
-        <Setter Property="Width" Value="38" />
-        <Setter Property="Height" Value="38" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Foreground" Value="{DynamicResource Text.Secondary}" />
@@ -348,6 +348,34 @@
     <Style Selector="Button.play">
         <Setter Property="Width" Value="40" />
         <Setter Property="Background" Value="{DynamicResource Surface.Playing}" />
+    </Style>
+    <Style Selector="TabItem">
+        <Setter Property="FontSize" Value="{DynamicResource Type.Body}" />
+        <Setter Property="Padding" Value="{DynamicResource Padding.Content}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Control.Height}" />
+        <Setter Property="Foreground" Value="{DynamicResource Text.Secondary}" />
+    </Style>
+    <Style Selector="TabItem:selected">
+        <Setter Property="Foreground" Value="{DynamicResource Accent.Action}" />
+    </Style>
+    <Style Selector="Button.mixerControl, TextBox.mixerValue">
+        <Setter Property="FontSize" Value="{DynamicResource Type.Caption}" />
+        <Setter Property="Height" Value="{DynamicResource Mixer.ControlHeight}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Mixer.ControlHeight}" />
+        <Setter Property="Padding" Value="{DynamicResource Padding.Numeric}" />
+        <Setter Property="CornerRadius" Value="2" />
+    </Style>
+    <Style Selector="Grid.mixerValueRow">
+        <Setter Property="MinHeight" Value="{DynamicResource Mixer.ControlHeight}" />
+        <Setter Property="ColumnSpacing" Value="1" />
+    </Style>
+    <Style Selector="Button.mixerControl">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.mixerControl.primary">
+        <Setter Property="Background" Value="{DynamicResource Surface.Selected}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Accent.Action}" />
     </Style>
     <Style Selector="TextBox.patternName">
         <Setter Property="FontWeight" Value="SemiBold" />

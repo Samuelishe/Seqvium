@@ -6,6 +6,22 @@ Authoritative for: Main-window chrome/keyboard window actions, pane reachability
 panes, user-controlled docking, activation/front behavior, layout ownership.
 Not authoritative for: Pane-specific editing, final visuals/gestures, framework Z-order API, or project schema.
 
+## Retained compact Mixer pane
+
+`mixer.main` is a retained workspace pane, reachable from the rail/Panes menu and a Rack sound's
+Open Mixer action. It uses the existing floating/docking/collapse/layout persistence and focus owner.
+Default floating bounds occupy roughly one fifth of FullHD, not the whole application. Strip widths
+and fader height remain fixed; growing the pane reveals more channels instead of inflating controls.
+The channel bank scrolls locally and Master stays in its own pinned column. A footer toggle reveals
+the selected channel's processing/routing inspector at the side. Small panes scroll each area locally;
+close the inspector to recover bank space. No music/pane scale transform is used.
+
+Selecting a strip is context, not a document edit. Controls commit through the shared workflow/history,
+and workspace changes cancel unfinished gestures. Source assignments belong to music; Playlist lanes
+remain organization/audibility, not Mixer IDs. Compact shared chrome, Rack/Playlist geometry and Pattern
+cards support simultaneous desktop tools. [UX](UX_CONTRACT.md#implemented-mixer-workflow) owns musical
+gestures; [design](UI_DESIGN.md#compact-studio-instrument-direction) owns the new density direction.
+
 ## Implemented R3-F1 host boundary
 
 The Desktop entry point obtains user-wide exclusive ownership before creating Avalonia, preferences,

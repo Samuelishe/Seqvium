@@ -33,6 +33,10 @@ The current desktop provides a small working environment for samples, synthesize
 - Build a basic processing graph with Source, Gain, Mix and Output nodes: connect ports, move nodes,
   and pan or zoom the canvas.
 - Adjust sample levels and mix independent WAV sources within the same graph.
+- Mix instruments across Patterns and Song in a compact Mixer: amplify quiet sources, set stereo
+  balance and Mute/Solo, read real stereo levels, and route channels through buses or pre/post sends.
+  Use built-in high-pass/three-band EQ and linked compression on channels or Master, with optional
+  Master sample-peak protection. Mixer settings share Undo/Redo, Save/Open and WAV export.
 - Double-click a node to open its reusable editor: adjust Gain with a physical dial, slider, exact amplitude
   and dB display, shape a Drum Voice source, or inspect Source, Mix and Output details.
 - Undo and redo edits, save a project with its imported audio, and reopen it.
@@ -41,10 +45,12 @@ The current desktop provides a small working environment for samples, synthesize
 - Use the interface in English or Russian, with dark and light themes.
 
 The graph makes signal flow visible: a sample can pass through Gain to Output, or several sources
-can meet at a Mix node. These are basic level and routing tools; richer effects are still ahead.
+can meet at a Mix node. The project Mixer adds global mixing and EQ/compression downstream of those
+local graphs; Playlist tracks organize clips rather than automatically defining Mixer channels.
 
 For a first rhythm, follow [Create a drum pattern](docs/README.md#create-a-drum-pattern).
 For pitched music, follow [Compose a melody](docs/README.md#compose-a-melody).
+For balance and processing, follow [Mix your music](docs/README.md#mix-your-music).
 The [sample processing guide](docs/README.md#try-sample-processing) covers graph editing.
 
 ## Current state and limitations
@@ -54,16 +60,17 @@ It supports rhythm creation and a first working song arrangement workflow. Many 
 instrument and processing capabilities remain unfinished.
 
 Step sequencing supports 1–32 bars in 4/4, continuous looping and live step editing. Piano Roll edits
-the shared pitch/duration/velocity data; a Mixer editor is still ahead. Playlist arranges whole Patterns and their
+the shared pitch/duration/velocity data. Playlist arranges whole Patterns and their
 repeats; section markers, independent variations, audio trimming/stretching and automation remain ahead.
 WAV export covers either a selected Pattern or the whole Song, including the current processing graphs.
 WAV channel edits preserve the other voices in the supported Rack graph. Short boundary smoothing
 reduces sample-end clicks. WAV import supports mono/stereo PCM16/24/32 and float32 at 8–192 kHz;
-FLAC remains unavailable. EQ and other effects, third-party plugin hosting,
+FLAC remains unavailable. Delay/reverb, automation, third-party plugin hosting,
 MIDI input, recording and crash recovery remain missing.
 Built-in drums use finite mono hits and shared sound parameters. Linked hats share one choke group
-across channels and audible Song clips; advanced modulation, user-defined groups, stereo layers and
-per-channel mix controls remain ahead.
+across channels and audible Song clips; advanced modulation, user-defined groups and stereo layers
+remain ahead. Mixer currently uses a fixed EQ/compression chain; stereo pan is
+balance, not a stereo-width processor. Its protection is sample-peak, not true-peak mastering.
 Sampler pitching uses linear resampling, changing sample playback speed and natural duration; it is
 not time stretching or a multisample instrument. The shared graph has a 32-voice budget.
 Playback can glitch under heavy system load.
@@ -97,7 +104,8 @@ walkthrough and routes to more detailed material.
 ## Where the project is heading
 
 The next musical editing work can build on continuous Pattern playback and live edits. The longer-term
-direction includes advanced note tools, richer Playlist editing, mixing, sample generation and resampling, detailed
+direction includes advanced note tools, richer Playlist editing, deeper mixing, sample generation and resampling,
+detailed
 effect and instrument editors, and optional extensions. Recording and external plugin hosting
 are later goals.
 

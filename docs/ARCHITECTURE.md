@@ -12,6 +12,29 @@ SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed 
 offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
 output adapter; graph, presentation and permanent engine choices remain separate.
 
+## Implemented project Mixer boundary
+
+The project owns optional canonical `MixerState`, stable channels/buses, explicit SoundDefinition
+assignments, validated output/send edges, strip parameters and Master settings. Mixer is independent
+of Playlist track slots and Pattern placement: a sound can occur in several Patterns or simultaneous
+clips yet feed one global channel. Initial explicit creation groups equal Part names as an editable
+starting arrangement, never as hidden permanent identity. Unassigned sounds feed Master directly.
+
+`MixerPreparation` projects the currently supported linear Source/Gain/Mix graphs into source
+contributions while preserving their exact local transfer gains. Song combines audible occurrences
+before compiling this projection. Each channel's stateful processing therefore executes once on its
+aggregate, not once per clip. `MixerDsp` owns filter/compressor state, routes, final protection and
+bounded measured taps inside the existing sampler; this is not a second renderer or backend.
+The existing graph operations also retain their node diagnostics. Stateful contributed graph nodes
+will require an explicit source/processor boundary instead of assuming linear decomposition.
+
+Canonical edits use the existing document owner, generation guards and Undo/Redo. Desktop owns only
+gestures, context and immutable meter observations; prepared plans/runtime DSP/meters are not serialized.
+Compatible control updates are owner-prepared, execution/authority-qualified and consumed at an audio
+packet boundary without rebuilding media or voices. Topology changes use existing prepared publication
+and retain compatible time/voice state. [Audio](AUDIO_ENGINE.md#project-mixer-execution) owns reset,
+memory and routing semantics; [format](PROJECT_FORMAT.md#mixer-persistence) owns the reader gate.
+
 ## R3-F1 desktop host and presentation ownership
 
 `src/Seqvium.Desktop` is the one framework-dependent `net10.0` desktop executable. It explicitly adopts

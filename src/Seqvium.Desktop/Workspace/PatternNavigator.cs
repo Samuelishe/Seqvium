@@ -110,7 +110,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
                 {
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                    Height = 74, Padding = new(10, 8)
+                    Height = 50, Padding = new(7, 4)
                 };
                 var id = choice.Id;
                 AutomationProperties.SetAutomationId(button, "Navigator.Pattern." + id);
@@ -130,7 +130,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
 
             button.IsEnabled = !observation.Busy && !observation.IsClosed;
             button.Classes.Set("primary", observation.Selected == choice.Id);
-            var body = new Grid { RowDefinitions = new("Auto,*"), RowSpacing = 8 };
+            var body = new Grid { RowDefinitions = new("Auto,*"), RowSpacing = 3 };
             body.Children.Add(new TextBlock
             {
                 Text = pattern?.Name ?? choice.Label, FontWeight = FontWeight.SemiBold,
@@ -138,7 +138,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
             });
             if (pattern is not null)
             {
-                var preview = new PatternThumbnail(_shell, pattern, index % 8) { Height = 24 };
+                var preview = new PatternThumbnail(_shell, pattern, index % 8) { Height = 17 };
                 SetRow(preview, 1);
                 body.Children.Add(preview);
             }

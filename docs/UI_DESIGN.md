@@ -12,8 +12,42 @@ Seqvium should feel like a creative instrument: substantial, tactile and enjoyab
 The owner explicitly requests expressive instrument design, including volume, complex controls,
 shadows, gradients, lighting and meaningful visualizations. Implementation difficulty is not a
 reason to reject an otherwise useful design. The older flat-shell preference is superseded.
-[DESIGN_SYSTEM](DESIGN_SYSTEM.md) catalogs the implemented v2 visual API; source owns actual values.
+[DESIGN_SYSTEM](DESIGN_SYSTEM.md) catalogs the implemented visual API; source owns actual values.
 Visual quality and musical correctness are complementary requirements.
+
+## Compact studio instrument direction
+
+The accepted direction is a dense desktop instrument, not a spacious settings application. The owner
+authorizes substantial recomposition of the interface and its guidelines when reference study and
+actual rendered usability justify it. Previous generous editor proportions are not immutable constraints.
+Design for simultaneous musical tools on a FullHD display: music above, compact mixing below, contextual
+processing beside its source. Do not scale a large form down uniformly or enlarge every channel when
+its pane grows. Spend extra space on music, meters, meaningful curves and additional channels.
+
+The implemented Mixer bank targets roughly one quarter of a FullHD desktop or less. Its narrow fixed
+strips, pinned Master and side inspector replace the initial oversized composition. Rack rows, Playlist
+lanes, Pattern cards, rail and chrome now use a denser common rhythm. These changes calibrate the
+desktop system, not touch-screen proportions; ordinary exact fields remain larger than strip readouts.
+Inspect actual pixels and mouse interaction at normal and reduced sizes, not isolated enlarged widgets.
+
+The visual language is **slate / jade / machined instrument**: dark recessed wells, small sculpted metal
+fader caps, graduated knobs, restrained chassis grain, thin colored source bands and quiet technical
+readouts. Light has a cool steel chassis, saturated identity ink and distinct recess/cap depth, rather
+than inverted Dark or default white Fluent forms. Color identifies source, selection and signal state;
+do not make every inactive control a green selection surface. Quiet M/S switches and processing
+summaries need no permanent button frames; selected/active/focus states remain independently legible.
+
+Original code-drawn vectors, textures and materials are preferred where they render cleanly at different
+sizes. Bitmap generation is appropriate only for a concrete visual need, not a prerequisite for rich
+design. Never extract proprietary DAW graphics. Grain belongs to chassis, not note grids or plots.
+Decorative depth cannot replace actual signal measurement or processing. EQ plots are explicitly
+analytical responses; meters show real DSP taps. No simulated spectrum is permitted.
+
+Reference review includes the private mixer/EQ/dynamics catalog and the owner's FullHD FL Studio and
+Cubase workspace captures. Adopt successful density, stable channel identity, restrained chrome and
+contextual processing; do not copy their assets or reproduce their layouts one-to-one. Private images
+remain outside Git. [Roadmap](ROADMAP.md#desktop-design-continuation) owns staged continuation across
+the other editors; rendered evidence is not owner aesthetic acceptance.
 
 ## Instrument materials and hierarchy
 
@@ -380,7 +414,7 @@ constraints.
 
 ### Specialized musical surfaces and multi-pane composition
 
-Pattern, Piano Roll, Arrangement and Graph, plus future Mixer, Browser and Sample Lab, share a coherent host
+Pattern, Piano Roll, Arrangement, Mixer and Graph, plus future Browser and Sample Lab, share a coherent host
 language while keeping task-specific interaction and useful density:
 
 - Arrangement prioritizes tracks, clips, time structure and editing.
@@ -404,7 +438,8 @@ Design deliberately for ordinary desktop work, including one 1920x1080 display, 
 platform DPI changes within declared evidence. Prefer reflow of small command groups, collapsing
 secondary panels, pane-local scrolling, resizable working regions, contextual tools and bounded usable
 minimums. The primary application frame stays stable: no default whole-window scrolling, permanent
-large headers, global font/control shrinking or unreachable offscreen work areas. Actual timelines,
+large headers, uniform scale transforms or unreachable offscreen work areas. Calibrate typography and
+control geometry by function within the shared desktop density system. Actual timelines,
 notes, channels and other editor content may scroll horizontally/vertically where musically appropriate.
 
 ### Visual hierarchy, color and control economy

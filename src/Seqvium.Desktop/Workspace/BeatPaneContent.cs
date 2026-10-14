@@ -38,6 +38,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     private readonly Dictionary<Id<MusicalPart>, (Control Steps, Button Preview)> _melodies = [];
     internal event Action<Id<MusicalPart>>? PianoRequested;
     internal event Action<Id<MusicalPart>>? SoundRequested;
+    internal event Action<Id<SoundDefinition>>? MixerRequested;
     private readonly Button _drum = new();
     private readonly List<(MenuItem Item, string Key)> _menuLabels = [];
     private readonly ComboBox _bars = new() { MinWidth = 90 };
@@ -511,6 +512,15 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         AutomationProperties.SetAutomationId(soundAction, $"Beat.Sound.{part.Id}");
         _menuLabels.Add((soundAction, "Drum.Open"));
         menu.Items.Add(soundAction);
+        var mixerAction = new MenuItem { Header = _shell["Pane.Mixer"] };
+        _menuLabels.Add((mixerAction, "Pane.Mixer"));
+        AutomationProperties.SetAutomationId(mixerAction, $"Beat.Mixer.{part.Id}");
+        mixerAction.Click += (_, _) =>
+        {
+            CancelGesture();
+            MixerRequested?.Invoke(part.SoundId);
+        };
+        menu.Items.Add(mixerAction);
         soundAction.Click += (_, _) =>
         {
             CancelGesture();

@@ -334,6 +334,14 @@ public sealed partial class ProjectEdit
     {
         CheckActive();
         State = State with { Sounds = Remove(State.Sounds, item => item.Id == id) };
+        if (State.Mixer is { } mixer)
+            State = State with
+            {
+                Mixer = mixer with
+                {
+                    Channels = [.. mixer.Channels.Select(c => c with { SoundIds = c.SoundIds.Remove(id) })]
+                }
+            };
     }
 
     public void DeleteResource(Id<ResourceDescriptor> id)

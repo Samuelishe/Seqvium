@@ -185,7 +185,7 @@ public sealed class WorkspaceLayoutTests
         Assert.NotNull(load.Layout);
         using var workspace = new WorkspaceState(load.Layout);
         workspace.Reflow(640, 390);
-        Assert.Equal(7, workspace.Panes.Length);
+        Assert.Equal(8, workspace.Panes.Length);
         var appearance = workspace.Get(WorkspaceState.AppearanceId);
         Assert.Equal(PaneVisibility.Visible, appearance.Visibility);
         Assert.False(appearance.AllowDocking);

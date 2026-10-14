@@ -7,6 +7,52 @@ boundary, recording, item-local hard boundaries, manual export ranges, finite ta
 preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
+## Project Mixer execution
+
+Optional project Mixer processing is shared by Pattern, finite Song, realtime and offline execution.
+No Mixer preserves the legacy path exactly; explicit unity creation preserves existing musical/local
+Gain intent. Source contributions retain their complete supported linear graph transfer, then sum by
+assigned SoundDefinition into global channels. Playlist Mute/Solo determines audible occurrences
+before these taps; Playlist slots do not define Mixer buses.
+
+Routing is a validated directed acyclic graph, with at most 64 channels and eight distinct sends per
+channel. Output goes to another channel or Master. Sends have independent dB levels and pre/post-fader
+choice: pre means after trim, EQ, compression and stereo balance but before the fader. Muting cuts
+pre-fader sends too. Solo admits its ancestors and descendants, with explicit Mute taking precedence;
+unassigned direct-Master sources are suppressed while a channel is soloed. Feedback/self/cyclic routes
+are refused atomically, not processed with an arbitrary order or hidden delay.
+
+Each strip executes trim → high-pass/low shelf/parametric mid/high shelf → stereo-linked peak compressor
+→ stereo balance → fader → output/sends. Low/high shelves are fixed at 120 Hz/8 kHz; the mid has frequency,
+gain and Q. The independent biquad implementation uses standard bilinear filter equations. Compression
+has threshold, ratio, soft knee, attack/release and explicit makeup, with no lookahead or sidechain.
+Center balance preserves stereo unity; moving toward one side attenuates the opposite side by cosine.
+Faders allow amplification and an exact -90 dB silence detent; trim supplies additional source gain.
+
+Gain/balance/filter coefficients smooth samplewise with a five-ms time constant after a compatible
+live commit. Compressor detection is stereo-linked; all state is consumer-owned. Restart and explicit
+seek/range wrap reset filter/detector/protection state to current target settings; ordinary Pattern
+looping retains streaming DSP state. Seek reconstructs voices but does not preroll stateful Mixer FX.
+Topology continuation copies bounded strip state by stable identity where compatible; new strips
+start clean. Coefficients are prepared off the callback, never mutated in the immutable publication.
+
+Meters report real post-strip stereo peak/RMS, peak hold, compression reduction, overload/nonfinite
+counts and frame counts. A bounded sequence-checked reader never locks the callback; UI observations
+may skip a busy sample. Reset peaks is a consumer command, not a musical edit. Nonfinite/float-overflow
+strip output is silenced and its DSP state cleared with an explicit counter, preventing propagation.
+Finite values above unity retain float headroom until final output; overloads remain measured.
+Optional Master protection has a linked -1 dB **sample-peak** ceiling, instantaneous attenuation and
+50-ms release. It is not a true-peak limiter, loudness normalizer or mastering guarantee.
+
+Prepared work/scratch budgets include Mixer strips and taps. Processing, compatible publication,
+continuation and meter reads use fixed bounded storage, no callback allocation, I/O or UI locks.
+Realtime/offline parity is measured at the same host rate and reset/packet context; a 44.1-kHz device
+cannot be compared bitwise to a 48-kHz WAV. GUI export retains its 48-kHz stereo PCM16 boundary.
+Existing 32-voice limits, instrument synthesis, sample leases and backend lifetime remain unchanged.
+Delay/reverb, processor racks/reordering, external plugins, automation, latency compensation and FX
+preroll are not implemented. [Graph](NODE_GRAPH.md#mixer-projection-of-supported-graphs) owns the
+currently linear source-boundary restriction.
+
 ## Built-in Drum Voice
 
 The built-in family includes Kick, Snare, Closed/Open Hat, Clap, Tom and Rim. Each versioned algorithm

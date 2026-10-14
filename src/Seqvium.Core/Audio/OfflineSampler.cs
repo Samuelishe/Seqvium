@@ -78,7 +78,10 @@ public sealed class PreparedSampler : IDisposable
     public long EndFrame { get; }
     internal PreparedGraph? Graph { get; }
     public int DecodedBytes { get; }
-    public int ScratchBytes => Graph?.ScratchBytes ?? 0;
+
+    public int ScratchBytes => (Graph?.ScratchBytes ?? 0) +
+                               (Graph?.Mixer is { } mixer ? mixer.Strips.Length * 2048 + mixer.Taps.Length * 64 : 0);
+
     public ImmutableArray<AudioContribution> Contributions => Graph?.Contributions ?? [];
     public Id<GraphAttachment>? GraphAttachmentId => Graph?.AttachmentId;
     public long PacketWork { get; internal set; }
@@ -402,6 +405,13 @@ public sealed class OfflineSampler : IDisposable
     private bool _stopped;
     private readonly float[][]? _signals;
     private float[]? _coefficients;
+    private readonly MixerRuntime? _mixer;
+
+    public MixerMeter ReadMixerMeter(Id<MixerChannel>? channel = null) =>
+        _mixer?.Read(channel?.Value ?? Guid.Empty) ?? default;
+
+    internal void UpdateMixer(PreparedMixer mixer) => _mixer?.Update(mixer);
+    public void ResetMixerMeters() => _mixer?.ResetMeters();
     private int _lastSamples;
     private bool _looping;
     private long _iteration;
@@ -439,6 +449,7 @@ public sealed class OfflineSampler : IDisposable
             _signals = Enumerable.Range(0, graph.BufferCount)
                 .Select(_ => new float[checked(graph.MaximumPacketFrames * plan.Channels)]).ToArray();
             _coefficients = graph.Coefficients;
+            if (graph.Mixer is { } mixer) _mixer = new(mixer);
         }
 
         _sources = plan.LeaseSources();
@@ -446,6 +457,7 @@ public sealed class OfflineSampler : IDisposable
 
     public void Restart()
     {
+        _mixer?.Reset();
         CheckAvailable();
         Stop();
         _stopped = false;
@@ -466,6 +478,7 @@ public sealed class OfflineSampler : IDisposable
     /// The frozen note table and voice capacity bound work; no history or allocation enters rendering.</summary>
     internal void Seek(long frame)
     {
+        _mixer?.Reset();
         Stop();
         _stopped = false;
         _iteration = 0;
@@ -499,6 +512,7 @@ public sealed class OfflineSampler : IDisposable
     // Mapping is constructed by the control owner, never searched/allocated in the callback.
     internal void ContinueFrom(OfflineSampler old, int[] notes)
     {
+        if (old._mixer is { } mixer) _mixer?.ContinueFrom(mixer);
         Position = old.Position;
         _iteration = old._iteration;
         _stopped = old._stopped;
@@ -643,6 +657,7 @@ public sealed class OfflineSampler : IDisposable
             }
 
             _signals![graph.OutputBuffer].AsSpan(0, _lastSamples).CopyTo(interleavedOutput);
+            _mixer?.Process(_signals, interleavedOutput, _plan.Channels);
         }
 
         // Events at block end belong to the following block, except final retirement is immediate.

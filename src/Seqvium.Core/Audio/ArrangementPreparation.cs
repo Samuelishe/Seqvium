@@ -159,6 +159,7 @@ public static class ArrangementPreparation
                 OutputBuffer = outputBuffer,
                 BufferCount = bufferCount, MaximumPacketFrames = maximumPacketFrames, ScratchBytes = scratch
             };
+            combined.Mixer = MixerPreparation.Compile(state, combined, sampleRate);
             var result = new PreparedSampler(document.Current.Revision, sampleRate, channels, VoiceCapacity, 0, last,
                     zero, notes.ToImmutable(), sorted, [.. sources], combined)
                 { CanonicalBasis = state, IsArrangement = true };

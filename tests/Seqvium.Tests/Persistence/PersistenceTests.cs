@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -9,7 +10,9 @@ namespace Seqvium.Tests;
 
 public sealed class PersistenceTests
 {
-    private static JsonObject Json(ProjectDocument document) => JsonNode.Parse(ProjectPersistence.Encode(document))!.AsObject();
+    private static JsonObject Json(ProjectDocument document) =>
+        JsonNode.Parse(ProjectPersistence.Encode(document))!.AsObject();
+
     private static ProjectLoadResult Read(JsonNode node, IReadOnlySet<string>? extensions = null,
         IReadOnlySet<Id<ResourceDescriptor>>? resources = null)
     {
@@ -23,7 +26,8 @@ public sealed class PersistenceTests
         using var directory = new TemporaryDirectory();
         var fixture = new SyntheticComposition();
         Id<Pattern> variationId = default;
-        fixture.Document.Edit("Variation", edit => variationId = edit.MakePatternVariation(fixture.Placements[1], "Fill"));
+        fixture.Document.Edit("Variation",
+            edit => variationId = edit.MakePatternVariation(fixture.Placements[1], "Fill"));
         var part = fixture.Document.Current.State.Patterns.Single(item => item.Id == variationId).Parts[0];
         fixture.Document.Edit("Independent sound and project settings", edit =>
         {
@@ -58,17 +62,19 @@ public sealed class PersistenceTests
     [Theory]
     [InlineData(2, 0, 0)]
     [InlineData(0, 0, 0)]
-    [InlineData(1, 3, 3)]
+    [InlineData(1, 4, 4)]
     [InlineData(1, -1, 0)]
     [InlineData(1, 0, -1)]
     [InlineData(1, 0, 1)]
     public void UnsupportedVersionsRefuseWithUsefulReason(int major, int minor, int minimum)
     {
         var node = Json(ProjectDocument.Create());
-        node["major"] = major; node["minor"] = minor; node["minimumReaderMinor"] = minimum;
+        node["major"] = major;
+        node["minor"] = minor;
+        node["minimumReaderMinor"] = minimum;
         var error = Assert.Throws<ProjectFormatException>(() => Read(node));
         Assert.Contains("Unsupported document version", error.Message);
-        Assert.Contains("Reader supports 1.2", error.Message);
+        Assert.Contains("Reader supports 1.3", error.Message);
     }
 
     [Fact]
@@ -76,7 +82,8 @@ public sealed class PersistenceTests
     {
         var fixture = new SyntheticComposition();
         fixture.Document.Edit("Opaque dependency", edit =>
-            edit.AddSound("Foreign", "extension", extension: new("org.example.future", 1, JsonSerializer.SerializeToElement(new { untouched = true }))));
+            edit.AddSound("Foreign", "extension",
+                extension: new("org.example.future", 1, JsonSerializer.SerializeToElement(new { untouched = true }))));
         var original = Json(fixture.Document);
         original["minor"] = 3;
         original["minimumReaderMinor"] = 0;
@@ -105,8 +112,10 @@ public sealed class PersistenceTests
         using (var opaque = JsonDocument.Parse("{\"preset\":7,\"foreign\":[1,2],\"state\":null}"))
         {
             var extension = new ExtensionState("org.example.instrument", 4, opaque.RootElement);
-            document.Edit("Unavailable sound", edit => edit.AddSound("Opaque source", "extension", extension: extension));
+            document.Edit("Unavailable sound",
+                edit => edit.AddSound("Opaque source", "extension", extension: extension));
         } // Domain owns a clone, so parser lifetime cannot invalidate state.
+
         var json = Json(document);
         var unavailable = Read(json);
         Assert.True(unavailable.IsDegraded);
@@ -126,7 +135,8 @@ public sealed class PersistenceTests
             edit.AddPart(patternId, "Part", document.Current.State.Sounds[0].Id);
         });
         var partId = document.Current.State.Patterns[0].Parts[0].Id;
-        document.Edit("Independent durable opaque state", edit => independent = edit.MakeSoundIndependent(patternId, partId, "Independent"));
+        document.Edit("Independent durable opaque state",
+            edit => independent = edit.MakeSoundIndependent(patternId, partId, "Independent"));
         Assert.NotEqual(document.Current.State.Sounds[0].Id, independent);
         Assert.Equal(document.Current.State.Sounds[0].Extension, document.Current.State.Sounds[1].Extension);
         // This proves data independence, not arbitrary plugin runtime duplication support.
@@ -211,7 +221,8 @@ public sealed class PersistenceTests
             case "empty-identity": state["id"] = Guid.Empty.ToString(); break;
             case "invalid-uuid": state["id"] = "not-a-uuid"; break;
             case "non-string-uuid": state["id"] = 123; break;
-            case "duplicate-identity": state["placements"]![1]!["id"] = state["placements"]![0]!["id"]!.DeepClone(); break;
+            case "duplicate-identity":
+                state["placements"]![1]!["id"] = state["placements"]![0]!["id"]!.DeepClone(); break;
             case "bad-reference": state["placements"]![0]!["patternId"] = Guid.NewGuid().ToString(); break;
             case "negative-position": note["position"] = -1; break;
             case "non-integer-position": note["position"] = "one-quarter"; break;
@@ -227,6 +238,7 @@ public sealed class PersistenceTests
             case "non-number-tempo": state["settings"]!["tempo"] = "fast"; break;
             default: throw new InvalidOperationException("Unknown fixture mutation.");
         }
+
         Assert.Throws<ProjectFormatException>(() => Read(node));
     }
 
@@ -265,7 +277,8 @@ public sealed class PersistenceTests
         var history = document.UndoCount;
         // Existing directory forces failure after the temporary document has been written.
         var error = Record.Exception(() => ProjectPersistence.Save(document, directory.Path));
-        Assert.True(error is IOException or UnauthorizedAccessException, $"Expected a filesystem failure; received {error?.GetType()}.");
+        Assert.True(error is IOException or UnauthorizedAccessException,
+            $"Expected a filesystem failure; received {error?.GetType()}.");
         Assert.Equal(bytes, File.ReadAllBytes(path));
         Assert.Same(saved, document.Saved);
         Assert.Same(current, document.Current);
@@ -278,8 +291,10 @@ public sealed class PersistenceTests
         {
             using var locked = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
             var lockedError = Record.Exception(() => ProjectPersistence.Save(document, path));
-            Assert.True(lockedError is IOException or UnauthorizedAccessException, $"Expected a filesystem failure; received {lockedError?.GetType()}.");
+            Assert.True(lockedError is IOException or UnauthorizedAccessException,
+                $"Expected a filesystem failure; received {lockedError?.GetType()}.");
         }
+
         Assert.Equal(bytes, File.ReadAllBytes(path));
         Assert.Same(saved, document.Saved);
         Assert.Empty(Directory.GetFiles(directory.Path, ".seqvium-*.tmp"));
@@ -312,18 +327,20 @@ public sealed class PersistenceTests
         yield return state["settings"]!.AsObject();
         yield return state["settings"]!["meter"]!.AsObject();
         foreach (var key in new[] { "patterns", "sounds", "placements", "groups", "resources", "contexts", "routes" })
-            foreach (var item in state[key]!.AsArray().OfType<JsonObject>())
-            {
-                yield return item;
-                if (key == "patterns")
-                    foreach (var part in item["parts"]!.AsArray().OfType<JsonObject>())
-                    {
-                        yield return part;
-                        foreach (var note in part["notes"]!.AsArray().OfType<JsonObject>()) yield return note;
-                    }
-                if (key == "placements")
-                    foreach (var relationship in item["partRelationships"]!.AsArray().OfType<JsonObject>()) yield return relationship;
-                if (item["extension"] is JsonObject extension) yield return extension;
-            }
+        foreach (var item in state[key]!.AsArray().OfType<JsonObject>())
+        {
+            yield return item;
+            if (key == "patterns")
+                foreach (var part in item["parts"]!.AsArray().OfType<JsonObject>())
+                {
+                    yield return part;
+                    foreach (var note in part["notes"]!.AsArray().OfType<JsonObject>()) yield return note;
+                }
+
+            if (key == "placements")
+                foreach (var relationship in item["partRelationships"]!.AsArray().OfType<JsonObject>())
+                    yield return relationship;
+            if (item["extension"] is JsonObject extension) yield return extension;
+        }
     }
 }

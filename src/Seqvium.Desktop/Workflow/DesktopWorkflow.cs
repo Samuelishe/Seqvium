@@ -47,6 +47,9 @@ internal sealed record WorkflowState(
     internal long LoopEnd { get; init; }
     internal bool SongLoopEnabled { get; init; }
     internal long TransportGeneration { get; init; }
+
+    internal System.Collections.Immutable.ImmutableDictionary<Guid, MixerMeter> MixerMeters { get; init; } =
+        System.Collections.Immutable.ImmutableDictionary<Guid, MixerMeter>.Empty;
 }
 
 /// <summary>Host application/session owner over the existing document, import, persistence and F2 engine.
@@ -552,7 +555,13 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         {
             SongMode = _songMode, ExecutionSampleRate = _output?.Sampler.SampleRate ?? 48000,
             SongCursor = _songCursor, LoopStart = _loopStart, LoopEnd = _loopEnd, SongLoopEnabled = _songLoopEnabled,
-            TransportGeneration = _playGeneration
+            TransportGeneration = _playGeneration,
+            MixerMeters = state.Mixer is { } mixer
+                ? System.Collections.Immutable.ImmutableDictionary.ToImmutableDictionary(
+                    mixer.Channels.Select(c => c.Id.Value).Append(Guid.Empty), id => id,
+                    id => _output?.Sampler.ReadMixerMeter(id == Guid.Empty ? null : new Id<MixerChannel>(id)) ??
+                          default)
+                : System.Collections.Immutable.ImmutableDictionary<Guid, MixerMeter>.Empty
         };
         Volatile.Write(ref _state, observation);
         Changed?.Invoke(observation);

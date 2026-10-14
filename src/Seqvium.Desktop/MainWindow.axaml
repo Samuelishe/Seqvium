@@ -62,6 +62,8 @@
                                             AutomationProperties.AutomationId="Workspace.OpenArrangement" />
                                     <Button Classes="shell" Content="{Binding [Pane.Piano]}" Click="PianoClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenPiano" />
+                                    <Button Classes="shell" Content="{Binding [Pane.Mixer]}" Click="MixerClicked"
+                                            AutomationProperties.AutomationId="Workspace.OpenMixer" />
                                     <Button Classes="shell" Content="{Binding [Pane.Inspector]}"
                                             Click="InspectorClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenInspector" />

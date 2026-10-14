@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Immutable;
 using System.Text.Json;
 
@@ -29,7 +30,8 @@ public sealed record Meter : CanonicalData
     public Meter(int numerator, int denominator)
     {
         if (numerator is < 1 or > 64 || denominator is < 1 or > 64 || (denominator & (denominator - 1)) != 0)
-            throw new ArgumentOutOfRangeException(nameof(denominator), "Meter requires numerator 1–64 and power-of-two denominator 1–64.");
+            throw new ArgumentOutOfRangeException(nameof(denominator),
+                "Meter requires numerator 1–64 and power-of-two denominator 1–64.");
         Numerator = numerator;
         Denominator = denominator;
     }
@@ -40,11 +42,24 @@ public sealed record Meter : CanonicalData
 }
 
 public sealed record ProjectSettings(Tempo Tempo, Meter Meter) : CanonicalData;
-public sealed record NoteEvent(Id<NoteEvent> Id, MusicalPosition Position, MusicalDuration Duration,
-    decimal Pitch, decimal Intensity) : CanonicalData;
-public sealed record MusicalPart(Id<MusicalPart> Id, string Name, Id<SoundDefinition> SoundId,
+
+public sealed record NoteEvent(
+    Id<NoteEvent> Id,
+    MusicalPosition Position,
+    MusicalDuration Duration,
+    decimal Pitch,
+    decimal Intensity) : CanonicalData;
+
+public sealed record MusicalPart(
+    Id<MusicalPart> Id,
+    string Name,
+    Id<SoundDefinition> SoundId,
     ImmutableArray<NoteEvent> Notes) : CanonicalData;
-public sealed record Pattern(Id<Pattern> Id, string Name, MusicalDuration Length,
+
+public sealed record Pattern(
+    Id<Pattern> Id,
+    string Name,
+    MusicalDuration Length,
     ImmutableArray<MusicalPart> Parts) : CanonicalData
 {
     /// <summary>Stable equal-position ordering: part UUID then note UUID; not insertion order or pitch.</summary>
@@ -58,7 +73,12 @@ public sealed record ExtensionState : CanonicalData
 {
     public string ExtensionId { get; init; }
     public int StateVersion { get; init; }
-    public JsonElement Payload { get; init => field = value.Clone(); }
+
+    public JsonElement Payload
+    {
+        get;
+        init => field = value.Clone();
+    }
 
     public ExtensionState(string extensionId, int stateVersion, JsonElement payload)
     {
@@ -67,38 +87,83 @@ public sealed record ExtensionState : CanonicalData
         Payload = payload;
     }
 }
-public sealed record SoundDefinition(Id<SoundDefinition> Id, string Name, string Algorithm,
-    ImmutableDictionary<string, decimal> Parameters, ImmutableArray<Id<ResourceDescriptor>> ResourceIds,
+
+public sealed record SoundDefinition(
+    Id<SoundDefinition> Id,
+    string Name,
+    string Algorithm,
+    ImmutableDictionary<string, decimal> Parameters,
+    ImmutableArray<Id<ResourceDescriptor>> ResourceIds,
     ExtensionState? Extension) : CanonicalData;
-public sealed record ResourceDescriptor(Id<ResourceDescriptor> Id, string Name, string? ManagedLocator,
+
+public sealed record ResourceDescriptor(
+    Id<ResourceDescriptor> Id,
+    string Name,
+    string? ManagedLocator,
     string? Origin) : CanonicalData;
-public sealed record InstrumentGroup(Id<InstrumentGroup> Id, string Name,
+
+public sealed record InstrumentGroup(
+    Id<InstrumentGroup> Id,
+    string Name,
     ImmutableArray<Id<SoundDefinition>> SoundIds) : CanonicalData;
 
-public enum LocalProcessingLevel { Item, Containing }
-public sealed record ProcessingContext(Id<ProcessingContext> Id, string Name, LocalProcessingLevel Level,
-    bool IntentionalMix, ExtensionState? Extension) : CanonicalData;
+public enum LocalProcessingLevel
+{
+    Item,
+    Containing
+}
+
+public sealed record ProcessingContext(
+    Id<ProcessingContext> Id,
+    string Name,
+    LocalProcessingLevel Level,
+    bool IntentionalMix,
+    ExtensionState? Extension) : CanonicalData;
+
 public sealed record RouteIntent(Id<RouteIntent> Id, string Name) : CanonicalData;
 
 /// <summary>Part-specific contribution path. A shared performance key requests interaction, not a runtime instance.</summary>
-public sealed record PlacementPart(Id<MusicalPart> PartId, Guid? SharedPerformanceKey,
+public sealed record PlacementPart(
+    Id<MusicalPart> PartId,
+    Guid? SharedPerformanceKey,
     Id<RouteIntent>? RouteId) : CanonicalData;
-public sealed record PatternPlacement(Id<PatternPlacement> Id, Id<Pattern> PatternId, MusicalPosition Position,
-    Id<ProcessingContext>? ItemContextId, Id<ProcessingContext>? ContainingContextId,
-    Id<RouteIntent>? RouteId, ImmutableArray<PlacementPart> PartRelationships) : CanonicalData;
+
+public sealed record PatternPlacement(
+    Id<PatternPlacement> Id,
+    Id<Pattern> PatternId,
+    MusicalPosition Position,
+    Id<ProcessingContext>? ItemContextId,
+    Id<ProcessingContext>? ContainingContextId,
+    Id<RouteIntent>? RouteId,
+    ImmutableArray<PlacementPart> PartRelationships) : CanonicalData;
 
 /// <summary>A shared Rack occurrence in the song. Lane is visual organization, not an audio route.</summary>
-public sealed record ArrangementClip(Id<ArrangementClip> Id, Id<PatternPlacement> SourcePlacementId,
-    MusicalPosition Position, int Lane, int Repeats) : CanonicalData;
+public sealed record ArrangementClip(
+    Id<ArrangementClip> Id,
+    Id<PatternPlacement> SourcePlacementId,
+    MusicalPosition Position,
+    int Lane,
+    int Repeats) : CanonicalData;
 
 /// <summary>Configuration of one fixed Playlist lane; it owns neither an instrument nor a mixer route.</summary>
-public sealed record ArrangementTrack(Id<ArrangementTrack> Id, int Lane, string Name, int ColorIndex,
-    bool Muted, bool Solo) : CanonicalData;
+public sealed record ArrangementTrack(
+    Id<ArrangementTrack> Id,
+    int Lane,
+    string Name,
+    int ColorIndex,
+    bool Muted,
+    bool Solo) : CanonicalData;
 
-public sealed record ProjectState(Id<ProjectState> Id, string? Name, ProjectSettings Settings,
-    ImmutableArray<Pattern> Patterns, ImmutableArray<SoundDefinition> Sounds,
-    ImmutableArray<PatternPlacement> Placements, ImmutableArray<InstrumentGroup> Groups,
-    ImmutableArray<ResourceDescriptor> Resources, ImmutableArray<ProcessingContext> Contexts,
+public sealed record ProjectState(
+    Id<ProjectState> Id,
+    string? Name,
+    ProjectSettings Settings,
+    ImmutableArray<Pattern> Patterns,
+    ImmutableArray<SoundDefinition> Sounds,
+    ImmutableArray<PatternPlacement> Placements,
+    ImmutableArray<InstrumentGroup> Groups,
+    ImmutableArray<ResourceDescriptor> Resources,
+    ImmutableArray<ProcessingContext> Contexts,
     ImmutableArray<RouteIntent> Routes) : CanonicalData
 {
     // Optional properties keep historical graph-free constructor contracts intact.
@@ -106,6 +171,7 @@ public sealed record ProjectState(Id<ProjectState> Id, string? Name, ProjectSett
     public ImmutableArray<GraphAttachment> GraphAttachments { get; init; } = [];
     public ImmutableArray<ArrangementClip> ArrangementClips { get; init; } = [];
     public ImmutableArray<ArrangementTrack> ArrangementTracks { get; init; } = [];
+    public MixerState? Mixer { get; init; }
 }
 
 public sealed record ProjectSnapshot(ProjectState State, Guid Revision);

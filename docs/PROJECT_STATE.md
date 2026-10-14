@@ -2,425 +2,107 @@
 
 Role: Compact handoff of current repository truth for a contributor/agent without conversational memory.
 Read when: Starting every nontrivial task.
-Authoritative for: Current checkpoint, implemented capability, focus, validation baseline, active blockers/evidence
-gaps.
-Not authoritative for: Contracts, decisions, plans, history, source topology, or live Git status.
+Authoritative for: Current checkpoint, implemented capability, focus, validation baseline and active evidence gaps.
+Not authoritative for: Contracts, decisions, plans, history, source topology or live Git status.
 
 ## Current checkpoint
 
-The current product alpha is **`0.1.4.0001`**, the SEQ-CHANNEL-RACK-MUSIC BUILD checkpoint after SEQ-DRUM-INSTRUMENTS on
-the
-owner-selected `0.1` line under
-[VERSIONING](VERSIONING.md). Production assembly identity is canonical; About reads built Desktop
-metadata. This identity does not close R4 acceptance or declare a production release.
+The product alpha is **0.1.5.0000**, SEQ-R11-MIXER, one substantial musical Mixer PATCH on the
+owner-selected 0.1 line. BUILD resets; production assembly identity is canonical under
+[VERSIONING](VERSIONING.md). No release, staging, commit, push or tag is performed.
 
-**SEQ-R1, SEQ-R2 and SEQ-R3 are complete / local accepted-ready** within their bounded foundations.
-R2-F1/F2/F3/F4 and R3-F1/F2 are working subdivisions, not new numbered stages. The owner accepts
-R3-F1 and R3-F2's current bounded workspace usability/interaction behavior. SEQ-R3-CLOSE finds no
-missing R3 prerequisite; no additional UI polishing package is required for this acceptance. **R4 is in progress /
-partial; R4-F1 is complete / local accepted-ready.** R4-F2's functional execution
-is implemented; full acceptance is blocked by mixed physical pressure evidence (two observed starvations).
-F2 remains **partial**. **R4-F3-A is functionally implemented and conditionally accepted by the owner
-for continued development. R4-F3-B is explicitly authorized and implemented, with actual canvas/
-interaction acceptance pending owner review.** F3/R4 full acceptance remains incomplete.
-SEQ-KB-R21 remains the planning baseline; R0 remains **partially evidenced / narrow** under its
-[report](experiments/SEQ-R0_REPORT.md), without a permanent engine/backend/ABI decision.
-Completed rationale is cold history; current contracts stay in canonical owners.
-
-**R5 is in progress / partial. R5-F1 and the bounded F2/F3 musical slice are implemented:** empty
-Beat creation, independent WAV channels, 1–32 bars, continuous Play, renderer position and compatible
-live step edits, atomic channel/Pattern deletion, navigation collapse, selected-Pattern WAV export
-and Save/Open. SEQ-R9 now supplies shared melodic/velocity editing; channel mix and richer processors
-remain future work. The separately owner-authorized
-bounded R10 Playlist below now supplies simultaneous Patterns and finite song composition/export;
-it does not complete R5, R10's wider scope or intervening stages.
-The owner reports the visual redesign complete and now prioritizes music. Full automated, actual
-window and short physical loop checks pass; long pressure/acoustic/platform acceptance stays separate.
+R1/R2/R3 are complete within their bounded foundations; R3 workspace acceptance is owner-confirmed.
+R4 remains partial: F1 is local accepted-ready, F2 functionally implemented but physical pressure
+acceptance unresolved, F3-A conditionally accepted for continued development, F3-B actual canvas/
+interaction acceptance pending. The new Mixer does not close those gaps or choose a permanent engine ABI.
+R5's Rack/music slice, R9's Piano Roll, R10's bounded Playlist and R11's musical Mixer are implemented;
+wider stage/First Track and owner aesthetic/acoustic acceptance remain separate.
+[Roadmap](ROADMAP.md) owns remaining plans; completed rationale belongs to the cold archive.
 
 ## Implemented capability
 
-SEQ-CHANNEL-RACK-MUSIC fixes compact square pads, beat/bar grouping, scrollbar-free Pattern card edges,
-wide rich-note previews and redundant committed Gain focus-loss commands that could consume Save.
-Neon Orchard was authored exclusively through native GUI input: 15 Patterns, nine tracks, 78 clips,
-all seven drums plus five library samples, 32 bars at 112 BPM. Native reopen/full physical Song/export
-passes at 68.571 s with zero saturated samples. [Report](experiments/SEQ-CHANNEL-RACK-MUSIC_REPORT.md)
-separates native composition, rendered checks and subjective/pressure limits.
-Final Release/reference build has zero warnings/errors; 168 focused Rack/style/Piano/Arrangement/version
-cases pass. Compact 12-case geometry/native history/playhead and final 12-field/11-native-Graph checks pass.
-Owner listening identified a masked quiet pizzicato; native forte-source replacement preserves the
-16-note Glass Seeds rhythm and improves its isolated export by about 33 dB without editing library bytes.
+The retained Desktop has Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and existing
+information/appearance panes. English/Russian and Dark/Light share semantic resources and preference/
+workspace persistence. Normal startup stays silent; user-wide Single Instance and explicit scoped
+device/output lifetime remain unchanged.
 
-SEQ-DRUM-INSTRUMENTS adds Snare, Closed/Open Hat, Clap, Tom and Rim to the existing kick, with distinct
-synthesis and parameters, 21 factory snapshots and portable `.seqdrum` Save/Load. Linked hats choke
-across channels and audible Song clips, including loops/seek/export; simultaneous Closed wins.
-The retained editor adapts its knobs/curves, preserves shared sound history and supports repeated
-stopped audition. A four-Pattern / 16-bar native composition passes physical Song, native Save/Open
-and export without media. [Report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md) owns evidence and limits.
+Rack provides 1–32-bar continuous Patterns, real renderer phase, atomic painting/actions/deletion/
+Undo and melodic previews. Piano Roll edits shared pitch/duration/velocity, chords, move/copy/resize,
+clipboard/exact properties, snap/zoom/scroll/ghosts. Playlist provides shared/overlapping/repeated
+Patterns, 32 organizational slots, groups, Mute/Solo, seek/range loop, overview and finite Song export.
+Built-in Kick/Snare/Hats/Clap/Tom/Rim, 21 presets and portable custom sounds reuse shared sound state;
+linked hats choke across audible channels/clips. WAV PCM sampler and local Source/Gain/Mix/Output
+graphs remain working. Source Root Pitch, transient audition, managed media and Save/Open are retained.
 
-The original kick retains Tune/Decay/Tone/Noise,
-pitch drop/time/shape and attack/amplitude shape, directly editable envelope points and actual derived
-waveform. Rack creates/opens the same explicitly bound Source editor; Piano notes transpose it with
-velocity and unchanged envelope time. Shared sound state uses existing Undo/Save/Open and Song/WAV
-graphs. Preparation generates disposable host-rate PCM; full one-shot tails overlap across loops,
-seek reconstructs them, finite exports retain them and sound commits preserve rhythm position/epoch.
-The spacious Dark/Light editor uses shared materials, exact values once and reflow/local scrolling.
-R6/R7 packages/exploration, further voices/layers, custom choke groups and modulation remain future scope.
-[Owners](AUDIO_ENGINE.md#built-in-drum-voice) and [report](experiments/SEQ-FIRST-DRUM_REPORT.md) define limits.
+Mixer adds explicit shared-sound assignments, channels/buses/Master, amplification/trim/stereo balance,
+Mute/Solo, measured stereo peak/RMS/hold/reduction, acyclic output routes, pre/post sends, high-pass/
+three-band EQ, linked compression and optional Master sample-peak protection. Song occurrences sum
+by assigned sound before stateful global processing, preserving supported local graph transfer.
+Playlist lanes are not Mixer channels. Canonical Mixer state uses the existing owner/history and
+format reader minor 3; older projects stay unchanged until explicit creation. Prepared control updates
+retain compatible voices/time, consume at packet boundaries, and do not decode media again.
+[Audio](AUDIO_ENGINE.md#project-mixer-execution), [architecture](ARCHITECTURE.md#implemented-project-mixer-boundary),
+[format](PROJECT_FORMAT.md#mixer-persistence) and [UX](UX_CONTRACT.md#implemented-mixer-workflow) own contracts.
 
-SEQ-R9 implements a retained real Piano Roll: shared Pattern/Part notes, chords, mixed duration/
-velocity, draw/select/group move/Ctrl-copy/resize/delete, clipboard/exact properties, keyboard editing,
-snap/triplet/free, pitch/time scrolling, anchored zoom, ghosts and renderer playhead. Rack uses a safe
-rich-note thumbnail without flattening. Shared history, Pattern/Song execution and WAV export preserve
-the same notes. Explicit source root/name settings and exact-path/hash-verified optional catalog roots
-correct melodic WAV tuning; full MIDI pitch preparation and quiet stopped note audition use the same
-PCM kernel. Existing projects/media remain unchanged on Open. Source/unknown-data and stale guards
-retain refusals. See [R9 evidence](experiments/SEQ-R9_REPORT.md) and canonical UX/audio/sample owners.
+The owner rejected oversized Mixer proportions. The accepted compact studio instrument direction now
+uses fixed narrow strips, pinned Master, a side inspector, original metal-cap/knob/chassis materials
+and thin colored identities. Shared chrome, rail, Pattern cards and Rack/Playlist rows are denser.
+Light is cool steel/colored ink; Dark is slate/jade. Framework tab templates use host tokens.
+[UI design](UI_DESIGN.md#compact-studio-instrument-direction) and
+[design system](DESIGN_SYSTEM.md#mixer-and-chassis-components) own current norms; this is not a claim
+that every editor's full radical redesign is complete.
 
-SEQ-TRACK-GUI fixes real composing obstacles: fractional toolbar Gain commits once on Enter/focus loss,
-with Escape/stale guards and retained Enter focus; Playlist anchors at TOP + LEFT, fills an expanded
-viewport with bars and exposes all 32 lane slots; floating corner targets match the visible 24-DIP
-grip. Saved large panes restore after native maximized startup settles. A new 61.94 s, seven-Pattern /
-13-sample / 21-clip layered composition was authored through native GUI input and saved outside Git.
-See the [workflow report](experiments/SEQ-TRACK-GUI_REPORT.md) for the music and verification boundary.
+## Musical result and validation baseline
 
-SEQ-PLAYLIST-MUSIC extends the existing music workflow with session seek/range looping, snapped
-single-transaction clip groups and navigation, restored normal/maximized main window, adaptive Rack +
-Playlist arrangement and reserved frame resize targets. Distinct export vectors replace disk icons.
-Supported channel tree add/delete/Undo/Redo keeps time/epoch/surviving voice ages, including empty
-channel plans. Explicit eligible Play retries failed preparation. WAV source rates/depths and two
-bounded exporter padding variants now admit all 271 WAVs in the owner's inspected library; FLAC
-remains refused. Desktop/export share a short inside-boundary smoothing policy that reduces piano/808
-gate discontinuities without editing bytes or note lengths. The actual Piano001 project reproduced
-an eight-voice source-graph refusal with nine overlapping piano notes; Rack/export and Song source
-graphs now share a bounded 32-voice budget. Actual physical Song/Pattern passes 120 → 135 → 120
-without blockers, preserving project/media hashes; explicit preparation-error recovery is also repaired. See
-the [report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md).
+An independent Neon Orchard project **and all managed media** are preserved in the owner's new
+Desktop Mixer folder. All musical balance/EQ/compression/bus edits, Save/Open and final WAV export
+used actual native GUI input, not musical JSON/internal APIs. Excluding only Mixer, its canonical
+music/graphs/resources match the original exactly. SHA-256 audit of 1255 protected original/library/
+reference files finds zero changes; all 379 Ready WAVs pass actual decoder inspection.
 
-SEQ-R10-PLAYLIST adds a retained real Playlist: shared source-placement clips at absolute musical
-positions, move/Ctrl-copy/whole-Pattern repeats/Duplicate/Delete, snap, named/color fixed tracks with
-actual Mute/Solo, overview/fit/follow and stationary headings. Actual note positions/durations/pitches
-drive previews. Finite Song schedules overlaps/gaps through existing source graphs/PCM execution;
-Pattern retains independent continuous Rack. Compatible edits retain time/epoch/unchanged voices,
-with passed onsets deferred and silent completion when shortened behind the playhead. One history
-and compatible reader 1.2 preserve clip/track/source IDs and media across Undo/Save/Open; legacy files
-open with empty song, and Open stays silent. Whole-Song WAV uses the same frozen graph program.
-The five new references are outside Git under `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`;
-earlier references remain preserved. Track slots are bounded visual organization, not Mixer routes.
-SEQ-PLAYLIST-MUSIC now adds ruler seek/range loops, atomic clip groups, pointer zoom/pan/scroll,
-main-window restoration/music layout/usable frame grips and continuous supported channel changes.
-Sections, variants, waveform trim/stretch and automation remain planned. UX/audio/format/UI owners
-define exact scope; the [report](experiments/SEQ-R10-PLAYLIST_REPORT.md) owns evidence/limits.
+The mixed WAV is 68.5714375 s, 3,291,429 stereo frames at 48 kHz, peak .8408203125 (about -1.51 dBFS),
+zero saturated samples and RMS difference .02218978 from the original. Full saved Song runs through
+Steinberg UR12 at 44.1 kHz stereo with real meters and up to 13 voices. A separate read-only physical
+diagnostic compares submitted float PCM with same-rate/same-partition offline output: maximum error
+zero. Native 48-kHz PCM16 WAV differs from 48-kHz float execution only by rounding. Callback/service/
+worker allocations, processor/service/packet misses, padding exhaustions and nonfinite counts are zero;
+Stop acknowledgment and joined teardown pass. No subjective listening/quality judgment is claimed.
 
-SEQ-UI-REDESIGN implements the owner's substantial instrument direction: slate/jade identity,
-layered panels, bevelled colored pads, shadows/glow, graduated Gain dial and coherent Dark/Light.
-Shared HostPalette/HostMetrics/HostMaterials own colors, geometry and derived materials; original
-vector rail icons and controls introduce no dependency or borrowed asset. A pristine layout opens
-Rack and Playlist in an adaptive music composition; saved layout remains authoritative. Rail actions expose actual
-panes. A wide-window navigator
-creates/selects real Patterns/occurrences with canonical rhythm thumbnails, without selection history.
-Captured row paint/erase commits once; Escape/capture loss/stale basis cancels. Fill/rotate/clear and
-single-WAV drop use the existing document/import owners. BPM commits settings once, stops playback
-and remains editable from narrow overflow; musical-time content is preserved. Gain's dial shares
-the existing editor draft/parameter/history. No schema/DSP/audio scheduling changes were made.
-The eleven inspected references are outside Git at `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-UI-REDESIGN`.
-Current decisions are in UI_DESIGN/DESIGN_SYSTEM; validation/limits are in the
-[redesign report](experiments/SEQ-UI-REDESIGN_REPORT.md). The owner reports this redesign complete.
+Full Release solution build is zero-warning/error; **1196/1196 automated tests pass**, zero skips (9.123 s CLI summary).
+New Mixer subset passes 17 cases, affected presentation/version/Mixer subset
 
-Panes → Step Sequencer / Channel Rack now creates an empty one-bar 4/4 Pattern without changing BPM/
-meter. Add WAV Channel durably accepts empty Parts/Sounds and exact placement Source bindings; three
-channels feed existing binary Mix nodes → Gain → Output. Step toggles create/delete canonical notes
-at exact sixteenths, with root pitch/unit intensity and finite quarter-note gates clipped to the Pattern end.
-Name, notes, length and deletion use the one history; shared note edits change the same Pattern.
-A derived absolute-tick LoopClock repeats in the same audio packet; compatible prepared note edits
-retain position, epoch and unchanged voice ages. Export renders one frozen occurrence through its
-current graph to 48 kHz stereo PCM16, preserving transport/history and reporting clipping.
-Save/Open preserves IDs/media, with fresh silent runtime/history on Open. Unsupported shape/unknown
-data and unsafe/shared channel expansion refuse without rewriting content; known rich notes now have
-safe Rack previews and Piano editing. Static retained
-pane behavior, RU/EN, Dark/Light, local scrolling, keyboard and toggle accessibility reuse the host.
-[UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing), [audio](AUDIO_ENGINE.md#r5-f1-finite-step-pattern-playback)
-and [test execution](TEST_EXECUTION.md#r5-f1-step-sequencer-verification) own contracts/evidence.
-
-Desktop now has user-wide Single Instance activation before document/audio initialization, independent
-workspace deactivation and thresholded graph gestures. [Design System v2](DESIGN_SYSTEM.md) supplies
-implicit standard controls, semantic template/drawing resources and verified parameter-row alignment.
-The separate [VisualCheck](../tools/Seqvium.VisualCheck/README.md) host provides isolated component,
-window, routed-input and process verification without a production developer surface.
-
-The .NET 10 solution contains portable Core, one Tests project, a narrow Windows audio adapter,
-an explicit physical-device harness and one Avalonia `Seqvium.Desktop` executable.
-[Architecture](ARCHITECTURE.md) owns product topology.
-[ProjectStats](PROJECT_STATS.md) is an independent BCL-only .NET 10 developer CLI in the solution,
-with console/Markdown/JSON structural reports, explicit local output and privacy/advisory boundaries.
-It adds no musical capability, device/GUI access or later-stage authorization.
-The silent desktop opens one pristine unnamed
-`ProjectDocument.Create` (120 BPM, 4/4); language/theme and layout persist as independent user files.
-Windows custom chrome retains OS movement/resize/window actions; other desktops retain native chrome.
-Optional Project Inspector and Appearance panes support activation/front order, floating, captured
-movement/anchored resize, collapse/restore, reversible close/reopen and explicit left/right docking.
-Expanded DIP hit targets use workspace boundary arbitration and frozen capture identity. Pane contents
-remain alive; floating panes and the two docks resize independently. Keyboard traversal/actions,
-Escape and safe focus return are implemented. [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes)
-owns exact bounds; [Settings](SETTINGS.md#implemented-r3-f2-workspace-layout-storage) owns restoration,
-corruption preservation, write failure and joined shutdown. RU/EN fallback and Dark/Light resources
-apply without replacing controls or editing music. The single command row, instrument panel materials,
-shared frame/pad geometry and local scrolling follow [UI design](UI_DESIGN.md) and source-owned metrics.
-F3-B adds the bounded graph editor below. No general docking hierarchy, snapping, automatic audio startup or reset UI
-exists.
-
-R1 provides immutable canonical documents, typed stable identities, shared multi-instrument Patterns,
-pitch-aware notes, variations, independent sound/resource/organization/processing intent, validated
-atomic edits, bounded Undo/Redo and precise ticks/constant-tempo conversion. Versioned JSON preserves
-compatible unknown/opaque state with explicit degraded/refusal behavior.
-R2 provides bounded WAV decoding (now PCM16/24/32 and float32 at 8–192 kHz source rates), durable unnamed import,
-managed Save As/reopen integrity,
-independent PCM leases, pitched offline/realtime execution, transport/epochs and prepared-state retirement.
-External/project discovery, raw transient preview and explicit independent same-resource sound reuse
-remain separate from import/Undo. Independent logical input/output intent supports default roles or
-explicit opaque IDs, availability without silent fallback and confirmed join before output replacement.
-Input discovery/selection opens no capture stream. [Audio](AUDIO_ENGINE.md) and
-[Sample workflow](SAMPLE_WORKFLOW.md) own exact resource/execution/device contracts.
-
-R4-F1 adds canonical item graph definitions/attachments, placement/part source bindings, version-1
-Source/Gain/Mix/Output descriptors, typed ports, graph coordinates, structural versus intent diagnostics,
-atomic editing/remapping/deletion and deep Undo/net-zero equality. Reader 1.1 preserves invalid/unknown
-graph intent and requires minor 1 for nonempty
-graphs. [Node graph](NODE_GRAPH.md#implemented-r4-f1-canonical-graph-intent)
-and [Project format](PROJECT_FORMAT.md#r4-f1-graph-aware-json-format) own exact contracts.
-R4-F2 executes independent placement/part PCM through Source/Gain/Mix/Output, with checked preparation,
-fixed scratch and shared R2 offline/realtime scheduling/leases. One owner coordinator automatically
-converges after Edit/Undo/Redo/target changes, retains last-valid in-session audio on blockers, retries
-capacity and preserves voices for Gain-only updates. Geometry provenance, atomic status, sticky hard
-Stop/Panic, finite topology transition and preparation/device joined shutdown are implemented under
-[Audio](AUDIO_ENGINE.md#r4-f2-independent-contributions-and-realtime-convergence). F3-B supplies its graph editor.
-
-R4-F3-A connects these foundations in the actual Desktop: native durable WAV import creates an atomic
-Sound/Pattern/Part/Note/Placement and exactly bound Source → Gain → Output graph. Selected Gain edits
-canonical intent; explicit Play/Stop/Panic, Undo/Redo and Save/Save As/Open use existing Core APIs.
-Dirty Save/Discard/Cancel, preparation/output joins and fresh silent reopen protect document/PCM lifetime.
-A non-GUI host owner supplies immutable observations to the retained R3 shell/panes. One vector command
-row, committed transport BPM editor/read-only meter, narrow overflow, compact status/details and owned modal follow
-[permanent visual rules](UI_DESIGN.md#first-party-visual-design-rules). No bundled sample content is added.
-
-R4-F3-B supplies one explicitly targeted retained Node Graph pane with real Source/Gain/Mix/Output,
-typed cables, nearest-cable selection with deterministic crossing ties and port-specific connection
-menus/selection feedback, free drag, pan/zoom/frame, context/keyboard editing and compact
-committed Gain. Node preview commits once through the existing owner/Undo; stale/cancel/no-op gestures
-publish nothing. A durable second WAV adds an independent Part/Note/Source binding in the same unshared
-item, with shared-Pattern refusal and atomic boundary extension. Canonical topology/coordinates survive
-Save/reopen; persistent element/status diagnostics distinguish invalid intent and last-valid playback.
-F2 coordinator/DSP/backend remain unchanged. [Graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor),
-[workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane) and [evidence](experiments/SEQ-R4-F3-B_REPORT.md) own details.
-Graph context menus open on Avalonia context requests, survive right-button release and support nested
-pointer/keyboard actions. Toolbar creation opens beside its button; incomplete intent remains editable,
-with per-action refusal explanations and dismissal/basis guards for retained menu actions.
-
-## Current focus
-
-The home machine has a private WAV library and 34 inspected, searchable design references outside Git;
-[development](DEVELOPMENT.md#local-development-resources) owns entry points. Light now has stronger
-musical color/material depth while Dark values are preserved; populated Rack/Playlist move tutorials
-into contextual help. [UI design](UI_DESIGN.md#reference-library-and-next-editor-direction) and
-[R9 follow-ups](ROADMAP.md#seq-r9--piano-roll) retain advanced tools beyond the implemented bounded editor.
-Browser and wider Mixer/effect stages remain unimplemented; private resources are optional inputs.
-The musical-editor assessment adds synth/drum/sampler/browser/dynamics study and future existing-tool
-refinements under [UI design](UI_DESIGN.md#musical-editor-reference-proposals) and
-[planning](ROADMAP.md#musical-editor-reference-follow-ups). The first Drum Voice is now built-in;
-optional generator/package direction and further percussion depth remain separate. New inbox images were
-copied with hashes/provenance and retained originals.
-
-SEQ-R10-PLAYLIST completes the owner-authorized first finite composition workflow and song export,
-with a reference-informed timeline instrument. Next work is song sections/containers,
-explicit variants, advanced note tools and actual waveform/audio-clip scope; R11 meters/
-automation/effects require their processing/state owners. Supported stateless Rack channel topology now preserves
-playback.
-R5 still lacks per-channel mix controls. Piano/Playlist aesthetic acceptance belongs to the
-owner; the checkpoint does not close prior R4 pressure acceptance or declare a release.
-
-The bounded workspace and canonical intent foundations are locally ready. F2's functional execution
-passes verification, but its repeated physical pressure result is not uniformly successful.
-F3-A is conditionally accepted for continued development. F3-B's implemented canvas/editor interaction
-and multi-source workflow require owner inspection under [ROADMAP](ROADMAP.md).
-Remaining [readiness recommendations](NODE_GRAPH.md#r4-implementation-readiness-recommendation) grant
-no further authorization. R4 remains partial; F2 alone cannot deliver a workstation or select an engine ABI.
-Preserve canonical intent, independent user configuration and narrow platform/device lifetimes.
-Full Browser/Personal Library, expanded graph/editor/plugins/Mixer/recovery and MIDI/capture/recording remain later
-work.
-
-The owner accepts DESIGN-R1 for the bounded **SEQ-NODE-EDITOR-IMPL-F1** slice, now implemented:
-one retained Node Editor with explicit lifecycle/attachment/definition/node identity, body double-click,
-Open Editor and canvas Enter access. Gain provides one-transaction level gestures, exact amplitude,
-derived dB/silence, Unity/Silence and a scalable analytical transfer graph behind Curve disclosure.
-The compact composition uses one node title, short source/scope and grouped Level/value/dB. Identical
-Gain parameters yield to the visible Node Editor, then Graph quick Gain, then toolbar; different
-targets remain accessible. Real cancelled drafts get transient feedback, without own-commit echoes.
-Minimum-size template/curve issues and unselected-node background contrast were corrected in both
-themes; rendered review of draft/invalid/zero states complements state assertions. Source/Mix/Output provide
-actual host information; unknown states are preserved without interpreting opaque parameters.
-Drafts expire on any intervening generation, including ABA; exact deletion Undo restores the target,
-whereas successful project replacement clears it even with identical saved IDs. Quick controls and
-the editor use the same workflow/document/F2 boundary. Empty panes show one content hint; absent
-selectors/headers/footer placeholders and empty toolbar Gain are hidden. Pristine startup leaves
-the editor hidden; explicit/restored panes may have no target. Q-032 retains independent editors and
-future composition. R4-F2 remains partial and F3-B remains pending owner review. Active Gain visual
-acceptance remains with the owner; the earlier presentation was explicitly rejected.
-
-## Validation baseline
-
-SEQ-DRUM-INSTRUMENTS: full Release solution build passes with zero warnings/errors (3.16 s), **1179/1179 tests pass**,
-zero skips (10.079 s CLI). Focused drums cover 106 cases. Seven editor
-RU/EN × Dark/Light ordinary/minimum render/alignment/scroll checks and native custom preset Save/Load
-pass. Native Rack/Piano/Playlist creates four Patterns and 16 bars; physical reopened Song and native
-Save/Open/WAV pass. Export is 32.525 s / 1,561,200 stereo frames, peak .342896, zero saturated samples.
-Subjective listening and earlier pressure/platform limits remain unevidenced. See the
-[report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md).
-
-SEQ-FIRST-DRUM: isolated full Release solution build passes with zero warnings/errors (6.72 s), **1092/1092 tests
-pass**, no skips (8.572 s runner summary); focused L1/L2 passes 225 cases.
-Actual production-window RU/EN × Dark/Light ordinary/300×210 minimum editor and field checks pass, including
-all nine fields reachable through scrolling. Guarded native dial and both envelope modes commit once
-and Undo exactly. Seven GUI-authored hits pass solo audition, physical Pattern looping/live sound
-edits, finite Song, Save/Open and Pattern/Song WAV. Song export has 215760 stereo frames at 48 kHz,
-peak 0.301605 and no saturated samples. Catalog/shared field regressions pass separately. A reusable
-Jade Pulse example is preserved outside Git; subjectively judged sound, long pressure and broader
-platform acceptance remain unevidenced. [Report](experiments/SEQ-FIRST-DRUM_REPORT.md) owns paths/failures.
-
-SEQ-R9: Windows 11 x64, SDK 10.0.401/runtime 10.0.12; final full Release solution build passes with
-zero warnings/errors and **1073/1073 tests pass**, no skips. Focused L1/L2, actual production-window
-RU/EN × Dark/Light ordinary/reduced Piano/property/source/Rack checks and shared catalog/field/Graph
-checks pass. Guarded native input authors 19 chord/melody notes plus four lower notes with verified
-library roots 57/45; physical note audition, continuous Pattern, finite Song and live-edit/Undo converge.
-Save/reopen preserves canonical identities; 48 kHz stereo exports contain 384000/768000 frames, nonzero
-PCM and no saturated samples. Two source hashes remain unchanged. A preserved Jade Nocturne project/
-media/WAV/theme review set lives outside Git; methods, locations and early failures are in the
-[report](experiments/SEQ-R9_REPORT.md). No subjective acoustic, native-picker, long pressure, high-DPI
-or wider platform acceptance is claimed. The previous Rack reduced-tempo harness gap is not relabelled a pass.
-
-SEQ-HOME-RESOURCES: home Windows 11 x64, SDK 10.0.401/runtime 10.0.12; locked restore and affected
-Release builds pass with zero warnings/errors, **196 focused cases pass** (not a full suite). Actual
-component catalog, Playlist, field/Graph/Node Editor matrix and guarded native graph checks pass.
-Decoder audit accepts all **379 local working WAVs**, including ten PCM-preserving RIFF-pad repairs;
-originals stay outside Git. The unchanged baseline Rack route still fails its reduced-English-Dark
-tempo check; Light Rack was rendered with all assertions in a local reordered harness. One Playlist
-attempt failed first routed placement before an unchanged retry passed. The
-[report](experiments/SEQ-HOME-RESOURCES_REPORT.md) separates outcomes; no complete Rack/native/audio/
-acoustic/platform acceptance is claimed.
-
-SEQ-TRACK-GUI: zero-warning/error affected Release builds, **183/183** focused geometry/layout/graph/
-design/version cases (16.255 s CLI), followed by successful actual-window RU/EN Dark/Light field and
-Playlist routes. Toolbar regression covers fractional drafts under observation, Enter, Escape, invalid
-input, focus-loss commit and expired authority; 32-lane/viewport render check observes origin (0,0).
-Eleven guarded native Graph/Workspace checks also pass. Actual Desktop reopens the authored project,
-restores its large pane, scrolls to lane 32 and runs Song from start through Ended; GUI export produces
-2,972,903 stereo frames at 48 kHz with zero saturated samples. The latest full suite remains the earlier
-SEQ-PLAYLIST-MUSIC baseline; no DSP/schema/dependency change or full suite is claimed for this UI task.
-
-SEQ-PLAYLIST-MUSIC: final isolated zero-warning/error full Release build; **1052/1052** full-suite
-pass (18.668 s CLI summary), including dense five-channel 9/32-voice Rack/Song/BPM/export regressions
-and 33-voice refusal. Earlier focused passes cover 205 and final voice subset 99 cases. Actual
-production-window RU/EN Dark/Light Playlist controls, groups/ruler/zoom/BPM-popup Play availability,
-reserved frame hit-test/capture, normal 1230×780 / position 30,25 / maximized restore, catalog and
-rendered fields pass separately, with eleven guarded native Graph/Workspace checks. The original
-Piano001 project reproduces graph.prepare-budget before repair; its final 19.374 s physical window run
-passes Song finite end and Pattern looping at 120 → 135 → 120, observing nine simultaneous voices
-and preserving SHA256 hashes of the project and all five media files. Read-only library inspection
-passes 271 WAVs; measured piano/808 gate deltas reduce about 7–99×. A 7.037 s physical Song verifies
-seek, range wrap, four channel add/delete/Undo/Redo publications, retained epoch after seek, zero
-processor/service allocation, processor/packet misses or padding exhaustion, finite end and Stop/join.
-Acoustic/pressure/wider platform acceptance is unchanged. Current evidence and failure details belong
-to the [report](experiments/SEQ-PLAYLIST-MUSIC_REPORT.md).
-
-SEQ-R10-PLAYLIST: zero-warning/error isolated Release solution build (17.67 s); **1030/1030** automated
-tests (17.466 s CLI summary).
-Early L3 covers project reader compatibility and shared realtime continuation. Focused repaired
-feature checks pass 55 and 30 cases; metadata/layout/node-editor subset passes 90. Actual Windows
-RU/EN Dark/Light ordinary/reduced Playlist routes, rendered repeat-field alignment, captured gestures,
-Ctrl-copy, M/S/name/color editor, overview/stationary headings/fit, Save/Open, Song WAV and retained
-lifecycle pass. A real-renderer window proves 44.1 kHz / 2:2 playhead position. Images in both themes
-were inspected. Short physical Song output verifies two simultaneous Patterns, finite end/live
-publication and sticky Stop/join at 48 kHz stereo/1056 frames over 5.994 s, with zero allocation,
-processor/packet misses or padding exhaustion; this does not establish acoustic or pressure acceptance. The owner
-opened normal Desktop during work; it remains untouched, with final complete binaries under
-`.artifacts/seq-r10-playlist/release/Release/net10.0/`. After that session ended, ordinary Desktop
-outputs were synchronized in a zero-warning/error 7.87 s build; no source/test rerun was needed.
-Report owns timings, initial failures and limits.
-
-SEQ-R5-MUSIC: final full Release solution build has zero warnings/errors; **1009/1009** tests pass (19.233 s CLI test
-summary; isolated build 7.65 s, restore reused unchanged locked assets). Early
-L3 was selected for shared realtime scheduling/continuation risk. Prior focused L1/L2 passes 210 cases.
-Actual Windows steps/catalog/field matrix checks pass, including RU/EN Dark/Light ordinary/reduced
-Rack, real length/deletion/navigation actions, 96 long pads, real-renderer current-column/2:1:2 position
-with a substituted physical borrower. Four earlier guarded native Rack checks pass; the final native
-attempt refuses on foreground, while rendered/routed checks pass. Dark/Light images were
-inspected. Physical WASAPI loop smoke passes at 48 kHz stereo/1056 frames for 6.026 s: live convergence
-with unchanged epoch, zero processor/service allocation, no processor/packet misses or padding
-exhaustion, acknowledged Stop and joined teardown. This is short output evidence, not acoustic or
-pressure acceptance. [Report](experiments/SEQ-R5-MUSIC_REPORT.md) owns commands, initial failures,
-timings and retained local evidence. No dependencies, format marker or engine/backend decision changes.
-
-SEQ-UI-REDESIGN: affected ordinary Release builds and final isolated Tests/reference builds pass
-with zero warnings/errors. Final focused L1/L2 covers **435/435**, zero failures/skips, across
-19 named Desktop interaction/presentation/metadata classes; after final warning-copy changes the
-affected three-class subset passes **82/82**. Nine new cases protect atomic row gestures, retained
-identities/Undo/ABA/refusals and exact canonical tempo editing. The full suite was not rerun.
-Actual Windows production controls pass the Dark/Light component catalog, RU/EN ordinary/reduced
-Rack renders and common window/field matrix. Checks include Save/Open, pane lifecycle, captured paint,
-row popup, dial, tempo popup (including narrow overflow), navigator and routed WAV drop/Undo/refusal.
-An authored eight-channel fixture checks 128 pads in each theme and ninth-channel refusal.
-Four guarded native Rack click/focus/drag/Escape checks and eleven native graph/Workspace checks pass;
-routed input is reported separately. No physical audio/device/picker/Explorer-drop acceptance follows.
-Screenshots were visually inspected and copied for owner review outside rolling retention.
-Normal output became locked by a user-launched Desktop during final refinement; the user session was
-preserved. Complete final executables are in `.artifacts/seq-ui-redesign/release/Release/net10.0/`.
-The [report](experiments/SEQ-UI-REDESIGN_REPORT.md) records actual scope, paths, failures and commands.
-
-The current full baseline is SEQ-DRUM-INSTRUMENTS on Windows 11 x64, SDK 10.0.401/runtime 10.0.12.
-Existing three-WAV 90/120/240 BPM finite PCM evidence remains in
-[R5 verification](TEST_EXECUTION.md#r5-f1-step-sequencer-verification); prior physical pressure failures
-and platform/owner acceptance remain separate below. Historical validation belongs to reports/archive.
+68. Production-window catalog/shared field/Graph matrix passes; native FullHD coexisting tools,
+    normal Dark/Light bank/processing, compact RU/EN × Dark/Light inspector fields and fader/pan/EQ
+    single-transaction Undo/Redo pass. Early failures, commands, signal measurements and evidence retention
+    are recorded in [the report](experiments/SEQ-R11-MIXER_REPORT.md), not hidden by this summary.
 
 ### Verification cadence
 
-Last successful L3: **SEQ-DRUM-INSTRUMENTS, 2026-10-14**, full Release solution build and 1179/1179 automated
-tests. Completed repository tasks since that L3: **1**.
-Update once at task completion under [test policy](TEST_EXECUTION.md#required-verification-levels);
-a focused pass does not reset it.
+Last successful L3: **SEQ-R11-MIXER, 2026-10-14**, full Release build and 1196/1196 tests.
+Completed repository tasks since that L3: **0**. Focused final presentation/metadata checks and native
+review complement this baseline; they do not imply another full-suite run.
 
-## Active blockers / evidence gaps
+## Current focus and remaining gaps
 
-F3-B canvas/manipulation acceptance is pending owner review; tests and recorded GUI/audio smoke do not
-constitute owner acceptance. The inherited nominal 640x480 client minimum produced
-640x511-pixel visible Windows captures; exact 480-pixel outer-frame review remains unevidenced. No
-full F3/R4 acceptance, high/mixed DPI, other-OS runtime or acoustic listening claim follows.
-The cable correction reproduces and fixes draw-order selection of a farther cable. An actual Windows
-window verifies routed pointer/key events, pre-Delete UI identity, saved remaining IDs, Undo topology
-and port-specific menus. Its bounded native-input attempt stopped on foreground loss; native crossing
-interaction and owner acceptance remain open under the [F3-B report](experiments/SEQ-R4-F3-B_REPORT.md).
+Continue the owner-authorized coherent, reference-led compact instrument language across Piano/
+Graph/Drum/source editors, preserving meaningful curves and musical interaction. Concrete follow-ups
+are in [desktop design continuation](ROADMAP.md#desktop-design-continuation). Private design and WAV
+resources remain outside Git; no third-party bitmap/icon/texture or new dependency was introduced.
 
-F2 pressure acceptance is unresolved. The original starvations at 22.86 and 39.57 seconds remain failures;
-new isolated diagnostics also fail with natural GC and graph-free legacy on the same 48 kHz stereo
-High Definition Audio/22 ms-capacity path. Native runtime events align one natural Gen1 stopped-runtime
-interval of 43.64 ms with a 52.03 ms audio wait and zero padding; legacy also fails near an induced compacting
-Gen2 collection. A bounded elevated WPR full-workload failure at 48.40 s now confirms a 67.38 ms suspension
-handshake: its initiator spends 62.45 ms Ready while higher-priority Rider threads dominate the CPUs;
-the natural Gen0 collection itself takes 1.64 ms, and audio dispatch after Ready is only 8.5/11.3 µs.
-This attributes that new failure, not the original two, a scheduler defect or driver fault. Callback allocation/deadline
-counters remain zero
-at those failures; fault-stop, join and lease release work. Buffer/GC/support policy is unchanged.
-Fast coefficient/provenance updates now require sampler-local prepared execution identity plus attachment;
-revision collisions, rejected handoff, reprepare/ABA and sticky Stop are covered deterministically.
-[R4-F2 evidence](experiments/SEQ-R4-F2_REPORT.md) preserves both outcomes and limits. Do not infer
-uniform device deadline stability or full F2 acceptance from the passing runs.
+Mixer's processing order is fixed; delay/reverb, arbitrary FX racks, sidechain, automation, true-peak/
+LUFS analysis and latency compensation are not implemented. Source projection covers actual linear
+stateless graphs, not arbitrary future stateful nodes. Explicit seek/range wrap resets FX without
+preroll, an actual [technical debt](TECH_DEBT.md#mixer-cold-seek-and-range-wrap). Maximum-channel
+physical stress and subjective acoustic/aesthetic acceptance remain unverified.
 
-No concrete prerequisite blocks bounded R3 closure. Q-053/Q-054/Q-055/Q-064/Q-067 retain broader
-settings/reset/migration, contribution resources, future editor targets/native-editor focus and input/
-accessibility mechanisms. High/mixed DPI, cross-monitor, screen readers and Linux/macOS runtime remain
-unevidenced; Q-041 owns supported distribution targets/prerequisites. These are wider evidence gaps,
-not unaccepted F2 behavior or full-platform claims. [Portability](PORTABILITY.md) owns claim limits.
-Q-001–Q-007 retain engine/ABI/workload/clock/device/distribution questions; Q-026/Q-027/Q-062/Q-069
-retain backends, hardware/default changes, notifications, recovery, input clocks and recording lifetime.
-Q-009/Q-019/Q-029/Q-063 retain expanded format/graph/edit/async integrity; Q-028/Q-030/Q-047 retain
-organization/routing/execution domains; Q-048/Q-051 audio time; Q-058/Q-059 recovery/repair/GC/storage
-faults/races; Q-061 whole First Track closure. Conservative accepted-file retention can grow storage;
-unnamed musical-state recovery is absent. Other questions, including Q-070, remain in
-[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). No CI, global tool or release support is introduced.
+R4-F2's earlier pressure failures remain unresolved; a passing full Song is not pressure closure.
+Existing WPR evidence attributes one later failure to a long suspension handshake with Ready time
+under competing Rider load, not all original starvations or a proven driver/scheduler defect.
+[Known problems](KNOWN_PROBLEMS.md) and prior reports retain the actual evidence and open support/
+GC/device/workload policy. F3-B owner review remains pending; no full R4 acceptance follows.
+
+Browser/Personal Library UI, Sample Lab/extension platform, deeper Playlist/Piano functions, MIDI/
+capture/recording and unnamed musical recovery remain future capabilities. Linux/macOS runtime,
+high/mixed DPI, cross-monitor, screen readers and broad platform support remain unevidenced.
+[Portability](PORTABILITY.md) owns claim limits; independent device clocks/backend/ABI, recovery,
+async integrity and extension/state questions remain with their canonical owners.

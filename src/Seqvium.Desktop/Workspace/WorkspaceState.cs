@@ -64,6 +64,7 @@ public sealed class WorkspaceState : IDisposable
     public const string BeatId = "step-sequencer.main";
     public const string ArrangementId = "arrangement.main";
     public const string PianoId = "piano-roll.main";
+    public const string MixerId = "mixer.main";
 
     public static ImmutableArray<PaneDefinition> Definitions { get; } =
     [
@@ -73,7 +74,8 @@ public sealed class WorkspaceState : IDisposable
         new(NodeEditorId, "node-editor", "Pane.NodeEditor", 300, 210, new(280, 64, 360, 220)),
         new(BeatId, "step-sequencer", "Pane.Beat", 360, 290, new(24, 24, 960, 390)),
         new(ArrangementId, "arrangement", "Pane.Arrangement", 360, 290, new(32, 36, 1040, 480)),
-        new(PianoId, "piano-roll", "Pane.Piano", 360, 320, new(42, 48, 1080, 580))
+        new(PianoId, "piano-roll", "Pane.Piano", 360, 320, new(42, 48, 1080, 580)),
+        new(MixerId, "mixer", "Pane.Mixer", 360, 280, new(24, 420, 1008, 408))
     ];
 
     private readonly List<PanePlacement> _panes = Definitions.Select(definition =>

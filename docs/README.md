@@ -111,6 +111,33 @@ add/delete/Undo/Redo keeps the current clock and other voices for the supported 
 Other incompatible topology changes retain their restart policy.
 See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
 
+## Mix your music
+
+Open **Mixer** from the rail or **Panes**, or use a Rack sound's **Open Mixer** action. In an older
+project click **Create Mixer**: it begins at unity, grouping equal sound-row names as an editable
+starting point. It does not rewrite notes or replace the existing graph Gain.
+
+1. Choose Song or Pattern playback. Drag a channel fader vertically, or enter its dB value; positive
+   values amplify, -90 is silence. Shift gives fine adjustment; double-click restores unity. Use the
+   compact dial or exact bipolar value to balance left/right. Real meters show peak/RMS; PK is held
+   peak and GR is compressor reduction. Reset peaks clears measurements, not music.
+2. Click a source name or processing summary to open its side inspector. EQ provides high-pass,
+   low/high shelves and a tunable mid band; drag its response handles or enter exact values. Compressor
+   has threshold, ratio, attack/release, knee and makeup. Enable processing explicitly. The plots are
+   analytical curves, not a live spectrum or loudness meter.
+3. In Routing, use Trim for extra source gain, choose Output, assign shared sounds, or add a send. **Add bus** creates
+   an empty channel; route drum outputs to it for shared compression, for example.
+   A pre-fader send is after processing/pan and before level; Mute cuts it too. Cycles are refused.
+   Playlist tracks still organize clips: a sound can share one Mixer channel across several tracks.
+4. Keep Master visible and watch overload indicators. Optional **-1 dB peak ceiling** protects sample
+   peaks, not intersample true peaks. It cannot certify mastering quality. Save, reopen and use the
+   existing Pattern/Song WAV export; the mix is included. Retain the `.seqvium.media` directory.
+
+The bank scrolls horizontally instead of widening every strip. Close its inspector to regain space
+in a small pane. Completed gestures/valid exact entry are one Undo; Escape cancels unfinished edits.
+There is currently no delay/reverb, automation, plugin rack or sidechain. See the
+[Mixer workflow](UX_CONTRACT.md#implemented-mixer-workflow) for detailed behavior.
+
 ## Try sample processing
 
 First [build and launch the desktop](../README.md#getting-started) on Windows. Start with a short

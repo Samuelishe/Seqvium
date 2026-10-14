@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -7,15 +8,24 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Seqvium.Core;
 
-internal sealed record ProjectFile(string Format, int Major, int Minor, int MinimumReaderMinor,
-    string WriterVersion, Guid Revision, ProjectState State) : CanonicalData;
+internal sealed record ProjectFile(
+    string Format,
+    int Major,
+    int Minor,
+    int MinimumReaderMinor,
+    string WriterVersion,
+    Guid Revision,
+    ProjectState State) : CanonicalData;
 
-public sealed class ProjectFormatException(string message, Exception? innerException = null) : Exception(message, innerException);
+public sealed class ProjectFormatException(string message, Exception? innerException = null)
+    : Exception(message, innerException);
+
 public sealed record ProjectLoadResult(ProjectDocument Document, ImmutableArray<string> Diagnostics)
 {
     public ImmutableArray<GraphIntentReport> GraphReports { get; init; } = [];
     public bool IsDegraded => !Diagnostics.IsEmpty || GraphReports.Any(report => !report.IsEligibleForPreparation);
 }
+
 public sealed record ProjectSaveResult(ProjectSnapshot Snapshot, string Path, ImmutableArray<string> Diagnostics)
 {
     public ImmutableArray<GraphIntentReport> GraphReports { get; init; } = [];
@@ -27,7 +37,7 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 2;
+    public const int ReaderMinor = 3;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     public static byte[] Encode(ProjectDocument document)
@@ -40,12 +50,14 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 : hasGraphs ? 1 : 0;
+        int required = snapshot.State.Mixer is not null ? 3 :
+            !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
+            hasGraphs ? 1 : 0;
         var file = new ProjectFile("seqvium-project", 1, Math.Max(compatibility.Minor, required),
             Math.Max(compatibility.MinimumReaderMinor, required),
             WriterVersion, snapshot.Revision, snapshot.State) { AdditionalData = compatibility.AdditionalData };
         var node = JsonSerializer.SerializeToNode(file, Options)?.AsObject()
-            ?? throw new ProjectFormatException("Unable to encode project structure.");
+                   ?? throw new ProjectFormatException("Unable to encode project structure.");
         TransformAdditionalData(node, typeof(ProjectFile), loading: false);
         var bytes = JsonSerializer.SerializeToUtf8Bytes(node, Options);
         if (bytes.Length > MaximumBytes) throw new ProjectFormatException("Project exceeds the 16 MiB format limit.");
@@ -68,8 +80,10 @@ public static class ProjectPersistence
         while ((count = source.Read(chunk, 0, (int)Math.Min(chunk.Length, MaximumBytes + 1L - buffer.Length))) > 0)
         {
             buffer.Write(chunk, 0, count);
-            if (buffer.Length > MaximumBytes) throw new ProjectFormatException("Project exceeds the 16 MiB format limit.");
+            if (buffer.Length > MaximumBytes)
+                throw new ProjectFormatException("Project exceeds the 16 MiB format limit.");
         }
+
         try
         {
             using var parsed = JsonDocument.Parse(buffer.ToArray(), new JsonDocumentOptions { MaxDepth = 64 });
@@ -79,14 +93,20 @@ public static class ProjectPersistence
             var node = JsonNode.Parse(parsed.RootElement.GetRawText())!.AsObject();
             CheckVersion(node);
             TransformAdditionalData(node, typeof(ProjectFile), loading: true);
-            var file = node.Deserialize<ProjectFile>(Options) ?? throw new ProjectFormatException("Missing project structure.");
+            var file = node.Deserialize<ProjectFile>(Options) ??
+                       throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (file.State.Mixer is not null && file.MinimumReaderMinor < 3)
+                throw new ProjectFormatException("Mixer requires minimumReaderMinor >= 3.");
             if ((!file.State.Graphs.IsEmpty || !file.State.GraphAttachments.IsEmpty) && file.MinimumReaderMinor < 1)
                 throw new ProjectFormatException("Graph intent requires minimumReaderMinor >= 1.");
-            if ((!file.State.ArrangementClips.IsEmpty || !file.State.ArrangementTracks.IsEmpty) && file.MinimumReaderMinor < 2)
+            if ((!file.State.ArrangementClips.IsEmpty || !file.State.ArrangementTracks.IsEmpty) &&
+                file.MinimumReaderMinor < 2)
                 throw new ProjectFormatException("Arrangement requires minimumReaderMinor >= 2.");
             ProjectValidation.Require(file.Revision != Guid.Empty, "Revision cannot be empty.");
-            ProjectValidation.Require(!string.IsNullOrWhiteSpace(file.WriterVersion) && file.WriterVersion.Length <= ProjectValidation.MaximumTextLength,
+            ProjectValidation.Require(
+                !string.IsNullOrWhiteSpace(file.WriterVersion) &&
+                file.WriterVersion.Length <= ProjectValidation.MaximumTextLength,
                 "Writer version is required.");
             var document = ProjectDocument.Reopen(new(file.State, file.Revision));
             document.Compatibility = new(file.Minor, file.MinimumReaderMinor) { AdditionalData = file.AdditionalData };
@@ -101,7 +121,8 @@ public static class ProjectPersistence
                     diagnostics.Add($"Extension '{extension.ExtensionId}' is unavailable; opaque state is retained.");
             return new(document, diagnostics.ToImmutable()) { GraphReports = GraphDiagnostics.Inspect(file.State) };
         }
-        catch (Exception error) when (error is JsonException or ArgumentException or OverflowException or ProjectValidationException)
+        catch (Exception error) when (error is JsonException or ArgumentException or OverflowException
+                                          or ProjectValidationException)
         {
             throw new ProjectFormatException($"Project structure cannot be safely interpreted: {error.Message}", error);
         }
@@ -118,12 +139,18 @@ public static class ProjectPersistence
         foreach (var resource in result.Document.Current.State.Resources.Where(ProjectMedia.IsManagedWav))
         {
             diagnostics.Remove($"Resource {resource.Id} is unavailable or has not been validated.");
-            try { using (ProjectMedia.Decode(result.Document, resource.Id)) { } }
+            try
+            {
+                using (ProjectMedia.Decode(result.Document, resource.Id))
+                {
+                }
+            }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException)
             {
                 diagnostics.Add($"Managed WAV {resource.Id} is unavailable or corrupt: {error.Message}");
             }
         }
+
         result.Document.MarkSaved(result.Document.Current, fullPath);
         result.Document.SavedMediaDiagnostics = diagnostics.ToImmutable();
         return result with { Diagnostics = diagnostics.ToImmutable() };
@@ -140,7 +167,8 @@ public static class ProjectPersistence
         var bytes = Encode(snapshot, document.Compatibility);
         var graphReports = GraphDiagnostics.Inspect(snapshot.State);
         var destination = Path.GetFullPath(path);
-        var directory = Path.GetDirectoryName(destination) ?? throw new ArgumentException("A destination directory is required.", nameof(path));
+        var directory = Path.GetDirectoryName(destination) ??
+                        throw new ArgumentException("A destination directory is required.", nameof(path));
         var temporary = Path.Combine(directory, $".seqvium-{Guid.NewGuid():N}.tmp");
         bool ownsTemporary = false;
         try
@@ -152,6 +180,7 @@ public static class ProjectPersistence
                 stream.Write(bytes);
                 stream.Flush(flushToDisk: true);
             }
+
             File.Move(temporary, destination, overwrite: true);
             ownsTemporary = false;
             document.MarkSaved(snapshot, destination);
@@ -159,10 +188,18 @@ public static class ProjectPersistence
                 !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty)
                 document.Compatibility = document.Compatibility with
                 {
-                    Minor = Math.Max(document.Compatibility.Minor, snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2),
-                    MinimumReaderMinor = Math.Max(document.Compatibility.MinimumReaderMinor, snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
+                    Minor = Math.Max(document.Compatibility.Minor,
+                        snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2),
+                    MinimumReaderMinor = Math.Max(document.Compatibility.MinimumReaderMinor,
+                        snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (snapshot.State.Mixer is not null)
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(3, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(3, document.Compatibility.MinimumReaderMinor)
+                };
             if (!document.MediaRoots.Contains(destination + ".media")) document.MediaRoots.Add(destination + ".media");
             return new(snapshot, destination, diagnostics) { GraphReports = graphReports };
         }
@@ -174,19 +211,23 @@ public static class ProjectPersistence
 
     private static void CheckVersion(JsonObject node)
     {
-        if (node["format"]?.GetValueKind() != JsonValueKind.String || node["format"]!.GetValue<string>() != "seqvium-project")
+        if (node["format"]?.GetValueKind() != JsonValueKind.String ||
+            node["format"]!.GetValue<string>() != "seqvium-project")
             throw new ProjectFormatException("Unrecognized project format.");
+
         int Integer(string key)
         {
             if (node[key] is not JsonValue value || !value.TryGetValue<int>(out var result))
                 throw new ProjectFormatException($"Required integer '{key}' is missing or invalid.");
             return result;
         }
+
         var major = Integer("major");
         var minor = Integer("minor");
         var minimum = Integer("minimumReaderMinor");
         if (major != 1 || minor < 0 || minimum < 0 || minimum > minor || minimum > ReaderMinor)
-            throw new ProjectFormatException($"Unsupported document version {major}.{minor} (minimum reader minor {minimum}). Reader supports 1.{ReaderMinor}.");
+            throw new ProjectFormatException(
+                $"Unsupported document version {major}.{minor} (minimum reader minor {minimum}). Reader supports 1.{ReaderMinor}.");
     }
 
     private static void RejectDuplicateProperties(JsonElement element)
@@ -196,12 +237,14 @@ public static class ProjectPersistence
             var names = new HashSet<string>(StringComparer.Ordinal);
             foreach (var property in element.EnumerateObject())
             {
-                if (!names.Add(property.Name)) throw new ProjectFormatException($"Duplicate JSON property '{property.Name}'.");
+                if (!names.Add(property.Name))
+                    throw new ProjectFormatException($"Duplicate JSON property '{property.Name}'.");
                 RejectDuplicateProperties(property.Value);
             }
         }
         else if (element.ValueKind == JsonValueKind.Array)
-            foreach (var item in element.EnumerateArray()) RejectDuplicateProperties(item);
+            foreach (var item in element.EnumerateArray())
+                RejectDuplicateProperties(item);
     }
 
     // Preserve optional unknown fields at their original object boundary. Opaque payloads/maps are not interpreted.
@@ -213,13 +256,15 @@ public static class ProjectPersistence
         known.Remove(storageKey);
         if (loading)
         {
-            if (node.ContainsKey(storageKey)) throw new ProjectFormatException($"'{storageKey}' is a reserved internal field.");
+            if (node.ContainsKey(storageKey))
+                throw new ProjectFormatException($"'{storageKey}' is a reserved internal field.");
             var extra = new JsonObject();
             foreach (var key in node.Select(pair => pair.Key).Where(key => !known.Contains(key)).ToArray())
             {
                 extra[key] = node[key]?.DeepClone();
                 node.Remove(key);
             }
+
             node[storageKey] = extra;
         }
         else
@@ -229,19 +274,24 @@ public static class ProjectPersistence
             if (extra is not null)
                 foreach (var (key, value) in extra)
                 {
-                    if (known.Contains(key) || key == storageKey) throw new ProjectFormatException("Unknown data collides with a reserved field.");
+                    if (known.Contains(key) || key == storageKey)
+                        throw new ProjectFormatException("Unknown data collides with a reserved field.");
                     node[key] = value?.DeepClone();
                 }
         }
+
         foreach (var property in properties)
         {
-            if (typeof(CanonicalData).IsAssignableFrom(property.PropertyType) && node[property.Name] is JsonObject child)
+            if (typeof(CanonicalData).IsAssignableFrom(property.PropertyType) &&
+                node[property.Name] is JsonObject child)
                 TransformAdditionalData(child, property.PropertyType, loading);
-            else if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(ImmutableArray<>))
+            else if (property.PropertyType.IsGenericType &&
+                     property.PropertyType.GetGenericTypeDefinition() == typeof(ImmutableArray<>))
             {
                 var elementType = property.PropertyType.GetGenericArguments()[0];
                 if (typeof(CanonicalData).IsAssignableFrom(elementType) && node[property.Name] is JsonArray array)
-                    foreach (var item in array.OfType<JsonObject>()) TransformAdditionalData(item, elementType, loading);
+                    foreach (var item in array.OfType<JsonObject>())
+                        TransformAdditionalData(item, elementType, loading);
             }
         }
     }
@@ -268,37 +318,56 @@ public static class ProjectPersistence
 
     private sealed class IdentityConverterFactory : JsonConverterFactory
     {
-        public override bool CanConvert(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Id<>);
+        public override bool CanConvert(Type type) =>
+            type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Id<>);
+
         public override JsonConverter CreateConverter(Type type, JsonSerializerOptions options) =>
-            (JsonConverter)(Activator.CreateInstance(typeof(IdentityConverter<>).MakeGenericType(type.GetGenericArguments()[0]))
-                ?? throw new InvalidOperationException("Unable to create identity codec."));
+            (JsonConverter)(Activator.CreateInstance(
+                                typeof(IdentityConverter<>).MakeGenericType(type.GetGenericArguments()[0]))
+                            ?? throw new InvalidOperationException("Unable to create identity codec."));
     }
+
     private sealed class IdentityConverter<T> : JsonConverter<Id<T>>
     {
         public override Id<T> Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) =>
             reader.TokenType == JsonTokenType.String && reader.TryGetGuid(out var value)
-                ? new(value) : throw new JsonException("Identity must be a UUID string.");
-        public override void Write(Utf8JsonWriter writer, Id<T> value, JsonSerializerOptions options) => writer.WriteStringValue(value.Value);
+                ? new(value)
+                : throw new JsonException("Identity must be a UUID string.");
+
+        public override void Write(Utf8JsonWriter writer, Id<T> value, JsonSerializerOptions options) =>
+            writer.WriteStringValue(value.Value);
     }
+
     private sealed class PositionConverter : JsonConverter<MusicalPosition>
     {
         public override MusicalPosition Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) =>
             reader.TokenType == JsonTokenType.Number && reader.TryGetInt64(out var value)
-                ? new(value) : throw new JsonException("Position must be an Int64 tick count.");
-        public override void Write(Utf8JsonWriter writer, MusicalPosition value, JsonSerializerOptions options) => writer.WriteNumberValue(value.Ticks);
+                ? new(value)
+                : throw new JsonException("Position must be an Int64 tick count.");
+
+        public override void Write(Utf8JsonWriter writer, MusicalPosition value, JsonSerializerOptions options) =>
+            writer.WriteNumberValue(value.Ticks);
     }
+
     private sealed class DurationConverter : JsonConverter<MusicalDuration>
     {
         public override MusicalDuration Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) =>
             reader.TokenType == JsonTokenType.Number && reader.TryGetInt64(out var value)
-                ? new(value) : throw new JsonException("Duration must be an Int64 tick count.");
-        public override void Write(Utf8JsonWriter writer, MusicalDuration value, JsonSerializerOptions options) => writer.WriteNumberValue(value.Ticks);
+                ? new(value)
+                : throw new JsonException("Duration must be an Int64 tick count.");
+
+        public override void Write(Utf8JsonWriter writer, MusicalDuration value, JsonSerializerOptions options) =>
+            writer.WriteNumberValue(value.Ticks);
     }
+
     private sealed class TempoConverter : JsonConverter<Tempo>
     {
         public override Tempo Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) =>
             reader.TokenType == JsonTokenType.Number && reader.TryGetDecimal(out var value)
-                ? new(value) : throw new JsonException("Tempo must be a decimal BPM value.");
-        public override void Write(Utf8JsonWriter writer, Tempo value, JsonSerializerOptions options) => writer.WriteNumberValue(value.BeatsPerMinute);
+                ? new(value)
+                : throw new JsonException("Tempo must be a decimal BPM value.");
+
+        public override void Write(Utf8JsonWriter writer, Tempo value, JsonSerializerOptions options) =>
+            writer.WriteNumberValue(value.BeatsPerMinute);
     }
 }

@@ -6,6 +6,22 @@ Authoritative for: Graph semantics and irreversible mixing boundaries, conceptua
 editable/prepared boundary.
 Not authoritative for: Arrangement, group identity, final port ABI/compiler, DSP algorithms, or pane infrastructure.
 
+## Mixer projection of supported graphs
+
+The project Mixer is now a working downstream processing/routing domain, not a visual duplicate of
+Playlist tracks or an item-local Gain replacement. The currently executed Source/Gain/Mix/Output
+graph is linear. Preparation derives each original Source's transfer to its item output, including
+all local gains, branches and repeated paths, then feeds explicitly assigned global channels.
+Local graph processing is preserved, not applied twice. Song sums all audible occurrences in each
+channel before its stateful EQ/compressor. Existing node diagnostics remain available.
+
+This projection is deliberately specific to supported stateless linear graphs. It is not a compiler
+for arbitrary nonlinear/stateful nodes, nor permission to move irreversible sums across independent
+contexts. Introducing such graph nodes requires an explicit processing/source split, meaningful taps
+and compatible state ownership. Mixer DSP currently has its own canonical strip settings rather than
+editable graph node types; Node Editor does not pretend to edit those effects. Rack exposes Open Mixer
+for its sound, while [Audio](AUDIO_ENGINE.md#project-mixer-execution) owns the actual downstream chain.
+
 ## Accepted direction and scope
 
 The node graph engine is core Seqvium platform functionality, not an optional editor plugin. It lets

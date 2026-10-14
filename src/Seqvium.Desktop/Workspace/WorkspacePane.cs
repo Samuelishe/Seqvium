@@ -57,9 +57,10 @@ internal sealed class WorkspacePane : Border, IDisposable
         AutomationProperties.SetAutomationId(this, Id);
         var body = new Grid { RowDefinitions = new("Auto,*"), Margin = new(PaneGeometry.EdgeThickness) };
         Child = _surface;
+        _surface.Children.Add(new HostChassisTexture());
         _surface.Children.Add(body);
         _header = new() { Classes = { "paneHeader" } };
-        _header.Bind(BackgroundProperty, this.GetResourceObservable("Surface.Raised"));
+        _header.Bind(BackgroundProperty, this.GetResourceObservable("Material.Header"));
         var header = new Grid { ColumnDefinitions = new("*,Auto,Auto,Auto") };
         _header.Child = header;
         body.Children.Add(_header);
@@ -247,6 +248,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         else if (_content is BeatPaneContent beat) beat.FocusEditor();
         else if (_content is PianoRollPaneContent piano) piano.FocusEditor();
         else if (_content is ArrangementPaneContent arrangement) arrangement.FocusEditor();
+        else if (_content is MixerPaneContent mixer) mixer.FocusEditor();
         else _actions.Focus();
     }
 
@@ -306,6 +308,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         if (_content is BeatPaneContent beat) beat.CancelGesture();
         if (_content is PianoRollPaneContent piano) piano.CancelGesture();
         if (_content is ArrangementPaneContent arrangement) arrangement.CancelGesture();
+        if (_content is MixerPaneContent mixer) mixer.CancelGesture();
         if (_pointer is not { } pointer) return;
         _pointer = null;
         _gesture?.Cancel();

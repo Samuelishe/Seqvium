@@ -21,6 +21,25 @@ Output directories should be absolute and task-owned, inside ignored `.artifacts
 The `gestures` command runs a shorter matrix for focused input/alignment verification, including
 committed toolbar Gain fractional drafts, Enter/Escape, invalid input, focus loss and stale authority.
 
+## Native Mixer check
+
+`native-mixer <absolute-output> <independent-project> <mix|review|play>` uses guarded Windows
+mouse/keyboard input and the production controls/dialogs. Supply an explicit independent project **and** its associated
+managed media; the route changes only that project. `mix` is the Neon Orchard
+balance/EQ/compression/bus workflow. `review` checks normal and compact RU/EN Dark/Light fields,
+coexisting Playlist/Rack layout and single-transaction fader/pan/EQ Undo/Redo, restoring musical state.
+`play` deliberately runs the whole saved Song on physical output, native Save/Open and native WAV
+export. No musical JSON/API authoring is used; internal observations are read-only assertions.
+Foreground/occlusion refusal is a failed native attempt, never permission to send input elsewhere.
+Use isolated evidence/config, bounded timeout and the existing failed-window rescue rules.
+
+`DeviceCheck mixer-project <project> <native-wave> <original-wave> <report-directory>` is a separate
+read-only physical diagnostic. It creates no project/media/WAV: submitted float PCM is captured only
+in bounded memory, compared with offline execution at the device rate, then the native GUI WAV is
+compared with a 48-kHz float render within PCM16 rounding. The JSON distinguishes physical output,
+submitted PCM, acoustic listening and callback/service allocations/deadlines. See the
+[report](../../docs/experiments/SEQ-R11-MIXER_REPORT.md) for actual measurements and limits.
+
 ## First Drum Voice musical check
 
 `rack-pads <absolute-output>` reviews compact fixed pad geometry at three widths in RU/EN × Dark/Light,

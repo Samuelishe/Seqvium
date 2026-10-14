@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
@@ -18,8 +19,11 @@ public sealed class ProductVersionTests
     {
         get
         {
-            for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
-                if (File.Exists(Path.Combine(directory.FullName, "Seqvium.sln"))) return directory.FullName;
+            for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
+                 directory is not null;
+                 directory = directory.Parent)
+                if (File.Exists(Path.Combine(directory.FullName, "Seqvium.sln")))
+                    return directory.FullName;
             throw new InvalidOperationException("Version source tests require the repository checkout.");
         }
     }
@@ -69,7 +73,9 @@ public sealed class ProductVersionTests
         using var directory = new TemporaryDirectory();
         using var session = new ShellSession(new(directory.File("preferences.json")), new(new(language, theme), false));
         var snapshot = session.Document.Current;
-        Assert.Equal(typeof(ShellSession).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion,
+        Assert.Equal(
+            typeof(ShellSession).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
+                .InformationalVersion,
             session.Version);
         Assert.Equal(CanonicalVersion().Display, session.Version);
         Assert.Same(snapshot, session.Document.Current);
@@ -84,7 +90,8 @@ public sealed class ProductVersionTests
     [InlineData(9999, "9999")]
     public async Task EvaluatedBuildPaddingAndNumericMetadataUseOneComponent(int build, string padded)
     {
-        var result = await Evaluate("src/Seqvium.Desktop/Seqvium.Desktop.csproj", "-property:SeqviumVersionBuild=" + build);
+        var result = await Evaluate("src/Seqvium.Desktop/Seqvium.Desktop.csproj",
+            "-property:SeqviumVersionBuild=" + build);
         Assert.Equal(0, result.ExitCode);
         var values = Properties(result.Output);
         var prefix = values["VersionPrefix"];
@@ -143,8 +150,9 @@ public sealed class ProductVersionTests
         using var directory = new TemporaryDirectory();
         var path = directory.File("Seqvium.Desktop.csproj");
         new XDocument(new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk"),
-            new XElement("Import", new XAttribute("Project", Path.Combine(RepositoryRoot, "Directory.Build.props"))),
-            new XElement("PropertyGroup", new XElement("TargetFramework", "net10.0"))))
+                new XElement("Import",
+                    new XAttribute("Project", Path.Combine(RepositoryRoot, "Directory.Build.props"))),
+                new XElement("PropertyGroup", new XElement("TargetFramework", "net10.0"))))
             .Save(path);
         var result = await Evaluate(path);
         Assert.Equal(0, result.ExitCode);
@@ -165,9 +173,13 @@ public sealed class ProductVersionTests
         {
             var xml = XDocument.Load(project);
             Assert.DoesNotContain(xml.Descendants(), element => element.Name.LocalName is
-                "Version" or "VersionPrefix" or "VersionSuffix" or "AssemblyVersion" or "FileVersion" or "InformationalVersion" ||
-                element.Name.LocalName.StartsWith("SeqviumVersion", StringComparison.Ordinal));
+                                                                    "Version" or "VersionPrefix" or "VersionSuffix"
+                                                                    or "AssemblyVersion" or "FileVersion"
+                                                                    or "InformationalVersion" ||
+                                                                element.Name.LocalName.StartsWith("SeqviumVersion",
+                                                                    StringComparison.Ordinal));
         }
+
         foreach (var path in Directory.EnumerateFiles(Path.Combine(root, "src"), "*", SearchOption.AllDirectories)
                      .Where(path => !path.Split(Path.DirectorySeparatorChar).Any(part => part is "bin" or "obj") &&
                                     Path.GetExtension(path) is ".cs" or ".axaml"))
@@ -176,7 +188,9 @@ public sealed class ProductVersionTests
             Assert.DoesNotContain("0.0.1-dev", source);
             Assert.DoesNotMatch(@"\[assembly:\s*Assembly(InformationalVersion|Version|FileVersion)", source);
         }
-        Assert.Contains("Text=\"{Binding Version}\"", File.ReadAllText(Path.Combine(root, "src/Seqvium.Desktop/MainWindow.axaml")));
+
+        Assert.Contains("Text=\"{Binding Version}\"",
+            File.ReadAllText(Path.Combine(root, "src/Seqvium.Desktop/MainWindow.axaml")));
     }
 
     [Theory]
@@ -191,14 +205,14 @@ public sealed class ProductVersionTests
         Assert.Equal(minor, json["minor"]!.GetValue<int>());
         Assert.Equal(minor, json["minimumReaderMinor"]!.GetValue<int>());
         Assert.Equal("0.2.0-r2-f1", json["writerVersion"]!.GetValue<string>());
-        Assert.Equal(2, ProjectPersistence.ReaderMinor);
+        Assert.Equal(3, ProjectPersistence.ReaderMinor);
         Assert.DoesNotContain(CanonicalVersion().Display, json.ToJsonString());
         Assert.True(JsonNode.DeepEquals(json, GraphFixture.Json(GraphFixture.Read(json).Document)));
         json["major"] = 0;
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
         json["major"] = 1;
-        json["minor"] = 3;
-        json["minimumReaderMinor"] = 3;
+        json["minor"] = 4;
+        json["minimumReaderMinor"] = 4;
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
     }
 
@@ -215,26 +229,39 @@ public sealed class ProductVersionTests
         JsonNode.Parse(output)!["Properties"]!.Deserialize<Dictionary<string, string>>()!;
 
     // Evaluation runs no restore/build, GUI, device or network. Global properties vary only this process.
-    private static async Task<(int ExitCode, string Output, string Error)> Evaluate(string project, params string[] properties)
+    private static async Task<(int ExitCode, string Output, string Error)> Evaluate(string project,
+        params string[] properties)
     {
         var start = new ProcessStartInfo("dotnet")
         {
             WorkingDirectory = RepositoryRoot, UseShellExecute = false,
             RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true
         };
-        foreach (var argument in new[] { "msbuild", project, "-nologo", "-property:Configuration=Release",
+        foreach (var argument in new[]
+                 {
+                     "msbuild", project, "-nologo", "-property:Configuration=Release",
                      "-target:ValidateSeqviumProductVersion,GetAssemblyVersion",
-                     "-getProperty:SeqviumProductAssembly,SeqviumDisplayVersion,SeqviumNumericVersion,VersionPrefix,Version,AssemblyVersion,FileVersion,InformationalVersion,IncludeSourceRevisionInInformationalVersion" }.Concat(properties))
+                     "-getProperty:SeqviumProductAssembly,SeqviumDisplayVersion,SeqviumNumericVersion,VersionPrefix,Version,AssemblyVersion,FileVersion,InformationalVersion,IncludeSourceRevisionInInformationalVersion"
+                 }.Concat(properties))
             start.ArgumentList.Add(argument);
         // The independent probe has its own props and deliberately no product validation target.
         if (project == "experiments/seq-r0/Probe.csproj")
             start.ArgumentList[4] = "-target:GetAssemblyVersion";
-        using var process = Process.Start(start) ?? throw new InvalidOperationException("Cannot start MSBuild evaluation.");
+        using var process = Process.Start(start) ??
+                            throw new InvalidOperationException("Cannot start MSBuild evaluation.");
         var output = process.StandardOutput.ReadToEndAsync();
         var error = process.StandardError.ReadToEndAsync();
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        try { await process.WaitForExitAsync(timeout.Token); }
-        catch (OperationCanceledException) { process.Kill(entireProcessTree: true); throw; }
+        try
+        {
+            await process.WaitForExitAsync(timeout.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            process.Kill(entireProcessTree: true);
+            throw;
+        }
+
         return (process.ExitCode, await output, await error);
     }
 }

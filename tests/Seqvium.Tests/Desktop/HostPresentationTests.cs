@@ -93,18 +93,24 @@ public sealed class HostPresentationTests
     public void SharedMetricsKeepCompactReadableShellAndDevelopmentVersionIndependent()
     {
         Assert.All(HostMetrics.Values.Where(pair => !pair.Key.StartsWith("Playlist.", StringComparison.Ordinal) &&
+                                                    !pair.Key.StartsWith("Mixer.", StringComparison.Ordinal) &&
                                                     !pair.Key.StartsWith("Piano.", StringComparison.Ordinal)),
             pair => Assert.InRange(pair.Value, 1, 56));
         Assert.InRange(HostMetrics.Values["Piano.KeyWidth"], 60, 96);
         Assert.InRange(HostMetrics.Values["Piano.VelocityHeight"], 60, 120);
         Assert.InRange(HostMetrics.Values["Piano.RowHeight"], 16, 28);
-        Assert.Equal(72, HostMetrics.Values["Playlist.LaneHeight"]);
-        Assert.Equal(156, HostMetrics.Values["Playlist.HeaderWidth"]);
+        Assert.Equal(52, HostMetrics.Values["Playlist.LaneHeight"]);
+        Assert.Equal(128, HostMetrics.Values["Playlist.HeaderWidth"]);
+        Assert.InRange(HostMetrics.Values["Mixer.ChannelWidth"], 48, 64);
+        Assert.InRange(HostMetrics.Values["Mixer.StripHeight"], 220, 320);
+        var mixer = Seqvium.Desktop.Workspace.WorkspaceState
+            .Definition(Seqvium.Desktop.Workspace.WorkspaceState.MixerId).DefaultBounds;
+        Assert.True(mixer.Width * mixer.Height <= 1920 * 1080 / 4d);
         Assert.InRange(HostMetrics.Values["Type.Body"], 12, 14);
-        Assert.Equal(34, HostMetrics.Values["Chrome.Height"]);
-        Assert.Equal(48, HostMetrics.Values["Toolbar.Height"]);
-        Assert.Equal(24, HostMetrics.Values["Status.Height"]);
-        Assert.Equal(30, HostMetrics.Values["Control.Height"]);
+        Assert.Equal(30, HostMetrics.Values["Chrome.Height"]);
+        Assert.Equal(40, HostMetrics.Values["Toolbar.Height"]);
+        Assert.Equal(20, HostMetrics.Values["Status.Height"]);
+        Assert.Equal(26, HostMetrics.Values["Control.Height"]);
         using var directory = new TemporaryDirectory();
         using var session = new ShellSession(new(directory.File("prefs.json")), new(new(), false));
         Assert.Equal(typeof(ShellSession).Assembly
