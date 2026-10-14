@@ -121,6 +121,10 @@ Open validates a candidate before touching the current session; Cancel/failed Sa
 Replacement/close stops intent, cancels/joins preparation, joins physical consumers, retires/releases
 prepared PCM through AudioDeviceSession, then closes/replaces the old document. Failed join retains
 ownership for retry. Reopened documents have fresh lifecycle and no execution; explicit Play is required.
+New uses the same unsaved-decision and joined release boundary, then creates a pristine canonical
+ProjectDocument. Session PatternEditorNavigation owns editor/Part preferences per Pattern; neither
+project persistence nor WorkspaceState owns these targets. MainWindow retains the last musical layout
+while showing the empty-document Rack, so empty startup/New does not overwrite useful musical geometry.
 [Sample workflow](SAMPLE_WORKFLOW.md#r4-f3-a-desktop-import-and-musical-use) owns initial musical policy;
 [audio](AUDIO_ENGINE.md#r4-f3-a-desktop-execution-composition) owns the execution limits.
 

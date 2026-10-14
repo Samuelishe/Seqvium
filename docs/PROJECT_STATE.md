@@ -7,8 +7,9 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.7.0001**, SEQ-SHARED-WAV-REPLACEMENT: one BUILD for a native Rack command
-that swaps the shared sampler recording while retaining musical/processing/Mixer intent. The preceding
+Product alpha **0.1.7.0002**, SEQ-DAILY-WORKFLOW: one BUILD for playing Pattern navigation,
+direct/remembered musical editors, New project and a calm empty workspace that retains musical layout.
+The preceding shared WAV replacement preserves musical/processing/Mixer intent. The preceding
 SEQ-R10-SONG-STRUCTURE PATCH introduced section arranging, variations and mixed clip editing.
 [Versioning](VERSIONING.md) owns identity;
 reader 1.5 is a separate format gate for sections/Pattern ancestry.
@@ -24,6 +25,13 @@ Desktop has Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and inf
 panes. Compact studio-instrument resources, movable/resizable/docked panes, English/Russian and
 Dark/Light share preferences and workspace persistence. Normal startup and project Open stay silent;
 user-wide Single Instance and scoped device/output lifetime remain unchanged.
+
+Navigator single click switches a playing Pattern to the new phrase at zero, with the same output
+and sticky Stop/Panic. Double-click/Enter opens a supported melodic Part directly in Piano or rhythm
+in Rack; explicit editor/Part choices persist per Pattern for this document session. Context menu
+offers named Piano channels; wider two-line cards improve long-name access. Playlist uses the same
+editor decision. New/Ctrl+N implements Save/Discard/Cancel and creates a pristine silent document.
+Empty startup/New shows only a compact Rack; previous musical layout returns when music is opened.
 
 Rack's **Replace WAV…** command updates a shared PCM sampler source across all Patterns with one
 Undo entry; known catalog Root Pitch is adopted, otherwise previous tuning remains. Notes, release,
@@ -67,7 +75,15 @@ zero warnings/errors; **1235/1235 tests pass**, zero skips (51.042 s CLI summary
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **1**. The follow-up shared WAV replacement passes 91
+Completed repository tasks since this L3: **2**. Daily workflow passes **353/353 focused tests**
+(24.732 s CLI, one test thread) and affected Release builds with zero warnings/errors; this is L1/L2,
+not a full suite. It adds transport/lifecycle/editor/layout regressions; real-window routed checks
+on an independent demo cover New Cancel/Save, direct
+Piano, remembered Rack, long names and restored layout. RU/EN × Dark/Light renders pass. Native input
+was refused because Telegram covered the entire check window; a physical attempt failed with WASAPI
+Starvation. Neither attempt establishes native/physical acceptance. Deterministic transport uses
+the production coordinator/preparation/renderer with a substituted output borrower.
+The follow-up shared WAV replacement passes 91
 focused cases, including six new preservation/tuning/cancel/error/stale cases; it is not another L3.
 Native shared sample/picker/history observations and complete private-project Rack/Piano/Playlist/
 Mixer inspection are scoped in the [replacement report](experiments/SEQ-SHARED-WAV-REPLACEMENT_REPORT.md).

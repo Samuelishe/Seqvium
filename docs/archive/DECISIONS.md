@@ -1670,3 +1670,17 @@ release and Mixer intent intact. Verified catalog tuning can differ with the new
 without that evidence, retaining the prior root avoids inventing pitch from filenames/audio.
 Recording level is an explicit Mixer trim decision rather than hidden normalization. This bounded
 command changes WAV material, not algorithms, extension state or sampler architecture.
+
+## SEQ-DAILY-WORKFLOW — selection, editor intent and empty document, 2026-10-14
+
+Daily musical use supersedes the earlier stop-on-Pattern-selection rule. Selection now retains an
+already-playing Pattern intent, prepares on the existing output and starts the selected phrase at
+zero; Stop/Panic still revoke pending starts. Song selection remains a context change. Selection and
+editor opening are separate gestures, so phrase comparison cannot unexpectedly raise windows.
+Supported melodic content supplies a first editor/Part; explicit choices then win per shared Pattern
+for this lifecycle. Contextual named channels preserve user control without an ambiguous automatic jump.
+
+New exposes the existing document replacement boundary with Save/Discard/Cancel. A calm empty Rack
+supersedes automatic startup restoration of unrelated empty editors. The last musical composition is
+kept for Open rather than overwritten by empty-document visibility. These are session/layout policies,
+not musical schema, DSP architecture or a dynamic pane registry.

@@ -75,6 +75,8 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
     private HostPreferences _preferences;
     internal PianoRollCanvas Canvas { get; }
     internal Task PendingCommand { get; private set; } = Task.CompletedTask;
+    internal event Action<Id<MusicalPart>>? PartOpened;
+    private readonly Dictionary<Id<Pattern>, Id<MusicalPart>> _partMemory = [];
 
     private static NumericUpDown Field(decimal minimum, decimal maximum, decimal increment) => new()
     {
@@ -115,6 +117,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             CancelGesture();
             _selectedPart = choice.Id;
             Refresh();
+            PartOpened?.Invoke(choice.Id);
         };
         var toolbar = new WrapPanel { Margin = new(8, 0, 8, 6) };
         SetRow(toolbar, 1);
@@ -423,8 +426,10 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
     internal void OpenPart(Id<MusicalPart> part)
     {
         CancelGesture();
+        Refresh();
         _selectedPart = part;
         Refresh();
+        if (Canvas.Part?.Id == part) PartOpened?.Invoke(part);
     }
 
     private void WorkflowChanged(WorkflowState _) => Dispatcher.UIThread.Post(() =>
@@ -455,13 +460,19 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             var (pattern, _) = BeatSteps.Resolve(observation);
             if (_lastLifecycle != observation.Document.LifecycleId || _lastPattern != pattern?.Id)
             {
+                if (_lastLifecycle != observation.Document.LifecycleId) _partMemory.Clear();
                 _selectedPart = null;
+                if (pattern is not null && _partMemory.TryGetValue(pattern.Id, out var remembered))
+                    _selectedPart = remembered;
                 _lastLifecycle = observation.Document.LifecycleId;
                 _lastPattern = pattern?.Id;
             }
 
             if (pattern?.Parts.Any(p => p.Id == _selectedPart) != true)
-                _selectedPart = pattern?.Parts.FirstOrDefault()?.Id;
+                _selectedPart = pattern is null ? null :
+                    PatternEditorNavigation.PreferredPart(observation.Snapshot.State, pattern)?.Id ??
+                    pattern.Parts.FirstOrDefault()?.Id;
+            if (pattern is not null && _selectedPart is { } selected) _partMemory[pattern.Id] = selected;
             if (!_pattern.Items.OfType<OccurrenceChoice>().SequenceEqual(observation.Occurrences))
                 _pattern.ItemsSource = observation.Occurrences;
             _pattern.SelectedItem = observation.Occurrences.SingleOrDefault(o => o.Id == observation.Selected);

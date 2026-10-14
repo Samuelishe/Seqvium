@@ -76,7 +76,9 @@ Explicit Play continuously cycles the selected Pattern. Note toggles, captured r
 Undo/Redo of notes preserve position and unchanged sounding voices after bounded preparation.
 Future notes take effect at publication; already passed new/restored notes wait until the next cycle.
 Deleting a sounding step stops that voice. Stop/Panic remain sticky through preparation and retries.
-Creation, selection, length and BPM edits stop transport; Play deliberately restarts.
+Creation, length and BPM edits stop transport; Play deliberately restarts. Selecting another Pattern
+while playing retains Play intent and starts the chosen phrase at its beginning after preparation;
+the same target is a no-op. Stopped selection stays silent. Song selection leaves Song time/execution intact.
 The current column outline and bar:beat:sixteenth display read renderer state, with up to 50 ms
 observation delay; they do not claim an output-latency-corrected audible cursor.
 
@@ -96,6 +98,15 @@ Rack scope adds no effects beyond Gain or an in-pad velocity editor. Piano Roll 
 [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns retained geometry/focus.
 
 ## Implemented SEQ-R9 Piano Roll
+
+The Pattern navigator separates selection from editing. Single click selects the occurrence and,
+in playing Pattern Mode, switches the phrase. Double-click or Enter opens its editor; Space selects.
+Context actions expose Channel Rack and Piano Roll with named channels. First opening prefers a
+supported populated melodic Part (pitched notes, or richer PCM note timing/duration/intensity);
+empty/step-only rhythm opens Rack. No inferred instrument/pitch classification is promised.
+Explicit editor/channel choices are remembered per shared Pattern for the document session, across
+occurrences. Missing/unsupported remembered Parts fall back to current content; replacement clears memory.
+Playlist's Pattern open gesture uses the same editor choice. Selection alone opens no pane.
 
 One retained editor targets the selected occurrence's shared Pattern and explicit Part. Target and
 sharing are visible; opening it never detaches content. All three musical views, history, playback
@@ -166,7 +177,7 @@ dense supported piano parts are not limited to one active voice per channel.
 
 Playlist is one retained editor of canonical ArrangementClips, with shared source-placement references,
 absolute tick positions, a fixed lane slot and whole-Pattern repeat count. Notes/resources/graphs are
-not copied by placement, duplication or Ctrl-drag. Double-click/Enter opens the source Rack; subsequent
+not copied by placement, duplication or Ctrl-drag. Double-click/Enter opens the source Pattern's preferred editor; subsequent
 Pattern edits affect every referring clip. A placement's source graph applies to all its song uses.
 Same-lane overlaps are legal and audible; tracks are not instrument or Mixer ownership.
 
@@ -252,7 +263,7 @@ Shared Pattern uses show a shared symbol. Editing through Rack/Piano still chang
 notes for all uses. Make variation is explicit for one Pattern clip: fresh notes/parts and supported
 item processing belong to its new placement, while instruments/resources and Mixer routes stay
 shared. An arrow and source ancestry distinguish the variation, including after rename/Save/Open;
-the Rack opens its actual new target. Unknown identity-bearing processing/data refuses safe detachment.
+the preferred editor opens its actual new target. Unknown identity-bearing processing/data refuses safe detachment.
 A repeated clip becomes one independent Pattern whose internal repeats still share that variation;
 individual repeat cycles are not automatically unfolded. Copying a variation shares the variation.
 

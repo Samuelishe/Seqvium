@@ -6,6 +6,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Input;
 using Avalonia.Threading;
 using Seqvium.Core;
 using Seqvium.Desktop.Presentation;
@@ -19,6 +20,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
     private readonly ShellSession _shell;
     private readonly DesktopWorkflow _workflow;
     private readonly WorkspaceHost _workspace;
+    private readonly Func<Id<GraphAttachment>, string?, Id<MusicalPart>?, Task> _openEditor;
     private readonly TextBlock _title = new() { Classes = { "caption" } };
     private readonly Button _create = new() { Classes = { "command" } };
     private readonly StackPanel _items = new() { Classes = { "compact" } };
@@ -30,12 +32,14 @@ internal sealed class PatternNavigator : Grid, IDisposable
 
     internal Task PendingCommand { get; private set; } = Task.CompletedTask;
 
-    internal PatternNavigator(ShellSession shell, DesktopWorkflow workflow, WorkspaceHost workspace)
+    internal PatternNavigator(ShellSession shell, DesktopWorkflow workflow, WorkspaceHost workspace,
+        Func<Id<GraphAttachment>, string?, Id<MusicalPart>?, Task> openEditor)
     {
         _shell = shell;
         _workflow = workflow;
         _workspace = workspace;
-        Width = 156;
+        _openEditor = openEditor;
+        Width = 240;
         RowDefinitions = new("Auto,*");
         Margin = new(10, 12, 10, 8);
         var header = new Grid { ColumnDefinitions = new("*,Auto") };
@@ -110,7 +114,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
                 {
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                    Height = 50, Padding = new(7, 4)
+                    MinHeight = 62, Padding = new(7, 4)
                 };
                 var id = choice.Id;
                 AutomationProperties.SetAutomationId(button, "Navigator.Pattern." + id);
@@ -120,9 +124,26 @@ internal sealed class PatternNavigator : Grid, IDisposable
                     await PendingCommand;
                     if (!_disposed)
                     {
-                        _workspace.Open(WorkspaceState.BeatId);
                         Refresh();
                     }
+                };
+                button.DoubleTapped += async (_, e) =>
+                {
+                    e.Handled = true;
+                    PendingCommand = _openEditor(id, null, null);
+                    await PendingCommand;
+                };
+                button.KeyDown += async (_, e) =>
+                {
+                    if (e.Key != Key.Enter || e.KeyModifiers != KeyModifiers.None) return;
+                    e.Handled = true;
+                    PendingCommand = _openEditor(id, null, null);
+                    await PendingCommand;
+                };
+                button.ContextRequested += (_, e) =>
+                {
+                    e.Handled = true;
+                    OpenMenu(button, id);
                 };
                 _choices.Add(choice.Id, button);
                 _items.Children.Add(button);
@@ -134,7 +155,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
             body.Children.Add(new TextBlock
             {
                 Text = pattern?.VariationOf is not null ? "↗ " + pattern.Name : pattern?.Name ?? choice.Label, FontWeight = FontWeight.SemiBold,
-                TextTrimming = TextTrimming.CharacterEllipsis
+                TextWrapping = TextWrapping.Wrap, MaxLines = 2, TextTrimming = TextTrimming.CharacterEllipsis
             });
             if (pattern is not null)
             {
@@ -145,9 +166,47 @@ internal sealed class PatternNavigator : Grid, IDisposable
 
             button.Content = body;
             AutomationProperties.SetName(button, pattern?.Name ?? choice.Label);
-            ToolTip.SetTip(button, choice.Label);
+            ToolTip.SetTip(button, choice.Label + "\n" + _shell["Navigator.Hint"]);
             index++;
         }
+    }
+
+    private void OpenMenu(Button button, Id<GraphAttachment> id)
+    {
+        var basis = _workflow.State;
+        var state = basis.Snapshot.State;
+        var attachment = state.GraphAttachments.SingleOrDefault(a => a.Id == id);
+        var placement = state.Placements.SingleOrDefault(p => p.ItemContextId == attachment?.ContextId);
+        var pattern = state.Patterns.SingleOrDefault(p => p.Id == placement?.PatternId);
+        if (basis.Busy || basis.IsClosed || pattern is null) return;
+        var menu = new ContextMenu();
+        MenuItem Item(string label, string? pane, Id<MusicalPart>? part = null)
+        {
+            var item = new MenuItem { Header = label };
+            item.Click += async (_, _) =>
+            {
+                var current = _workflow.State;
+                if (_disposed || current.Document.LifecycleId != basis.Document.LifecycleId ||
+                    current.Generation != basis.Generation || current.Busy) return;
+                PendingCommand = _openEditor(id, pane, part);
+                await PendingCommand;
+            };
+            return item;
+        }
+
+        menu.Items.Add(Item(_shell["Navigator.Edit"], null));
+        menu.Items.Add(Item(_shell["Pane.Beat"], WorkspaceState.BeatId));
+        var piano = new MenuItem { Header = _shell["Piano.Open"] };
+        foreach (var part in pattern.Parts)
+        {
+            var item = Item(part.Name, WorkspaceState.PianoId, part.Id);
+            item.IsEnabled = PianoNotes.Refusal(state, pattern, part) is null;
+            piano.Items.Add(item);
+        }
+        piano.IsEnabled = piano.Items.Cast<MenuItem>().Any(i => i.IsEnabled);
+        menu.Items.Add(piano);
+        button.ContextMenu = menu;
+        menu.Open(button);
     }
 
     public void Dispose()

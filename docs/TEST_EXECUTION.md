@@ -116,6 +116,16 @@ listening or pressure acceptance. [Report](experiments/SEQ-FIRST-DRUM_REPORT.md)
 
 ## Required verification levels
 
+Daily music interaction uses `DesktopWorkflowTests`, `PatternEditorNavigationTests`,
+`WorkspaceStateTests`, `WorkspaceLayoutTests`, `PianoRollTests`, `StepSequencerTests` and relevant
+presentation/metadata classes. New cases protect selected-target PCM and output reuse, same-target
+position, stopped/Song selection, Stop/Panic during held preparation, New Save/Discard/Cancel and
+failed Save, melodic Part choice, per-Pattern/lifecycle memory and reachable empty layout.
+The [daily workflow route](../tools/Seqvium.VisualCheck/README.md#daily-musical-workflow-check)
+distinguishes native input/physical output from actual-window routed/render checks. Use an independent
+musical project copy; the GUI New/Save test intentionally saves that copy. Do not reinterpret foreground
+refusal or device Starvation as a successful physical check.
+
 Check enough to justify confidence in the change. Remove redundant work without weakening meaningful
 assertions or scenario coverage. Select the scope before running it and report the level, commands,
 results and remaining evidence gaps. These rules apply to ordinary tasks and handoffs.

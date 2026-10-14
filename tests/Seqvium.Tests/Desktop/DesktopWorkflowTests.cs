@@ -9,6 +9,147 @@ namespace Seqvium.Tests;
 
 public sealed class DesktopWorkflowTests
 {
+    [Fact]
+    public async Task PlayingPatternSelectionRestartsChosenPhraseOnSameOutputAndSameTargetIsNoOp()
+    {
+        await using var f = new Fixture();
+        await f.Import();
+        var first = f.Workflow.State.Selected!.Value;
+        Assert.True(await f.Workflow.ImportAsync(await f.Source(Enumerable.Repeat(-.25f, 48000).ToArray()),
+            TestContext.Current.CancellationToken));
+        var second = f.Workflow.State.Selected!.Value;
+        Assert.True(await f.Workflow.SelectAsync(first));
+        await f.Drive(f.Workflow.PlayAsync());
+        var before = f.Workflow.State.Snapshot;
+        int undo = f.Workflow.State.UndoCount;
+        await f.Drive(f.Workflow.SelectAsync(second));
+        Assert.Equal(second, f.Sampler!.ReadStatus().AttachmentId);
+        Assert.True(f.Sampler.ReadStatus().Playing);
+        var pcm = new float[64];
+        f.Sampler.Process(pcm);
+        Assert.Contains(pcm, sample => sample < 0);
+        long position = f.Sampler.ReadStatus().Position;
+        Assert.True(await f.Workflow.SelectAsync(second));
+        Assert.Equal(position, f.Sampler.ReadStatus().Position);
+        Assert.Equal(before, f.Workflow.State.Snapshot);
+        Assert.Equal(undo, f.Workflow.State.UndoCount);
+        Assert.Equal(1, f.Opens);
+        Assert.False(f.Output!.Joined);
+        await f.Drive(f.Workflow.StopAsync());
+        Assert.True(await f.Workflow.SelectAsync(first));
+        f.Sampler.Process(pcm);
+        Assert.False(f.Sampler.ReadStatus().Playing);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task StopDuringPatternSwitchPreparationCannotRestartPlayback(bool panic)
+    {
+        TaskCompletionSource entered = new(), release = new();
+        bool hold = false;
+        await using var f = new Fixture(gate: async _ =>
+        {
+            if (!hold) return;
+            entered.TrySetResult();
+            await release.Task;
+        });
+        await f.Import();
+        var first = f.Workflow.State.Selected!.Value;
+        await f.Import();
+        await f.Drive(f.Workflow.PlayAsync());
+        hold = true;
+        var selection = f.Workflow.SelectAsync(first);
+        try
+        {
+            await entered.Task.WaitAsync(TestContext.Current.CancellationToken);
+            await f.Workflow.StopAsync(panic);
+        }
+        finally { release.TrySetResult(); }
+        await f.Drive(selection);
+        for (int i = 0; i < 100; i++)
+        {
+            await f.Workflow.ObserveAsync();
+            f.Sampler!.Process(new float[64]);
+        }
+        Assert.False(f.Sampler!.ReadStatus().Playing);
+        Assert.Equal(1, f.Opens);
+    }
+
+    [Fact]
+    public async Task SongSelectionChangesEditorContextWithoutRestartingSong()
+    {
+        await using var f = new Fixture();
+        await f.Import();
+        var first = f.Workflow.State.Selected!.Value;
+        await f.Import();
+        var second = f.Workflow.State.Selected!.Value;
+        await f.Workflow.AddArrangementClipAsync(ArrangementEditBasis.From(f.Workflow.State), first, new(0), 0);
+        await f.Workflow.SetSongModeAsync(true);
+        await f.Drive(f.Workflow.PlayAsync());
+        long epoch = f.Sampler!.ReadStatus().Epoch, position = f.Sampler.ReadStatus().Position;
+        await f.Workflow.SelectAsync(first);
+        await f.Workflow.SelectAsync(second);
+        Assert.Equal(epoch, f.Sampler.ReadStatus().Epoch);
+        Assert.Equal(position, f.Sampler.ReadStatus().Position);
+        Assert.True(f.Sampler.ReadStatus().Playing);
+        Assert.Equal(second, f.Workflow.State.Selected);
+        Assert.Equal(1, f.Opens);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public async Task NewProjectHonorsUnsavedChoiceAndCreatesFreshSilentDocument(int decision)
+    {
+        await using var f = new Fixture();
+        await f.Import();
+        await f.Drive(f.Workflow.PlayAsync());
+        var old = f.Workflow.State.Document;
+        var save = f.Directory.File("old.seqvium");
+        bool accepted = await f.Workflow.NewAsync((UnsavedDecision)decision, save);
+        if ((UnsavedDecision)decision == UnsavedDecision.Cancel)
+        {
+            Assert.False(accepted);
+            Assert.Same(old, f.Workflow.State.Document);
+            Assert.True(f.Sampler!.ReadStatus().Playing);
+            Assert.False(f.Output!.Joined);
+            return;
+        }
+        Assert.True(accepted);
+        Assert.True(old.IsClosed);
+        Assert.NotEqual(old.LifecycleId, f.Workflow.State.Document.LifecycleId);
+        Assert.Empty(f.Workflow.State.Snapshot.State.Patterns);
+        Assert.Empty(f.Workflow.State.Snapshot.State.AudioClips);
+        Assert.Empty(f.Workflow.State.Occurrences);
+        Assert.Null(f.Workflow.State.Selected);
+        Assert.Null(f.Workflow.State.SavedPath);
+        Assert.False(f.Workflow.State.IsDirty);
+        Assert.False(f.Workflow.State.SongMode);
+        Assert.Equal(0, f.Workflow.State.UndoCount);
+        Assert.Equal(0, f.Workflow.State.RedoCount);
+        Assert.True(f.Output!.Joined);
+        Assert.True(f.Output.Disposed);
+        Assert.Equal(1, f.Opens);
+        Assert.Equal((UnsavedDecision)decision == UnsavedDecision.Save, File.Exists(save));
+    }
+
+    [Fact]
+    public async Task NewProjectFailedSavePreservesPlayingDocument()
+    {
+        await using var f = new Fixture();
+        await f.Import();
+        await f.Drive(f.Workflow.PlayAsync());
+        var old = f.Workflow.State.Document;
+        var blocked = f.Directory.File("blocked");
+        Directory.CreateDirectory(blocked);
+        Assert.False(await f.Workflow.NewAsync(UnsavedDecision.Save, blocked));
+        Assert.Same(old, f.Workflow.State.Document);
+        Assert.True(f.Sampler!.ReadStatus().Playing);
+        Assert.False(f.Output!.Joined);
+    }
+
     // Only the physical borrower is substituted. Document, durable import, preparation, DSP,
     // coordinator publication/identity and release are production implementations.
     private sealed class Borrower : IAudioOutputLifetime

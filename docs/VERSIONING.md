@@ -146,6 +146,16 @@ retrieved only for explicit historical tasks.
 | `0.1.6.0000` | SEQ-R10-AUDIO-CLIPS        | One PATCH for standalone fixed-speed Audio Clips with native import/editing, real waveforms, shared Mixer, portable history/media and Song playback/export. BUILD resets. Evidence and bounded resident/Windows-codec limits are in the [checkpoint](#seq-r10-audio-clips-checkpoint) and [report](experiments/SEQ-R10-AUDIO-CLIPS_REPORT.md); wider R10/pressure/platform/acoustic acceptance remains separate.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `0.1.7.0000` | SEQ-R10-SONG-STRUCTURE | One PATCH for section arranging, independent Pattern variations and atomic mixed clip editing/clipboard. BUILD resets. 1235 full-suite cases, native musical authoring and whole-Song/export pass; official demo unchanged. [Checkpoint](#seq-r10-song-structure-checkpoint) and [report](experiments/SEQ-R10-SONG-STRUCTURE_REPORT.md) retain bounded scope and limits. |
 | `0.1.7.0001` | SEQ-SHARED-WAV-REPLACEMENT | One BUILD for a native Channel Rack shared WAV swap, preserving notes/graphs/release/Mixer with durable media and Undo. 91 focused cases and independent cover GUI verification; no new algorithm/schema or full-suite claim. |
+| `0.1.7.0002` | SEQ-DAILY-WORKFLOW | One BUILD for playing Pattern selection, direct/session-remembered editors, New/Ctrl+N and calm empty workspace with preserved musical layout. Focused production transport/lifecycle/editor/layout tests and RU/EN Dark/Light actual-window routed evidence; native input refused by covered foreground, physical output attempt failed with Starvation. No schema/DSP redesign, PATCH or full-suite claim. |
+
+### SEQ-DAILY-WORKFLOW checkpoint
+
+Identity advances once **0.1.7.0001 → 0.1.7.0002**. This is a coherent refinement of existing musical
+and document workflows, classified as BUILD rather than a new editor/capability line deserving PATCH.
+Deterministic production preparation/renderer tests protect output reuse, target PCM and sticky
+Stop/Panic; real-window routed demo/empty-document checks verify editor choice, New decisions and
+layout/name presentation in both languages/themes. Native foreground refusal and WASAPI Starvation
+remain failed attempts; no physical, acoustic, pressure or wider-platform acceptance is inferred.
 
 ### SEQ-SHARED-WAV-REPLACEMENT checkpoint
 

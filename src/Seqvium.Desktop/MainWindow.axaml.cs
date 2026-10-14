@@ -28,11 +28,17 @@ internal sealed partial class MainWindow : Window
     private readonly NodeEditorSession _nodeEditor = new();
     private GraphPaneContent? _graphPane;
     private PianoRollPaneContent? _pianoPane;
+    private readonly PatternEditorNavigation _patternEditors = new();
     private bool _closing;
     private bool _shutdownComplete;
     private MainWindowPlacement? _normalWindow;
+    private WorkspaceLayout? _musicLayout;
 
-    private WorkspaceLayout CaptureLayout() => _workspace.State.Capture() with
+    private bool HasMusicalContent => !_workflow.State.Snapshot.State.Patterns.IsEmpty ||
+                                      !_workflow.State.Snapshot.State.AudioClips.IsEmpty;
+
+    private WorkspaceLayout CaptureLayout() => (!HasMusicalContent && _musicLayout is { } music
+        ? music : _workspace.State.Capture()) with
     {
         Window = _normalWindow is { } normal
             ? normal with
@@ -88,6 +94,7 @@ internal sealed partial class MainWindow : Window
     {
         _session = session;
         _app = app;
+        _musicLayout = layout.Layout;
         InitializeComponent();
         RestoreWindow(layout.Layout?.Window);
         DataContext = session;
@@ -97,8 +104,8 @@ internal sealed partial class MainWindow : Window
         _workspace = new(session, new(layout.Layout), ToggleLanguageAsync, ToggleThemeAsync,
             CreatePaneContent);
         WorkspaceRegion.Child = _workspace;
-        var navigation = new WorkspaceRail(session, _workspace);
-        var patterns = new PatternNavigator(session, _workflow, _workspace);
+        var navigation = new WorkspaceRail(session, _workspace, OpenPane);
+        var patterns = new PatternNavigator(session, _workflow, _workspace, OpenPatternEditorAsync);
         var navigationBody = new Grid { ColumnDefinitions = new("Auto,Auto") };
         navigationBody.Children.Add(navigation);
         Grid.SetColumn(patterns, 1);
@@ -109,6 +116,7 @@ internal sealed partial class MainWindow : Window
         void AdaptNavigation()
         {
             patterns.IsVisible = !navigationCollapsed && Bounds.Width >= 1000;
+            patterns.Width = Math.Clamp(Bounds.Width * .15, 190, 288);
             navigationBody.ColumnDefinitions[1].Width = patterns.IsVisible ? GridLength.Auto : new GridLength(0);
             navigation.NavigationToggle.Classes.Set("active", patterns.IsVisible);
             _workflowControls.OccurrenceShownElsewhere = patterns.IsVisible;
@@ -136,7 +144,9 @@ internal sealed partial class MainWindow : Window
                 // Initial normal-size layout can precede the native maximized arrange.
                 // Replay saved geometry against the settled workspace, before user interaction.
                 if (layout.Layout is { } saved) _workspace.State.RestoreLayout(saved);
-                else _workspace.State.ArrangeMusic();
+                if (_workflow.State.Snapshot.State.Patterns.IsEmpty &&
+                    _workflow.State.Snapshot.State.AudioClips.IsEmpty) _workspace.State.StartEmptyDocument();
+                else if (layout.Layout is null) _workspace.State.ArrangeMusic();
                 _workspace.Commit();
             }, Avalonia.Threading.DispatcherPriority.Loaded);
         };
@@ -305,7 +315,7 @@ internal sealed partial class MainWindow : Window
             return new MixerPaneContent(_session, _workflow);
         if (definition.InstanceId == WorkspaceState.ArrangementId)
             return new ArrangementPaneContent(_session, _workflow, WorkflowActionAsync,
-                () => _workspace.Open(WorkspaceState.BeatId));
+                () => OpenSelectedPatternEditor());
         if (definition.InstanceId == WorkspaceState.BeatId)
         {
             var rack = new BeatPaneContent(_session, _workflow, ImportBeatWavAsync);
@@ -327,13 +337,18 @@ internal sealed partial class MainWindow : Window
             {
                 _workspace.Open(WorkspaceState.PianoId);
                 _pianoPane?.OpenPart(part);
+                _patternEditors.Remember(_workflow.State, WorkspaceState.PianoId, part);
             };
             return rack;
         }
 
         if (definition.InstanceId == WorkspaceState.PianoId)
-            return _pianoPane = new(_session, _workflow, WorkflowActionAsync,
-                () => _workspace.Open(WorkspaceState.BeatId));
+        {
+            _pianoPane = new(_session, _workflow, WorkflowActionAsync,
+                () => OpenPane(WorkspaceState.BeatId));
+            _pianoPane.PartOpened += part => _patternEditors.Remember(_workflow.State, WorkspaceState.PianoId, part);
+            return _pianoPane;
+        }
         if (definition.InstanceId == WorkspaceState.GraphId)
         {
             var content = new GraphPaneContent(_session, _workflow, _graphEditor, ImportGraphWavAsync);
@@ -400,6 +415,38 @@ internal sealed partial class MainWindow : Window
         if (_closing) return;
         PaneMenuAction.Flyout?.Hide();
         _workspace.Open(id);
+        if (id == WorkspaceState.BeatId) _patternEditors.Remember(_workflow.State, id);
+        if (id == WorkspaceState.PianoId && _pianoPane?.Canvas.Part is { } part)
+            _patternEditors.Remember(_workflow.State, id, part.Id);
+    }
+
+    private async Task OpenPatternEditorAsync(Id<GraphAttachment> target, string? pane, Id<MusicalPart>? part)
+    {
+        var lifecycle = _workflow.State.Document.LifecycleId;
+        if (_closing || !await _workflow.SelectAsync(target) ||
+            _workflow.State.Document.LifecycleId != lifecycle || _workflow.State.Selected != target) return;
+        OpenSelectedPatternEditor(pane, part);
+    }
+
+    private void OpenSelectedPatternEditor(string? pane = null, Id<MusicalPart>? part = null)
+    {
+        if (_closing) return;
+        var resolved = _patternEditors.Resolve(_workflow.State);
+        pane ??= resolved.Pane;
+        part ??= pane == WorkspaceState.PianoId ? resolved.Part : null;
+        _workspace.Open(pane);
+        if (pane == WorkspaceState.PianoId && part is { } target) _pianoPane?.OpenPart(target);
+        _patternEditors.Remember(_workflow.State, pane, _pianoPane?.Canvas.Part?.Id);
+    }
+
+    private void ApplyOpenedWorkspace()
+    {
+        _workspace.CancelGestures();
+        if (!HasMusicalContent) _workspace.State.StartEmptyDocument();
+        else if (_musicLayout is { } layout) _workspace.State.RestoreLayout(layout);
+        else if (_workflow.State.SongMode) _workspace.State.ArrangeMusic();
+        else _workspace.Open(WorkspaceState.BeatId);
+        _workspace.Commit();
     }
 
     private async void OnClosing(object? sender, WindowClosingEventArgs args)

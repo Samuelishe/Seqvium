@@ -16,7 +16,7 @@ internal sealed class WorkspaceRail : Border, IDisposable
     private readonly Dictionary<string, Button> _buttons = [];
     internal Button NavigationToggle { get; } = new() { Classes = { "rail" } };
 
-    internal WorkspaceRail(ShellSession shell, WorkspaceHost host)
+    internal WorkspaceRail(ShellSession shell, WorkspaceHost host, Action<string>? openPane = null)
     {
         _shell = shell;
         _host = host;
@@ -41,7 +41,11 @@ internal sealed class WorkspaceRail : Border, IDisposable
             var button = new Button { Classes = { "rail" } };
             button.Content = HostIcons.Create(icon, button, 20);
             AutomationProperties.SetAutomationId(button, id + ".open");
-            button.Click += (_, _) => host.Open(id);
+            button.Click += (_, _) =>
+            {
+                if (openPane is not null) openPane(id);
+                else host.Open(id);
+            };
             body.Children.Add(button);
             _buttons.Add(id, button);
         }

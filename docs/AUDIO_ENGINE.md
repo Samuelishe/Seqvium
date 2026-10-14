@@ -540,8 +540,13 @@ RealtimeSampler and the existing Windows output adapter. A non-GUI host owner se
 Edit/notifications, preparation completion and transport; views consume status, never PCM ownership.
 Gain editing uses ProjectEdit.SetGraphGain and F2's coefficient path, preserving voices, prepared
 execution identity, attachment and origin/equivalent provenance. Stop/Panic invalidates pending Start
-intent and stays sticky through automatic preparation. Import/new selection stops previous playback;
-Open/reopen never inherits runtime or starts automatically.
+intent and stays sticky through automatic preparation. Import stops previous playback. A playing
+Pattern selection retains the existing output and old phrase during preparation, then deliberately
+starts the chosen target at zero through the same coordinator. Blocked preparation stops old audio
+with visible feedback. Stop/Panic revokes the pending restart. The same target does nothing; stopped
+selection stays stopped, and Song selection changes editor context only. This is a bounded prepared
+handoff, not a sample-accurate crossfade or a guarantee of gapless switching under pressure.
+New/Open/reopen never inherit runtime or start automatically.
 
 Physical discovery resolves the default Console output only on explicit Play and opens that exact
 endpoint without unrelated fallback. Format/open/runtime failures remain visible; cleanup joins

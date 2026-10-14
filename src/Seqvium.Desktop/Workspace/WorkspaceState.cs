@@ -193,6 +193,15 @@ public sealed class WorkspaceState : IDisposable
         Activate(id);
     }
 
+    public void StartEmptyDocument()
+    {
+        CheckAvailable();
+        foreach (var pane in Panes) Hide(pane.InstanceId);
+        Open(BeatId);
+        Dock(BeatId, PaneDock.Floating);
+        SetBounds(BeatId, new(24, 24, Math.Min(960, Width - 48), Math.Min(390, Height - 48)));
+    }
+
     public void ArrangeMusic()
     {
         CheckAvailable();

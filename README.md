@@ -32,6 +32,8 @@ UI/audio platforms.
 - Undo/redo musical edits, save/reopen projects with managed media, and export a Pattern or the full
   Song to 48 kHz stereo PCM16 WAV using the same audio processing.
 - Work in English or Russian, with Dark and Light themes.
+- Create a fresh project with **New project / Ctrl+N**, switch playing Patterns from the navigator,
+  and open a melody directly in Piano Roll. Empty documents start with one compact Channel Rack.
 
 Audio Clips do not change pitch or speed when moved or when BPM changes. Their start positions use
 musical time; their lengths, trims and fades use source frames. There is **no time stretch or warp**.

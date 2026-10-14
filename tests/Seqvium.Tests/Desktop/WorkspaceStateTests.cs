@@ -9,6 +9,24 @@ namespace Seqvium.Tests;
 
 public sealed class WorkspaceStateTests
 {
+    [Theory]
+    [InlineData(420, 280)]
+    [InlineData(1160, 780)]
+    [InlineData(1620, 930)]
+    public void EmptyDocumentHidesRestoredEditorsKeepsTheirGeometryAndShowsOneReachableRack(double width, double height)
+    {
+        using var workspace = Create(width, height);
+        workspace.Open(WorkspaceState.PianoId);
+        workspace.Open(WorkspaceState.MixerId);
+        var piano = workspace.Get(WorkspaceState.PianoId).FloatingBounds;
+        workspace.StartEmptyDocument();
+        Assert.Equal(WorkspaceState.BeatId, Assert.Single(workspace.Panes.Where(p =>
+            p.Visibility == PaneVisibility.Visible)).InstanceId);
+        Assert.Equal(WorkspaceState.BeatId, workspace.ActivePaneId);
+        Assert.Equal(piano, workspace.Get(WorkspaceState.PianoId).FloatingBounds);
+        AssertUsable(workspace, WorkspaceState.BeatId);
+        Assert.InRange(workspace.Bounds(WorkspaceState.BeatId).Width, 1, 960);
+    }
     private const string Inspector = WorkspaceState.InspectorId;
     private const string Appearance = WorkspaceState.AppearanceId;
 

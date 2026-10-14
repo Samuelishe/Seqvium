@@ -98,7 +98,7 @@ internal sealed class WorkflowControls : Grid
         {
             Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Classes = { "joined" }
         };
-        foreach (var key in new[] { "Import", "Open", "Save" }) _project.Children.Add(Command(key));
+        foreach (var key in new[] { "New", "Open", "Save", "Import" }) _project.Children.Add(Command(key));
         commands.Children.Add(_project);
         commands.Children.Add(Separator());
         foreach (var key in new[] { "Play", "Stop", "Panic" }) commands.Children.Add(Command(key));

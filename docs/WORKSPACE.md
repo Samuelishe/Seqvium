@@ -57,14 +57,19 @@ One command row groups project, transport and history with an actual occurrence 
 committed transport BPM editor, read-only meter and
 existing preference/pane actions. Reduced width moves secondary commands/selection/parameters into
 explicit overflow/details; Inspector retains musical parameters. No new editor pane or toolbar row
-is added. Project replacement updates retained Inspector content without changing layout/pane identity.
+is added. Project replacement updates retained Inspector content without changing pane identity. New
+uses the empty-document composition; opening music can restore the retained musical layout.
 Technical details require deliberate disclosure; the existing status strip carries persistent blockers.
 
 Native storage pickers remain OS-owned modals. The unsaved first-party confirmation is an owned,
 content-sized Avalonia modal with no system decorations, centered on its owner; initial focus is Cancel,
 Tab cycles, Esc/Alt+F4 cancel, and focus returns safely. Main window remains alive on Cancel/failed Save.
+New project is a toolbar command and Ctrl+N. Like Open, it offers Save/Discard/Cancel for dirty work;
+Cancel, cancelled Save As and failed Save retain the current document and playback. Successful New
+joins audio/preparation and creates an unnamed clean document with default tempo/meter, empty music,
+fresh lifecycle/history, no file association and no audio startup.
 Shutdown waits outstanding import/action and joined document/audio cleanup before workspace/preference
-shutdown. Ctrl+I/O/S/Shift+S, Ctrl+Z/Y, F5/Shift+F5 and Ctrl+Esc complement existing R3 pane/window keys.
+shutdown. Ctrl+N/I/O/S/Shift+S, Ctrl+Z/Y, F5/Shift+F5 and Ctrl+Esc complement existing R3 pane/window keys.
 [UI design rules](UI_DESIGN.md#first-party-visual-design-rules) apply to all future first-party dialogs;
 external editor windows and native file pickers retain their explicit exceptions.
 
@@ -110,7 +115,8 @@ Old two-pane version-1 layouts remain readable; missing graph entries start hidd
 ## R5-F1 retained step sequencer
 
 `step-sequencer.main` / `step-sequencer` is one static pane, titled Channel Rack (RU: Каналы).
-Pristine layout opens it without musical creation; restored visibility remains authoritative.
+Empty startup/New opens only this musical pane without creating content. Musical layout visibility
+is retained separately while the document is empty and reapplied when musical content is opened.
 Panes or the left Rack rail action opens it. Default floating bounds are 960×390 DIP, minimum 360×290; the application's
 640×480 minimum is unchanged. Its own horizontal/
 vertical scrolling preserves the 16–512-step content in narrow floating/docked panes. Existing header,
@@ -121,6 +127,9 @@ layout, with no musical/editor model there.
 The left rail opens existing Rack/Graph/Node Editor/Inspector/Appearance panes without replacing them.
 At window width >= 1000 DIP a project navigator lists actual occurrences with Pattern thumbnails.
 Its selection/create commands use DesktopWorkflow; navigation itself does not edit the document.
+Cards use up to two name lines, full-name/gesture tooltips and a width that grows with the host.
+Selection leaves pane visibility/focus alone; double-click/Enter and the contextual editor/channel
+menu open an editor. Shared session editor intent belongs to PatternEditorNavigation, not layout storage.
 A rail toggle hides/restores it; the session choice is preserved across window resizing. Below that
 width it is hidden, reclaiming workspace space. It is session presentation, not persisted
 musical content or a separate layout registry.
@@ -136,7 +145,7 @@ owns editing/refusals. No dynamic instance registration or second transport is i
 
 `arrangement.main` / `arrangement` is the fixed Playlist pane, opened by rail or Panes. It shares
 the retained floating/docking/collapse/hide/restore lifecycle and independently stored workspace
-layout. Historical layouts add it hidden; pristine startup opens Rack and Playlist in a music layout. The pane cancels
+layout. Historical layouts add it hidden; empty startup opens only a compact Rack. The pane cancels
 clip,
 overview and track-editor drafts on deactivation, hide/collapse, shutdown or invalid authority.
 Reopening retains content/view and adopts the current document. Focus returns to the timeline.
@@ -231,11 +240,13 @@ Restore selects an available monitor and clamps the rectangle to its working are
 docks and floating sizes retain their existing adaptation. Single-monitor Windows restoration is
 verified; mixed DPI and monitor changes remain wider evidence gaps.
 
-Pristine startup arranges Rack above Playlist when height permits, or beside it on a wide shorter
-workspace. The smallest workspace keeps Playlist visible and Rack reachable through its collapsed
-tab. Panes → Arrange Rack + Playlist deliberately reapplies this composition to existing layouts.
-It changes only these two panes' placement, docking and visibility, never musical data. A valid saved
-layout remains authoritative on later starts; shutdown joins main-window and pane storage together.
+Pristine startup and New show one compact Rack near the workspace's upper left. Other retained panes
+are hidden while the document is empty; their geometry and the preceding musical composition survive.
+Opening music restores that composition. With no preceding layout, a Song opens Rack above Playlist
+(or beside it on a short wide workspace); a Pattern project keeps Rack. Panes → Arrange Rack + Playlist
+deliberately applies this two-pane composition. It changes only those panes' placement, docking and
+visibility, never music. Empty-document persistence retains the last musical composition with current
+main-window placement. Shutdown joins main-window and pane storage together.
 
 ## Implemented R3-F2 internal panes
 

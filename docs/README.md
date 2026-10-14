@@ -8,6 +8,13 @@ To start with a complete editable example, open [Neon Orchard](../examples/Neon%
 It includes all required media and saved Mixer processing, with instructions for Song playback,
 WAV export and personal Save As copies. The composition will grow with the application.
 
+Use **New project** in the toolbar or **Ctrl+N** for a fresh document. If the current project has
+changes, choose Save, Discard or Cancel. An empty document starts silently with one compact Channel Rack;
+opening music restores your previous musical layout. In Pattern Mode, click navigator cards to switch
+the playing phrase without pressing Play again. Double-click or Enter opens an appropriate editor;
+right-click offers Channel Rack or Piano Roll for a named channel. Explicit choices are remembered
+for each Pattern until you replace the document.
+
 ## Work with audio clips
 
 Open **Playlist** from the left rail. Drop WAV, MP3 or FLAC from Explorer onto a lane, or use Playlist's **Import
@@ -114,7 +121,7 @@ Root Pitch stays unchanged. Check source tuning and Mixer trim when the new reco
 
 1. Create the Patterns you need in Channel Rack. Open **Playlist** from its rail icon or **Panes**.
 2. Choose a source Pattern in Playlist and click a track to place it. Clips share the original notes;
-   double-click a clip to return to its Rack. Overlapping clips play together, including on the same track.
+   double-click a clip to open its Pattern editor. Overlapping clips play together, including on the same track.
 3. Drag a clip to move it. Ctrl-drag makes a shared copy; dragging the right edge changes the number
    of whole Pattern repeats. Shift-click adds/removes clips from a selection; the selection tool draws a box and Ctrl+A
    selects all.
@@ -149,7 +156,7 @@ Root Pitch stays unchanged. Check source tuning and Mixer trim when the new reco
    only the label. A crossing clip blocks restructuring with its name/track and **Show crossing clip**;
    adjust the range or explicitly split audio, then retry. Every accepted edit is one Undo.
 9. Shared clips show **≋**. Their Rack/Piano edits affect the shared Pattern. Select one clip and choose
-   **Make variation** for a fill or altered phrase: it opens an independent Pattern target in Rack,
+   **Make variation** for a fill or altered phrase: it opens an independent Pattern target in its editor,
    with **↗** ancestry and its own notes/processing. Instruments and Mixer routes remain shared.
    Rename it and edit through Piano Roll; other uses retain their original notes. Copying that variation
    shares its new Pattern. A clip's internal repeats still use one Pattern; separate the desired

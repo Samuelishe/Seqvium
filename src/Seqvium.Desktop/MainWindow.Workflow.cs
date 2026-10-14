@@ -164,6 +164,17 @@ internal sealed partial class MainWindow
         {
             switch (action)
             {
+                case "New":
+                    var newDecision = await ReplacementDecisionAsync();
+                    var previousLayout = HasMusicalContent ? _workspace.State.Capture() : _musicLayout;
+                    if (await _workflow.NewAsync(newDecision.Decision, newDecision.SavePath))
+                    {
+                        _musicLayout = previousLayout;
+                        _workspace.CancelGestures();
+                        _workspace.State.StartEmptyDocument();
+                        _workspace.Commit();
+                    }
+                    break;
                 case "ImportAudio":
                     var audioFiles = await StorageProvider.OpenFilePickerAsync(new()
                     {
@@ -200,7 +211,12 @@ internal sealed partial class MainWindow
                     var path = await PickOpenAsync(false);
                     if (path is null || _closing) break;
                     var decision = await ReplacementDecisionAsync();
-                    await _workflow.OpenAsync(path, decision.Decision, decision.SavePath);
+                    var openLayout = HasMusicalContent ? _workspace.State.Capture() : _musicLayout;
+                    if (await _workflow.OpenAsync(path, decision.Decision, decision.SavePath))
+                    {
+                        _musicLayout = openLayout;
+                        ApplyOpenedWorkspace();
+                    }
                     break;
                 case "Save":
                 case "SaveAs":
@@ -303,6 +319,7 @@ internal sealed partial class MainWindow
             args.Source is Visual source && source.GetVisualAncestors().Prepend(source).Any(v => v is TextBox)) return;
         string? action = (args.Key, args.KeyModifiers) switch
         {
+            (Key.N, KeyModifiers.Control) => "New",
             (Key.O, KeyModifiers.Control) => "Open", (Key.I, KeyModifiers.Control) => "Import",
             (Key.S, KeyModifiers.Control) => "Save",
             (Key.S, KeyModifiers.Control | KeyModifiers.Shift) => "SaveAs",

@@ -121,6 +121,9 @@ Rack pads use `Rack.StepHeight` for fixed width/minimum/maximum and height, with
 The inner cap, highlight/shade overlays and pressed recess retain existing semantic materials;
 playing outline and keyboard focus remain independent. `Navigation.ScrollGutter` reserves scrollbar
 width plus shared small spacing on the Pattern list; cards do not paint underneath the bar.
+Pattern cards use up to two wrapped name lines with ellipsis beyond that, a full-name/gesture tooltip
+and a host-width-dependent navigator. Selection styling and rhythm thumbnails still use the common
+Button/material/channel roles; editor menus use the standard ContextMenu rather than a private popup.
 
 | Component                 | Default / supported classes                                                                  | Guidance                                                                                                                                                                                                          |
 |---------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

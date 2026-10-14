@@ -1,5 +1,23 @@
 # Desktop visual and lifecycle verification
 
+## Daily musical workflow check
+
+Use an **independent project copy** with at least three Patterns and melodic notes. The scenario
+creates a Pattern and exercises New → Save on that copy. Never pass the official demo or owner work.
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll daily-workflow "$PWD/.artifacts/daily-workflow/gui" "C:/Independent/music.seqvium"
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll daily-workflow "$PWD/.artifacts/daily-workflow/rendered" "C:/Independent/music.seqvium" routed
+```
+
+The default route uses foreground-guarded native input, real pickers, Pattern playback on the default
+output, direct/remembered editors, context menu and New Cancel/Save. Foreground refusal or device fault
+fails the attempt. `routed` raises events on actual retained controls/windows and opens the supplied
+fixture through the workflow; it verifies RU/EN × Dark/Light rendering, editor/rail/context choices,
+long-name cards, New dialogs and musical-layout restoration, without native input or physical output.
+Its JSON explicitly marks those limits. Audio transport/PCM invariants belong to focused production
+coordinator/renderer tests. Unique captures/JSON/config and modified fixture copies stay local/ignored.
+
 This developer-only host reuses the built Desktop, its actual resources, controls and workflows.
 Catalog/matrix hosts also enter through the production Single Instance gate with an isolated identity.
 It adds no application tab, audio startup, public Single Instance bypass or UI framework dependency.

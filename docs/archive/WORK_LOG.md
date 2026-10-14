@@ -1816,3 +1816,34 @@ Playlist/Mixer inspection is green. The [report](../experiments/SEQ-SHARED-WAV-R
 preserves those distinctions and explicit tuning/level/algorithm limits. Musical material and helpers
 remain outside Git. BUILD advances once 0.1.7.0000 → 0.1.7.0001; cadence advances to one after the
 previous L3. No staging, commit, push or tag occurs; official demo/publication remain unchanged.
+
+## SEQ-DAILY-WORKFLOW — 2026-10-14
+
+Daily musician use motivates separate Pattern selection/editor opening, automatic continuation of
+playing phrase choice, direct supported melodic Parts and session editor/channel memory. New/Ctrl+N
+reuses Save/Discard/Cancel and joined document/audio replacement. Empty startup/New shows one compact
+Rack, retaining the previous musical composition for Open. Navigator names gain adaptive width and
+two-line wrapping. Current UX/workspace/audio/architecture and reader descriptions are synchronized.
+
+The final isolated affected Release build passes with zero warnings/errors (6.96 s); locked restore
+for the initial output tree takes 1.73 s. **353/353** L1/L2 cases pass (24.732 s CLI, one test thread),
+including 14 new transport/lifecycle/editor/layout cases. An earlier concurrent 302-case run finds
+7,224 measured bytes in the existing Arrangement live-publication allocation test; the complete
+23-case Arrangement class then passes alone, and the final wider 353-case single-thread run passes.
+No callback/DSP source changes or assertion weakening are made; the intermittent observation's cause
+is not established. L3 is not repeated; cadence advances to two completed tasks.
+
+The real-window routed tool passes on a task-owned independent Neon Orchard copy: all Pattern
+selections, direct Piano, editor/context/rail memory, New Cancel/Save, a long two-line name and
+musical-layout restoration. Empty and populated RU/EN × Dark/Light captures pass visual review;
+the final route takes 16.20 s. Native input twice refuses a maximized foreground Telegram window,
+without sending input through it. A separate physical attempt fails with WASAPI Starvation; these
+are failed attempts, not native/physical/acoustic acceptance. `routed` explicitly excludes device
+output; deterministic transport tests retain production preparation/coordinator/renderer boundaries.
+
+Local captures/JSON/config/build outputs under `.artifacts/daily-workflow` remain ignored for review
+under existing retention. The disposable `.scratch/daily-workflow/demo` copy remains ignored because
+the tool policy rejected the checked recursive-removal command; it is available for review or later
+manual cleanup. Permanent product/test/navigation and reusable GUI verification sources remain. The repository demo,
+publication and user projects remain unchanged. BUILD advances once **0.1.7.0001 → 0.1.7.0002**;
+no staging, commit, push or tag is performed.

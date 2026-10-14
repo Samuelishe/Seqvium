@@ -167,7 +167,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
-                or "native-track" or "native-mixer" or "native-audio" or "song-structure",
+                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -187,6 +187,13 @@ internal static partial class Program
                     Json(output, "smoke", new { WindowOpened = true, NativeInput = false, AudioStarted = false });
                 }
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
+                else if (args[0] == "daily-workflow")
+                {
+                    Require(args.Length is 3 or 4, "daily-workflow <output> <independent-project> [routed]");
+                    if (args.Length == 4 && args[3] == "routed")
+                        await DailyWorkflowRenderedAsync(main, output, Path.GetFullPath(args[2]));
+                    else await DailyWorkflowAsync(main, output, Path.GetFullPath(args[2]));
+                }
                 else if (args[0] == "rack-pads") await RackPadReviewAsync(main, output);
                 else if (args[0] == "native-track")
                 {

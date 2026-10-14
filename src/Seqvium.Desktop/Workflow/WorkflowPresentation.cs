@@ -5,7 +5,7 @@ internal static class WorkflowPresentation
 {
     internal static string Shortcut(string action) => action switch
     {
-        "Import" => "Ctrl+I", "Open" => "Ctrl+O", "Save" => "Ctrl+S", "SaveAs" => "Ctrl+Shift+S",
+        "New" => "Ctrl+N", "Import" => "Ctrl+I", "Open" => "Ctrl+O", "Save" => "Ctrl+S", "SaveAs" => "Ctrl+Shift+S",
         "Undo" => "Ctrl+Z", "Redo" => "Ctrl+Y", "Panic" => "Ctrl+Esc", "Play" => "F5", "Stop" => "Shift+F5",
         "Graph" => "Ctrl+G", _ => ""
     };

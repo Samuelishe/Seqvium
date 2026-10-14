@@ -233,18 +233,53 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         return Task.FromResult(true);
     });
 
-    public Task<bool> SelectAsync(Id<GraphAttachment> target) => Command("Workflow.EditFailed", () =>
+    public Task<bool> SelectAsync(Id<GraphAttachment> target) => Command("Workflow.EditFailed", async () =>
     {
-        if (!_document.Current.State.GraphAttachments.Any(item => item.Id == target)) return Task.FromResult(false);
+        if (!_document.Current.State.GraphAttachments.Any(item => item.Id == target)) return false;
+        if (_selected == target) return true;
+        bool resume = !_songMode && _coordinator?.ReadStatus().Execution.Playing == true;
+        long generation = _playGeneration;
         if (!_songMode)
         {
-            _playGeneration++;
-            _coordinator?.Stop();
+            generation = ++_playGeneration;
+            if (!resume) _coordinator?.Stop();
         }
 
         _selected = target;
         if (!_songMode) _coordinator?.SelectTarget(target);
-        return Task.FromResult(true);
+        if (!resume) return true;
+        _status = "Workflow.Preparing";
+        Publish();
+        // Reuse the output owner. Stop/Panic can revoke this selection's pending restart.
+        for (int wait = 0; wait < 1500 && generation == _playGeneration; wait++)
+        {
+            if (_output!.ReadFailure() is { } failure) throw new IOException(failure);
+            var status = _coordinator!.ReadStatus();
+            if (status.Blocker is { } blocker)
+            {
+                _coordinator.Stop();
+                _status = "Workflow.Blocked";
+                _detail = blocker;
+                return true;
+            }
+
+            if (!status.PreparationPending && _coordinator.Start())
+            {
+                _status = "Workflow.Ready";
+                return true;
+            }
+
+            await Task.Delay(20);
+        }
+
+        if (generation == _playGeneration)
+        {
+            _coordinator!.Stop();
+            _status = "Workflow.Blocked";
+            _detail = "graph.preparation-timeout";
+        }
+
+        return true;
     });
 
     public Task<bool> UndoAsync(bool redo = false) => Command("Workflow.EditFailed", () =>
@@ -321,6 +356,24 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
                     .Select(d => d.Reason)));
                 return true;
             });
+
+    public Task<bool> NewAsync(UnsavedDecision decision, string? savePath = null)
+        => decision == UnsavedDecision.Cancel ? Task.FromResult(false) : Command("Workflow.NewFailed", async () =>
+        {
+            if (!CanReplace(decision, savePath)) return false;
+            await CloseAudioAsync();
+            _document.Changed -= DocumentChanged;
+            _document.Close();
+            _document = ProjectDocument.Create();
+            _document.Changed += DocumentChanged;
+            _selected = null;
+            _songMode = false;
+            _audioWaveforms = _audioWaveforms.Clear();
+            _songCursor = _loopStart = _loopEnd = 0;
+            _songLoopEnabled = false;
+            _status = "Workflow.Empty";
+            return true;
+        });
 
     public Task<bool> PlayAsync() => Command("Workflow.DeviceFault", async () =>
     {
