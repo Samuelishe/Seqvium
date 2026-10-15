@@ -21,6 +21,7 @@ Folder navigation/selection are session presentation; pinned/recent/last locatio
 [access preferences](SETTINGS.md#browser-access-preferences). No native tool window, second project,
 audio engine or media ownership model is introduced. Hide/collapse cancels temporary work/preview;
 shutdown joins Browser operations before document/audio cleanup.
+Browser uses Ctrl+R for folder refresh; F6/Shift+F6 keep their global pane-switch meaning.
 
 ## Retained compact Mixer pane
 

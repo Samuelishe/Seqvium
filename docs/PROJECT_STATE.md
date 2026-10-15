@@ -7,9 +7,12 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.7.0004**, SEQ-SAMPLE-BROWSER: one BUILD for a retained local/project sound
-Browser, real metadata/waveform, transient solo preview and atomic Rack/Playlist use/reuse. Native
-interaction acceptance remains foreground-refused; no PATCH closure is asserted. The preceding identity
+Product alpha **0.1.7.0005**, SEQ-CROSS-STAGE-AUDIT: section-only playback equivalence, Song Mixer fast
+publication, playing Pattern double-click delivery, Browser refresh/drag origin and failed-Save Close
+repairs. The [audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) separates fixed defects, native input,
+deterministic audio, measured Browser cost and unresolved pressure/allocation evidence. No PATCH or
+broader native/physical acceptance is asserted. The preceding Browser adds retained local/project
+sound discovery, real metadata/waveform, transient preview and atomic Rack/Playlist use/reuse. The preceding identity
 integrates the 09 brand, embedded typography, optical icons and publication kit. The daily workflow
 adds playing Pattern navigation, direct/remembered editors, New and remembered musical layout.
 The preceding shared WAV replacement preserves musical/processing/Mixer intent. The preceding
@@ -97,7 +100,11 @@ Native input was foreground-refused; this is not native/acoustic/platform accept
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. Prior visual identity passes **60/60 focused tests**
+Completed repository tasks since this L3: **1**. Audit L0/L1/L2 and guarded native keyboard/drag/held
+double-click checks pass in bounded scope; final focused verification passes 183/183 in 17.254 s.
+An initial parallel allocation case records 4,136 bytes;
+its isolated pass is not a fix or pressure closure. Final counts/commands are in the audit report.
+Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
 FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell
 shortcut and live 16/24 px window icon extraction pass. Foreground guard refused taskbar/Alt+Tab
@@ -146,6 +153,8 @@ consume more; no global media quota. MP3/FLAC use Windows-only Media Foundation 
 portable universal decoder. Surround and time stretch/warp are absent. Sections are organization,
 not processing containers; crossing clips need explicit split/range adjustment. Variations do not
 inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachment remain absent.
+Browser inspection followed by preview decodes external sources twice; three-minute source latency
+and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 
 Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, wider Browser
 integration/Personal Library, Sample Lab, MIDI, recording and recovery remain future work. Cold seek/range wrap

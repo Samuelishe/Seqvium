@@ -20,6 +20,8 @@ resource authority on its owner; workers inspect/decode one selected source. Ext
 reuses `AudioFileDecode`, then `AudioMedia.ReadTemporaryWave` validates transient float PCM without
 project acceptance. `WavAudition` can borrow the existing solo renderer/output lifetime; Desktop retains
 joined disposal authority. Preview refuses while transport plays and never edits canonical state.
+Browser drag captures the file row at pointer press rather than borrowing later selection; whitespace
+and folders cannot start a sample drag.
 
 Rack acceptance composes the existing managed WAV import or `WavResourceReuse` with a musical-use
 callback inside one document edit. `AudioResourceReuse` validates a captured accepted resource before
@@ -142,6 +144,8 @@ New uses the same unsaved-decision and joined release boundary, then creates a p
 ProjectDocument. Session PatternEditorNavigation owns editor/Part preferences per Pattern; neither
 project persistence nor WorkspaceState owns these targets. MainWindow retains the last musical layout
 while showing the empty-document Rack, so empty startup/New does not overwrite useful musical geometry.
+Close withdraws pending Start intent before entering the command gate, but keeps existing playback
+until Save succeeds. A failed Save keeps the document, output owner and Browser directory cursor.
 [Sample workflow](SAMPLE_WORKFLOW.md#r4-f3-a-desktop-import-and-musical-use) owns initial musical policy;
 [audio](AUDIO_ENGINE.md#r4-f3-a-desktop-execution-composition) owns the execution limits.
 
@@ -186,6 +190,8 @@ Pattern and Audio Clip selections use one transaction, common relative movement/
 geometry and duplicate span. Audio copies retain source-frame ranges, envelope clocks, fades, gain
 and shared Mixer assignments. A copied Pattern clip retains its placement reference and opaque data;
 there are no hidden note copies. Clipboard/view state remains Desktop session data.
+Section-only organizational edits publish an equivalent revision without preparing PCM or resetting
+transport. Musical restructuring still rebuilds scheduling and maps only compatible voices.
 
 Make variation is an explicit exception to shared placement reuse: it clones a supported placement's
 item context and built-in graph with fresh context/node/port/connection/binding identities, then uses

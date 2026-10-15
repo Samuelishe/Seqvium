@@ -467,15 +467,15 @@ internal sealed partial class MainWindow : Window
         foreach (var browser in this.GetVisualDescendants().OfType<BrowserPaneContent>())
             await browser.CancelPendingAsync();
         var decision = await ReplacementDecisionAsync();
-        if (decision.Decision != UnsavedDecision.Cancel)
-            foreach (var browser in this.GetVisualDescendants().OfType<BrowserPaneContent>())
-                await browser.ShutdownAsync();
         if (!await _workflow.CloseAsync(decision.Decision, decision.SavePath))
         {
             _closing = false;
             _workflowControls.Refresh();
             return;
         }
+
+        foreach (var browser in this.GetVisualDescendants().OfType<BrowserPaneContent>())
+            await browser.ShutdownAsync();
 
         _workflow.Changed -= WorkflowChanged;
         await _workflow.DisposeAsync();

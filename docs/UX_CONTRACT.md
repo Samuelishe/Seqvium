@@ -13,7 +13,8 @@ and the implemented Rack, Playlist and Piano Roll sections below; broader capabi
 
 Rail/Panes or Ctrl+B opens Browser. Choose Project resources, a pinned folder or recent location;
 Add folder uses the native folder picker. The address field opens an explicit path on Enter.
-Double-click/Enter enters a folder; parent, Back/Alt+Left and F6 refresh complement the mouse actions.
+Double-click/Enter enters a folder; parent, Back/Alt+Left and Ctrl+R refresh complement the mouse actions.
+F6/Shift+F6 retain workspace pane traversal, including while Browser has focus.
 Ctrl+F focuses local name search; arrow keys select files. Search applies to the current folder only;
 large directories expose a bounded **Load next page**, rather than silently omitting the remainder.
 
@@ -261,6 +262,8 @@ section navigator to seek without starting playback; double-click edits its name
 in bars and color. Add section starts with the retained musical range. Sections are non-overlapping
 organization, independent of routing and clip ownership. Context actions select wholly contained
 clips, loop the range or remove its label; removal leaves the music intact.
+Changing section labels, colors or label bounds alone preserves playback position and sounding voices;
+Earlier/Later and Repeat still publish their actual clip changes.
 
 Earlier/Later swaps adjacent ranges and their musical content, preserving the intervening gap.
 Repeat section inserts shared Pattern/Audio uses immediately after it and shifts all later music and

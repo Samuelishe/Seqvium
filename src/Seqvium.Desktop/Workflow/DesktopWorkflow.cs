@@ -505,7 +505,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     public async Task<bool> CloseAsync(UnsavedDecision decision, string? savePath = null)
     {
         if (decision == UnsavedDecision.Cancel) return false;
-        await StopAsync();
+        // Withdraw pending Start intent so Close can enter the command gate during preparation.
+        // Existing playback remains intact until Save succeeds and joined audio close begins.
+        await _owner.Run(() => { _playGeneration++; return Task.FromResult(true); });
         return await Command("Workflow.CloseFailed", async () =>
         {
             if (!CanReplace(decision, savePath)) return false;

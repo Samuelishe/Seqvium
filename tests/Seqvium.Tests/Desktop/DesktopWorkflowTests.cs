@@ -672,7 +672,7 @@ public sealed class DesktopWorkflowTests
     }
 
     [Fact]
-    public async Task FailedSaveDuringCloseRetainsStoppedDocumentAndBorrowerUntilRetry()
+    public async Task FailedSaveDuringCloseRetainsPlayingDocumentAndBorrowerUntilRetry()
     {
         await using var fixture = new Fixture();
         await fixture.Import();
@@ -686,6 +686,11 @@ public sealed class DesktopWorkflowTests
         Assert.False(fixture.Document.IsClosed);
         Assert.False(fixture.Output!.Joined);
         Assert.True(fixture.Sampler!.LivePreparedStates > 0);
+        long epoch = fixture.Sampler.TransportEpoch, position = fixture.Sampler.RenderPosition;
+        fixture.Sampler.Process(new float[64]);
+        Assert.True(fixture.Sampler.ReadStatus().Playing);
+        Assert.Equal(epoch, fixture.Sampler.TransportEpoch);
+        Assert.Equal(position + 32, fixture.Sampler.RenderPosition);
         Assert.True(await fixture.Workflow.CloseAsync(UnsavedDecision.Discard));
         Assert.True(fixture.Output.Joined);
         Assert.Equal(0, fixture.Sampler.LivePreparedStates);

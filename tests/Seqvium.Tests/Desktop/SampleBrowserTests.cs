@@ -209,6 +209,51 @@ public sealed class SampleBrowserTests
     }
 
     [Fact]
+    public async Task ReplacementJoinsPreviewAndRejectsQueuedUseOfThePreviousDocument()
+    {
+        await using var f = new Fixture(); Assert.True(await f.UseRack());
+        var old = f.Workflow.State;
+        var resource = old.Snapshot.State.Resources.Single();
+        var source = new BrowserSource(resource.Name, Resource: resource.Id, Lifecycle: old.Document.LifecycleId, SamplerCompatible: true);
+        Assert.True(await f.Workflow.PreviewBrowserSourceAsync(source, Cancellation));
+        var sampler = f.Sampler!; sampler.Process(new float[64]);
+        Assert.True(sampler.ReadStatus().Playing);
+        var replace = f.Workflow.NewAsync(UnsavedDecision.Discard);
+        var queued = f.Workflow.UseBrowserAudioAsync(ArrangementEditBasis.From(old), source, default, 0, Cancellation);
+        Assert.True(await replace); Assert.False(await queued);
+        Assert.True(old.Document.IsClosed);
+        Assert.All(f.Outputs, output => Assert.True(output.Joined));
+        Assert.Equal(0, sampler.LivePreparedStates);
+        Assert.Empty(f.Workflow.State.Snapshot.State.Resources);
+        Assert.Empty(f.Workflow.State.Snapshot.State.AudioClips);
+        Assert.Equal(0, f.Workflow.State.UndoCount);
+        Assert.False(await f.Workflow.PreviewBrowserSourceAsync(source, Cancellation));
+    }
+
+    [Fact]
+    public async Task ActivePreviewLeaseSurvivesHistoryAndPortableSaveWithoutBrokenMedia()
+    {
+        await using var f = new Fixture(); Assert.True(await f.UseRack());
+        var state = f.Workflow.State; var resource = state.Snapshot.State.Resources.Single();
+        var source = new BrowserSource(resource.Name, Resource: resource.Id, Lifecycle: state.Document.LifecycleId, SamplerCompatible: true);
+        Assert.True(await f.Workflow.PreviewBrowserSourceAsync(source, Cancellation));
+        var packet = new float[64]; f.Sampler!.Process(packet);
+        string save = f.Directory.File("portable/project.seqvium");
+        Assert.True(await f.Workflow.SaveAsync(save));
+        File.Delete(f.Source.Path!);
+        Assert.True(await f.Workflow.UndoAsync());
+        f.Sampler.Process(packet);
+        Assert.Contains(packet, v => v != 0);
+        Assert.True(await f.Workflow.UndoAsync(redo: true));
+        Assert.True(await f.Workflow.SaveAsync(save));
+        Assert.True(await f.Workflow.OpenAsync(save, UnsavedDecision.Discard));
+        Assert.All(f.Outputs, o => Assert.True(o.Joined));
+        using var pcm = AudioMedia.Decode(f.Workflow.State.Document, resource.Id);
+        Assert.Equal(4800, pcm.Frames);
+        Assert.Empty(f.Workflow.State.Document.SavedMediaDiagnostics);
+    }
+
+    [Fact]
     public void BrowserLabelsHaveEnglishAndRussianAndItsDefaultIsAnOptionalLeftPane()
     {
         foreach (string key in HostLocalizer.English.Keys.Where(k => k.StartsWith("Browser.", StringComparison.Ordinal)))

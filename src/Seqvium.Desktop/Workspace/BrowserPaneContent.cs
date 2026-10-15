@@ -13,6 +13,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Seqvium.Core;
 using Seqvium.Desktop.Presentation;
 using Seqvium.Desktop.Workflow;
@@ -139,8 +140,12 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         _auto.IsCheckedChanged += (_, _) => { if (_auto.IsChecked == true) Preview(); };
         _list.AddHandler(PointerPressedEvent, (_, e) =>
         {
-            if (e.GetCurrentPoint(_list).Properties.IsLeftButtonPressed)
-                _drag = (e, e.GetPosition(_list));
+            _drag = null;
+            if (e.GetCurrentPoint(_list).Properties.IsLeftButtonPressed &&
+                e.Source is Visual visual && visual.GetVisualAncestors().Prepend(visual)
+                    .OfType<ListBoxItem>().FirstOrDefault() is { } row &&
+                _list.ItemFromContainer(row) is BrowserSource { Directory: false } source)
+                _drag = (e, e.GetPosition(_list), source);
         }, RoutingStrategies.Tunnel, handledEventsToo: true);
         _list.AddHandler(PointerMovedEvent, DragMoved, RoutingStrategies.Tunnel, handledEventsToo: true);
         _list.PointerReleased += (_, _) => _drag = null;
@@ -329,14 +334,14 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         _refreshing = false;
     }
 
-    private (PointerPressedEventArgs Event, Point Point)? _drag;
+    private (PointerPressedEventArgs Event, Point Point, BrowserSource Source)? _drag;
     private async void DragMoved(object? sender, PointerEventArgs e)
     {
-        if (_drag is not { } drag || _selected is not { Directory: false } source || _using ||
+        if (_drag is not { } drag || _using ||
             !e.GetCurrentPoint(_list).Properties.IsLeftButtonPressed ||
             Math.Abs(e.GetPosition(_list).X - drag.Point.X) + Math.Abs(e.GetPosition(_list).Y - drag.Point.Y) < 6) return;
         _drag = null;
-        using var transfer = new DataTransfer(); transfer.Add(DataTransferItem.Create(DragFormat, source));
+        using var transfer = new DataTransfer(); transfer.Add(DataTransferItem.Create(DragFormat, drag.Source));
         try { await DragDrop.DoDragDropAsync(drag.Event, transfer, DragDropEffects.Copy); }
         catch (Exception error) when (error is InvalidOperationException or NotSupportedException)
         { _message = "Browser.SourceUnavailable"; Refresh(); }
@@ -347,7 +352,8 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         if (e.Key == Key.Escape) { StopPreview(); e.Handled = true; }
         else if (e.Key == Key.F && e.KeyModifiers == KeyModifiers.Control) { _search.Focus(); e.Handled = true; }
         else if (e.Key == Key.Left && e.KeyModifiers == KeyModifiers.Alt && _history.TryPop(out var path)) { Navigate(path, false); e.Handled = true; }
-        else if (e.Key == Key.F6) { Navigate(_currentPath, false); e.Handled = true; }
+        else if (e.Key == Key.R && e.KeyModifiers == KeyModifiers.Control)
+        { Navigate(_currentPath, false); e.Handled = true; }
         else if (_list.IsKeyboardFocusWithin && e.Key is Key.Enter or Key.Space) { ActivateSelected(); e.Handled = true; }
         else if (_list.IsKeyboardFocusWithin && e.Key == Key.Back) { Navigate(_currentPath is { } p ? Directory.GetParent(p)?.FullName : null); e.Handled = true; }
     }
@@ -374,7 +380,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
     {
         foreach (var (button, key) in new[] { (_add, "Browser.AddFolder"), (_remove, "Browser.RemoveFolder"), (_back, "Browser.Back"),
             (_up, "Browser.Up"), (_refresh, "Browser.Refresh"), (_play, "Browser.Preview"), (_stop, "Browser.Stop"), (_cancel, "Browser.Cancel") })
-        { AutomationProperties.SetName(button, _shell[key]); ToolTip.SetTip(button, _shell[key]); }
+        { AutomationProperties.SetName(button, _shell[key]); ToolTip.SetTip(button, _shell[key] + (button == _refresh ? " · Ctrl+R" : "")); }
         _search.PlaceholderText = _shell["Browser.Search"];
         AutomationProperties.SetName(_search, _shell["Browser.Search"]);
         AutomationProperties.SetName(_locations, _shell["Browser.Locations"]);

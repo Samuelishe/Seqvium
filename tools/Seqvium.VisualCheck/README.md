@@ -1,5 +1,24 @@
 # Desktop visual and lifecycle verification
 
+## Cross-stage input and Browser cost
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll cross-stage "$PWD/.artifacts/cross-stage-audit/.artifacts/routed"
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll cross-stage "$PWD/.artifacts/cross-stage-audit/.artifacts/native" native
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll browser-cost "$PWD/.artifacts/cross-stage-audit/cost" <authored-long-mp3> <authored-long-flac>
+```
+
+`cross-stage` verifies main-window F6/pane traversal and Ctrl+R/Browser refresh. A held production
+preparation exercises Pattern selection, second-click editor intent and Panic with a deterministic
+borrower/callback; it does not play physical audio or validate MainWindow's exact melodic Part choice.
+`native` adds guarded real Windows clicks/motion, including a row different from previous selection
+and list whitespace. Foreign-window coverage refuses input. An ordinary Shell shortcut launch may
+be needed for foreground eligibility; guards must still pass. Sources, projects and configuration
+are synthetic and local to the run. `browser-cost` observes full inspection then preview, process
+allocations/peak working set and cooperative cancellation once per supplied source; it neither
+measures UI dispatcher progress nor opens physical output. Supply authored/licensed files and keep
+the run bounded. [Audit](../../docs/experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) owns observations and limits.
+
 ## Sample Browser check
 
 With an affected Release build (or equivalent isolated `--artifacts-path` executable):

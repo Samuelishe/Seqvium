@@ -359,4 +359,48 @@ public sealed class MixerTests
         sampler.Process(packet);
         Assert.Equal(Render(f.Document, packet: 127).Take(254), packet);
     }
+
+    [Theory]
+    [InlineData(44100)] [InlineData(48000)]
+    public async Task ProcessedRangeLoopMatchesBoundedColdSeekAtEveryWrap(int rate)
+    {
+        using var f = await Fixture.Create(); f.Enable();
+        f.Settings(new() { TrimDb = 12, Eq = new() { Enabled = true, HighPassHz = 500, MidDb = 12, MidQ = 4 },
+            Compressor = new() { Enabled = true, ThresholdDb = -40, Ratio = 20 } });
+        f.Document.Edit("Protect", e => e.SetMixer(f.Mixer with { ProtectOutput = true }));
+        using var plan = ArrangementPreparation.Prepare(f.Document, rate, 2, 127, TestContext.Current.CancellationToken);
+        using var cold = plan.CreateExecution(); using var streaming = plan.CreateExecution();
+        int start = rate / 10, length = rate / 100;
+        var segment = new float[length * 2]; cold.Seek(start);
+        for (int offset = 0; offset < length; offset += 127)
+            cold.Process(segment.AsSpan(offset * 2, Math.Min(127, length - offset) * 2));
+        var scratch = new float[254];
+        while (streaming.Position < start)
+            streaming.Process(scratch.AsSpan(0, (int)Math.Min(127, start - streaming.Position) * 2));
+        streaming.Process(scratch);
+        Assert.Contains(segment.Take(254).Zip(scratch), p => Math.Abs(p.First - p.Second) > .000001f);
+        foreach (int packetSize in new[] { 1, 127 })
+        {
+            using var sampler = new RealtimeSampler(rate, 2, 127);
+            using var request = sampler.BeginArrangementPreparation(f.Document);
+            await request.PrepareAsync(TestContext.Current.CancellationToken);
+            Assert.Equal(SamplerPublication.Accepted, request.Publish(TestContext.Current.CancellationToken));
+            sampler.SeekSong(start); sampler.SetSongLoop(start, start + length, true); sampler.Start();
+            for (int offset = 0; offset < length * 4;)
+            {
+                int count = Math.Min(packetSize, length * 4 - offset);
+                sampler.Process(scratch.AsSpan(0, count * 2));
+                for (int sample = 0; sample < count * 2; sample++)
+                {
+                    Assert.Equal(segment[(offset * 2 + sample) % segment.Length], scratch[sample]);
+                    Assert.True(float.IsFinite(scratch[sample]));
+                    Assert.InRange(Math.Abs(scratch[sample]), 0, .891252f);
+                }
+                offset += count;
+            }
+            Assert.True(sampler.ReadStatus().Playing);
+            sampler.Panic(); sampler.Process(scratch);
+            Assert.All(scratch, v => Assert.Equal(0, v));
+        }
+    }
 }

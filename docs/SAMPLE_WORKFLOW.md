@@ -48,6 +48,10 @@ routes remain intact. Frozen destination/lifecycle/generation, cancellation, man
 Undo/Redo and portable Save As/Open remain the existing owners. No schema or resource store is added.
 The [Browser report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) distinguishes deterministic, rendered,
 routed-drop and physical-output evidence from the foreground-refused native mouse attempt.
+The later [cross-stage audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) adds guarded native row-origin
+drag and whitespace refusal, shortcut and held-selection evidence; broader folder-picker/native
+musical authoring acceptance remains separate. Inspection followed by preview currently decodes
+external audio twice; measured cost and a bounded follow-up are in [technical debt](TECH_DEBT.md#browser-selected-source-decode-cost).
 
 ## Playlist audio import
 

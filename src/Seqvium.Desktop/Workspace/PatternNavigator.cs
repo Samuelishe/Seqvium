@@ -26,6 +26,8 @@ internal sealed class PatternNavigator : Grid, IDisposable
     private readonly StackPanel _items = new() { Classes = { "compact" } };
     private readonly Dictionary<Id<GraphAttachment>, Button> _choices = [];
     private bool _disposed;
+    private Id<GraphAttachment>? _selecting;
+    private Task _selectionWork = Task.CompletedTask;
 
     private (Guid Lifecycle, long Generation, Id<GraphAttachment>? Selected, bool Busy, bool Closed, HostPreferences
         Preferences)? _rendered;
@@ -120,24 +122,26 @@ internal sealed class PatternNavigator : Grid, IDisposable
                 AutomationProperties.SetAutomationId(button, "Navigator.Pattern." + id);
                 button.Click += async (_, _) =>
                 {
-                    PendingCommand = _workflow.SelectAsync(id);
-                    await PendingCommand;
-                    if (!_disposed)
+                    if (_selecting is not null) return;
+                    _selecting = id;
+                    try
                     {
-                        Refresh();
+                        PendingCommand = _selectionWork = _workflow.SelectAsync(id);
+                        await PendingCommand;
                     }
+                    finally { _selecting = null; _rendered = null; if (!_disposed) Refresh(); }
                 };
                 button.DoubleTapped += async (_, e) =>
                 {
                     e.Handled = true;
-                    PendingCommand = _openEditor(id, null, null);
+                    PendingCommand = OpenEditorAsync(id);
                     await PendingCommand;
                 };
                 button.KeyDown += async (_, e) =>
                 {
                     if (e.Key != Key.Enter || e.KeyModifiers != KeyModifiers.None) return;
                     e.Handled = true;
-                    PendingCommand = _openEditor(id, null, null);
+                    PendingCommand = OpenEditorAsync(id);
                     await PendingCommand;
                 };
                 button.ContextRequested += (_, e) =>
@@ -149,8 +153,13 @@ internal sealed class PatternNavigator : Grid, IDisposable
                 _items.Children.Add(button);
             }
 
-            button.IsEnabled = !observation.Busy && !observation.IsClosed;
+            // Keep the clicked card and its visual target alive through async selection so the
+            // second native press can complete DoubleTapped. Other busy commands stay gated.
+            button.IsEnabled = (!observation.Busy || _selecting == choice.Id) && !observation.IsClosed;
             button.Classes.Set("primary", observation.Selected == choice.Id);
+            var contentBasis = (pattern, choice.Label, index);
+            if (Equals(button.Tag, contentBasis)) { index++; continue; }
+            button.Tag = contentBasis;
             var body = new Grid { RowDefinitions = new("Auto,*"), RowSpacing = 3 };
             body.Children.Add(new TextBlock
             {
@@ -169,6 +178,16 @@ internal sealed class PatternNavigator : Grid, IDisposable
             ToolTip.SetTip(button, choice.Label + "\n" + _shell["Navigator.Hint"]);
             index++;
         }
+    }
+
+    private async Task OpenEditorAsync(Id<GraphAttachment> target)
+    {
+        var basis = _workflow.State;
+        await _selectionWork;
+        var current = _workflow.State;
+        if (_disposed || current.Document.LifecycleId != basis.Document.LifecycleId ||
+            current.Generation != basis.Generation) return;
+        await _openEditor(target, null, null);
     }
 
     private void OpenMenu(Button button, Id<GraphAttachment> id)

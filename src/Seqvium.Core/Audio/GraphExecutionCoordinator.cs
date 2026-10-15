@@ -223,7 +223,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
 
         var execution = _sampler.ReadStatus();
         bool ownsExecution = _basis is not null && execution.PreparedExecutionId == _startAuthority &&
-                             execution.AttachmentId == _target;
+                             execution.AttachmentId == (_arrangement ? default(Id<GraphAttachment>) : _target);
         // Publication reserves a pending slot, not an accepted consumer handoff. A rejected target
         // must be prepared again even when its document revision equals the last-valid active plan.
         if (_basis is not null && _sampler.RejectedPreparedExecutionId == _startAuthority &&
@@ -243,10 +243,25 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 (attachment is null || !GraphPreparation.IsSilentChannelGraph(snapshot.State, attachment)))
                 _blocker = report?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
             else if (_basis is not null && ownsExecution && !_sampler.HasPending &&
+                     snapshot.State.Mixer is null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
+                     ProjectDocument.HasSameContent(_basis.State with { ArrangementSections = [] },
+                         snapshot.State with { ArrangementSections = [] }))
+            {
+                // Labels do not own music. Republish equivalent revision/Gain coefficients only;
+                // include an earlier unconsumed Gain edit instead of revoking its update.
+                var nodes = snapshot.State.Graphs.SelectMany(g => g.Nodes).ToDictionary(n => n.Id);
+                float[] coefficients = _gainNodes.Select(id =>
+                    (float)nodes[id].Parameters[GraphBuiltIns.GainAmplitude].GetDecimal()).ToArray();
+                if (_sampler.PublishGraphUpdate(_startAuthority, execution.AttachmentId!.Value,
+                        _executionRevision, snapshot.Revision, coefficients, _sampler.InvalidatePreparation()))
+                    _basis = snapshot;
+                else _dirty = true;
+            }
+            else if (_basis is not null && ownsExecution && !_sampler.HasPending &&
                      _basisRoots.SequenceEqual(_document.MediaRoots) &&
                      MixerPreparation.SameTopology(_basis.State.Mixer, snapshot.State.Mixer) &&
-                     ProjectDocument.HasSameContent(_basis.State with { Mixer = null },
-                         snapshot.State with { Mixer = null }))
+                     ProjectDocument.HasSameContent(_basis.State with { Mixer = null, ArrangementSections = [] },
+                         snapshot.State with { Mixer = null, ArrangementSections = [] }))
             {
                 if (_sampler.PublishMixerUpdate(snapshot, _startAuthority))
                 {
@@ -362,6 +377,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             ArrangementClips = [],
             AudioClips = [],
             ArrangementTracks = [],
+            ArrangementSections = [],
             Sounds = ignoreNotes
                 ?
                 [

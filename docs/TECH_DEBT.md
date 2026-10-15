@@ -25,5 +25,21 @@ Future entries should identify the existing compromise, affected files/evidence,
 bounded resolution or exit condition. Open uncertainties belong to [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md);
 new capabilities belong to [ROADMAP](ROADMAP.md).
 
+## Browser selected-source decode cost
+
+`InspectBrowserSourceAsync` and subsequent explicit/automatic `PreviewBrowserSourceAsync` each
+normalize and read the complete external source. The inspection PCM is released before preview;
+there is no persistent selected-source PCM cache. The worker path keeps this work off the UI, but
+selection commands wait for cooperative cancellation of the previous worker. A stalled OS codec
+cannot be forcibly cancelled. Large sources cause repeated disk/codec work and LOH allocation;
+the 512 MiB source limit is not a process memory bound.
+
+The [cross-stage audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md#browser-cost-observation) records
+one three-minute stereo MP3/FLAC observation: approximately 70 MB allocated per pass, with variable
+latency up to 7.68 s. This is evidence of cost, not an attributed decoder/GC/UI hang. A follow-up
+should first measure dispatcher progress and codec/GC time, then consider sharing decoded PCM only
+within one inspection/auto-preview operation, retaining cancellation, source validation and joined
+lease disposal. Avoid a general media cache or enlarged budgets without evidence.
+
 Keep only currently existing unresolved implementation debt here. Remove resolved entries and retain
 useful resolution/evidence history in the cold archive under documentation governance.

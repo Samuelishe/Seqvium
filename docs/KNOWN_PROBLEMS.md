@@ -11,6 +11,21 @@ Owners keep the detailed constraints; this register identifies what is not yet e
 Speculative possibilities without required resolution belong to [IDEAS](IDEAS.md); agreed staged
 intent belongs to [ROADMAP](ROADMAP.md). No entry below is implementation debt.
 
+## Cross-stage measurement gaps
+
+The [cross-stage audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md#physical-pressure-and-test-isolation)
+reproduces a 4,136-byte preview zero-allocation assertion in a bounded parallel run; the exact current
+and retained-baseline cases pass alone. Allocation origin remains unattributed. Preserve the strict
+requirement and investigate with a bounded allocation trace or isolated consumer-thread observation,
+recording source/runtime/runner/concurrency. Serial green is not evidence of a permanent correction.
+The earlier measured-loop assertion defect is already fixed and is a separate issue.
+
+Retained ArtifactRetention failure evidence explicitly reports unavailable process ownership snapshot.
+Its external PowerShell/CIM snapshot has a five-second deadline and safely protects all candidates on
+failure. Temporary paths are isolated, but parallel process/load timing is not. Separate algorithm
+fixtures from real OS snapshot/failure-safety checks in a focused tooling follow-up; never weaken
+fail-closed deletion to obtain green tests. R4-F2 physical starvation remains Q-047, independently.
+
 ## SEQ-R0 validation priorities
 
 | ID    | Question / risk                                                                                          | Evidence needed                                                                                                                                                                                                                                                                                                        | Owner                                                          |

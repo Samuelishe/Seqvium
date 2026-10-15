@@ -149,6 +149,17 @@ retrieved only for explicit historical tasks.
 | `0.1.7.0002` | SEQ-DAILY-WORKFLOW | One BUILD for playing Pattern selection, direct/session-remembered editors, New/Ctrl+N and calm empty workspace with preserved musical layout. Focused production transport/lifecycle/editor/layout tests and RU/EN Dark/Light actual-window routed evidence; native input refused by covered foreground, physical output attempt failed with Starvation. No schema/DSP redesign, PATCH or full-suite claim. |
 | `0.1.7.0003` | SEQ-VISUAL-IDENTITY | One BUILD for integrated 09 identity, optical native icons, bundled typography and reproducible publication resources. 60/60 focused cases, zero-warning affected builds, actual embedded-font hashes, both-theme localized catalog/field/workspace renders and EXE/window/shortcut extraction. Taskbar/Alt+Tab visual capture refused by foreground guard; platform/DPI/aesthetic limits remain. No new musical capability, PATCH, L3 or release. |
 | `0.1.7.0004` | SEQ-SAMPLE-BROWSER | One BUILD for paged local/project Browser, real waveform/metadata, transient solo preview and atomic Rack/Playlist use/reuse. 246 focused cases, actual RU/EN Dark/Light routed/drop and portable-media checks, physical WAV/MP3/FLAC output. Native input foreground-refused; PATCH acceptance remains open. [Report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) owns final full-suite evidence and limits. |
+| `0.1.7.0005` | SEQ-CROSS-STAGE-AUDIT | One BUILD for section playback, Song Mixer publication, Pattern double-click, Browser shortcut/drag origin and failed-Save Close repairs. Focused regressions and native input pass; inherited pressure/measurement gaps remain open. [Audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) owns evidence and limits. |
+
+### SEQ-CROSS-STAGE-AUDIT checkpoint
+
+Identity advances once **0.1.7.0004 → 0.1.7.0005**, one BUILD for verified bounded integration repairs:
+section-only playback equivalence, Song Mixer control publication, playing Pattern double-click
+delivery, Browser refresh/drag origin and failed-Save Close preservation. Regression tests, guarded
+native input and measurements are scoped in the [audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md).
+No independent new capability/PATCH, reader gate, L3, pressure/acoustic/platform acceptance or release
+is claimed. Inherited intermittent allocation and process-snapshot isolation gaps remain explicit.
+No staging, commit, push, tag or history mutation.
 
 ### SEQ-SAMPLE-BROWSER checkpoint
 

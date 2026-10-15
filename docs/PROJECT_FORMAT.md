@@ -9,6 +9,8 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
+The current reader supports major 1 / minor 5. Each feature below has its own minimum-reader gate;
+product BUILD changes do not migrate documents.
 
 ## Playlist sections and Pattern ancestry (reader 1.5)
 
@@ -59,7 +61,7 @@ not apply to normalized Audio Clip media. Global durable-media disk quota remain
 
 ## Mixer persistence
 
-The current reader understands major 1 / minor 4. Optional `state.mixer` requires both `minor >= 3`
+Optional `state.mixer` requires both `minor >= 3`
 and `minimumReaderMinor >= 3`; Save raises those markers when Mixer is present. Files without Mixer
 retain their applicable older gate and legacy sound, with no silent creation/migration on Open.
 An older reader must refuse essential Mixer intent instead of opening an apparently compatible dry mix.
@@ -200,7 +202,7 @@ identified sound uses without defining runtime instances. `additionalData` is a 
 name, never emitted as a format field. Extension payloads and optional unknown values are opaque JSON.
 
 Only major 1 is understood. Higher compatible minor documents are retained at their original minor
-when `minimumReaderMinor <= 3`; unsupported major/required minor is refused. Graph-free 1.0 remains
+when `minimumReaderMinor <= 5`; unsupported major/required minor is refused. Graph-free 1.0 remains
 supported; the graph-aware gate below applies to meaningful graph intent. No legacy migration is
 claimed. Unknown JSON properties at envelope, state, settings and every entity/nested part/note are
 preserved semantically at the same object boundary, including through edits/Undo/Save. Reserved known
@@ -221,7 +223,7 @@ No external-reference import is adopted.
 
 ## R4-F1 graph-aware JSON format
 
-The reader supports major 1, minor 1. `state.graphs` and `state.graphAttachments` are optional on read,
+Graph intent requires reader 1.1 or later. `state.graphs` and `state.graphAttachments` are optional on read,
 defaulting to empty arrays for historical R1 files; explicit null/invalid collections refuse. Current
 writers emit both arrays. A graph-free legacy document keeps its 1.0 envelope and musical meaning.
 Any nonempty graph/attachment array, including unsupported, unattached, incomplete or cyclic intent,

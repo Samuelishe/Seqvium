@@ -8,6 +8,30 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-CROSS-STAGE-AUDIT — 2026-10-15
+
+Audited the published 0.1.7.0004 baseline (`45e873bcf6adbf598e4bfda94e8b74e4b93ed79f`) across
+Drum/Mixer/demo/Audio Clips/sections/replacement/daily/identity/Browser boundaries. Reproduced and
+repaired section metadata restarting Song, Song attachment qualification bypassing fast Mixer updates,
+playing Pattern double-click gating/visual replacement, Browser F6 collision/selection-based drag
+origin and premature Stop/Browser cursor shutdown before failed-Save Close. Seven expected pre-fix
+cases fail, then pass. Added actual-music-swap, processed cold-loop and Browser lifecycle/media checks.
+
+Guarded Windows input passes shortcut, actual unselected-row and whitespace drags, held selection/
+second-click/Panic. The held transport uses production preparation/rendering with a substituted
+borrower/editor-intent callback; no physical audio acceptance is inferred. First foreground refusal
+and a task-owned layout occlusion are retained as failed attempts. Long authored MP3/FLAC inspection/
+preview records repeated full-source allocations and variable latency; cache/preroll/backend work
+is deferred. A 4,136-byte parallel preview allocation assertion is reproduced and remains unexplained;
+isolated current/baseline passes are not a fix. Historical retention failure explicitly reports a
+missing process snapshot and safe protection, rather than an unsafe cleanup.
+
+Reader documentation is corrected to current 1.5 without changing gates. Current contracts, debt,
+remaining risks, state/cadence and version ledger are updated. One BUILD **0.1.7.0005** covers these
+bounded repairs; L3 remains the Browser checkpoint and cadence becomes one. The
+[audit report](../experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) records exact verification and limits.
+No user project/demo changes, staging, commit, push, tag or history mutation.
+
 ## SEQ-SAMPLE-BROWSER — 2026-10-15
 
 Added a retained compact Browser with chosen folders, recent/pinned access, bounded paged navigation

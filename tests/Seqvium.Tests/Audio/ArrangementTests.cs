@@ -182,6 +182,131 @@ public sealed class ArrangementTests
 
     [Theory]
     [InlineData(false)] [InlineData(true)]
+    public async Task SectionLabelsPreserveSongPcmAndEpochAcrossPublicationAndHistory(bool mixer)
+    {
+        using var f = await Fixture.Create(longPattern: true);
+        Id<ArrangementSection> section = default;
+        f.Document.Edit("Song", e =>
+        {
+            e.AddArrangementClip(f.Sources[0], default, 0, 2);
+            section = e.AddArrangementSection("Intro", default, new(3840000), 0);
+            if (mixer) e.InitializeMixer();
+        });
+        using var referencePlan = ArrangementPreparation.Prepare(f.Document, 48000, 2, 256, TestContext.Current.CancellationToken);
+        using var reference = referencePlan.CreateExecution();
+        using var sampler = new RealtimeSampler(48000, 2, 256);
+        await Publish(f, sampler); sampler.Start();
+        var packet = new float[512]; var expected = new float[512];
+        sampler.Process(packet); reference.Process(expected);
+        long epoch = sampler.TransportEpoch;
+        f.Document.Edit("Label only", e => e.UpdateArrangementSection(section, "Verse", default, new(3840000), 3));
+        for (int edit = 0; edit < 3; edit++)
+        {
+            long position = sampler.RenderPosition;
+            await Publish(f, sampler, true);
+            sampler.Process(packet); reference.Process(expected);
+            Assert.Equal(epoch, sampler.TransportEpoch);
+            Assert.Equal(position + 256, sampler.RenderPosition);
+            Assert.Equal(expected, packet);
+            Assert.Equal(1, sampler.ActiveVoices);
+            sampler.RetireCompleted();
+            if (edit == 0) Assert.True(f.Document.Undo());
+            if (edit == 1) Assert.True(f.Document.Redo());
+        }
+    }
+
+    [Theory]
+    [InlineData(false, false)] [InlineData(false, true)]
+    [InlineData(true, false)] [InlineData(true, true)]
+    public async Task SectionOrganizationNeedsNoPreparationInPatternOrSong(bool song, bool mixer)
+    {
+        using var f = await Fixture.Create(longPattern: true);
+        Id<ArrangementSection> section = default;
+        f.Document.Edit("Song", e =>
+        {
+            e.AddArrangementClip(f.Sources[0], default, 0, 2);
+            if (mixer) e.InitializeMixer();
+        });
+        using var sampler = new RealtimeSampler(48000, 2, 256);
+        sampler.SetLooping(!song);
+        var owner = new AudioOwnerContext();
+        GraphExecutionCoordinator coordinator = null!;
+        owner.Run(() =>
+        {
+            coordinator = new(f.Document, sampler, f.Attachments[0].Id, owner, 8, 1, null, false);
+            coordinator.SelectArrangement(song);
+        });
+        try
+        {
+            await owner.Until(() => !coordinator.ReadStatus().PreparationPending || sampler.HasPending);
+            owner.Run(() => Assert.True(coordinator.Start()));
+            var packet = new float[512]; sampler.Process(packet);
+            owner.Run(coordinator.Progress);
+            int preparations = coordinator.ReadStatus().Preparations;
+            long epoch = sampler.TransportEpoch;
+            var commands = new Action[]
+            {
+                () => f.Document.Edit("Add section", e => section = e.AddArrangementSection("Intro", default, new(3840000), 0)),
+                () => f.Document.Edit("Rename/color", e => e.UpdateArrangementSection(section, "Verse", default, new(3840000), 3)),
+                () => Assert.True(f.Document.Undo()),
+                () => Assert.True(f.Document.Redo()),
+                () => f.Document.Edit("Remove label", e => e.DeleteArrangementSection(section))
+            };
+            foreach (var command in commands)
+            {
+                long position = sampler.RenderPosition;
+                owner.Run(command);
+                Assert.Equal(preparations, coordinator.ReadStatus().Preparations);
+                sampler.Process(packet);
+                Assert.Equal(epoch, sampler.TransportEpoch);
+                Assert.Equal(position + 256, sampler.RenderPosition);
+                Assert.True(sampler.ReadStatus().Playing);
+                Assert.Equal(f.Document.Current.Revision, sampler.ReadStatus().EquivalentCanonicalRevision);
+                owner.Run(coordinator.Progress);
+            }
+            if (mixer)
+            {
+                owner.Run(() => f.Document.Edit("Mixer control", e =>
+                    e.SetMixerStrip(f.Document.Current.State.Mixer!.Channels[0].Id, new() { LevelDb = -6 })));
+                Assert.Equal(preparations, coordinator.ReadStatus().Preparations);
+                sampler.Process(packet);
+                Assert.Equal(epoch, sampler.TransportEpoch);
+                Assert.Equal(f.Document.Current.Revision, sampler.ReadStatus().ExecutingRevision);
+            }
+        }
+        finally { await owner.Join(coordinator.DisposeAsync); }
+    }
+
+    [Fact]
+    public async Task SectionSwapStillPublishesMovedMusicAtTheCurrentSongClock()
+    {
+        using var f = await Fixture.Create();
+        Id<ArrangementSection> section = default;
+        f.Document.Edit("Sections and music", e =>
+        {
+            e.AddArrangementClip(f.Sources[0], default, 0);
+            e.AddArrangementClip(f.Sources[1], new(9600), 1);
+            section = e.AddArrangementSection("First", default, new(9600), 0);
+            e.AddArrangementSection("Second", new(9600), new(14400), 1);
+        });
+        using var sampler = new RealtimeSampler(48000, 2, 127);
+        await Publish(f, sampler); sampler.Start(); sampler.Process(new float[2]);
+        long epoch = sampler.TransportEpoch, position = sampler.RenderPosition;
+        f.Document.Edit("Swap actual music", e => e.MoveArrangementSection(section, true));
+        Assert.Equal(14400, f.Document.Current.State.ArrangementClips.Single(c => c.SourcePlacementId == f.Sources[0]).Position.Ticks);
+        using var plan = ArrangementPreparation.Prepare(f.Document, 48000, 2, 127, TestContext.Current.CancellationToken);
+        using var reference = plan.CreateExecution(); reference.Seek(position);
+        await Publish(f, sampler, true);
+        var actual = new float[254]; var expected = new float[254];
+        sampler.Process(actual); reference.Process(expected);
+        Assert.Equal(epoch, sampler.TransportEpoch);
+        Assert.Equal(position + 127, sampler.RenderPosition);
+        Assert.Equal(expected, actual);
+        Assert.Contains(actual, v => v != 0);
+    }
+
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
     public async Task ProductionBoundarySmoothingEndsInsideGateAndSourceEofWithNoAddedTail(bool sourceEof)
     {
         using var f = await Fixture.Create(longPattern: !sourceEof);

@@ -9,6 +9,14 @@ progress.
 
 ## Sample Browser verification
 
+Cross-stage regressions additionally cover section-only Pattern/Song × Mixer publication without
+preparation, actual section-swap scheduling, cold processed range loops at 44.1/48 kHz, failed-Save
+Close playback, queued stale Browser acceptance after New and preview/history/portable-media leases.
+The [audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) records the native/routed input split, inherited
+allocation failure and process-snapshot isolation evidence. Use VisualCheck `cross-stage` for held
+double-click/Panic and shortcut checks; `native` adds real row/whitespace drag. This substitutes the
+held selection's output and editor-intent callback, and does not claim physical audio or exact Part choice.
+
 `SampleBrowserTests` covers paged nonrecursive discovery/cancellation, transient preview and failed
 replacement, playing-transport preservation, atomic empty Rack creation, managed WAV/audio reuse,
 Save As/reopen without external sources, malformed location preservation, stale/cancelled/missing
