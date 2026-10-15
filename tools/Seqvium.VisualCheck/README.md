@@ -261,6 +261,30 @@ output.** Parameters are restored after input probes. It changes no system/user 
 isolated project/layout state; optional delivery preserves the authored example outside rolling artifacts.
 No subjective listening, long pressure or native file-picker acceptance follows from this route.
 
+## Captured musical controls
+
+`control-input <absolute-output> --timeout-seconds=600` creates a new Pattern and Clap with guarded
+Windows mouse input, then exercises all seven instruments, their dials and envelope handles, local
+audition velocity, graph Gain and initialized Mixer channel/Master balance. Variable-radius curved
+paths check direction and capture, Shift precision, stationary clicks, Escape and actual Ctrl+Z.
+Horizontal paths leave the track above and below. Samples record requested/delivered coordinates,
+capture and event delivery latency. Fixture pane placement and visual language/theme changes are
+explicit setup, separate from native input. It plays quiet hits through the actual default output:
+changed commit audition, eight rapid retriggers, stable output/PCM identity, absence of a delayed
+backlog and a separate local sample Stop. It changes no user project or device/system volume.
+
+`gain-mixer` restricts the scenario after its initial Clap regression to Gain/Mixer. `velocity-only`
+restricts subsequent checks to the seven audition-level instances. `audition-only` stops after the
+initial commit/Undo, rapid Play/Stop and localized ordinary/reduced visual review. Layout fixtures also
+exercise intermediate width/height changes, docked neighbours, breakpoint jitter, precise focused text,
+Escape and resizing a captured gesture with one commit/Undo. `instrument=Clap` limits instrument iteration
+without relabeling other instruments as checked. `routed` uses synthetic routed
+events in the real window and reports `NativeWindowsInput=false`; it is never a native pass.
+`reproduce` adds a short attach window before the initial amplitude press for comparing the original
+crash. Foreground, occlusion or input-delivery refusal remains failed/partial evidence. Launch this
+interactive check with a visible window; hiding the native startup window can invalidate activation.
+Screenshots, traces, private fixture projects and original crash logs stay in ignored `.artifacts/`.
+
 ## Catalog and central-change demonstration
 
 `catalog` opens real standard/primary/compact/icon/danger buttons, sliders, drawn Gain levels,

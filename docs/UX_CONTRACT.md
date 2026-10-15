@@ -447,10 +447,25 @@ Programmatic refresh is not a user edit. Local text Undo/input takes precedence 
 Enter in a numeric field commits it rather than opening another editor. Keyboard and pointer access
 share the same target and document transactions.
 
-The physical Gain dial and slider share the same editor draft. Relative vertical dragging previews;
-release commits once, Shift gives fine movement, double-click restores unity and arrows/Home/End
+The physical Gain dial and slider share the same editor draft. Relative circular dragging increases
+clockwise and decreases counterclockwise, without snapping on press or wrapping values at the angular
+seam. The center is insensitive; crossing it re-anchors the gesture. Limits respond immediately to
+reversal. Release commits once, Shift gives fine rotation, double-click restores unity and arrows/Home/End
 provide keyboard access. Escape/capture loss cancels. The exact amplitude field remains available.
 The dial's ring displays its real value; the transfer plot is analytical, not a live signal meter.
+Drum parameter dials and compact Mixer balance use this same rotation model. Horizontal Gain and drum
+audition velocity use the shared captured level control: only X changes the value, including outside
+the drawn track vertically. Audition velocity remains local and never enters project history.
+The Drum editor keeps a large icon-only Play beside a separate sample Stop below its scrolling
+parameters. Play can retrigger rapidly without waiting for an earlier hit to finish. Releasing a
+changed accepted parameter auditions the current sound outside musical playback; cancellation,
+Escape, Undo and unchanged or stale edits do not trigger sound. Pending preparation retains only the
+latest intent, and Stop/Panic, target changes and project close prevent stale starts.
+The editor continuously reduces dials to a usable minimum within its own floating/docked viewport,
+then wraps with stable breakpoint bands. Graph size follows available width/height; text fields/fonts
+remain readable. A very small viewport may scroll vertically.
+Draft feedback stays on the edited controls; transient warning text has a fixed header slot and never
+pushes Play/Stop or changes the working area during a gesture.
 
 The node name belongs in the pane title; source and processing scope appear once below it. Gain's
 short Level label groups exact amplitude and derived dB with the control. Curve is optional disclosure,

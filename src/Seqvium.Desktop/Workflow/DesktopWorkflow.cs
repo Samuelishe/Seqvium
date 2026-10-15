@@ -471,6 +471,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     // Emergency transport bypasses the async command gate: Stop during preparation cancels pending Start intent.
     public Task<bool> StopAsync(bool panic = false) => _owner.Run(() =>
     {
+        InvalidateDrumAuditions();
         ClearLabAudition();
         _playGeneration++;
         if (panic) _coordinator?.Panic();
@@ -514,7 +515,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         if (decision == UnsavedDecision.Cancel) return false;
         // Withdraw pending Start intent so Close can enter the command gate during preparation.
         // Existing playback remains intact until Save succeeds and joined audio close begins.
-        await _owner.Run(() => { _playGeneration++; return Task.FromResult(true); });
+        await _owner.Run(() => { InvalidateDrumAuditions(); _playGeneration++; return Task.FromResult(true); });
         return await Command("Workflow.CloseFailed", async () =>
         {
             if (!CanReplace(decision, savePath)) return false;
@@ -686,6 +687,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         if (_disposed) return;
         if (!_closed && !await CloseAsync(UnsavedDecision.Discard))
             throw new InvalidOperationException(State.Detail ?? "Workflow shutdown did not complete.");
+        await _drumAuditionDrain;
         await _owner.DisposeAsync();
         _commands.Dispose();
         _disposed = true;

@@ -14,7 +14,7 @@ namespace Seqvium.VisualCheck;
 internal static partial class NativePointer
 {
     /// <summary>Native musical authoring. Input stops on foreground loss, including an unrelated window in this process.</summary>
-    internal sealed class DrumInput(MainWindow window)
+    internal sealed partial class DrumInput(MainWindow window)
     {
         private nint Handle => window.TryGetPlatformHandle()?.Handle ?? 0;
 
@@ -46,9 +46,10 @@ internal static partial class NativePointer
                 throw new ForegroundLostException();
         }
 
-        internal async Task Click(Control control, Point? point = null, bool allowOwnedDialog = false)
+        internal async Task Click(Control control, Point? point = null, bool allowOwnedDialog = false,
+            int beforeMs = 80, int afterMs = 150)
         {
-            await Task.Delay(80); // Input hit testing uses the rendered scene after a layout publication.
+            await Task.Delay(beforeMs); // Input hit testing uses the rendered scene after a layout publication.
             Guard();
             Program.Require(control.IsEffectivelyVisible && control.IsEnabled, "Native target unavailable: " + control);
             var screen = control.PointToScreen(point ?? new(control.Bounds.Width / 2, control.Bounds.Height / 2));
@@ -62,6 +63,16 @@ internal static partial class NativePointer
             }
 
             Program.Require(SetCursorPos(screen.X, screen.Y), "Native drum cursor failed.");
+            if (TopLevel.GetTopLevel(control) is { } root && root != window)
+            {
+                await Task.Delay(60);
+                screen = control.PointToScreen(point ?? new(control.Bounds.Width / 2, control.Bounds.Height / 2));
+                var popupHit = root.InputHitTest(root.PointToClient(screen)) as Visual;
+                Program.Require(popupHit == control || popupHit?.GetVisualAncestors().Contains(control) == true,
+                    "Native popup target is occluded or unsettled.");
+                Program.Require(SetCursorPos(screen.X, screen.Y), "Native popup cursor failed.");
+                await Task.Delay(35);
+            }
             Program.Require(
                 SendInput(1, [new() { Type = 0, Data = new() { Mouse = new() { Flags = 2 } } }],
                     Marshal.SizeOf<Input>()) == 1,
@@ -69,7 +80,7 @@ internal static partial class NativePointer
             await Task.Delay(40);
             Guard(allowOwnedDialog);
             SendInput(1, [new() { Type = 0, Data = new() { Mouse = new() { Flags = 4 } } }], Marshal.SizeOf<Input>());
-            await Task.Delay(150);
+            await Task.Delay(afterMs);
         }
 
         internal async Task RightClick(Control control, Point point)
@@ -262,6 +273,8 @@ internal static partial class NativePointer
     private readonly record struct NativeScreenPoint(int X, int Y);
     [DllImport("user32.dll")]
     private static extern nint WindowFromPoint(NativeScreenPoint point);
+    [DllImport("user32.dll")]
+    private static extern bool GetCursorPos(out NativeScreenPoint point);
     [DllImport("user32.dll")]
     private static extern bool SetWindowPos(nint window, nint after, int x, int y, int width, int height, uint flags);
 

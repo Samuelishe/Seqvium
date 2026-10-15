@@ -226,8 +226,12 @@ state bounds after repeated actual-window reductions. This is reachability/layou
 The Drum Voice uses the existing singleton Node Editor, with a useful 720×740-DIP initial floating
 composition clamped to the available workspace. Opening a different drum target can enlarge an old
 compact Gain pane; repeated same-target opens retain the user's size. The existing 300×210 pane
-minimum remains supported through local vertical scrolling and reflow, rather than shrinking knobs
-or fields. The sound/processing target remains explicit and independent of playback selection.
+minimum remains supported through responsive knob size, wrapping parameter groups and a graph whose
+height follows the available pane. Knobs retain a 64-DIP minimum hit area; exact fields keep their
+readable size. Play/Stop remain below the scrolling parameters and reflow with note/velocity at narrow
+widths. Vertical overflow remains available when the pane is too short to fit the readable content;
+there is no horizontal scrolling. Captured gestures retain their geometry until completion.
+The sound/processing target remains explicit and independent of playback selection.
 Gain's compact default/disclosure and ordinary pane lifecycle are unchanged. Layout saves geometry,
 not instrument drafts, audition pitch/velocity or a document target. See
 [interaction](UX_CONTRACT.md#drum-voice-sound-design) and [evidence](experiments/SEQ-FIRST-DRUM_REPORT.md).

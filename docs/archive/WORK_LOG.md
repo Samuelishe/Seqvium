@@ -2090,3 +2090,40 @@ Settings; the repository has no executable RAG index. ProjectStats root reports 
 Initial Git status was clean. All new source/tests/tooling are intentional; screenshots/configuration
 stay ignored under .artifacts/settings with rolling retention. No staging/index/history mutation,
 commit, push or tag is performed.
+
+## SEQ-CONTROL-INPUT — 2026-10-15
+
+Windows crash events and an independent native new-Pattern/Clap/amplitude drag reproduced the unhandled
+`KeyNotFoundException: pitchAmount` in `DrumEnvelopePlot.PointerPressed`. Amplitude capture now uses
+its own scale. The shared Drum/Gain/Mixer dial follows signed angular motion with center re-anchoring,
+seam continuity, immediate limit reversal and cancellation/Undo. Horizontal Gain and local audition
+levels retain capture off the track; deduplicated feedback, cached graph diagnostics and joined,
+superseded waveform work bound expensive preview paths.
+
+Accepted changed drum commits audition only the relevant stopped source. Spacious icon-only Play and
+local sample Stop use one healthy output, authority-bound ready retrigger and one replaceable pending
+preparation intent. There is no delayed hit queue. Stop/Panic, target change and close withdraw stale
+authority; Piano audition ownership remains covered. Transient PCM still retires at EOF/Stop.
+The owner's follow-ups center the footer/note/larger volume, fix warning placement, localize parameter
+labels and display compact inactive numbers without rounding stored or focused values. Actual allocated
+pane width/height continuously shrink 76–64-DIP dials before wrapping, with 180–250-DIP graph height,
+stable threshold bands, readable fields, frozen pointer geometry and vertical overflow at small sizes.
+
+Affected Release builds have zero warnings/errors; 265/265 focused cases pass, zero skips, 27.285 s.
+Final aligned-label refinement passes 97/97 focused cases (16.492 s), the shared component catalog
+and the existing Rack/Gain `steps` GUI route. A complete native Clap/Gain/Mixer run passes 17 checks;
+the final label layout additionally passes native focus/Escape/Undo/resize fixtures.
+All seven drums, Gain and initialized Mixer owners pass 81 real-window routed checks/124 traces;
+RU/EN × Dark/Light, intermediate width/height, neighbouring docked panes, precision/focus, Escape,
+captured resize and one-commit/Undo fixtures pass. Native crash reproduction/fix and rapid eight-hit
+Play/Stop on Samsung USB C Earphones, 48 kHz stereo, are independently recorded. Ordinary Windows
+coverage remains partial where foreground/delivery guards refuse input; routed evidence is never
+relabeled as native. The [report](../experiments/SEQ-CONTROL-INPUT_REPORT.md) owns final detailed evidence,
+including earlier failures and an intermittent strict Mixer allocation observation; no cause/fix for
+that allocation observation or broad stress/acoustic acceptance is claimed.
+
+One BUILD advances 0.1.8.0003 to 0.1.8.0004; L3 cadence advances to one after the Settings baseline.
+No R8, reader change or release. Initial Git status was clean; product source, regression tests and
+reusable verification tools are intentional. Transient logs/renders remain ignored under .artifacts
+with rolling retention; owner screenshots and breakpoints are preserved. Root ProjectStats reports
+are regenerated separately. No staging/index/history mutation, commit, push or tag is performed.

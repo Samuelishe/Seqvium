@@ -7,7 +7,17 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.8.0003**, SEQ-SETTINGS-F1. A unified compact Settings window owns General,
+Product alpha **0.1.8.0004**, SEQ-CONTROL-INPUT. The first real drum-editing crash is corrected from
+its reproduced `KeyNotFoundException: pitchAmount` in amplitude pointer capture. Shared Drum/Gain/Mixer
+dials follow relative circular motion; captured horizontal levels follow X off the track. The Drum
+footer keeps spacious icon-only Play and local sample Stop accessible, auditions changed accepted
+commits outside music and reuses resident ready PCM/output for retrigger. Dials shrink continuously to
+a usable minimum before wrapping within the allocated pane; Play/Stop stays outside parameter scrolling.
+Preparation keeps only the latest
+pending request; cancellation/transport/lifecycle relevance prevents stale starts. Evidence and limits
+belong to the [control input report](experiments/SEQ-CONTROL-INPUT_REPORT.md). R8 is not started.
+
+A unified compact Settings window owns General,
 Controls and branded About/version. Language/theme duplication and the Appearance UI are retired;
 the title-row sun/moon opens explicit checked catalog selection. Thirteen application commands have
 real remapping, named conflict transfer, clear/default/reset and compatible independent persistence.
@@ -122,7 +132,17 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-SETTINGS-F1, 2026-10-15**. Full Release solution build has zero warnings/errors;
+Latest L0/L1/L2: **SEQ-CONTROL-INPUT, 2026-10-15**. Affected Release builds have zero warnings/errors;
+**265/265 focused tests pass**, zero skips, one thread (**27.285 s**). This includes drum commit/Undo,
+burst coalescing, Stop/Panic/close, ready retrigger authority, long-sample Stop/restart and Piano audition
+ownership. Final aligned-label refinement additionally passes **97/97 focused presentation/editor tests**
+(16.492 s), localized ordinary/reduced layout/precision fixtures with native focus/Escape/Undo and
+the shared component catalog. Original Windows crash events and independent native reproduction establish the missing
+pitch-only key read in amplitude capture. The [report](experiments/SEQ-CONTROL-INPUT_REPORT.md) separates
+native mouse/output checks, routed all-owner coverage, responsive layout/precision fixtures and remaining
+foreground/input-delivery limits. This is focused verification, not a new L3 or pressure/acoustic acceptance.
+
+Latest L3: **SEQ-SETTINGS-F1, 2026-10-15**. Full Release solution build has zero warnings/errors;
 **1384/1384 tests pass**, zero skips, one thread (**99.262 s** CLI summary). Final minimum-size/custom-reset/theme-affordance refinement reuses that L3 with **105/105 focused
 tests** (17.642 s), zero skips and a zero-warning affected Release build. Real production windows pass RU/EN × Dark/Light at
 720×570 and 500×340 settings, with main window down to 640×480, search/capture/conflict/default/reset,
@@ -169,7 +189,7 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected L3 covers global shortcut routing,
+Completed repository tasks since this L3: **1**. This risk-selected L3 covers global shortcut routing,
 preference persistence and existing production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**

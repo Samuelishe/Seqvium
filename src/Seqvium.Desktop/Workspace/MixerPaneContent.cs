@@ -306,6 +306,7 @@ internal sealed class MixerPaneContent : Grid, IDisposable
         {
             if (_state.Busy) return false;
             panBasis = _state;
+            panValue = Settings(_state, id).Pan;
             return true;
         };
         pan.Preview += v =>

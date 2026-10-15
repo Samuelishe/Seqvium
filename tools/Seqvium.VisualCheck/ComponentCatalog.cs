@@ -39,33 +39,41 @@ internal static class ComponentCatalog
         foreach (var state in states) labels.Children.Add(new TextBlock { Text = state, Width = 112 });
         body.Children.Add(labels);
         var buttons = new List<Button>(); var sliders = new List<Slider>(); var inputs = new List<TextBox>();
-        foreach (string variant in new[] { "standard", "primary", "compact", "command", "danger" })
+        foreach (string variant in new[] { "standard", "primary", "compact", "command", "danger", "audition", "audition-stop" })
         {
             var row = Row(variant + " Button");
             foreach (string state in states)
             {
                 var button = new StateButton { Content = "Action", Width = variant == "command" ? double.NaN : 112 };
-                if (variant != "standard") button.Classes.Add(variant);
+                if (variant != "standard" && variant != "audition-stop") button.Classes.Add(variant);
+                if (variant == "audition") { button.Classes.Add("primary"); button.Content = HostIcons.Create("Play", button, 32); }
+                if (variant == "audition-stop")
+                {
+                    button.Classes.Add("audition"); button.Classes.Add("stop");
+                    button.Content = HostIcons.Create("Stop", button, 24);
+                }
                 if (variant == "command") button.Content = HostIcons.Create("Play", button, 16);
                 Set(button, state, button.State);
-                row.Children.Add(new Border { Width = 112, Child = button, HorizontalAlignment = HorizontalAlignment.Left }); buttons.Add(button);
+                row.Children.Add(new Border { Width = variant == "audition" ? 160 : 112, Child = button, HorizontalAlignment = HorizontalAlignment.Left }); buttons.Add(button);
             }
             body.Children.Add(row);
         }
         var sliderRow = Row("Slider"); var levelRow = Row("Gain level / drawn"); var textRow = Row("Numeric TextBox");
-        var comboRow = Row("ComboBox"); var toggleRow = Row("ToggleButton");
+        var comboRow = Row("ComboBox"); var toggleRow = Row("ToggleButton"); var auditionLevelRow = Row("Audition level / drawn");
         foreach (string state in states)
         {
             var slider = new StateSlider { Width = 112, Minimum = 0, Maximum = 1, Value = .6 };
             Set(slider, state, slider.State); sliderRow.Children.Add(slider); sliders.Add(slider);
             var level = new GainLevelControl(shell) { Width = 112, Height = 30, Focusable = true, Amplitude = .6m, IsEnabled = state != "disabled" };
             levelRow.Children.Add(level);
+            auditionLevelRow.Children.Add(new GainLevelControl(shell) { SizeRole = "AuditionLevel", Width = 128, Height = 40,
+                Focusable = true, Amplitude = .6m, IsEnabled = state != "disabled" });
             var text = new StateTextBox { Text = "0.60", Width = 112, Classes = { "numeric" } };
             Set(text, state, text.State); if (state == "invalid") text.Classes.Add("invalid"); textRow.Children.Add(text); inputs.Add(text);
             comboRow.Children.Add(new ComboBox { Width = 112, ItemsSource = new[] { "Source", "Gain", "Output" }, SelectedIndex = 1, IsEnabled = state != "disabled" });
             toggleRow.Children.Add(new ToggleButton { Width = 112, Content = "Toggle", IsChecked = state == "selected", IsEnabled = state != "disabled" });
         }
-        foreach (var row in new[] { sliderRow, levelRow, textRow, comboRow, toggleRow }) body.Children.Add(row);
+        foreach (var row in new[] { sliderRow, levelRow, auditionLevelRow, textRow, comboRow, toggleRow }) body.Children.Add(row);
         var disclosures = new List<Expander>();
         var disclosureRow = Row("Expander");
         foreach (double width in new[] { 180d, 260d, 360d })
@@ -106,13 +114,18 @@ internal static class ComponentCatalog
             var acceptedCorner = app.Resources["Control.Corner"];
             var acceptedFill = app.Resources["Control.Fill"];
             var acceptedNode = app.Resources["Graph.Node"];
+            var acceptedAuditionCorner = app.Resources["Audition.Corner"];
             try
             {
                 app.Resources["Control.Corner"] = new CornerRadius(7);
                 app.Resources["Control.Fill"] = new SolidColorBrush(Colors.Magenta);
                 app.Resources["Graph.Node"] = new SolidColorBrush(Colors.Magenta);
                 await Program.CaptureAsync(window, output, theme + "-controlled-change");
-                Program.Require(buttons.All(b => b.CornerRadius == new CornerRadius(7)), "Common button radius failed to propagate.");
+                Program.Require(buttons.Where(b => !b.Classes.Contains("audition")).All(b => b.CornerRadius == new CornerRadius(7)),
+                    "Common button radius failed to propagate.");
+                app.Resources["Audition.Corner"] = new CornerRadius(9);
+                Program.Require(buttons.Where(b => b.Classes.Contains("audition")).All(b => b.CornerRadius == new CornerRadius(9)),
+                    "Audition variant radius failed to propagate.");
                 foreach (var slider in sliders.Where(s => s.IsEnabled && !s.Classes.Contains("invalid")))
                 {
                     var fill = slider.GetVisualDescendants().OfType<RepeatButton>().Single(c => c.Name == "PART_DecreaseButton");
@@ -120,10 +133,11 @@ internal static class ComponentCatalog
                 }
                 var invalid = sliders.Single(s => s.Classes.Contains("invalid")).GetVisualDescendants().OfType<RepeatButton>().Single(c => c.Name == "PART_DecreaseButton");
                 Program.Require(invalid.Background is ISolidColorBrush error && error.Color == Color.Parse(HostPalette.For(theme)["Status.Critical"]), "Invalid slider exception lost its semantic error role.");
-                foreach (var level in levelRow.Children.OfType<GainLevelControl>())
+                foreach (var level in levelRow.Children.Concat(auditionLevelRow.Children).OfType<GainLevelControl>())
                     Program.Require(HostVisual.Brush(level, theme, "Control.Fill") is ISolidColorBrush b && b.Color == Colors.Magenta, "Drawn level failed to consume live fill.");
             }
-            finally { app.Resources["Control.Corner"] = acceptedCorner; app.Resources["Control.Fill"] = acceptedFill; app.Resources["Graph.Node"] = acceptedNode; }
+            finally { app.Resources["Control.Corner"] = acceptedCorner; app.Resources["Audition.Corner"] = acceptedAuditionCorner;
+                app.Resources["Control.Fill"] = acceptedFill; app.Resources["Graph.Node"] = acceptedNode; }
             await Program.CaptureAsync(window, output, theme + "-restored");
             inputs[3].Focus();
             menuButton.ContextMenu.Open(menuButton);

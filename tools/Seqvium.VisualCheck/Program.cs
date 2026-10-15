@@ -174,7 +174,7 @@ internal static partial class Program
 
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
-                or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
+                or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "control-input" or "rack-pads"
                 or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "ui-density" or "theme-navigation" or "settings",
             "Unknown scenario.");
         using var run =
@@ -231,6 +231,7 @@ internal static partial class Program
                     Require(args.Length == 4, "native-audio <output> <independent-project> <author|review|play>");
                     await NativeAudioClipsAsync(main, output, Path.GetFullPath(args[2]), args[3]);
                 }
+                else if (args[0] == "control-input") await ControlInputAsync(main, output, args.Contains("reproduce"), args.Contains("routed"), args.Contains("gain-mixer"), args.Contains("velocity-only"));
                 else if (args[0] == "drum") await DrumMusicAsync(main, output, args.Length > 2 ? args[2] : null);
                 else if (args[0] == "drum-kit")
                 {

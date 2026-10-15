@@ -238,11 +238,33 @@ and a recessed well are optional host variants; default Gain presentation remain
 uses exact values once, retaining the distinct Tune frequency. Light well/scale and waveform choices
 derive from existing semantic roles, without local HEX colors or another palette.
 `DrumEnvelopePlot` uses HostVisual for the editable analytical curves and actual derived waveform.
+Amplitude gestures never read pitch-only parameters. Waveform requests cancel superseded work, join
+the preceding worker and wait briefly for input to settle; the analytical curve and values update
+immediately. `GainDialControl` uses relative angular increments, an insensitive center and immediate
+limit reversal in Drum, Gain and Mixer. Shared `GainLevelControl` draws a continuous track with an
+outlined thumb and captures the whole X gesture outside its visible bounds. Drum audition velocity
+reuses this control and its Escape/capture-loss behavior with a local 0.05–1 mapping, outside Undo.
 Instrument descriptors supply only the working knobs, preset selector and hat choke toggle. Portable
 preset actions use existing Save/Open vectors and standard buttons; repeated stopped audition remains enabled.
 The shared chassis, responsive audition/knob groups and local ScrollViewer preserve comfortable
 input dimensions. Rendered exact-text/unit centers and reachability are verified in both languages
 and themes under [the instrument report](experiments/SEQ-FIRST-DRUM_REPORT.md).
+
+The Drum audition footer uses the shared `Button.audition` variant: a spacious icon-only Play with
+an adjacent square Stop, both 56 DIP high, semantic materials, normal hover/press/focus feedback and
+localized tooltip/accessibility names. It stays outside parameter scrolling and stacks note/velocity
+below the actions at narrow widths. The component catalog includes both variants and states.
+The complete footer row is centered as a group, with symmetric dock padding and common row centers.
+The 104×40-DIP note selector and 128×40-DIP audition level use a larger track/thumb from the
+`AuditionLevel` metrics; ordinary Gain keeps its `Level` metrics. Narrow footers center both stacked rows.
+Drum dials shrink continuously from 76 to 64 DIP using the editor's allocated width/height, independently
+of column count. Parameter cells shrink with them, then wrap with separate enter/leave thresholds;
+the graph height follows available space within 180–250 DIP. Exact fields and fonts keep
+their normal sizes; envelope grab tolerance remains unchanged. Pointer capture freezes control sizes,
+while retained text controls preserve a typed draft/focus across resizing. Musical draft state has no
+permanent status label; brief warnings occupy the fixed identity row and cannot move the audition footer.
+Shared-height two-line parameter label slots keep neighbouring knobs and exact fields aligned across
+translated wrapping without shrinking type.
 
 ## Field and row alignment
 

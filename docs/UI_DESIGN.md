@@ -570,6 +570,12 @@ are selected.
 
 ### Full node editor visual proposal
 
+The implemented Drum editor continuously scales its dials from 76 to 64 DIP as its allocated width or
+height shrinks, independently of column count. Cells contract before wrapping with hysteresis, so
+reducing width cannot enlarge a knob. The analytical graph varies within 180–250 DIP. Numeric fields remain readable.
+Spacious Play and sample Stop stay outside parameter scrolling. At very short pane heights vertical
+overflow preserves access; resizing does not change geometry in the middle of a captured edit.
+
 **SEQ-NODE-EDITOR-IMPL-F1 — bounded implementation of the accepted first slice.** The first-party editor
 has a compact scope/identity row, a task-specific working region and restrained applicable
 status. A real EQ curve, instrument controls or analyzer can occupy substantial space; generic cards
@@ -579,8 +585,9 @@ Gain attenuation/transfer-graph slice; [Workspace](WORKSPACE.md#node-editor-plac
 placement and retained sizing.
 
 Gain uses its node name once in the pane title, a short source/scope line, and a graduated physical
-dial beside the level slider, exact linear value and derived dB. The dial supports relative vertical
-movement, Shift fine adjustment, double-click unity, arrows/Home/End and cancellation; all surfaces
+dial beside the level slider, exact linear value and derived dB. The dial supports relative clockwise
+rotation to increase, counterclockwise to decrease, Shift fine adjustment, double-click unity,
+arrows/Home/End and cancellation; all surfaces
 share the same canonical parameter and one draft/commit owner. Unity/Silence sit below the level control. The labelled
 analytical
 transfer graph is a compact, initially collapsed Curve disclosure; its formula is available on

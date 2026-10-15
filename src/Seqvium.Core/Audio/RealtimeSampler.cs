@@ -351,6 +351,23 @@ public sealed class RealtimeSampler : IDisposable
     internal void EndWork() => Volatile.Write(ref _preparing, 0);
     public void Start() => StartPrepared(0);
 
+    /// <summary>Control-owner retrigger of the current transient audition, including a pending handoff.
+    /// Bind Start to its preparation authority so retirement backpressure cannot restart an older source.</summary>
+    public bool RetriggerAudition()
+    {
+        if (_disposed || IsTerminated) return false;
+        long authority = Volatile.Read(ref _authority);
+        var pending = Volatile.Read(ref _pending);
+        var active = Volatile.Read(ref _active);
+        if (pending is { Transient: true } && pending.Authority == authority ||
+            active is { Transient: true } && active.Authority == authority)
+        {
+            StartPrepared(authority);
+            return true;
+        }
+        return false;
+    }
+
     internal void StartPrepared(long authority)
     {
         Volatile.Write(ref _startAuthority, authority);

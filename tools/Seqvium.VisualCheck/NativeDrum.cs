@@ -47,10 +47,10 @@ internal static partial class NativePointer
             Guard();
             var before = workflow.State.Snapshot;
             int undo = workflow.State.UndoCount;
-            Move(dial, new(dial.Bounds.Width / 2, dial.Bounds.Height / 2));
+            Move(dial, new(dial.Bounds.Width / 2, dial.Bounds.Height / 2 - 24));
             Button(true);
             await Task.Delay(50);
-            Move(dial, new(dial.Bounds.Width / 2, dial.Bounds.Height / 2 - 10));
+            Move(dial, new(dial.Bounds.Width / 2 + 12, dial.Bounds.Height / 2 - 20));
             await Task.Delay(50);
             Button(false);
             await Task.Delay(80);

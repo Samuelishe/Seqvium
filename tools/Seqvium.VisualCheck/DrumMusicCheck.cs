@@ -93,16 +93,17 @@ internal static partial class Program
         await Exact("pitchDecay", "90");
         using var pointer = new Pointer(91043, PointerType.Mouse, true);
         var dial = (GainDialControl)Id("Drum.Dial.tune");
-        var point = dial.TranslatePoint(new(46, 46), main)!.Value;
+        var point = dial.TranslatePoint(new(42, 14), main)!.Value;
+        var dialDestination = dial.TranslatePoint(new(56, 18), main)!.Value;
         int beforeDial = workflow.State.UndoCount;
         dial.RaiseEvent(new PointerPressedEventArgs(dial, pointer, main, point, 0,
             new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
             KeyModifiers.None, 1));
         dial.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, dial, pointer, main,
-            point + new Vector(0, -4), 0,
+            dialDestination, 0,
             new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other),
             KeyModifiers.Shift));
-        dial.RaiseEvent(new PointerReleasedEventArgs(dial, pointer, main, point, 0,
+        dial.RaiseEvent(new PointerReleasedEventArgs(dial, pointer, main, dialDestination, 0,
             new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased), KeyModifiers.None,
             MouseButton.Left));
         await drum.PendingCommand;

@@ -286,15 +286,17 @@ internal static partial class Program
         editor.Refresh(); main.UpdateLayout();
         var dial = Field<GainDialControl>(editor, "_dial");
         using var pointer = new Pointer(100043, PointerType.Mouse, true);
-        var origin = dial.TranslatePoint(new(dial.Bounds.Width / 2, dial.Bounds.Height / 2), main)!.Value;
+        var center = dial.TranslatePoint(new(dial.Bounds.Width / 2, dial.Bounds.Height / 2), main)!.Value;
+        var origin = center + new Vector(0, -30);
+        var destination = center + new Vector(Math.Sin(Math.PI * .3), -Math.Cos(Math.PI * .3)) * 30;
         void Press() => dial.RaiseEvent(new PointerPressedEventArgs(dial, pointer, main, origin, 0,
             new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed), KeyModifiers.None, 1));
         void Move(KeyModifiers modifiers = KeyModifiers.None) => dial.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, dial,
-            pointer, main, origin + new Vector(0, -40), 0,
+            pointer, main, destination, 0,
             new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), modifiers));
         async Task Release()
         {
-            dial.RaiseEvent(new PointerReleasedEventArgs(dial, pointer, main, origin + new Vector(0, -40), 0,
+            dial.RaiseEvent(new PointerReleasedEventArgs(dial, pointer, main, destination, 0,
                 new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased), KeyModifiers.None, MouseButton.Left));
             await editor.PendingCommand; editor.Refresh();
         }
@@ -350,7 +352,7 @@ internal static partial class Program
         transfer.Add(DataTransferItem.CreateFile(file));
         pane.RaiseEvent(new DragEventArgs(DragDrop.DragOverEvent, transfer, pane, new Point(10, 10), KeyModifiers.None));
         Require(!pane.Classes.Contains("dropReady"), "Multi-file drop was presented as supported.");
-        Json(output, "redesign-controls", new { Dial = "relative/fine preview, single commit/Undo, Escape, capture loss, keyboard End",
+        Json(output, "redesign-controls", new { Dial = "clockwise/fine preview, single commit/Undo, Escape, capture loss, keyboard End",
             Tempo = "actual popup Enter / one Undo / canonical restoration",
             Navigator = "actual create/select buttons, unchanged selection history, exact create Undo",
             Drop = "routed single-file import / exact Undo / multi-file refusal; not native Explorer input", PhysicalAudio = false });

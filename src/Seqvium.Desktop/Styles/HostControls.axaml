@@ -227,6 +227,19 @@
     <Style Selector="Button.danger">
         <Setter Property="Foreground" Value="{DynamicResource Status.Critical}" />
     </Style>
+    <Style Selector="Button.audition">
+        <Setter Property="Height" Value="{DynamicResource Audition.Height}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Audition.Height}" />
+        <Setter Property="MinWidth" Value="{DynamicResource Audition.MinWidth}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource Audition.Corner}" />
+        <Setter Property="Background" Value="{DynamicResource Material.Button}" />
+        <Setter Property="FontSize" Value="{DynamicResource Type.Section}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.audition.stop">
+        <Setter Property="MinWidth" Value="{DynamicResource Audition.Height}" />
+        <Setter Property="Width" Value="{DynamicResource Audition.Height}" />
+    </Style>
     <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource Surface.Critical}" />
     </Style>

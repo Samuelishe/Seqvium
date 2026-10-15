@@ -31,13 +31,18 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
     private readonly DesktopWorkflow _workflow;
     private readonly DrumEditorSession _session = new();
     private readonly List<ParameterControl> _parameters = [];
+    private ParameterControl? _textDraft;
+    private bool _pointerEdit;
     private readonly TextBlock _identity = new() { Classes = { "caption" } };
 
     private readonly TextBlock _status = new()
-        { Classes = { "caption", "warning" }, TextWrapping = Avalonia.Media.TextWrapping.Wrap };
+        { Classes = { "caption", "warning" }, TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis,
+            VerticalAlignment = VerticalAlignment.Center };
 
-    private readonly Button _pitch = new(), _amplitude = new(), _hit = new() { Classes = { "primary" } };
-    private readonly ComboBox _note = new() { Width = 84 };
+    private readonly Button _pitch = new(), _amplitude = new(), _hit = new() { Classes = { "primary", "audition" } };
+    private readonly Button _stop = new() { Classes = { "audition", "stop" } };
+    private readonly ComboBox _note = new()
+        { Width = HostMetrics.Values["Audition.NoteWidth"], Height = HostMetrics.Values["AuditionLevel.Height"] };
     private readonly ComboBox _presets = new() { MinWidth = 110 };
 
     private readonly Button _savePreset = new() { Classes = { "command" } },
@@ -46,47 +51,85 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
     private readonly ToggleButton _choke = new();
     private readonly WrapPanel _primary = new() { HorizontalAlignment = HorizontalAlignment.Center };
     private string? _instrumentAlgorithm;
-    private readonly Slider _velocity = new() { Minimum = .05, Maximum = 1, Value = .8, Width = 84 };
+    private int _parameterColumns;
+    private readonly GainLevelControl _velocity;
     private readonly DrumEnvelopePlot _plot;
+    private readonly ScrollViewer _scroll;
+    private readonly Border _auditionDock;
     private readonly WrapPanel _shape = new() { HorizontalAlignment = HorizontalAlignment.Center };
     private readonly DispatcherTimer _notice = new() { Interval = TimeSpan.FromSeconds(3) };
     private bool _refreshing, _disposed;
     private bool _presetBusy;
     private Task _command = Task.CompletedTask;
+    private Task _auditionWork = Task.CompletedTask;
     private CancellationTokenSource? _waveCancellation;
     private ImmutableDictionary<string, decimal>? _waveBasis;
-    internal Task PendingCommand => _command;
+    internal Task PendingCommand => Task.WhenAll(_command, _auditionWork);
     internal Task PendingWaveform { get; private set; } = Task.CompletedTask;
 
     public DrumVoicePaneContent(ShellSession shell, DesktopWorkflow workflow)
     {
         _shell = shell;
         _workflow = workflow;
+        _velocity = new(shell) { SizeRole = "AuditionLevel", Width = HostMetrics.Values["Audition.LevelWidth"],
+            Height = HostMetrics.Values["AuditionLevel.Height"], Focusable = true, Amplitude = (.8m - .05m) / .95m };
+        decimal? velocityBefore = _velocity.Amplitude;
+        _velocity.Begin = () => { velocityBefore = _velocity.Amplitude; _pointerEdit = true; return true; };
+        _velocity.Preview += value => { _velocity.Amplitude = value; _velocity.InvalidateVisual(); };
+        _velocity.Cancelled += () => { _pointerEdit = false; _velocity.Amplitude = velocityBefore; _velocity.InvalidateVisual(); };
+        _velocity.Completed += async () =>
+        {
+            _pointerEdit = false;
+            ApplyResponsiveLayout();
+            if (_velocity.Amplitude != velocityBefore) await AuditionAsync();
+        };
         RowDefinitions = new("*,Auto");
         this.Bind(RowSpacingProperty, this.GetResourceObservable("Space.Gap"));
-        var header = new Grid { ColumnDefinitions = new("*,Auto"), RowDefinitions = new("Auto,Auto") };
-        var audition = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Right };
-        audition.Children.Add(_note);
-        audition.Children.Add(_velocity);
-        audition.Children.Add(_hit);
-        foreach (var control in new Control[] { _note, _velocity, _hit }) control.Margin = new(4, 2);
-        header.Children.Add(_identity);
-        _identity.VerticalAlignment = VerticalAlignment.Center;
-        header.Children.Add(audition);
-        SetColumn(audition, 1);
-        SizeChanged += (_, _) =>
+        var auditionActions = new StackPanel { Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        auditionActions.Bind(StackPanel.SpacingProperty, this.GetResourceObservable("Space.Medium"));
+        auditionActions.Children.Add(_hit);
+        auditionActions.Children.Add(_stop);
+        var audition = new Grid { ColumnDefinitions = new("Auto,Auto"), RowDefinitions = new("Auto"),
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        audition.Bind(ColumnSpacingProperty, this.GetResourceObservable("Space.Section"));
+        audition.Bind(RowSpacingProperty, this.GetResourceObservable("Space.Medium"));
+        var auditionValues = new StackPanel { Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        auditionValues.Bind(StackPanel.SpacingProperty, this.GetResourceObservable("Space.Medium"));
+        auditionValues.Children.Add(_note);
+        auditionValues.Children.Add(_velocity);
+        audition.Children.Add(auditionActions);
+        audition.Children.Add(auditionValues);
+        SetColumn(auditionValues, 1);
+        var auditionDock = new Border { Child = audition };
+        _auditionDock = auditionDock;
+        auditionDock.Bind(Border.PaddingProperty, this.GetResourceObservable("Padding.Audition"));
+        auditionDock.Bind(Border.BackgroundProperty, this.GetResourceObservable("Material.Header"));
+        auditionDock.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Border.Default"));
+        auditionDock.Bind(Border.BorderThicknessProperty, this.GetResourceObservable("Border.Top"));
+        bool compactAudition = false;
+        auditionDock.SizeChanged += (_, _) =>
         {
-            bool compact = Bounds.Width < 430;
-            SetColumnSpan(_identity, compact ? 2 : 1);
-            SetRow(audition, compact ? 1 : 0);
-            SetColumn(audition, compact ? 0 : 1);
-            SetColumnSpan(audition, compact ? 2 : 1);
-            audition.HorizontalAlignment = compact ? HorizontalAlignment.Left : HorizontalAlignment.Right;
+            double width = auditionDock.Bounds.Width;
+            bool compact = compactAudition ? width < 504 : width < 480;
+            if (width <= 0 || compact == compactAudition) return;
+            compactAudition = compact;
+            audition.ColumnDefinitions = new(compact ? "Auto" : "Auto,Auto");
+            audition.RowDefinitions = new(compact ? "Auto,Auto" : "Auto");
+            SetRow(auditionValues, compact ? 1 : 0);
+            SetColumn(auditionValues, compact ? 0 : 1);
         };
         _note.ItemsSource = Enumerable.Range(0, 128).Select(i => PianoNotes.Name(i)).ToArray();
         _note.SelectedIndex = (int)DrumVoice.RootPitch;
         var body = new StackPanel { Classes = { "tight" } };
-        body.Children.Add(header);
+        var identityRow = new Grid { ColumnDefinitions = new("*,Auto") };
+        identityRow.Bind(HeightProperty, this.GetResourceObservable("Control.Height"));
+        _identity.VerticalAlignment = VerticalAlignment.Center;
+        identityRow.Children.Add(_identity);
+        identityRow.Children.Add(_status);
+        SetColumn(_status, 1);
+        body.Children.Add(identityRow);
         var presets = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Left };
         presets.Children.Add(_presets);
         presets.Children.Add(_savePreset);
@@ -106,21 +149,28 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         modes.Children.Add(_pitch);
         modes.Children.Add(_amplitude);
         body.Children.Add(modes);
-        _plot = new(shell) { Height = 280, MinWidth = 245 };
+        _plot = new(shell) { Height = HostMetrics.Values["Drum.GraphHeight"], MinWidth = HostMetrics.Values["Drum.GraphMinWidth"] };
+        SizeChanged += (_, _) => ApplyResponsiveLayout();
         body.Children.Add(_plot);
         body.Children.Add(_shape);
         var scroll = new ScrollViewer
         {
             Content = chassis, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled
         };
+        _scroll = scroll;
+        scroll.PropertyChanged += (_, change) =>
+        {
+            if (change.Property == ScrollViewer.ViewportProperty) ApplyResponsiveLayout();
+        };
         Children.Add(scroll);
         Identify(scroll, "Scroll");
         SetRow(scroll, 0);
-        Children.Add(_status);
-        SetRow(_status, 1);
+        Children.Add(auditionDock);
+        SetRow(auditionDock, 1);
         Identify(_pitch, "Pitch");
         Identify(_amplitude, "Amplitude");
         Identify(_hit, "Audition");
+        Identify(_stop, "StopAudition");
         Identify(_note, "Note");
         Identify(_velocity, "Velocity");
         Identify(_identity, "Identity");
@@ -131,6 +181,8 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         Identify(_choke, "Choke");
         AttachedToVisualTree += (_, _) =>
         {
+            _hit.Content ??= HostIcons.Create("Play", _hit, 32);
+            _stop.Content ??= HostIcons.Create("Stop", _stop, 24);
             _savePreset.Content ??= HostIcons.Create("Save", _savePreset, 16);
             _loadPreset.Content ??= HostIcons.Create("Open", _loadPreset, 16);
         };
@@ -150,22 +202,14 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         };
         _pitch.Click += (_, _) => Switch(false);
         _amplitude.Click += (_, _) => Switch(true);
-        _hit.Click += async (_, _) =>
-        {
-            if (_session.Target is not { } target || !_command.IsCompleted) return;
-            Cancel();
-            _command = workflow.AuditionDrumAsync(target, workflow.State.Generation,
-                _note.SelectedIndex >= 0 ? _note.SelectedIndex : DrumVoice.RootPitch, (decimal)_velocity.Value);
-            Refresh();
-            await _command;
-            Refresh();
-        };
+        _hit.Click += async (_, _) => await AuditionAsync();
+        _stop.Click += async (_, _) => await _workflow.CancelDrumAuditionAsync();
         _note.SelectionChanged += (_, _) =>
         {
             _waveBasis = null;
             if (!_refreshing) RefreshPreview();
         };
-        _plot.Begin = Begin;
+        _plot.Begin = () => Begin(pointer: true);
         _plot.Preview += Preview;
         _plot.Completed += async () => await CommitAsync();
         _plot.Cancelled += () =>
@@ -191,11 +235,14 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
 
     private ParameterControl CreateParameter(DrumVoice.Parameter parameter)
     {
-        var panel = new Grid { RowDefinitions = new("Auto,Auto,Auto"), Width = 132, Margin = new(4, 4) };
-        var label = new TextBlock { HorizontalAlignment = HorizontalAlignment.Center };
+        var panel = new Grid { RowDefinitions = new("Auto,Auto,Auto"), Width = HostMetrics.Values["Drum.ParameterWidth"], Margin = new(4, 4) };
+        panel.RowDefinitions[0].Height = new GridLength(HostMetrics.Values["Drum.LabelHeight"]);
+        var label = new TextBlock { HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+            TextAlignment = Avalonia.Media.TextAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom,
+            MaxLines = 2, TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis };
         var dial = new GainDialControl(_shell)
         {
-            Width = 84, Height = 84, Focusable = true,
+            Width = HostMetrics.Values["Drum.DialSize"], Height = HostMetrics.Values["Drum.DialSize"], Focusable = true,
             HorizontalAlignment = HorizontalAlignment.Center,
             DefaultAmplitude = Normalize(parameter, parameter.Default),
             AccentRole = parameter.Key is "attack" or "amplitudeCurve" ? "Rack.Channel1" : "Control.Fill"
@@ -220,7 +267,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         Identify(label, "Label." + parameter.Key);
         var result = new ParameterControl(parameter, panel, label, dial, exact, unit);
         _parameters.Add(result);
-        dial.Begin = Begin;
+        dial.Begin = () => Begin(pointer: true);
         dial.Preview += value => Preview(parameter.Key, Denormalize(parameter, value));
         dial.Completed += async () => await CommitAsync();
         dial.Cancelled += () =>
@@ -230,6 +277,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         exact.PropertyChanged += (_, change) =>
         {
             if (_refreshing || change.Property != TextBox.TextProperty || !Begin()) return;
+            _textDraft = result;
             if (Parse(result, out var value))
             {
                 _session.Set(parameter.Key, value);
@@ -242,6 +290,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
                 _status.IsVisible = true;
             }
         };
+        exact.GotFocus += (_, _) => RefreshPreview(updateText: true);
         exact.KeyDown += async (_, e) =>
         {
             if (e.Key != Key.Enter) return;
@@ -254,6 +303,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         };
         exact.LostFocus += async (_, _) =>
         {
+            if (_textDraft != result) { RefreshPreview(updateText: true); return; }
             if (_session.Draft is null || _refreshing || !_command.IsCompleted) return;
             if (Parse(result, out var value))
             {
@@ -281,8 +331,14 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         return valid && value >= control.Parameter.Minimum && value <= control.Parameter.Maximum;
     }
 
-    private bool Begin()
+    private bool Begin(bool pointer = false)
     {
+        if (pointer && _textDraft is not null)
+        {
+            // Finish the text owner's transaction before accepting another parameter gesture.
+            TopLevel.GetTopLevel(this)?.FocusManager?.Focus(null);
+            return false;
+        }
         if (_session.Observe(_workflow.State, _session.Target))
         {
             Refresh();
@@ -290,8 +346,50 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         }
 
         bool started = !_disposed && !_presetBusy && _command.IsCompleted && _session.Begin();
-        if (started) _notice.Stop();
+        if (started) { _pointerEdit = pointer; _notice.Stop(); }
         return started;
+    }
+
+    private void ApplyResponsiveLayout()
+    {
+        // Reflow in the space owned by this editor, independent of the main window or docking.
+        // Keep control sizes stable until the current pointer edit ends. Text fields retain their
+        // controls and dimensions across reflow, so a typed draft can keep its focus.
+        if (_pointerEdit || _plot.HasGesture || _velocity.HasGesture || _parameters.Any(p => p.Dial.HasGesture) ||
+            Bounds.Width <= 0 || Bounds.Height <= 0) return;
+        double maximumDial = HostVisual.Metric(this, "Drum.DialSize");
+        double minimumDial = HostVisual.Metric(this, "Drum.CompactDialSize");
+        double available = Math.Max(1, Bounds.Width - HostMetrics.Values["Space.Medium"] * 2 -
+            HostVisual.Metric(this, "ScrollBar.Size") - 2);
+        double slotHeight = Math.Max(0, Bounds.Height - _auditionDock.Bounds.Height - HostMetrics.Values["Space.Gap"]);
+        double viewportHeight = _scroll.Viewport.Height > 0 ? Math.Min(slotHeight, _scroll.Viewport.Height) : slotHeight;
+        // Visual size follows only the allocated viewport, continuously and with a mouse-friendly
+        // floor. Changing the number of columns can never enlarge a knob on a shrinking pane.
+        double widthSize = minimumDial + (maximumDial - minimumDial) * (available - 492) / (704 - 492);
+        double heightSize = minimumDial + (maximumDial - minimumDial) * (viewportHeight - 360) / (520 - 360);
+        double dial = Math.Clamp(Math.Min(widthSize, heightSize), minimumDial, maximumDial);
+        double sizeFraction = (dial - minimumDial) / (maximumDial - minimumDial);
+        double cell = Math.Floor(90 + sizeFraction * (HostVisual.Metric(this, "Drum.ParameterWidth") - 90));
+        double RowWidth(int columns) => columns * (cell + 8) + 2;
+        if (_parameterColumns == 0) _parameterColumns = Math.Clamp((int)((available - 2) / (cell + 8)), 2, 5);
+        // Remove a column only when it no longer fits; add it back with 12 DIP of spare room.
+        while (_parameterColumns > 2 && RowWidth(_parameterColumns) > available) _parameterColumns--;
+        while (_parameterColumns < 5 && RowWidth(_parameterColumns + 1) + 12 <= available) _parameterColumns++;
+        foreach (var parameter in _parameters)
+        {
+            parameter.Body.Width = cell;
+            parameter.Label.MaxWidth = parameter.Body.Width;
+            parameter.Dial.Width = parameter.Dial.Height = dial;
+            // Compact is the Mixer's different drawing style; it would enlarge the knob inside
+            // a smaller hit area. Drum keeps one drawing model so its visible disc really scales.
+            parameter.Dial.Compact = false;
+            parameter.Dial.InvalidateVisual();
+        }
+        _primary.Width = Math.Min(available, Math.Min(_parameterColumns, _primary.Children.Count(c => c.IsVisible)) * (cell + 8) + 2);
+        _shape.Width = Math.Min(available, Math.Min(_parameterColumns, _shape.Children.Count(c => c.IsVisible)) * (cell + 8) + 2);
+        _status.MaxWidth = Math.Max(80, Bounds.Width * .55);
+        _plot.Height = Math.Clamp(Math.Min(viewportHeight * .36, Bounds.Width * .4),
+            HostVisual.Metric(this, "Drum.CompactGraphHeight"), HostVisual.Metric(this, "Drum.GraphHeight"));
     }
 
     private void Preview(string key, decimal value)
@@ -309,9 +407,13 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
 
     internal void Observe(NodeEditorTarget? target)
     {
+        if (_session.Target != target) _ = _workflow.CancelDrumAuditionAsync();
         if (_session.Observe(_workflow.State, target))
         {
+            _pointerEdit = false;
+            _textDraft = null;
             _refreshing = true;
+            _velocity.Cancel();
             foreach (var parameter in _parameters) parameter.Dial.Cancel();
             _plot.Cancel();
             _refreshing = false;
@@ -379,7 +481,9 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             _pitch.IsVisible = instrument.HasPitchEnvelope;
             _amplitude.Content = _shell["Drum.Amplitude"];
             _amplitude.IsVisible = instrument.HasPitchEnvelope;
-            _hit.Content = _shell["Drum.Audition"];
+            ToolTip.SetTip(_hit, _shell["Drum.Audition"]);
+            ToolTip.SetTip(_stop, _shell["Workflow.Stop"]);
+            AutomationProperties.SetName(_stop, _shell["Workflow.Stop"]);
             _pitch.Classes.Set("primary", !_plot.AmplitudeMode);
             _amplitude.Classes.Set("primary", _plot.AmplitudeMode);
             foreach (var p in _parameters)
@@ -396,8 +500,9 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
                     _plot.AmplitudeMode == (p.Parameter.Key is "attack" or "amplitudeCurve");
             }
 
-            _hit.IsEnabled = _session.CanEdit && _command.IsCompleted &&
+            _hit.IsEnabled = _session.Sound is { } available && DrumVoice.Supports(available) && !_presetBusy &&
                              _workflow.State.Execution?.Execution.Playing != true;
+            _stop.IsEnabled = _hit.IsEnabled;
             _plot.IsEnabled = _session.CanEdit && _command.IsCompleted;
             AutomationProperties.SetName(_hit, _shell["Drum.Audition"]);
             AutomationProperties.SetName(_note, _shell["Drum.Note"]);
@@ -406,6 +511,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             ToolTip.SetTip(_note, _shell["Drum.Note"]);
             ToolTip.SetTip(_velocity, _shell["Drum.Velocity"]);
             ToolTip.SetTip(_plot, _shell["Drum.EnvelopeHint"]);
+            ApplyResponsiveLayout();
             RefreshPreview(updateText: _session.Draft is null);
         }
         finally
@@ -432,8 +538,11 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             p.Dial.InvalidateVisual();
             if (updateText)
             {
+                bool precise = p.Exact.IsKeyboardFocusWithin;
+                decimal shown = p.Parameter.Unit == "%" ? value * 100 : value;
                 p.Exact.Text =
-                    (p.Parameter.Unit == "%" ? value * 100 : value).ToString("0.###", CultureInfo.InvariantCulture);
+                    shown.ToString(precise ? "0.############################" : p.Parameter.Unit is "ms" or "%" ? "0.#" : "0.##",
+                        CultureInfo.InvariantCulture);
                 p.Exact.Classes.Remove("invalid");
             }
         }
@@ -442,8 +551,8 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
         _plot.BasePitch = _note.SelectedIndex >= 0 ? _note.SelectedIndex : DrumVoice.RootPitch;
         _plot.IsDraft = _session.Draft is not null;
         _plot.InvalidateVisual();
-        _status.Text = _session.ChangedElsewhere ? _shell["NodeEditor.ChangedElsewhere"] :
-            _session.Draft is not null ? _shell["NodeEditor.Draft"] : "";
+        _status.Text = _session.ChangedElsewhere ? _shell["NodeEditor.ChangedElsewhere"] : "";
+        ToolTip.SetTip(_status, _status.Text);
         _status.IsVisible = _status.Text.Length > 0;
         _refreshing = previous;
         if (_session.Sound is { } sound && DrumVoice.Supports(sound) && IsVisible &&
@@ -456,15 +565,19 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             _plot.Waveform = null;
             PendingWaveform = RenderWaveformAsync(sound with { Parameters = values },
                 _note.SelectedIndex >= 0 ? _note.SelectedIndex : 36,
-                _waveCancellation.Token);
+                _waveCancellation.Token, PendingWaveform);
         }
     }
 
     private async Task RenderWaveformAsync(SoundDefinition sound, decimal pitch,
-        CancellationToken cancellation)
+        CancellationToken cancellation, Task previous)
     {
         try
         {
+            // Join the cancelled calculation before starting another; bursts of native input must
+            // not queue competing synthesis jobs. The analytical envelope/value stays immediate.
+            await previous;
+            await Task.Delay(40, cancellation);
             var envelope = await Task.Run(() =>
             {
                 using var pcm = DrumVoice.Render(sound, 48000, pitch, cancellation);
@@ -567,6 +680,8 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
 
     private async Task CommitAsync()
     {
+        _pointerEdit = false;
+        _textDraft = null;
         if (!_command.IsCompleted || _disposed) return;
         _session.Observe(_workflow.State, _session.Target);
         var proposal = _session.Complete();
@@ -576,15 +691,34 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
             return;
         }
 
-        _command = _workflow.SetDrumParametersAsync(proposal);
+        _command = _workflow.ShapeAndAuditionDrumAsync(proposal,
+            _note.SelectedIndex >= 0 ? _note.SelectedIndex : DrumVoice.RootPitch,
+            .05m + .95m * _velocity.Amplitude!.Value);
         Refresh();
         await _command;
         if (!_disposed) Observe(_session.Target);
     }
 
+    private async Task AuditionAsync()
+    {
+        if (_disposed || _presetBusy || _session.Target is not { } target) return;
+        if (_command.IsCompleted) Cancel();
+        var state = _workflow.State;
+        var request = _workflow.AuditionDrumAsync(target, state.Generation,
+            _note.SelectedIndex >= 0 ? _note.SelectedIndex : DrumVoice.RootPitch,
+            .05m + .95m * _velocity.Amplitude!.Value, state.TransportGeneration);
+        _auditionWork = _auditionWork.IsCompleted ? request : Task.WhenAll(_auditionWork, request);
+        Refresh();
+        await request;
+        Refresh();
+    }
+
     public void Cancel()
     {
+        _pointerEdit = false;
+        _textDraft = null;
         _session.Cancel();
+        _velocity.Cancel();
         _notice.Stop();
         foreach (var p in _parameters) p.Dial.Cancel();
         _plot.Cancel();
@@ -593,6 +727,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
 
     public void Suspend()
     {
+        _ = _workflow.CancelDrumAuditionAsync();
         Cancel();
         _waveCancellation?.Cancel();
         _waveBasis = null;

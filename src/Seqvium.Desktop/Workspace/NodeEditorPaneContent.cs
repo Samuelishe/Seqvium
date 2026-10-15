@@ -45,6 +45,9 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     private NodeEditorTarget? _renderedTarget;
     private (Guid Lifecycle, long Generation)? _noticeBasis;
     private Task _command = Task.CompletedTask;
+    private ProjectState? _diagnosticState;
+    private Id<GraphNode>? _diagnosticNode;
+    private string[] _diagnosticReasons = [];
     internal Task PendingCommand => _command;
     internal Task PendingSourceInspection { get; private set; } = Task.CompletedTask;
     public string Title { get; private set; }
@@ -346,9 +349,14 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         bool warning = _editor.HasDraft || _editor.ChangedElsewhere || _feedback is not null;
         if (_editor.Node is { } node && _editor.Graph is { } graph && _editor.State is { } state)
         {
-            var diagnostics = GraphDiagnostics.Inspect(state).Single(r => r.GraphId == graph.Id).Diagnostics;
-            var reasons = diagnostics.Where(d => d.NodeId is null || d.NodeId == node.Id).Select(d => _shell[d.Reason])
-                .Distinct();
+            if (!ReferenceEquals(_diagnosticState, state) || _diagnosticNode != node.Id)
+            {
+                _diagnosticReasons = GraphDiagnostics.Inspect(state).Single(r => r.GraphId == graph.Id).Diagnostics
+                    .Where(d => d.NodeId is null || d.NodeId == node.Id).Select(d => d.Reason).Distinct().ToArray();
+                _diagnosticState = state;
+                _diagnosticNode = node.Id;
+            }
+            var reasons = _diagnosticReasons.Select(reason => _shell[reason]);
             if (reasons.Any())
             {
                 warning = true;

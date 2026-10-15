@@ -21,6 +21,14 @@ public static class HostMetrics
         ["Control.Height"] = 26, ["Control.Corner"] = 3, ["Space.Gap"] = 4,
         ["Control.InputHeight"] = 26, ["Control.ComfortableHeight"] = 30,
         ["Control.IconWidth"] = 28, ["Control.StatusHeight"] = 20,
+        ["Audition.Height"] = 56, ["Audition.MinWidth"] = 128, ["Audition.Corner"] = 14,
+        ["Audition.NoteWidth"] = 104, ["Audition.LevelWidth"] = 128,
+        ["AuditionLevel.Height"] = 40, ["AuditionLevel.TrackHeight"] = 8,
+        ["AuditionLevel.ThumbSize"] = 14, ["AuditionLevel.Inset"] = 10,
+        ["Drum.DialSize"] = 76, ["Drum.CompactDialSize"] = 64, ["Drum.ParameterWidth"] = 128,
+        ["Drum.LabelHeight"] = 32,
+        ["Drum.GraphHeight"] = 250, ["Drum.CompactGraphHeight"] = 180,
+        ["Drum.GraphMinWidth"] = 220,
         ["Pane.HeaderHeight"] = 26, ["Pane.Corner"] = 4, ["Chrome.ButtonWidth"] = 38,
         ["Border.Width"] = 1, ["Focus.Width"] = 2,
         ["Space.XSmall"] = 2, ["Space.Small"] = 4, ["Space.Medium"] = 8,
@@ -53,6 +61,7 @@ public static class HostMetrics
         resources["Padding.Control"] = new Thickness(Values["Space.Gap"], 0);
         resources["Padding.Input"] = new Thickness(Values["Space.Small"], Values["Space.XSmall"]);
         resources["Padding.Content"] = new Thickness(Values["Space.Medium"], Values["Space.Small"]);
+        resources["Padding.Audition"] = new Thickness(Values["Space.Section"]);
         resources["Padding.Popup"] = new Thickness(Values["Space.Large"]);
         resources["Padding.Dialog"] = new Thickness(Values["Space.Section"]);
         resources["Padding.Parameter"] = new Thickness(Values["Space.Gap"], Values["Space.XSmall"]);

@@ -119,8 +119,10 @@ opens it; the left Rack icon or **Panes** menu reopens it. You can begin without
 2. Click **Add drum…** and choose Kick, Snare, Closed/Open Hat, Clap, Tom or Rim. The sound editor
    opens with a useful starting sound and three presets. Each instrument has its own controls:
    Snare blends body and snappy noise; Clap spreads bursts; Tom exposes pitch drop and resonance.
-   Drag envelope points or enter exact values; each completed adjustment is one Undo. Audition
-   plays a quiet hit at the selected note/velocity. The small save/open buttons exchange custom
+   Rotate dials clockwise to increase and counterclockwise to decrease; Shift adjusts finely.
+   Drag envelope points or enter exact values; each completed adjustment is one Undo and plays a
+   quiet hit when music is stopped. The large **▶** repeats the selected note/velocity immediately;
+   **■** beside it cuts the sample. The small save/open buttons exchange custom
    `.seqdrum` sound presets. Linked hats cut each other; switch **Hat choke** off for independent tails.
    Double-click the channel name or use **… → Open sound editor** to return. **Add sound** or a dropped
    WAV adds a sample channel. Sources mix automatically; rhythm stays in Rack.
@@ -277,7 +279,8 @@ is bundled; the official demo includes its own reviewed media.
    tooltips; secondary actions may move into the overflow menu in a narrow window.
 2. Open **Node Graph**, or press Ctrl+G. The imported item starts with Source → Gain → Output.
    Source supplies the sample, Gain adjusts its level, and Output receives the result.
-3. Double-click Gain to open **Node Editor**. Drag its dial vertically or use the level slider;
+3. Double-click Gain to open **Node Editor**. Rotate its dial clockwise to increase the level,
+   counterclockwise to decrease it, or use the horizontal level slider;
    release applies once, Shift adjusts finely and Escape cancels. Double-click the dial for unity,
    or enter an exact linear amplitude between 0 and 1 and press Enter or **Apply**.
    `1` preserves the level and `0` silences it; the editor also shows dB attenuation. Expand **Curve**

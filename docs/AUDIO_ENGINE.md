@@ -148,8 +148,15 @@ tails overlap independently, including across Pattern loops; loop overlap is pre
 Finite Pattern/Song export includes the latest hit's natural tail. Explicit Stop/Panic/range boundaries
 still cut voices; seek reconstructs source age from the frozen signal. Shared sound edits preserve
 transport position/epoch, retire changed voices and affect subsequent hits after publication. There is
-no continuous audible uncommitted drag preview. Solo audition can retrigger while transport is stopped,
-even when an earlier audition owns an output. It uses the same synthesis and quiet pitched
+no continuous audible uncommitted drag preview. A successful changed Drum editor commit auditions the
+current source while musical transport is stopped; cancellation, unchanged/stale edits and Undo do not.
+The roomy Play and adjacent local Stop remain available outside the scrolling parameter area. Ready
+hits reuse one output and resident prepared transient PCM with authority-bound retrigger. EOF/Stop
+retire transient state as before; later Play may prepare again while retaining the healthy output. During preparation
+only the latest pending request survives: there is no queue of delayed hits. Stop/Panic, editor target
+changes and project close withdraw pending authority. A failed audition preserves the accepted edit
+and its Undo. Piano note audition retains its separate source validation and joined ownership transfer.
+Solo audition uses the same synthesis and quiet pitched
 audition lifetime, bypassing downstream Gain/Mix while transport is stopped. Offline, realtime and WAV
 use the same prepared kernel and boundary policy. See [family verification](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md)
 and the [original kick evidence](experiments/SEQ-FIRST-DRUM_REPORT.md).

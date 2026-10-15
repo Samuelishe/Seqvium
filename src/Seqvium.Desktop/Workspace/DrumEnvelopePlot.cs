@@ -25,6 +25,7 @@ internal sealed class DrumEnvelopePlot(ShellSession shell) : Control
     public bool AmplitudeMode { get; set; }
     public string Algorithm { get; set; } = DrumVoice.Algorithm;
     public bool IsDraft { get; set; }
+    public bool HasGesture => _pointer is not null;
     public float[]? Waveform { get; set; }
     public Func<bool>? Begin { get; set; }
     public event Action<string, decimal>? Preview;
@@ -70,7 +71,8 @@ internal sealed class DrumEnvelopePlot(ShellSession shell) : Control
             Focus();
             _handle = closest;
             _horizon = Horizon;
-            _capturedScale = PitchScale;
+            // Amplitude-only instruments (Clap, hats, Rim) have no pitchAmount parameter.
+            _capturedScale = AmplitudeMode ? 1 : PitchScale;
             _pointer = e.Pointer;
             e.Pointer.Capture(this);
             e.Handled = true;

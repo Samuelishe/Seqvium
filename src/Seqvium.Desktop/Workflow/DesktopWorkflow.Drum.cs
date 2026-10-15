@@ -7,6 +7,42 @@ namespace Seqvium.Desktop.Workflow;
 
 internal sealed partial class DesktopWorkflow
 {
+    private bool _drumAuditionOutput;
+    private SoundDefinition? _drumAuditionSource;
+    private decimal _drumAuditionPitch, _drumAuditionIntensity;
+    private sealed record DrumAuditionIntent(NodeEditorTarget Target, long Generation, Id<SoundDefinition> Sound,
+        decimal Pitch, decimal Intensity, long Transport, long Serial, TaskCompletionSource<bool> Completion);
+    private DrumAuditionIntent? _pendingDrumAudition;
+    private long _drumAuditionSerial;
+    private Task _drumAuditionDrain = Task.CompletedTask;
+
+    internal Task<bool> CancelDrumAuditionAsync() => _closed || _disposed ? Task.FromResult(false) : _owner.Run(() =>
+    {
+        InvalidateDrumAuditions();
+        return Task.FromResult(true);
+    });
+
+    private void InvalidateDrumAuditions()
+    {
+        _drumAuditionSerial++;
+        _pendingDrumAudition?.Completion.TrySetResult(false);
+        _pendingDrumAudition = null;
+        if (_drumAuditionOutput) _noteOutput?.Sampler.Stop();
+    }
+
+    private async Task DrainDrumAuditionsAsync()
+    {
+        while (_pendingDrumAudition is { } intent)
+        {
+            _pendingDrumAudition = null;
+            try
+            {
+                intent.Completion.TrySetResult(await AuditionDrumSourceAsync(intent.Target, intent.Generation,
+                    intent.Sound, intent.Pitch, intent.Intensity, intent.Transport, intent.Serial));
+            }
+            catch (Exception error) { intent.Completion.TrySetException(error); }
+        }
+    }
     internal Task<bool> AddDrumVoiceAsync(BeatEditBasis basis, string name) =>
         AddDrumVoiceAsync(basis, name, DrumVoice.Algorithm);
 
@@ -60,41 +96,88 @@ internal sealed partial class DesktopWorkflow
         return Task.FromResult(changed);
     });
 
-    internal Task<bool> AuditionDrumAsync(NodeEditorTarget target, long generation, decimal pitch, decimal intensity)
+    internal async Task<bool> ShapeAndAuditionDrumAsync(DrumProposal proposal, decimal pitch, decimal intensity)
+    {
+        long auditionSerial = Volatile.Read(ref _drumAuditionSerial);
+        long transport = State.TransportGeneration;
+        bool changed = await SetDrumParametersAsync(proposal);
+        if (!changed) return false;
+        var current = State;
+        if (current.Generation == proposal.Generation + 1 && current.TransportGeneration == transport)
+            await AuditionDrumAsync(proposal.Target, current.Generation, pitch, intensity, transport, auditionSerial);
+        return true; // A failed/unavailable audition must not undo an accepted musical edit.
+    }
+
+    internal async Task<bool> AuditionDrumAsync(NodeEditorTarget target, long generation, decimal pitch, decimal intensity,
+        long? expectedTransportGeneration = null, long? expectedAuditionSerial = null)
     {
         var observation = State;
         var state = observation.Snapshot.State;
-        if (observation.Document.LifecycleId != target.LifecycleId || observation.Generation != generation ||
+        if (_disposed || _closed || observation.Document.LifecycleId != target.LifecycleId || observation.Generation != generation ||
+            expectedTransportGeneration is { } expected && observation.TransportGeneration != expected ||
             DrumEditorSession.Resolve(state, target) is not { } sound || !DrumVoice.Supports(sound))
-            return Task.FromResult(false);
+            return false;
         // Audition uses explicit source identity, even if another Pattern is selected for transport.
-        return AuditionDrumSourceAsync(target, generation, sound.Id, pitch, intensity);
+        var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await _owner.Run(() =>
+        {
+            if (_closed || observation.TransportGeneration != _playGeneration ||
+                expectedAuditionSerial is { } serial && serial != _drumAuditionSerial)
+                completion.TrySetResult(false);
+            else
+            {
+                _pendingDrumAudition?.Completion.TrySetResult(false);
+                _pendingDrumAudition = new(target, generation, sound.Id, pitch, intensity,
+                    observation.TransportGeneration, ++_drumAuditionSerial, completion);
+                if (_drumAuditionDrain.IsCompleted) _drumAuditionDrain = DrainDrumAuditionsAsync();
+            }
+            return Task.FromResult(true);
+        });
+        return await completion.Task;
     }
 
     private Task<bool> AuditionDrumSourceAsync(NodeEditorTarget target, long generation,
-        Id<SoundDefinition> sound, decimal pitch, decimal intensity) => Command("Workflow.ActionFailed", async () =>
+        Id<SoundDefinition> sound, decimal pitch, decimal intensity, long expectedTransportGeneration, long serial) => Command("Workflow.ActionFailed", async () =>
     {
+        if (serial != _drumAuditionSerial || expectedTransportGeneration != _playGeneration) return false;
         if (_document.LifecycleId != target.LifecycleId || _document.Generation != generation ||
             DrumEditorSession.Resolve(_document.Current.State, target)?.Id != sound)
             throw new InvalidOperationException("Workflow.EditStale");
         if (_coordinator?.ReadStatus().Execution.Playing == true) return false;
-        await CloseNoteAuditionAsync();
-        long playGeneration = _playGeneration;
-        _noteOutput = _openOutput();
+        long playGeneration = expectedTransportGeneration;
         try
         {
-            _noteSession = new();
-            _noteSession.AttachOutput(_noteOutput.Lifetime, _noteOutput.Sampler);
-            _noteOutput.Sampler.SetGain(.12f);
+            if (!_drumAuditionOutput || _noteOutput is null || _noteOutput.Lifetime.Joined || _noteOutput.ReadFailure() is not null)
+            {
+                await CloseNoteAuditionAsync(preserveDrumRequests: true);
+                _noteOutput = _openOutput();
+                _noteSession = new();
+                _noteSession.AttachOutput(_noteOutput.Lifetime, _noteOutput.Sampler);
+                _noteOutput.Sampler.SetGain(.12f);
+                _drumAuditionOutput = true;
+            }
+            var source = DrumEditorSession.Resolve(_document.Current.State, target)!;
+            _noteOutput.Sampler.RetireCompleted();
+            if (_drumAuditionSource is { } cached && cached.Id == source.Id && cached.Algorithm == source.Algorithm &&
+                cached.Parameters.OrderBy(p => p.Key).SequenceEqual(source.Parameters.OrderBy(p => p.Key)) &&
+                _drumAuditionPitch == pitch && _drumAuditionIntensity == intensity &&
+                _noteOutput.Sampler.RetriggerAudition())
+                return true;
             using var request = new NoteAuditionRequest(_noteOutput.Sampler, _document, sound, pitch, intensity);
             await request.PrepareAsync();
+            // A slow preparation never turns later clicks into a backlog of old hits.
+            if (serial != _drumAuditionSerial && _playGeneration == playGeneration &&
+                _document.Generation == generation && _document.LifecycleId == target.LifecycleId)
+                return false;
             if (_document.Generation != generation || _playGeneration != playGeneration ||
                 _document.LifecycleId != target.LifecycleId || request.Publish() != SamplerPublication.Accepted)
             {
                 await CloseNoteAuditionAsync();
                 return false;
             }
-
+            _drumAuditionSource = source;
+            _drumAuditionPitch = pitch;
+            _drumAuditionIntensity = intensity;
             return true;
         }
         catch

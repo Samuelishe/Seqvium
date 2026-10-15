@@ -10,12 +10,13 @@ using Seqvium.Desktop.Presentation;
 
 namespace Seqvium.Desktop.Workspace;
 
-/// <summary>Physical level dial with relative vertical movement and one committed captured gesture.</summary>
+/// <summary>Relative clockwise rotation with one committed captured gesture and no press-position jump.</summary>
 internal sealed class GainDialControl(ShellSession shell) : Control
 {
     private IPointer? _pointer;
-    private Point _origin;
-    private decimal _start;
+    private Point? _previousPosition;
+    private decimal _gestureValue;
+    private const double Sweep = Math.PI * 1.5;
     public decimal? Amplitude { get; set; }
     public decimal DefaultAmplitude { get; set; } = 1;
     public string? CenterText { get; set; }
@@ -37,7 +38,7 @@ internal sealed class GainDialControl(ShellSession shell) : Control
         ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
         PointerPressed += (_, e) =>
         {
-            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || Begin?.Invoke() != true) return;
+            if (_pointer is not null || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || Begin?.Invoke() != true) return;
             Focus();
             e.Handled = true;
             if (e.ClickCount == 2)
@@ -48,21 +49,21 @@ internal sealed class GainDialControl(ShellSession shell) : Control
             }
 
             _pointer = e.Pointer;
-            _origin = e.GetPosition(this);
-            _start = Amplitude ?? 1;
+            _previousPosition = OutsideCenter(e.GetPosition(this));
+            _gestureValue = Amplitude ?? 1;
             e.Pointer.Capture(this);
             InvalidateVisual();
         };
         PointerMoved += (_, e) =>
         {
             if (_pointer != e.Pointer) return;
-            decimal sensitivity = e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? .001m : .005m;
-            Preview?.Invoke(Math.Clamp(_start + (decimal)(_origin.Y - e.GetPosition(this).Y) * sensitivity, 0, 1));
+            Update(e.GetPosition(this), e.KeyModifiers);
             e.Handled = true;
         };
         PointerReleased += (_, e) =>
         {
             if (_pointer != e.Pointer || e.InitialPressMouseButton != MouseButton.Left) return;
+            Update(e.GetPosition(this), e.KeyModifiers);
             _pointer = null;
             e.Pointer.Capture(null);
             e.Handled = true;
@@ -83,7 +84,7 @@ internal sealed class GainDialControl(ShellSession shell) : Control
             }
 
             if (e.Key is not (Key.Left or Key.Down or Key.Right or Key.Up or Key.Home or Key.End) ||
-                e.KeyModifiers is not (KeyModifiers.None or KeyModifiers.Shift) || Begin?.Invoke() != true) return;
+                HasGesture || e.KeyModifiers is not (KeyModifiers.None or KeyModifiers.Shift) || Begin?.Invoke() != true) return;
             decimal delta = e.KeyModifiers == KeyModifiers.Shift ? .001m : .01m;
             decimal value = e.Key == Key.Home ? 0 :
                 e.Key == Key.End ? 1 : Math.Clamp((Amplitude ?? 1) +
@@ -94,6 +95,36 @@ internal sealed class GainDialControl(ShellSession shell) : Control
         };
         GotFocus += (_, _) => InvalidateVisual();
         LostFocus += (_, _) => InvalidateVisual();
+    }
+
+    private Point? OutsideCenter(Point point)
+    {
+        var offset = point - new Point(Bounds.Width / 2, Bounds.Height / 2);
+        double deadRadius = Math.Max(3, Math.Min(Bounds.Width, Bounds.Height) * .12);
+        return offset.X * offset.X + offset.Y * offset.Y >= deadRadius * deadRadius ? point : null;
+    }
+
+    private void Update(Point point, KeyModifiers modifiers)
+    {
+        var current = OutsideCenter(point);
+        var previous = _previousPosition;
+        _previousPosition = current;
+        if (current is not { } to || previous is not { } from || to == from) return;
+        var center = new Point(Bounds.Width / 2, Bounds.Height / 2);
+        var a = from - center;
+        var b = to - center;
+        // A chord crossing the center is ambiguous. Re-anchor instead of turning it into half a turn.
+        var segment = b - a;
+        double along = Math.Clamp(-(a.X * segment.X + a.Y * segment.Y) /
+            (segment.X * segment.X + segment.Y * segment.Y), 0, 1);
+        if (OutsideCenter(center + a + segment * along) is null) return;
+        double delta = Math.Atan2(a.X * b.Y - a.Y * b.X, a.X * b.X + a.Y * b.Y);
+        decimal next = Math.Clamp(_gestureValue + (decimal)(delta / Sweep) *
+            (modifiers.HasFlag(KeyModifiers.Shift) ? .2m : 1m), 0, 1);
+        // Clamp each increment: reversing at a limit responds immediately, without accumulated overshoot.
+        if (next == _gestureValue) return;
+        _gestureValue = next;
+        Preview?.Invoke(next);
     }
 
     public void Cancel()
@@ -143,7 +174,8 @@ internal sealed class GainDialControl(ShellSession shell) : Control
                 CenterText ?? ((double)Amplitude.Value * 100).ToString("0", CultureInfo.InvariantCulture),
                 CultureInfo.InvariantCulture, FlowDirection.LeftToRight, HostVisual.Typeface(this),
                 HostVisual.Metric(this, "Type.Body"), Brush(IsEnabled ? "Text.Primary" : "State.Unavailable"));
-            if (!Compact) context.DrawText(value, new(center.X - value.Width / 2, center.Y - value.Height / 2));
+            if (!Compact && value.Width <= knob * 2 - 4)
+                context.DrawText(value, new(center.X - value.Width / 2, center.Y - value.Height / 2));
         }
 
         if (IsFocused) context.DrawEllipse(null, new Pen(Brush("Focus.Active"), 2), center, radius + 9, radius + 9);

@@ -112,8 +112,11 @@ internal sealed partial class DesktopWorkflow
             }
         });
 
-    private async Task CloseNoteAuditionAsync()
+    private async Task CloseNoteAuditionAsync(bool preserveDrumRequests = false)
     {
+        if (!preserveDrumRequests) InvalidateDrumAuditions();
+        _drumAuditionOutput = false;
+        _drumAuditionSource = null;
         if (!_labContextual) _labAudible = null;
         _browserAudition?.EndLifetime();
         if (_noteSession?.OutputSampler is not null) await _noteSession.DisposeAsync();

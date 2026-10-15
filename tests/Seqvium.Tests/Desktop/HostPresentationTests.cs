@@ -94,8 +94,15 @@ public sealed class HostPresentationTests
     {
         Assert.All(HostMetrics.Values.Where(pair => !pair.Key.StartsWith("Playlist.", StringComparison.Ordinal) &&
                                                     !pair.Key.StartsWith("Mixer.", StringComparison.Ordinal) &&
+                                                    !pair.Key.StartsWith("Audition.", StringComparison.Ordinal) &&
+                                                    !pair.Key.StartsWith("Drum.", StringComparison.Ordinal) &&
                                                     !pair.Key.StartsWith("Piano.", StringComparison.Ordinal)),
             pair => Assert.InRange(pair.Value, 1, 56));
+        Assert.InRange(HostMetrics.Values["Audition.MinWidth"], 112, 160);
+        Assert.InRange(HostMetrics.Values["Audition.NoteWidth"], 96, 120);
+        Assert.InRange(HostMetrics.Values["Audition.LevelWidth"], 112, 160);
+        Assert.InRange(HostMetrics.Values["Drum.CompactDialSize"], 60, HostMetrics.Values["Drum.DialSize"]);
+        Assert.InRange(HostMetrics.Values["Drum.CompactGraphHeight"], 180, HostMetrics.Values["Drum.GraphHeight"]);
         Assert.InRange(HostMetrics.Values["Piano.KeyWidth"], 60, 96);
         Assert.InRange(HostMetrics.Values["Piano.VelocityHeight"], 60, 120);
         Assert.InRange(HostMetrics.Values["Piano.RowHeight"], 16, 28);
