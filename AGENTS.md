@@ -18,6 +18,15 @@ For every nontrivial task:
    guidelines together; do not reduce that request to cosmetic changes to preserve an older baseline.
 6. Update durable documents in the same change only when their owned truth changes.
 
+Seqvium has a unified global Settings center. Before adding any global preference or application
+behavior option, read [SETTINGS](docs/SETTINGS.md#unified-global-settings-center) and route its UI
+there. Do not add an independent preference pane or duplicate language/theme/About controls on the
+musical toolbar. New application keyboard commands must use the stable HostCommands catalog and
+shared binding resolver, with conflict/default/persistence and actual dispatch verification. Preserve
+system/text/editor focus ownership; local editor remapping remains a separate scoped follow-up.
+Add settings sections only with working capabilities; future VST, audio I/O and MIDI settings belong
+in this same center when implemented. Sound/timing/project-instance state remains project-owned.
+
 Do not depend on earlier chat history or load the whole knowledge base by default.
 Active docs contain current truth/policy/plans/open questions/state; history belongs in `docs/archive/`.
 Exclude `docs/archive/**` from normal startup, selected owner reading, ordinary task context, generated
@@ -50,7 +59,7 @@ All routes start with current state; add these owners as needed:
 | Audio / realtime                                          | [AUDIO_ENGINE](docs/AUDIO_ENGINE.md), architecture                                                                |
 | Node / processing graph, ports, node execution            | [NODE_GRAPH](docs/NODE_GRAPH.md) + affected audio/architecture owner                                              |
 | Workspace panes, docking, floating, layout, activation    | [WORKSPACE](docs/WORKSPACE.md), UX contract                                                                       |
-| User/application preferences, reset, production logging   | [SETTINGS](docs/SETTINGS.md); project format for project-owned persistence, development for developer diagnostics |
+| Global settings, shortcuts/input, application behavior, reset, production logging | [SETTINGS](docs/SETTINGS.md); project format for project-owned persistence, development for developer diagnostics |
 | Samples / generation / resampling                         | [SAMPLE_WORKFLOW](docs/SAMPLE_WORKFLOW.md); audio or extensions for affected boundaries                           |
 | Extensions / packages                                     | [EXTENSIONS](docs/EXTENSIONS.md)                                                                                  |
 | Project serialization                                     | [PROJECT_FORMAT](docs/PROJECT_FORMAT.md); extensions for opaque state                                             |

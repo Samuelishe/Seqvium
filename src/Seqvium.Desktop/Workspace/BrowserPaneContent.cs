@@ -168,7 +168,14 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         _cancel.Click += (_, _) => { _cancellation.Cancel(); StopPreview(); };
         _rack.Click += (_, _) => UseSelected(true);
         _playlist.Click += (_, _) => UseSelected(false);
-        _auto.IsCheckedChanged += (_, _) => { if (_auto.IsChecked == true) Preview(); };
+        _auto.IsCheckedChanged += async (_, _) =>
+        {
+            if (_refreshing || _auto.IsChecked == _shell.Controls.AutoPreview) return;
+            bool enabled = _auto.IsChecked == true;
+            var save = _shell.SetControlsAsync(_shell.Controls with { AutoPreview = enabled });
+            if (enabled) Preview();
+            await save;
+        };
         _list.AddHandler(PointerPressedEvent, (_, e) =>
         {
             _drag = null;
@@ -436,6 +443,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         AutomationProperties.SetName(_locations, _shell["Browser.Locations"]);
         AutomationProperties.SetName(_path, _shell["Browser.Path"]);
         _auto.Content = _shell["Browser.AutoPreview"];
+        _auto.IsChecked = _shell.Controls.AutoPreview;
         _more.Content = _shell["Browser.More"];
         string message = _workflow.State.BrowserPreviewPlaying ? "Browser.Previewing" : _message;
         _status.Text = message is "Browser.Ready" or "Browser.MoreHint" ? "" : _shell[message];

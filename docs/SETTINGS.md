@@ -7,8 +7,75 @@ safety, logical device-selection UX, preference-reset limits, quiet bounded prod
 Not authoritative for: Project serialization, workspace interaction/geometry, localization/theme APIs, or
 logging implementation.
 
-R2-F4 implements session-only logical audio selection. R3-F1/F2 implement the bounded preferences and
-workspace layout files below plus the optional Appearance pane; broader Settings/reset/logging UI is absent.
+R2-F4 implements session-only logical audio selection. The unified Settings center owns global
+preferences and application shortcuts; the independent preference/layout files below remain compatible.
+Broad application/plugin reset, persistent audio selection and production logging controls remain future work.
+
+## Unified global settings center
+
+Implemented SEQ-SETTINGS-F1: the toolbar Settings action (default Ctrl+,) opens one owned compact
+window. General contains explicit language/theme choices, Controls contains behavior and application
+keyboard shortcuts, and About retains the brand composition, scope and assembly-derived version.
+Changes apply immediately; Close/Escape keep applied values. Opening cancels active workspace gestures;
+closing returns focus to the originating live control. Settings contains no musical document or Undo.
+The Appearance pane and toolbar language/About actions are retired. Its version-1 layout identity is
+retained only as a hidden compatibility token; it never creates preference controls or a pane tab.
+
+New global preferences must enter this center under their real subsystem owner. Extend a useful page
+or add a page with implemented content; do not add placeholder VST/audio I/O/MIDI categories. Those
+subsystems will add their meaningful global preferences here when available. Keep environment/device
+intent separate from reproducible project sound/timing/instance state. Browser's contextual Auto preview
+checkbox is a quick access to the same persistent Controls preference, not a second setting.
+
+The title-row sun/moon action opens an explicit theme menu with the current item marked. It never
+cycles or alternates themes. A compact disclosure chevron and localized Choose theme label identify
+the button as a selector; the tooltip also names the current theme. General and the quick menu
+enumerate the same ThemeCatalog. Additional
+built-in or user themes must extend this selection model with stable persisted identities and coherent
+availability fallback, rather than creating a binary toggle or a cycle. Current implementation ships
+only Dark/Light; user-theme loading/packaging remains unimplemented under UI design/Q-055.
+
+### Remappable application commands
+
+HostCommands owns stable nonlocalized IDs, labels, groups and defaults. Controls offers search by
+command/chord, key capture, explicit Assign, clear, per-command default and keyboard-only Reset shortcuts.
+Only effective differences from defaults have a small dot/bold chord and an individual reset icon
+with a default-chord tooltip. Default rows have no reset button; column alignment remains stable.
+Explicitly assigning the default does not mark it customized; clearing a default binding does.
+A conflict names the current owner; explicit Reassign clears the old owner and applies the new binding
+atomically in session. Restoring one default uses the same conflict decision. Reset shortcuts restores
+all command defaults without changing behavior, language, theme, layout, Browser locations or extensions.
+
+The real MainWindow dispatcher and toolbar shortcut/automation hints consume the current bindings.
+Bindings are single chords: Ctrl (optionally Shift) plus supported letters/comma, Ctrl+Escape, or
+unmodified/Shift function keys except F4/F6/F10. Alt/Meta/AltGr, text clipboard/selection, editor duplicate,
+search, Browser refresh, pane close/navigation, arrows and plain typing/Space remain reserved.
+Ctrl+Z/Y and document Undo/Redo never steal text history, including after remapping; transport function
+keys remain available while editing text. No global OS keyboard hook is installed.
+
+This completed first stage covers New/Open/Save/Save As/Import WAV, Undo/Redo, Play/Stop/Panic,
+Browser, Graph and Settings. Editor-local Piano/Playlist/Rack/Graph gestures and pane traversal/close
+remain fixed and are disclosed under Editor & system keys. A future scoped stage must model overlapping
+editor contexts, command availability and text/focus arbitration before allowing their remapping;
+it must not merely add editable labels. Multiple alternatives/chord sequences, mouse gestures,
+controllers, MIDI mapping, imported profiles and macro commands are not implemented.
+
+### Control preference storage
+
+`controls.json` sits beside existing preferences/layout in the platform user configuration directory.
+Version 1 stores `autoPreview` (default false) and `shortcuts`, an optional map of stable command IDs
+to canonical chord strings or null (unassigned). Omitted commands use current defaults. Existing
+`preferences.json` language/theme bytes/schema and workspace schema remain independently owned;
+there is no project-format change or migration of old preference files.
+
+Reads run on workers with a 32 KiB + sentinel byte bound and depth 8. Missing files use defaults.
+Malformed/oversize/unreadable/future versions, unknown command IDs, reserved/invalid chords and conflicting
+effective bindings fall back safely, preserve original bytes and block writes for the store lifetime.
+Session changes remain functional with a visible notice. Writes are serialized, flush a unique sibling
+temporary, preserve `.previous`, replace atomically and remove only their own temporary. Shutdown joins
+pending writes. Reset cannot bypass a damaged-file write refusal. Power-loss durability, competing
+external writers, hostile links and preference repair/profile migration remain unestablished.
+
 
 ## Extension enablement
 
@@ -56,7 +123,7 @@ The main window awaits pending preference persistence on close. Power-loss durab
 processes, hostile links and a multi-version backup history are not established guarantees.
 
 Language/theme apply immediately, preserve controls/focus and do not edit canonical revision/history,
-translate user project names or invalidate pending imports. No Reset command or full Settings UI exists.
+translate user project names or invalidate pending imports. The Settings center above owns their UI.
 A future reset must be restricted to independently owned configuration; it cannot delete project files,
 accepted WAV, user-created content or recovery. The `.previous` file is preferences only, not music recovery.
 
@@ -116,7 +183,8 @@ no production environment/command-line bypass or setting is added.
 
 The implemented file policies above cover language/theme, registered first-party pane placements,
 main-window restoration and Pattern navigation width/collapse.
-Other application/plugin settings remain future work.
+Application keyboard bindings and Browser auto preview use the separate control file above; other
+application/plugin settings remain future work.
 
 Node Editor adds the fixed `node-editor.main` / `node-editor` entry under the same version-1 layout.
 Older layouts omit it and start it hidden. Only pane placement/visibility/docking is persisted; target,

@@ -7,7 +7,18 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.8.0002**, SEQ-LEFT-PANELS. An ordered shared left zone places rail, Browser,
+Product alpha **0.1.8.0003**, SEQ-SETTINGS-F1. A unified compact Settings window owns General,
+Controls and branded About/version. Language/theme duplication and the Appearance UI are retired;
+the title-row sun/moon opens explicit checked catalog selection. Thirteen application commands have
+real remapping, named conflict transfer, clear/default/reset and compatible independent persistence.
+Browser auto preview now uses the same persistent global behavior preference. Old language/theme/layout
+files remain compatible and musical project/Undo ownership is unchanged. New global options must use
+this center and new application keys must use HostCommands. These rules are routed through AGENTS,
+INDEX and [Settings](SETTINGS.md#unified-global-settings-center), the current Markdown knowledge base;
+no executable RAG index is installed. Editor-local remapping/profiles/controllers and actual future
+VST/audio I/O/MIDI pages remain separately scoped work. R8 is not started.
+
+An ordered shared left zone places rail, Browser,
 Patterns and musical workspace side by side. Each right boundary resizes only its left panel;
 content reflows, then clips, and collapses only near the edge. Independent rail toggles restore the
 last usable width. Sidebar icons form a separate top group. Reduced windows fit both panels without
@@ -47,8 +58,8 @@ and application shutdown retires providers. Failed activation/disposal and missi
 packages retain host diagnostics. Metadata labels use host RU/EN fallback and shared Dark/Light controls.
 A separate user file remembers disabled IDs; accepted media and its Undo history stay project-owned.
 
-Desktop has Browser, Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and information/appearance
-panes. Compact studio-instrument resources, movable/resizable/docked panes, English/Russian and
+Desktop has Browser, Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor, Project Inspector
+and the global Settings center. Compact studio-instrument resources, movable/resizable/docked panes, English/Russian and
 Dark/Light share preferences and workspace persistence. Normal startup and project Open stay silent;
 user-wide Single Instance and scoped device/output lifetime remain unchanged.
 
@@ -111,7 +122,19 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2: **SEQ-LEFT-PANELS, 2026-10-15**. Affected Release test-project build and its
+Latest L0/L1/L2/L3: **SEQ-SETTINGS-F1, 2026-10-15**. Full Release solution build has zero warnings/errors;
+**1384/1384 tests pass**, zero skips, one thread (**99.262 s** CLI summary). Final minimum-size/custom-reset/theme-affordance refinement reuses that L3 with **105/105 focused
+tests** (17.642 s), zero skips and a zero-warning affected Release build. Real production windows pass RU/EN × Dark/Light at
+720×570 and 500×340 settings, with main window down to 640×480, search/capture/conflict/default/reset,
+file reload, real binding dispatch/old-key removal, text-local history, About and explicit quick-theme
+selection. The shared component catalog passes. A narrow Settings-source corpus exception additionally passes
+76/76 ProjectStats tests (1.964 s); other settings/private trees remain excluded. Native Windows input
+attempts are foreground/coverage
+refused; rendered/routed evidence is not relabeled as native input. No physical audio, other-platform,
+DPI, accessibility certification or owner aesthetic acceptance follows. The
+[Settings report](experiments/SEQ-SETTINGS-F1_REPORT.md) owns methods, failures and limits.
+
+Prior L0/L1/L2: **SEQ-LEFT-PANELS, 2026-10-15**. Affected Release test-project build and its
 production/tool references: zero warnings/errors; **260/260 focused tests** pass, zero skips,
 one thread (19.270 s), including 75 ProjectStats cases. Eight added layout cases cover independent usable/clipped widths,
 malformed-file
@@ -127,7 +150,7 @@ This is focused verification, not L3, physical audio, other-platform/DPI or subj
 Commands, observations and bounded native refusals belong to the
 [work log](archive/WORK_LOG.md#seq-left-panels--2026-10-15).
 
-Latest L3: **SEQ-R7-SAMPLE-LAB-V1, 2026-10-15**. Full Release solution build: zero warnings/errors;
+Earlier L3: **SEQ-R7-SAMPLE-LAB-V1, 2026-10-15**. Full Release solution build: zero warnings/errors;
 **1341/1341 tests pass**, zero skips, one test thread (**62.326 s** CLI summary). Numerical tests cover
 finite/transient/decay/spectral differences, actual reference/lock behavior, exact processed-audition
 versus accepted-PCM agreement and unrelated voice/time continuation. Host tests cover cancellation,
@@ -146,8 +169,9 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **2**. This risk-selected L3 covers prepared audition,
-extension/document/media lifecycle and resets the cadence. No broader platform, aesthetic, pressure or acoustic closure follows.
+Completed repository tasks since this L3: **0**. This risk-selected L3 covers global shortcut routing,
+preference persistence and existing production regressions. No broader platform, aesthetic, pressure
+or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
 FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell

@@ -19,6 +19,14 @@ for later stages. The separately authorized ProjectStats developer tool is imple
 [Open questions](KNOWN_PROBLEMS.md), including First Track Release dependency closure Q-061, do not
 reorder stages or make recording, automation, external hosting or ProjectStats implicit prerequisites.
 
+## Settings and control follow-ups
+
+Global Settings is implemented under [Settings](SETTINGS.md#unified-global-settings-center); new global
+options must go there. The next control stage may add editor-scoped remapping after explicit context,
+conflict and text/focus contracts; alternatives/profiles/controllers remain separately scoped work.
+Future VST, audio I/O and MIDI stages add working preferences to this center, without placeholder pages
+or changes to project-owned sound/timing state. This does not start or reorder R8.
+
 ## Sequencing philosophy
 
 Prioritize durable, extensible foundations over the fastest visible MVP/demo. Substantial document/domain,

@@ -30,7 +30,10 @@
                                VerticalAlignment="Center" MaxWidth="190" TextTrimming="CharacterEllipsis"
                                ToolTip.Tip="{Binding ProjectStatus}" />
                 </Grid>
-                <StackPanel x:Name="WindowActions" Grid.Column="1" Orientation="Horizontal" Classes="joined">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Classes="joined">
+                    <Button x:Name="ThemeAction" Classes="shell chrome" Click="ThemeClicked"
+                            AutomationProperties.AutomationId="Preference.Theme" />
+                <StackPanel x:Name="WindowActions" Orientation="Horizontal" Classes="joined">
                     <Button x:Name="MinimizeAction" Classes="shell chrome" Click="MinimizeClicked"
                             AutomationProperties.AutomationId="Window.Minimize"
                             AutomationProperties.Name="{Binding [Window.Minimize]}"
@@ -40,6 +43,7 @@
                     <Button x:Name="CloseAction" Classes="shell chrome" Click="CloseClicked"
                             AutomationProperties.AutomationId="Window.Close"
                             AutomationProperties.Name="{Binding [Window.Close]}" ToolTip.Tip="{Binding [Window.Close]}" />
+                </StackPanel>
                 </StackPanel>
             </Grid>
         </Border>
@@ -76,9 +80,6 @@
                                     <Button Classes="shell" Content="{Binding [Pane.Inspector]}"
                                             Click="InspectorClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenInspector" />
-                                    <Button Classes="shell" Content="{Binding [Pane.Appearance]}"
-                                            Click="AppearanceClicked"
-                                            AutomationProperties.AutomationId="Workspace.OpenAppearance" />
                                     <Button Classes="shell" Content="{Binding [Pane.Graph]}"
                                             Click="GraphClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenGraph" />
@@ -90,32 +91,9 @@
                             </Flyout>
                         </Button.Flyout>
                     </Button>
-                    <Button Classes="shell" Content="{Binding LanguageCode}" Click="LanguageClicked"
-                            AutomationProperties.AutomationId="Preference.Language"
-                            AutomationProperties.Name="{Binding LanguageLabel}" ToolTip.Tip="{Binding LanguageLabel}" />
-                    <Button x:Name="ThemeAction" Classes="shell command" Click="ThemeClicked"
-                            AutomationProperties.AutomationId="Preference.Theme"
-                            AutomationProperties.Name="{Binding ThemeLabel}" ToolTip.Tip="{Binding ThemeLabel}" />
-                    <Button x:Name="AboutAction" Classes="shell command"
-                            AutomationProperties.AutomationId="Host.About"
-                            AutomationProperties.Name="{Binding [Host.About]}" ToolTip.Tip="{Binding [Host.About]}">
-                        <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedRight">
-                                <StackPanel Width="280" Spacing="{DynamicResource Space.Medium}">
-                                    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space.Medium}">
-                                        <Image Source="avares://Seqvium.Desktop/Assets/Brand/Icons/seqvium-128.png"
-                                               Width="{DynamicResource Brand.AboutSize}" Height="{DynamicResource Brand.AboutSize}" />
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="Seqvium" Classes="brand" FontSize="{DynamicResource Type.BrandDisplay}" />
-                                            <TextBlock Text="chaos into structure." Classes="caption" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                    <TextBlock Text="{Binding Version}" />
-                                    <TextBlock Text="{Binding [Host.Scope]}" TextWrapping="Wrap" Classes="secondary" />
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
+                    <Button x:Name="SettingsAction" Classes="shell command" Click="SettingsClicked"
+                            AutomationProperties.AutomationId="Settings.Open"
+                            AutomationProperties.Name="{Binding [Settings.Title]}" ToolTip.Tip="{Binding [Settings.Title]}" />
                 </StackPanel>
             </Grid>
         </Border>

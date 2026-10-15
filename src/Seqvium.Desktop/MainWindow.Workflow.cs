@@ -32,8 +32,8 @@ internal sealed partial class MainWindow
         WorkflowRegion.Child = _workflowControls;
         WorkflowStatusRegion.Child = _workflowControls.StatusControl;
         PaneMenuAction.Content = Presentation.HostIcons.Create("Panes", PaneMenuAction);
-        ThemeAction.Content = Presentation.HostIcons.Create("Theme", ThemeAction);
-        AboutAction.Content = Presentation.HostIcons.Create("Info", AboutAction);
+        ThemeAction.Content = Presentation.HostIcons.Create("Moon", ThemeAction);
+        SettingsAction.Content = Presentation.HostIcons.Create("Settings", SettingsAction);
         MinimizeAction.Content = Presentation.HostIcons.Create("Minimize", MinimizeAction, 16);
         CloseAction.Content = Presentation.HostIcons.Create("Close", CloseAction, 16);
         _workflow.Changed += WorkflowChanged;
@@ -314,23 +314,11 @@ internal sealed partial class MainWindow
     private async void WorkflowKeyDown(object? sender, KeyEventArgs args)
     {
         if (_closing || args.Handled) return;
-        if (args.Key == Key.B && args.KeyModifiers == KeyModifiers.Control)
-        { OpenPane(WorkspaceState.BrowserId); args.Handled = true; return; }
-        // A text editing session owns its local Undo until the value is explicitly committed.
-        if (args.Key is Key.Z or Key.Y && args.KeyModifiers == KeyModifiers.Control &&
-            args.Source is Visual source && source.GetVisualAncestors().Prepend(source).Any(v => v is TextBox)) return;
-        string? action = (args.Key, args.KeyModifiers) switch
-        {
-            (Key.N, KeyModifiers.Control) => "New",
-            (Key.O, KeyModifiers.Control) => "Open", (Key.I, KeyModifiers.Control) => "Import",
-            (Key.S, KeyModifiers.Control) => "Save",
-            (Key.S, KeyModifiers.Control | KeyModifiers.Shift) => "SaveAs",
-            (Key.Z, KeyModifiers.Control) => "Undo", (Key.Y, KeyModifiers.Control) => "Redo",
-            (Key.G, KeyModifiers.Control) => "Graph",
-            (Key.Escape, KeyModifiers.Control) => "Panic", _ => null
-        };
-        if (args.Key == Key.F5 && args.KeyModifiers is KeyModifiers.None or KeyModifiers.Shift)
-            action = args.KeyModifiers == KeyModifiers.Shift ? "Stop" : "Play";
+        bool textInput = args.Source is Visual source &&
+            source.GetVisualAncestors().Prepend(source).Any(v => v is TextBox);
+        string? action = Presentation.HostCommands.Resolve(_session.Controls, args.Key, args.KeyModifiers, textInput);
+        if (action == "Settings") { args.Handled = true; await OpenSettingsAsync(); return; }
+        if (action == "Browser") { args.Handled = true; OpenPane(WorkspaceState.BrowserId); return; }
         if (action is null) return;
         args.Handled = true;
         await WorkflowActionAsync(action);

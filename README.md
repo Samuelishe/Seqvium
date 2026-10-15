@@ -49,6 +49,8 @@ for the logo, typography, alternative directions and publication resources.
 - Edit Source → Gain → Mix → Output graphs, reuse sound editors, and arrange movable/resizable panes.
 - Undo/redo musical edits, save/reopen projects with managed media, and export a Pattern or the full
   Song to 48 kHz stereo PCM16 WAV using the same audio processing.
+- Open **Settings / Ctrl+,** for language, theme, global keyboard shortcuts, Browser auto preview and
+  About. The title-row sun/moon opens a theme menu. Shortcut hints below describe the defaults.
 - Open **Browser / Ctrl+B** to pin sample folders, browse subfolders, search names and reuse project
   audio. Browser and Patterns share a separate group at the top of the left rail; both can stay open
   beside the workspace, resize independently and restore their remembered widths.

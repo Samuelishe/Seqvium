@@ -1744,3 +1744,19 @@ cards replace the ambiguous ellipsis. Static captions replace misleading Browser
 Compact disclosure chevrons share one header surface instead of an oversized separately raised tile.
 Current contracts live in WORKSPACE, ARCHITECTURE, UX_CONTRACT and DESIGN_SYSTEM; operational reuse and
 final ProjectStats report refresh live in AGENTS. This decision introduces no project-reader/DSP change.
+
+## SEQ-SETTINGS-F1 — unified preferences and bounded input ownership
+
+A single compact owned Settings window replaces the two-button Appearance pane and duplicate toolbar
+preferences. General/Controls/About are real pages; future subsystem content belongs there when it
+exists. A theme catalog feeds explicit selection and a checked sun/moon menu, avoiding a binary or
+cyclic theme contract. The disclosure arrow and Choose theme label communicate menu semantics.
+
+Stable global command IDs and an immutable binding map feed actual command dispatch and hints.
+Conflicts require explicit transfer; default restoration uses the same rule. Only effective custom
+bindings expose an individual reset and modified marker, limiting default-state noise. Reserve native,
+text and editor gestures rather than granting a global command ambiguous ownership. Editor-local
+remapping requires its own contextual stage. A separate bounded controls file preserves legacy
+appearance/layout compatibility and unsafe originals without mixing preferences with musical history.
+Canonical current policy lives in SETTINGS; AGENTS/INDEX/PROJECT_STATE make it discoverable to future
+sessions without inventing an unimplemented RAG service. The 2026-10-15 report owns verification limits.

@@ -9,6 +9,23 @@ namespace Seqvium.Tests.ProjectStats;
 public sealed class ProjectStatsScannerTests
 {
     [Fact]
+    public void HostSettingsSourceIsCountedWithoutOpeningOtherSettingsOrNestedPrivateTrees()
+    {
+        using var repo = new StatsRepository();
+        repo.Write("src/Seqvium.Desktop/Settings/SettingsWindow.cs", "source\n");
+        repo.Write("src/Other/Settings/Preferences.cs", "private\n");
+        repo.Write("tools/Settings/Preferences.cs", "private\n");
+        repo.Write("src/Seqvium.Desktop/Settings/private/Preferences.cs", "private\n");
+        var report = repo.Collect(scanner: new FileScanner(path =>
+        {
+            Assert.Equal("SettingsWindow.cs", Path.GetFileName(path));
+            return new StringReader("source\n");
+        }));
+        Assert.Equal(1, report.Totals.CSharpFiles);
+        Assert.Equal(1, report.Ownership.Single(group => group.Subject == "Production").Totals.CSharpFiles);
+    }
+
+    [Fact]
     public void AuthoredAudioSubsystemsRemainInsideProductionAndTestsCorpus()
     {
         using var repo = new StatsRepository();

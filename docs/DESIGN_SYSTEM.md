@@ -29,6 +29,12 @@ its visual, including retained Pattern/Part thumbnails, Gain transfer, Playlist 
 Piano. Resolving live brushes only inside `Render` is insufficient: a cached scene may otherwise keep
 the previous theme until another visual change. Resource refresh never requires replacing editor content.
 
+SettingsWindow consumes shared compact Window, Button, ComboBox, CheckBox, TextBox and Expander
+styles. Its shortcut scroll gutter reuses Navigation.ScrollGutter; selected page borders use Accent.Action
+with weight/thickness cues. Shortcut rows reserve the shared icon width for custom-only reset; a
+dot/bold chord and tooltip identify changes without color alone. ThemeCatalog feeds the shared sun/moon/check icon family without new
+palette values or control templates. About retains Brand.AboutSize and embedded typography.
+
 ## Token catalog
 
 ### Brand and embedded typography

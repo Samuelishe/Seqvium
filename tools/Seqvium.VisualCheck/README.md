@@ -1,5 +1,18 @@
 # Desktop visual and lifecycle verification
 
+## Global Settings
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll settings "$PWD/.artifacts/settings/review" "$PWD/examples/Neon Orchard/Neon Orchard.seqvium" native
+```
+
+Omit `native` for routed input. Uses isolated real Desktop/preferences and a read-only project.
+Reviews General/Controls/About in RU/EN × Dark/Light, ordinary and reduced windows. Exercises capture,
+conflict transfer, clear/default/reset, reserved-key/cancel/search behavior, actual command dispatch
+and old-key removal, Browser global behavior, file reload and unchanged music. Native mode guards exact
+foreground and hit testing before action-button/key delivery. No physical audio or other-platform/DPI
+acceptance follows. Identity review now opens About inside Settings.
+
 ## Theme switching and Pattern navigation
 
 ```powershell

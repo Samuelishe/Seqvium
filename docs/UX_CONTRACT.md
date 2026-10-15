@@ -959,7 +959,9 @@ and unresolved latency/reporting/compensation/bypass policy, not a selected UI c
 
 ## Application preferences and reset
 
-The future Settings experience supports bounded application/plugin-global preference resets under
+The implemented global Settings center and its keyboard-only reset are owned by
+[Settings](SETTINGS.md#unified-global-settings-center). New global options must use that center.
+Broader future application/plugin-global preference resets follow
 [SETTINGS](SETTINGS.md#reset-boundary). Configuration reset must not delete user projects,
 project-managed audio/media, user-created samples/presets or Personal Library content. Exact button
 layout and confirmation flow remain open.
@@ -968,14 +970,15 @@ developer logging levels belong outside ordinary GUI settings under [SETTINGS](S
 
 ### Language and theme preference changes
 
-R3-F1 applies its two language/theme actions immediately after button activation. Existing controls,
+Settings applies explicit language/theme choices immediately. The title-row theme menu selects a
+named theme with a current-item mark; it never cycles. Existing controls,
 keyboard focus and document remain alive; no deferred restart is required in this bounded shell.
 RU entries fall back individually to usable English; if an essential host entry is also unusable,
 short independent English action/name labels remain available rather than exposing keys. Other missing
 text gets a meaningful localized unavailable explanation. Blank, control-containing or overlong entries
 are unusable. Dotted keys and first-party catalogs are host-owned, not an extension resource SDK.
 Unnamed display is localized only while canonical name is null; user names and canonical numeric values
-never translate. This shell has no editable localized numeric input or active musical gesture.
+never translate. Numeric musical input retains its own explicit commit/cancel ownership.
 
 Changing host language/theme with a project open is a presentation preference change, not a musical
 edit. Preserve project content/relationships, ongoing editing intent, focus/selection and pending

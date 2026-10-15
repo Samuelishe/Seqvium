@@ -52,6 +52,13 @@ internal sealed partial class MainWindow : Window
         BrowserPanel = _navigation.Browser.Placement
     };
 
+    private static WorkspaceLayout? RetireAppearance(WorkspaceLayout? layout) => layout is null ? null : layout with
+    {
+        ActivePaneId = layout.ActivePaneId == WorkspaceState.AppearanceId ? null : layout.ActivePaneId,
+        Panes = [.. layout.Panes.Select(pane => pane.InstanceId == WorkspaceState.AppearanceId
+            ? pane with { Visibility = PaneVisibility.Hidden } : pane)]
+    };
+
     private WorkspaceLayout KeepSidebarVisibility(WorkspaceLayout layout) => layout with
     {
         Panes = [.. layout.Panes.Select(pane => WorkspaceState.Definition(pane.InstanceId).IsSidebar
@@ -103,14 +110,14 @@ internal sealed partial class MainWindow : Window
     {
         _session = session;
         _app = app;
-        _musicLayout = layout.Layout;
+        _musicLayout = RetireAppearance(layout.Layout);
         InitializeComponent();
         RestoreWindow(layout.Layout?.Window);
         DataContext = session;
         InitializeWorkflow();
         _layoutFallback = layout.UsedFallback;
         _layoutPersistence = new(layoutStore.SaveAsync);
-        _workspace = new(session, new(layout.Layout), ToggleLanguageAsync, ToggleThemeAsync,
+        _workspace = new(session, new(RetireAppearance(layout.Layout)), ToggleLanguageAsync, ToggleThemeAsync,
             CreatePaneContent);
         WorkspaceRegion.Child = _workspace;
         var navigation = new WorkspaceRail(session, _workspace, OpenPane);
@@ -130,10 +137,11 @@ internal sealed partial class MainWindow : Window
                 if (_closing) return;
                 // Initial normal-size layout can precede the native maximized arrange.
                 // Replay saved geometry against the settled workspace, before user interaction.
-                if (layout.Layout is { } saved) _workspace.State.RestoreLayout(saved);
+                if (RetireAppearance(layout.Layout) is { } saved) _workspace.State.RestoreLayout(saved);
                 if (_workflow.State.Snapshot.State.Patterns.IsEmpty &&
                     _workflow.State.Snapshot.State.AudioClips.IsEmpty) _workspace.State.StartEmptyDocument();
                 else if (layout.Layout is null) _workspace.State.ArrangeMusic();
+                _workspace.State.Hide(WorkspaceState.AppearanceId);
                 _workspace.Commit();
             }, Avalonia.Threading.DispatcherPriority.Loaded);
         };
@@ -211,6 +219,19 @@ internal sealed partial class MainWindow : Window
             BrandName.GetResourceObservable(IsActive ? "Text.Primary" : "Text.Secondary"));
         Chrome.Bind(Border.BorderBrushProperty,
             Chrome.GetResourceObservable(IsActive ? "Focus.Active" : "Border.Default"));
+        var themeIcon = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal,
+            Spacing = HostMetrics.Values["Space.XSmall"] };
+        themeIcon.Children.Add(HostIcons.Create(ThemeCatalog.All.Single(theme => theme.Theme == _session.Preferences.Theme).Icon, ThemeAction, 16));
+        var chevron = HostIcons.Create("Up", ThemeAction, 8);
+        chevron.RenderTransform = new Avalonia.Media.RotateTransform(180);
+        themeIcon.Children.Add(chevron);
+        ThemeAction.Content = themeIcon;
+        string themeLabel = _session["Settings.SelectTheme"] + " · " + _session.ThemeName;
+        AutomationProperties.SetName(ThemeAction, themeLabel);
+        ToolTip.SetTip(ThemeAction, themeLabel);
+        string settingsShortcut = HostCommands.Display(_session.Controls.Binding("Settings"));
+        AutomationProperties.SetAcceleratorKey(SettingsAction, settingsShortcut);
+        ToolTip.SetTip(SettingsAction, _session["Settings.Title"] + (settingsShortcut.Length == 0 ? "" : " · " + settingsShortcut));
         var label = _session[WindowState == WindowState.Maximized ? "Window.Restore" : "Window.Maximize"];
         MaximizeAction.Content = HostIcons.Create(WindowState == WindowState.Maximized ? "Restore" : "Maximize",
             MaximizeAction, 16);
@@ -286,11 +307,9 @@ internal sealed partial class MainWindow : Window
         return _preferenceWork;
     }
 
-    private async void LanguageClicked(object? sender, RoutedEventArgs args) => await ToggleLanguageAsync();
-    private async void ThemeClicked(object? sender, RoutedEventArgs args) => await ToggleThemeAsync();
+
 
     private void InspectorClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.InspectorId);
-    private void AppearanceClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.AppearanceId);
     private void GraphClicked(object? sender, RoutedEventArgs args) => OpenGraph();
     private void NodeEditorClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.NodeEditorId);
     private void BeatClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.BeatId);
@@ -485,6 +504,7 @@ internal sealed partial class MainWindow : Window
         _layoutPersistence.Request(CaptureLayout());
         await _layoutPersistence.ShutdownAsync();
         await _preferenceWork;
+        await _session.PendingControls;
         _shutdownComplete = true;
         Close();
     }

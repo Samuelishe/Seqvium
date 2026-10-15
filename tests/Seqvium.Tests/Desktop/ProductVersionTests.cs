@@ -189,8 +189,8 @@ public sealed class ProductVersionTests
             Assert.DoesNotMatch(@"\[assembly:\s*Assembly(InformationalVersion|Version|FileVersion)", source);
         }
 
-        Assert.Contains("Text=\"{Binding Version}\"",
-            File.ReadAllText(Path.Combine(root, "src/Seqvium.Desktop/MainWindow.axaml")));
+        Assert.Contains("Text = _shell.Version",
+            File.ReadAllText(Path.Combine(root, "src/Seqvium.Desktop/Settings/SettingsWindow.cs")));
     }
 
     [Theory]

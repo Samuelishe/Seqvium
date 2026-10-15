@@ -21,6 +21,14 @@ Click its rail icon to restore the last comfortable width. Each panel remembers 
 visibility with the workspace, independently of the music. Smaller windows fit both panels without
 automatically closing either one.
 
+## Application settings
+
+Open **Settings** at the right end of the toolbar (default **Ctrl+,**). General selects language and
+theme; Controls remembers Browser auto preview and lets you search, assign, clear or restore global
+keyboard shortcuts. Reassign explicitly transfers an occupied chord. Editor and system keys remain
+fixed. About shows the application version. The small sun/moon in the title row opens the theme menu.
+These preferences belong to your application, independently of saved music.
+
 ## Create a sound
 
 Open **Sample Lab** from the rail or Panes menu. Choose **Kick** or **Clap**, press **Generate**, and

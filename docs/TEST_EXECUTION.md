@@ -49,6 +49,20 @@ It renders RU/EN Dark/Light plus reduced disclosure/list/preview geometry. Route
 Windows input, decoded PCM and physical/acoustic evidence remain distinct. A failed native click
 delivery is not a pass, even when the corresponding routed scenario succeeds.
 
+## Global settings and command bindings
+
+`ControlPreferencesTests` covers real resolver/default removal, explicit conflict transfer, reserved
+system/editor/text keys, text-local Undo after remapping, separate file/previous bytes, unsafe-original
+write refusal, language/theme/music independence and joined latest writes. Combine with
+`PreferenceStoreTests`, `HostPresentationTests`, `WorkflowPresentationTests` and `*Workspace*` classes.
+Use `--filter-class "*ControlPreferencesTests"` with SDK 10/xUnit MTP after the affected Release build.
+
+[VisualCheck settings](../tools/Seqvium.VisualCheck/README.md#global-settings) owns real-window
+RU/EN × Dark/Light, reduced settings/workspace, capture/conflicts/default/reset, file reload, current
+command dispatch and title-row theme selection. GUI setup and combo fixture selection are distinct
+from guarded native action input. Editor-local remapping and hardware/platform/DPI acceptance remain
+outside this first stage. Current evidence belongs to PROJECT_STATE and the Settings report.
+
 ## Sample Browser verification
 
 Cross-stage regressions additionally cover section-only Pattern/Song × Mixer publication without

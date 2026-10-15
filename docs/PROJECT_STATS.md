@@ -85,6 +85,8 @@ path-policy update and tests.
 Ownership uses the first segment: `src` production; `tests` tests; `tools`/`eng` tooling; `experiments`
 experiments; `docs` documentation; root files repository. Nested `tests` folders do not reclassify
 tooling/experiments. Authored `src/<project>/Audio` and `tests/<project>/Audio` are included.
+The exact first-party `src/Seqvium.Desktop/Settings` source directory is also included; generic settings
+trees and nested private directories remain excluded before opening contents.
 
 Before reading content or descending into directories, exclude:
 

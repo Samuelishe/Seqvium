@@ -43,8 +43,7 @@ internal sealed class WorkspaceRail : Border, IDisposable
                      (WorkspaceState.BeatId, "Rack"), (WorkspaceState.PianoId, "Piano"),
                      (WorkspaceState.ArrangementId, "Playlist"), (WorkspaceState.MixerId, "Mixer"),
                      (WorkspaceState.GraphId, "Graph"),
-                     (WorkspaceState.NodeEditorId, "Sound"), (WorkspaceState.InspectorId, "Inspector"),
-                     (WorkspaceState.AppearanceId, "Theme")
+                     (WorkspaceState.NodeEditorId, "Sound"), (WorkspaceState.InspectorId, "Inspector")
                  })
         {
             var button = new Button { Classes = { "rail" } };

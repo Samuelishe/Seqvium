@@ -300,15 +300,17 @@ main-window placement. Shutdown joins main-window and pane storage together.
 
 ## Implemented R3-F2 internal panes
 
-The toolbar's Panes action deliberately opens Project Inspector or Appearance. Both are optional and
-hidden in a missing/default layout. Inspector projects actual open `ProjectDocument` name/status,
-tempo/meter and Pattern/sound/resource counts; Appearance invokes the existing language/theme actions.
-No invented music, editor controls, audio startup or dashboard is introduced.
+The toolbar's Panes action opens Project Inspector and the implemented musical tools. Inspector
+projects actual open `ProjectDocument` name/status, tempo/meter and Pattern/sound/resource counts.
+Appearance is retired in favor of the [global Settings center](SETTINGS.md#unified-global-settings-center).
+The old appearance placement remains a hidden version-1 compatibility token, excluded from rail,
+menu, pane tabs and control creation. Desktop normalizes restored legacy visibility/activation without
+invalidating the other saved placements. Settings itself is an owned window outside musical pane layout.
 
 `WorkspaceState` owns only placement, visibility, docking permission, active identity and bounded
 back-to-front ordering. Type IDs (`project-inspector`, `appearance`), singleton instance IDs (`project-inspector.main`,
-`appearance.main`) and localized title keys are distinct. These two capabilities
-support one instance each; this is not a policy for all future editors or a plugin registry/interface.
+`appearance.main`) and localized title keys are distinct. The latter is compatibility-only;
+the inspector supports one instance; this is not a policy for all future editors or a plugin registry/interface.
 `WorkspaceHost` lazily creates and retains pane/content controls until host disposal. Collapse, hide,
 overlap, docking and preference refresh do not replace them. The content owner projects its document
 or holds its own controls/scroll context; geometry operations never select or edit musical material.

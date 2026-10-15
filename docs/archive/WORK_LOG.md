@@ -2066,3 +2066,27 @@ scripts and exceptional pressure measurements in a verified external ZIP; repars
 traversed. Originals remain available for the owner to delete manually. The generated root reports
 are ignored and replaced after final edits; measured structural snapshots remain in those reports,
 not canonical documents. No staging/index/history mutation, commit, push or tag was performed.
+
+## SEQ-SETTINGS-F1 — 2026-10-15
+
+Built the unified General/Controls/About center, retired duplicate language/theme/About and Appearance
+UI, and moved title-row theme choice to an explicit checked catalog menu. Global application commands
+now resolve real persistent assignments, conflicts, clear/default/reset with reserved system/text/editor
+ownership. Browser auto preview shares persistent Controls state. The owner's visual follow-up removes
+individual reset noise from defaults, marks effective custom bindings, and adds a menu chevron/Choose
+theme label. Existing preference/layout files, project reader 1.5, music and branded About are retained.
+
+Full Release solution build has zero warnings/errors; L3 passes 1384/1384, zero skips, 99.262 seconds.
+One earlier L3 failure was an obsolete About source-location guard, updated for the new accessor.
+Final minimum/custom-reset/menu refinement has zero-warning affected Release build and 105/105 focused
+passes (17.642 seconds). Actual Windows production windows, RU/EN × Dark/Light, 500×340 settings and
+640×480 main-window bounds, capture/conflict/default/clear/reset/filter/reload/dispatch and source-music
+preservation pass. Component catalog passes. Native action attempts are coverage/foreground-refused;
+actual-window renders and admitted compositor captures do not imply native-input acceptance.
+[Report](../experiments/SEQ-SETTINGS-F1_REPORT.md) records methods, failures, retained local evidence and
+limits. One BUILD advances 0.1.8.0002 to 0.1.8.0003; no R8, project/DSP change, physical output, broader
+platform/DPI or subjective acceptance. AGENTS/current owners/index route future global preferences to
+Settings; the repository has no executable RAG index. ProjectStats root reports are refreshed separately.
+Initial Git status was clean. All new source/tests/tooling are intentional; screenshots/configuration
+stay ignored under .artifacts/settings with rolling retention. No staging/index/history mutation,
+commit, push or tag is performed.

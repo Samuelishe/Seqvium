@@ -92,12 +92,12 @@ internal static partial class Program
             Require(main.Icon is not null, "Window icon missing.");
             var controls = Field<WorkflowControls>(main, "_workflowControls");
             observations.Add(FieldAlignment.Verify(Field<NumericUpDown>(controls, "_gain"), Field<TextBlock>(controls, "_gainLabel"), main, $"{language}-{theme}-toolbar"));
-            var about = main.FindControl<Button>("AboutAction")!;
-            about.Flyout!.ShowAt(about);
+            var aboutWork = main.OpenSettingsAsync();
             await Task.Delay(100);
-            var aboutBody = ((Flyout)about.Flyout).Content as Control ?? throw new InvalidOperationException("About content missing");
-            await CapturePopupAsync(aboutBody.GetVisualAncestors().OfType<FlyoutPresenter>().Single(), output, $"about-{language}-{theme}");
-            about.Flyout.Hide();
+            var settings = Field<Seqvium.Desktop.Settings.SettingsWindow>(main, "_settings");
+            settings.SelectPage("About");
+            await CaptureAsync(settings, output, $"about-{language}-{theme}");
+            settings.Close(); await aboutWork;
             workspace.Open(WorkspaceState.PianoId);
             workspace.State.SetBounds(WorkspaceState.PianoId, new(0, 0, workspace.State.Width, workspace.State.Height));
             var piano = main.GetVisualDescendants().OfType<PianoRollPaneContent>().Single();

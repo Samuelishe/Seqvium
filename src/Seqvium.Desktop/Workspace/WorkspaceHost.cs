@@ -336,6 +336,8 @@ public sealed class WorkspaceHost : Grid, IDisposable
         {
             var definition = WorkspaceState.Definition(pane.InstanceId);
             var tab = _tabs[pane.InstanceId];
+            // Retain the legacy placement token for version-1 layout compatibility, never its UI.
+            if (pane.InstanceId == WorkspaceState.AppearanceId) { tab.IsVisible = false; continue; }
             if (definition.IsSidebar) { tab.IsVisible = false; continue; }
             tab.IsVisible = pane.Visibility != PaneVisibility.Hidden;
             var tabContent = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "compact" } };
@@ -365,7 +367,7 @@ public sealed class WorkspaceHost : Grid, IDisposable
             view.Refresh(pane, State.ActivePaneId == pane.InstanceId);
         }
 
-        _shelf.IsVisible = State.Panes.Any(pane => !WorkspaceState.Definition(pane.InstanceId).IsSidebar && pane.Visibility != PaneVisibility.Hidden);
+        _shelf.IsVisible = State.Panes.Any(pane => pane.InstanceId != WorkspaceState.AppearanceId && !WorkspaceState.Definition(pane.InstanceId).IsSidebar && pane.Visibility != PaneVisibility.Hidden);
         ShowBoundary(_resizeBoundary ?? _hoverBoundary);
     }
 

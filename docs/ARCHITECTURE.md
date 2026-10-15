@@ -139,14 +139,24 @@ its standalone document lifetime transfers to the integrated workflow below. It 
 first-party stable dotted-key EN/RU catalogs and per-entry fallback. `HostPalette` owns Dark/Light roles;
 `PreferenceStore` owns the independent versioned user JSON. No culture change, canonical discriminator,
 document generation/history or media authority depends on translated strings or UI preference changes.
+The owned SettingsWindow projects global preferences through ShellSession; it has a bounded page
+composition, not another workspace pane or a document. HostCommands catalogs stable application actions,
+defaults and reserved input policy; MainWindow resolves current bindings before invoking its existing
+workflow commands. ControlPreferences contains an immutable override map and global behavior;
+ControlPreferencesStore owns its separate bounded file, worker I/O and unsafe-original refusal.
+ShellSession serializes changes and exposes joined persistence for application shutdown. ThemeCatalog
+feeds both explicit Settings selection and the checked title-row menu. New global options and commands
+must reuse these owners under [Settings](SETTINGS.md#unified-global-settings-center); no future
+subsystem pages/providers or general keymap framework are preconstructed.
+
 Language/theme apply immediately at completed button actions without replacing controls/window/document.
 Numeric display is explicitly invariant; language is not a project parser or automatic name translator.
 
 Windows chrome retains native window styles, resize/move roles and a small guarded OS system-menu
 adapter; other platforms retain native decorations until tested. `WorkspaceRegion` hosts R3-F2's compact
 `WorkspaceState` (pure placement/visibility/order), `WorkspaceHost`/`WorkspacePane` (retained controls,
-pointer capture and local focus), and `FirstPartyPaneContent` (read-only document projection or existing
-preference actions). `WorkspaceLayoutStore` owns a separate user file and `WorkspaceLayoutPersistence`
+pointer capture and local focus), and `FirstPartyPaneContent` (read-only document projection).
+`WorkspaceLayoutStore` owns a separate user file and `WorkspaceLayoutPersistence`
 joins/coalesces requested snapshots; `MainWindow` coordinates their shutdown with preference writes.
 Pane instance/type, active pane, focused control, canonical selection and semantic edit target are
 distinct. R3 panes add no native pane window, extension hierarchy or audio owner.

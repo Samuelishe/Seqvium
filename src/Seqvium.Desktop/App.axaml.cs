@@ -35,7 +35,9 @@ public sealed partial class App : Application
         base.OnFrameworkInitializationCompleted();
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
         var store = new PreferenceStore(Path.Combine(_launch.ConfigurationDirectory, "preferences.json"));
-        var session = new ShellSession(store, await store.LoadAsync());
+        var controlStore = new ControlPreferencesStore(Path.Combine(_launch.ConfigurationDirectory, "controls.json"));
+        var session = new ShellSession(store, await store.LoadAsync(), controlStore: controlStore,
+            controls: await controlStore.LoadAsync());
         var layoutStore = new WorkspaceLayoutStore(Path.Combine(_launch.ConfigurationDirectory, "workspace-layout.json"));
         var layout = await layoutStore.LoadAsync();
         ApplyTheme(session.Preferences.Theme);

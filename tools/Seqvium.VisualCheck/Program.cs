@@ -175,7 +175,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
-                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "ui-density" or "theme-navigation",
+                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "ui-density" or "theme-navigation" or "settings",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -199,6 +199,7 @@ internal static partial class Program
                     Require(args.Length == 3, "identity <output> <project-file>");
                     await IdentityAsync(main, output, Path.GetFullPath(args[2]));
                 }
+                else if (args[0] == "settings") await SettingsAsync(main, output, Path.GetFullPath(args[2]), args.Contains("native"));
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
                 else if (args[0] == "cross-stage") await CrossStageInputAsync(main, output, args.Length > 2 && args[2] == "native");
                 else if (args[0] == "extensions") await ExtensionFoundationAsync(main, output, args.Length > 2 && args[2] == "native");
@@ -424,7 +425,6 @@ internal static partial class Program
         Field<GraphPaneContent>(main, "_graphPane").Refresh();
         Invoke(main, "OpenNodeEditor", target);
         workspace.Open(WorkspaceState.InspectorId);
-        workspace.Open(WorkspaceState.AppearanceId);
         var snapshot = workflow.State.Snapshot;
         int undo = workflow.State.Document.UndoCount;
         var rows = new List<object>();
@@ -451,7 +451,6 @@ internal static partial class Program
                 workspace.State.SetBounds(WorkspaceState.InspectorId,
                     new(Math.Max(0, width - 340), Math.Max(0, height - 245), geometry == "pane-minimum" ? 280 : 340,
                         geometry == "pane-minimum" ? 210 : 245));
-                workspace.State.SetBounds(WorkspaceState.AppearanceId, new(20, Math.Max(0, height - 190), 280, 170));
                 var curve = main.GetVisualDescendants().OfType<Expander>().Single(c =>
                     Avalonia.Automation.AutomationProperties.GetAutomationId(c) == "NodeEditor.Curve");
                 curve.IsExpanded = geometry == "pane-expanded";
@@ -480,7 +479,6 @@ internal static partial class Program
         workspace.State.SetBounds(WorkspaceState.GraphId, new(10, 10, 650, 480));
         workspace.State.SetBounds(WorkspaceState.NodeEditorId, new(700, 10, 360, 320));
         workspace.State.Hide(WorkspaceState.InspectorId);
-        workspace.State.Hide(WorkspaceState.AppearanceId);
         workspace.State.Hide(WorkspaceState.BeatId);
         workspace.State.Hide(WorkspaceState.ArrangementId);
         workspace.State.Activate(WorkspaceState.GraphId);

@@ -9,14 +9,12 @@ using Seqvium.Desktop.Presentation;
 
 namespace Seqvium.Desktop.Workspace;
 
-/// <summary>Retained first-party content; it projects the document or requests existing preference actions.</summary>
+/// <summary>Retained read-only first-party document projection.</summary>
 internal sealed class FirstPartyPaneContent : ScrollViewer, IDisposable
 {
     private readonly ShellSession _session;
     private readonly bool _inspector;
     private readonly List<(TextBlock Label, TextBlock Value, string Key)> _rows = [];
-    private readonly Button? _language;
-    private readonly Button? _theme;
     public bool IsDisposed { get; private set; }
 
     public FirstPartyPaneContent(ShellSession session, PaneDefinition definition, Func<Task> language, Func<Task> theme)
@@ -46,28 +44,9 @@ internal sealed class FirstPartyPaneContent : ScrollViewer, IDisposable
                 _rows.Add((label, value, key));
             }
         }
-        else
-        {
-            _language = PreferenceButton("Preference.Language", language);
-            _theme = PreferenceButton("Preference.Theme", theme);
-            body.Children.Add(_language);
-            body.Children.Add(_theme);
-        }
 
         session.PropertyChanged += SessionChanged;
         Refresh();
-    }
-
-    private Button PreferenceButton(string id, Func<Task> operation)
-    {
-        var button = new Button
-            { Classes = { "shell" }, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch };
-        AutomationProperties.SetAutomationId(button, "Pane." + id);
-        button.Click += async (_, _) =>
-        {
-            if (!IsDisposed) await operation();
-        };
-        return button;
     }
 
     private void SessionChanged(object? sender, PropertyChangedEventArgs args) => Refresh();
@@ -93,17 +72,6 @@ internal sealed class FirstPartyPaneContent : ScrollViewer, IDisposable
             }
         }
 
-        if (_language is not null)
-        {
-            _language.Content = _session.LanguageLabel;
-            AutomationProperties.SetName(_language, _session.LanguageLabel);
-        }
-
-        if (_theme is not null)
-        {
-            _theme.Content = _session.ThemeLabel;
-            AutomationProperties.SetName(_theme, _session.ThemeLabel);
-        }
     }
 
     public void Dispose()

@@ -457,7 +457,8 @@ internal sealed class WorkflowControls : Grid
                         "ExportSong" => !state.Snapshot.State.ArrangementClips.IsEmpty, "Undo" => state.UndoCount > 0,
                         "Redo" => state.RedoCount > 0, _ => true
                     };
-                var shortcut = WorkflowPresentation.Shortcut(key);
+                var shortcut = HostCommands.All.Any(command => command.Id == key)
+                    ? HostCommands.Display(_shell.Controls.Binding(key)) : WorkflowPresentation.Shortcut(key);
                 var label = _shell["Workflow." + key];
                 AutomationProperties.SetName(button, label);
                 AutomationProperties.SetAcceleratorKey(button, shortcut);

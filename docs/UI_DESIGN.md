@@ -690,6 +690,21 @@ quality is the desired "vibe"; decorative animation and visual noise are not req
 [UX_CONTRACT](UX_CONTRACT.md) owns observable interaction and discoverability. Future visual work
 should develop this guide from concrete workflows rather than fill in a complete theme spec prematurely.
 
+## Global settings composition
+
+The Settings center uses compact left navigation, ordinary shared controls, aligned preference rows
+and local content scrolling. General, Controls and About are implemented; no empty future pages.
+Keyboard rows lead with the action and assigned chord, with a small default action only for custom bindings. A dot/bold chord marks an effective custom
+assignment; default rows have no reset icon. Search and a
+short temporary capture/conflict area provide depth without permanent instructions. Fixed-key details
+stay behind disclosure. About retains the brand mark/wordmark/tagline, runtime version and short scope.
+Toolbar chrome offers Settings and Panes; the small title-row sun/moon opens explicit checked theme
+selection, with a disclosure chevron and Choose theme tooltip. [Settings](SETTINGS.md#unified-global-settings-center) owns routing and behavior.
+
+The owner's four Desktop screenshots and local WORK-EQ-001 (FabFilter), WORK-OT-001 (Reason) and
+WORK-CR-001 (SONAR) images were inspected for this composition. Transfer compact action density,
+quiet chrome, consistent rows and contextual depth; none of these private screenshots is a product asset.
+
 ## Themes and semantic resources
 
 Dark and Light themes are baseline product directions, with room for additional restrained visual

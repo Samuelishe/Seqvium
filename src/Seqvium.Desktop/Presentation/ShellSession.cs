@@ -13,6 +13,11 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
 {
     private readonly HostLocalizer _localizer;
     private readonly PreferenceStore _store;
+    private readonly ControlPreferencesStore _controlStore;
+    private string? _controlNoticeKey;
+    private Task _controlWork = Task.CompletedTask;
+    public ControlPreferences Controls { get; private set; }
+    public Task PendingControls => _controlWork;
     private string? _noticeKey;
     private string? _layoutNoticeKey;
     private string _audioStatusKey = "Audio.Idle";
@@ -62,10 +67,10 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
     public string ThemeLabel =>
         $"{this["Preference.Theme"]}: {this[Preferences.Theme == HostTheme.Dark ? "Preference.Dark" : "Preference.Light"]}";
 
-    public string? Notice => string.Join(" · ", new[] { _noticeKey, _layoutNoticeKey }
+    public string? Notice => string.Join(" · ", new[] { _noticeKey, _layoutNoticeKey, _controlNoticeKey }
         .Where(key => key is not null).Select(key => this[key!]));
 
-    public bool HasNotice => _noticeKey is not null || _layoutNoticeKey is not null;
+    public bool HasNotice => _noticeKey is not null || _layoutNoticeKey is not null || _controlNoticeKey is not null;
 
     public void SetLayoutNotice(string? key)
     {
@@ -82,9 +87,12 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
             ?.InformationalVersion ?? throw new InvalidOperationException("Desktop informational version metadata is missing.");
 
     public ShellSession(PreferenceStore store, PreferenceLoad load, ProjectDocument? document = null,
-        HostLocalizer? localizer = null)
+        HostLocalizer? localizer = null, ControlPreferencesStore? controlStore = null, ControlPreferenceLoad? controls = null)
     {
         _store = store;
+        _controlStore = controlStore ?? new(Path.Combine(store.DirectoryPath, "controls.json"));
+        Controls = controls?.Preferences ?? new();
+        _controlNoticeKey = controls?.UsedFallback == true ? "Settings.ControlsFallback" : null;
         _localizer = localizer ?? new();
         Preferences = load.Preferences;
         Document = document ?? ProjectDocument.Create();
@@ -101,6 +109,27 @@ public sealed class ShellSession : INotifyPropertyChanged, IDisposable
     {
         Theme = Preferences.Theme == HostTheme.Dark ? HostTheme.Light : HostTheme.Dark
     });
+
+    public Task SetLanguageAsync(HostLanguage language) => ApplyAsync(Preferences with { Language = language });
+    public Task SetThemeAsync(HostTheme theme) => ApplyAsync(Preferences with { Theme = theme });
+
+    public Task SetControlsAsync(ControlPreferences controls)
+    {
+        ObjectDisposedException.ThrowIf(IsClosed, this);
+        Controls = controls;
+        Refresh();
+        _controlWork = PersistControlsAsync(_controlWork, controls);
+        return _controlWork;
+    }
+
+    private async Task PersistControlsAsync(Task previous, ControlPreferences controls)
+    {
+        await previous;
+        bool saved = await _controlStore.SaveAsync(controls);
+        if (IsClosed) return;
+        _controlNoticeKey = saved ? null : "Settings.ControlsSaveFailed";
+        Refresh();
+    }
 
     private async Task ApplyAsync(HostPreferences preferences)
     {

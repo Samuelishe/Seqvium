@@ -38,7 +38,8 @@ internal static class PathPolicy
         {
             bool sourceAudio = name.Equals("Audio", StringComparison.OrdinalIgnoreCase) && segments.Length == 3 &&
                 (segments[0].Equals("src", StringComparison.OrdinalIgnoreCase) || segments[0].Equals("tests", StringComparison.OrdinalIgnoreCase));
-            if ((!sourceAudio && BlockedDirectories.Contains(name)) || name.StartsWith('.') ||
+            bool hostSettingsSource = relative.Equals("src/Seqvium.Desktop/Settings", StringComparison.OrdinalIgnoreCase);
+            if ((!sourceAudio && !hostSettingsSource && BlockedDirectories.Contains(name)) || name.StartsWith('.') ||
                 name.StartsWith("cmake-build-", StringComparison.OrdinalIgnoreCase))
                 return "ExcludedDirectory";
             if (segments.Length == 1 && !PublicRoots.Contains(name))

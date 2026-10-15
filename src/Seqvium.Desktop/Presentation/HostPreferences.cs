@@ -14,6 +14,7 @@ public sealed class PreferenceStore(string path)
     private const int MaximumBytes = 4096;
     private readonly string _path = Path.GetFullPath(path);
     private readonly SemaphoreSlim _writeGate = new(1, 1);
+    internal string DirectoryPath => Path.GetDirectoryName(_path)!;
 
     public static string DefaultPath()
     {

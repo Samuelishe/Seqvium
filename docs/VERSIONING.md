@@ -77,7 +77,7 @@ release system. No versioning dependency, Git-derived counter, bump-on-build aut
 or release workflow is added. The validation target rejects invalid components and independent
 metadata overrides before assembly generation/compilation.
 
-The existing About flyout binds to
+The Settings center's About page binds to
 [ShellSession.Version](../src/Seqvium.Desktop/Presentation/ShellSession.cs), which reads the running
 Desktop assembly's `AssemblyInformationalVersionAttribute`. It stores no second version and refuses
 missing metadata rather than inventing an identity. RU/EN and Dark/Light do not affect the value.
@@ -155,6 +155,8 @@ retrieved only for explicit historical tasks.
 | `0.1.8.0000` | SEQ-R7-SAMPLE-LAB-V1 | One PATCH for optional Kick/Clap exploration, real variations/locks/history, bounded processed audition and durable independent acceptance, plus first-party UI density cleanup. BUILD resets. Full Release 1341/1341, actual-window RU/EN Dark/Light and physical 48-kHz output pass; native input/aesthetic/acoustic/stress limits remain. [Checkpoint](#seq-r7-sample-lab-v1-checkpoint). |
 | `0.1.8.0001` | SEQ-WORKSPACE-THEME-NAV | One BUILD for complete retained-drawing theme refresh and persistent resizable/collapsible Pattern navigation. Zero-warning affected Release build, 118 focused tests, guarded Windows boundary/rail input, repeated compositor theme checks, RU/EN empty/populated views, catalog and field matrix pass. Existing musical capability/reader gates remain; wider platform/DPI and subjective acceptance remain separate. [Evidence](archive/WORK_LOG.md#seq-workspace-theme-nav--2026-10-15). |
 | `0.1.8.0002` | SEQ-LEFT-PANELS | One BUILD for ordered Browser/Patterns sidebars, shared right-boundary resize/minimum-content clipping/near-edge collapse/restore, grouped rail icons and integrated disclosure chevrons. Compatible optional user-layout fields preserve independent widths outside music; no reader/DSP change. Zero-warning affected Release builds, 260 focused tests, actual Windows boundary/rail input through 640×480, localized rendered review, Browser portable acceptance, catalog and field matrix pass. ProjectStats completion policy/report refresh and owner-requested artifact preservation accompany this checkpoint. Native guard refusals and an unreproduced input attempt remain bounded in [evidence](archive/WORK_LOG.md#seq-left-panels--2026-10-15); no L3, release or wider platform/aesthetic claim. |
+| `0.1.8.0003` | SEQ-SETTINGS-F1 | One BUILD from `0.1.8.0002` for the unified Settings center, explicit catalog theme menu, actual global shortcut remapping/conflict/default/reset and persistent Browser auto preview. Full zero-warning Release solution build and 1384 passing tests; localized ordinary/minimum real-window/routed checks and catalog pass. Final minimum-size/custom-reset/theme-affordance refinement passes 105 focused tests and affected Release build. Compatible independent user files; no reader/DSP change, R8, PATCH reset, release or Git mutation. Native input remains foreground-refused; [report](experiments/SEQ-SETTINGS-F1_REPORT.md) owns limits. |
+
 
 ### SEQ-R7-SAMPLE-LAB-V1 checkpoint
 
