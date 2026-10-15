@@ -98,6 +98,8 @@ public sealed class PreparedSampler : IDisposable
     internal LoopClock? Loop { get; set; }
     internal ProjectState? CanonicalBasis { get; set; }
     internal bool IsArrangement { get; init; }
+    internal Id<SoundDefinition>? AuditionSound { get; init; }
+    internal Guid? AuditionCandidate { get; init; }
 
     internal PreparedSampler(Guid revision, int rate, int channels, int capacity, long start, long end, int zero,
         ImmutableArray<PreparedNote> notes, ImmutableArray<PreparedEvent> events, PcmLease[] sources,

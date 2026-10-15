@@ -144,12 +144,20 @@ layout, with no musical/editor model there.
 The left rail opens existing Rack/Graph/Node Editor/Inspector/Appearance panes without replacing them.
 At window width >= 1000 DIP a project navigator lists actual occurrences with Pattern thumbnails.
 Its selection/create commands use DesktopWorkflow; navigation itself does not edit the document.
-Cards use up to two name lines, full-name/gesture tooltips and a width that grows with the host.
+Cards use up to two name lines and full-name/gesture tooltips. Drag the navigator's right boundary
+to resize it continuously; cards and thumbnails follow its width. Dragging below the usable minimum
+collapses it. Reopening from the rail restores the width from before that collapse gesture, rather
+than a narrow remainder. Ordinary resize release remembers its new width. Escape, capture loss,
+window deactivation/resizing and shutdown cancel an unfinished gesture. The boundary also supports
+Left/Right width changes and Home to collapse, returning focus to the rail when needed.
 Selection leaves pane visibility/focus alone; double-click/Enter and the contextual editor/channel
 menu open an editor. Shared session editor intent belongs to PatternEditorNavigation, not layout storage.
-A rail toggle hides/restores it; the session choice is preserved across window resizing. Below that
-width it is hidden, reclaiming workspace space. It is session presentation, not persisted
-musical content or a separate layout registry.
+A rail toggle hides/restores it. Preferred width and explicit collapsed state belong to the existing
+independent user workspace file, outside musical history. Below the automatic window-width threshold,
+it hides to reclaim space without overwriting that preference; the rail can still explicitly reopen
+it. Available width is capped to leave room for a musical pane. A visible left-docked Browser temporarily
+suppresses the navigator; explicit rail reopening collapses that Browser into the existing shelf.
+The Browser's retained content and placement remain available. No new dock group or pane type is added.
 
 The pane follows the workflow's selected occurrence. Its selector appears only for multiple choices;
 the Pattern name is editable canonical content. Focus returns to an enabled step, otherwise Create.
@@ -481,6 +489,14 @@ may be explored later. Dock-group identity, allowed relationships, gestures, and
 do not assume an unlimited IDE-style docking hierarchy.
 
 ## Sample Lab and processing-graph targets
+
+Sample Lab V1 is now the tenth retained pane (`sample-lab.main`), initially hidden and reachable from
+the rail/Panes and supported Rack channel menu. It uses ordinary movable/resizable/docked placement;
+the default is 920×660 DIP with a 390×440 minimum. Below 680 DIP, history moves below the locally
+scrollable sound area; acceptance stays pinned. Hiding/collapsing ends audition while retaining
+history/reference/locks. New/Open/Close clear that document's exploration. Target identity remains
+separate from layout and current selection. [Sample workflow](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1)
+owns generation, context and acceptance scope.
 
 Sample Lab is a dedicated standalone workspace pane, movable/resizable under the general pane
 contract, retaining useful exploration state. It can work without a target or against selected

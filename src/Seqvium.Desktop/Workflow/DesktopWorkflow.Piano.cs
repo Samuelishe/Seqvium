@@ -114,6 +114,7 @@ internal sealed partial class DesktopWorkflow
 
     private async Task CloseNoteAuditionAsync()
     {
+        if (!_labContextual) _labAudible = null;
         _browserAudition?.EndLifetime();
         if (_noteSession?.OutputSampler is not null) await _noteSession.DisposeAsync();
         else if (_noteOutput is { } output)

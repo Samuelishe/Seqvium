@@ -7,6 +7,24 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Sample Lab verification
+
+`PercussionLabTests` measures finite bounded PCM, nontrivial transient/decay, different Random PCM,
+family spectral distinction, normalized recipe variations, exact locks and bounded history disposal.
+`SampleLabTests` covers host activation/use, selection/reference independence, standalone edits,
+late/superseding/cancelled/New results, managed independent acceptance, captured/stale/deleted targets,
+Undo/Redo, disabled-generator Save As/Open/export and Pattern/Song audition authority.
+`SampleAuditionTests` compares contextual PCM exactly with accepted playback through local Gain and
+Mixer balance/level, distinguishes raw PCM, and verifies unrelated sustained-voice/time continuation.
+These checks establish numerical behavior, not acoustic preference or physical device quality.
+
+Use focused `*PercussionLabTests`, `*SampleLabTests`, `*SampleAuditionTests` and affected extension,
+workspace, media, transport and presentation cases. This stage selects L3 because prepared realtime
+publication/lifetime changed. VisualCheck `sample-lab` and `ui-density` cover real retained windows;
+[the tool guide](../tools/Seqvium.VisualCheck/README.md#sample-lab-and-ui-density) owns commands and input
+modes. Native input, routed actions, deterministic processed PCM, physical output and subjective
+listening remain distinct. See the [R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md).
+
 ## R6 extension verification
 
 `ExtensionFoundationTests` exercises local manifest damage/version/path/missing/duplicate boundaries,

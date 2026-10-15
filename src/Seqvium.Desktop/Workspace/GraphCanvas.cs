@@ -173,8 +173,9 @@ internal sealed class GraphCanvas : Control
             }
             string value;
             if (node.Type == GraphBuiltIns.Gain)
-                value = node.Parameters.TryGetValue(GraphBuiltIns.GainAmplitude, out var gain)
-                    ? "× " + gain.ToString() : _shell["Graph.InvalidValue"];
+                value = node.Parameters.TryGetValue(GraphBuiltIns.GainAmplitude, out var gain) && gain.TryGetDecimal(out var amplitude) && amplitude >= 0
+                    ? amplitude == 0 ? "−∞ dB" : (20 * Math.Log10((double)amplitude)).ToString("0.0", CultureInfo.InvariantCulture) + " dB"
+                    : _shell["Graph.InvalidValue"];
             else if (node.Type == GraphBuiltIns.Source)
             {
                 var binding = _editor.Attachment?.Sources.SingleOrDefault(s => s.NodeId == node.Id);

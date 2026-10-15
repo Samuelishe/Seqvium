@@ -18,6 +18,7 @@ internal sealed class ExtensionBrowserContent : StackPanel, IDisposable
     private readonly ShellSession _shell;
     private readonly DesktopWorkflow _workflow;
     private readonly ExtensionPreferencesStore _store;
+    private readonly string _configurationDirectory;
     private readonly Action<ExtensionStatus?> _browse;
     private readonly ComboBox _packages = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
     private readonly Button _toggle = new(), _sounds = new();
@@ -31,7 +32,7 @@ internal sealed class ExtensionBrowserContent : StackPanel, IDisposable
     internal ExtensionBrowserContent(ShellSession shell, DesktopWorkflow workflow, string configurationDirectory,
         Action<ExtensionStatus?> browse)
     {
-        _shell = shell; _workflow = workflow; _browse = browse;
+        _shell = shell; _workflow = workflow; _browse = browse; _configurationDirectory = configurationDirectory;
         _store = new(Path.Combine(configurationDirectory, "extensions.json"));
         Classes.Add("tight");
         Children.Add(_packages); Children.Add(_details);
@@ -50,11 +51,7 @@ internal sealed class ExtensionBrowserContent : StackPanel, IDisposable
     private async Task InitializeAsync()
     {
         foreach (string id in await _store.LoadAsync()) _disabled.Add(id);
-        await _workflow.Extensions.DiscoverAsync(Path.Combine(AppContext.BaseDirectory, "Extensions"));
-        // Corrupt preferences never silently re-enable optional modules.
-        if (!_store.Failed)
-            foreach (var package in _workflow.Extensions.Status.Where(p => p.Availability == ExtensionAvailability.Disabled && !_disabled.Contains(p.Package.Identity)))
-                await _workflow.Extensions.EnableAsync(package.Package.Identity);
+        await _workflow.InitializeExtensionsAsync(_configurationDirectory);
         Rebuild(); _browse(null);
     }
     private void Run(Func<Task> operation)
@@ -77,7 +74,7 @@ internal sealed class ExtensionBrowserContent : StackPanel, IDisposable
         string id = choice.Status.Package.Identity;
         bool disable = choice.Status.Availability == ExtensionAvailability.Available;
         if (disable) await _workflow.StopBrowserPreviewAsync();
-        bool changed = disable ? await _workflow.Extensions.DisableAsync(id) : await _workflow.Extensions.EnableAsync(id);
+        bool changed = await _workflow.SetExtensionEnabledAsync(id, !disable);
         if (!changed) { _message = disable ? "Extension.Busy" : "Extension.ActivationFailed"; return; }
         if (disable) _disabled.Add(id); else _disabled.Remove(id);
         await _store.SaveAsync(_disabled);
@@ -105,11 +102,10 @@ internal sealed class ExtensionBrowserContent : StackPanel, IDisposable
         _sounds.IsEnabled = selected?.Availability == ExtensionAvailability.Available &&
             selected.Package.Manifest!.Capabilities.Any(c => !c.Content.IsEmpty);
         string status = selected is null ? _shell["Extension.None"] : _shell["Extension.State." + selected.Availability];
-        _details.Text = status + (selected is null ? "" : "\n" +
-            string.Join(" · ", selected.Package.Manifest?.Capabilities.Select(c => _shell["Extension.Category." + c.Category]).Distinct() ?? []) +
-            "\n" + selected.Package.Identity + "\n" +
-            string.Join("\n", selected.Diagnostics.Select(d => _shell[d.Code] + (d.Detail is null ? "" : " · " + d.Detail)))) +
-            "\n" + _shell[_store.Failed ? "Extension.PreferencesFailed" : _message ?? "Extension.Durability"];
+        _details.Text = _shell[_store.Failed ? "Extension.PreferencesFailed" : _message ??
+            (selected is null ? "Extension.None" : "Extension.State." + selected.Availability)];
+        ToolTip.SetTip(_details, selected is null ? status : selected.Package.Identity + "\n" +
+            string.Join("\n", selected.Diagnostics.Select(d => _shell[d.Code] + (d.Detail is null ? "" : " · " + d.Detail))));
         ToolTip.SetTip(_toggle, _shell["Extension.DisableHint"]);
     }
     private void PreferencesChanged(object? sender, PropertyChangedEventArgs args) { if (!_disposed) Rebuild(); }

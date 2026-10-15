@@ -528,3 +528,21 @@ These resolve bounded mechanisms, not the entire questions. General installation
 realtime/configuration/state ABI, contributed resource registration/versioning and native delivery
 remain open in [Known problems](../KNOWN_PROBLEMS.md). R7 owns real creative families/reference/locks/
 history/contextual audition. Current truth is in [Extensions](../EXTENSIONS.md#implemented-r6-local-foundation).
+
+
+## R7 resolved portions — Q-011/Q-024/Q-029/Q-063/Q-071 — 2026-10-15
+
+- Q-011: bounded shared PCM Rack audition in Pattern/Song uses prepared temporary substitution,
+  existing downstream processing, selective voice continuation and actual-current canonical restore.
+- Q-024: required sample-exploration v1 negotiates family-local numeric recipe/reference/lock inputs;
+  validated WAV/metadata transfers to host ownership before provider use ends.
+- Q-029: reusable resource, independent Rack/Playlist use and explicitly shared PCM replacement have
+  distinct acceptance actions. One-use detachment remains unsupported and is not silently simulated.
+- Q-063: standalone lifecycle relevance, captured source/binding authority, cancellation/late disposal
+  and existing guarded media/document transaction are concrete for this workflow.
+- Q-071: Kick/Clap algorithms, correlated Random/nearby Variation, meaningful exact locks and twelve
+  disposable candidates implement the bounded exploration semantics without a library or arbitrary
+  acoustic-similarity model.
+
+Broader scopes and evidence remain open under [Known problems](../KNOWN_PROBLEMS.md). The current
+contract is [Sample workflow](../SAMPLE_WORKFLOW.md#implemented-sample-lab-v1), not this history.

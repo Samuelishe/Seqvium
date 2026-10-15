@@ -47,7 +47,7 @@ internal static partial class Program
             await Drain();
         }
         await Drain();
-        Require(workflow.Extensions.Status.Single().Availability == ExtensionAvailability.Available, "Bundled sound pack not discovered/activated.");
+        Require(workflow.Extensions.Status.Single(p => p.Package.Identity == "seqvium.found-sounds").Availability == ExtensionAvailability.Available, "Bundled sound pack not discovered/activated.");
         var sounds = (Button)Id("Extension.Sounds");
         var pointerEvents = new List<string>();
         int soundClicks = 0;
@@ -109,7 +109,7 @@ internal static partial class Program
         Require(workflow.State.Snapshot.State.Resources.Length == 2 && workflow.State.UndoCount == 2, "Pack import bypassed managed musical transactions.");
         workspace.Open(WorkspaceState.BrowserId);
         await Click("Extension.Toggle");
-        Require(workflow.Extensions.Status.Single().Availability == ExtensionAvailability.Disabled, "Pack did not disable.");
+        Require(workflow.Extensions.Status.Single(p => p.Package.Identity == "seqvium.found-sounds").Availability == ExtensionAvailability.Disabled, "Pack did not disable.");
         Require(list.Items.Cast<BrowserSource>().All(s => s.Package is null), "Disabled contribution left active Browser sources.");
         Require(workflow.State.Snapshot.State.Resources.Length == 2, "Disabling erased imported audio.");
         await CaptureAsync(main, output, "extensions-disabled");

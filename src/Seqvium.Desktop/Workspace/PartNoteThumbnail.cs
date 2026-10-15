@@ -11,6 +11,12 @@ namespace Seqvium.Desktop.Workspace;
 /// <summary>Read-only exact pitch/duration/velocity projection, never editable step state.</summary>
 internal sealed class PartNoteThumbnail(ShellSession shell, Pattern pattern, MusicalPart part, int color) : Control
 {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
+    }
+
     public override void Render(DrawingContext context)
     {
         if (Bounds.Width <= 0 || Bounds.Height <= 0) return;

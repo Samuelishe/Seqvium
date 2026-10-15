@@ -14,6 +14,12 @@ product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
 
+Sample Lab V1 also adds no project fields/reader gate. Temporary candidates, recipes, locks,
+reference/selection and audition overrides stay outside Save/Undo. Explicit acceptance uses existing
+managed WAV resources and ordinary PCM/Audio Clip sounds; portability does not require Percussion Lab.
+Reusable-resource, new-use and explicitly shared PCM replacement are separate actions with one
+existing transaction each. No durable regeneration recipe is promised.
+
 R6 adds no project fields or reader gate. Package enablement/discovery and temporary generator
 sessions/candidates are not musical state. Pack audio and explicitly accepted generator WAVs use the
 existing immutable managed resources, sound/use IDs, Save As integrity and history. Reopening does not

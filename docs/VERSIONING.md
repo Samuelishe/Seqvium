@@ -152,6 +152,23 @@ retrieved only for explicit historical tasks.
 | `0.1.7.0005` | SEQ-CROSS-STAGE-AUDIT | One BUILD for section playback, Song Mixer publication, Pattern double-click, Browser shortcut/drag origin and failed-Save Close repairs. Focused regressions and native input pass; inherited pressure/measurement gaps remain open. [Audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) owns evidence and limits. |
 | `0.1.7.0006` | SEQ-R6-EXTENSION-FOUNDATION | One BUILD for trusted local manifest/contract discovery, real activation/disable/use lifetimes, optional Found Sounds in Browser and tested async candidate/managed acceptance. Full Release build has zero warnings/errors; 1314/1314 tests pass, zero skips (63.176 s). Real RU/EN Dark/Light routed rendering/import/disable/reopen passes; native click delivery remains unresolved. No PATCH/reset, reader change, external realtime SDK or Sample Lab is claimed. [R6 report](experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md) owns evidence/limits. |
 | `0.1.7.0007` | SEQ-R6-EXTENSION-FOUNDATION follow-up | One BUILD from 0006 for virtual Browser address identity and manifest-file link rejection, with a real symlink regression and focused address/input tooling. 108 focused cases and affected Release builds pass; routed real-window navigation/import/disable/reopen passes. One delayed debugger-assisted native click succeeds, but ordinary Windows acceptance and the earlier delivery cause remain open. No PATCH, R7 scope or L3/stress rerun; see the [follow-up](experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md#independent-review-follow-up). |
+| `0.1.8.0000` | SEQ-R7-SAMPLE-LAB-V1 | One PATCH for optional Kick/Clap exploration, real variations/locks/history, bounded processed audition and durable independent acceptance, plus first-party UI density cleanup. BUILD resets. Full Release 1341/1341, actual-window RU/EN Dark/Light and physical 48-kHz output pass; native input/aesthetic/acoustic/stress limits remain. [Checkpoint](#seq-r7-sample-lab-v1-checkpoint). |
+| `0.1.8.0001` | SEQ-WORKSPACE-THEME-NAV | One BUILD for complete retained-drawing theme refresh and persistent resizable/collapsible Pattern navigation. Zero-warning affected Release build, 118 focused tests, guarded Windows boundary/rail input, repeated compositor theme checks, RU/EN empty/populated views, catalog and field matrix pass. Existing musical capability/reader gates remain; wider platform/DPI and subjective acceptance remain separate. [Evidence](archive/WORK_LOG.md#seq-workspace-theme-nav--2026-10-15). |
+
+### SEQ-R7-SAMPLE-LAB-V1 checkpoint
+
+Previous `0.1.7.0007` → **`0.1.8.0000`**, one PATCH with BUILD reset. Sample Lab is an independently
+useful sound-design workflow: optional real Kick/Clap generation, bounded variation/locks/history,
+raw and processed PCM Rack audition, independent project/Rack/Playlist acceptance and explicit shared
+replacement. Full Release build has zero warnings/errors; 1341/1341 tests pass, zero skips (62.326 s).
+Actual RU/EN Dark/Light ordinary/reduced creation/acceptance/disable/reopen/export and physical
+Samsung USB C Earphones 48-kHz solo/Pattern/context/original checks pass. The same checkpoint reduces
+first-party UI text/numeric clutter and establishes a required reference/density gate.
+
+Native action input remains foreground-refused; subjective acoustic/aesthetic judgement, broad
+stress and other platforms are not claimed. Reader 1.5 remains unchanged. No MAJOR/MINOR, additional
+BUILD, release, staging/commit/push/tag or public plugin SDK follows. The
+[R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md) owns scope, commands and evidence limits.
 
 ### SEQ-CROSS-STAGE-AUDIT checkpoint
 

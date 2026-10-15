@@ -103,6 +103,7 @@ internal sealed class PianoRollCanvas : Control
     internal PianoRollCanvas(ShellSession shell, DesktopWorkflow workflow)
     {
         _shell = shell;
+        ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
         _workflow = workflow;
         _observation = workflow.State;
         Focusable = true;

@@ -7,15 +7,27 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.7.0007**, SEQ-R6-EXTENSION-FOUNDATION follow-up. Local trusted packages now have real
-metadata/compatibility, activation/disable and active-use lifetimes. Browser exposes optional Found
-Sounds through existing preview/Rack/Playlist use; imported audio survives disable/removal. The tested
-async generator seam owns cancellation, stale/late candidate disposal and explicit managed acceptance;
-it is not a shipped Sample Lab. [Extensions](EXTENSIONS.md#implemented-r6-local-foundation) owns scope,
-and the [R6 report](experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md) records evidence and native-input
-limits. BUILD only; no public SDK, realtime external host or format migration. The preceding audit's
-transport/Mixer/Browser/Close corrections remain implemented. Reader 1.5 remains the separate gate for
-sections/Pattern ancestry. [Versioning](VERSIONING.md) owns product identity.
+Product alpha **0.1.8.0001**, SEQ-WORKSPACE-THEME-NAV. Theme changes invalidate retained custom
+drawings, including Pattern/Part thumbnails, Gain, Playlist and Piano. Pattern navigation has a
+continuous right-edge resize, minimum-width collapse and rail restoration at the remembered width.
+Preferred width/collapse persist in the independent workspace file; compact auto-hide and Browser
+handoff preserve that preference. [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns behavior.
+This is one BUILD for interface repairs/refinements; project reader 1.5 and musical capabilities remain.
+
+The optional default-enabled Percussion Lab
+provides useful Kick/Clap generation, real recipe variations/locks and a twelve-candidate host history.
+The retained Sample Lab supports standalone exploration, raw solo, bounded shared PCM Rack audition
+through current local processing/Mixer, independent managed acceptance and explicit shared replacement.
+Standalone work survives unrelated edits; captured context never follows selection. Accepted audio
+survives generator disable and portable Save As/Open/export, without format migration or external SDK.
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1)
+owns scope; the [R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md) owns evidence and limits.
+
+The owner's follow-up also removes permanent instructional/technical clutter across the first-party
+working surfaces. Sample Lab/Browser/Extensions lead with short actions and sound; redundant Gain/Mixer
+readouts and Piano/source-property explanations are reduced or disclosed. AGENTS/UI design require
+actual reference-image inspection and a density gate before future UI edits. Reader 1.5 remains the
+separate sections/ancestry compatibility boundary. [Versioning](VERSIONING.md) owns identity.
 No release, staging, commit, push or tag is performed. R1–R3 remain complete in their bounded scopes.
 R4 remains partial: F1 accepted-ready, F2 pressure acceptance unresolved, F3-A conditionally accepted,
 F3-B owner interaction/visual review pending. R5 Rack/music, R9 Piano, bounded R10 Playlist/audio and
@@ -27,10 +39,11 @@ separate. [Roadmap](ROADMAP.md) owns remaining scope.
 R6 discovers bounded schema-1 manifests under the application deployment Extensions root, checks
 required/optional host contracts before activation and never scans/executes arbitrary DLLs. Exact
 trusted factory registration is needed for executable providers. Uses block disable until work and
-dependent sessions finish; document edits cancel stale generator work, New/Open/Close join sessions,
+dependent sessions finish; the strict R6 adapter cancels on document edits, while Lab uses its bounded
+relevance rules above. New/Open/Close join sessions,
 and application shutdown retires providers. Failed activation/disposal and missing/invalid/incompatible
 packages retain host diagnostics. Metadata labels use host RU/EN fallback and shared Dark/Light controls.
-A separate user file remembers disabled IDs; accepted media/history stay project-owned.
+A separate user file remembers disabled IDs; accepted media and its Undo history stay project-owned.
 
 Desktop has Browser, Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and information/appearance
 panes. Compact studio-instrument resources, movable/resizable/docked panes, English/Russian and
@@ -96,23 +109,37 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L3: **SEQ-R6-EXTENSION-FOUNDATION, 2026-10-15**. Full Release solution build has zero
-warnings/errors; **1314/1314 tests pass**, zero skips, one test thread (**63.176 s** CLI summary). The
-final generation-invalidation hook participates in that run and 92 focused cases. Real-window
-RU/EN × Dark/Light, disabled/re-enabled Browser contributions, managed imports and disabled-pack reopen
-pass routed checks, including reduced-height list access. Ordinary-run native acceptance remains open:
-the original post-click debugger evidence shows Project resources/zero rows, not the requested pack.
-The follow-up closes virtual-address Enter and linked-manifest reading with 108 focused tests and
-real-window routed navigation/import/disable/reopen checks. One debugger-assisted native attempt
-received press/release and one Click, reaching the pack's three rows; its temporary attachment delay
-prevents treating it as ordinary-run acceptance or explaining the earlier failure. No new physical
-or acoustic acceptance is claimed. Earlier Browser physical WAV/MP3/FLAC evidence and the audit's
-native/routed split remain in their reports; inherited pressure/allocation questions remain open.
+Latest L0/L1/L2: **SEQ-WORKSPACE-THEME-NAV, 2026-10-15**. Affected Release test-project build and
+its production/tool references: zero warnings/errors; **118/118 focused tests** pass, zero skips,
+one thread (**17.434 s** CLI). Eight new layout cases cover optional-field compatibility, width/collapse
+roundtrip and malformed-file preservation. Actual Windows mouse resize/collapse/reopen, routed
+cancel/reversal/focus/compact/Browser handoff and persisted layout pass. Eight compositor pixel checks
+before explicit bitmap rendering confirm repeated theme switches in RU/EN without thumbnail replacement
+or musical/history edits. Empty/populated ordinary/reduced review, component catalog and field matrix
+pass; wider platform/DPI and subjective acceptance are not established. Completed evidence and
+commands are in the [work log](archive/WORK_LOG.md#seq-workspace-theme-nav--2026-10-15).
+
+Latest L3: **SEQ-R7-SAMPLE-LAB-V1, 2026-10-15**. Full Release solution build: zero warnings/errors;
+**1341/1341 tests pass**, zero skips, one test thread (**62.326 s** CLI summary). Numerical tests cover
+finite/transient/decay/spectral differences, actual reference/lock behavior, exact processed-audition
+versus accepted-PCM agreement and unrelated voice/time continuation. Host tests cover cancellation,
+late results, lifecycle, captured/stale targets and managed history/portability.
+Final UI/availability follow-up: zero-warning Release solution build and **189/189 focused tests**
+(5.665 s); this reuses the L3 baseline rather than claiming a second full regression run.
+
+Real-window routed Sample Lab creation/reference/lock/history/acceptance/disable/reopen/export passes,
+with RU/EN × Dark/Light ordinary/reduced views and zero-DIP exact-field center differences. A populated
+Neon Orchard review composes all ten first-party panes in four language/theme combinations. Physical
+solo, Pattern/context/original output passes through Samsung USB C Earphones, 48 kHz stereo. Native
+Windows action input is foreground-refused because another window covers the check. These establish
+neither ordinary native acceptance nor subjective acoustic/aesthetic judgement, stress or other platforms.
+The R7 report separates the tiers and retained evidence. Earlier R6 and cross-stage evidence remains
+in its owning reports; inherited pressure/allocation issues are not closed by this capability.
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **1**. This risk-selected L3 covers extension/document/media
-lifecycle and resets the cadence. No broader platform, aesthetic, pressure or acoustic closure follows.
+Completed repository tasks since this L3: **1**. This risk-selected L3 covers prepared audition,
+extension/document/media lifecycle and resets the cadence. No broader platform, aesthetic, pressure or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
 FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell
@@ -166,7 +193,7 @@ Browser inspection followed by preview decodes external sources twice; three-min
 and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 
 Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
-Sample Lab, MIDI, recording and recovery remain future work. Cold seek/range wrap
+wider Sample Lab context/reference models, MIDI, recording and recovery remain future work. Cold seek/range wrap
 resets Mixer FX without preroll. R4-F2 pressure failures, maximum-channel stress, aesthetic/acoustic
 review, Linux/macOS runtime, high/mixed DPI, cross-monitor and accessibility remain unevidenced.
 [Known problems](KNOWN_PROBLEMS.md), [debt](TECH_DEBT.md) and [portability](PORTABILITY.md) retain

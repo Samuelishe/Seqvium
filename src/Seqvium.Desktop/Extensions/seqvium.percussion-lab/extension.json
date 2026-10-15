@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "id": "seqvium.percussion-lab",
+  "version": "1.0.0",
+  "name": "Percussion Lab",
+  "russianName": "Лаборатория перкуссии",
+  "capabilities": [
+    {
+      "id": "seqvium.percussion-lab.percussion",
+      "category": "SampleGenerator",
+      "requires": [
+        { "contract": "seqvium.sample-generator", "minimum": 1, "maximum": 1 },
+        { "contract": "seqvium.sample-exploration", "minimum": 1, "maximum": 1 }
+      ],
+      "content": []
+    }
+  ]
+}

@@ -6,6 +6,24 @@ Authoritative for: Categories, base-versus-optional policy, preset-source versus
 compatibility/fallback, lifecycle/removal safety, degraded availability and dependency blockers.
 Not authoritative for: A general public SDK/ABI, project container, DSP implementation, or store.
 
+## Sample Lab generator package
+
+R7 ships **seqvium.percussion-lab 1.0.0**, default enabled unless disabled in user preferences.
+Its manifest requires `seqvium.sample-generator: 1` and `seqvium.sample-exploration: 1`; the latter
+negotiates the bounded family/recipe/reference/lock declarations. Older hosts refuse the unmet
+contract instead of ignoring variation intent. The exact package/version/capability factory creates
+`PercussionGenerator`; no algorithm runs through a bypass when disabled. There is no assembly scan
+or new general SDK. Browser and Sample Lab share one initialization/enablement owner and the existing
+Extensions disclosure. The host retains copied sealed metadata and candidate WAVs, not provider UI/code.
+
+`IExploringSampleGenerator` extends the async seam with bounded family-local numeric controls.
+Requests capture intention, seed, reference recipe/identity and held values. The host validates output
+audio and recipe family/ranges/seed/lineage/locks before transfer to its twelve-candidate history.
+Provider use is counted through generation/validation, then released. Disable is refused while work
+is active; after cancellation/join or ordinary completion it can retire the provider while idle
+history remains. Accepted PCM owns no provider lease or generator dependency.
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1) owns musical scope and acceptance.
+
 ## Implemented R6 local foundation
 
 R6 implements a bounded local host in the existing Core/Desktop assemblies, with no public SDK/ABI
@@ -14,7 +32,7 @@ stability promise. `ExtensionPackage`, `ExtensionCapability`, a counted `Extensi
 and **SampleGenerator**. Future realtime instruments/effects/nodes require their own concrete contracts;
 they cannot execute through the asynchronous generator boundary.
 
-Desktop discovers immediate directories under **`<application>/Extensions`** when Browser is created.
+Desktop discovers immediate directories under **`<application>/Extensions`** when Browser or Sample Lab first needs extensions.
 This is a deployment-controlled root, not a scan of user folders or an installer. At most 64 packages,
 64 KiB per `extension.json`, 16 capabilities, 32 requirements per capability and 256 content entries
 per capability are admitted. Linked paths (including `extension.json` itself), absolute/escaping
@@ -29,7 +47,8 @@ declares `id`, `category`, `requires` and `content` (empty for a generator). Req
 `id`, `name`, and a package-relative WAV `file`. The shipped
 [Found Sounds manifest](../src/Seqvium.Desktop/Extensions/seqvium.found-sounds/extension.json) is a complete example.
 
-The current contracts are **`seqvium.content.wav: 1`** and **`seqvium.sample-generator: 1`**. Each
+The current contracts are **`seqvium.content.wav: 1`**, **`seqvium.sample-generator: 1`** and
+**`seqvium.sample-exploration: 1`**. Each
 category must require its corresponding contract. All required contracts must match before any
 package activation; one unmet required contract makes this bounded package unavailable atomically.
 Optional contract failures produce a usable fallback diagnostic. Product-version age is never a gate.
@@ -76,15 +95,15 @@ Existing opaque unavailable sound/node state remains preserved and affected exec
 R6 adds no realtime provider, project field or format-reader gate.
 
 The test-only functional provider proves activation, generation, cancellation, stale/late disposal,
-document/application close and durable acceptance. It is not shipped as Sample Lab. R7 must supply real
-families, reference/variation/lock declarations, contextual audition and bounded candidate history/UI.
+document/application close and durable acceptance. It tests the R6 seam independently; the R7 package and host surface above add real
+families, reference/variation/locks, contextual audition and bounded history.
 Those concrete request extensions must retain R6's ownership, cancellation and final acceptance gates;
 R6 does not invent universal similarity or promise cross-version regeneration.
 
 ### R6 host presentation
 
-Browser's **Sound packs & extensions** disclosure lists local identity/version/purpose, availability
-and diagnostics, with Browse sounds and Enable/Disable. Enabled pack sounds join the existing Browser
+Browser's **Extensions** disclosure lists package name/version and availability, with identity and
+diagnostics on inspection and Sounds/Enable/Disable actions. Enabled pack sounds join the existing Browser
 location/list/preview/drag and musical-use paths. Disabling removes contributed locations/selections;
 old captured drag sources must reacquire availability and are refused after disable. Host-owned metadata
 labels require no executable activation. Optional absent/invalid Russian names fall back to English;

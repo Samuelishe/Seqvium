@@ -119,8 +119,6 @@ internal sealed class WorkflowControls : Grid
         Grid.SetColumn(tempoApply, 2);
         tempoRow.Children.Add(tempoApply);
         tempoPopup.Children.Add(tempoRow);
-        var tempoHint = new TextBlock { Classes = { "caption" }, MaxWidth = 240, TextWrapping = TextWrapping.Wrap };
-        tempoPopup.Children.Add(tempoHint);
         var tempoFlyout = new Flyout { Content = tempoPopup };
         _tempoAction.Flyout = tempoFlyout;
         AutomationProperties.SetAutomationId(_tempoAction, "Workflow.EditTempo");
@@ -136,7 +134,6 @@ internal sealed class WorkflowControls : Grid
                     : "en-US");
             _tempoEdit.Text = _shell.Tempo;
             _tempoEdit.Classes.Remove("invalid");
-            tempoHint.Text = _shell["Workflow.TempoHint"];
             AutomationProperties.SetName(_tempoEdit, _shell["Project.Tempo"]);
             AutomationProperties.SetName(tempoApply, _shell["Workflow.ApplyTempo"]);
             _tempoEdit.Focus();

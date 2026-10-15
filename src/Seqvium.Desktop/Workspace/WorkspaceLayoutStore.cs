@@ -137,7 +137,21 @@ public sealed class WorkspaceLayoutStore(string path)
                     else window = new((int)x, (int)y, windowWidth, windowHeight, maximized);
                 }
             }
-            return new(new(width, height, active, entries.ToImmutable()) { Window = window }, fallback);
+            PatternNavigationPlacement? navigation = null;
+            if (root.TryGetProperty("navigation", out var savedNavigation) && savedNavigation.ValueKind != JsonValueKind.Null)
+            {
+                if (savedNavigation.ValueKind != JsonValueKind.Object) fallback = true;
+                else
+                {
+                    double navigationWidth = Number(savedNavigation, "width", 240, ref fallback);
+                    if (savedNavigation.TryGetProperty("collapsed", out var collapsed) &&
+                        collapsed.ValueKind is JsonValueKind.True or JsonValueKind.False &&
+                        new PatternNavigationPlacement(navigationWidth).IsValid)
+                        navigation = new(navigationWidth, collapsed.GetBoolean());
+                    else fallback = true;
+                }
+            }
+            return new(new(width, height, active, entries.ToImmutable()) { Window = window, Navigation = navigation }, fallback);
         }
         catch (FileNotFoundException)
         {
@@ -175,6 +189,7 @@ public sealed class WorkspaceLayoutStore(string path)
         {
             if (layout.Panes.IsDefault || layout.Panes.Length > WorkspaceState.Definitions.Length ||
                 !double.IsFinite(layout.Width) || !double.IsFinite(layout.Height)) return false;
+            if (layout.Navigation is { IsValid: false }) return false;
             if (layout.Window is { } placement && (!double.IsFinite(placement.Width) || !double.IsFinite(placement.Height) ||
                 placement.Width <= 0 || placement.Height <= 0 || placement.Width > 100000 || placement.Height > 100000)) return false;
             var bytes = JsonSerializer.SerializeToUtf8Bytes(new
@@ -182,6 +197,7 @@ public sealed class WorkspaceLayoutStore(string path)
                 version = 1, width = layout.Width, height = layout.Height, activePaneId = layout.ActivePaneId,
                 window = layout.Window is { } window ? new { x = window.X, y = window.Y, width = window.Width,
                     height = window.Height, maximized = window.Maximized } : null,
+                navigation = layout.Navigation is { } navigation ? new { width = navigation.Width, collapsed = navigation.Collapsed } : null,
                 panes = layout.Panes.Select(pane => new
                 {
                     instanceId = pane.InstanceId, typeId = pane.TypeId,

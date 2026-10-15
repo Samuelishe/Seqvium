@@ -238,10 +238,10 @@ internal sealed class MixerPaneContent : Grid, IDisposable
                 fader.Meter = _state.MixerMeters.GetValueOrDefault(id?.Value ?? Guid.Empty);
                 fader.Playing = _state.Execution?.Execution.Playing == true;
                 fader.InvalidateVisual();
-                peak.Text =
-                    $"PK {(fader.Meter.HeldPeak > 0 ? 20 * Math.Log10(fader.Meter.HeldPeak) : -90):0.0}\nGR {fader.Meter.ReductionDb:0.0}";
-                ToolTip.SetTip(peak,
-                    $"Peak dBFS · RMS L/R {fader.Meter.RmsLeft:0.000}/{fader.Meter.RmsRight:0.000} · Overloads {fader.Meter.Overloads}");
+                peak.IsVisible = fader.Meter.Overloads > 0 || fader.Meter.NonFiniteSamples > 0;
+                peak.Text = "CLIP";
+                ToolTip.SetTip(fader, FormattableString.Invariant(
+                    $"Peak {(fader.Meter.HeldPeak > 0 ? 20 * Math.Log10(fader.Meter.HeldPeak) : -90):0.0} dBFS · GR {fader.Meter.ReductionDb:0.0} dB"));
                 peak.Classes.Set("error", fader.Meter.Overloads > 0 || fader.Meter.NonFiniteSamples > 0);
             }
         }

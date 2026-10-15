@@ -383,24 +383,16 @@ use whole 4/4 bars with occupied-shortening refusal. Other meters and multi-file
 
 ## SEQ-R7 — Sample Lab / Generator V1
 
-The implemented [R6 local foundation](EXTENSIONS.md#implemented-r6-local-foundation) supplies trusted
-package/capability identity, lifecycle, Browser content and temporary generation/explicit acceptance.
-R7 must keep that boundary and provide the actual creative families and surface below. Native-input
-evidence remains separately scoped in [current state](PROJECT_STATE.md); no public external SDK is implied.
+The bounded V1 is implemented: optional Percussion Lab, Kick/Clap recipes, Random/Variation, explicit
+references/locks, twelve-candidate history, standalone/PCM Rack entry, real prepared contextual
+substitution and independent managed acceptance. Current scope belongs to
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1); evidence and acceptance limits belong
+to the [R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md). Completed work and rationale are in
+[history](archive/WORK_LOG.md#seq-r7-sample-lab-v1--2026-10-15).
 
-Ship one default-installed but removable generator package with one or two bounded families. Provide
-random and nearby/similar variants, justified parameter locks, candidate history, and a dedicated
-workspace pane with standalone and contextual entry. Provide temporary contextual audition through
-relevant existing downstream processing alongside solo audition, then explicit acceptance as durable
-audio. Resolve bounded substitution/publication/restoration behavior. Follow [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md).
-Accepted/generated material joins the same discoverable project-resource audition/reuse path established
-in R2; candidate exploration remains separate from acceptance. No hidden Sample Lab resource universe or
-automatic global Personal Library publication. R7 does not require cross-project publication.
-Acceptance identifies reusable-resource, specific-use or explicitly shared-definition intent under
-[sample scope](SAMPLE_WORKFLOW.md#acceptance-scope-and-shared-uses), validates the actual target and
-commits coherently. Implement only supported bounded scopes; no full Arrangement/event-conversion UI prerequisite.
-Use host localization and semantic styles for the removable generator's first-party UI under
-[foundation ownership](#localization-and-theme-foundation-ownership), rather than a separate resource system.
+Owner acoustic/aesthetic judgement and ordinary native-input evidence remain separate from the
+implemented capability. Broader reference inputs, one-use detachment, other context types, durable
+recipes and Personal Library are evidence-led follow-ups, not prerequisites silently claimed by V1.
 
 ## SEQ-R8 — Resampling
 

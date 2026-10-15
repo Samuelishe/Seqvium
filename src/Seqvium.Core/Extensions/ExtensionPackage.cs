@@ -29,7 +29,7 @@ public static partial class ExtensionDiscovery
 {
     public const int MaximumPackages = 64, MaximumManifestBytes = 65536;
     public static ImmutableDictionary<string, int> PlatformContracts { get; } =
-        new Dictionary<string, int> { ["seqvium.content.wav"] = 1, ["seqvium.sample-generator"] = 1 }
+        new Dictionary<string, int> { ["seqvium.content.wav"] = 1, ["seqvium.sample-generator"] = 1, ["seqvium.sample-exploration"] = 1 }
             .ToImmutableDictionary(StringComparer.Ordinal);
 
     public static Task<ImmutableArray<ExtensionPackage>> DiscoverAsync(string root, CancellationToken cancellation = default)

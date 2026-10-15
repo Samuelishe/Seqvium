@@ -7,6 +7,13 @@ entry fields.
 Not authoritative for: Authoritative license text, final technical choices, subsystem design, or installed-version
 locks.
 
+## Percussion Lab
+
+The optional first-party Percussion Lab algorithms and generated output use original procedural DSP,
+without recordings, borrowed samples or copied third-party DSP source. They introduce no external
+component or asset license. Source/manifest use the root Apache-2.0 license. Private interface
+references inform composition only; no reference screenshot/graphic is distributed in the application.
+
 ## Original Found Sounds content
 
 The [Found Sounds package](../src/Seqvium.Desktop/Extensions/seqvium.found-sounds/README.md) contains

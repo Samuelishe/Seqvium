@@ -63,7 +63,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         Children.Add(_scope);
         _level = new(shell) { Focusable = true };
         _plot = new(shell) { Height = 116 };
-        _dial = new(shell) { Width = 86, Height = 86, Focusable = true };
+        _dial = new(shell) { Width = 86, Height = 86, Focusable = true, CenterText = "" };
         var levelRow = new Grid { ColumnDefinitions = new("Auto,*"), ColumnSpacing = 12 };
         levelRow.Children.Add(_dial);
         SetColumn(_level, 1);
@@ -324,13 +324,14 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         _plot.Amplitude = amplitude;
         _plot.IsDraft = _editor.HasDraft;
         _plot.InvalidateVisual();
-        _db.IsVisible = amplitude is not null;
+        _db.IsVisible = false;
         _curve.IsVisible = amplitude is not null;
         _db.Text = amplitude == 0
             ? _shell["NodeEditor.SilentDb"]
             : amplitude is { } a
                 ? NodeEditorSession.Decibels(a)?.ToString("0.00", CultureInfo.InvariantCulture) + " dB"
                 : _shell["Graph.InvalidValue"];
+        ToolTip.SetTip(_value, _db.Text);
         string status = _editor.Node is null
             ? ""
             : _feedback is not null
@@ -406,10 +407,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         if (!GraphConnectionRules.Supported(node) || node.Type == GraphBuiltIns.Gain)
         {
             lines.Add(_shell["NodeEditor.HostDetails"]);
-            lines.Add(node.Type + " · v" + node.StateVersion);
-            lines.Add(_shell["NodeEditor.NodeId"] + ": " + node.Id);
-            foreach (var port in node.Ports)
-                lines.Add(port.Direction + " · " + port.Role + " · " + port.SignalClass + " · " + port.Layout);
+            ToolTip.SetTip(_details, node.Type + " · v" + node.StateVersion);
             return string.Join("\n", lines);
         }
 
@@ -421,32 +419,20 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             var part = pattern?.Parts.SingleOrDefault(p => p.Id == binding?.PartId);
             var sound = state.Sounds.SingleOrDefault(s => s.Id == part?.SoundId);
             lines.Add(part is null ? _shell["Graph.Unbound"] : _shell["NodeEditor.Part"] + ": " + part.Name);
-            if (sound is not null) lines.Add(_shell["NodeEditor.Sound"] + ": " + sound.Name);
+            if (sound is not null && sound.Name != part?.Name) lines.Add(sound.Name);
             if (binding is not null)
             {
-                lines.Add(_shell["NodeEditor.Placement"] + " " +
-                          (state.Placements.ToList().FindIndex(p => p.Id == binding.PlacementId) + 1) +
-                          " · " + binding.Boundary);
-                ToolTip.SetTip(_details, _shell["NodeEditor.Placement"] + ": " + binding.PlacementId + "\n" +
-                                         _shell["NodeEditor.Part"] + ": " + binding.PartId);
+                ToolTip.SetTip(_details, part?.Name);
             }
 
             foreach (var resourceId in sound?.ResourceIds ?? [])
             {
                 var resource = state.Resources.SingleOrDefault(r => r.Id == resourceId);
                 var observed = _sources?.Sources.SingleOrDefault(r => r.ResourceId == resourceId);
-                lines.Add((resource?.Name ?? resourceId.ToString()) + " · " + _shell[observed is null
-                    ?
-                    "NodeEditor.Checking"
-                    :
-                    observed.Availability == SourceAvailability.Supported
-                        ? "NodeEditor.ResourceReady"
-                        : "NodeEditor.ResourceUnavailable"]);
-                if (observed is { Availability: SourceAvailability.Supported })
-                    lines.Add($"{observed.Rate} Hz · " +
-                              (observed.Channels == 1 ? "Mono" : "Stereo L/R") + " · " +
-                              ((double)observed.Frames!.Value / observed.Rate!.Value).ToString("0.###",
-                                  CultureInfo.InvariantCulture) + " s");
+                if (observed?.Availability != SourceAvailability.Supported)
+                    lines.Add(_shell[observed is null ? "NodeEditor.Checking" : "NodeEditor.ResourceUnavailable"]);
+                else ToolTip.SetTip(_details, (resource?.Name ?? sound?.Name) + " · " +
+                    ((double)observed.Frames!.Value / observed.Rate!.Value).ToString("0.00", CultureInfo.InvariantCulture) + " s");
             }
 
             if (sound is null || sound.ResourceIds.IsEmpty) lines.Add(_shell["NodeEditor.ResourceUnavailable"]);

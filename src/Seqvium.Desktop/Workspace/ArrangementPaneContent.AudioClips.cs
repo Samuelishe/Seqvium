@@ -71,7 +71,7 @@ internal sealed partial class ArrangementPaneContent
             Text = _shell["AudioClip.SharedRoute"], TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             Classes = { "caption" }
         };
-        body.Children.Add(routeHint);
+        ToolTip.SetTip(routing, routeHint.Text);
         var error = new TextBlock { Classes = { "error" }, TextWrapping = Avalonia.Media.TextWrapping.Wrap };
         body.Children.Add(error);
         var buttons = new StackPanel { Orientation = Orientation.Horizontal };

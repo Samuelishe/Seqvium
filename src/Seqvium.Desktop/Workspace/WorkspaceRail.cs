@@ -32,6 +32,7 @@ internal sealed class WorkspaceRail : Border, IDisposable
         foreach (var (id, icon) in new[]
                  {
                      (WorkspaceState.BrowserId, "Browser"),
+                     (WorkspaceState.SampleLabId, "SampleLab"),
                      (WorkspaceState.BeatId, "Rack"), (WorkspaceState.PianoId, "Piano"),
                      (WorkspaceState.ArrangementId, "Playlist"), (WorkspaceState.MixerId, "Mixer"),
                      (WorkspaceState.GraphId, "Graph"),

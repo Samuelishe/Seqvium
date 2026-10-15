@@ -80,6 +80,12 @@ internal sealed class GainLevelControl(ShellSession shell) : Control
 /// <summary>Analytical normalized transfer function, never a live signal or independent DSP preview.</summary>
 internal sealed class GainTransferPlot(ShellSession shell) : Control
 {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
+    }
+
     public decimal? Amplitude { get; set; }
     public bool IsDraft { get; set; }
     public override void Render(DrawingContext context)

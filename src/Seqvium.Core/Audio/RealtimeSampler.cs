@@ -306,6 +306,7 @@ public sealed class RealtimeSampler : IDisposable
             var indices = plan.Notes.Select((note, index) => (note, index)).ToDictionary(item => item.note.Occurrence);
             state.ContinuationNotes = active.Plan.Notes.Select(note =>
                 indices.TryGetValue(note.Occurrence, out var next) &&
+                SameAuditionSource(active.Plan, plan, note.Occurrence) &&
                 next.note == note with
                 {
                     SourceIndex = next.note.SourceIndex, ContributionIndex = next.note.ContributionIndex
@@ -319,6 +320,13 @@ public sealed class RealtimeSampler : IDisposable
         Volatile.Write(ref _pending, state);
         PreparedStatesCreated++;
         return SamplerPublication.Accepted;
+    }
+
+    private static bool SameAuditionSource(PreparedSampler left, PreparedSampler right, ExecutionOccurrence occurrence)
+    {
+        if (left.AuditionCandidate == right.AuditionCandidate) return true;
+        var part = right.CanonicalBasis?.Patterns.SelectMany(p => p.Parts).SingleOrDefault(p => p.Id == occurrence.PartId);
+        return part is null || part.SoundId != left.AuditionSound && part.SoundId != right.AuditionSound;
     }
 
     public void SetGain(float gain)
@@ -357,6 +365,7 @@ public sealed class RealtimeSampler : IDisposable
     }
 
     public long Panic() => Stop();
+    public Guid? SampleAuditionCandidate => Volatile.Read(ref _active)?.Plan.AuditionCandidate;
     public void SetLooping(bool looping) => Volatile.Write(ref _looping, looping);
 
     /// <summary>Control-owner song cursor. Seeking never starts playback or overrides Stop/Panic.</summary>
@@ -631,6 +640,7 @@ public sealed class SamplerPreparationRequest : IDisposable
     internal PreparedSampler? Plan => _plan;
     internal long Authority => _authority;
     internal bool PreservePlayback { get; set; }
+    internal SampleAuditionSource? Audition { get; set; }
 
     internal SamplerPreparationRequest(RealtimeSampler consumer, ProjectDocument document, Id<Pattern> target,
         int voices, int repeats, MusicalPosition start, long authority, Id<GraphAttachment>? graphTarget = null,
@@ -681,7 +691,8 @@ public sealed class SamplerPreparationRequest : IDisposable
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                return plan;
+                if (Audition is not { } audition) return plan;
+                using (plan) return audition.Apply(plan);
             }, cancellationToken).ConfigureAwait(false);
         }
         catch
@@ -718,6 +729,7 @@ public sealed class SamplerPreparationRequest : IDisposable
 
     public void Dispose()
     {
+        Audition?.Dispose(); Audition = null;
         _plan?.Dispose();
         _plan = null;
         _ended = true;

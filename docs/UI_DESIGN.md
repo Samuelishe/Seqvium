@@ -32,6 +32,25 @@ Visual quality and musical correctness are complementary requirements.
 
 ## Compact studio instrument direction
 
+### Required reference and information-density gate
+
+Before every first-party UI change, inspect relevant actual screenshots from the local reference
+library below. If suitable local images are unavailable, search for and inspect real product
+interfaces on the web before editing. Reading a catalog or relying on memory does not satisfy this
+gate. References inform composition and hierarchy; their graphics are not application assets.
+
+Working surfaces must not become documentation. Never add permanent tutorials, explanatory paragraphs,
+formulas, canonical/runtime terminology, UUIDs or redundant diagnostic counters to the musical flow.
+Prefer familiar icons and one- or two-word actions. Show the selected sound, waveform, notes, controls
+and actual musical state. Keep tempo, pitch, position and useful levels where they support a decision;
+show exact source/recipe/engineering data only on deliberate inspection. Do not duplicate a value in
+several formats or replace a usable control with an explanatory sentence.
+
+Short tooltips name actions or essential scope; they are not a place to hide the same long tutorial.
+Concise errors, unavailable state and consequential shared-edit scope remain understandable.
+Review empty and populated panels together at normal and reduced sizes in RU/EN and Dark/Light.
+Remove unnecessary words/numbers before adding help text to explain an overloaded composition.
+
 Playlist now separates form from events: a quiet named/color band directly beneath the bar ruler
 makes sections legible across a dense mixed arrangement. The section navigator gives precise access;
 its small command row and item context menus expose actual structural editing rather than an
@@ -131,6 +150,8 @@ and reuse rights were not supplied. These are private study references, never di
 [Development](DEVELOPMENT.md#local-development-resources) owns the local-resource entry points.
 Earlier reference locations describe their originating machine; their absence on another machine
 does not invalidate the design owners or authorize reconstruction of missing personal material.
+The current work-machine catalog uses `WORK-`-prefixed IDs and local Previews. Inspect that actual
+catalog/images rather than assuming the home-machine count or identifiers are present unchanged.
 
 The following are selected directions, not claims about source-DAW gestures or sound. The preparation
 implemented theme/control economy; SEQ-R9 now implements the bounded Piano surface below. Static

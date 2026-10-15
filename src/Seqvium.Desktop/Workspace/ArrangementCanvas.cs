@@ -87,6 +87,7 @@ internal sealed partial class ArrangementCanvas : Control
     internal ArrangementCanvas(ShellSession shell, DesktopWorkflow workflow)
     {
         _shell = shell;
+        ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
         _workflow = workflow;
         _observation = workflow.State;
         Focusable = true;

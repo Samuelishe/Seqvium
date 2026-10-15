@@ -97,6 +97,15 @@ Report the actual scope; focused verification is never a full regression pass.
 Every first-party UI task must read DESIGN_SYSTEM and use its shared tokens/components, including
 DrawingContext code. Shared-style changes require the component catalog and rendered field-alignment
 checks; update the implementation when the visual contract changes.
+Before designing or changing any first-party UI, inspect relevant actual screenshots in the local
+reference library linked by [UI design](docs/UI_DESIGN.md#reference-library-and-next-editor-direction).
+If suitable local screenshots are unavailable, search the web and inspect real product interfaces
+before editing. A catalog entry or remembered interface is not a visual review. Never ship permanent
+instructional paragraphs, developer explanations, formulas or redundant technical counters on a
+musical working surface. Prefer recognizable controls/icons and one- or two-word action labels.
+Keep essential musical values and concise actionable errors; put exact/technical detail behind a
+deliberate disclosure and keep tooltips short. Review populated and empty states for text/numeric
+overload at ordinary and reduced sizes, in both languages/themes. This is a required UI gate for all agents.
 Update owners when contracts change and current state when its facts change. Move resolved questions
 and completed roadmap stages out of active registers; append decision rationale and meaningful
 completed work directly to the archive. Preserve current truth in active owners, not only in history.

@@ -48,6 +48,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         _status = new() { Classes = { "caption" }, TextWrapping = TextWrapping.Wrap },
         _notice = new() { Classes = { "caption", "warning" }, TextWrapping = TextWrapping.Wrap };
     private readonly BrowserWaveform _wave;
+    private readonly ScrollViewer _preview;
     private readonly DispatcherTimer _searchDelay = new() { Interval = TimeSpan.FromMilliseconds(220) };
     private BrowserLocations _saved = new([], [], null);
     private readonly Stack<string?> _history = [];
@@ -120,6 +121,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             Content = preview, MaxHeight = 230, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
         };
+        _preview = previewScroll;
         void FitDisclosures()
         {
             extensionScroll.MaxHeight = Math.Max(80, Math.Min(190, Bounds.Height * .28));
@@ -302,7 +304,8 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             var info = await _workflow.InspectBrowserSourceAsync(source, cancellation);
             cancellation.ThrowIfCancellationRequested();
             string format = source.Path is { } file ? Path.GetExtension(file).TrimStart('.').ToUpperInvariant() : "WAV";
-            _metadata.Text = FormattableString.Invariant($"{format}  ·  {info.Frames / (double)info.Rate:0.000} s\n{info.Rate:N0} Hz  ·  {info.Channels} ch");
+            _metadata.Text = FormattableString.Invariant($"{info.Frames / (double)info.Rate:0.00} s · {(info.Channels == 1 ? "Mono" : "Stereo")}");
+            ToolTip.SetTip(_metadata, FormattableString.Invariant($"{format} · {info.Rate:N0} Hz"));
             _wave.Waveform = info.Waveform; _wave.InvalidateVisual();
             _message = "Browser.Ready";
             if (_auto.IsChecked == true) await _workflow.PreviewBrowserSourceAsync(source, cancellation);
@@ -435,17 +438,18 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         _auto.Content = _shell["Browser.AutoPreview"];
         _more.Content = _shell["Browser.More"];
         string message = _workflow.State.BrowserPreviewPlaying ? "Browser.Previewing" : _message;
-        _status.Text = _shell[message] + (_entries.Count > 0 ? $"  ·  {_entries.Count}" : "");
-        _notice.Text = _store.Failed ? _shell["Browser.LocationSaveFailed"] :
-            _workflow.State.Execution?.Execution.Playing == true ? _shell["Browser.StopTransport"] : "";
+        _status.Text = message is "Browser.Ready" or "Browser.MoreHint" ? "" : _shell[message];
+        _status.IsVisible = _status.Text.Length > 0;
+        _notice.Text = _store.Failed ? _shell["Browser.LocationSaveFailed"] : "";
         _notice.IsVisible = _notice.Text.Length > 0;
-        _title.Text = _selected?.Name ?? _shell["Browser.Select"];
+        _title.Text = _selected?.Name ?? "";
         ToolTip.SetTip(_title, _selected?.Path ?? _selected?.Name);
         _rack.Content = _shell["Browser.UseRack"]; _playlist.Content = _shell["Browser.UsePlaylist"];
         ToolTip.SetTip(_rack, (_selected?.SamplerCompatible == false ? _shell["Browser.RackWavOnly"] : _shell["Browser.RackHint"]) +
             " · " + (_workflow.State.Occurrences.FirstOrDefault(o => o.Id == _workflow.State.Selected)?.Label ?? _shell["Beat.New"]));
         ToolTip.SetTip(_playlist, _shell["Browser.PlaylistHint"]);
         bool selected = _selected is { Directory: false };
+        _preview.IsVisible = selected;
         _rack.IsEnabled = selected && _selected!.SamplerCompatible && !_using && !_workflow.State.Busy;
         _playlist.IsEnabled = selected && !_using && !_workflow.State.Busy;
         _play.IsEnabled = selected && !_using && _workflow.State.Execution?.Execution.Playing != true;

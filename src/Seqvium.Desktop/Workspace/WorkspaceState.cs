@@ -47,9 +47,16 @@ public sealed record WorkspaceLayout(
     ImmutableArray<PanePlacement> Panes)
 {
     public MainWindowPlacement? Window { get; init; }
+    public PatternNavigationPlacement? Navigation { get; init; }
 }
 
 public sealed record MainWindowPlacement(int X, int Y, double Width, double Height, bool Maximized);
+
+public sealed record PatternNavigationPlacement(double Width = 240, bool Collapsed = false)
+{
+    internal const double MinimumWidth = 180, MaximumWidth = 480, CollapseWidth = MinimumWidth;
+    internal bool IsValid => double.IsFinite(Width) && Width is >= MinimumWidth and <= MaximumWidth;
+}
 
 /// <summary>
 /// Owner-thread geometry/visibility only. Ordered entries run back to front; content, focus,
@@ -66,6 +73,7 @@ public sealed class WorkspaceState : IDisposable
     public const string PianoId = "piano-roll.main";
     public const string MixerId = "mixer.main";
     public const string BrowserId = "sample-browser.main";
+    public const string SampleLabId = "sample-lab.main";
 
     public static ImmutableArray<PaneDefinition> Definitions { get; } =
     [
@@ -77,7 +85,8 @@ public sealed class WorkspaceState : IDisposable
         new(ArrangementId, "arrangement", "Pane.Arrangement", 360, 290, new(32, 36, 1040, 480)),
         new(PianoId, "piano-roll", "Pane.Piano", 360, 320, new(42, 48, 1080, 580)),
         new(MixerId, "mixer", "Pane.Mixer", 360, 280, new(24, 420, 1008, 408)),
-        new(BrowserId, "sample-browser", "Pane.Browser", 290, 460, new(0, 0, 320, 740))
+        new(BrowserId, "sample-browser", "Pane.Browser", 290, 460, new(0, 0, 320, 740)),
+        new(SampleLabId, "sample-lab", "Pane.SampleLab", 390, 440, new(100, 40, 920, 660))
     ];
 
     private readonly List<PanePlacement> _panes = Definitions.Select(definition =>

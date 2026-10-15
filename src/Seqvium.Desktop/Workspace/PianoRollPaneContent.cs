@@ -55,18 +55,12 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         _noteDuration = Field(0.000001m, long.MaxValue / (decimal)MusicalPosition.TicksPerQuarter, 0.25m),
         _noteVelocity = Field(0, 100, 1);
 
-    private readonly TextBlock _rootHint = new()
-        { Classes = { "caption", "secondary" }, MaxWidth = 280, TextWrapping = Avalonia.Media.TextWrapping.Wrap };
-
     private readonly List<(Control Control, string Key)> _labels = [];
     private readonly Dictionary<string, Button> _buttons = [];
     private BeatEditBasis? _rootBasis, _noteBasis;
     private Id<MusicalPart>? _rootPart, _notePart, _selectedPart;
     private NoteEvent[] _noteSelection = [];
     private (decimal Pitch, decimal Start, decimal Duration, decimal Velocity) _noteInitial;
-
-    private readonly TextBlock _noteHint = new()
-        { Classes = { "caption", "secondary" }, MaxWidth = 280, TextWrapping = Avalonia.Media.TextWrapping.Wrap };
 
     private Id<Pattern>? _lastPattern;
     private Guid _lastLifecycle;
@@ -306,9 +300,9 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         row.Children.Add(_rootLabel);
         row.Children.Add(_rootPitch);
         Identify(_rootPitch, "Piano.RootPitch");
-        _rootPitch.ItemsSource = Enumerable.Range(0, 128).Select(i => $"{PianoNotes.Name(i)} · {i}").ToArray();
+        _rootPitch.ItemsSource = Enumerable.Range(0, 128).Select(i => PianoNotes.Name(i)).ToArray();
         body.Children.Add(row);
-        body.Children.Add(_rootHint);
+        ToolTip.SetTip(_rootPitch, _shell["Piano.RootHint"]);
         var apply = new Button { Classes = { "primary" } };
         Identify(apply, "Piano.Apply");
         body.Children.Add(apply);
@@ -334,7 +328,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         _originalRoot = sound?.Parameters.TryGetValue("rootPitch", out var root) == true ? root : 60m;
         _rootPitch.SelectedIndex = (int)_originalRoot;
         _rootPitch.IsEnabled = sound?.Algorithm == PcmSampler.Algorithm;
-        _rootHint.Text = _shell["Piano.RootHint"];
+        ToolTip.SetTip(_rootPitch, _shell["Piano.RootHint"]);
     }
 
     private void BuildNoteEditor()
@@ -356,7 +350,6 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             AutomationProperties.SetAutomationId(field, "Piano.Note" + key);
         }
 
-        body.Children.Add(_noteHint);
 
         var apply = new Button { Classes = { "primary" } };
         Identify(apply, "Piano.Apply");
@@ -418,8 +411,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         _noteVelocity.Value = _noteSelection[0].Intensity * 100;
         _noteInitial = (_notePitch.Value!.Value, _noteStart.Value!.Value, _noteDuration.Value!.Value,
             _noteVelocity.Value!.Value);
-        _noteHint.IsVisible = _noteSelection.Length > 1;
-        _noteHint.Text = _shell["Piano.GroupProperties"];
+        ToolTip.SetTip(_notePitch, _noteSelection.Length > 1 ? _shell["Piano.GroupProperties"] : _shell["Piano.Pitch"]);
         _noteDuration.Classes.Remove("error");
     }
 
@@ -518,6 +510,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
                     observation.Snapshot.State.Placements.Any(p =>
                         p.Id == c.SourcePlacementId && p.PatternId == pattern.Id));
             _scope.Text = uses > 0 ? $"{_shell["Piano.Shared"]} · {uses}" : _shell["Piano.PatternScope"];
+            _scope.IsVisible = uses > 1;
             string? refusal = PianoNotes.Refusal(observation.Snapshot.State, pattern, Canvas.Part);
             _warning.IsVisible = refusal is not null && refusal != "Piano.NoTarget";
             _warning.Text = refusal is null ? "" : _shell[refusal];

@@ -64,11 +64,16 @@ accepted WAV, user-created content or recovery. The `.previous` file is preferen
 
 `WorkspaceLayoutStore` owns `workspace-layout.json` alongside `preferences.json` in the same
 platform user configuration directory. It does not change the preference schema, project JSON, Undo,
-Save, device intent, media roots or recovery. Missing layout means four optional hidden panes,
-including Node Graph and Node Editor. Older layouts initialize each missing pane hidden.
+Save, device intent, media roots or recovery. Missing layout starts with the registered panes hidden;
+the host then opens the appropriate empty or musical workspace. Older layouts initialize each missing pane hidden.
 Version 1 stores usable workspace `width`/`height`, `activePaneId`, and a back-to-front `panes` array.
 Optional `window` contains normal `x`/`y` in screen pixels, `width`/`height` in DIPs and `maximized`.
 Omission is valid for older layouts; malformed supplied values use the same preserve-original fallback.
+Optional `navigation` stores the Pattern navigator's preferred `width` in DIPs and explicit `collapsed`
+boolean. Old version-1 files omit it without fallback; malformed supplied values preserve the original
+file under the same write-refusal policy. Transient drag widths and automatic compact-window/Browser
+suppression never replace this preference. [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer)
+owns the resize/collapse and explicit reopening behavior.
 Maximized/minimized geometry never replaces the normal restore rectangle. Main-window movement,
 settled resize, pane commits and joined shutdown persist this independent user configuration.
 Each entry contains `instanceId`, `typeId`, `visibility` (`hidden`/`visible`/`collapsed`), floating
@@ -81,7 +86,7 @@ tokens, not localized titles. Controls, focus references, project targets and ru
 [Workspace](WORKSPACE.md#implemented-r3-f2-internal-panes) owns placement/interaction invariants.
 
 Reads cap actual bytes at 32 KiB plus one sentinel, JSON depth at 16, and input entries at 16; only
-the four known independent instances can enter state. Unknown/duplicate entries are skipped, malformed
+the registered independent instances can enter state. Unknown/duplicate entries are skipped, malformed
 fields fall back independently, invalid geometry is adapted/clamped and dock conflicts remain reachable.
 Unsupported/stale versions, malformed/oversize/unreadable data leave the app usable. No read repairs
 the original file. If any read used fallback, this store refuses every write for the session and shows
@@ -107,7 +112,8 @@ project-file exclusion against external tools, recovery or crash/power-loss stor
 VisualCheck's internal composition gives preferences/layout and unnamed media an isolated directory;
 no production environment/command-line bypass or setting is added.
 
-The implemented file policies above cover only language/theme and the four first-party pane placements.
+The implemented file policies above cover language/theme, registered first-party pane placements,
+main-window restoration and Pattern navigation width/collapse.
 Other application/plugin settings remain future work.
 
 Node Editor adds the fixed `node-editor.main` / `node-editor` entry under the same version-1 layout.

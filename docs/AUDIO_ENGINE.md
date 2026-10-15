@@ -7,6 +7,21 @@ boundary, recording, item-local hard boundaries, manual export ranges, finite ta
 preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
+## Sample Lab contextual audition
+
+V1 replaces a supported shared PCM Rack source in the existing prepared Pattern/Song plan. The
+temporary decoded source is at most two seconds, mono/stereo; each preparation and active plan owns
+independent PCM leases. Existing pitch/root/release, contribution buffers/local Gain and global
+Mixer routes/processing remain authoritative. It does not inject an unrelated solo WAV over the mix.
+Prepared publication compares candidate identity as well as canonical note compatibility: changed
+sound voices retire, unrelated voices/time and compatible Mixer DSP continue. The next musical
+trigger hears the replacement. Clearing prepares current canonical media without snapshot restoration,
+Undo or dirty state. Stop/Panic and lifecycle joins retain their existing authority. Raw solo remains
+a distinct stopped-transport `WavAudition`. There is no realtime generator execution, Audio Clip target
+substitution, generalized effect hosting or guaranteed click-free transition. See
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1) and the
+[R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md).
+
 ## Standalone audio clips
 
 Playlist Audio Clips use the same prepared sampler, realtime publication/seek/range loop and offline

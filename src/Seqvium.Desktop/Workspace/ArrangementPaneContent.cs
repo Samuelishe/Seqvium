@@ -389,7 +389,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
                         ? "AudioClip.EmptyHint"
                         : "Arrangement.Hint"];
             _hint.IsVisible = state.ArrangementClips.IsEmpty && state.AudioClips.IsEmpty;
-            ToolTip.SetTip(_select, _shell["Arrangement.Select"] + " · " + _shell["Arrangement.Hint"]);
+            ToolTip.SetTip(_select, _shell["Arrangement.Select"]);
             AutomationProperties.SetHelpText(_canvas, _shell["Arrangement.Hint"]);
             RefreshOverview();
         }

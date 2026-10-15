@@ -7,10 +7,68 @@ Lab exploration/reference/locks/history, candidate acceptance, durable audio, ob
 Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing,
 or final resource file format.
 
+## Implemented Sample Lab V1
+
+Sample Lab is a retained workspace instrument with standalone entry from the rail/Panes and contextual
+entry from a supported PCM Rack channel. The optional default-enabled **Percussion Lab** package
+provides Kick and Clap. Its registered offline provider, contract checks, activation and retirement
+are owned by [Extensions](EXTENSIONS.md#sample-lab-generator-package). Disabling it removes generation,
+not the host surface or accepted audio. There is no Drum Voice dependency or arbitrary-audio analysis.
+
+Kick combines a swept fundamental, harmonics, filtered noise transient, exponential envelope,
+saturation and DC/terminal smoothing. Clap combines three spaced filtered-noise bursts, a separate
+tail and a quiet resonant body. Output is peak-bounded mono PCM16 at the requested rate; Desktop
+requests 48 kHz and at most two seconds, outside the realtime callback.
+
+Random uses family-correlated ranges. Variation perturbs the explicitly chosen reference's normalized
+recipe controls by at most 16% before musical quantization/clamping. It never falls back to Random.
+References are retained same-family candidates, not arbitrary WAVs or the current project source.
+Locks hold exact recipe controls for future Random and Variation requests. Kick exposes body pitch,
+decay, pitch drop, transient, colour and drive; Clap exposes colour, decay, pulse spacing, transient
+and tail body. Decay means the envelope's nominal 60 dB time; saturation/spectrum affect perceived
+length. Clap pulse spacing also changes total duration. No independently preserved perceptual decay
+or acoustic-similarity metric is promised. Family changes clear reference and locks.
+
+The host owns twelve recent WAV candidates and bounded waveform metadata, without temporary files or
+resident history PCM. Oldest unselected/non-reference entries are evicted and disposed. Selection,
+reference and audition are separate; completion never changes the reference, and an explicit selection
+during generation prevents completion selecting over it. Four pending/superseding requests are the
+admission bound; the existing provider gate serializes execution. Cancellation disposes late output.
+The provider lease lasts only through generation/validation; idle history permits disable. Retained
+audio can still be auditioned/accepted after disable. New/Open/Close cancel and join work, then clear
+history. Hiding/collapsing the pane preserves history and ends audition. History/recipes are not saved.
+
+Standalone generation depends on the document lifecycle, not every document edit. Context captures
+the original attachment, Pattern/Part binding and sound definition; selection and unrelated renaming
+do not retarget it. Source replacement, retargeting or deletion makes the context stale, including
+after Undo; explicitly reopen the Rack target to renew it. Retained candidates remain reusable.
+
+Solo plays the raw candidate while stopped. **In music** supports existing PCM Rack sounds during
+Pattern or Song Play. It temporarily substitutes that shared sound's future note triggers through
+the current Source/Gain/Mix/Output processing and downstream Mixer. In Song its other uses also
+audition the shared substitution. Existing note pitch/root/release still apply; this is not a new
+one-shot instrument mode. The target's sounding voice ends at publication and its next trigger uses
+the new source; unrelated compatible voices, transport position and Mixer DSP continue. **Original**,
+Stop/Panic, target invalidation, pane hiding, document replacement and close withdraw the substitution.
+Restoration prepares current canonical state; no launch snapshot is written back. Playback/export/save
+remain canonical. Drum Voice, Audio Clip targets and arbitrary future processors are outside V1 context.
+
+**Keep** imports a durable project sample without placement. **+ Rack** creates an independent channel
+in the captured current Rack, or a new Pattern with a native-pitch hit when none is selected.
+**+ Playlist** adds an Audio Clip at the cursor on lane 1. **Replace shared** explicitly updates the
+captured PCM sound across its Patterns, retaining notes/root/release/graphs/Mixer assignment. V1 does
+not offer one-use detachment. Each acceptance uses existing managed WAV preparation plus one guarded
+document/Undo transaction; failure preserves canonical state. Acceptance does not remove history or
+replace another candidate. Undo/Redo badges reflect resources actually present in the current document.
+Accepted audio is ordinary discoverable project media and needs no generator after Save As/Open/export.
+
+The [R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md) owns evidence and limits. The conceptual
+sections below retain broader direction; this section owns the implemented V1 choices.
+
 ## R6 module sources and candidate boundary
 
-Enabled content-pack WAVs appear as locations in the existing Browser. **Sound packs & extensions**
-shows availability, purpose/version and host-owned diagnostics and offers Browse sounds/Enable/Disable.
+Enabled content-pack WAVs appear as locations in the existing Browser. **Extensions**
+shows availability, exposes host-owned diagnostics on inspection and offers Sounds/Enable/Disable.
 The address field displays a read-only label for a pack or Project resources; Enter reloads that
 virtual location by its internal identity. Filesystem folder addresses remain editable.
 Inspect/preview are transient. Rack/Playlist uses acquire the package during preparation/acceptance,
@@ -18,16 +76,15 @@ then use the same managed media and single Undo transaction as ordinary file imp
 sources refuse new use, including a captured old drag. Imported resources survive disable, source
 removal, Undo/Redo and Save As/Open, and remain available from Project resources. There is no second Browser.
 
-R6's functional generator provider exists only in tests. It returns a disposable WAV candidate with its
+R6's original fixture provider remains test-only. Its contract returns a disposable WAV candidate with its
 own identity, without editing music. Sessions cancel/join work on replacement/close, invalidate superseded
 requests and dispose even late results. Explicit acceptance validates the original document/generation
 and captured Rack destination, then uses normal managed WAV import. Failure/staleness/cancellation
 adds no media/use/history. Temporary candidate bytes/files never become a parallel saved audio store.
 
-This establishes lifetime/acceptance, not Sample Lab. R7 still owns actual families, random/related
-intention, reference inputs, declared locks, bounded history/comparison, UI and contextual audition.
-R6 conservatively rejects a candidate for changed document generation; deliberate safe reuse under
-R7's richer context needs concrete evidence, not selection-based retargeting. See
+This strict R6 adapter remains available for document-bound requests. Sample Lab uses the implemented
+V1 exploration/history and standalone/context relevance above instead of invalidating independent
+generation for every unrelated edit. Neither path retargets acceptance from current selection. See
 [Extensions](EXTENSIONS.md#r6-generator-and-acceptance-boundary) for bounds and lifecycle.
 
 ## Implemented SEQ-SAMPLE-BROWSER
@@ -260,7 +317,7 @@ discover/create sound
 
 The transition between exploration and musical context should be unusually cheap. Sample Lab is
 a dedicated creative workspace pane, with behavior/layout owned by [WORKSPACE](WORKSPACE.md).
-It is not isolated from the composition. No Sample Lab is implemented yet.
+It is not isolated from the composition. The implemented V1 scope is described above.
 
 ## Browser discovery and ownership
 
@@ -466,8 +523,7 @@ The first generator should be local/procedural and cover one or two bounded fami
 
 ## Intentional and lazy exploration
 
-The following are accepted bounded product semantics for future Sample Lab work, not implemented
-capabilities. Start with sound: choose a supported family, generate, listen, explore a related variant,
+The following accepted semantics include the bounded V1 above and wider future exploration. Start with sound: choose a supported family, generate, listen, explore a related variant,
 and explicitly accept useful material. Detailed parameter knowledge is optional. Advanced controls
 appear progressively under [UX](UX_CONTRACT.md#sample-lab-exploration-feedback); final widgets/layout
 remain open. Generation is bounded asynchronous work outside realtime audio.
@@ -616,10 +672,9 @@ waveform analysis, unlimited branching, cross-project publication, complete pres
 generator orchestration. R14+ may expand families and exploration only with demonstrated need; no
 roadmap stage/order change follows from these semantics.
 
-Q-071 remains partially answered: concrete generation/similarity calculations, supported reference
-inputs, control schemas/ranges and lock representation/coupling, history limits/storage/retention,
-comparison and request-selection UI, resource/removal mechanics and performance/usability evidence
-remain open. Q-011/Q-029/Q-063 retain audition, acceptance-scope and async/Undo mechanisms;
+Q-071 is implemented for the two V1 recipes and twelve-candidate host history above. Arbitrary-audio
+references, richer similarity/lock models, durable recipe/version migration and broader usability
+evidence remain open. Q-011/Q-029/Q-063 retain audition, acceptance-scope and async/Undo mechanisms;
 Q-065 retains discovery/publication, Q-058/Q-059 recovery/media integrity. No implementation is claimed.
 
 ## Acceptance and provenance

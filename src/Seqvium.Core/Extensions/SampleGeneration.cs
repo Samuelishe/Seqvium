@@ -6,7 +6,10 @@ namespace Seqvium.Core;
 
 public sealed record SampleParameter(string Id, decimal Minimum, decimal Maximum, decimal Default);
 public sealed record SampleGenerationContext(Guid Lifecycle, long Generation, int SampleRate, int MaximumFrames);
-public sealed record SampleGenerationRequest(SampleGenerationContext Context, ImmutableDictionary<string, decimal> Parameters);
+public sealed record SampleGenerationRequest(SampleGenerationContext Context, ImmutableDictionary<string, decimal> Parameters)
+{
+    public SampleExploration? Exploration { get; init; }
+}
 
 /// <summary>Trusted asynchronous provider. No document, device, graph or realtime callback access.</summary>
 public interface ISampleGenerator : IAsyncDisposable
@@ -21,6 +24,7 @@ public sealed class SampleCandidate : IDisposable
     private byte[]? _wave;
     public Guid Id { get; } = Guid.NewGuid();
     public string Name { get; }
+    public SampleRecipe? Recipe { get; init; }
     public bool IsAvailable => Volatile.Read(ref _wave) is not null;
     public SampleCandidate(string name, ReadOnlySpan<byte> wave)
     {
@@ -51,6 +55,7 @@ public sealed class SampleGenerationSession : IAsyncDisposable
     private bool _closed;
     private Task? _shutdown;
     public ImmutableArray<SampleParameter> Parameters { get; }
+    public ImmutableArray<SampleFamily> Families { get; }
     public string? Failure { get; private set; }
 
     public SampleGenerationSession(ExtensionHost host, string package, string capability)
@@ -60,6 +65,8 @@ public sealed class SampleGenerationSession : IAsyncDisposable
         {
             _generator = _use.Generator;
             Parameters = _generator.Parameters;
+            Families = _generator is IExploringSampleGenerator explorer ? explorer.Families : [];
+            SampleExploration.ValidateFamilies(Families);
             if (Parameters.IsDefault || Parameters.Length > 32 || Parameters.Any(p => p is null || !ExtensionDiscovery.Label(p.Id) ||
                 p.Minimum > p.Maximum || p.Default < p.Minimum || p.Default > p.Maximum) ||
                 Parameters.Select(p => p.Id).Distinct(StringComparer.Ordinal).Count() != Parameters.Length)
@@ -73,6 +80,7 @@ public sealed class SampleGenerationSession : IAsyncDisposable
         lock (_sync)
         {
             ObjectDisposedException.ThrowIf(_closed, this);
+            request.Exploration?.Validate(Families);
             if (_pending.Count(t => !t.IsCompleted) >= 4) throw new InvalidOperationException("Extension.Busy");
             if (request.Context.Lifecycle == Guid.Empty || request.Context.SampleRate is < 8000 or > 192000 ||
                 request.Context.MaximumFrames < 1 || request.Context.MaximumFrames > request.Context.SampleRate * 30 ||
@@ -100,6 +108,18 @@ public sealed class SampleGenerationSession : IAsyncDisposable
                 ?? throw new InvalidDataException("Extension.InvalidResult");
             cancellation.Token.ThrowIfCancellationRequested();
             result.Validate(request.Context);
+            if (request.Exploration is { } exploration)
+            {
+                var family = Families.Single(f => f.Id == exploration.Family);
+                var recipe = result.Recipe;
+                if (recipe is null || recipe.Family != exploration.Family || recipe.Seed != exploration.Seed ||
+                    recipe.Reference != (exploration.Kind == SampleExplorationKind.Similar ? exploration.ReferenceId : null) ||
+                    recipe.Values.Count != family.Controls.Length || family.Controls.Any(c =>
+                        !recipe.Values.TryGetValue(c.Id, out var value) || value < c.Minimum || value > c.Maximum) ||
+                    recipe.Locks.Count != exploration.Locks.Count || exploration.Locks.Any(p =>
+                        !recipe.Locks.TryGetValue(p.Key, out var held) || held != p.Value || recipe.Values[p.Key] != p.Value))
+                    throw new InvalidDataException("Extension.InvalidResult");
+            }
             lock (_sync)
             {
                 if (_closed || sequence != _sequence || cancellation.IsCancellationRequested) return false;
@@ -134,6 +154,17 @@ public sealed class SampleGenerationSession : IAsyncDisposable
     /// <summary>Final synchronous acceptance gate on the document owner. Supersession/close cannot race this commit.</summary>
     public void UseCurrent(SampleGenerationContext current, Action<SampleCandidate> accept)
     { lock (_sync) accept(Current(current)); }
+
+    /// <summary>Transfers validated audio to the host's bounded history before releasing the provider use.</summary>
+    public SampleCandidate TakeCurrent(SampleGenerationContext current)
+    {
+        lock (_sync)
+        {
+            var candidate = Current(current);
+            _candidate = null; _context = null;
+            return candidate;
+        }
+    }
 
     public ValueTask DisposeAsync()
     {

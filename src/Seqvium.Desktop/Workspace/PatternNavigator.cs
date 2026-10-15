@@ -238,6 +238,12 @@ internal sealed class PatternNavigator : Grid, IDisposable
 
 internal sealed class PatternThumbnail(ShellSession shell, Pattern pattern, int color) : Control
 {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
+    }
+
     public override void Render(DrawingContext context)
     {
         if (Bounds.Width <= 0 || pattern.Length.Ticks <= 0) return;

@@ -48,6 +48,7 @@ internal sealed record WorkflowState(
     internal bool SongLoopEnabled { get; init; }
     internal long TransportGeneration { get; init; }
     internal bool BrowserPreviewPlaying { get; init; }
+    internal SampleLabState? Lab { get; init; }
 
     internal System.Collections.Immutable.ImmutableDictionary<Id<SoundDefinition>, AudioWaveform> AudioWaveforms
     {
@@ -239,6 +240,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     {
         if (!_document.Current.State.GraphAttachments.Any(item => item.Id == target)) return false;
         if (_selected == target) return true;
+        if (!_songMode) ClearLabAudition();
         bool resume = !_songMode && _coordinator?.ReadStatus().Execution.Playing == true;
         long generation = _playGeneration;
         if (!_songMode)
@@ -469,6 +471,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     // Emergency transport bypasses the async command gate: Stop during preparation cancels pending Start intent.
     public Task<bool> StopAsync(bool panic = false) => _owner.Run(() =>
     {
+        ClearLabAudition();
         _playGeneration++;
         if (panic) _coordinator?.Panic();
         else _coordinator?.Stop();
@@ -481,6 +484,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private async Task CloseAudioAsync()
     {
+        ClearLabAudition();
         await CloseNoteAuditionAsync();
         _playGeneration++;
         _audioReady = false;
@@ -530,6 +534,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void DocumentChanged()
     {
+        LabDocumentChanged();
         // R6 uses strict generation relevance: an intervening musical edit expires pending/candidate work.
         foreach (var session in _generationSessions) session.Cancel();
         long end = ArrangementPreparation.EndTicks(_document.Current.State);
@@ -558,6 +563,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void Publish()
     {
+        if (!_labContextual && _labAudible is not null &&
+            _browserAudition?.Processor.ReadStatus().Transport is SamplerTransportState.Ended)
+            _labAudible = null;
         if (_status == "Browser.Previewing" &&
             _browserAudition?.Processor.ReadStatus().Transport == SamplerTransportState.Ended)
             _status = "Workflow.Ended";
@@ -635,6 +643,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             TransportGeneration = _playGeneration,
             AudioWaveforms = _audioWaveforms,
             BrowserPreviewPlaying = _browserAudition?.Processor.ReadStatus().Playing == true,
+            Lab = ObserveLab(),
             MixerMeters = state.Mixer is { } mixer
                 ? System.Collections.Immutable.ImmutableDictionary.ToImmutableDictionary(
                     mixer.Channels.Select(c => c.Id.Value).Append(Guid.Empty), id => id,

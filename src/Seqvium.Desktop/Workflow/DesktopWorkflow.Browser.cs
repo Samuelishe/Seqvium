@@ -93,6 +93,7 @@ internal sealed partial class DesktopWorkflow
 
     internal Task StopBrowserPreviewAsync() => _owner.Run(() =>
     {
+        if (!_labContextual) _labAudible = null;
         _browserAudition?.Stop();
         if (_status == "Browser.Previewing") _status = "Workflow.Stopped";
         Publish();

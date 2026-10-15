@@ -33,6 +33,7 @@ internal sealed partial class MainWindow : Window
     private bool _shutdownComplete;
     private MainWindowPlacement? _normalWindow;
     private WorkspaceLayout? _musicLayout;
+    private readonly PatternNavigationHost _navigation;
 
     private bool HasMusicalContent => !_workflow.State.Snapshot.State.Patterns.IsEmpty ||
                                       !_workflow.State.Snapshot.State.AudioClips.IsEmpty;
@@ -46,7 +47,8 @@ internal sealed partial class MainWindow : Window
                 Maximized = WindowState == WindowState.Maximized ||
                             WindowState == WindowState.Minimized && normal.Maximized
             }
-            : null
+            : null,
+        Navigation = _navigation.Placement
     };
 
     private void RememberWindow()
@@ -106,36 +108,12 @@ internal sealed partial class MainWindow : Window
         WorkspaceRegion.Child = _workspace;
         var navigation = new WorkspaceRail(session, _workspace, OpenPane);
         var patterns = new PatternNavigator(session, _workflow, _workspace, OpenPatternEditorAsync);
-        var navigationBody = new Grid { ColumnDefinitions = new("Auto,Auto") };
-        navigationBody.Children.Add(navigation);
-        Grid.SetColumn(patterns, 1);
-        navigationBody.Children.Add(patterns);
-        NavigationRegion.Child = navigationBody;
-        bool navigationCollapsed = false;
-
-        void AdaptNavigation()
+        _navigation = new(this, session, _workspace, navigation, patterns, layout.Layout?.Navigation, visible =>
         {
-            patterns.IsVisible = !navigationCollapsed && Bounds.Width >= 1000 &&
-                !(_workspace.State.Get(WorkspaceState.BrowserId) is { Visibility: PaneVisibility.Visible, Dock: PaneDock.Left });
-            patterns.Width = Math.Clamp(Bounds.Width * .15, 190, 288);
-            navigationBody.ColumnDefinitions[1].Width = patterns.IsVisible ? GridLength.Auto : new GridLength(0);
-            navigation.NavigationToggle.Classes.Set("active", patterns.IsVisible);
-            _workflowControls.OccurrenceShownElsewhere = patterns.IsVisible;
+            _workflowControls.OccurrenceShownElsewhere = visible;
             _workflowControls.Refresh();
-        }
-
-        navigation.NavigationToggle.Click += (_, _) =>
-        {
-            navigationCollapsed = !navigationCollapsed;
-            if (navigationCollapsed && patterns.IsKeyboardFocusWithin) navigation.NavigationToggle.Focus();
-            AdaptNavigation();
-        };
-        SizeChanged += (_, _) => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-        {
-            if (!_closing) AdaptNavigation();
-        }, Avalonia.Threading.DispatcherPriority.Loaded);
-        AdaptNavigation();
-        _workspace.State.Changed += AdaptNavigation;
+        });
+        NavigationRegion.Child = _navigation;
         // The first workspace starts at a musical tool without creating or modifying a Pattern.
         Opened += (_, _) =>
         {
@@ -195,6 +173,7 @@ internal sealed partial class MainWindow : Window
         {
             session.PropertyChanged -= SessionChanged;
             _workspace.State.Changed -= RefreshGainHierarchy;
+            _navigation.Dispose();
             navigation.Dispose();
             patterns.Dispose();
             _workspace.Dispose();
@@ -311,9 +290,12 @@ internal sealed partial class MainWindow : Window
     private void ArrangementClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.ArrangementId);
     private void MixerClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.MixerId);
     private void BrowserClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.BrowserId);
+    private void SampleLabClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.SampleLabId);
 
     private Control CreatePaneContent(PaneDefinition definition)
     {
+        if (definition.InstanceId == WorkspaceState.SampleLabId)
+            return new SampleLabPaneContent(_session, _workflow, _app.ConfigurationDirectory, OpenPane);
         if (definition.InstanceId == WorkspaceState.BrowserId)
             return new BrowserPaneContent(_session, _workflow, _app.ConfigurationDirectory, OpenPane);
         if (definition.InstanceId == WorkspaceState.MixerId)
@@ -324,6 +306,16 @@ internal sealed partial class MainWindow : Window
         if (definition.InstanceId == WorkspaceState.BeatId)
         {
             var rack = new BeatPaneContent(_session, _workflow, ImportBeatWavAsync);
+            rack.SampleLabRequested += async part =>
+            {
+                if (_workflow.State.Selected is not { } attachment) return;
+                try
+                {
+                    await _workflow.SetLabTargetAsync(attachment, part);
+                    OpenPane(WorkspaceState.SampleLabId);
+                }
+                catch (Exception error) { await _workflow.ReportFailureAsync(error.Message); }
+            };
             rack.MixerRequested += sound =>
             {
                 _workspace.Open(WorkspaceState.MixerId);
@@ -460,6 +452,7 @@ internal sealed partial class MainWindow : Window
         args.Cancel = true;
         if (_closing) return;
         _closing = true;
+        _navigation.Cancel();
         _importCancellation?.Cancel();
         _workflowControls.Refresh(true);
         await _workflowWork;

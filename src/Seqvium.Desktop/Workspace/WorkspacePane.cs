@@ -174,6 +174,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         _permission.IsChecked = pane.AllowDocking;
         _corner.IsVisible = pane.Dock == PaneDock.Floating;
         if (_content is FirstPartyPaneContent firstParty) firstParty.Refresh();
+        if (_content is SampleLabPaneContent lab && pane.Visibility != PaneVisibility.Visible) lab.Suspend();
         if (_content is BrowserPaneContent browser)
         {
             if (pane.Visibility != PaneVisibility.Visible) browser.Suspend();

@@ -63,6 +63,7 @@
                                     <Button Classes="shell" Content="{Binding [Pane.Beat]}"
                                             Click="BeatClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenBeat" />
+                                    <Button Classes="shell" Content="{Binding [Pane.SampleLab]}" Click="SampleLabClicked" />
                                     <Button Classes="shell" Content="{Binding [Pane.Browser]}" Click="BrowserClicked"
                                             AutomationProperties.AutomationId="Workspace.OpenBrowser" />
                                     <Button Classes="shell" Content="{Binding [Pane.Arrangement]}"

@@ -45,6 +45,19 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     private string? _blocker;
     private GraphIntentReport? _intent;
     private GraphExecutionStatus _status;
+    private SampleAuditionSource? _sampleAudition;
+
+    /// <summary>Host audition of a supported shared PCM sound. Reprepares music without editing the document.
+    /// Passing null restores the current canonical source. Unrelated voices and compatible Mixer DSP continue.</summary>
+    public void SetSampleAudition(Id<SoundDefinition> sound, Guid candidate, DecodedPcm? pcm)
+    {
+        CheckOwner();
+        ObjectDisposedException.ThrowIf(_closed, this);
+        var next = pcm is null ? null : new SampleAuditionSource(sound, candidate, pcm);
+        _sampleAudition?.Dispose(); _sampleAudition = next;
+        _basis = null;
+        Refresh();
+    }
 
     public GraphExecutionCoordinator(ProjectDocument document, RealtimeSampler sampler,
         Id<GraphAttachment> target, SynchronizationContext owner, int voiceCapacity = 8, int repeats = 1)
@@ -300,6 +313,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                     : _sampler.BeginGraphPreparation(_document, _target, _voices, _repeats);
                 // The sampler compares against its actual active basis, including superseded pending handoffs.
                 _request.PreservePlayback = _repeats == 1;
+                _request.Audition = _sampleAudition?.Borrow();
                 _request.PreparationGate = _gate;
                 _busy = true;
                 _preparations++;
@@ -527,6 +541,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         _document.Closed -= BeginClose;
         _cancellation?.Dispose();
         _basis = null;
+        _sampleAudition?.Dispose(); _sampleAudition = null;
     }
 
     private void CheckOwner()

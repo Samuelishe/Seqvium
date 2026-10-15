@@ -8,6 +8,56 @@ namespace Seqvium.Tests;
 
 public sealed class WorkspaceLayoutTests
 {
+    [Theory]
+    [InlineData(180, false)]
+    [InlineData(320, false)]
+    [InlineData(480, true)]
+    public async Task PatternNavigationWidthAndCollapseRoundtripAsUserLayout(double width, bool collapsed)
+    {
+        using var directory = new TemporaryDirectory();
+        using var workspace = new WorkspaceState();
+        workspace.Reflow(1100, 700);
+        var expected = new PatternNavigationPlacement(width, collapsed);
+        var store = new WorkspaceLayoutStore(directory.File("layout.json"));
+        Assert.True(await store.SaveAsync(workspace.Capture() with { Navigation = expected }));
+        var loaded = await store.LoadAsync();
+        Assert.False(loaded.UsedFallback);
+        Assert.Equal(expected, loaded.Layout!.Navigation);
+    }
+
+    [Theory]
+    [InlineData("{\"width\":119,\"collapsed\":true}")]
+    [InlineData("{\"width\":481,\"collapsed\":false}")]
+    [InlineData("{\"width\":240,\"collapsed\":\"false\"}")]
+    [InlineData("[]")]
+    public async Task DamagedNavigationPreservesOriginalLayoutFile(string navigation)
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.File("layout.json");
+        string original = "{\"version\":1,\"width\":1100,\"height\":700,\"panes\":[],\"navigation\":" + navigation + "}";
+        await File.WriteAllTextAsync(path, original, TestContext.Current.CancellationToken);
+        var store = new WorkspaceLayoutStore(path);
+        var loaded = await store.LoadAsync();
+        Assert.True(loaded.UsedFallback);
+        Assert.Null(loaded.Layout!.Navigation);
+        Assert.False(await store.SaveAsync(loaded.Layout));
+        Assert.Equal(original, await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task VersionOneWithoutNavigationUsesDefaultAndRemainsWritable()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.File("layout.json");
+        await File.WriteAllTextAsync(path, "{\"version\":1,\"width\":1100,\"height\":700,\"panes\":[]}", TestContext.Current.CancellationToken);
+        var store = new WorkspaceLayoutStore(path);
+        var loaded = await store.LoadAsync();
+        Assert.False(loaded.UsedFallback);
+        Assert.Null(loaded.Layout!.Navigation);
+        Assert.True(await store.SaveAsync(loaded.Layout with { Navigation = new() }));
+        Assert.Equal(new(), (await store.LoadAsync()).Layout!.Navigation);
+    }
+
     [Fact]
     public void SettledMaximizedWorkspaceRestoresSizesAfterTransientNormalStartupClamp()
     {
@@ -185,7 +235,7 @@ public sealed class WorkspaceLayoutTests
         Assert.NotNull(load.Layout);
         using var workspace = new WorkspaceState(load.Layout);
         workspace.Reflow(640, 390);
-        Assert.Equal(9, workspace.Panes.Length);
+        Assert.Equal(10, workspace.Panes.Length);
         var appearance = workspace.Get(WorkspaceState.AppearanceId);
         Assert.Equal(PaneVisibility.Visible, appearance.Visibility);
         Assert.False(appearance.AllowDocking);

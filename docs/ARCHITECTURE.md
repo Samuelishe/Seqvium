@@ -12,6 +12,23 @@ SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed 
 offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
 output adapter; graph, presentation and permanent engine choices remain separate.
 
+## Sample Lab ownership
+
+The optional Desktop `Generators/PercussionGenerator` is reachable only through its trusted R6
+factory/use. Core owns sealed exploration metadata and disposable bounded candidate history.
+`DesktopWorkflow.SampleLab` serializes host history, target authority, generation completion and
+existing managed acceptance; the retained pane owns presentation only. A generation session/use
+ends after validated candidate transfer. Independent generation uses lifecycle relevance; the older
+R6 strict-generation acceptance adapter remains available for its existing callers.
+
+`SampleAuditionSource` transforms a frozen prepared PCM plan without editing a document or creating
+a resource. The coordinator owns a source lease and each preparation borrows its own lease. Publication
+uses existing sampler authority/retirement; continuation excludes the changed sound while preserving
+unrelated compatible notes and Mixer state. Clear/invalidated context re-prepares actual current
+canonical state. Saved projects/offline export never consume the temporary override. No second
+transport, DSP, Undo, media cache or generic preview framework is introduced. Exact supported scope
+belongs to [Sample workflow](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1).
+
 ## Implemented R6 extension ownership
 
 Core `Extensions/` owns bounded manifest discovery/contract checks, trusted registered factories,
@@ -30,8 +47,8 @@ supersession and temporary candidate disposal. `DesktopWorkflow` owns its docume
 them before New/Open/Close retires that document; application Close then retires the package host.
 The acceptance seam captures a Rack destination, validates lifecycle/generation and candidate identity,
 and commits through the existing managed WAV import inside the final synchronous session gate.
-There is no generator UI/renderer or second save/Undo system. Concrete R7 variation/contextual audition
-and history semantics remain with [Sample workflow](SAMPLE_WORKFLOW.md#r6-module-sources-and-candidate-boundary).
+The R6 adapter adds no UI or second save/Undo system. The Sample Lab surface and prepared audition
+above retain those owners; musical semantics remain with [Sample workflow](SAMPLE_WORKFLOW.md#r6-module-sources-and-candidate-boundary).
 
 ## Implemented Browser composition
 

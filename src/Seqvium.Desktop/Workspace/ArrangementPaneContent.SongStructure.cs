@@ -4,6 +4,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Seqvium.Core;
+using Seqvium.Desktop.Presentation;
 using Seqvium.Desktop.Workflow;
 
 namespace Seqvium.Desktop.Workspace;
@@ -77,6 +78,16 @@ internal sealed partial class ArrangementPaneContent
         void Add(string key, Func<Task> action)
         {
             var button = new Button { Classes = { "compact" }, Margin = new(3, 0) };
+            string? icon = key switch
+            {
+                "SectionAdd" => "Add", "SectionEdit" => "Draw", "SectionEarlier" => "Left",
+                "SectionLater" => "Right", "SectionDuplicate" => "Duplicate", "Properties" => "Inspector", _ => null
+            };
+            if (icon is not null)
+            {
+                button.Classes.Remove("compact"); button.Classes.Add("command");
+                button.Content = HostIcons.Create(icon, button);
+            }
             AutomationProperties.SetAutomationId(button, "Arrangement." + key);
             button.Click += async (_, _) => { PendingCommand = action(); await PendingCommand; };
             row.Children.Add(button); _structureButtons.Add((key, button));
@@ -125,7 +136,10 @@ internal sealed partial class ArrangementPaneContent
         AutomationProperties.SetName(_sections, _shell["Arrangement.Sections"]);
         foreach (var (key, button) in _structureButtons)
         {
-            button.Content = _shell["Arrangement." + key];
+            string label = _shell["Arrangement." + key];
+            if (key == "Variation") button.Content = label;
+            AutomationProperties.SetName(button, label);
+            ToolTip.SetTip(button, label);
             button.IsEnabled = !_workflow.State.Busy && key switch
             {
                 "SectionEdit" or "SectionDuplicate" => selected is not null && choices.Any(s => s.Id == selected),

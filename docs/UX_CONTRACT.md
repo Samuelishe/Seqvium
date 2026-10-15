@@ -9,10 +9,22 @@ Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or cur
 These are intended requirements except the explicitly implemented bounded R3 host, F3-A/F3-B workflows
 and the implemented Rack, Playlist and Piano Roll sections below; broader capabilities remain future work.
 
+## Implemented Sample Lab V1
+
+The rail/Panes opens standalone exploration; a PCM Rack channel menu captures contextual identity.
+Generate and Variation are separate intentions. History selection, explicit reference, audition mode
+and acceptance destination remain distinct. Shape/locks are disclosed; ordinary work presents short
+commands, actual waveform and sound names. No permanent tutorial or recipe/debug dump occupies the
+working surface. Keep/+Rack/+Playlist preserve other candidates; Replace shared names its real scope.
+Solo requires stopped transport; In music requires the supported target Pattern/Song to be playing.
+Original restores current canonical sound without accepting or editing anything. Unavailable/stale
+targets remain understandable and never follow another channel's selection. Bounds and lifecycle
+are owned by [Sample workflow](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1).
+
 ## Implemented Sample Browser
 
-The **Sound packs & extensions** disclosure lists local packages, purpose/version, availability and
-specific compatibility/file/lifecycle diagnostics. **Browse sounds** opens an enabled pack in this
+The **Extensions** disclosure lists local package names/versions and availability, with specific
+compatibility/file/lifecycle diagnostics on inspection. **Sounds** opens an enabled pack in this
 same Browser. **Disable** hides new uses and explicitly preserves imported audio; an in-use module
 refuses disable with finish/cancel/close-editor guidance. **Enable** restores a compatible contribution.
 Missing optional translation uses English without changing the host language. Small windows retain
@@ -962,6 +974,8 @@ never translate. This shell has no editable localized numeric input or active mu
 Changing host language/theme with a project open is a presentation preference change, not a musical
 edit. Preserve project content/relationships, ongoing editing intent, focus/selection and pending
 operations without committing, discarding or reinterpreting user input merely to refresh presentation.
+The current first-party host applies themes to retained controls and cached custom drawings, including
+navigation thumbnails, without requiring a hover, resize, content edit or editor reopening to repaint.
 UI behavior must be predictable: make clear when the new preference takes effect and any necessary
 deferral. Applying safely at a defined boundary is permitted; instantaneous hot switching, rebuilding
 every window or mandatory restart is not an accepted policy. Concrete behavior requires later UI evidence.

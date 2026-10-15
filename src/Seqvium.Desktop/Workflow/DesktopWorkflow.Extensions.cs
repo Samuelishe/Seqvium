@@ -6,8 +6,30 @@ namespace Seqvium.Desktop.Workflow;
 
 internal sealed partial class DesktopWorkflow
 {
-    internal ExtensionHost Extensions { get; } = new();
+    internal ExtensionHost Extensions { get; } = Seqvium.Desktop.Extensions.PercussionGenerator.CreateHost();
     private readonly List<SampleGenerationSession> _generationSessions = [];
+    private Task? _extensionInitialization;
+    internal Task InitializeExtensionsAsync(string configurationDirectory) => _extensionInitialization ??= InitializeExtensionsCoreAsync(configurationDirectory);
+    private async Task InitializeExtensionsCoreAsync(string configurationDirectory)
+    {
+        var store = new Presentation.ExtensionPreferencesStore(Path.Combine(configurationDirectory, "extensions.json"));
+        var disabled = await store.LoadAsync();
+        await Extensions.DiscoverAsync(Path.Combine(AppContext.BaseDirectory, "Extensions"));
+        if (!store.Failed)
+            foreach (var package in Extensions.Status.Where(p => p.Availability == ExtensionAvailability.Disabled && !disabled.Contains(p.Package.Identity)))
+                await Extensions.EnableAsync(package.Package.Identity);
+    }
+
+    internal Task<bool> SetExtensionEnabledAsync(string package, bool enabled) => _owner.Run(async () =>
+    {
+        try
+        {
+            bool changed = enabled ? await Extensions.EnableAsync(package) : await Extensions.DisableAsync(package);
+            if (changed) await RefreshLabGeneratorAsync();
+            return changed;
+        }
+        finally { Publish(); }
+    });
 
     internal Task<SampleGenerationSession> OpenGeneratorAsync(string package, string capability) => _owner.Run(() =>
     {
@@ -45,6 +67,7 @@ internal sealed partial class DesktopWorkflow
 
     private async Task CloseGeneratorsAsync()
     {
+        await CloseLabAsync();
         foreach (var session in _generationSessions) await session.DisposeAsync();
         _generationSessions.Clear();
     }

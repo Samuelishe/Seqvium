@@ -20,6 +20,7 @@ namespace Seqvium.Desktop.Workspace;
 /// <summary>Retained, locally scrolling projection of canonical Pattern parts and notes.</summary>
 internal sealed class BeatPaneContent : Grid, IDisposable
 {
+    internal event Action<Id<MusicalPart>>? SampleLabRequested;
     private sealed record Channel(Id<MusicalPart> Part, TextBlock Label, TextBlock Warning, ToggleButton[] Steps);
 
     private readonly ShellSession _shell;
@@ -534,6 +535,11 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         AutomationProperties.SetAutomationId(replaceAction, $"Beat.ReplaceWav.{part.Id}");
         _menuLabels.Add((replaceAction, "Beat.ReplaceWav"));
         menu.Items.Add(replaceAction);
+        var labAction = new MenuItem { Header = _shell["Pane.SampleLab"] };
+        _menuLabels.Add((labAction, "Pane.SampleLab"));
+        AutomationProperties.SetAutomationId(labAction, $"Beat.SampleLab.{part.Id}");
+        labAction.Click += (_, _) => { CancelGesture(); SampleLabRequested?.Invoke(part.Id); };
+        menu.Items.Add(labAction);
         BeatEditBasis? replaceBasis = null;
         menu.Opened += (_, _) =>
         {
@@ -541,6 +547,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             var sound = _workflow.State.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == part.SoundId);
             replaceAction.IsEnabled = !_workflow.State.Busy && replaceBasis is not null &&
                 sound is { Algorithm: PcmSampler.Algorithm, Extension: null } && sound.AdditionalData.IsEmpty;
+            labAction.IsEnabled = replaceAction.IsEnabled;
             ToolTip.SetTip(replaceAction, _shell["Beat.ReplaceWavHint"]);
         };
         replaceAction.Click += async (_, _) =>

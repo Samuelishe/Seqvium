@@ -1936,3 +1936,84 @@ disable/reopen checks pass. One delayed debugger-assisted native attempt receive
 one Click and three pack rows; the original delivery failure remains unexplained and ordinary
 Windows native acceptance stays open. No R7 scope, full L3 or stress rerun. See the
 [follow-up report](../experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md#independent-review-follow-up).
+
+
+## SEQ-R7-SAMPLE-LAB-V1 — 2026-10-15
+
+Implemented the first creative Sample Lab as an optional real Percussion Lab package: correlated
+Kick/Clap recipes, explicit nearby variation/reference, exact locks, twelve host-owned temporary
+candidates and independent managed acceptance. Standalone generation uses lifecycle relevance;
+captured PCM Rack context does not follow selection and stales on source/binding changes. Prepared
+shared-source audition reuses real local/Mixer processing and normal publication/retirement, preserving
+unrelated compatible voices/time/DSP. Acceptance remains one existing media/document Undo transaction;
+Save As/Open/export remain generator-independent. No second engine, cache, history or public SDK.
+
+The owner expanded UI work to remove first-party text/numeric overload. Actual local references were
+inspected, working surfaces/metadata/readouts were simplified and exact depth remained disclosed.
+AGENTS/UI design now make reference inspection and density review mandatory. This is an interaction
+rule, not a ban on musical tempo/pitch/level values or necessary error/shared-scope feedback.
+
+One PATCH, 0.1.7.0007 → 0.1.8.0000, BUILD reset. Zero-warning full Release build; 1341/1341 tests,
+zero skips (62.326 s CLI). Actual-window routed RU/EN Dark/Light ordinary/reduced workflows and physical
+48-kHz Samsung USB C Earphones solo/Pattern/context/original pass. Native input is foreground-refused;
+owner acoustic/aesthetic judgement and wider stress/platform scope remain open. See the
+[R7 report](../experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md). No staging, commit, push, tag or history change.
+
+## SEQ-WORKSPACE-THEME-NAV — 2026-10-15
+
+Fixed cached custom drawings keeping old theme pixels: Pattern/Part thumbnails, Gain transfer,
+Playlist timeline/overview and Piano now invalidate from their own live resource notifications.
+Existing controls, musical targets, history and editor state remain retained. The owner's screenshots
+showed dark Pattern thumbnail wells inside otherwise Light cards. Existing local FL Studio/Cubase
+workspace images were inspected for compact navigation hierarchy; no reference graphics are shipped.
+
+Added one retained right boundary for Pattern navigation, using shared border/spacing/accent roles.
+Cards and thumbnails resize continuously. Below the usable minimum the sidebar collapses; reopening
+uses its pre-collapse normal width. Release remembers ordinary resize, while Escape, capture loss,
+deactivation, window resizing and shutdown discard the draft. Upper-bound reversal responds immediately.
+Keyboard Left/Right/Home and focus return complement the pointer path. Compact windows auto-hide the
+sidebar but allow explicit rail reopening; a visible docked Browser gives up its space by collapsing
+to the existing shelf when Patterns are explicitly requested. Optional `navigation` width/collapse
+uses existing version-1 user workspace storage; musical serialization and Undo remain independent.
+Old files remain readable; damaged supplied navigation preserves the original file and refuses writes.
+
+One BUILD: **0.1.8.0000 → 0.1.8.0001**. These are repairs/refinements of existing UI capability,
+not a new standalone music block for PATCH. No project reader gate, dependency, release or Git mutation.
+Pre-existing tracked/untracked Sample Lab and other work was preserved.
+
+Verification uses the existing pinned SDK 10.0.401, MTP/xUnit v3 and Release outputs:
+
+```powershell
+dotnet build tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class '*WorkspaceLayoutTests' --filter-class '*WorkspaceStateTests' --filter-class '*HostPresentationTests' --filter-class '*DesignSystemTests' --filter-class '*DesktopFoundationGestureTests' --filter-class '*PatternEditorNavigationTests' --filter-class '*ProductVersionTests' --max-threads 1
+```
+
+Affected build has zero warnings/errors (final incremental build 3.88 s); **118/118** focused tests,
+zero skips, pass in **17.434 s** CLI, including eight new layout roundtrip/old-file/damage cases.
+This is L0/L1/L2, not a full suite; R7's L3 remains the baseline, one completed task since it.
+Earlier build/test iterations took 40.46/56.164 s; sufficient green checks were reused after the final
+tool-only matrix extension rather than repeating the suite.
+
+The reusable [VisualCheck route](../../tools/Seqvium.VisualCheck/README.md#theme-switching-and-pattern-navigation)
+checks actual retained windows, routed continuous/threshold/reversal/cancellation/keyboard/focus/compact/
+Browser gestures, actual saved open/closed preferences and guarded Windows mouse resize/collapse/rail
+restoration. Eight exact compositor background samples, read before explicit bitmap rendering, pass
+across repeated theme switches in both languages, with identical thumbnail controls and music/history.
+The initial probe hit a note rather than background; correcting that sample location resolved the
+probe failure before the successful repeated runs. No product failure was hidden by forcing repaint.
+An additional native matrix launch was refused by the foreground/coverage guard before input. The
+successful `final` native run covers the unchanged production implementation; the later tool-only
+extension adds four populated reduced-size language/theme views and passes in `final-matrix-routed`
+(17.875 s), with routed/rendered evidence rather than an additional native-input claim.
+
+RU/EN Dark/Light empty/populated ordinary/reduced captures, the two-theme component catalog (5.272 s),
+field/gesture matrix (14.421 s) and all ten populated first-party panes (19.337 s) pass. Field centers
+differ by 0 DIP in toolbar/quick Gain and 1 DIP in the normal Node Editor, within the existing gate;
+the matrix's guarded graph pointer subset also passes. No physical audio/stress, subjective visual
+acceptance, other-OS or high/mixed-DPI claim follows. Inspection did not change the supplied demo.
+
+Transient PNG/JSON and failure receipts are retained only under ignored `.artifacts/theme-navigation/` for
+review and ordinary rolling retention; permanent helpers remain in tools/tests. Earlier runs are
+superseded by `final` (native), `final-matrix-routed`, `catalog`, `fields` and `all-panes`; no exceptional
+pin is introduced. Task-owned parent-directory console logs were removed after their results were
+reconciled with run receipts; reusable helpers and build/runtime resources remain.

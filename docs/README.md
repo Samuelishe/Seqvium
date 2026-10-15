@@ -14,13 +14,39 @@ opening music restores your previous musical layout. In Pattern Mode, click navi
 the playing phrase without pressing Play again. Double-click or Enter opens an appropriate editor;
 right-click offers Channel Rack or Piano Roll for a named channel. Explicit choices are remembered
 for each Pattern until you replace the document.
+Drag the Pattern list's right edge to change its width. Pull it inward past its usable minimum to
+close it; the top left **…** rail button restores its previous width. Width and open/closed preference
+are remembered with your workspace. A narrow window hides the list automatically; the same button
+can explicitly reopen it.
+
+## Create a sound
+
+Open **Sample Lab** from the rail or Panes menu. Choose **Kick** or **Clap**, press **Generate**, and
+use **Solo** to listen while transport is stopped. Select a recent candidate and press the reference
+icon to base **Variation** on it. **Shape** reveals controls and locks; changing family clears those
+constraints. The recent list is temporary and disappears on New/Open/close.
+
+**Keep** saves reusable audio in the project. **+ Rack** adds a new sampler channel; an empty project
+gets a playable first Pattern. **+ Playlist** places a clip at the cursor on lane 1. Several candidates
+can be kept independently. Project Undo/Redo changes accepted music, not candidate navigation.
+
+For a supported WAV/PCM channel, open Sample Lab from its Rack menu. Play that Pattern or Song and
+choose **In music** to hear the candidate through its existing processing and Mixer. This temporarily
+substitutes the shared sound's future hits, including its other Song uses. **Original** or Stop ends
+it. **Replace shared** explicitly changes that sound across its Patterns; it is not a one-channel
+unlink. Existing pitch/root and note release still apply. Drum Voice and Audio Clip context targets
+are outside this first version.
+
+Browser → **Extensions** can disable **Percussion Lab**. Accepted sounds remain ordinary project
+media and play after saving/reopening without the generator. See the
+[sample contract](SAMPLE_WORKFLOW.md#implemented-sample-lab-v1) for precise limits.
 
 ## Find and use sounds
 
-Browser also includes **Sound packs & extensions**. Choose the optional **Found Sounds** pack and
-**Browse sounds** for three original short sounds, then preview/add them like other WAVs. **Disable**
+Browser also includes **Extensions**. Choose the optional **Found Sounds** pack and
+**Sounds** for three original short sounds, then preview/add them like other WAVs. **Disable**
 hides the pack from new uses while imported audio stays in the project; **Enable** restores it.
-The disclosure explains unavailable packages. There is no external plugin installer or Sample Lab yet.
+The disclosure explains unavailable packages. There is no external plugin installer.
 
 Open **Browser** from the left rail or press **Ctrl+B**. Use the folder button to add your sample
 folder. Open subfolders with double-click/Enter, go up with the arrow/Backspace and return with
@@ -102,7 +128,7 @@ opens it; the left Rack icon or **Panes** menu reopens it. You can begin without
 5. Choose the number of bars in the Pattern header (1–32). Added bars start empty. Clear late steps
    before shortening; length and BPM changes stop playback. The row **…** menu deletes a channel,
    and the header × deletes the Pattern and its occurrences; Undo restores them. The top left **…**
-   rail button hides/restores the Pattern navigation at wide window sizes.
+   rail button hides/restores the Pattern navigation, including explicit opening in narrow windows.
 6. Use toolbar **… → Export selected Pattern to WAV** for a 48 kHz stereo PCM16 file with its
    current graph processing. Lower Gain and export again if clipping is reported. This exports one
    cycle of the selected Pattern; use Playlist below for a complete arrangement.

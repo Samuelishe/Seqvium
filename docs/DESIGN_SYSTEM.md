@@ -24,6 +24,10 @@ a new first-party editor inherits the system without adding a class to every con
 [HostFluentResources](../src/Seqvium.Desktop/Presentation/HostFluentResources.cs) maps the installed
 Fluent template resource names to these same tokens. These aliases contain no independent colors.
 Application resource replacement synchronizes aliases; theme changes retain existing controls.
+Every custom drawing surface subscribes to its own `IResourceHost.ResourcesChanged` and invalidates
+its visual, including retained Pattern/Part thumbnails, Gain transfer, Playlist overview/timeline and
+Piano. Resolving live brushes only inside `Render` is insufficient: a cached scene may otherwise keep
+the previous theme until another visual change. Resource refresh never requires replacing editor content.
 
 ## Token catalog
 
@@ -111,6 +115,24 @@ focus/selection and sparse/dense content still require image review. Do not ligh
 then compensate with a separate local palette. The current Dark values are unaffected by the home
 preparation; actual values remain source-owned.
 
+## Information density and Sample Lab
+
+Apply the mandatory reference/density gate in [UI design](UI_DESIGN.md#required-reference-and-information-density-gate)
+before changing a surface. Standard icon commands retain localized accessible names and short tooltips.
+Normal panels omit permanent tutorials, repeated units/formats and diagnostic counters. Exact properties
+remain deliberately accessible; errors and shared-edit consequences keep concise feedback.
+
+Sample Lab composes standard controls, a shared BrowserWaveform, compact candidate names/reference
+icons, a Shape disclosure and pinned acceptance actions. Recent names/lineage/accepted marks replace
+recipe dumps; duration is the sole normal numeric source readout. Recipe values use family-appropriate
+precision and appear only on disclosure. At narrow widths history stacks below the scrolling sound
+area; acceptance remains reachable. New SampleLab/Reference vectors belong to HostIcons.
+Browser hides empty preview and normal success chatter; metadata details are on inspection. Extensions
+shows availability, with identity/diagnostics on inspection. Mixer keeps real visual meters and exact
+strip controls, with peak/reduction observations in a tooltip and visible overload only. Gain uses one
+editable value; dB conversion stays in inspection instead of duplicating percent/linear/dB readouts.
+No shared control template, numeric minimum, palette or theme token changes accompany this cleanup.
+
 ## Browser composition
 
 The local extension disclosure is a host-owned Expander with standard ComboBox/buttons, wrapped
@@ -161,7 +183,8 @@ The inner cap, highlight/shade overlays and pressed recess retain existing seman
 playing outline and keyboard focus remain independent. `Navigation.ScrollGutter` reserves scrollbar
 width plus shared small spacing on the Pattern list; cards do not paint underneath the bar.
 Pattern cards use up to two wrapped name lines with ellipsis beyond that, a full-name/gesture tooltip
-and a host-width-dependent navigator. Selection styling and rhythm thumbnails still use the common
+and a continuously resizable navigator. Its focusable boundary uses shared spacing/border/accent
+roles; width limits and collapse behavior are workspace composition geometry. Selection styling and rhythm thumbnails still use the common
 Button/material/channel roles; editor menus use the standard ContextMenu rather than a private popup.
 
 | Component                 | Default / supported classes                                                                  | Guidance                                                                                                                                                                                                          |

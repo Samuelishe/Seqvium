@@ -1,5 +1,43 @@
 # Desktop visual and lifecycle verification
 
+## Theme switching and Pattern navigation
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll theme-navigation "$PWD/.artifacts/theme-navigation/review" "$PWD/examples/Neon Orchard/Neon Orchard.seqvium" native
+```
+
+Uses isolated preferences/layout and opens the supplied project without writing it. Empty RU/EN
+Dark/Light ordinary/reduced captures precede the populated review. Routed pointer checks cover continuous
+card/thumbnail resizing, collapse/reversal/restore, Escape/capture loss, upper-bound reversal, compact
+opening, Browser handoff, keyboard/focus and actual user-layout persistence. `native` adds guarded
+Windows mouse resize/collapse/rail reopening and exact compositor thumbnail-background checks across
+repeated theme switches. Screen pixels are sampled before explicit bitmap rendering can refresh a
+stale scene. Omit `native` for routed/rendered evidence only. Retained control identity, canonical
+snapshot and Undo remain unchanged; no physical output or cross-platform/DPI acceptance is claimed.
+
+## Sample Lab and UI density
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll sample-lab "$PWD/.artifacts/sample-lab/review"
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll sample-lab "$PWD/.artifacts/sample-lab/native" native audio
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll ui-density "$PWD/.artifacts/sample-lab/ui-density" "$PWD/examples/Neon Orchard/Neon Orchard.seqvium"
+```
+
+`sample-lab` opens the real production pane without Browser initialization, generates independent
+and related Kick candidates, holds decay, revisits history and accepts independent project/Rack/
+Playlist uses. It checks Undo/Redo, generator disable, retained-audio acceptance and portable reopen/
+canonical export. RU/EN Dark/Light ordinary/reduced renders and actual numeric-field alignment are
+included. Default buttons are routed; selection, lock checkbox and window layout are fixture setup.
+`native` uses guarded Windows action-button input and refuses foreign-window coverage. `audio` adds
+one real default-output solo/Pattern/context/original sequence; its result/device/failure is recorded
+separately. Neither rendered waveform nor physical delivery establishes subjective acoustic quality.
+
+`ui-density` opens the supplied project without writing its source, composes all ten first-party
+panes in populated musical groups, and captures four language/theme combinations plus reduced Lab.
+It uses fixture setup, no native input or physical output. Source/Gain/Drum/processor disclosures are
+also reviewed through their existing focused routes when affected; a capture matrix is not every
+possible gesture/state. All outputs remain ignored, retention-managed developer evidence.
+
 ## Local extension foundation
 
 ```powershell

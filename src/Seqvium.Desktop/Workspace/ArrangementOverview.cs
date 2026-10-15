@@ -27,6 +27,7 @@ internal sealed class ArrangementOverview : Control
     {
         _shell = shell;
         _navigate = navigate;
+        ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
         this.Bind(HeightProperty, this.GetResourceObservable("Playlist.OverviewHeight"));
         AutomationProperties.SetAutomationId(this, "Arrangement.Overview");
         PointerCaptureLost += (_, _) => _pointer = null;

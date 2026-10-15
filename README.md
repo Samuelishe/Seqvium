@@ -25,6 +25,10 @@ for the logo, typography, alternative directions and publication resources.
 
 ## What you can do today
 
+- Create your own **Kick and Clap** samples in **Sample Lab**. Generate variations, lock a useful
+  characteristic, compare recent sounds, then keep them in the project or add them to Rack/Playlist.
+  A PCM Rack channel can audition a candidate through its existing processing while music plays.
+
 - Drop **WAV, MP3 or FLAC from Windows Explorer directly onto Playlist**. Audio Clips are independent
   of Patterns and Channel Rack. See real mono/stereo waveforms, move or Ctrl-copy clips, trim their
   source ranges, split them, adjust fades and gain, and repeat the selected range at its natural speed.
@@ -49,7 +53,7 @@ for the logo, typography, alternative directions and publication resources.
   audio. Inspect real waveforms, preview sounds while transport is stopped, then drag into Channel
   Rack or Playlist, or use the explicit add buttons. Preview never imports or changes Undo.
 - Work in English or Russian, with Dark and Light themes.
-- Explore the optional **Found Sounds** pack in Browser's **Sound packs & extensions** disclosure.
+- Explore the optional **Found Sounds** pack in Browser's **Extensions** disclosure.
   Enable or disable local sound packs; imported audio stays in your project.
 - Create a fresh project with **New project / Ctrl+N**, switch playing Patterns from the navigator,
   and open a melody directly in Piano Roll. Empty documents start with one compact Channel Rack.
@@ -58,7 +62,7 @@ Audio Clips do not change pitch or speed when moved or when BPM changes. Their s
 musical time; their lengths, trims and fades use source frames. There is **no time stretch or warp**.
 Copies reuse a source and its Mixer assignment rather than duplicating decoded audio.
 
-Try [the Sample Browser](docs/README.md#find-and-use-sounds), [Audio Clips](docs/README.md#work-with-audio-clips),
+Try [Sample Lab](docs/README.md#create-a-sound), [the Sample Browser](docs/README.md#find-and-use-sounds), [Audio Clips](docs/README.md#work-with-audio-clips),
 [a drum pattern](docs/README.md#create-a-drum-pattern),
 [a melody](docs/README.md#compose-a-melody), or [the Mixer](docs/README.md#mix-your-music).
 For an editable song with licensed media, open [Neon Orchard](examples/Neon%20Orchard/README.md).
