@@ -1926,3 +1926,13 @@ Version advances once 0.1.7.0005 → 0.1.7.0006 (BUILD), cadence resets to zero.
 and narrowed open questions are updated; completed R6 scope is archived. All changes are task-owned
 from a clean Git baseline; runtime assets/tests/tools are permanent, ignored captures/config/projects/
 TRX remain review evidence. No user music/demo, index or Git history mutation; no stage/commit/push/tag.
+
+## SEQ-R6-EXTENSION-FOUNDATION follow-up — 2026-10-15
+
+One BUILD, 0.1.7.0006 → 0.1.7.0007, closes virtual Browser label/Enter navigation and rejects linked
+extension.json before metadata read. The actual external-manifest symlink regression runs on Windows;
+108 focused tests, affected zero-warning Release build and real-window routed navigation/import/
+disable/reopen checks pass. One delayed debugger-assisted native attempt receives press/release,
+one Click and three pack rows; the original delivery failure remains unexplained and ordinary
+Windows native acceptance stays open. No R7 scope, full L3 or stress rerun. See the
+[follow-up report](../experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md#independent-review-follow-up).

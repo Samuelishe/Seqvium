@@ -7,7 +7,7 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.7.0006**, SEQ-R6-EXTENSION-FOUNDATION. Local trusted packages now have real
+Product alpha **0.1.7.0007**, SEQ-R6-EXTENSION-FOUNDATION follow-up. Local trusted packages now have real
 metadata/compatibility, activation/disable and active-use lifetimes. Browser exposes optional Found
 Sounds through existing preview/Rack/Playlist use; imported audio survives disable/removal. The tested
 async generator seam owns cancellation, stale/late candidate disposal and explicit managed acceptance;
@@ -100,14 +100,18 @@ Latest L3: **SEQ-R6-EXTENSION-FOUNDATION, 2026-10-15**. Full Release solution bu
 warnings/errors; **1314/1314 tests pass**, zero skips, one test thread (**63.176 s** CLI summary). The
 final generation-invalidation hook participates in that run and 92 focused cases. Real-window
 RU/EN × Dark/Light, disabled/re-enabled Browser contributions, managed imports and disabled-pack reopen
-pass routed checks, including reduced-height list access. Native pointer delivery remains unproven:
-post-click debugger evidence shows Project resources/zero rows, not the requested pack. No new physical
+pass routed checks, including reduced-height list access. Ordinary-run native acceptance remains open:
+the original post-click debugger evidence shows Project resources/zero rows, not the requested pack.
+The follow-up closes virtual-address Enter and linked-manifest reading with 108 focused tests and
+real-window routed navigation/import/disable/reopen checks. One debugger-assisted native attempt
+received press/release and one Click, reaching the pack's three rows; its temporary attachment delay
+prevents treating it as ordinary-run acceptance or explaining the earlier failure. No new physical
 or acoustic acceptance is claimed. Earlier Browser physical WAV/MP3/FLAC evidence and the audit's
 native/routed split remain in their reports; inherited pressure/allocation questions remain open.
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected L3 covers extension/document/media
+Completed repository tasks since this L3: **1**. This risk-selected L3 covers extension/document/media
 lifecycle and resets the cadence. No broader platform, aesthetic, pressure or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light

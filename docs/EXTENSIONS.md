@@ -17,9 +17,9 @@ they cannot execute through the asynchronous generator boundary.
 Desktop discovers immediate directories under **`<application>/Extensions`** when Browser is created.
 This is a deployment-controlled root, not a scan of user folders or an installer. At most 64 packages,
 64 KiB per `extension.json`, 16 capabilities, 32 requirements per capability and 256 content entries
-per capability are admitted. Linked paths, absolute/escaping content paths, duplicate package or
-capability identities, malformed metadata and unknown manifest versions remain unavailable with
-host diagnostics. Valid metadata survives a missing declared file. Deployment updates/removal happen
+per capability are admitted. Linked paths (including `extension.json` itself), absolute/escaping
+content paths, duplicate package or capability identities, malformed metadata and unknown manifest
+versions remain unavailable with host diagnostics. Valid metadata survives a missing declared file. Deployment updates/removal happen
 while the app is closed; refresh of loaded/borrowed/failed-to-retire packages is refused.
 
 Schema 1 declares `id`, independent three/four-component `version`, English `name`, optional

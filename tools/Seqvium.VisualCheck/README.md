@@ -11,8 +11,11 @@ The real Browser discovers the build-copied original Found Sounds pack, shows a 
 through Rack/Playlist buttons, checks managed resources/Undo, disables/re-enables the contribution,
 and reopens music with the package disabled. Four language/theme renders and reduced-window
 disclosure/list/preview checks are included. The default route uses routed buttons and does not
-establish native Windows input. `native` uses the guarded pointer helper for action buttons;
-initial window/pane/disclosure setup and file selection remain fixture setup. It opens no physical
+establish native Windows input. `native` uses the guarded pointer helper for action buttons.
+`extension-browse-input.json` records the first Browse click's pointer delivery, Click count,
+resulting internal location and row count. Address Enter/Up/Back and editable-folder regressions use
+routed keyboard events with focus on the address field in both modes.
+Initial window/pane/disclosure setup and file selection remain fixture setup. It opens no physical
 audio device. [R6 report](../../docs/experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md) records actual
 success/failure and scope. The test-only generator provider is exercised by deterministic tests,
 not presented as Sample Lab in this GUI.

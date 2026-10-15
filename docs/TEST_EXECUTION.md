@@ -10,8 +10,9 @@ progress.
 ## R6 extension verification
 
 `ExtensionFoundationTests` exercises local manifest damage/version/path/missing/duplicate boundaries,
-required-contract rejection without activation, old package versions with optional fallback, trusted
-factory registration, failed/timed-out/cancelled activation and retry/disposal failure. Explicit gates
+required-contract rejection without activation, old package versions with optional fallback,
+manifest-file symlink rejection before metadata read (explicit skip if the platform denies symlink creation),
+trusted factory registration, failed/timed-out/cancelled activation and retry/disposal failure. Explicit gates
 cover active-use disable refusal, open-editor leases, serialized generation, cancellation, superseded
 late outputs, invalid parameters/audio, changed document generations, New/application Close joins and
 candidate disposal. Managed Rack/Playlist and generated acceptance cover one Undo, disable/source

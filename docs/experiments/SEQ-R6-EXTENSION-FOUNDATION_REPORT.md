@@ -118,3 +118,65 @@ A checked task-scoped recursive cleanup of the stopped debugger run and its logs
 automatic approval review (`blocked by policy`); those ignored files are intentionally retained
 rather than deleting through another execution path. Runtime/test resources remain permanent.
 No user project/demo, staging index or Git history was modified. No stage, commit, push or tag.
+
+## Independent review follow-up
+
+Date: 2026-10-15. **0.1.7.0006 → 0.1.7.0007**, one BUILD for two bounded R6 corrections and
+their regressions. There is no new capability/PATCH, R7 implementation, plugin framework, reader
+change, full-suite rerun or renewed stress campaign. The preceding L3 remains the baseline;
+completed-task cadence is now one.
+
+Browser previously displayed `Found Sounds` but sent that text to filesystem navigation on Enter.
+Virtual pack/Project resources addresses are now read-only labels; Enter uses the current internal
+location. Ordinary folder addresses remain editable. The real-window routed check focuses the
+address field before Enter and verifies pack rows, Project resources, Up/Back, editable filesystem
+navigation and return to the same pack. It also passes the existing managed Rack/Playlist import,
+disable/re-enable, disabled-pack reopen and RU/EN Dark/Light/reduced-window checks. Ordinary sound
+list height remains 298 DIP; shared tokens/templates are unchanged.
+
+Discovery now calls `RejectLink` on `extension.json` before opening it, under the existing damaged
+manifest diagnostic boundary. The regression moves valid metadata outside the deployment root and
+links the package's manifest to it; discovery returns Damaged with no admitted manifest and refuses
+activation. Windows file symlink creation succeeded here: the test ran without a skip. Platforms
+that deny symlink creation report an explicit skip; no other-platform execution is claimed.
+
+Final affected Release build: zero warnings/errors, **7.94 s** MSBuild summary. Final focused
+L1/L2: **108/108 passed, zero failures/skips**, **16.301 s** CLI summary, including extension,
+Browser, workspace and actual product metadata checks. Commands:
+
+```powershell
+dotnet build tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class '*ExtensionFoundationTests' --filter-class '*SampleBrowserTests' --filter-class '*WorkspaceStateTests' --filter-class '*ProductVersionTests' --max-threads 1 --report-xunit-trx --results-directory .artifacts/r6-followup/tests-final
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll extensions .artifacts/r6-followup/routed-final --timeout-seconds=45
+```
+
+The routed window run preceded the metadata-only BUILD change; final metadata tests cover 0007.
+During verification, one nullable observer expression was corrected after a compiler error. Two
+early routed checks incorrectly sent Enter while the file list still had focus; the fixture now
+focuses the address field. Those failed checks are not counted as passes.
+
+### Native input remains bounded evidence
+
+Exactly one new native attempt was made, on a task-owned process with a temporary 20-second pause
+before input to attach Rider. A test-tool observer recorded PointerPressed and PointerReleased
+through `Extension.Sounds`, **one Click**, completed Browser work,
+`seqvium-pack:seqvium.found-sounds` and **three rows**. The debugger paused at the immediate
+post-click assertion in `ExtensionFoundationAsync` on the UI continuation; its stack and evaluation
+confirmed `list.ItemCount = 3` and `browser._currentPath = "seqvium-pack:seqvium.found-sounds"`.
+
+This localizes a successful Pointer → Click → Browse path, but does not reproduce or explain the
+original zero-row failure. The attachment pause changes startup timing. **Ordinary Windows native
+acceptance therefore remains unverified.** No speculative input/production fix was applied and no
+repeated native attempts followed. The run stopped at that assertion before further native imports.
+Agent breakpoints were removed, the task-owned session stopped, user breakpoint settings preserved,
+and the temporary attachment pause removed before the final build.
+
+The reusable tool now writes `extension-browse-input.json` around the first Browse action so future
+evidence distinguishes pointer delivery, Click and the resulting Browser state. Address keyboard
+regressions remain routed in either tool mode. Ignored `.artifacts/r6-followup` retains TRX, successful
+routed renders/independent media and failed/debugger-attempt observations for review; none is a
+runtime dependency. No untracked product/resource files were created. Git started clean; all tracked
+changes belong to this follow-up. No staging, commit, push or tag was performed.
+Static checks pass: 258 local links in changed documentation, no missing targets/anchors, and
+`git diff --check`. Final status has 13 modified tracked files, an unchanged staging index and no
+untracked files; ignored verification evidence is intentionally retained as described above.

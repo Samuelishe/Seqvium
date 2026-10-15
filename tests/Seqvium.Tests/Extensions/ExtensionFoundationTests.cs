@@ -61,6 +61,33 @@ public sealed class ExtensionFoundationTests
     }
 
     [Fact]
+    public async Task LinkedManifestOutsideDeploymentIsRejectedBeforeMetadataIsRead()
+    {
+        using var deployment = new TemporaryDirectory();
+        using var outside = new TemporaryDirectory();
+        string package = CreatePackage(deployment, false);
+        string manifest = Path.Combine(package, "extension.json");
+        string target = outside.File("extension.json");
+        File.Move(manifest, target);
+        try { File.CreateSymbolicLink(manifest, target); }
+        catch (Exception error) when (error is UnauthorizedAccessException or PlatformNotSupportedException ||
+            error is IOException && OperatingSystem.IsWindows() && (error.HResult & 0xffff) == 1314)
+        { Assert.Skip("File symbolic links are unavailable: " + error.Message); }
+        try
+        {
+            await using var host = new ExtensionHost();
+            await host.DiscoverAsync(deployment.Path, Cancellation);
+            var status = Assert.Single(host.Status);
+            Assert.Equal(ExtensionAvailability.Damaged, status.Availability);
+            Assert.Null(status.Package.Manifest);
+            Assert.Contains(status.Diagnostics, d => d.Code == "Extension.DamagedManifest");
+            Assert.False(await host.EnableAsync(Package, Cancellation));
+            Assert.True(File.Exists(target));
+        }
+        finally { File.Delete(manifest); }
+    }
+
+    [Fact]
     public async Task CompatibilityUsesRequiredContractsAndOptionalFallbackInsteadOfProductAge()
     {
         using var directory = new TemporaryDirectory();

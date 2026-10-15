@@ -2,6 +2,7 @@
 
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using Seqvium.Core;
@@ -47,10 +48,58 @@ internal static partial class Program
         }
         await Drain();
         Require(workflow.Extensions.Status.Single().Availability == ExtensionAvailability.Available, "Bundled sound pack not discovered/activated.");
-        if (native) await input.ActivateVisibleWindow();
-        await Click("Extension.Sounds");
+        var sounds = (Button)Id("Extension.Sounds");
+        var pointerEvents = new List<string>();
+        int soundClicks = 0;
+        void PointerObserved(object? sender, PointerEventArgs e)
+        {
+            var source = e.Source as Control;
+            pointerEvents.Add(e.RoutedEvent?.Name + ": " + (source is null ? e.Source?.ToString() :
+                string.Join("/", source.GetVisualAncestors().OfType<Control>().Prepend(source)
+                    .Select(c => AutomationProperties.GetAutomationId(c) ?? c.GetType().Name))));
+        }
+        void SoundsClicked(object? sender, RoutedEventArgs e) => soundClicks++;
+        main.AddHandler(InputElement.PointerPressedEvent, PointerObserved, RoutingStrategies.Tunnel, true);
+        main.AddHandler(InputElement.PointerReleasedEvent, PointerObserved, RoutingStrategies.Tunnel, true);
+        sounds.Click += SoundsClicked;
+        try
+        {
+            if (native) await input.ActivateVisibleWindow();
+            await Click("Extension.Sounds");
+        }
+        finally
+        {
+            main.RemoveHandler(InputElement.PointerPressedEvent, PointerObserved);
+            main.RemoveHandler(InputElement.PointerReleasedEvent, PointerObserved);
+            sounds.Click -= SoundsClicked;
+            Json(output, "extension-browse-input", new { NativeInput = native, SoundClicks = soundClicks,
+                PointerEvents = pointerEvents, CurrentPath = Field<string?>(browser, "_currentPath"),
+                Rows = ((ListBox)Id("Browser.Files")).ItemCount, BrowserPendingComplete = browser.PendingCommand.IsCompleted });
+        }
         var list = (ListBox)Id("Browser.Files");
         Require(list.ItemCount == 3, "Sound pack is absent from the existing Browser.");
+        var address = (TextBox)Id("Browser.Path");
+        async Task EnterAddress()
+        {
+            Require(address.Focus(), "Address did not receive keyboard focus.");
+            address.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+            await Drain();
+        }
+        Require(address.IsReadOnly && address.Text == "Found Sounds", "Package label is an editable filesystem path.");
+        await EnterAddress();
+        Require(list.ItemCount == 3 && list.Items.Cast<BrowserSource>().All(s => s.Package == "seqvium.found-sounds"),
+            "Enter on the package label navigated away from its content.");
+        await Click("Browser.Up"); await EnterAddress();
+        Require(address.IsReadOnly && list.ItemCount == 0, "Enter on project resources became filesystem navigation.");
+        await Click("Browser.Back");
+        Require(list.ItemCount == 3, "Back did not restore the package after Enter/Up.");
+        string folder = Path.Combine(output, "address-folder"); Directory.CreateDirectory(folder);
+        browser.Navigate(folder); await Drain();
+        Require(!address.IsReadOnly, "Filesystem navigation retained a read-only address.");
+        address.Text = output; await EnterAddress();
+        Require(Field<string?>(browser, "_currentPath") == output, $"Edited filesystem address did not navigate: {Field<string?>(browser, "_currentPath")} != {output}.");
+        await Click("Browser.Back"); await Click("Browser.Back");
+        Require(address.IsReadOnly && list.ItemCount == 3, "Back from a folder lost the package identity.");
         list.SelectedIndex = 0; await Drain();
         Require(Field<BrowserWaveform>(browser, "_wave").Waveform is { Peak: > 0 }, "Pack source has no decoded waveform.");
         Require(!workflow.State.IsDirty && workflow.State.UndoCount == 0, "Pack discovery edited music.");
@@ -95,6 +144,6 @@ internal static partial class Program
         { using var pcm = AudioMedia.Decode(workflow.State.Document, resource.Id); Require(pcm.Frames > 0, "Accepted pack audio is unavailable."); }
         Require(workflow.State.Document.SavedMediaDiagnostics.IsEmpty, "Pack music depends on the disabled package.");
         Json(output, "extension-foundation", new { NativeInput = native, RoutedInput = !native, PhysicalAudio = false,
-            ManagedResources = 2, DisableReenable = true, ReopenDisabled = true, Matrix = matrix });
+            AddressNavigation = true, ManagedResources = 2, DisableReenable = true, ReopenDisabled = true, Matrix = matrix });
     }
 }

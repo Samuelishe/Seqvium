@@ -11,6 +11,8 @@ or final resource file format.
 
 Enabled content-pack WAVs appear as locations in the existing Browser. **Sound packs & extensions**
 shows availability, purpose/version and host-owned diagnostics and offers Browse sounds/Enable/Disable.
+The address field displays a read-only label for a pack or Project resources; Enter reloads that
+virtual location by its internal identity. Filesystem folder addresses remain editable.
 Inspect/preview are transient. Rack/Playlist uses acquire the package during preparation/acceptance,
 then use the same managed media and single Undo transaction as ordinary file import. Disabled/missing
 sources refuse new use, including a captured old drag. Imported resources survive disable, source

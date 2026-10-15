@@ -58,7 +58,9 @@ public static partial class ExtensionDiscovery
         try
         {
             RejectLink(directory);
-            using var input = File.OpenRead(Path.Combine(directory, "extension.json"));
+            string manifestPath = Path.Combine(directory, "extension.json");
+            RejectLink(manifestPath);
+            using var input = File.OpenRead(manifestPath);
             if (input.Length > MaximumManifestBytes) throw new InvalidDataException("Manifest exceeds 64 KiB.");
             using var json = JsonDocument.Parse(input, new() { MaxDepth = 12 });
             if (!json.RootElement.TryGetProperty("schema", out var schema) || schema.GetInt32() != 1)

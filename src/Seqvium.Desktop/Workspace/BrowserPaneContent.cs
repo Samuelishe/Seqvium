@@ -152,7 +152,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         {
             if (!_refreshing && _locations.SelectedItem is Location location) Navigate(location.Path);
         };
-        _path.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Navigate(_path.Text); e.Handled = true; } };
+        _path.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Navigate(_path.IsReadOnly ? _currentPath : _path.Text); e.Handled = true; } };
         _up.Click += (_, _) => Navigate(!IsPack && _currentPath is { } p ? Directory.GetParent(p)?.FullName : null);
         _back.Click += (_, _) => { if (_history.TryPop(out var p)) Navigate(p, false); };
         _refresh.Click += (_, _) => Navigate(_currentPath, false);
@@ -237,6 +237,8 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             if (remember && resolved != _currentPath) _history.Push(_currentPath);
             _directory?.Dispose(); _directory = null;
             _currentPath = resolved;
+            // Virtual locations display labels, never editable filesystem addresses.
+            _path.IsReadOnly = resolved is null || IsPack;
             _refreshing = true;
             _selected = null; _entries.Clear(); _wave.Waveform = null; _wave.InvalidateVisual();
             _path.Text = resolved ?? _shell["Browser.Project"]; _refreshing = false;
