@@ -199,6 +199,9 @@ locked restore and risk-selected Release checks apply; no global tool or additio
 [PROJECT_STATS](PROJECT_STATS.md#cli-and-outputs) owns console/Markdown/JSON invocations, explicit
 output, public corpus/privacy, count semantics and advisory limits. Its assembly metadata supplies
 tool identity; it is developer tooling, separate from musical product capabilities and the R0 probe.
+Repository-changing tasks finish by replacing the ignored root Markdown/JSON reports and inspecting
+their metadata, corpus and advisories under the [completion workflow](PROJECT_STATS.md#completion-workflow).
+Final agent handoffs link the current report and summarize useful findings separately from test results.
 
 ## Verification output organization
 

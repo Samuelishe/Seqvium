@@ -69,11 +69,13 @@ the host then opens the appropriate empty or musical workspace. Older layouts in
 Version 1 stores usable workspace `width`/`height`, `activePaneId`, and a back-to-front `panes` array.
 Optional `window` contains normal `x`/`y` in screen pixels, `width`/`height` in DIPs and `maximized`.
 Omission is valid for older layouts; malformed supplied values use the same preserve-original fallback.
-Optional `navigation` stores the Pattern navigator's preferred `width` in DIPs and explicit `collapsed`
-boolean. Old version-1 files omit it without fallback; malformed supplied values preserve the original
-file under the same write-refusal policy. Transient drag widths and automatic compact-window/Browser
-suppression never replace this preference. [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer)
-owns the resize/collapse and explicit reopening behavior.
+Optional `navigation` and `browserPanel` store each sidebar's preferred usable `width` in DIPs,
+`collapsed` boolean and optional `visibleWidth` for a released, partly clipped viewport. Browser's
+workspace pane entry remains authoritative for visibility; its optional sidebar placement owns width.
+Old version-1 files omit these additions without fallback; old Browser geometry seeds its initial width.
+Malformed supplied values preserve the original file under the same write-refusal policy. Transient
+drag widths and automatic window-pressure fitting never replace these preferences.
+[Workspace](WORKSPACE.md#shared-left-panel-zone) owns resize, clipping, collapse and reopening.
 Maximized/minimized geometry never replaces the normal restore rectangle. Main-window movement,
 settled resize, pane commits and joined shutdown persist this independent user configuration.
 Each entry contains `instanceId`, `typeId`, `visibility` (`hidden`/`visible`/`collapsed`), floating

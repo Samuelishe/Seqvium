@@ -50,7 +50,9 @@ for the logo, typography, alternative directions and publication resources.
 - Undo/redo musical edits, save/reopen projects with managed media, and export a Pattern or the full
   Song to 48 kHz stereo PCM16 WAV using the same audio processing.
 - Open **Browser / Ctrl+B** to pin sample folders, browse subfolders, search names and reuse project
-  audio. Inspect real waveforms, preview sounds while transport is stopped, then drag into Channel
+  audio. Browser and Patterns share a separate group at the top of the left rail; both can stay open
+  beside the workspace, resize independently and restore their remembered widths.
+  Inspect real waveforms, preview sounds while transport is stopped, then drag into Channel
   Rack or Playlist, or use the explicit add buttons. Preview never imports or changes Undo.
 - Work in English or Russian, with Dark and Light themes.
 - Explore the optional **Found Sounds** pack in Browser's **Extensions** disclosure.

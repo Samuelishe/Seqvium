@@ -130,7 +130,13 @@ silently discards notes. A channel menu can remove a channel from the recognized
 unshared graph, repairing its Mix tree in one Undo. Shared/custom/unknown topology refuses safely.
 Pattern deletion removes all its placements and their item graphs in one Undo, retaining independent
 sounds/resources and unrelated music. Target/generation guards apply to every action.
-The rail toggle hides/restores navigation independently of music; its session choice survives resizing.
+The rail toggle hides/restores navigation independently of music and Browser. Both sidebars coexist
+in rail/Browser/Patterns/workspace order. Each right boundary resizes only its left panel and shifts
+everything following it. Content first reflows, then clips at its usable minimum, and collapses only
+near its left edge. Reopening restores its last usable width; closing a neighbour never closes or
+overlays the other panel. These preferences survive resizing and document replacement independently
+of musical history. [Shared left zone](WORKSPACE.md#shared-left-panel-zone) owns exact geometry,
+cancellation, keyboard paths and reduced-window fitting. Sidebar captions do not imply movement/docking.
 WAV export is a toolbar overflow action for the selected occurrence through its current valid graph.
 It captures one frozen revision, writes one finite cycle as 48 kHz stereo PCM16, reports clipping and
 leaves transport, music and history intact. Failed/cancelled export preserves an existing destination.

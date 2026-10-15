@@ -1723,3 +1723,24 @@ music edits invalidate R6 candidates and document replacement closes the explora
 No recipe or installed-generator dependency is needed to replay accepted audio. R7 retains actual
 variation/reference/lock/history and audition work. BUILD 0.1.7.0006 records this foundation; failed
 native delivery is retained as evidence, with no PATCH or broader platform/acoustic claim.
+
+## SEQ-LEFT-PANELS — ordered retained sidebars — 2026-10-15
+
+Status: Implemented under the owner's Browser/Patterns UX request and follow-up rail grouping.
+Supersedes the Browser-left-dock/Pattern-suppression composition and early minimum-width collapse
+recorded in the Sample Browser and SEQ-WORKSPACE-THEME-NAV checkpoints. Musical pane docking remains.
+
+Use one ordered LeftPanelZone collection and one SidePanelHost boundary implementation for current
+Browser/Patterns and subsequent sidebars. A seam owns the panel immediately left of it; following
+surfaces shift with layout. Keep minimum readable content geometry separate from the clipped viewport,
+collapse only near the edge and restore a distinct usable width. This directly addresses two concrete
+consumers without inventing general docking or another lifecycle/history service. Sidebar visibility
+continues through workspace state; the zone owns retained content and width presentation. Window
+pressure may fit widths but must not close neighbours or overwrite preferences. Manual movement keeps
+neighbour widths stable. New/Open preserve sidebars separately from musical-pane layout.
+
+Rail group order mirrors Browser then Patterns and is separated from musical-window actions. Phrase
+cards replace the ambiguous ellipsis. Static captions replace misleading Browser window chrome.
+Compact disclosure chevrons share one header surface instead of an oversized separately raised tile.
+Current contracts live in WORKSPACE, ARCHITECTURE, UX_CONTRACT and DESIGN_SYSTEM; operational reuse and
+final ProjectStats report refresh live in AGENTS. This decision introduces no project-reader/DSP change.

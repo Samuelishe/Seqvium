@@ -19,7 +19,7 @@ and renderer. Internals are visible to the existing Tests project for synthetic 
 injected I/O failures. No semantic-analysis, smoke-coverage, indexing or historical database is added.
 Scanning is read-only; only explicit `--output` writes a file, without creating directories.
 This is not an MSBuild evaluator, compiler, test runner, coverage system, benchmark, quality gate or
-automatic refactoring tool. This developer checkpoint starts no R5 and accepts no R4 visuals/audio.
+automatic refactoring tool. Its results establish no musical capability, visual or audio acceptance.
 
 ## CLI and outputs
 
@@ -52,6 +52,26 @@ ignored by [.gitignore](../.gitignore) and excluded on every scan. An explicit c
 excluded for that invocation; use a conventional name or excluded tree for stable later scans
 without `--output`. Generated reports are local and must not be committed. This permanent owner is
 a different file. No live metric snapshots belong in PROJECT_STATE or ordinary history.
+
+## Completion workflow
+
+After repository-changing work, regenerate the two ignored root reports after the final source/docs
+edits, overwriting the previous snapshot rather than creating dated copies. Use the current Release
+binary; build the tool when its source changed or no current binary exists:
+
+```text
+dotnet tools/Seqvium.Tools.ProjectStats/bin/Release/net10.0/Seqvium.Tools.ProjectStats.dll . --markdown --output PROJECT_STATS.md
+dotnet tools/Seqvium.Tools.ProjectStats/bin/Release/net10.0/Seqvium.Tools.ProjectStats.dll . --json --output PROJECT_STATS.json
+```
+
+Inspect the report, rather than merely reporting command success: timestamp/tool metadata and dirty
+state should match the working tree; new public source must be counted before staging; ignored root
+reports, local artifacts and cold history must stay excluded. Check unreadable counts and the advisory
+summary. In the final agent response, link PROJECT_STATS.md and mention the useful current production
+C# file/line totals, material unreadable/advisory findings and the largest relevant concentration when
+it helps assess the work. Keep this compact, distinguish lexical attributes from executed tests, and
+make no architectural quality claim from line counts. Report failures/limitations explicitly. Do not
+copy live counts into canonical docs or history; those documents retain policy and bounded evidence.
 
 ## Public corpus, classification, and safety
 

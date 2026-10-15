@@ -44,6 +44,7 @@ public sealed class WorkspaceHost : Grid, IDisposable
     public WorkspaceState State { get; }
     public event Action? LayoutCommitted;
     public event Action? LeaveRequested;
+    internal Action<string>? FocusSidebar { get; set; }
 
     public WorkspaceHost(ShellSession session, WorkspaceState state, Func<Task> language, Func<Task> theme,
         Func<PaneDefinition, Control>? contentFactory = null)
@@ -152,6 +153,11 @@ public sealed class WorkspaceHost : Grid, IDisposable
     public void FocusPane(string? id)
     {
         if (_disposed || _stopping || State.IsDisposed) return;
+        if (id is not null && WorkspaceState.Definition(id).IsSidebar && State.Get(id).Visibility == PaneVisibility.Visible)
+        {
+            FocusSidebar?.Invoke(id);
+            return;
+        }
         if (id is not null && State.Get(id).Visibility == PaneVisibility.Visible &&
             _views.TryGetValue(id, out var view))
             view.FocusContext();
@@ -330,6 +336,7 @@ public sealed class WorkspaceHost : Grid, IDisposable
         {
             var definition = WorkspaceState.Definition(pane.InstanceId);
             var tab = _tabs[pane.InstanceId];
+            if (definition.IsSidebar) { tab.IsVisible = false; continue; }
             tab.IsVisible = pane.Visibility != PaneVisibility.Hidden;
             var tabContent = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "compact" } };
             if (pane.Visibility == PaneVisibility.Collapsed)
@@ -358,7 +365,7 @@ public sealed class WorkspaceHost : Grid, IDisposable
             view.Refresh(pane, State.ActivePaneId == pane.InstanceId);
         }
 
-        _shelf.IsVisible = State.Panes.Any(pane => pane.Visibility != PaneVisibility.Hidden);
+        _shelf.IsVisible = State.Panes.Any(pane => !WorkspaceState.Definition(pane.InstanceId).IsSidebar && pane.Visibility != PaneVisibility.Hidden);
         ShowBoundary(_resizeBoundary ?? _hoverBoundary);
     }
 

@@ -14,10 +14,12 @@ opening music restores your previous musical layout. In Pattern Mode, click navi
 the playing phrase without pressing Play again. Double-click or Enter opens an appropriate editor;
 right-click offers Channel Rack or Piano Roll for a named channel. Explicit choices are remembered
 for each Pattern until you replace the document.
-Drag the Pattern list's right edge to change its width. Pull it inward past its usable minimum to
-close it; the top left **…** rail button restores its previous width. Width and open/closed preference
-are remembered with your workspace. A narrow window hides the list automatically; the same button
-can explicitly reopen it.
+The top group on the left rail controls **Browser** (folder/sound) and **Patterns** (two phrase cards).
+Both panels can stay open together, in that order. Drag a panel's right edge to resize it; pull it
+nearly to its left edge to close it. At narrow widths its contents gradually slide behind the edge.
+Click its rail icon to restore the last comfortable width. Each panel remembers its own width and
+visibility with the workspace, independently of the music. Smaller windows fit both panels without
+automatically closing either one.
 
 ## Create a sound
 

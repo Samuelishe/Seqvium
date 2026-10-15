@@ -153,11 +153,10 @@ internal static partial class Program
                 "Browser managed-resource drop did not reuse media in Playlist.");
             Require(await workflow.UndoAsync(), "Browser Playlist drop Undo failed.");
         }
-        workspace.State.ArrangeMusic(); workspace.State.Open(WorkspaceState.BrowserId); workspace.State.Dock(WorkspaceState.BrowserId, PaneDock.Left);
-        // Browser has one coherent strip; the remaining workspace retains the two musical editors.
-        double left = workspace.State.Bounds(WorkspaceState.BrowserId).Width;
-        workspace.State.SetBounds(WorkspaceState.BeatId, new(left + 8, 0, workspace.State.Width - left - 8, 340));
-        workspace.State.SetBounds(WorkspaceState.ArrangementId, new(left + 8, 348, workspace.State.Width - left - 8, workspace.State.Height - 348));
+        workspace.State.ArrangeMusic(); workspace.State.Open(WorkspaceState.BrowserId);
+        // The sidebar zone has already reserved Browser's width outside the musical canvas.
+        workspace.State.SetBounds(WorkspaceState.BeatId, new(0, 0, workspace.State.Width, 340));
+        workspace.State.SetBounds(WorkspaceState.ArrangementId, new(0, 348, workspace.State.Width, workspace.State.Height - 348));
         await Task.Delay(150);
         var matrices = new List<object>();
         for (int theme = 0; theme < 2; theme++)

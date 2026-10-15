@@ -66,7 +66,16 @@ internal static class ComponentCatalog
             toggleRow.Children.Add(new ToggleButton { Width = 112, Content = "Toggle", IsChecked = state == "selected", IsEnabled = state != "disabled" });
         }
         foreach (var row in new[] { sliderRow, levelRow, textRow, comboRow, toggleRow }) body.Children.Add(row);
-        body.Children.Add(new Expander { Header = "Disclosure / Curve", Content = new TextBlock { Text = "Localized content retains control focus and input." }, IsExpanded = true });
+        var disclosures = new List<Expander>();
+        var disclosureRow = Row("Expander");
+        foreach (double width in new[] { 180d, 260d, 360d })
+        {
+            var disclosure = new Expander { Width = width, Header = "Disclosure / Curve",
+                Content = new TextBlock { Text = "Content", Margin = new(4) }, IsExpanded = width == 260,
+                VerticalAlignment = VerticalAlignment.Top };
+            disclosures.Add(disclosure); disclosureRow.Children.Add(disclosure);
+        }
+        body.Children.Add(disclosureRow);
         var statuses = Row("Diagnostics");
         foreach (string state in new[] { "warning", "error", "success" }) statuses.Children.Add(new TextBlock { Text = state, Width = 112, Classes = { state } });
         var menuButton = new Button { Content = "Menu / Tooltip", Width = 150 };
@@ -82,6 +91,18 @@ internal static class ComponentCatalog
         {
             if (shell.Preferences.Theme != theme) await shell.ToggleThemeAsync(); app.ApplyTheme(theme);
             await Program.CaptureAsync(window, output, theme + "-catalog");
+            foreach (var disclosure in disclosures)
+            {
+                var header = disclosure.GetVisualDescendants().OfType<ToggleButton>().Single(c => c.Name == "ExpanderHeader");
+                var chevron = header.GetVisualDescendants().OfType<Border>().Single(c => c.Name == "ExpandCollapseChevronBorder");
+                var position = chevron.TranslatePoint(default, header)!.Value;
+                Program.Require(position.X >= 0 && position.Y >= 0 &&
+                    position.X + chevron.Bounds.Width <= header.Bounds.Width &&
+                    position.Y + chevron.Bounds.Height <= header.Bounds.Height,
+                    "Disclosure chevron paints outside its compact header.");
+                Program.Require(chevron.Background is ISolidColorBrush clear && clear.Color.A == 0,
+                    "Disclosure chevron has a separate raised tile.");
+            }
             var acceptedCorner = app.Resources["Control.Corner"];
             var acceptedFill = app.Resources["Control.Fill"];
             var acceptedNode = app.Resources["Graph.Node"];

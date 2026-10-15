@@ -8,13 +8,12 @@ Not authoritative for: Pane-specific editing, final visuals/gestures, framework 
 
 ## Retained Sample Browser
 
-`sample-browser.main` / `sample-browser` is the ninth retained pane, initially hidden, with a preferred
-left dock and a compact 320-DIP default width. Existing layouts add it hidden. It shares ordinary
-floating/docking/resizing/collapse/hide/restore and independent user-layout persistence. The content
+`sample-browser.main` / `sample-browser` is a retained sidebar, initially hidden, with a 320-DIP
+default width. Existing layouts add it hidden. It shares the workspace visibility/lifecycle and
+independent user-layout persistence, while the shared left zone owns its geometry. The content
 uses local virtualized file scrolling with a pinned metadata/waveform/action footer; narrow panes
 retain accessible controls rather than scaling their text. FullHD supports Browser, Rack and Playlist
-together. While Browser occupies the left dock, Pattern cards yield their width and the existing
-occurrence selector returns; hiding/undocking Browser restores navigation. This is view composition,
+together. Browser and Pattern cards can remain visible simultaneously. This is view composition,
 not musical selection/history. Browser remains available with the calm empty Rack via Ctrl+B/rail.
 
 Folder navigation/selection are session presentation; pinned/recent/last locations use independent
@@ -22,6 +21,39 @@ Folder navigation/selection are session presentation; pinned/recent/last locatio
 audio engine or media ownership model is introduced. Hide/collapse cancels temporary work/preview;
 shutdown joins Browser operations before document/audio cleanup.
 Browser uses Ctrl+R for folder refresh; F6/Shift+F6 keep their global pane-switch meaning.
+
+## Shared left panel zone
+
+The fixed order is **rail | Browser | Patterns | musical workspace**. `LeftPanelZone` lays out an
+ordered collection of `SidePanelHost` controls outside the workspace canvas. Each open panel reserves
+its actual width; closing any entry removes only that entry's space. The same composition loop applies
+to additional first-party sidebars. This is not another docking registry or an overlapping window layer.
+
+Each right boundary belongs to the panel immediately to its left. Drag right expands that panel and
+moves all following panels and the workspace right; drag left narrows it and moves the following region
+left. Neighbour widths/visibility stay independent during the gesture, including in a reduced window.
+Cards/controls reflow down to a usable content width (Patterns 180 DIP, Browser 260 DIP). Below that,
+the content retains that minimum width and clips behind the moving right boundary. Collapse occurs
+only at 24 DIP. Capture survives the closed preview, permitting reversal before release. An intermediate
+release retains a partly clipped viewport; reopening restores the last usable width, rather than
+the clipped remainder. A normal resize release updates the usable width. Maximum width is 480 DIP.
+
+The rail icons toggle their panels independently and show visibility, rather than last activation.
+Patterns uses two musical phrase cards; Browser retains the folder/sound symbol. Static captions have
+no move cursor, drag header, docking menu, window close chrome or shelf tab. Browser still opens through
+Ctrl+B/Panes and participates in F6 and Ctrl+W; content and focus stay retained. Closing stops preview.
+New/Open preserve sidebar visibility independently of the musical-pane layout. Browser content is
+created on first opening; retained operations are joined on document/application shutdown as before.
+
+Escape, capture loss, deactivation, main-window resize and shutdown cancel unfinished boundary drafts.
+Left/Right adjust a focused boundary by 16 DIP; Home collapses. Closing returns focus to its rail icon.
+Window pressure fits the open widths proportionally while reserving 260 DIP for the musical workspace;
+it can clip below content minima, never automatically hides another panel or overwrites preferences.
+Visibility/window changes refit the zone; manual boundary movement keeps neighbouring allocated widths.
+Pointer geometry follows input directly without a delayed animation. Workspace persistence stores both
+usable width and optional clipped viewport separately from transient drafts and project history.
+Old Browser pane geometry seeds its first sidebar width; old floating/dock flags are retained in the
+legacy placement record but do not give the sidebar window gestures or reserve a musical dock.
 
 ## Retained compact Mixer pane
 
@@ -142,22 +174,15 @@ Older layouts omit this pane and restore it hidden; only geometry/visibility/doc
 layout, with no musical/editor model there.
 
 The left rail opens existing Rack/Graph/Node Editor/Inspector/Appearance panes without replacing them.
-At window width >= 1000 DIP a project navigator lists actual occurrences with Pattern thumbnails.
+A project navigator in the shared left zone lists actual occurrences with Pattern thumbnails.
 Its selection/create commands use DesktopWorkflow; navigation itself does not edit the document.
-Cards use up to two name lines and full-name/gesture tooltips. Drag the navigator's right boundary
-to resize it continuously; cards and thumbnails follow its width. Dragging below the usable minimum
-collapses it. Reopening from the rail restores the width from before that collapse gesture, rather
-than a narrow remainder. Ordinary resize release remembers its new width. Escape, capture loss,
-window deactivation/resizing and shutdown cancel an unfinished gesture. The boundary also supports
-Left/Right width changes and Home to collapse, returning focus to the rail when needed.
+Cards use up to two name lines and full-name/gesture tooltips. The shared left-zone boundary owns
+continuous resize, minimum-content clipping, near-edge collapse and remembered-width reopening.
 Selection leaves pane visibility/focus alone; double-click/Enter and the contextual editor/channel
 menu open an editor. Shared session editor intent belongs to PatternEditorNavigation, not layout storage.
-A rail toggle hides/restores it. Preferred width and explicit collapsed state belong to the existing
-independent user workspace file, outside musical history. Below the automatic window-width threshold,
-it hides to reclaim space without overwriting that preference; the rail can still explicitly reopen
-it. Available width is capped to leave room for a musical pane. A visible left-docked Browser temporarily
-suppresses the navigator; explicit rail reopening collapses that Browser into the existing shelf.
-The Browser's retained content and placement remain available. No new dock group or pane type is added.
+A rail toggle hides/restores it independently of Browser. Preferred width, optional clipped width
+and explicit collapsed state belong to the independent user workspace file, outside musical history.
+Reduced-window fitting retains both preferences. No new musical dock group or pane instance is added.
 
 The pane follows the workflow's selected occurrence. Its selector appears only for multiple choices;
 the Pattern name is editable canonical content. Focus returns to an enabled step, otherwise Create.

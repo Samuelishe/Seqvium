@@ -302,8 +302,9 @@ public sealed class HostLocalizer
         ["Arrangement.Unsupported"] =
             "This clip contains dependencies that song playback cannot interpret. Its data is preserved.",
         ["Navigator.Patterns"] = "PATTERNS",
-        ["Navigator.Toggle"] = "Show / hide pattern navigation",
+        ["Navigator.Toggle"] = "Patterns",
         ["Navigator.Resize"] = "Resize patterns",
+        ["Browser.Resize"] = "Resize browser",
         ["Beat.Bars"] = "Pattern length in bars",
         ["Beat.BarsUnit"] = "bars",
         ["Beat.Delete"] = "Delete Pattern and all its occurrences · Undo available",
@@ -812,8 +813,9 @@ public sealed class HostLocalizer
         ["Arrangement.Unsupported"] =
             "Клип содержит зависимости, которые воспроизведение композиции пока не поддерживает. Данные сохранены.",
         ["Navigator.Patterns"] = "ПАТТЕРНЫ",
-        ["Navigator.Toggle"] = "Показать / скрыть навигацию по паттернам",
+        ["Navigator.Toggle"] = "Паттерны",
         ["Navigator.Resize"] = "Ширина паттернов",
+        ["Browser.Resize"] = "Ширина браузера",
         ["Beat.Bars"] = "Длина паттерна в тактах",
         ["Beat.BarsUnit"] = "такт.",
         ["Beat.Delete"] = "Удалить паттерн и все его размещения · Можно отменить",

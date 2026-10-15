@@ -138,6 +138,10 @@ No shared control template, numeric minimum, palette or theme token changes acco
 The local extension disclosure is a host-owned Expander with standard ComboBox/buttons, wrapped
 caption diagnostics and local scrolling. Identity/version/purpose/state remain textual; it contributes
 no palette, template or independent icon system. Enabled pack locations join Browser's existing list.
+Compact Expander headers integrate the chevron into one continuous header surface. Its square uses
+the shared inner-control height, fits inside the header border and has only shared horizontal spacing;
+all normal/hover/pressed/disabled chevron backgrounds are clear. This applies through the Fluent
+compatibility aliases to Browser, Sample Lab and other disclosures, retaining native toggle input.
 At reduced heights, disclosure and preview have bounded local scroll areas so the sound list remains
 reachable; at ordinary heights preview retains its established controls. This adds no shared-style
 or field-alignment exception. R6 uses metadata labels only, not a generic contributed style registry.
@@ -186,6 +190,12 @@ Pattern cards use up to two wrapped name lines with ellipsis beyond that, a full
 and a continuously resizable navigator. Its focusable boundary uses shared spacing/border/accent
 roles; width limits and collapse behavior are workspace composition geometry. Selection styling and rhythm thumbnails still use the common
 Button/material/channel roles; editor menus use the standard ContextMenu rather than a private popup.
+Browser and Patterns use the same `SidePanelHost` clipped surface and focusable boundary, with shared
+spacing, border and accent resources. Static caption rows use the common control height, never window
+chrome. Original `HostIcons.Patterns` phrase cards and `HostIcons.Browser` folder/sound vectors share
+the rail's stroke/foreground family; active state means visible for these two toggles. Minimum-content
+widths, near-edge collapse and independent ordered allocation belong to
+[Workspace](WORKSPACE.md#shared-left-panel-zone), not a control-template exception.
 
 | Component                 | Default / supported classes                                                                  | Guidance                                                                                                                                                                                                          |
 |---------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

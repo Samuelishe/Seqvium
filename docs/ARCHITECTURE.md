@@ -52,6 +52,21 @@ above retain those owners; musical semantics remain with [Sample workflow](SAMPL
 
 ## Implemented Browser composition
 
+`LeftPanelZone` composes an ordered collection of retained `SidePanelHost` controls between the rail
+and musical workspace. The zone owns ordering, space allocation and reduced-window fitting; each host
+owns one captured right-boundary draft, minimum-content clipping, near-edge collapse and usable-width
+restoration. Following panels shift with layout; they do not share a resize target. New first-party
+sidebars must reuse this path rather than implement independent drag/collapse policies. The bounded
+collection is a concrete Browser/Patterns composition, not a general docking service.
+
+Browser remains a workspace capability for visibility, activation, keyboard traversal and joined
+content lifetime, marked `PaneDefinition.IsSidebar`. `WorkspaceHost` excludes sidebars from its canvas,
+shelf and musical dock arbitration and delegates their focus to the zone. Old layout fields remain
+readable; optional `navigation`/`browserPanel` placements retain widths outside music/Undo. Browser
+content is created lazily and disposed by the zone after MainWindow's existing pending-work join.
+Sidebar visibility survives empty/music layout transitions; document replacement still owns stale
+Browser actions and audition cancellation. [Workspace](WORKSPACE.md#shared-left-panel-zone) owns gestures.
+
 Desktop's retained Browser owns only navigation/list/selection and bounded worker directory cursors.
 It does not decode entire folders or infer resource identity from paths/bytes. `DesktopWorkflow` captures
 resource authority on its owner; workers inspect/decode one selected source. External normalization

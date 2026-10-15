@@ -7,12 +7,14 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.8.0001**, SEQ-WORKSPACE-THEME-NAV. Theme changes invalidate retained custom
-drawings, including Pattern/Part thumbnails, Gain, Playlist and Piano. Pattern navigation has a
-continuous right-edge resize, minimum-width collapse and rail restoration at the remembered width.
-Preferred width/collapse persist in the independent workspace file; compact auto-hide and Browser
-handoff preserve that preference. [Workspace](WORKSPACE.md#r5-f1-retained-step-sequencer) owns behavior.
-This is one BUILD for interface repairs/refinements; project reader 1.5 and musical capabilities remain.
+Product alpha **0.1.8.0002**, SEQ-LEFT-PANELS. An ordered shared left zone places rail, Browser,
+Patterns and musical workspace side by side. Each right boundary resizes only its left panel;
+content reflows, then clips, and collapses only near the edge. Independent rail toggles restore the
+last usable width. Sidebar icons form a separate top group. Reduced windows fit both panels without
+changing preferences, and New/Open retain sidebar visibility. Optional compatible workspace fields
+store usable/clipped widths outside project/history. [Workspace](WORKSPACE.md#shared-left-panel-zone)
+owns behavior. This is one BUILD for interface refinement; reader 1.5 and musical capabilities remain.
+Theme changes continue to invalidate retained custom drawings without replacing their controls.
 
 The optional default-enabled Percussion Lab
 provides useful Kick/Clap generation, real recipe variations/locks and a twelve-candidate host history.
@@ -109,15 +111,21 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2: **SEQ-WORKSPACE-THEME-NAV, 2026-10-15**. Affected Release test-project build and
-its production/tool references: zero warnings/errors; **118/118 focused tests** pass, zero skips,
-one thread (**17.434 s** CLI). Eight new layout cases cover optional-field compatibility, width/collapse
-roundtrip and malformed-file preservation. Actual Windows mouse resize/collapse/reopen, routed
-cancel/reversal/focus/compact/Browser handoff and persisted layout pass. Eight compositor pixel checks
-before explicit bitmap rendering confirm repeated theme switches in RU/EN without thumbnail replacement
-or musical/history edits. Empty/populated ordinary/reduced review, component catalog and field matrix
-pass; wider platform/DPI and subjective acceptance are not established. Completed evidence and
-commands are in the [work log](archive/WORK_LOG.md#seq-workspace-theme-nav--2026-10-15).
+Latest L0/L1/L2: **SEQ-LEFT-PANELS, 2026-10-15**. Affected Release test-project build and its
+production/tool references: zero warnings/errors; **260/260 focused tests** pass, zero skips,
+one thread (19.270 s), including 75 ProjectStats cases. Eight added layout cases cover independent usable/clipped widths,
+malformed-file
+preservation and Browser separation from musical docks/empty layout. Actual Windows mouse checks
+cover both boundaries, independent collapse/reopen, neighbour-width stability and ordered displacement
+at 640×480/900/1400 DIP. Routed cancellation/reversal/keyboard/focus/layout checks, RU/EN Dark/Light
+empty/populated review, retained-theme compositor checks, component catalog and field matrix pass.
+Browser discovery/acceptance/history/portable Save/Open also passes in the real routed window.
+Compact disclosure chevrons remain inside one header surface in both themes; current rendered
+catalog fixtures check three widths and collapsed/expanded geometry. ProjectStats completion now
+refreshes the ignored root reports and requires an inspected compact summary in agent handoffs.
+This is focused verification, not L3, physical audio, other-platform/DPI or subjective acceptance.
+Commands, observations and bounded native refusals belong to the
+[work log](archive/WORK_LOG.md#seq-left-panels--2026-10-15).
 
 Latest L3: **SEQ-R7-SAMPLE-LAB-V1, 2026-10-15**. Full Release solution build: zero warnings/errors;
 **1341/1341 tests pass**, zero skips, one test thread (**62.326 s** CLI summary). Numerical tests cover
@@ -138,7 +146,7 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **1**. This risk-selected L3 covers prepared audition,
+Completed repository tasks since this L3: **2**. This risk-selected L3 covers prepared audition,
 extension/document/media lifecycle and resets the cadence. No broader platform, aesthetic, pressure or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light

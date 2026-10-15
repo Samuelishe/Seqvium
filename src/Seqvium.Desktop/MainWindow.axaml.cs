@@ -33,13 +33,13 @@ internal sealed partial class MainWindow : Window
     private bool _shutdownComplete;
     private MainWindowPlacement? _normalWindow;
     private WorkspaceLayout? _musicLayout;
-    private readonly PatternNavigationHost _navigation;
+    private readonly LeftPanelZone _navigation;
 
     private bool HasMusicalContent => !_workflow.State.Snapshot.State.Patterns.IsEmpty ||
                                       !_workflow.State.Snapshot.State.AudioClips.IsEmpty;
 
     private WorkspaceLayout CaptureLayout() => (!HasMusicalContent && _musicLayout is { } music
-        ? music : _workspace.State.Capture()) with
+        ? KeepSidebarVisibility(music) : _workspace.State.Capture()) with
     {
         Window = _normalWindow is { } normal
             ? normal with
@@ -48,7 +48,14 @@ internal sealed partial class MainWindow : Window
                             WindowState == WindowState.Minimized && normal.Maximized
             }
             : null,
-        Navigation = _navigation.Placement
+        Navigation = _navigation.Placement,
+        BrowserPanel = _navigation.Browser.Placement
+    };
+
+    private WorkspaceLayout KeepSidebarVisibility(WorkspaceLayout layout) => layout with
+    {
+        Panes = [.. layout.Panes.Select(pane => WorkspaceState.Definition(pane.InstanceId).IsSidebar
+            ? _workspace.State.Get(pane.InstanceId) : pane)]
     };
 
     private void RememberWindow()
@@ -108,7 +115,7 @@ internal sealed partial class MainWindow : Window
         WorkspaceRegion.Child = _workspace;
         var navigation = new WorkspaceRail(session, _workspace, OpenPane);
         var patterns = new PatternNavigator(session, _workflow, _workspace, OpenPatternEditorAsync);
-        _navigation = new(this, session, _workspace, navigation, patterns, layout.Layout?.Navigation, visible =>
+        _navigation = new(this, session, _workspace, navigation, patterns, layout.Layout, visible =>
         {
             _workflowControls.OccurrenceShownElsewhere = visible;
             _workflowControls.Refresh();
@@ -240,7 +247,8 @@ internal sealed partial class MainWindow : Window
         }
 
         if (!_closing && args.Key == Key.W && args.KeyModifiers == KeyModifiers.Control &&
-            _workspace.IsKeyboardFocusWithin && _workspace.State.ActivePaneId is { } active)
+            (_workspace.IsKeyboardFocusWithin || _navigation.Browser.IsKeyboardFocusWithin) &&
+            _workspace.State.ActivePaneId is { } active)
         {
             _workspace.Action(active, () => _workspace.State.Hide(active));
             args.Handled = true;
@@ -440,7 +448,7 @@ internal sealed partial class MainWindow : Window
     {
         _workspace.CancelGestures();
         if (!HasMusicalContent) _workspace.State.StartEmptyDocument();
-        else if (_musicLayout is { } layout) _workspace.State.RestoreLayout(layout);
+        else if (_musicLayout is { } layout) _workspace.State.RestoreLayout(KeepSidebarVisibility(layout));
         else if (_workflow.State.SongMode) _workspace.State.ArrangeMusic();
         else _workspace.Open(WorkspaceState.BeatId);
         _workspace.Commit();

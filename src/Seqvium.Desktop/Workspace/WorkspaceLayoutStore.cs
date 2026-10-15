@@ -137,21 +137,10 @@ public sealed class WorkspaceLayoutStore(string path)
                     else window = new((int)x, (int)y, windowWidth, windowHeight, maximized);
                 }
             }
-            PatternNavigationPlacement? navigation = null;
-            if (root.TryGetProperty("navigation", out var savedNavigation) && savedNavigation.ValueKind != JsonValueKind.Null)
-            {
-                if (savedNavigation.ValueKind != JsonValueKind.Object) fallback = true;
-                else
-                {
-                    double navigationWidth = Number(savedNavigation, "width", 240, ref fallback);
-                    if (savedNavigation.TryGetProperty("collapsed", out var collapsed) &&
-                        collapsed.ValueKind is JsonValueKind.True or JsonValueKind.False &&
-                        new PatternNavigationPlacement(navigationWidth).IsValid)
-                        navigation = new(navigationWidth, collapsed.GetBoolean());
-                    else fallback = true;
-                }
-            }
-            return new(new(width, height, active, entries.ToImmutable()) { Window = window, Navigation = navigation }, fallback);
+            var navigation = ReadPanel(root, "navigation", 240, ref fallback);
+            var browser = ReadPanel(root, "browserPanel", 320, ref fallback);
+            return new(new(width, height, active, entries.ToImmutable())
+                { Window = window, Navigation = navigation, BrowserPanel = browser }, fallback);
         }
         catch (FileNotFoundException)
         {
@@ -165,6 +154,25 @@ public sealed class WorkspaceLayoutStore(string path)
         {
             return new(null, true);
         }
+    }
+
+    private static object? PanelJson(SidePanelPlacement? panel) => panel is null ? null :
+        new { width = panel.Width, collapsed = panel.Collapsed, visibleWidth = panel.VisibleWidth };
+
+    private static SidePanelPlacement? ReadPanel(JsonElement root, string key, double defaultWidth, ref bool fallback)
+    {
+        if (!root.TryGetProperty(key, out var saved) || saved.ValueKind == JsonValueKind.Null) return null;
+        if (saved.ValueKind == JsonValueKind.Object && saved.TryGetProperty("collapsed", out var collapsed) &&
+            collapsed.ValueKind is JsonValueKind.True or JsonValueKind.False)
+        {
+            double width = Number(saved, "width", defaultWidth, ref fallback);
+            double? visibleWidth = saved.TryGetProperty("visibleWidth", out var visible) && visible.ValueKind != JsonValueKind.Null
+                ? Number(saved, "visibleWidth", 0, ref fallback) : null;
+            var result = new SidePanelPlacement(width, collapsed.GetBoolean()) { VisibleWidth = visibleWidth };
+            if (result.IsValid) return result;
+        }
+        fallback = true;
+        return null;
     }
 
     public async Task<bool> SaveAsync(WorkspaceLayout layout)
@@ -189,7 +197,7 @@ public sealed class WorkspaceLayoutStore(string path)
         {
             if (layout.Panes.IsDefault || layout.Panes.Length > WorkspaceState.Definitions.Length ||
                 !double.IsFinite(layout.Width) || !double.IsFinite(layout.Height)) return false;
-            if (layout.Navigation is { IsValid: false }) return false;
+            if (layout.Navigation is { IsValid: false } || layout.BrowserPanel is { IsValid: false }) return false;
             if (layout.Window is { } placement && (!double.IsFinite(placement.Width) || !double.IsFinite(placement.Height) ||
                 placement.Width <= 0 || placement.Height <= 0 || placement.Width > 100000 || placement.Height > 100000)) return false;
             var bytes = JsonSerializer.SerializeToUtf8Bytes(new
@@ -197,7 +205,7 @@ public sealed class WorkspaceLayoutStore(string path)
                 version = 1, width = layout.Width, height = layout.Height, activePaneId = layout.ActivePaneId,
                 window = layout.Window is { } window ? new { x = window.X, y = window.Y, width = window.Width,
                     height = window.Height, maximized = window.Maximized } : null,
-                navigation = layout.Navigation is { } navigation ? new { width = navigation.Width, collapsed = navigation.Collapsed } : null,
+                navigation = PanelJson(layout.Navigation), browserPanel = PanelJson(layout.BrowserPanel),
                 panes = layout.Panes.Select(pane => new
                 {
                     instanceId = pane.InstanceId, typeId = pane.TypeId,

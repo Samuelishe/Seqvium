@@ -26,7 +26,10 @@ public sealed record PaneDefinition(
     string TitleKey,
     double MinimumWidth,
     double MinimumHeight,
-    PaneBounds DefaultBounds);
+    PaneBounds DefaultBounds)
+{
+    public bool IsSidebar { get; init; }
+}
 
 public sealed record PanePlacement(
     string InstanceId,
@@ -47,15 +50,19 @@ public sealed record WorkspaceLayout(
     ImmutableArray<PanePlacement> Panes)
 {
     public MainWindowPlacement? Window { get; init; }
-    public PatternNavigationPlacement? Navigation { get; init; }
+    public SidePanelPlacement? Navigation { get; init; }
+    public SidePanelPlacement? BrowserPanel { get; init; }
 }
 
 public sealed record MainWindowPlacement(int X, int Y, double Width, double Height, bool Maximized);
 
-public sealed record PatternNavigationPlacement(double Width = 240, bool Collapsed = false)
+public sealed record SidePanelPlacement(double Width = 240, bool Collapsed = false)
 {
-    internal const double MinimumWidth = 180, MaximumWidth = 480, CollapseWidth = MinimumWidth;
-    internal bool IsValid => double.IsFinite(Width) && Width is >= MinimumWidth and <= MaximumWidth;
+    internal const double MinimumWidth = 180, MaximumWidth = 480, CollapseWidth = 24;
+    // A partly pushed-in panel can remain clipped, while reopening restores its last usable width.
+    public double? VisibleWidth { get; init; }
+    internal bool IsValid => double.IsFinite(Width) && Width is >= MinimumWidth and <= MaximumWidth &&
+        (VisibleWidth is null || double.IsFinite(VisibleWidth.Value) && VisibleWidth is > CollapseWidth and <= MaximumWidth);
 }
 
 /// <summary>
@@ -85,7 +92,7 @@ public sealed class WorkspaceState : IDisposable
         new(ArrangementId, "arrangement", "Pane.Arrangement", 360, 290, new(32, 36, 1040, 480)),
         new(PianoId, "piano-roll", "Pane.Piano", 360, 320, new(42, 48, 1080, 580)),
         new(MixerId, "mixer", "Pane.Mixer", 360, 280, new(24, 420, 1008, 408)),
-        new(BrowserId, "sample-browser", "Pane.Browser", 290, 460, new(0, 0, 320, 740)),
+        new(BrowserId, "sample-browser", "Pane.Browser", 260, 460, new(0, 0, 320, 740)) { IsSidebar = true },
         new(SampleLabId, "sample-lab", "Pane.SampleLab", 390, 440, new(100, 40, 920, 660))
     ];
 
@@ -94,6 +101,7 @@ public sealed class WorkspaceState : IDisposable
             definition.DefaultBounds, definition.InstanceId == BrowserId ? PaneDock.Left : PaneDock.Floating, true)).ToList();
 
     private WorkspaceLayout? _restored;
+    internal bool HasPendingLayout => _restored is not null;
     public double Width { get; private set; } = 1;
     public double Height { get; private set; } = 1;
     public string? ActivePaneId { get; private set; }
@@ -137,7 +145,8 @@ public sealed class WorkspaceState : IDisposable
                     Y = bounds.Y * height / Math.Max(1, layout.Height)
                 };
                 var dock = saved.AllowDocking ? saved.Dock : PaneDock.Floating;
-                if (saved.Visibility == PaneVisibility.Visible && dock != PaneDock.Floating && entries.Any(item =>
+                if (!definition.IsSidebar && saved.Visibility == PaneVisibility.Visible && dock != PaneDock.Floating && entries.Any(item =>
+                        !Definition(item.InstanceId).IsSidebar &&
                         item.Dock == dock &&
                         item.Visibility == PaneVisibility.Visible))
                     dock = PaneDock.Floating;
@@ -208,7 +217,7 @@ public sealed class WorkspaceState : IDisposable
     public void StartEmptyDocument()
     {
         CheckAvailable();
-        foreach (var pane in Panes) Hide(pane.InstanceId);
+        foreach (var pane in Panes.Where(pane => !Definition(pane.InstanceId).IsSidebar)) Hide(pane.InstanceId);
         Open(BeatId);
         Dock(BeatId, PaneDock.Floating);
         SetBounds(BeatId, new(24, 24, Math.Min(960, Width - 48), Math.Min(390, Height - 48)));
@@ -333,10 +342,11 @@ public sealed class WorkspaceState : IDisposable
 
     private void ResolveDockConflict(string id)
     {
+        if (Definition(id).IsSidebar) return;
         var requested = Get(id);
         if (requested.Dock == PaneDock.Floating) return;
         for (var index = 0; index < _panes.Count; index++)
-            if (_panes[index].InstanceId != id && _panes[index].Dock == requested.Dock &&
+            if (_panes[index].InstanceId != id && !Definition(_panes[index].InstanceId).IsSidebar && _panes[index].Dock == requested.Dock &&
                 _panes[index].Visibility == PaneVisibility.Visible)
                 _panes[index] = _panes[index] with { Dock = PaneDock.Floating };
     }

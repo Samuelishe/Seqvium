@@ -97,6 +97,11 @@ Report the actual scope; focused verification is never a full regression pass.
 Every first-party UI task must read DESIGN_SYSTEM and use its shared tokens/components, including
 DrawingContext code. Shared-style changes require the component catalog and rendered field-alignment
 checks; update the implementation when the visual contract changes.
+First-party left sidebars must use the ordered LeftPanelZone/SidePanelHost composition under
+[Workspace](docs/WORKSPACE.md#shared-left-panel-zone). Reuse its right-boundary ownership, minimum-content
+clipping, near-edge collapse, independent visibility/width restoration and layout persistence; do not
+add per-panel resize policies, overlay windows or misleading draggable captions. Exercise neighbouring
+panels together, cancellation/reversal and reduced-window mouse input after changes to this zone.
 Before designing or changing any first-party UI, inspect relevant actual screenshots in the local
 reference library linked by [UI design](docs/UI_DESIGN.md#reference-library-and-next-editor-direction).
 If suitable local screenshots are unavailable, search the web and inspect real product interfaces
@@ -122,3 +127,9 @@ Do not use broad Git cleanup/history/index mutations to achieve cleanliness.
 When a task creates or modifies tracked files, always include one concise suggested English commit
 message describing the actual outcome. Begin with the stage/milestone ID when applicable. If no tracked
 files changed, no message is needed. A suggested message never authorizes commit or push.
+At the end of repository-changing work, refresh the ignored root PROJECT_STATS.md and PROJECT_STATS.json
+with the current ProjectStats executable, replacing the previous generated files. Read and apply
+[ProjectStats](docs/PROJECT_STATS.md#completion-workflow): inspect corpus/metadata, unreadable counts and
+advisories; link the Markdown report and summarize meaningful size/concentration findings in the final
+agent response. Keep measured structural counts separate from executed tests and do not treat size
+advisories as permission for unrelated refactoring. Rebuild the tool only when missing or changed.

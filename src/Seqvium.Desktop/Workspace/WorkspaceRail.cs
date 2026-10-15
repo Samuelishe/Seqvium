@@ -15,6 +15,7 @@ internal sealed class WorkspaceRail : Border, IDisposable
     private readonly WorkspaceHost _host;
     private readonly Dictionary<string, Button> _buttons = [];
     internal Button NavigationToggle { get; } = new() { Classes = { "rail" } };
+    internal Button BrowserToggle => _buttons[WorkspaceState.BrowserId];
 
     internal WorkspaceRail(ShellSession shell, WorkspaceHost host, Action<string>? openPane = null)
     {
@@ -26,9 +27,15 @@ internal sealed class WorkspaceRail : Border, IDisposable
         BorderThickness = new(0, 0, 1, 0);
         var body = new StackPanel { Margin = new(7, 10), Classes = { "spaced" } };
         Child = body;
-        NavigationToggle.Content = HostIcons.Create("More", NavigationToggle, 20);
+        var sidebars = new StackPanel { Classes = { "tight" } };
+        AutomationProperties.SetAutomationId(sidebars, "Sidebar.Toggles");
+        body.Children.Add(sidebars);
+        var divider = new Border { Margin = new(3, 4, 3, 4) };
+        divider.Bind(HeightProperty, this.GetResourceObservable("Border.Width"));
+        divider.Bind(BackgroundProperty, this.GetResourceObservable("Border.Default"));
+        body.Children.Add(divider);
+        NavigationToggle.Content = HostIcons.Create("Patterns", NavigationToggle, 20);
         AutomationProperties.SetAutomationId(NavigationToggle, "Navigator.Toggle");
-        body.Children.Add(NavigationToggle);
         foreach (var (id, icon) in new[]
                  {
                      (WorkspaceState.BrowserId, "Browser"),
@@ -45,10 +52,16 @@ internal sealed class WorkspaceRail : Border, IDisposable
             AutomationProperties.SetAutomationId(button, id + ".open");
             button.Click += (_, _) =>
             {
-                if (openPane is not null) openPane(id);
+                if (id == WorkspaceState.BrowserId && host.State.Get(id).Visibility == PaneVisibility.Visible)
+                    host.Action(id, () => host.State.Collapse(id), false);
+                else if (openPane is not null) openPane(id);
                 else host.Open(id);
             };
-            body.Children.Add(button);
+            if (id == WorkspaceState.BrowserId)
+            {
+                sidebars.Children.Add(button); sidebars.Children.Add(NavigationToggle);
+            }
+            else body.Children.Add(button);
             _buttons.Add(id, button);
         }
 
@@ -68,7 +81,8 @@ internal sealed class WorkspaceRail : Border, IDisposable
             string label = _shell[WorkspaceState.Definition(id).TitleKey];
             AutomationProperties.SetName(button, label);
             ToolTip.SetTip(button, label);
-            button.Classes.Set("active", _host.State.ActivePaneId == id);
+            button.Classes.Set("active", id == WorkspaceState.BrowserId
+                ? _host.State.Get(id).Visibility == PaneVisibility.Visible : _host.State.ActivePaneId == id);
         }
     }
 

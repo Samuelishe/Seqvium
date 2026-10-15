@@ -9,11 +9,15 @@ dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll the
 Uses isolated preferences/layout and opens the supplied project without writing it. Empty RU/EN
 Dark/Light ordinary/reduced captures precede the populated review. Routed pointer checks cover continuous
 card/thumbnail resizing, collapse/reversal/restore, Escape/capture loss, upper-bound reversal, compact
-opening, Browser handoff, keyboard/focus and actual user-layout persistence. `native` adds guarded
-Windows mouse resize/collapse/rail reopening and exact compositor thumbnail-background checks across
+fitting, independent Browser/Patterns coexistence, clipping, keyboard/focus and user-layout persistence.
+Both right boundaries are checked for independent resize/collapse/restore and exact neighbouring
+workspace displacement, including 640×480 and a 900-DIP neighbour-width regression. `native` adds guarded
+Windows mouse resize/collapse/rail reopening for both panels and exact compositor thumbnail-background checks across
 repeated theme switches. Screen pixels are sampled before explicit bitmap rendering can refresh a
 stale scene. Omit `native` for routed/rendered evidence only. Retained control identity, canonical
 snapshot and Undo remain unchanged; no physical output or cross-platform/DPI acceptance is claimed.
+`left-panels.json` records completed sidebar checks before the separate repeated-theme matrix, so a
+later foreground refusal does not erase their bounded evidence.
 
 ## Sample Lab and UI density
 

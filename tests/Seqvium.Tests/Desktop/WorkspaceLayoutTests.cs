@@ -9,6 +9,59 @@ namespace Seqvium.Tests;
 public sealed class WorkspaceLayoutTests
 {
     [Theory]
+    [InlineData(false, 90d)]
+    [InlineData(true, null)]
+    public async Task SidebarsRememberIndependentComfortableAndClippedWidths(bool collapsed, double? clipped)
+    {
+        using var directory = new TemporaryDirectory();
+        using var state = new WorkspaceState();
+        state.Reflow(1000, 700); state.Open(WorkspaceState.BrowserId);
+        var navigation = new SidePanelPlacement(240, collapsed) { VisibleWidth = clipped };
+        var browser = new SidePanelPlacement(360, false) { VisibleWidth = 120 };
+        var store = new WorkspaceLayoutStore(directory.File("layout.json"));
+        Assert.True(await store.SaveAsync(state.Capture() with { Navigation = navigation, BrowserPanel = browser }));
+        var saved = await store.LoadAsync();
+        Assert.False(saved.UsedFallback);
+        Assert.Equal(navigation, saved.Layout!.Navigation);
+        Assert.Equal(browser, saved.Layout.BrowserPanel);
+    }
+
+    [Theory]
+    [InlineData("{\"width\":360,\"collapsed\":false,\"visibleWidth\":24}")]
+    [InlineData("{\"width\":360,\"collapsed\":false,\"visibleWidth\":481}")]
+    [InlineData("{\"width\":360,\"collapsed\":false,\"visibleWidth\":\"bad\"}")]
+    [InlineData("[]")]
+    public async Task DamagedSidebarGeometryPreservesOriginal(string browser)
+    {
+        using var directory = new TemporaryDirectory();
+        string path = directory.File("layout.json");
+        string original = "{\"version\":1,\"width\":1100,\"height\":700,\"panes\":[],\"browserPanel\":" + browser + "}";
+        await File.WriteAllTextAsync(path, original, TestContext.Current.CancellationToken);
+        var store = new WorkspaceLayoutStore(path);
+        var saved = await store.LoadAsync();
+        Assert.True(saved.UsedFallback);
+        Assert.False(await store.SaveAsync(saved.Layout!));
+        Assert.Equal(original, await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void BrowserVisibilityDoesNotEvictMusicalPaneFromItsDock(bool browserFirst)
+    {
+        using var state = new WorkspaceState(); state.Reflow(1000, 700);
+        if (browserFirst) state.Open(WorkspaceState.BrowserId);
+        state.Open(WorkspaceState.BeatId); state.Dock(WorkspaceState.BeatId, PaneDock.Left);
+        if (!browserFirst) state.Open(WorkspaceState.BrowserId);
+        Assert.Equal(PaneDock.Left, state.Get(WorkspaceState.BeatId).Dock);
+        using var restored = new WorkspaceState(state.Capture()); restored.Reflow(640, 480);
+        Assert.Equal(PaneDock.Left, restored.Get(WorkspaceState.BeatId).Dock);
+        Assert.Equal(PaneVisibility.Visible, restored.Get(WorkspaceState.BrowserId).Visibility);
+        restored.StartEmptyDocument();
+        Assert.Equal(PaneVisibility.Visible, restored.Get(WorkspaceState.BrowserId).Visibility);
+    }
+
+    [Theory]
     [InlineData(180, false)]
     [InlineData(320, false)]
     [InlineData(480, true)]
@@ -17,7 +70,7 @@ public sealed class WorkspaceLayoutTests
         using var directory = new TemporaryDirectory();
         using var workspace = new WorkspaceState();
         workspace.Reflow(1100, 700);
-        var expected = new PatternNavigationPlacement(width, collapsed);
+        var expected = new SidePanelPlacement(width, collapsed);
         var store = new WorkspaceLayoutStore(directory.File("layout.json"));
         Assert.True(await store.SaveAsync(workspace.Capture() with { Navigation = expected }));
         var loaded = await store.LoadAsync();

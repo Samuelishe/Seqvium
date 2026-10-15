@@ -66,13 +66,18 @@ internal sealed class HostFluentResources
         foreach (var prefix in new[]
                  {
                      "Button", "ToggleButton", "ComboBox", "TextControlButton", "MenuFlyoutItem", "ScrollBarButton",
-                     "ExpanderHeader", "ExpanderChevron"
+                     "ExpanderHeader"
                  })
         {
             States(prefix + "Background", "Surface.Raised", "Surface.Hover", "Surface.Pressed", "Surface.Background");
             States(prefix + "BorderBrush", "Border.Default", "Accent.Action", "Accent.Action", "Border.Default");
             States(prefix + "Foreground", "Text.Primary", "Text.Primary", "Text.Primary", "State.Unavailable");
         }
+
+        // The chevron is part of the compact header, not a second raised button inside it.
+        States("ExpanderChevronBackground", "Material.Clear", "Material.Clear", "Material.Clear", "Material.Clear");
+        States("ExpanderChevronBorderBrush", "Material.Clear", "Material.Clear", "Material.Clear", "Material.Clear");
+        States("ExpanderChevronForeground", "Text.Primary", "Text.Primary", "Text.Primary", "State.Unavailable");
 
         Add("Surface.Selected", "ToggleButtonBackgroundChecked", "ToggleButtonBackgroundCheckedPointerOver",
             "ToggleButtonBackgroundCheckedPressed");
@@ -134,7 +139,9 @@ internal sealed class HostFluentResources
         Add("Control.Corner", "ControlCornerRadius", "OverlayCornerRadius");
         Add("Control.Height", "ComboBoxMinHeight", "MenuFlyoutThemeMinHeight");
         Add("Control.InputHeight", "TextControlThemeMinHeight");
-        Add("Pane.HeaderHeight", "ExpanderMinHeight", "ExpanderChevronButtonSize");
+        Add("Pane.HeaderHeight", "ExpanderMinHeight");
+        Add("Control.NumericInnerHeight", "ExpanderChevronButtonSize");
+        Add("Padding.Control", "ExpanderChevronMargin");
         Add("Level.Height", "SliderHorizontalHeight", "SliderVerticalWidth");
         Add("Level.TrackHeight", "SliderTrackThemeHeight");
         Add("Level.ThumbSize", "SliderHorizontalThumbWidth", "SliderHorizontalThumbHeight", "SliderVerticalThumbWidth",

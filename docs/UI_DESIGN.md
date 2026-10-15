@@ -275,6 +275,15 @@ Inspector/Appearance use shared controls; scrolling and localized tooltips prese
 The left navigation rail opens actual Rack, Graph, Editor, Inspector and Appearance surfaces.
 Only implemented actions are offered. User-restored layout remains authoritative.
 
+Browser and Patterns are adjacent static sidebars under the
+[shared left-zone contract](WORKSPACE.md#shared-left-panel-zone), rather than movable pane windows.
+Their folder/sound and phrase-card icons form the rail's top group, separated from musical-window
+actions by space and a quiet shared boundary. Group order follows Browser then Patterns. Active
+styling communicates independent visibility. Captions remain quiet; each exposed right edge is the
+only resize affordance. Below usable content widths, clipping communicates pushing the panel inward
+without crushing controls or closing early. The owner screenshots and inspected local Ableton Browser
+and Bitwig references support this spatial hierarchy; no reference graphics are distributed.
+
 ## Implemented R5-F1 Channel Rack composition
 
 A pristine layout opens Rack and Playlist in the adaptive music composition, without inserting music. At wider

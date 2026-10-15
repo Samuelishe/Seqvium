@@ -2017,3 +2017,52 @@ review and ordinary rolling retention; permanent helpers remain in tools/tests. 
 superseded by `final` (native), `final-matrix-routed`, `catalog`, `fields` and `all-panes`; no exceptional
 pin is introduced. Task-owned parent-directory console logs were removed after their results were
 reconciled with run receipts; reusable helpers and build/runtime resources remain.
+
+## SEQ-LEFT-PANELS — 2026-10-15
+
+Completed one BUILD, 0.1.8.0001 → 0.1.8.0002. Browser and Patterns occupy an ordered left zone,
+sharing captured right-boundary resize, readable-minimum clipping, 24-DIP collapse, reversal/cancel
+and independent usable-width restoration. Optional compatible user-layout fields retain clipped and
+usable widths outside project history. Browser retains lazy content, discovery, preview, acceptance,
+keyboard focus/lifecycle and joined shutdown. Musical docks are separate. New/Open retain sidebar
+visibility. Rail buttons form a separate Browser/Patterns group with original folder/sound and phrase
+card vectors. Shared compact disclosures no longer paint an oversized raised chevron tile. Current
+owners and reader guidance were updated together; AGENTS requires future sidebar reuse and end-of-task
+ProjectStats report refresh/inspection with a compact final-response summary.
+
+L0/L1/L2: affected Release Tests project and production/tool references build with zero warnings/errors;
+260/260 focused cases pass, zero skips, one thread (19.270 s). Filters select *Workspace*,
+*SampleBrowserTests, *PatternEditorNavigationTests, *Design*, *Presentation*, *ProductVersionTests and
+*ProjectStats*. Eight new layout cases cover independent clipped/usable width roundtrip, damaged-file
+write refusal and Browser separation from musical docks/empty layout. This is not another L3; cadence
+is two completed tasks since the retained R7 L3. No physical audio or other-platform/DPI acceptance.
+
+VisualCheck theme-navigation used isolated preferences/layout and the official demo without saving it.
+Actual Windows mouse checks in native-grouped, final-review, input-reviewed and repeat-native covered
+both boundaries, independent rail collapse/reopen, seam displacement, neighbour width at 900 DIP and
+coexistence at 640×480/900/1400. Four additional clipped-close/reopen pairs with exact single-click
+delivery checks passed. Routed checks additionally covered Escape, capture loss, upper/lower reversal,
+neighbour-opening cancellation, keyboard rendered/saved width, focus and workspace-file persistence.
+Eight repeated RU/EN Dark/Light compositor checks, empty/populated ordinary/reduced review, final
+shared-disclosure catalog at three widths and the rendered field-alignment matrix passed. Browser
+route passed discovery/search/corrupt source/folder actions, real waveform, Rack/Playlist acceptance,
+Undo and portable Save/Open after removing original files. Native input and routed fixtures remain
+separate; final disclosure expansion/render was routed after later startup foreground refusals.
+
+Several native attempts refused input while Rider covered the window. One earlier native trial ended
+with Patterns still collapsed after a close/reopen pair; a debugger-attached routed run reached
+ThemeNavigationCheck line 184 with the expected 195-DIP usable width and restored content, and passed.
+The ordinary run configuration did not support argument overrides, so the debugger attached only to a
+task-owned host. Native reproductions with delivery counting and repeated pairs passed; no product
+root cause is claimed for the earlier unmatched attempt. All agent breakpoints were removed and the
+pre-existing exception breakpoint state was retained. Final actual renders include the owner's
+chevron follow-up; broader subjective and native-input availability remain bounded.
+
+The owner also requested artifact cleanup and refreshed ProjectStats. A safe inventory found about
+10 GB, primarily nine obsolete isolated build trees with repeated native debug libraries. Automatic
+approval review rejected recursive deletion with blocked-by-policy and no further reason. The
+owner-authorized fallback preserves non-build files, musical study projects/media, reusable local
+scripts and exceptional pressure measurements in a verified external ZIP; reparse targets are not
+traversed. Originals remain available for the owner to delete manually. The generated root reports
+are ignored and replaced after final edits; measured structural snapshots remain in those reports,
+not canonical documents. No staging/index/history mutation, commit, push or tag was performed.
