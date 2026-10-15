@@ -145,6 +145,14 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         DragDrop.SetAllowDrop(this, true);
         AddHandler(DragDrop.DragOverEvent, (_, e) =>
         {
+            if (e.DataTransfer.TryGetValue(BrowserPaneContent.DragFormat) is { } source)
+            {
+                e.DragEffects = source.SamplerCompatible && !_workflow.State.Busy && PendingCommand.IsCompleted
+                    ? DragDropEffects.Copy : DragDropEffects.None;
+                Classes.Set("dropReady", e.DragEffects == DragDropEffects.Copy);
+                e.Handled = true;
+                return;
+            }
             var files = e.DataTransfer.TryGetFiles()?.ToArray();
             e.DragEffects = _add.IsEnabled && PendingCommand.IsCompleted && files is { Length: 1 } &&
                             files[0].TryGetLocalPath() is { } path && Path.GetExtension(path)
@@ -158,6 +166,16 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         AddHandler(DragDrop.DropEvent, async (_, e) =>
         {
             Classes.Remove("dropReady");
+            if (e.DataTransfer.TryGetValue(BrowserPaneContent.DragFormat) is { } source)
+            {
+                e.Handled = true;
+                if (_disposed || !source.SamplerCompatible || _workflow.State.Busy || !PendingCommand.IsCompleted) return;
+                var before = _workflow.State;
+                PendingCommand = _workflow.UseBrowserRackAsync(ArrangementEditBasis.From(before), before.Selected, source);
+                await PendingCommand;
+                Refresh();
+                return;
+            }
             var files = e.DataTransfer.TryGetFiles()?.ToArray();
             if (_disposed || !_add.IsEnabled || !PendingCommand.IsCompleted || _basis is not { } basis ||
                 files is not { Length: 1 } || files[0].TryGetLocalPath() is not { } path ||

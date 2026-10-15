@@ -12,6 +12,23 @@ SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed 
 offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
 output adapter; graph, presentation and permanent engine choices remain separate.
 
+## Implemented Browser composition
+
+Desktop's retained Browser owns only navigation/list/selection and bounded worker directory cursors.
+It does not decode entire folders or infer resource identity from paths/bytes. `DesktopWorkflow` captures
+resource authority on its owner; workers inspect/decode one selected source. External normalization
+reuses `AudioFileDecode`, then `AudioMedia.ReadTemporaryWave` validates transient float PCM without
+project acceptance. `WavAudition` can borrow the existing solo renderer/output lifetime; Desktop retains
+joined disposal authority. Preview refuses while transport plays and never edits canonical state.
+
+Rack acceptance composes the existing managed WAV import or `WavResourceReuse` with a musical-use
+callback inside one document edit. `AudioResourceReuse` validates a captured accepted resource before
+one independent Audio Clip use. `AudioMedia.Decode` dispatches legacy managed WAV to `ProjectMedia`
+and normalized audio to its existing resolver, allowing reuse without conversion/copy. Existing
+resource/sound/occurrence identities, media roots, integrity/history and Save As remain canonical.
+Browser access preferences and waveform observations are outside project serialization. See
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-seq-sample-browser) for bounded product behavior.
+
 ## Implemented standalone Audio Clip boundary
 
 `AudioClip` is canonical Playlist intent, not a synthetic Pattern, Part or Rack item. Position/lane

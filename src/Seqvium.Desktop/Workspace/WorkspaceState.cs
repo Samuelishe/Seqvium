@@ -65,6 +65,7 @@ public sealed class WorkspaceState : IDisposable
     public const string ArrangementId = "arrangement.main";
     public const string PianoId = "piano-roll.main";
     public const string MixerId = "mixer.main";
+    public const string BrowserId = "sample-browser.main";
 
     public static ImmutableArray<PaneDefinition> Definitions { get; } =
     [
@@ -75,12 +76,13 @@ public sealed class WorkspaceState : IDisposable
         new(BeatId, "step-sequencer", "Pane.Beat", 360, 290, new(24, 24, 960, 390)),
         new(ArrangementId, "arrangement", "Pane.Arrangement", 360, 290, new(32, 36, 1040, 480)),
         new(PianoId, "piano-roll", "Pane.Piano", 360, 320, new(42, 48, 1080, 580)),
-        new(MixerId, "mixer", "Pane.Mixer", 360, 280, new(24, 420, 1008, 408))
+        new(MixerId, "mixer", "Pane.Mixer", 360, 280, new(24, 420, 1008, 408)),
+        new(BrowserId, "sample-browser", "Pane.Browser", 290, 460, new(0, 0, 320, 740))
     ];
 
     private readonly List<PanePlacement> _panes = Definitions.Select(definition =>
         new PanePlacement(definition.InstanceId, definition.TypeId, PaneVisibility.Hidden,
-            definition.DefaultBounds, PaneDock.Floating, true)).ToList();
+            definition.DefaultBounds, definition.InstanceId == BrowserId ? PaneDock.Left : PaneDock.Floating, true)).ToList();
 
     private WorkspaceLayout? _restored;
     public double Width { get; private set; } = 1;

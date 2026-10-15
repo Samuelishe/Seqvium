@@ -114,6 +114,7 @@ internal sealed partial class DesktopWorkflow
 
     private async Task CloseNoteAuditionAsync()
     {
+        _browserAudition?.EndLifetime();
         if (_noteSession?.OutputSampler is not null) await _noteSession.DisposeAsync();
         else if (_noteOutput is { } output)
         {
@@ -127,5 +128,7 @@ internal sealed partial class DesktopWorkflow
 
         _noteSession = null;
         _noteOutput = null;
+        _browserAudition?.Dispose();
+        _browserAudition = null;
     }
 }

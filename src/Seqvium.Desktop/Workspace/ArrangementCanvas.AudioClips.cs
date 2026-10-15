@@ -30,11 +30,12 @@ internal sealed partial class ArrangementCanvas
         DragDrop.SetAllowDrop(this, true);
         AddHandler(DragDrop.DragOverEvent, (_, e) =>
         {
+            bool browserSource = e.DataTransfer.TryGetValue(BrowserPaneContent.DragFormat) is { Directory: false };
             var files = e.DataTransfer.TryGetFiles()?.ToArray();
             var point = e.GetPosition(this);
             e.DragEffects = !_observation.Busy && point.X >= HeaderX + HeaderWidth && point.Y >= RulerY + RulerHeight &&
-                            files is { Length: > 0 } && files.All(f =>
-                                f.TryGetLocalPath() is { } path && AudioFileDecode.Supported(path))
+                            (browserSource || files is { Length: > 0 } && files.All(f =>
+                                f.TryGetLocalPath() is { } path && AudioFileDecode.Supported(path)))
                 ? DragDropEffects.Copy
                 : DragDropEffects.None;
             _dropPoint = e.DragEffects == DragDropEffects.Copy ? point : null;
@@ -48,6 +49,15 @@ internal sealed partial class ArrangementCanvas
         });
         AddHandler(DragDrop.DropEvent, async (_, e) =>
         {
+            if (e.DataTransfer.TryGetValue(BrowserPaneContent.DragFormat) is { } source)
+            {
+                var at = e.GetPosition(this);
+                _dropPoint = null; e.Handled = true;
+                if (_observation.Busy) return;
+                CommandSubmitted?.Invoke(ImportBrowserSourceAsync(source, TickAt(at.X),
+                    Math.Clamp((int)((at.Y - RulerHeight) / LaneHeight), 0, 31)));
+                return;
+            }
             var files = e.DataTransfer.TryGetFiles()?.Select(f => f.TryGetLocalPath()).ToArray();
             var point = e.GetPosition(this);
             _dropPoint = null;
@@ -58,6 +68,23 @@ internal sealed partial class ArrangementCanvas
                 Math.Clamp((int)((point.Y - RulerHeight) / LaneHeight), 0, 31)));
             await Task.CompletedTask;
         });
+    }
+
+    private async Task ImportBrowserSourceAsync(BrowserSource source, long ticks, int lane)
+    {
+        using var cancellation = new CancellationTokenSource();
+        _audioImportCancellation = cancellation;
+        try
+        {
+            if (await _workflow.UseBrowserAudioAsync(ArrangementEditBasis.From(_workflow.State), source,
+                    new(ticks), lane, cancellation.Token))
+            {
+                var clip = _workflow.State.Snapshot.State.AudioClips.Last();
+                _audioSelection.Clear(); _audioSelection.Add(clip.Id); SelectedAudio = clip.Id;
+                SelectionChanged?.Invoke(); InvalidateVisual();
+            }
+        }
+        finally { _audioImportCancellation = null; }
     }
 
     internal async Task ImportAudioFilesAsync(string[] files, long ticks, int lane)

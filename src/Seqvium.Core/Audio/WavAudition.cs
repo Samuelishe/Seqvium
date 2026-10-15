@@ -8,6 +8,7 @@ public sealed class WavAudition : IDisposable
 {
     private readonly ProjectDocument? _context;
     private bool _ended, _disposed;
+    private readonly bool _ownsProcessor = true;
     public const float InitialGain = 0.05f;
     public RealtimeSampler Processor { get; }
 
@@ -18,6 +19,17 @@ public sealed class WavAudition : IDisposable
         Processor.SetGain(InitialGain);
         _context = context;
         if (context is not null) context.Closed += EndLifetime;
+    }
+
+    /// <summary>Borrows a host-owned solo renderer; the host joins and disposes its output/renderer.</summary>
+    public WavAudition(RealtimeSampler processor, ProjectDocument context)
+    {
+        context.CheckAvailable();
+        Processor = processor;
+        Processor.SetGain(InitialGain);
+        _ownsProcessor = false;
+        _context = context;
+        context.Closed += EndLifetime;
     }
 
     public WavAuditionRequest BeginExternal(string path)
@@ -82,7 +94,7 @@ public sealed class WavAudition : IDisposable
         if (_context is not null) _context.Closed -= EndLifetime;
         _disposed = true;
         _ended = true;
-        Processor.Dispose();
+        if (_ownsProcessor) Processor.Dispose();
     }
 }
 
@@ -113,6 +125,26 @@ public sealed class WavAuditionRequest : IDisposable
 
     public Task PrepareAsync(CancellationToken cancellationToken = default) => PrepareCore(null, cancellationToken);
 
+    /// <summary>Prepares already decoded transient PCM. Caller retains/disposes PCM after awaiting.</summary>
+    public async Task PrepareAsync(DecodedPcm pcm, CancellationToken cancellationToken = default)
+    {
+        if (_started || _ended) throw new InvalidOperationException("Audition preparation is single-use.");
+        _started = true;
+        _cancellation = cancellationToken;
+        if (!_owner.Available || !_owner.Processor.TryBeginWork())
+            throw new InvalidOperationException("Audition lifetime ended or capacity occupied.");
+        _reserved = true;
+        try
+        {
+            _plan = await Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return SamplerPreparation.PrepareOneShot(pcm, _owner.Processor.SampleRate, _owner.Processor.Channels);
+            }, cancellationToken).ConfigureAwait(false);
+        }
+        catch { ReleaseReservation(); throw; }
+    }
+
     public Task PrepareAsync(Stream source, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(source);
@@ -140,7 +172,7 @@ public sealed class WavAuditionRequest : IDisposable
             else if (_path is not null)
                 pcm = await SourceAccess.DecodeExternalAsync(_path, cancellationToken).ConfigureAwait(false);
             else
-                pcm = await Task.Run(() => ProjectMedia.Decode(_frozen!, _resource), cancellationToken)
+                pcm = await Task.Run(() => AudioMedia.Decode(_frozen!, _resource), cancellationToken)
                     .ConfigureAwait(false);
 
             using (pcm)

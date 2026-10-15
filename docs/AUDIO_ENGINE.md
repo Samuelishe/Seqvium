@@ -570,7 +570,12 @@ channel mapping, cursor and EOF semantics, including supported 44.1/48 kHz rate 
 revision/occurrence denotes no canonical music; no saved project/Pattern is fabricated. No second
 sampler, looping, contextual substitution or processing is added.
 
-`WavAudition` owns a dedicated RealtimeSampler, not a mix into unrelated project playback. Optional
+`WavAudition` owns a dedicated RealtimeSampler, or borrows Desktop's existing solo renderer for Browser.
+The borrower does not dispose the host-owned processor. Browser can supply validated worker-decoded
+transient PCM and preview accepted normalized audio as well as legacy WAV. Native-pitch one-shot,
+gain 0.05, resident source limits and packet cancellation remain; no Mixer/contextual audition is added.
+Desktop refuses preview while transport plays, closes it before Play and joins output before releasing
+its audition/processor. This never mixes into unrelated project playback. Optional
 document Close notification runs on the control owner; Process has no document reference. F2's
 one-candidate and active/pending/retired capacities apply. Tagged Start waits for the intended source
 handoff, never restarting an old source under retirement backpressure. Musical F2 Start/Stop stays

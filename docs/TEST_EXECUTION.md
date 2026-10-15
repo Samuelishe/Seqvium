@@ -7,6 +7,22 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Sample Browser verification
+
+`SampleBrowserTests` covers paged nonrecursive discovery/cancellation, transient preview and failed
+replacement, playing-transport preservation, atomic empty Rack creation, managed WAV/audio reuse,
+Save As/reopen without external sources, malformed location preservation, stale/cancelled/missing
+reuse and callback rollback. Focus `*SampleBrowserTests` with affected `*WavAuditionTests`,
+`*WavResourceReuseTests`, `*SourceAccessTests`, `*DesktopWorkflowTests`, `*AudioClipTests`,
+`*StepSequencerTests` and workspace/design tests. Actual platform remains SDK 10/xUnit MTP.
+
+VisualCheck `browser` renders RU/EN Dark/Light and reduced layouts, authors a small phrase and Audio
+Clip through real routed controls, checks source drops and Undo, saves/reopens after removing originals.
+`browser ... native` requires guarded Windows input; refusal is not a native pass. `browser ... audio
+<codec-fixture-directory>` additionally exercises production physical output and Windows MP3/FLAC
+decode/preview/import. [Tool guide](../tools/Seqvium.VisualCheck/README.md#sample-browser-check)
+owns invocation; [report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) owns evidence and limits.
+
 ## Audio Clip verification
 
 `SongStructureTests` covers non-overlap/reader gates and unknown fields, section swaps with gaps,

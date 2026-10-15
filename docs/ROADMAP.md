@@ -125,6 +125,13 @@ DSP algorithm, UI framework or public ABI; all stage IDs/order and R0 scope rema
 
 ## Discovery and reuse ownership
 
+SEQ-SAMPLE-BROWSER implements bounded local-folder/project-resource navigation, current-folder name
+search, actual metadata/waveform, stopped-transport solo preview and explicit Rack/Playlist use/drop.
+It uses existing resource/history/Save ownership and adds no Personal Library. The
+[sample owner](SAMPLE_WORKFLOW.md#implemented-seq-sample-browser) defines the implemented boundary;
+[report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) records native-input limits. This does not close
+Sample Lab/generators, installed-pack integration, contextual audition or the First Track release.
+
 Minimum discovery/reuse has bounded owners under
 [Sample workflow](SAMPLE_WORKFLOW.md#browser-discovery-and-ownership): R2 establishes external WAV and
 project-resource find/audition/import/reuse; R7 integrates accepted Sample Lab material; R8 returns
@@ -367,7 +374,7 @@ Keep the reference-driven physical materials as editors grow; do not revert to g
 | Priority / scope              | Desired interaction                                                  | Required implementation boundary                                                                                                                  |
 |-------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | R5/R11 integration            | Functional channel mute/solo/level/pan and sample audition           | Explicit Part/Sound/routing versus transient audition scope, valid execution/Undo; no unbound decorative knobs                                    |
-| R7/R8 and First Track R12     | Project sound browser, waveform previews and fast find/audition/drop | Existing durable-media foundation plus bounded preview decoding, cancellation and transient audio borrowing; library publication remains separate |
+| R7/R8 and First Track R12     | Extend the implemented Browser to accepted generated/resampled/installed-pack material | Keep the existing resource/preview boundary; generation, resampling and library publication retain their own owners |
 | R11 / actual processing nodes | Instrument/EQ panels, meaningful signal/spectrum visualization       | Real parameters/DSP and bounded measured taps delivered off the realtime/UI path; own material language and state preservation                    |
 | Workspace Q-032               | Independent instrument panels and comparisons                        | Dynamic instance/layout/target retirement and focus ownership, beyond the current reusable singleton                                              |
 
@@ -534,7 +541,7 @@ behavior/state/lifetime ownership. Piano Roll is the completed bounded baseline,
 |--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Further percussion depth                   | Additional voices, layers, user-defined choke groups and modulation beyond the implemented seven drums/presets/linked hats                         | Establish each synthesis/state/performance boundary and musical evidence; retain the existing notes and R6/R7 package/generator ownership                                                                       |
 | Sampler / source editing                   | Dominant waveform, source/loop bounds and overview; later slicing, key/velocity mapping, sustain loops and fine tuning                             | Non-destructive canonical source-frame ranges, derived waveform cache and actual voice execution; Root Pitch/audition already exist. Stretch independent of pitch needs separate algorithms/state               |
-| Browser / R7 integration and R12 usability | Local source/project search, duration/waveform results, one selected preview player and explicit use/drop; later contextual tempo/key audition     | Bounded discovery/decode/cancellation/preview borrowing and metadata confidence. Contextual substitution must restore safely; audition does not import or silently replace a sound. No store/cloud prerequisite |
+| Browser / R7 integration and R12 usability | Extend the implemented local-folder/project Browser with justified installed-pack and contextual tempo/key audition | Preserve bounded discovery/decode/cancellation and temporary preview ownership; contextual substitution must restore safely. No store/cloud prerequisite |
 | EQ/compression / R11                       | Large editable curve and contextual exact controls, readable tactile caps, useful measured levels/reduction history                                | Actual parameters and stateful DSP, reset/tails, bounded measured taps and realtime/offline equivalence; multiband crossovers/sidechain require their routing/execution boundaries                              |
 | Existing Rack/Piano/Playlist               | Rack targeted Sound editors and Playlist source-frame waveform/range/fades are implemented; expression lanes and richer sampler maps remain future | Preserve canonical shared notes and explicit targets; new expression/mapping requires actual event/voice ownership. Audio source frames remain distinct from musical placement ticks.                           |
 | Rich Node Editor / graph and workspace     | Resizable graph-led sound/effect composition; selected parameter depth; optional simple-chain view or independent comparisons                      | Compact Gain remains useful. A chain must project the same canonical graph; branching stays explicit. Multiple editors require instance/target/focus/layout/resource retirement under Q-032                     |
@@ -543,7 +550,7 @@ The owner-authorized built-in drum family is implemented under
 [Audio](AUDIO_ENGINE.md#built-in-drum-voice), with completion evidence in the
 [report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md). Further voices, click layers, user-defined
 choke groups and modulation remain follow-ups; built-in percussion does not complete or reorder R6/R7.
-Local Browser/find/audition/use remains a practical candidate for convenient access to WAV material.
+Local Browser/find/audition/use is implemented; wider source/context integration remains future work.
 
 Wavetable/granular voices, path/LFO modulation and macro morphs remain exploratory under
 [I-006](IDEAS.md#i-006--expressive-synthesis-and-modulation-surfaces), beyond this initial candidate.

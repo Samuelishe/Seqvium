@@ -185,7 +185,7 @@ public sealed class WorkspaceLayoutTests
         Assert.NotNull(load.Layout);
         using var workspace = new WorkspaceState(load.Layout);
         workspace.Reflow(640, 390);
-        Assert.Equal(8, workspace.Panes.Length);
+        Assert.Equal(9, workspace.Panes.Length);
         var appearance = workspace.Get(WorkspaceState.AppearanceId);
         Assert.Equal(PaneVisibility.Visible, appearance.Visibility);
         Assert.False(appearance.AllowDocking);
@@ -220,7 +220,8 @@ public sealed class WorkspaceLayoutTests
         var load = await store.LoadAsync();
         using var reopened = new WorkspaceState(load.Layout);
         reopened.Reflow(640, 390);
-        Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Left));
+        // Hidden Browser remembers its preferred dock without reserving workspace space.
+        Assert.Single(reopened.Panes.Where(pane => pane.Dock == PaneDock.Left && pane.Visibility == PaneVisibility.Visible));
         Assert.Single(reopened.Panes.Where(pane =>
             pane.Dock == PaneDock.Floating && pane.Visibility == PaneVisibility.Visible));
         Assert.All(

@@ -7,8 +7,10 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.7.0003**, SEQ-VISUAL-IDENTITY: one BUILD for the integrated 09 brand, embedded
-typography, optical EXE/window icons and reproducible publication kit. The preceding daily workflow
+Product alpha **0.1.7.0004**, SEQ-SAMPLE-BROWSER: one BUILD for a retained local/project sound
+Browser, real metadata/waveform, transient solo preview and atomic Rack/Playlist use/reuse. Native
+interaction acceptance remains foreground-refused; no PATCH closure is asserted. The preceding identity
+integrates the 09 brand, embedded typography, optical icons and publication kit. The daily workflow
 adds playing Pattern navigation, direct/remembered editors, New and remembered musical layout.
 The preceding shared WAV replacement preserves musical/processing/Mixer intent. The preceding
 SEQ-R10-SONG-STRUCTURE PATCH introduced section arranging, variations and mixed clip editing.
@@ -22,10 +24,18 @@ separate. [Roadmap](ROADMAP.md) owns remaining scope.
 
 ## Implemented capability
 
-Desktop has Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and information/appearance
+Desktop has Browser, Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and information/appearance
 panes. Compact studio-instrument resources, movable/resizable/docked panes, English/Russian and
 Dark/Light share preferences and workspace persistence. Normal startup and project Open stay silent;
 user-wide Single Instance and scoped device/output lifetime remain unchanged.
+
+Browser opens with Ctrl+B/rail/Panes, supports pinned/recent folders, bounded one-level pages and
+name search, and lists current project audio without reopening external originals. Selection shows
+actual metadata/waveform; explicit/optional automatic preview stays outside music/Undo and refuses
+while transport plays. WAV enters Rack through its existing bounded sampler; WAV/Windows MP3/FLAC
+and managed resources enter Playlist. Reuse keeps ResourceIds/media without copying, with one Undo
+per use and portable Save As/Open. [Sample workflow](SAMPLE_WORKFLOW.md#implemented-seq-sample-browser)
+owns boundaries; [report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) owns verification and limits.
 
 Navigator single click switches a playing Pattern to the new phrase at zero, with the same output
 and sticky Stop/Panic. Double-click/Enter opens a supported melodic Part directly in Piano or rhythm
@@ -78,12 +88,16 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L3: **SEQ-R10-SONG-STRUCTURE, 2026-10-14**. Locked isolated full Release solution build has
-zero warnings/errors; **1235/1235 tests pass**, zero skips (51.042 s CLI summary, four test threads).
+Latest L3: **SEQ-SAMPLE-BROWSER, 2026-10-15**. Locked isolated full Release solution build has
+zero warnings/errors; **1270/1270 tests pass**, zero skips (59.254 s CLI summary, one test thread).
+Browser additionally passes 318 final affected cases, real RU/EN Dark/Light and reduced-window routed
+authoring/drop/Undo/portable-media checks, and physical WAV/MP3/FLAC preview on Samsung 48-kHz output.
+Native input was foreground-refused; this is not native/acoustic/platform acceptance. The
+[Browser report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) retains failures and exact evidence scope.
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **3**. Visual identity passes **60/60 focused tests**
+Completed repository tasks since this L3: **0**. Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
 FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell
 shortcut and live 16/24 px window icon extraction pass. Foreground guard refused taskbar/Alt+Tab
@@ -133,8 +147,8 @@ portable universal decoder. Surround and time stretch/warp are absent. Sections 
 not processing containers; crossing clips need explicit split/range adjustment. Variations do not
 inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachment remain absent.
 
-Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Browser/
-Personal Library, Sample Lab, MIDI, recording and recovery remain future work. Cold seek/range wrap
+Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, wider Browser
+integration/Personal Library, Sample Lab, MIDI, recording and recovery remain future work. Cold seek/range wrap
 resets Mixer FX without preroll. R4-F2 pressure failures, maximum-channel stress, aesthetic/acoustic
 review, Linux/macOS runtime, high/mixed DPI, cross-monitor and accessibility remain unevidenced.
 [Known problems](KNOWN_PROBLEMS.md), [debt](TECH_DEBT.md) and [portability](PORTABILITY.md) retain

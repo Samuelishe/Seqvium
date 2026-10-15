@@ -148,6 +148,17 @@ retrieved only for explicit historical tasks.
 | `0.1.7.0001` | SEQ-SHARED-WAV-REPLACEMENT | One BUILD for a native Channel Rack shared WAV swap, preserving notes/graphs/release/Mixer with durable media and Undo. 91 focused cases and independent cover GUI verification; no new algorithm/schema or full-suite claim. |
 | `0.1.7.0002` | SEQ-DAILY-WORKFLOW | One BUILD for playing Pattern selection, direct/session-remembered editors, New/Ctrl+N and calm empty workspace with preserved musical layout. Focused production transport/lifecycle/editor/layout tests and RU/EN Dark/Light actual-window routed evidence; native input refused by covered foreground, physical output attempt failed with Starvation. No schema/DSP redesign, PATCH or full-suite claim. |
 | `0.1.7.0003` | SEQ-VISUAL-IDENTITY | One BUILD for integrated 09 identity, optical native icons, bundled typography and reproducible publication resources. 60/60 focused cases, zero-warning affected builds, actual embedded-font hashes, both-theme localized catalog/field/workspace renders and EXE/window/shortcut extraction. Taskbar/Alt+Tab visual capture refused by foreground guard; platform/DPI/aesthetic limits remain. No new musical capability, PATCH, L3 or release. |
+| `0.1.7.0004` | SEQ-SAMPLE-BROWSER | One BUILD for paged local/project Browser, real waveform/metadata, transient solo preview and atomic Rack/Playlist use/reuse. 246 focused cases, actual RU/EN Dark/Light routed/drop and portable-media checks, physical WAV/MP3/FLAC output. Native input foreground-refused; PATCH acceptance remains open. [Report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) owns final full-suite evidence and limits. |
+
+### SEQ-SAMPLE-BROWSER checkpoint
+
+Identity advances once **0.1.7.0003 → 0.1.7.0004**, one BUILD for bounded Browser integration over
+existing resource, preview, history and Save owners. Local/source discovery, real waveform/metadata,
+Rack/Playlist import/reuse and portable Save/Open pass focused checks and actual-window routed review.
+WAV/MP3/FLAC physical preview uses the production 48-kHz output. Native interaction was refused by
+foreground coverage; that acceptance remains open, so no PATCH/native milestone closure is asserted.
+The [report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) records final full-suite evidence and limits.
+No MAJOR/MINOR, reader gate, release, staging, commit, push or tag change.
 
 ### SEQ-VISUAL-IDENTITY checkpoint
 

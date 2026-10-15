@@ -115,7 +115,8 @@ internal sealed partial class MainWindow : Window
 
         void AdaptNavigation()
         {
-            patterns.IsVisible = !navigationCollapsed && Bounds.Width >= 1000;
+            patterns.IsVisible = !navigationCollapsed && Bounds.Width >= 1000 &&
+                !(_workspace.State.Get(WorkspaceState.BrowserId) is { Visibility: PaneVisibility.Visible, Dock: PaneDock.Left });
             patterns.Width = Math.Clamp(Bounds.Width * .15, 190, 288);
             navigationBody.ColumnDefinitions[1].Width = patterns.IsVisible ? GridLength.Auto : new GridLength(0);
             navigation.NavigationToggle.Classes.Set("active", patterns.IsVisible);
@@ -134,6 +135,7 @@ internal sealed partial class MainWindow : Window
             if (!_closing) AdaptNavigation();
         }, Avalonia.Threading.DispatcherPriority.Loaded);
         AdaptNavigation();
+        _workspace.State.Changed += AdaptNavigation;
         // The first workspace starts at a musical tool without creating or modifying a Pattern.
         Opened += (_, _) =>
         {
@@ -308,9 +310,12 @@ internal sealed partial class MainWindow : Window
     private void PianoClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.PianoId);
     private void ArrangementClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.ArrangementId);
     private void MixerClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.MixerId);
+    private void BrowserClicked(object? sender, RoutedEventArgs args) => OpenPane(WorkspaceState.BrowserId);
 
     private Control CreatePaneContent(PaneDefinition definition)
     {
+        if (definition.InstanceId == WorkspaceState.BrowserId)
+            return new BrowserPaneContent(_session, _workflow, _app.ConfigurationDirectory, OpenPane);
         if (definition.InstanceId == WorkspaceState.MixerId)
             return new MixerPaneContent(_session, _workflow);
         if (definition.InstanceId == WorkspaceState.ArrangementId)
@@ -458,7 +463,13 @@ internal sealed partial class MainWindow : Window
         _importCancellation?.Cancel();
         _workflowControls.Refresh(true);
         await _workflowWork;
+        // Settle Browser acceptance before deciding whether the document has unsaved work.
+        foreach (var browser in this.GetVisualDescendants().OfType<BrowserPaneContent>())
+            await browser.CancelPendingAsync();
         var decision = await ReplacementDecisionAsync();
+        if (decision.Decision != UnsavedDecision.Cancel)
+            foreach (var browser in this.GetVisualDescendants().OfType<BrowserPaneContent>())
+                await browser.ShutdownAsync();
         if (!await _workflow.CloseAsync(decision.Decision, decision.SavePath))
         {
             _closing = false;

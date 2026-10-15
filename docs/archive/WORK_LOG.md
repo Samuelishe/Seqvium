@@ -8,6 +8,19 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-SAMPLE-BROWSER — 2026-10-15
+
+Added a retained compact Browser with chosen folders, recent/pinned access, bounded paged navigation
+and current-folder name search, selected metadata/real waveform and existing project-resource reuse.
+Solo preview composes WavAudition and Desktop's output lifetime without edits/Undo; playing transport
+refuses preview. One acceptance adds an empty WAV sampler channel/initial Pattern or independent Audio
+Clip using existing managed resources/history/Save. No library database, global scan or new project
+model. Shared VisualCheck route authors eight notes and one Audio Clip, validates routed drops/Undo,
+RU/EN Dark/Light and reduced renders, and reopens after external source removal. Focused checks pass
+246/246; real Samsung 48-kHz WAV/MP3/FLAC output and compressed Playlist import pass. Native input is
+foreground-refused and remains unestablished. The [report](../experiments/SEQ-SAMPLE-BROWSER_REPORT.md)
+owns final full-suite evidence/limits. One BUILD 0.1.7.0004; no stage/commit/push/tag/release.
+
 ## SEQ-VISUAL-IDENTITY — 2026-10-14
 
 Integrated the owner's primary 09 direction as manually reconstructed SVG/optical masters, Windows

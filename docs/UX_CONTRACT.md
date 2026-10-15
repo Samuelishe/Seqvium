@@ -9,6 +9,27 @@ Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or cur
 These are intended requirements except the explicitly implemented bounded R3 host, F3-A/F3-B workflows
 and the implemented Rack, Playlist and Piano Roll sections below; broader capabilities remain future work.
 
+## Implemented Sample Browser
+
+Rail/Panes or Ctrl+B opens Browser. Choose Project resources, a pinned folder or recent location;
+Add folder uses the native folder picker. The address field opens an explicit path on Enter.
+Double-click/Enter enters a folder; parent, Back/Alt+Left and F6 refresh complement the mouse actions.
+Ctrl+F focuses local name search; arrow keys select files. Search applies to the current folder only;
+large directories expose a bounded **Load next page**, rather than silently omitting the remainder.
+
+Selection reveals name, format, actual duration/rate/channels and a real waveform, with full names/paths
+in tooltips. Space/Enter or Play previews; Auto preview repeats that action for subsequent selections.
+Stop/Escape cancels temporary listening. Music already playing keeps playing; Browser explains why
+solo preview is unavailable. Browsing/preview are never import, dirty or Undo actions. Corrupt/missing
+sources and cancellation preserve the project and leave navigation usable.
+
+Drag a sound into Rack or Playlist, or use the visible **+ Rack / + Playlist** buttons. Tooltips identify
+the selected Pattern and the button's Song-cursor/unused-lane destination. Rack's bounded WAV support
+and shared/custom-graph refusals stay explicit; Playlist also accepts supported Windows MP3/FLAC and
+managed normalized audio. Successful uses are atomic history edits and survive loss of external
+originals after Save/Open/Save As. Project-resource reuse refers to accepted media without another copy.
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-seq-sample-browser) owns format/lifetime details.
+
 ## Implemented Mixer workflow
 
 Mixer opens independently of Playlist. Existing projects start without it; explicit Create Mixer

@@ -15,6 +15,31 @@ the playing phrase without pressing Play again. Double-click or Enter opens an a
 right-click offers Channel Rack or Piano Roll for a named channel. Explicit choices are remembered
 for each Pattern until you replace the document.
 
+## Find and use sounds
+
+Open **Browser** from the left rail or press **Ctrl+B**. Use the folder button to add your sample
+folder. Open subfolders with double-click/Enter, go up with the arrow/Backspace and return with
+Back/Alt+Left. The address field accepts a folder path. Pinned folders and recent locations remain
+available next time; forgetting a location does not delete its files.
+
+Type a name such as `Kick` into search. Search covers the open folder; **Load next page** continues
+large folders without scanning your whole library. Select a file to see format, duration, sample
+rate, channels and its real waveform. Press Space/Enter or the preview triangle to listen. Optional
+**Auto preview** plays each new selection; Stop/Escape ends it. If music is playing, stop transport
+explicitly before solo preview. Browsing/listening never imports audio or consumes Undo.
+
+Drag a WAV into **Channel Rack** to create an empty sampler channel, or choose **+ Rack** for the
+selected Pattern. An empty project gets its first Pattern in the same Undo action; click steps to
+make a rhythm. Rack retains its 16 MiB WAV limit. Drag WAV/MP3/FLAC into **Playlist** at the desired
+lane/time, or choose **+ Playlist** to add at the Song cursor on an unused lane. MP3/FLAC use the
+Windows codecs available on your machine.
+
+Choose **Project resources** to find and reuse accepted audio after its external original is gone.
+Managed WAV can become another Rack channel or Audio Clip; normalized Playlist resources remain
+available as Audio Clips. Reuse keeps existing media and creates an independent sound/use, so it
+does not change earlier instruments. Save and Save As retain project-owned media normally; keep
+the project's `.seqvium.media` directory beside the project file.
+
 ## Work with audio clips
 
 Open **Playlist** from the left rail. Drop WAV, MP3 or FLAC from Explorer onto a lane, or use Playlist's **Import

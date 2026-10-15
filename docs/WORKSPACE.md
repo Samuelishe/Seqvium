@@ -6,6 +6,22 @@ Authoritative for: Main-window chrome/keyboard window actions, pane reachability
 panes, user-controlled docking, activation/front behavior, layout ownership.
 Not authoritative for: Pane-specific editing, final visuals/gestures, framework Z-order API, or project schema.
 
+## Retained Sample Browser
+
+`sample-browser.main` / `sample-browser` is the ninth retained pane, initially hidden, with a preferred
+left dock and a compact 320-DIP default width. Existing layouts add it hidden. It shares ordinary
+floating/docking/resizing/collapse/hide/restore and independent user-layout persistence. The content
+uses local virtualized file scrolling with a pinned metadata/waveform/action footer; narrow panes
+retain accessible controls rather than scaling their text. FullHD supports Browser, Rack and Playlist
+together. While Browser occupies the left dock, Pattern cards yield their width and the existing
+occurrence selector returns; hiding/undocking Browser restores navigation. This is view composition,
+not musical selection/history. Browser remains available with the calm empty Rack via Ctrl+B/rail.
+
+Folder navigation/selection are session presentation; pinned/recent/last locations use independent
+[access preferences](SETTINGS.md#browser-access-preferences). No native tool window, second project,
+audio engine or media ownership model is introduced. Hide/collapse cancels temporary work/preview;
+shutdown joins Browser operations before document/audio cleanup.
+
 ## Retained compact Mixer pane
 
 `mixer.main` is a retained workspace pane, reachable from the rail/Panes menu and a Rack sound's

@@ -174,6 +174,11 @@ internal sealed class WorkspacePane : Border, IDisposable
         _permission.IsChecked = pane.AllowDocking;
         _corner.IsVisible = pane.Dock == PaneDock.Floating;
         if (_content is FirstPartyPaneContent firstParty) firstParty.Refresh();
+        if (_content is BrowserPaneContent browser)
+        {
+            if (pane.Visibility != PaneVisibility.Visible) browser.Suspend();
+            else browser.Resume();
+        }
         if (_content is PianoRollPaneContent piano)
         {
             if (pane.Visibility != PaneVisibility.Visible) piano.CancelGesture();
@@ -249,6 +254,7 @@ internal sealed class WorkspacePane : Border, IDisposable
         else if (_content is PianoRollPaneContent piano) piano.FocusEditor();
         else if (_content is ArrangementPaneContent arrangement) arrangement.FocusEditor();
         else if (_content is MixerPaneContent mixer) mixer.FocusEditor();
+        else if (_content is BrowserPaneContent browser) browser.FocusBrowser();
         else _actions.Focus();
     }
 

@@ -20,6 +20,7 @@ public sealed partial class App : Application
     internal App(DesktopLaunch launch) => _launch = launch;
     internal event Action<MainWindow>? MainWindowCreated;
     internal string? IsolatedMediaDirectory => _launch.IsolatedMediaDirectory;
+    internal string ConfigurationDirectory => _launch.ConfigurationDirectory;
     private HostTheme? _appliedTheme;
     public override void Initialize()
     {

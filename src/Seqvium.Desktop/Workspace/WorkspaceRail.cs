@@ -31,6 +31,7 @@ internal sealed class WorkspaceRail : Border, IDisposable
         body.Children.Add(NavigationToggle);
         foreach (var (id, icon) in new[]
                  {
+                     (WorkspaceState.BrowserId, "Browser"),
                      (WorkspaceState.BeatId, "Rack"), (WorkspaceState.PianoId, "Piano"),
                      (WorkspaceState.ArrangementId, "Playlist"), (WorkspaceState.MixerId, "Mixer"),
                      (WorkspaceState.GraphId, "Graph"),

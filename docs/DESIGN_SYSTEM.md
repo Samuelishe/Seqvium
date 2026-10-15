@@ -111,6 +111,15 @@ focus/selection and sparse/dense content still require image review. Do not ligh
 then compensate with a separate local palette. The current Dark values are unaffected by the home
 preparation; actual values remain source-owned.
 
+## Browser composition
+
+Browser uses shared standard ComboBox/TextBox/ListBox, compact vector buttons, localized actions and
+local virtualized scrolling. The pinned preview uses the existing caption/monospace hierarchy and
+`BrowserWaveform` resolves live HostVisual surface/boundary/accent roles in both themes. It draws only
+actual selected mono/stereo min/max envelopes, visually fitted without changing gain. Source names
+are ellipsized with full-path tooltips. The original Browser/Refresh vectors belong to HostIcons;
+there is no new palette, shared template or field-height exception.
+
 ## Standard controls and variants
 
 ### Mixer and chassis components

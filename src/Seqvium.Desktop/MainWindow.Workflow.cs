@@ -314,6 +314,8 @@ internal sealed partial class MainWindow
     private async void WorkflowKeyDown(object? sender, KeyEventArgs args)
     {
         if (_closing || args.Handled) return;
+        if (args.Key == Key.B && args.KeyModifiers == KeyModifiers.Control)
+        { OpenPane(WorkspaceState.BrowserId); args.Handled = true; return; }
         // A text editing session owns its local Undo until the value is explicitly committed.
         if (args.Key is Key.Z or Key.Y && args.KeyModifiers == KeyModifiers.Control &&
             args.Source is Visual source && source.GetVisualAncestors().Prepend(source).Any(v => v is TextBox)) return;

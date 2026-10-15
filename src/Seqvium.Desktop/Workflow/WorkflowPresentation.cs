@@ -21,6 +21,8 @@ internal static class WorkflowPresentation
         "Workflow.Degraded" => "Status.Degraded", "Workflow.SaveFailed" => "Status.SaveFailed",
         "Workflow.OpenFailed" => "Status.OpenFailed", "Workflow.ImportFailed" => "Status.ImportFailed",
         "Workflow.DeviceFault" => "Status.DeviceFault",
+        "Browser.Previewing" => "Browser.Previewing", "Browser.StopTransport" => "Browser.StopTransport",
+        "Browser.PreviewFailed" => "Browser.PreviewFailed",
         "Workflow.Exporting" => "Workflow.Exporting", "Workflow.Exported" => "Workflow.Exported",
         "Workflow.ExportClipped" => "Workflow.ExportClipped", "Workflow.ExportFailed" => "Workflow.ExportFailed",
         _ => "Status.ActionFailed"

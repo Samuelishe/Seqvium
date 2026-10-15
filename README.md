@@ -45,6 +45,9 @@ for the logo, typography, alternative directions and publication resources.
 - Edit Source → Gain → Mix → Output graphs, reuse sound editors, and arrange movable/resizable panes.
 - Undo/redo musical edits, save/reopen projects with managed media, and export a Pattern or the full
   Song to 48 kHz stereo PCM16 WAV using the same audio processing.
+- Open **Browser / Ctrl+B** to pin sample folders, browse subfolders, search names and reuse project
+  audio. Inspect real waveforms, preview sounds while transport is stopped, then drag into Channel
+  Rack or Playlist, or use the explicit add buttons. Preview never imports or changes Undo.
 - Work in English or Russian, with Dark and Light themes.
 - Create a fresh project with **New project / Ctrl+N**, switch playing Patterns from the navigator,
   and open a melody directly in Piano Roll. Empty documents start with one compact Channel Rack.
@@ -53,7 +56,7 @@ Audio Clips do not change pitch or speed when moved or when BPM changes. Their s
 musical time; their lengths, trims and fades use source frames. There is **no time stretch or warp**.
 Copies reuse a source and its Mixer assignment rather than duplicating decoded audio.
 
-Try [Audio Clips](docs/README.md#work-with-audio-clips),
+Try [the Sample Browser](docs/README.md#find-and-use-sounds), [Audio Clips](docs/README.md#work-with-audio-clips),
 [a drum pattern](docs/README.md#create-a-drum-pattern),
 [a melody](docs/README.md#compose-a-melody), or [the Mixer](docs/README.md#mix-your-music).
 For an editable song with licensed media, open [Neon Orchard](examples/Neon%20Orchard/README.md).
@@ -91,7 +94,8 @@ dotnet build Seqvium.sln -c Release --no-restore
 dotnet run --project src/Seqvium.Desktop/Seqvium.Desktop.csproj -c Release --no-build --no-restore
 ```
 
-The app opens an empty project and stays silent until Play. Open Playlist from the rail to drop
+The app opens an empty project and stays silent until Play or explicit Browser preview. Open Browser
+from the rail to find/audition/add samples, or open Playlist from the rail to drop
 audio, create a Pattern in Channel Rack, or open the included demo. Run the app with normal user
 permissions: Windows blocks Explorer drops into an elevated application. No general sample library
 is bundled beyond the demo's reviewed media.

@@ -10,6 +10,20 @@ logging implementation.
 R2-F4 implements session-only logical audio selection. R3-F1/F2 implement the bounded preferences and
 workspace layout files below plus the optional Appearance pane; broader Settings/reset/logging UI is absent.
 
+## Browser access preferences
+
+`browser-locations.json` lives alongside the existing user preference/layout files, including isolated
+VisualCheck configuration. Version 1 stores at most 16 pinned roots, 16 recent folders and one last
+folder (or Project resources), with 32 KiB and 2048-character path bounds. Paths are remembered access,
+not retained audio, project dependencies or Personal Library ownership. Forget location removes only
+that preference; it never deletes a source folder or project media.
+
+Reads and serialized writes run on workers; malformed/unreadable/unsupported/oversize originals are
+preserved and block writes for this session. A visible Browser notice leaves navigation usable.
+Valid changes flush a unique same-directory temporary, preserve `.previous` and replace atomically.
+Shutdown joins pending writes. This adds no Reset command, indexing database or preference-schema
+change. Language/theme and music/history remain independently owned.
+
 ## Implemented R3-F1 host preferences
 
 The shell persists only language (`en`/`ru`) and theme (`dark`/`light`) in version-1 JSON, default EN/Dark:

@@ -273,27 +273,33 @@ internal sealed partial class DesktopWorkflow
             ValidateBeatBasis(basis);
             request.Accept((edit, media) =>
             {
-                var part = edit.AddPart(pattern.Id, name, media.SoundId);
-                var source = edit.AddGraphNode(graph.Id, GraphBuiltIns.Source, new(0, pattern.Parts.Length * 120));
-                edit.BindGraphSource(attachment.Id, source.Id, placement.Id, part);
-                var gain = graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
-                var input = gain.Ports.Single(p => p.Direction == GraphPortDirection.Input);
-                if (pattern.Parts.IsEmpty)
-                    edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, gain.Id, input.Id);
-                else
-                {
-                    var cable = graph.Connections.Single(c => c.ToNodeId == gain.Id);
-                    var mix = edit.AddGraphNode(graph.Id, GraphBuiltIns.Mix, new(180, pattern.Parts.Length * 120));
-                    var slots = mix.Ports.Where(p => p.Direction == GraphPortDirection.Input).ToArray();
-                    edit.DisconnectGraphPorts(graph.Id, cable.Id);
-                    edit.ConnectGraphPorts(graph.Id, cable.FromNodeId, cable.FromPortId, mix.Id, slots[0].Id);
-                    edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, mix.Id, slots[1].Id);
-                    edit.ConnectGraphPorts(graph.Id, mix.Id,
-                        mix.Ports.Single(p => p.Direction == GraphPortDirection.Output).Id, gain.Id, input.Id);
-                    edit.SetContextMix(attachment.ContextId, true);
-                }
+                AttachBeatSound(edit, pattern, placement, attachment, graph, media.SoundId, name);
             }, cancellation);
             _status = "Workflow.Ready";
             return true;
         });
+
+    private static void AttachBeatSound(ProjectEdit edit, Pattern pattern, PatternPlacement placement,
+        GraphAttachment attachment, GraphDefinition graph, Id<SoundDefinition> sound, string name)
+    {
+        var part = edit.AddPart(pattern.Id, name, sound);
+        var source = edit.AddGraphNode(graph.Id, GraphBuiltIns.Source, new(0, pattern.Parts.Length * 120));
+        edit.BindGraphSource(attachment.Id, source.Id, placement.Id, part);
+        var gain = graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);
+        var input = gain.Ports.Single(p => p.Direction == GraphPortDirection.Input);
+        if (pattern.Parts.IsEmpty)
+            edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, gain.Id, input.Id);
+        else
+        {
+            var cable = graph.Connections.Single(c => c.ToNodeId == gain.Id);
+            var mix = edit.AddGraphNode(graph.Id, GraphBuiltIns.Mix, new(180, pattern.Parts.Length * 120));
+            var slots = mix.Ports.Where(p => p.Direction == GraphPortDirection.Input).ToArray();
+            edit.DisconnectGraphPorts(graph.Id, cable.Id);
+            edit.ConnectGraphPorts(graph.Id, cable.FromNodeId, cable.FromPortId, mix.Id, slots[0].Id);
+            edit.ConnectGraphPorts(graph.Id, source.Id, source.Ports.Single().Id, mix.Id, slots[1].Id);
+            edit.ConnectGraphPorts(graph.Id, mix.Id,
+                mix.Ports.Single(p => p.Direction == GraphPortDirection.Output).Id, gain.Id, input.Id);
+            edit.SetContextMix(attachment.ContextId, true);
+        }
+    }
 }

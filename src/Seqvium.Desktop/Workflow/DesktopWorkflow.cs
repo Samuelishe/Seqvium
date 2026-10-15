@@ -47,6 +47,7 @@ internal sealed record WorkflowState(
     internal long LoopEnd { get; init; }
     internal bool SongLoopEnabled { get; init; }
     internal long TransportGeneration { get; init; }
+    internal bool BrowserPreviewPlaying { get; init; }
 
     internal System.Collections.Immutable.ImmutableDictionary<Id<SoundDefinition>, AudioWaveform> AudioWaveforms
     {
@@ -548,6 +549,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void Publish()
     {
+        if (_status == "Browser.Previewing" &&
+            _browserAudition?.Processor.ReadStatus().Transport == SamplerTransportState.Ended)
+            _status = "Workflow.Ended";
         var state = _document.Current.State;
         var choices = state.GraphAttachments.Select(attachment =>
         {
@@ -621,6 +625,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             SongCursor = _songCursor, LoopStart = _loopStart, LoopEnd = _loopEnd, SongLoopEnabled = _songLoopEnabled,
             TransportGeneration = _playGeneration,
             AudioWaveforms = _audioWaveforms,
+            BrowserPreviewPlaying = _browserAudition?.Processor.ReadStatus().Playing == true,
             MixerMeters = state.Mixer is { } mixer
                 ? System.Collections.Immutable.ImmutableDictionary.ToImmutableDictionary(
                     mixer.Channels.Select(c => c.Id.Value).Append(Guid.Empty), id => id,

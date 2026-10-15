@@ -1,5 +1,25 @@
 # Desktop visual and lifecycle verification
 
+## Sample Browser check
+
+With an affected Release build (or equivalent isolated `--artifacts-path` executable):
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll browser "$PWD/.artifacts/sample-browser/gui"
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll browser "$PWD/.artifacts/sample-browser/native" native
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll browser "$PWD/.artifacts/sample-browser/audio" audio <codec-fixture-directory>
+```
+
+The first route uses actual windows/controls and routed actions/drop events, not native mouse claims.
+It creates authored synthetic WAV fixtures in its own run directory, browses/reuses them, makes eight
+notes and one Audio Clip, checks drop/Undo, localized theme/reduced renders and Save/Open after removing
+originals. `native` requires exact foreground and hit-testing guards before Windows input. A covered
+window refuses input rather than clicking another application. `audio` adds actual WASAPI solo output
+and optionally `Tone.mp3`/`Tone.flac` from the supplied independent fixture directory. These must be
+caller-authored or licensed fixtures; no private library is required. This checks decoded metadata,
+real preview execution and managed Playlist import/Undo, not subjective acoustic quality or pressure.
+Physical observations and input mode are recorded separately in `sample-browser.json`.
+
 ## Visual identity review
 
 ```powershell

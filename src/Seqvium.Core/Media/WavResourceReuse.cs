@@ -48,6 +48,11 @@ public sealed class WavResourceReuse : IDisposable
     }
 
     public MediaAcceptance Accept(CancellationToken cancellationToken = default)
+        => Accept(null, cancellationToken);
+
+    /// <summary>Creates an explicit musical use in the same Undo transaction as the independent sound.</summary>
+    public MediaAcceptance Accept(Action<ProjectEdit, MediaAcceptance>? createUse,
+        CancellationToken cancellationToken = default)
     {
         if (!_prepared || _ended) throw new InvalidOperationException("Reuse has no prepared result.");
         CheckCancellation(cancellationToken);
@@ -66,6 +71,7 @@ public sealed class WavResourceReuse : IDisposable
             CheckCancellation(cancellationToken);
             sound = edit.AddSound(_name, PcmSampler.Algorithm, [_resource]);
             edit.ConfigurePcmSampler(sound, _resource, _rootPitch, _releaseMilliseconds);
+            createUse?.Invoke(edit, new(_resource, sound));
             CheckCancellation(cancellationToken);
         });
         _ended = true;

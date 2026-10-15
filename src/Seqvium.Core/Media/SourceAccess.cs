@@ -108,7 +108,7 @@ public static class SourceAccess
                 cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
-                    using var pcm = ProjectMedia.Decode(frozen, resource.Id);
+                    using var pcm = AudioMedia.Decode(frozen, resource.Id);
                     result.Add(Supported(resource.Name, null, resource.Id, pcm));
                 }
                 catch (Exception error) when (IsSourceError(error))
@@ -129,6 +129,25 @@ public static class SourceAccess
         var frozen = ProjectDocument.Reopen(document.Current);
         frozen.MediaRoots.AddRange(document.MediaRoots);
         return frozen;
+    }
+
+    /// <summary>Capture storage authority on the document owner, then decode one identified resource on a worker.
+    /// This observation grants no import, reuse or preview publication authority.</summary>
+    public static Task<DecodedPcm> ReadResourceAsync(ProjectDocument document, Id<ResourceDescriptor> resource,
+        CancellationToken cancellation = default)
+    {
+        var frozen = Capture(document);
+        return Task.Run(() =>
+        {
+            cancellation.ThrowIfCancellationRequested();
+            var pcm = AudioMedia.Decode(frozen, resource);
+            if (cancellation.IsCancellationRequested)
+            {
+                pcm.Dispose();
+                cancellation.ThrowIfCancellationRequested();
+            }
+            return pcm;
+        }, cancellation);
     }
 
     internal static async Task<DecodedPcm> DecodeExternalAsync(string source, CancellationToken cancellationToken)

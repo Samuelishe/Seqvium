@@ -7,6 +7,48 @@ Lab exploration/reference/locks/history, candidate acceptance, durable audio, ob
 Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing,
 or final resource file format.
 
+## Implemented SEQ-SAMPLE-BROWSER
+
+Browser exposes explicitly chosen filesystem folders and the current project's accepted audio resources.
+Pinned roots, recent folders and last location are access preferences, not imported material or a Personal
+Library. Opening a folder enumerates one level on a worker: up to 256 matching entries and 4096 visited
+entries per requested page. **Load next page** continues the same directory cursor. Search is a
+case-insensitive name filter within that folder; it does not recurse, watch, index or crawl drives.
+Only the selected sound is decoded for metadata and a real mono/stereo min/max waveform. Availability
+is rechecked on every preview/use; missing/corrupt sources remain visible with useful failure feedback.
+
+External WAV/MP3/FLAC inspection and preview use the existing worker normalization adapter, transient
+float WAV and bounded resident PCM (512 MiB maximum), never managed project media. WAV is portable;
+MP3/FLAC depend on Windows Media Foundation and installed codecs. Supported input is mono/stereo,
+8–192 kHz. Temporary normalized files are deleted on success/failure/cancellation. Project resources
+are decoded through existing managed-resource access; waveform/PCM observations grant no later-use
+authority. Resource discovery lists descriptors without decoding the whole project.
+
+Preview is an explicit one-shot, optionally repeated automatically when selection changes. It uses
+`WavAudition` with a renderer borrowed from Desktop's existing solo-output lifetime, native pitch and
+conservative gain 0.05. It adds no resource, sound, Pattern, dirty flag or Undo. Selecting another sound,
+Stop/Escape, cancellation, hiding/collapsing Browser, project close/replacement and starting transport
+end preview. An already playing transport refuses preview without stopping music or opening another
+output; no automatic transport resume or contextual substitution is implied. Output/preparation are
+joined before disposal. Native-pitch preview supports the existing 44.1/48 kHz mono/stereo output.
+
+Drag or explicit **+ Rack** uses the existing bounded pitched WAV model (16 MiB external WAV or an
+accepted `wav/` resource). A selected unshared supported Pattern receives an empty independent sampler
+channel. Without a selected Pattern, resource/sound, first empty Pattern, placement, channel and graph
+are accepted in one Edit/Undo. No notes, tempo changes or inferred pitch are added. Existing channel
+composition/shared-Pattern refusals remain. Verified external catalog root is respected; independent
+resource reuse starts at the existing default root 60. Normalized `audio/` resources and MP3/FLAC are
+explicitly available for Playlist rather than converted into another sampler representation.
+
+Drag or **+ Playlist** creates an independent Audio Clip through existing audio acceptance. Drop chooses
+position/lane; the button uses the Song cursor and first unused lane, asking for a drop if all lanes are
+used. Existing accepted `wav/` and normalized `audio/` resources are validated and reused without a
+physical copy or new ResourceId. Each use gets independent sound configuration; existing uses/Mixer
+routes remain intact. Frozen destination/lifecycle/generation, cancellation, managed durability,
+Undo/Redo and portable Save As/Open remain the existing owners. No schema or resource store is added.
+The [Browser report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) distinguishes deterministic, rendered,
+routed-drop and physical-output evidence from the foreground-refused native mouse attempt.
+
 ## Playlist audio import
 
 Playlist accepts WAV/MP3/FLAC as independent Audio Clips, by Explorer drop or its native picker.
@@ -173,7 +215,7 @@ of an existing SoundId is a different scope. Undo/Redo/Save As/reopen retain exi
 Reuse of degraded/unvalidated or cross-project resources fails without editing canonical state.
 
 The [F3 report](experiments/SEQ-R2-F3_REPORT.md) owns deterministic and explicitly audible smoke
-evidence. No Browser pane, GUI, catalog, library or general content-management system is implemented.
+evidence. This foundation introduced no GUI/catalog/library; the Desktop Browser above now composes it.
 
 ## The creative loop
 
@@ -196,7 +238,7 @@ It is not isolated from the composition. No Sample Lab is implemented yet.
 ## Browser discovery and ownership
 
 Browser is a discovery/access surface for finding and auditioning available material, not an ownership
-model or a universal asset identity. These accepted future semantics distinguish five roles:
+model or a universal asset identity. These ownership roles cover the bounded Browser and future sources:
 
 | Role                           | Meaning                                                                                                                                             |
 |--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|

@@ -42,6 +42,12 @@ audio keep their applicable gates and are not migrated merely by opening. Unknow
 history/persistence but block unsupported execution instead of silently losing musical intent.
 
 Managed audio resides under `<project>.media/audio/<identity>-<sha256>.wav`, normalized float32 WAV.
+Browser can also refer an independent Audio Clip sound to an already accepted `wav/` resource.
+That resource keeps its locator/identity and WAV integrity/Save As rules; source rate/frame/channel
+metadata defines fixed-speed execution. No media copy or additional serialized field is required.
+Earlier builds can preserve this combination but may lack its execution adapter; this is not an
+older-build playback guarantee. Browser folders/selection/preview do not enter project JSON or raise
+a reader gate.
 Locators remain relative, bounded and hash-verified. Save As copies required media atomically to the
 new associated directory; the imported original is not needed afterward. Missing/corrupt managed
 media preserves clip intent and diagnostics on Open, displays unavailable audio and refuses unsafe

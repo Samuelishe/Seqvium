@@ -1684,3 +1684,20 @@ New exposes the existing document replacement boundary with Save/Discard/Cancel.
 supersedes automatic startup restoration of unrelated empty editors. The last musical composition is
 kept for Open rather than overwritten by empty-document visibility. These are session/layout policies,
 not musical schema, DSP architecture or a dynamic pane registry.
+
+## SEQ-SAMPLE-BROWSER — bounded access over existing audio ownership, 2026-10-15
+
+Browser is a retained compact workspace tool. Explicit one-level paged enumeration and selected-only
+analysis serve everyday sample folders without a database or background disk crawl. Pinned/recent
+paths are access preferences, never retained user audio. The left dock replaces wide Pattern cards
+with the existing occurrence selector so Browser, Rack and Playlist fit FullHD together.
+
+Solo preview reuses WavAudition and the existing Desktop output lifetime, refuses during transport
+Play and has no import/Undo/dirty effect. This preserves musical sessions without introducing a new
+mixing owner or implicit Stop/resume policy. The real Windows normalization adapter supports
+MP3/FLAC for metadata/preview/Playlist; bounded legacy WAV remains Rack's pitched-sampler boundary.
+Explicit use validates a frozen destination and commits media/sound/use in one existing transaction.
+Project reuse shares accepted resource identity/bytes, creating independent sound/use configuration;
+Save As and source removal retain existing durable-media authority. No Personal Library or schema
+is introduced. Native input remains foreground-refused; routed rendering and physical output are
+separate evidence classes under the current sample/workspace owners and Browser report.

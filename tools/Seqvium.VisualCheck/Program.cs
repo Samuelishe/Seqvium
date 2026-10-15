@@ -167,7 +167,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "rack-pads"
-                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity",
+                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity" or "browser",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -192,6 +192,8 @@ internal static partial class Program
                     await IdentityAsync(main, output, Path.GetFullPath(args[2]));
                 }
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
+                else if (args[0] == "browser") await SampleBrowserAsync(main, output, args.Length > 2 && args[2] == "native",
+                    args.Length > 2 && args[2] == "audio", args.Length > 3 ? Path.GetFullPath(args[3]) : null);
                 else if (args[0] == "daily-workflow")
                 {
                     Require(args.Length is 3 or 4, "daily-workflow <output> <independent-project> [routed]");

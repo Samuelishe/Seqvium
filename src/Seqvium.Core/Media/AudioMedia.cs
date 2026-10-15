@@ -12,12 +12,17 @@ namespace Seqvium.Core;
 /// <summary>Immutable min/max pyramid. Overview queries retain transients without scanning source PCM on the UI.</summary>
 public sealed class AudioWaveform
 {
+    public static AudioWaveform FromPcm(DecodedPcm pcm, CancellationToken cancellation = default)
+    {
+        using var lease = pcm.Lease();
+        return new(lease.Samples, pcm.Channels, cancellation);
+    }
     private readonly (float Min, float Max)[][] _levels;
     public int Channels { get; }
     public int Frames { get; }
     public float Peak { get; }
 
-    internal AudioWaveform(float[] samples, int channels)
+    internal AudioWaveform(float[] samples, int channels, CancellationToken cancellation = default)
     {
         Channels = channels;
         Frames = samples.Length / channels;
@@ -27,6 +32,7 @@ public sealed class AudioWaveform
         for (int b = 0; b < count; b++)
         for (int c = 0; c < channels; c++)
         {
+            cancellation.ThrowIfCancellationRequested();
             float min = 0, max = 0;
             for (int f = b * 256; f < Math.Min(Frames, (b + 1) * 256); f++)
             {
@@ -264,7 +270,10 @@ public static partial class AudioMedia
 
     public static DecodedPcm Decode(ProjectDocument document, Id<ResourceDescriptor> id)
     {
+        document.CheckAvailable();
         var resource = document.Current.State.Resources.Single(r => r.Id == id);
+        if (ProjectMedia.IsManagedWav(resource)) return ProjectMedia.Decode(document, id);
+        if (!IsManaged(resource)) throw new IOException("Resource is not managed audio.");
         var cache = Caches.GetOrCreateValue(document);
         lock (cache)
         {
@@ -334,12 +343,20 @@ public static partial class AudioMedia
     internal static DecodedPcm DecodeFile(string path, string locator)
     {
         ValidateFile(path, locator);
+        return ReadTemporaryWave(path);
+    }
+
+    /// <summary>Reads adapter-normalized transient float WAV without accepting project media.
+    /// The caller owns the temporary file. Run outside UI/realtime; header, budget and PCM are validated.</summary>
+    public static DecodedPcm ReadTemporaryWave(string path, CancellationToken cancellation = default)
+    {
         using var input = File.OpenRead(path);
         var header = ReadHeader(input);
         var samples = new float[header.Samples];
         // Chunked I/O avoids simultaneously retaining compressed bytes and complete decoded PCM.
         for (int offset = 0; offset < samples.Length; offset += 16384)
         {
+            cancellation.ThrowIfCancellationRequested();
             var target = samples.AsSpan(offset, Math.Min(16384, samples.Length - offset));
             input.ReadExactly(MemoryMarshal.AsBytes(target));
             foreach (float sample in target)
@@ -348,6 +365,22 @@ public static partial class AudioMedia
         }
 
         return new(header.Rate, header.Channels, samples);
+    }
+
+    public static async Task<AudioResourceReuse> PrepareReuseAsync(ProjectDocument document,
+        Id<ResourceDescriptor> resource, CancellationToken cancellation = default)
+    {
+        var frozen = SourceAccess.Capture(document);
+        long generation = document.Generation;
+        return await Task.Run(() =>
+        {
+            cancellation.ThrowIfCancellationRequested();
+            using var pcm = Decode(frozen, resource);
+            using var lease = pcm.Lease();
+            var waveform = new AudioWaveform(lease.Samples, pcm.Channels);
+            cancellation.ThrowIfCancellationRequested();
+            return new AudioResourceReuse(document, generation, resource, pcm, waveform, cancellation);
+        }, cancellation).ConfigureAwait(false);
     }
 
     internal static void CopyForSave(ProjectDocument document, ResourceDescriptor resource, string root)
