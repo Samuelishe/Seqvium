@@ -23,6 +23,7 @@ internal sealed partial class DesktopWorkflow
         if (source.Resource is { } resource) return SourceAccess.ReadResourceAsync(_document, resource, cancellation);
         return Task.Run(() =>
         {
+            using var use = BorrowBrowserSource(source);
             string temporary = Path.Combine(Path.GetTempPath(), $"seqvium-preview-{Guid.NewGuid():N}.wav");
             try
             {
@@ -54,6 +55,7 @@ internal sealed partial class DesktopWorkflow
     internal Task<bool> PreviewBrowserSourceAsync(BrowserSource source, CancellationToken cancellation = default)
         => Command("Browser.PreviewFailed", async () =>
         {
+            using var use = BorrowBrowserSource(source);
             ValidateBrowserSource(source);
             if (_coordinator?.ReadStatus().Execution.Playing == true)
             {
@@ -100,7 +102,7 @@ internal sealed partial class DesktopWorkflow
     internal Task<bool> UseBrowserAudioAsync(ArrangementEditBasis basis, BrowserSource source,
         MusicalPosition position, int lane, CancellationToken cancellation = default)
     {
-        if (source.Path is { } path) return ImportAudioClipAsync(basis, path, position, lane, cancellation);
+        if (source.Path is { } path) return ImportAudioClipAsync(basis, path, position, lane, cancellation, source);
         return Command("Workflow.ImportFailed", async () =>
         {
             ValidateArrangementBasis(basis);
@@ -122,7 +124,13 @@ internal sealed partial class DesktopWorkflow
 
     internal Task<bool> UseBrowserRackAsync(ArrangementEditBasis basis, Id<GraphAttachment>? target,
         BrowserSource source, CancellationToken cancellation = default) => Command("Workflow.ImportFailed", async () =>
+            await UseBrowserRackCoreAsync(basis, target, source, cancellation));
+
+    private async Task<bool> UseBrowserRackCoreAsync(ArrangementEditBasis basis, Id<GraphAttachment>? target,
+        BrowserSource source, CancellationToken cancellation, Action<Action>? acceptanceGate = null)
     {
+        void Accept(Action commit) { if (acceptanceGate is null) commit(); else acceptanceGate(commit); }
+        using var use = BorrowBrowserSource(source);
         ValidateArrangementBasis(basis);
         ValidateBrowserSource(source);
         // Preserve the established pitched WAV source limits and resource model.
@@ -178,7 +186,7 @@ internal sealed partial class DesktopWorkflow
             using var request = ProjectMedia.BeginReuse(_document, existing, name, releaseMilliseconds: 0);
             await request.PrepareAsync(cancellation);
             ValidateArrangementBasis(basis);
-            request.Accept(CreateUse, cancellation);
+            Accept(() => request.Accept(CreateUse, cancellation));
         }
         else
         {
@@ -194,7 +202,7 @@ internal sealed partial class DesktopWorkflow
             using var stream = new MemoryStream(bytes, false);
             await request.PrepareAsync(stream, cancellation);
             ValidateArrangementBasis(basis);
-            request.Accept(CreateUse, cancellation);
+            Accept(() => request.Accept(CreateUse, cancellation));
         }
         if (created is not null)
         {
@@ -203,5 +211,5 @@ internal sealed partial class DesktopWorkflow
         }
         _status = "Workflow.Ready";
         return true;
-    });
+    }
 }

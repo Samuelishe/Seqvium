@@ -12,6 +12,16 @@ Recovery, broader packaging and later migrations remain open; this is not a fina
 The current reader supports major 1 / minor 5. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
+## R6 optional modules and accepted media
+
+R6 adds no project fields or reader gate. Package enablement/discovery and temporary generator
+sessions/candidates are not musical state. Pack audio and explicitly accepted generator WAVs use the
+existing immutable managed resources, sound/use IDs, Save As integrity and history. Reopening does not
+require the source package or generator and never regenerates accepted audio. No durable recipe or
+candidate history is promised. Existing `ExtensionState` and unknown node/sound payload preservation
+and dependency-scoped execution refusal remain unchanged; R6 provides no realtime extension processor.
+See [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
+
 ## Playlist sections and Pattern ancestry (reader 1.5)
 
 `state.arrangementSections` contains identified, named/color ranges in canonical musical ticks.

@@ -6,7 +6,7 @@ namespace Seqvium.Desktop.Workflow;
 
 internal sealed record BrowserSource(string Name, string? Path = null,
     Id<ResourceDescriptor>? Resource = null, Guid Lifecycle = default, bool Directory = false,
-    bool SamplerCompatible = false)
+    bool SamplerCompatible = false, string? Package = null, string? Capability = null, string? Content = null)
 {
     public override string ToString() => (Directory ? "▸  " : "∿  ") + Name;
 }

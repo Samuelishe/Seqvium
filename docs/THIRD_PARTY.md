@@ -7,6 +7,14 @@ entry fields.
 Not authoritative for: Authoritative license text, final technical choices, subsystem design, or installed-version
 locks.
 
+## Original Found Sounds content
+
+The [Found Sounds package](../src/Seqvium.Desktop/Extensions/seqvium.found-sounds/README.md) contains
+three original deterministic mathematical syntheses, created for Seqvium without recordings, external
+samples or copied DSP source. WAVs and [reproduction script](../tools/content/create-found-sounds.py)
+are Seqvium contribution material under the root Apache-2.0 license. This introduces no third-party
+audio/license obligation; generated verification candidates remain test data, not distributed instruments.
+
 ## Visual identity fonts and reference material
 
 The [brand kit](../brand/README.md) retains owner-supplied generated raster references for concepts

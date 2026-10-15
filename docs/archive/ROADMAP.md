@@ -341,3 +341,16 @@ editor targets, magnetic/shared/group docking, high/mixed DPI, screen readers, L
 delivered-distribution evidence remain scoped questions; closure neither implements nor certifies them.
 No stage requirement is weakened, no production code or test changes, no R4 start, commit/push or
 staging-index mutation. Current truth remains in [PROJECT_STATE](../PROJECT_STATE.md) and active owners.
+
+## SEQ-R6-EXTENSION-FOUNDATION — 2026-10-15
+
+Completed bounded functional scope: real package/capability/use/resource separation, deployment-root
+manifest discovery, required/optional contract compatibility, trusted exact-version factories,
+activation/disable/failure/cancellation/close lifetimes, host metadata fallback/withdrawal and managed
+content/candidate acceptance. Found Sounds is a real optional data package in the existing Browser.
+A functional test provider verifies the asynchronous seam; no user Sample Lab is claimed. General
+realtime/state/UI-resource SDKs, installer/updater and external bridges remain future; R7 still owns
+actual families, variation/locks/history and contextual audition. Native click delivery remains an
+explicit evidence gap rather than being inferred from routed rendering. Current owners are
+[Extensions](../EXTENSIONS.md#implemented-r6-local-foundation) and
+[Sample workflow](../SAMPLE_WORKFLOW.md#r6-module-sources-and-candidate-boundary).

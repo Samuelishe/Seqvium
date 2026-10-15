@@ -7,6 +7,29 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## R6 extension verification
+
+`ExtensionFoundationTests` exercises local manifest damage/version/path/missing/duplicate boundaries,
+required-contract rejection without activation, old package versions with optional fallback, trusted
+factory registration, failed/timed-out/cancelled activation and retry/disposal failure. Explicit gates
+cover active-use disable refusal, open-editor leases, serialized generation, cancellation, superseded
+late outputs, invalid parameters/audio, changed document generations, New/application Close joins and
+candidate disposal. Managed Rack/Playlist and generated acceptance cover one Undo, disable/source
+removal, portable Save As/Open and nonzero export without the package. Existing persistence/graph
+tests retain opaque missing-state and affected-execution blockers; no realtime plugin is implied.
+
+Use focused `*ExtensionFoundationTests`, then affected `*SampleBrowserTests`, `*DesktopWorkflowTests`,
+`*PersistenceTests`, `*ManagedMediaTests`, `*GraphDiagnosticTests` and `*WorkspaceStateTests` as needed.
+The workspace regression covers opening the docked Browser before its first native arrange.
+For this stage's lifecycle risk, L3 is additionally selected; see the
+[R6 report](experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md).
+
+VisualCheck `extensions <output> [native]` opens the real production Browser and shipped Found Sounds,
+imports through existing buttons, disables/re-enables contributions and reopens with the pack disabled.
+It renders RU/EN Dark/Light plus reduced disclosure/list/preview geometry. Routed controls, native
+Windows input, decoded PCM and physical/acoustic evidence remain distinct. A failed native click
+delivery is not a pass, even when the corresponding routed scenario succeeds.
+
 ## Sample Browser verification
 
 Cross-stage regressions additionally cover section-only Pattern/Song × Mixer publication without

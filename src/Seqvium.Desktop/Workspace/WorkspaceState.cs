@@ -167,7 +167,8 @@ public sealed class WorkspaceState : IDisposable
     {
         var pane = Get(id);
         if (pane.Dock == PaneDock.Floating) return pane.FloatingBounds;
-        var width = pane.DockedWidth!.Value;
+        // A pane can be opened before the first native arrange has supplied dock widths.
+        var width = pane.DockedWidth ?? ClampDockWidth(id, pane.FloatingBounds.Width);
         return new(pane.Dock == PaneDock.Left ? 0 : Width - width, 0, width, Height);
     }
 

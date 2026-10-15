@@ -1,5 +1,22 @@
 # Desktop visual and lifecycle verification
 
+## Local extension foundation
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll extensions "$PWD/.artifacts/r6-extensions/review"
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll extensions "$PWD/.artifacts/r6-extensions/native" native
+```
+
+The real Browser discovers the build-copied original Found Sounds pack, shows a waveform, imports
+through Rack/Playlist buttons, checks managed resources/Undo, disables/re-enables the contribution,
+and reopens music with the package disabled. Four language/theme renders and reduced-window
+disclosure/list/preview checks are included. The default route uses routed buttons and does not
+establish native Windows input. `native` uses the guarded pointer helper for action buttons;
+initial window/pane/disclosure setup and file selection remain fixture setup. It opens no physical
+audio device. [R6 report](../../docs/experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md) records actual
+success/failure and scope. The test-only generator provider is exercised by deterministic tests,
+not presented as Sample Lab in this GUI.
+
 ## Cross-stage input and Browser cost
 
 ```powershell

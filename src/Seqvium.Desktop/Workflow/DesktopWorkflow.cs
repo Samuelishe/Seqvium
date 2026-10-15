@@ -91,8 +91,9 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     internal DesktopWorkflow(ProjectDocument document, Func<WorkflowOutput>? openOutput = null,
         string? mediaDirectory = null,
         Func<ProjectDocument, RealtimeSampler, Id<GraphAttachment>, SynchronizationContext,
-            GraphExecutionCoordinator>? createCoordinator = null)
+            GraphExecutionCoordinator>? createCoordinator = null, ExtensionHost? extensions = null)
     {
+        if (extensions is not null) Extensions = extensions;
         _document = document;
         _openOutput = openOutput ?? DesktopOutput.Open;
         _createCoordinator = createCoordinator ?? ((doc, sampler, target, owner) =>
@@ -341,6 +342,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
                     throw;
                 }
 
+                await CloseGeneratorsAsync();
                 _document.Changed -= DocumentChanged;
                 _document.Close();
                 _document = loaded.Document;
@@ -363,6 +365,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         {
             if (!CanReplace(decision, savePath)) return false;
             await CloseAudioAsync();
+            await CloseGeneratorsAsync();
             _document.Changed -= DocumentChanged;
             _document.Close();
             _document = ProjectDocument.Create();
@@ -512,6 +515,8 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         {
             if (!CanReplace(decision, savePath)) return false;
             await CloseAudioAsync();
+            await CloseGeneratorsAsync();
+            await Extensions.DisposeAsync();
             _document.Changed -= DocumentChanged;
             _document.Close();
             _closed = true;
@@ -525,6 +530,8 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void DocumentChanged()
     {
+        // R6 uses strict generation relevance: an intervening musical edit expires pending/candidate work.
+        foreach (var session in _generationSessions) session.Cancel();
         long end = ArrangementPreparation.EndTicks(_document.Current.State);
         _songCursor = Math.Min(_songCursor, end);
         _loopEnd = Math.Min(_loopEnd, end);

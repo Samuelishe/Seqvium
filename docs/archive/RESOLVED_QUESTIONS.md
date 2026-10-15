@@ -512,3 +512,19 @@ No release timeline or exact distribution matrix chosen; no platform runtime/har
   without making it a prerequisite or adding/reordering a musical roadmap stage. R4 remains partial,
   F3-B visual owner acceptance remains pending, and R5 is not started. Owners:
   [Development](../DEVELOPMENT.md), [ProjectStats](../PROJECT_STATS.md), [roadmap](../ROADMAP.md).
+
+## R6 resolved portions — Q-010/Q-024/Q-054/Q-055/Q-067 — 2026-10-15
+
+- Q-010: deployment-local discovery, persisted disabled IDs, counted use/editor lifetimes, disable
+  refusal, cancellation/joins and ordinary failed activation/retirement retry are implemented.
+- Q-024: bounded schema-1 manifests, required/optional inclusive contract ranges and exact-version
+  trusted factories are implemented for WAV content and async generation. Product age is not a gate.
+- Q-054/Q-055: actual R6 surfaces use host RU/EN Dark/Light controls; optional Russian metadata falls
+  back to English without executable activation or incompatible-processing classification.
+- Q-067: duplicate package rejection, scoped content identity, Browser contribution withdrawal and
+  stale captured-source refusal are implemented without executable UI/resource contributions.
+
+These resolve bounded mechanisms, not the entire questions. General installation/update/rollback,
+realtime/configuration/state ABI, contributed resource registration/versioning and native delivery
+remain open in [Known problems](../KNOWN_PROBLEMS.md). R7 owns real creative families/reference/locks/
+history/contextual audition. Current truth is in [Extensions](../EXTENSIONS.md#implemented-r6-local-foundation).

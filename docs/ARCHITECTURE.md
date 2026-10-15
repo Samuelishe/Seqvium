@@ -12,6 +12,27 @@ SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed 
 offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
 output adapter; graph, presentation and permanent engine choices remain separate.
 
+## Implemented R6 extension ownership
+
+Core `Extensions/` owns bounded manifest discovery/contract checks, trusted registered factories,
+package state and counted use/retirement. Package identity/version, contributed capability,
+active session and accepted project resource are separate. No new assembly, dynamic DLL loader,
+realtime plugin contract or dependency from the audio callback is introduced. The host platform
+contracts and deployment/trust limits belong to [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
+
+Desktop owns enablement preferences and the small host-rendered Browser disclosure. Content sources
+carry package/capability/content identity and reacquire a lease through inspection/preview/import;
+disabled captured sources cannot bypass availability. Successful uses call existing `ProjectMedia`
+or `AudioMedia`, retaining one document transaction and ordinary managed-media/history authority.
+
+`SampleGenerationSession` owns one exploration lifetime, serial worker execution, cancellation,
+supersession and temporary candidate disposal. `DesktopWorkflow` owns its document sessions and joins
+them before New/Open/Close retires that document; application Close then retires the package host.
+The acceptance seam captures a Rack destination, validates lifecycle/generation and candidate identity,
+and commits through the existing managed WAV import inside the final synchronous session gate.
+There is no generator UI/renderer or second save/Undo system. Concrete R7 variation/contextual audition
+and history semantics remain with [Sample workflow](SAMPLE_WORKFLOW.md#r6-module-sources-and-candidate-boundary).
+
 ## Implemented Browser composition
 
 Desktop's retained Browser owns only navigation/list/selection and bounded worker directory cursors.
@@ -1444,8 +1465,9 @@ Pattern, sample and track names remain user content, not automatic host translat
 Contributed resources are scoped by stable contributor identity as well as resource identity. A similar
 human-readable name/key from two providers must not collide or silently replace another provider's
 resource, including host-owned fallback resources. The host owns resolution rules and the contributor
-owns its supplied content and availability; labels do not establish ownership. Exact identifier syntax,
-manifest fields, duplicate-registration handling and APIs remain open in Q-054/Q-055/Q-067.
+owns its supplied content and availability; labels do not establish ownership. General resource identifier syntax
+and APIs remain open in Q-054/Q-055/Q-067. R6 implements only
+bounded package/capability identity, duplicate-package rejection and host-rendered metadata above.
 
 ### Language support and resource fallback
 

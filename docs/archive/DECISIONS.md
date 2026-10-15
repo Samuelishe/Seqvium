@@ -1701,3 +1701,25 @@ Project reuse shares accepted resource identity/bytes, creating independent soun
 Save As and source removal retain existing durable-media authority. No Personal Library or schema
 is introduced. Native input remains foreground-refused; routed rendering and physical output are
 separate evidence classes under the current sample/workspace owners and Browser report.
+
+## SEQ-R6 — bounded trusted modules and project-owned acceptance — 2026-10-15
+
+Status: Implemented within owner-authorized SEQ-R6-EXTENSION-FOUNDATION.
+
+Keep package identity/version, contributed capability, live use/session and accepted music separate.
+Use a deployment-controlled metadata root and explicit package/version/capability factories instead of
+unrestricted DLL loading. Integer required/optional contract ranges prove the concrete first categories
+without guessing compatibility from product age. Data-only content and asynchronous generators do
+not justify a universal realtime ABI or additional assemblies.
+
+Block disable while known borrowers/editors exist; require cooperative cancellation and actual joins
+before retirement. Supervise timed-out activation and dispose late candidates rather than unload
+beneath code. Keep presentation host-owned metadata in this slice, with validated English fallback
+and shared semantic controls; defer general contributed dictionaries/styles until a real module needs them.
+
+Use the existing Browser, managed-media import and history for content and accepted generator WAVs.
+Candidates remain disposable until an explicit destination/context/identity-checked commit; ordinary
+music edits invalidate R6 candidates and document replacement closes the exploration lifetime.
+No recipe or installed-generator dependency is needed to replay accepted audio. R7 retains actual
+variation/reference/lock/history and audition work. BUILD 0.1.7.0006 records this foundation; failed
+native delivery is retained as evidence, with no PATCH or broader platform/acoustic claim.

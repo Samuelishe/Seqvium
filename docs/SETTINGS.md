@@ -10,6 +10,21 @@ logging implementation.
 R2-F4 implements session-only logical audio selection. R3-F1/F2 implement the bounded preferences and
 workspace layout files below plus the optional Appearance pane; broader Settings/reset/logging UI is absent.
 
+## Extension enablement
+
+`extensions.json` lives beside preferences/layout and Browser locations. Version 1 stores only a
+bounded list of disabled package IDs (at most 256, 32 KiB), including temporarily absent packages.
+Unlisted compatible deployment packages default enabled when Browser initializes the local catalog.
+The deployment root and trust rules are owned by [Extensions](EXTENSIONS.md#implemented-r6-local-foundation),
+not user preferences. No plugin installer, reset or deletion action is introduced.
+
+Worker reads/writes preserve invalid/unsupported originals and refuse overwriting them for this
+session. Unsafe settings do not automatically enable modules; explicit session choices remain usable
+with a visible persistence notice. Valid writes flush an exclusive sibling temporary, preserve
+`.previous` and replace the file. Browser shutdown joins pending changes. These settings contain no
+audio, project dependencies, sound parameters or opaque plugin state; disabling/resetting preferences
+cannot delete accepted media.
+
 ## Browser access preferences
 
 `browser-locations.json` lives alongside the existing user preference/layout files, including isolated
@@ -115,7 +130,7 @@ preferences: changing global defaults must not silently alter previously saved p
 [PROJECT_FORMAT](PROJECT_FORMAT.md#project-state-and-user-preferences) owns their
 persistence; [WORKSPACE](WORKSPACE.md#layout-ownership-and-restoration) owns workspace behavior.
 Bundled/plugin executable files and preferences are separate concerns. Exact plugin installation/
-discovery locations remain open under [EXTENSIONS](EXTENSIONS.md).
+discovery beyond R6's bounded deployment root remain open under [EXTENSIONS](EXTENSIONS.md).
 
 Host localization ownership/Russian-English direction belongs to
 [ARCHITECTURE](ARCHITECTURE.md#host-localization-and-ui-resources); Dark/Light semantic theme resources

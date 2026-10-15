@@ -49,6 +49,8 @@ for the logo, typography, alternative directions and publication resources.
   audio. Inspect real waveforms, preview sounds while transport is stopped, then drag into Channel
   Rack or Playlist, or use the explicit add buttons. Preview never imports or changes Undo.
 - Work in English or Russian, with Dark and Light themes.
+- Explore the optional **Found Sounds** pack in Browser's **Sound packs & extensions** disclosure.
+  Enable or disable local sound packs; imported audio stays in your project.
 - Create a fresh project with **New project / Ctrl+N**, switch playing Patterns from the navigator,
   and open a melody directly in Piano Roll. Empty documents start with one compact Channel Rack.
 
@@ -80,7 +82,7 @@ refuses overload instead of silently dropping music. Heavy system load can still
 Audio split currently operates on a single occurrence; set repeats to one before splitting.
 Section rearrangement refuses clips that cross its boundaries, shows the source/track and offers
 direct navigation; explicitly split audio or adjust the section first. Dynamic track insertion,
-groups, automation, delay/reverb, plugin hosting, MIDI input, recording and crash recovery are not
+groups, automation, delay/reverb, external realtime plugin hosting, MIDI input, recording and crash recovery are not
 implemented. Sampler pitching uses linear resampling, not time stretching. Mixer stereo pan is
 balance; its peak ceiling is sample-peak protection, not true-peak mastering.
 

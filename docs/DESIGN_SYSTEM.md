@@ -113,6 +113,13 @@ preparation; actual values remain source-owned.
 
 ## Browser composition
 
+The local extension disclosure is a host-owned Expander with standard ComboBox/buttons, wrapped
+caption diagnostics and local scrolling. Identity/version/purpose/state remain textual; it contributes
+no palette, template or independent icon system. Enabled pack locations join Browser's existing list.
+At reduced heights, disclosure and preview have bounded local scroll areas so the sound list remains
+reachable; at ordinary heights preview retains its established controls. This adds no shared-style
+or field-alignment exception. R6 uses metadata labels only, not a generic contributed style registry.
+
 Browser uses shared standard ComboBox/TextBox/ListBox, compact vector buttons, localized actions and
 local virtualized scrolling. The pinned preview uses the existing caption/monospace hierarchy and
 `BrowserWaveform` resolves live HostVisual surface/boundary/accent roles in both themes. It draws only

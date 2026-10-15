@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "seqvium.found-sounds",
+  "version": "1.0.0",
+  "name": "Found Sounds",
+  "russianName": "Найденные звуки",
+  "capabilities": [
+    {
+      "id": "seqvium.found-sounds.content",
+      "category": "ContentPack",
+      "requires": [{ "contract": "seqvium.content.wav", "minimum": 1, "maximum": 1 }],
+      "content": [
+        { "id": "found.soft-pulse", "name": "Soft Pulse.wav", "file": "Soft Pulse.wav" },
+        { "id": "found.glass-drop", "name": "Glass Drop.wav", "file": "Glass Drop.wav" },
+        { "id": "found.dust-tick", "name": "Dust Tick.wav", "file": "Dust Tick.wav" }
+      ]
+    }
+  ]
+}

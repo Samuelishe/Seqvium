@@ -4,7 +4,96 @@ Role: Optional-capability and extension lifecycle contract.
 Read when: Designing extension boundaries, packages, removal, or missing-capability behavior.
 Authoritative for: Categories, base-versus-optional policy, preset-source versus project-state boundaries,
 compatibility/fallback, lifecycle/removal safety, degraded availability and dependency blockers.
-Not authoritative for: A final public API, package format, project container, DSP implementation, or store.
+Not authoritative for: A general public SDK/ABI, project container, DSP implementation, or store.
+
+## Implemented R6 local foundation
+
+R6 implements a bounded local host in the existing Core/Desktop assemblies, with no public SDK/ABI
+stability promise. `ExtensionPackage`, `ExtensionCapability`, a counted `ExtensionUse` and project-owned
+`ResourceDescriptor` are separate identities/lifetimes. The supported categories are **ContentPack**
+and **SampleGenerator**. Future realtime instruments/effects/nodes require their own concrete contracts;
+they cannot execute through the asynchronous generator boundary.
+
+Desktop discovers immediate directories under **`<application>/Extensions`** when Browser is created.
+This is a deployment-controlled root, not a scan of user folders or an installer. At most 64 packages,
+64 KiB per `extension.json`, 16 capabilities, 32 requirements per capability and 256 content entries
+per capability are admitted. Linked paths, absolute/escaping content paths, duplicate package or
+capability identities, malformed metadata and unknown manifest versions remain unavailable with
+host diagnostics. Valid metadata survives a missing declared file. Deployment updates/removal happen
+while the app is closed; refresh of loaded/borrowed/failed-to-retire packages is refused.
+
+Schema 1 declares `id`, independent three/four-component `version`, English `name`, optional
+`russianName`, and `capabilities`. IDs are bounded lowercase dotted/hyphenated names. Each capability
+declares `id`, `category`, `requires` and `content` (empty for a generator). Requirements contain a
+`contract` plus inclusive integer `minimum`/`maximum` and optional `optional`. Content contains stable
+`id`, `name`, and a package-relative WAV `file`. The shipped
+[Found Sounds manifest](../src/Seqvium.Desktop/Extensions/seqvium.found-sounds/extension.json) is a complete example.
+
+The current contracts are **`seqvium.content.wav: 1`** and **`seqvium.sample-generator: 1`**. Each
+category must require its corresponding contract. All required contracts must match before any
+package activation; one unmet required contract makes this bounded package unavailable atomically.
+Optional contract failures produce a usable fallback diagnostic. Product-version age is never a gate.
+An executable factory must additionally be registered by the host for the exact package ID, package
+version and capability ID. No manifest assembly/type path, DLL scanning, reflection load, native
+hosting, sandbox or external store exists. Placing DLLs beside a manifest does not execute them.
+
+States distinguish Disabled, Activating, Available, Deactivating, Incompatible, Damaged and Failed;
+missing identities receive an explicit missing diagnostic. Activation runs on a worker with a
+five-second caller deadline. Cancellation/deadline withdraws use immediately; an uncooperative late
+activation stays supervised/unavailable until it exits and its created providers are disposed. It is
+never unloaded underneath running code. Ordinary activation failure allows retry after cleanup.
+Failed disposal retains references, refuses discovery/re-enable, and allows a later disable retry.
+The in-process trusted contract requires cooperative termination; R6 cannot kill arbitrary stuck code.
+
+Disable is **blocked**, not queued, while generation, inspection/import or an open dependent session
+holds a use. The host explains that work must finish/cancel and editors must close. Once drained,
+disable withdraws acquisition before awaited provider disposal. Re-enable creates a fresh provider
+through the registered factory. Application shutdown cancels borrowers, joins pending activation/work,
+then disposes providers; document replacement closes and joins its generator sessions first. Accepted
+media owns no package lease. There is no physical package deletion command.
+
+### R6 generator and acceptance boundary
+
+`ISampleGenerator` declares a bounded numeric parameter schema and accepts immutable parameters plus
+document lifecycle/generation, requested sample rate and maximum output frames. Generation runs outside
+UI/document/audio callbacks, serialized per provider across sessions. The host accepts supported mono/
+stereo WAV candidates, up to 16 MiB and the requested rate/frame bound (context permits 8–192 kHz and
+at most 30 seconds). No document, device, graph, transport or Undo object is passed to the provider.
+
+`SampleGenerationSession` owns the editor/use lease, pending requests and one temporary candidate.
+Supersession/cancellation/close invalidates prior requests and disposes late outputs even if the provider
+ignores cancellation. Queued work is bounded; provider errors are recoverable. A `SampleCandidate` has
+its own UUID, name, availability and disposable host-owned WAV bytes; it is not a durable ResourceId.
+There is no candidate-history or recipe persistence in R6.
+
+The Desktop acceptance seam captures an explicit Rack destination, checks the original document and
+generation, prepares through existing managed WAV import, and rechecks candidate identity at the final
+synchronous session/document commit gate. Acceptance creates media/sound/use with one ordinary Undo
+entry. Temporary transport files are removed on every outcome. Cancelled, superseded, closed or stale
+results cannot edit another project. Pack Rack/Playlist uses follow the same existing managed paths;
+accepted audio remains playable/renderable after package disable/removal and portable Save As/Open.
+Existing opaque unavailable sound/node state remains preserved and affected execution remains blocked;
+R6 adds no realtime provider, project field or format-reader gate.
+
+The test-only functional provider proves activation, generation, cancellation, stale/late disposal,
+document/application close and durable acceptance. It is not shipped as Sample Lab. R7 must supply real
+families, reference/variation/lock declarations, contextual audition and bounded candidate history/UI.
+Those concrete request extensions must retain R6's ownership, cancellation and final acceptance gates;
+R6 does not invent universal similarity or promise cross-version regeneration.
+
+### R6 host presentation
+
+Browser's **Sound packs & extensions** disclosure lists local identity/version/purpose, availability
+and diagnostics, with Browse sounds and Enable/Disable. Enabled pack sounds join the existing Browser
+location/list/preview/drag and musical-use paths. Disabling removes contributed locations/selections;
+old captured drag sources must reacquire availability and are refused after disable. Host-owned metadata
+labels require no executable activation. Optional absent/invalid Russian names fall back to English;
+there are no contributed dictionaries, styles, icons or editor factories to unload in this slice.
+All actual controls use existing Onest/semantic resources and RU/EN Dark/Light. Broader contribution
+registration/versioning remains future work, rather than a generic resource registry added for R6.
+User enablement persistence belongs to [Settings](SETTINGS.md#extension-enablement).
+
+The [R6 report](experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md) owns verification and native-input limits.
 
 ## First built-in instrument boundary
 
@@ -53,7 +142,7 @@ capability; this does not make the host graph or audio resources removable with 
 Seqvium Platform defines the current host rules and contracts; plugins are guests. Each plugin version
 must declare and satisfy the host contracts/capabilities it requires. New plugin development should
 target the current Seqvium platform/SDK contract available at development time, rather than evolve
-independently of host semantics. This does not select final manifest fields, API, or version-range mechanics.
+independently of host semantics. The bounded R6 representation is above; a general SDK/ABI remains open.
 
 Plugins consume the host processing environment, including sample rate, frame/block count, channels,
 tempo, transport/musical position, and supported capabilities where relevant. General realtime
@@ -81,7 +170,7 @@ A known incompatible plugin must not be activated. Installation may be rejected 
 is known beforehand. An already installed plugin may remain present but unavailable/incompatible;
 losing support must not automatically uninstall or delete it. The user decides whether to remove it.
 Preserve project/plugin identity, state, and relationships where applicable under the missing-extension
-rules below. The final resolver, manifest/schema, and compatibility paths are not selected.
+rules below. R6 selects only the local categories/contracts above; general processing/state negotiation remains open.
 
 ## Independent execution capability
 
@@ -113,14 +202,14 @@ Leave room for stable plugin identity, package/version, plugin state/schema vers
 contract/capability ranges, optional capabilities, supported localization/languages, fallback/default
 language, and optional last-tested/last-updated Seqvium platform information. Platform-age metadata
 helps diagnosis; `older than host -> reject` is not the rule. No manifest format, exact fields or API/ABI
-is selected; Q-024 retains negotiation representation and state compatibility schema.
+is selected for general external hosting; the R6 local schema is above. Q-024 retains broader state compatibility.
 
 Localization support/fallback metadata is independent of executable capability/version compatibility.
 Missing localization does not reject otherwise compatible processing or change the host language.
 [ARCHITECTURE](ARCHITECTURE.md#language-support-and-resource-fallback) owns per-resource fallback,
 the initial first-party RU/EN baseline and English fallback; Q-054 retains concrete format/schema.
 Human-readable metadata should be discoverable without requiring activation of arbitrary plugin code;
-no manifest fields or discovery/registration API are selected. Independent third-party native editors
+R6 implements that bounded metadata path above; a general resource registration API remains open. Independent third-party native editors
 remain outside host-rendered localization control where applicable.
 
 ## UI resource contribution lifecycle
@@ -218,7 +307,7 @@ Stronger out-of-process hosting, crash containment, sandboxing, or per-plugin/ve
 evaluated later if practical value justifies their complexity. They are not initial extension-architecture
 requirements or necessary to satisfy this baseline. No process/IPC architecture is selected; optional
 containment is retained in [IDEAS](IDEAS.md#i-005--out-of-process-external-plugin-crash-isolation) and
-future evaluation in Q-025 of [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). No plugin host exists yet.
+future evaluation in Q-025 of [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). R6 is a trusted local asynchronous/data host only.
 
 ## External plugin lifecycle and editors
 
@@ -390,9 +479,8 @@ package lifecycle remain Q-010. This follows the general
 Plugin-global preferences are user configuration; sound/meaning-affecting plugin instance state belongs
 with the project. [SETTINGS](SETTINGS.md) owns this separation and preference-reset boundaries;
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns instance-state preservation. Executable installation/discovery
-locations are separate from preferences and remain open.
+locations are separate from preferences; R6's bounded deployment root is defined above.
 
-Exact identity namespace syntax, version compatibility, manifest and package format, executable trust/isolation,
-loading mechanism, API/ABI, update policy, and realtime contracts are open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md).
-SEQ-R6 should implement only what the first optional content/generator modules require; later realtime
+General executable loading/isolation, public API/ABI, state evolution, update policy and realtime
+contracts remain open in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md). R6 implements only local content/generator needs; later realtime
 capabilities must meet [AUDIO_ENGINE](AUDIO_ENGINE.md), not inherit an asynchronous generator contract.

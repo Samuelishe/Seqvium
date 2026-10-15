@@ -7,6 +7,27 @@ Lab exploration/reference/locks/history, candidate acceptance, durable audio, ob
 Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing,
 or final resource file format.
 
+## R6 module sources and candidate boundary
+
+Enabled content-pack WAVs appear as locations in the existing Browser. **Sound packs & extensions**
+shows availability, purpose/version and host-owned diagnostics and offers Browse sounds/Enable/Disable.
+Inspect/preview are transient. Rack/Playlist uses acquire the package during preparation/acceptance,
+then use the same managed media and single Undo transaction as ordinary file import. Disabled/missing
+sources refuse new use, including a captured old drag. Imported resources survive disable, source
+removal, Undo/Redo and Save As/Open, and remain available from Project resources. There is no second Browser.
+
+R6's functional generator provider exists only in tests. It returns a disposable WAV candidate with its
+own identity, without editing music. Sessions cancel/join work on replacement/close, invalidate superseded
+requests and dispose even late results. Explicit acceptance validates the original document/generation
+and captured Rack destination, then uses normal managed WAV import. Failure/staleness/cancellation
+adds no media/use/history. Temporary candidate bytes/files never become a parallel saved audio store.
+
+This establishes lifetime/acceptance, not Sample Lab. R7 still owns actual families, random/related
+intention, reference inputs, declared locks, bounded history/comparison, UI and contextual audition.
+R6 conservatively rejects a candidate for changed document generation; deliberate safe reuse under
+R7's richer context needs concrete evidence, not selection-based retargeting. See
+[Extensions](EXTENSIONS.md#r6-generator-and-acceptance-boundary) for bounds and lifecycle.
+
 ## Implemented SEQ-SAMPLE-BROWSER
 
 Browser exposes explicitly chosen filesystem folders and the current project's accepted audio resources.

@@ -1901,3 +1901,28 @@ the tool policy rejected the checked recursive-removal command; it is available 
 manual cleanup. Permanent product/test/navigation and reusable GUI verification sources remain. The repository demo,
 publication and user projects remain unchanged. BUILD advances once **0.1.7.0001 → 0.1.7.0002**;
 no staging, commit, push or tag is performed.
+
+## SEQ-R6-EXTENSION-FOUNDATION — 2026-10-15
+
+Implemented trusted deployment-local packages, metadata/contract negotiation, exact-version provider
+registration, counted use/disable/failure/retry/close lifetimes and host-rendered Browser contribution
+availability. Found Sounds ships three original deterministic WAVs as a separately disableable data
+package. Pack music survives disable/source removal, Undo/Redo, portable Save As/Open and nonzero
+export. Test-only generation produces real temporary WAV candidates, supports parameter/context
+validation, serial work, cancellation/errors/supersession/late disposal and safe document/application
+close. Explicit Rack acceptance uses existing managed media and one Undo; music edits invalidate
+stale generation. No arbitrary executable loader, realtime SDK, new assembly or Sample Lab is added.
+
+Final full Release build: zero warnings/errors. Final L3: 1314/1314 tests, zero skips, 63.176 s CLI
+summary, one test thread. Initial affected selection passes 255; final lifecycle selection passes 92.
+Actual-window routed RU/EN Dark/Light and reduced-height Browser checks pass, including disable/
+re-enable and disabled-pack reopen. Native delivery remains unproven: post-click debugger evidence
+shows Project resources/0 rows. An initial early dock-width crash and reduced-list overflow are fixed
+with a regression and actual rendering respectively; neither failed attempt is counted as acceptance.
+No new physical/acoustic/platform/pressure claim. [Report](../experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md)
+records commands, failures, evidence and retained ignored artifacts.
+
+Version advances once 0.1.7.0005 → 0.1.7.0006 (BUILD), cadence resets to zero. Owners/guides/provenance
+and narrowed open questions are updated; completed R6 scope is archived. All changes are task-owned
+from a clean Git baseline; runtime assets/tests/tools are permanent, ignored captures/config/projects/
+TRX remain review evidence. No user music/demo, index or Git history mutation; no stage/commit/push/tag.

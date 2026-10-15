@@ -17,6 +17,11 @@ for each Pattern until you replace the document.
 
 ## Find and use sounds
 
+Browser also includes **Sound packs & extensions**. Choose the optional **Found Sounds** pack and
+**Browse sounds** for three original short sounds, then preview/add them like other WAVs. **Disable**
+hides the pack from new uses while imported audio stays in the project; **Enable** restores it.
+The disclosure explains unavailable packages. There is no external plugin installer or Sample Lab yet.
+
 Open **Browser** from the left rail or press **Ctrl+B**. Use the folder button to add your sample
 folder. Open subfolders with double-click/Enter, go up with the arrow/Backspace and return with
 Back/Alt+Left. The address field accepts a folder path. Pinned folders and recent locations remain

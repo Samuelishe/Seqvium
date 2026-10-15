@@ -628,6 +628,12 @@ settings/inspector placement, and optional parameter exposure are not final visu
 
 ## Feedback and motion
 
+R6 keeps local packages inside Browser as a compact optional disclosure: sound access leads,
+identity/version/purpose and availability support it, and Enable/Disable remain secondary. Imported
+audio preservation and active-use refusal are explained in text. Diagnostics and reduced-height
+scrolling use the existing visual system; no Marketplace, administrative dashboard or placeholder
+Sample Lab surface is added. RU/EN and both themes share this composition.
+
 Make keyboard focus, document selection, active pane and relevant command target sufficiently legible
 without treating them as one visual state. Essential invalid/unavailable state and pending operations
 need non-color/structural cues where applicable, such as shape/outline, labels, icons and concise

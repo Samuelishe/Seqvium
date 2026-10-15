@@ -11,6 +11,13 @@ and the implemented Rack, Playlist and Piano Roll sections below; broader capabi
 
 ## Implemented Sample Browser
 
+The **Sound packs & extensions** disclosure lists local packages, purpose/version, availability and
+specific compatibility/file/lifecycle diagnostics. **Browse sounds** opens an enabled pack in this
+same Browser. **Disable** hides new uses and explicitly preserves imported audio; an in-use module
+refuses disable with finish/cancel/close-editor guidance. **Enable** restores a compatible contribution.
+Missing optional translation uses English without changing the host language. Small windows retain
+the sound list with local disclosure/preview scrolling; closing the disclosure returns musical space.
+
 Rail/Panes or Ctrl+B opens Browser. Choose Project resources, a pinned folder or recent location;
 Add folder uses the native folder picker. The address field opens an explicit path on Enter.
 Double-click/Enter enters a folder; parent, Back/Alt+Left and Ctrl+R refresh complement the mouse actions.

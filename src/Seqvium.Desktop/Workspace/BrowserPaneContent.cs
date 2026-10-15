@@ -28,6 +28,10 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
     private readonly ShellSession _shell;
     private readonly DesktopWorkflow _workflow;
     private readonly BrowserLocationsStore _store;
+    private readonly ExtensionBrowserContent _extensions;
+    private readonly Expander _extensionDisclosure = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
+    private const string PackPrefix = "seqvium-pack:";
+    private bool IsPack => _currentPath?.StartsWith(PackPrefix, StringComparison.Ordinal) == true;
     private readonly Action<string> _openPane;
     private readonly ComboBox _locations = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
     private readonly TextBox _path = new();
@@ -67,7 +71,25 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         RowSpacing = 6;
         var locations = new Grid { ColumnDefinitions = new("*,Auto,Auto"), ColumnSpacing = 4 };
         locations.Children.Add(_locations); Add(locations, _add, 1); Add(locations, _remove, 2);
-        Children.Add(locations);
+        _extensions = new(shell, workflow, configurationDirectory, package =>
+        {
+            RebuildLocations();
+            if (package is not null) Navigate(PackPrefix + package.Package.Identity);
+            else if (IsPack)
+            {
+                if (_using) Enqueue(() => { Navigate(null); return Task.CompletedTask; });
+                else Navigate(null);
+            }
+        });
+        var extensionScroll = new ScrollViewer
+        {
+            Content = _extensions, MaxHeight = 190, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+        _extensionDisclosure.Content = extensionScroll;
+        AutomationProperties.SetAutomationId(_extensionDisclosure, "Extension.Disclosure");
+        var discovery = new StackPanel { Classes = { "tight" } };
+        discovery.Children.Add(locations); discovery.Children.Add(_extensionDisclosure); Children.Add(discovery);
         var address = new Grid { ColumnDefinitions = new("Auto,Auto,*,Auto"), ColumnSpacing = 4 };
         address.Children.Add(_back); Add(address, _up, 1); Add(address, _path, 2); Add(address, _refresh, 3);
         SetRow(address, 1); Children.Add(address);
@@ -98,7 +120,14 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             Content = preview, MaxHeight = 230, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
         };
-        SizeChanged += (_, _) => previewScroll.MaxHeight = Math.Max(80, Math.Min(230, Bounds.Height * .45));
+        void FitDisclosures()
+        {
+            extensionScroll.MaxHeight = Math.Max(80, Math.Min(190, Bounds.Height * .28));
+            previewScroll.MaxHeight = Math.Max(80, Math.Min(230, Bounds.Height *
+                (_extensionDisclosure.IsExpanded && Bounds.Height < 650 ? .22 : .45)));
+        }
+        SizeChanged += (_, _) => FitDisclosures();
+        _extensionDisclosure.PropertyChanged += (_, args) => { if (args.Property == Expander.IsExpandedProperty) FitDisclosures(); };
         SetRow(previewScroll, 5); Children.Add(previewScroll);
         Setup(_add, "Browser.AddFolder", "Open"); Setup(_remove, "Browser.RemoveFolder", "Close");
         Setup(_back, "Browser.Back", "Left"); Setup(_up, "Browser.Up", "Up");
@@ -124,7 +153,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             if (!_refreshing && _locations.SelectedItem is Location location) Navigate(location.Path);
         };
         _path.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Navigate(_path.Text); e.Handled = true; } };
-        _up.Click += (_, _) => Navigate(_currentPath is { } p ? Directory.GetParent(p)?.FullName : null);
+        _up.Click += (_, _) => Navigate(!IsPack && _currentPath is { } p ? Directory.GetParent(p)?.FullName : null);
         _back.Click += (_, _) => { if (_history.TryPop(out var p)) Navigate(p, false); };
         _refresh.Click += (_, _) => Navigate(_currentPath, false);
         _more.Click += (_, _) => Enqueue(() => LoadPageAsync(_cancellation.Token));
@@ -181,7 +210,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             if (_disposed) return;
             try { await operation(); }
             catch (OperationCanceledException) { _message = "Workflow.Cancelled"; }
-            catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException or
                 NotSupportedException or ArgumentException)
             {
                 bool localized = HostLocalizer.English.ContainsKey(error.Message);
@@ -204,7 +233,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         Enqueue(async () =>
         {
             cancellation.ThrowIfCancellationRequested();
-            string? resolved = string.IsNullOrWhiteSpace(path) ? null : Path.GetFullPath(path);
+            string? resolved = string.IsNullOrWhiteSpace(path) ? null : path.StartsWith(PackPrefix, StringComparison.Ordinal) ? path : Path.GetFullPath(path);
             if (remember && resolved != _currentPath) _history.Push(_currentPath);
             _directory?.Dispose(); _directory = null;
             _currentPath = resolved;
@@ -212,7 +241,19 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             _selected = null; _entries.Clear(); _wave.Waveform = null; _wave.InvalidateVisual();
             _path.Text = resolved ?? _shell["Browser.Project"]; _refreshing = false;
             _more.IsVisible = false;
-            if (resolved is null)
+            if (IsPack)
+            {
+                string id = resolved![PackPrefix.Length..];
+                var package = _workflow.Extensions.Status.SingleOrDefault(p => p.Package.Identity == id && p.Availability == ExtensionAvailability.Available)
+                    ?? throw new InvalidOperationException("Extension.Unavailable");
+                _path.Text = package.Package.Manifest!.Name;
+                foreach (var capability in package.Package.Manifest.Capabilities.Where(c => c.Category == ExtensionCategory.ContentPack))
+                    foreach (var item in capability.Content.Where(c => c.Name.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                        _entries.Add(new(item.Name, Path: ExtensionDiscovery.ResolveContent(package.Package.Directory, item.File),
+                            SamplerCompatible: true, Package: id, Capability: capability.Id, Content: item.Id));
+                _message = _entries.Count == 0 ? "Browser.NoMatches" : "Browser.Ready";
+            }
+            else if (resolved is null)
             {
                 var state = _workflow.State;
                 foreach (var resource in state.Snapshot.State.Resources.Where(r => r.Name.Contains(query, StringComparison.OrdinalIgnoreCase)))
@@ -226,7 +267,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
                 await LoadPageAsync(cancellation);
                 _saved = _saved with { Recent = new[] { resolved }.Concat(_saved.Recent).Distinct(StringComparer.OrdinalIgnoreCase).Take(16).ToArray(), Last = resolved };
             }
-            if (resolved is null) _saved = _saved with { Last = null };
+            if (resolved is null || IsPack) _saved = _saved with { Last = null };
             RebuildLocations(); await SaveLocationsAsync();
         });
     }
@@ -326,6 +367,9 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
     {
         _refreshing = true;
         var locations = new[] { new Location(_shell["Browser.Project"], null) }
+            .Concat(_workflow.Extensions.Status.Where(p => p.Availability == ExtensionAvailability.Available &&
+                p.Package.Manifest!.Capabilities.Any(c => !c.Content.IsEmpty)).Select(p => new Location(
+                    "∿ " + p.Package.Manifest!.DisplayName(_shell.Preferences.Language == HostLanguage.Russian), PackPrefix + p.Package.Identity)))
             .Concat(_saved.Roots.Select(p => new Location("▸ " + Path.GetFileName(Path.TrimEndingDirectorySeparator(p)), p)))
             .Concat(_saved.Recent.Where(p => !_saved.Roots.Contains(p, StringComparer.OrdinalIgnoreCase))
                 .Select(p => new Location("↶ " + Path.GetFileName(Path.TrimEndingDirectorySeparator(p)), p))).ToArray();
@@ -355,7 +399,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         else if (e.Key == Key.R && e.KeyModifiers == KeyModifiers.Control)
         { Navigate(_currentPath, false); e.Handled = true; }
         else if (_list.IsKeyboardFocusWithin && e.Key is Key.Enter or Key.Space) { ActivateSelected(); e.Handled = true; }
-        else if (_list.IsKeyboardFocusWithin && e.Key == Key.Back) { Navigate(_currentPath is { } p ? Directory.GetParent(p)?.FullName : null); e.Handled = true; }
+        else if (_list.IsKeyboardFocusWithin && e.Key == Key.Back) { Navigate(!IsPack && _currentPath is { } p ? Directory.GetParent(p)?.FullName : null); e.Handled = true; }
     }
 
     private void WorkflowChanged(WorkflowState state) => Dispatcher.UIThread.Post(() =>
@@ -378,6 +422,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
 
     private void Refresh()
     {
+        _extensionDisclosure.Header = _shell["Extension.Title"];
         foreach (var (button, key) in new[] { (_add, "Browser.AddFolder"), (_remove, "Browser.RemoveFolder"), (_back, "Browser.Back"),
             (_up, "Browser.Up"), (_refresh, "Browser.Refresh"), (_play, "Browser.Preview"), (_stop, "Browser.Stop"), (_cancel, "Browser.Cancel") })
         { AutomationProperties.SetName(button, _shell[key]); ToolTip.SetTip(button, _shell[key] + (button == _refresh ? " · Ctrl+R" : "")); }
@@ -404,7 +449,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         _play.IsEnabled = selected && !_using && _workflow.State.Execution?.Execution.Playing != true;
         _back.IsEnabled = _history.Count > 0 && !_using;
         _up.IsEnabled = _currentPath is not null && !_using;
-        _remove.IsEnabled = _currentPath is not null && !_using;
+        _remove.IsEnabled = _currentPath is not null && !IsPack && !_using;
         _cancel.IsVisible = _using || !PendingCommand.IsCompleted;
         _list.IsEnabled = !_using; _locations.IsEnabled = !_using; _search.IsEnabled = !_using;
         _more.IsEnabled = !_using && PendingCommand.IsCompleted;
@@ -424,11 +469,12 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         RenewCancellation();
     }
     internal async Task ShutdownAsync()
-    { await CancelPendingAsync(); _directory?.Dispose(); _directory = null; }
+    { await _extensions.Pending; await CancelPendingAsync(); _directory?.Dispose(); _directory = null; }
     public void Dispose()
     {
         if (_disposed) return; _disposed = true; _cancellation.Cancel(); _searchDelay.Stop();
         _shell.PropertyChanged -= PreferencesChanged; _workflow.Changed -= WorkflowChanged;
+        _extensions.Dispose();
         // MainWindow joins pending operations before disposing retained content.
         _directory?.Dispose(); _cancellation.Dispose();
     }

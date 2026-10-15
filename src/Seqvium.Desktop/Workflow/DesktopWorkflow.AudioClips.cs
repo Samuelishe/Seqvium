@@ -11,8 +11,9 @@ internal sealed partial class DesktopWorkflow
         ImmutableDictionary<Id<SoundDefinition>, AudioWaveform>.Empty;
 
     internal Task<bool> ImportAudioClipAsync(ArrangementEditBasis basis, string path, MusicalPosition position,
-        int lane, CancellationToken cancellation = default) => Command("Workflow.ImportFailed", async () =>
+        int lane, CancellationToken cancellation = default, BrowserSource? browserSource = null) => Command("Workflow.ImportFailed", async () =>
     {
+        using var use = browserSource is null ? null : BorrowBrowserSource(browserSource);
         ValidateArrangementBasis(basis);
         _status = "Workflow.Importing";
         Publish();

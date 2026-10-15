@@ -9,6 +9,16 @@ namespace Seqvium.Tests;
 
 public sealed class WorkspaceStateTests
 {
+    [Fact]
+    public void BrowserCanOpenBeforeFirstNativeArrangeWithoutAnInitializedDockWidth()
+    {
+        using var workspace = new WorkspaceState();
+        workspace.Open(WorkspaceState.BrowserId);
+        var initial = workspace.Bounds(WorkspaceState.BrowserId);
+        Assert.True(double.IsFinite(initial.Width)); Assert.True(initial.Width > 0 && initial.Width <= workspace.Width);
+        workspace.Reflow(1100, 640);
+        Assert.InRange(workspace.Bounds(WorkspaceState.BrowserId).Width, 290, 550);
+    }
     [Theory]
     [InlineData(420, 280)]
     [InlineData(1160, 780)]

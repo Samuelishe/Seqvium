@@ -154,7 +154,7 @@ Minimum host presentation dependencies have bounded stage owners under
 | Stage                           | Minimum responsibility                                                                                                                                                                                                                                                                                                                                                                                                                |
 |---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | R3 — Workspace Shell Foundation | Host-owned stable localization lookup, initial first-party RU/EN with English/per-resource host fallback, semantic Dark/Light roles sufficient for the shell, and safe user language/theme preference behavior. The shell works without future extension hosting or mature dynamic registration.                                                                                                                                      |
-| R6 — Extension Foundation       | Extend the R3 foundation with contributor-scoped identity, supported languages/fallback, bounded registration/availability and safe resource/UI retirement for actual native first-party modules. Late contributions use current host preferences; metadata discovery need not activate arbitrary executable code. Resource contract evolution must be handled deliberately, with exact versioning/registration mechanics still open. |
+| R6 — Extension Foundation | Bounded metadata identity, duplicate rejection, host-language fallback and availability/source withdrawal are implemented in [Extensions](EXTENSIONS.md#r6-host-presentation). General contributed dictionaries/styles/editors and their versioned registration remain future work with real R7 surfaces. |
 | R7 — Sample Lab / Generator V1  | The default-installed removable generator and its first-party UI consume R3/R6 host localization/semantic styles, including fallback and removal behavior; no separate translation/theme stack.                                                                                                                                                                                                                                       |
 | R12 — First Track Release       | Within the bounded small-track scenario, require coherent RU/EN and Dark/Light presentation, safe preference changes, usable missing-resource/missing-capability host explanation and preservation of project values/state. Validate the surfaces actually shipped; missing presentation must not become apparent project corruption.                                                                                                 |
 
@@ -381,24 +381,12 @@ Keep the reference-driven physical materials as editors grow; do not revert to g
 These remaining follow-ups are not shipped controls or a new release schedule. Longer Patterns now
 use whole 4/4 bars with occupied-shortening refusal. Other meters and multi-file drop remain separate.
 
-## SEQ-R6 — Extension Foundation
-
-Implement enough identity, manifest/package concepts, local discovery, content-pack boundaries,
-sample-generator capability contract, and lifecycle/error/missing-state handling to make first-party
-optional modules honest extensions. No store or marketplace. [EXTENSIONS](EXTENSIONS.md) owns the boundary.
-Include deliberate compatibility outcomes, diagnostics, and state preservation at the bounded level
-needed by actual modules. The core graph/workspace/device infrastructure stays host-owned.
-Resolve compatibility before activation under current platform contracts; installed incompatible
-plugins may remain unavailable, with preserved identity/state, and must not be automatically deleted.
-Compatibility checks answer satisfied required contracts/capabilities/state, not build age alone;
-prefer lightweight declared checks and handle real activation failure without mandatory expensive
-self-tests of every plugin at every startup. Support graded compatibility/localization fallback and
-dependency-scoped blockers with normally degraded document access. Block/defer package uninstall under
-known active use; exact package lifecycle and manifest/API negotiation remain open.
-Extend existing host resources with bounded contribution identity, availability/fallback and safe
-UI-resource retirement under [foundation ownership](#localization-and-theme-foundation-ownership).
-
 ## SEQ-R7 — Sample Lab / Generator V1
+
+The implemented [R6 local foundation](EXTENSIONS.md#implemented-r6-local-foundation) supplies trusted
+package/capability identity, lifecycle, Browser content and temporary generation/explicit acceptance.
+R7 must keep that boundary and provide the actual creative families and surface below. Native-input
+evidence remains separately scoped in [current state](PROJECT_STATE.md); no public external SDK is implied.
 
 Ship one default-installed but removable generator package with one or two bounded families. Provide
 random and nearby/similar variants, justified parameter locks, candidate history, and a dedicated

@@ -7,18 +7,15 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.7.0005**, SEQ-CROSS-STAGE-AUDIT: section-only playback equivalence, Song Mixer fast
-publication, playing Pattern double-click delivery, Browser refresh/drag origin and failed-Save Close
-repairs. The [audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) separates fixed defects, native input,
-deterministic audio, measured Browser cost and unresolved pressure/allocation evidence. No PATCH or
-broader native/physical acceptance is asserted. The preceding Browser adds retained local/project
-sound discovery, real metadata/waveform, transient preview and atomic Rack/Playlist use/reuse. The preceding identity
-integrates the 09 brand, embedded typography, optical icons and publication kit. The daily workflow
-adds playing Pattern navigation, direct/remembered editors, New and remembered musical layout.
-The preceding shared WAV replacement preserves musical/processing/Mixer intent. The preceding
-SEQ-R10-SONG-STRUCTURE PATCH introduced section arranging, variations and mixed clip editing.
-[Versioning](VERSIONING.md) owns identity;
-reader 1.5 is a separate format gate for sections/Pattern ancestry.
+Product alpha **0.1.7.0006**, SEQ-R6-EXTENSION-FOUNDATION. Local trusted packages now have real
+metadata/compatibility, activation/disable and active-use lifetimes. Browser exposes optional Found
+Sounds through existing preview/Rack/Playlist use; imported audio survives disable/removal. The tested
+async generator seam owns cancellation, stale/late candidate disposal and explicit managed acceptance;
+it is not a shipped Sample Lab. [Extensions](EXTENSIONS.md#implemented-r6-local-foundation) owns scope,
+and the [R6 report](experiments/SEQ-R6-EXTENSION-FOUNDATION_REPORT.md) records evidence and native-input
+limits. BUILD only; no public SDK, realtime external host or format migration. The preceding audit's
+transport/Mixer/Browser/Close corrections remain implemented. Reader 1.5 remains the separate gate for
+sections/Pattern ancestry. [Versioning](VERSIONING.md) owns product identity.
 No release, staging, commit, push or tag is performed. R1–R3 remain complete in their bounded scopes.
 R4 remains partial: F1 accepted-ready, F2 pressure acceptance unresolved, F3-A conditionally accepted,
 F3-B owner interaction/visual review pending. R5 Rack/music, R9 Piano, bounded R10 Playlist/audio and
@@ -26,6 +23,14 @@ R11 Mixer are implemented; wider stages and First Track/owner aesthetic/acoustic
 separate. [Roadmap](ROADMAP.md) owns remaining scope.
 
 ## Implemented capability
+
+R6 discovers bounded schema-1 manifests under the application deployment Extensions root, checks
+required/optional host contracts before activation and never scans/executes arbitrary DLLs. Exact
+trusted factory registration is needed for executable providers. Uses block disable until work and
+dependent sessions finish; document edits cancel stale generator work, New/Open/Close join sessions,
+and application shutdown retires providers. Failed activation/disposal and missing/invalid/incompatible
+packages retain host diagnostics. Metadata labels use host RU/EN fallback and shared Dark/Light controls.
+A separate user file remembers disabled IDs; accepted media/history stay project-owned.
 
 Desktop has Browser, Channel Rack, Piano Roll, Playlist, Mixer, Node Graph/Editor and information/appearance
 panes. Compact studio-instrument resources, movable/resizable/docked panes, English/Russian and
@@ -91,19 +96,19 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L3: **SEQ-SAMPLE-BROWSER, 2026-10-15**. Locked isolated full Release solution build has
-zero warnings/errors; **1270/1270 tests pass**, zero skips (59.254 s CLI summary, one test thread).
-Browser additionally passes 318 final affected cases, real RU/EN Dark/Light and reduced-window routed
-authoring/drop/Undo/portable-media checks, and physical WAV/MP3/FLAC preview on Samsung 48-kHz output.
-Native input was foreground-refused; this is not native/acoustic/platform acceptance. The
-[Browser report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) retains failures and exact evidence scope.
+Latest L3: **SEQ-R6-EXTENSION-FOUNDATION, 2026-10-15**. Full Release solution build has zero
+warnings/errors; **1314/1314 tests pass**, zero skips, one test thread (**63.176 s** CLI summary). The
+final generation-invalidation hook participates in that run and 92 focused cases. Real-window
+RU/EN × Dark/Light, disabled/re-enabled Browser contributions, managed imports and disabled-pack reopen
+pass routed checks, including reduced-height list access. Native pointer delivery remains unproven:
+post-click debugger evidence shows Project resources/zero rows, not the requested pack. No new physical
+or acoustic acceptance is claimed. Earlier Browser physical WAV/MP3/FLAC evidence and the audit's
+native/routed split remain in their reports; inherited pressure/allocation questions remain open.
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **1**. Audit L0/L1/L2 and guarded native keyboard/drag/held
-double-click checks pass in bounded scope; final focused verification passes 183/183 in 17.254 s.
-An initial parallel allocation case records 4,136 bytes;
-its isolated pass is not a fix or pressure closure. Final counts/commands are in the audit report.
+Completed repository tasks since this L3: **0**. This risk-selected L3 covers extension/document/media
+lifecycle and resets the cadence. No broader platform, aesthetic, pressure or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
 FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell
@@ -156,8 +161,8 @@ inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachm
 Browser inspection followed by preview decodes external sources twice; three-minute source latency
 and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 
-Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, wider Browser
-integration/Personal Library, Sample Lab, MIDI, recording and recovery remain future work. Cold seek/range wrap
+Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
+Sample Lab, MIDI, recording and recovery remain future work. Cold seek/range wrap
 resets Mixer FX without preroll. R4-F2 pressure failures, maximum-channel stress, aesthetic/acoustic
 review, Linux/macOS runtime, high/mixed DPI, cross-monitor and accessibility remain unevidenced.
 [Known problems](KNOWN_PROBLEMS.md), [debt](TECH_DEBT.md) and [portability](PORTABILITY.md) retain
