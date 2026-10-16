@@ -74,6 +74,7 @@ internal sealed record PreparedNote(
     long SustainStart = 0,
     long SustainEnd = 0,
     long SustainFade = 0,
+    long SustainCrossfade = 0,
     bool SamplerRange = false);
 
 /// <summary>Frozen single-Pattern execution, bounded repeats and source leases. Derived state, never persistent musical truth.</summary>
@@ -752,7 +753,7 @@ public sealed class OfflineSampler : IDisposable
                     gain *= Math.Clamp((remaining - 1) / BoundaryFadeFrames, 0, 1);
                 }
 
-                if (note.SustainEnd > 0 && cursor >= note.SustainStart)
+                if (note.SustainFade > 0 && cursor >= note.SustainStart)
                 {
                     // A bounded dip at the explicit seam. Never shifts markers or changes source PCM.
                     double fade = Math.Clamp((note.SustainEnd - cursor - 1) / note.SustainFade, 0, 1);
@@ -762,6 +763,17 @@ public sealed class OfflineSampler : IDisposable
                 }
                 double left = ReadSample(source, note, cursor, 0);
                 double right = source.Channels == 1 ? left : ReadSample(source, note, cursor, 1);
+                if (note.SustainCrossfade > 0 && cursor >= note.SustainEnd - note.SustainCrossfade)
+                {
+                    // Phase-preserving pre-loop overlap: [B-X,B) -> [A-X,A).
+                    // Both heads retain Step; wrapping still has period B-A, never B-A-X.
+                    double t = (cursor - (note.SustainEnd - note.SustainCrossfade)) / note.SustainCrossfade;
+                    double weight = t * t * (3 - 2 * t);
+                    double incoming = cursor - (note.SustainEnd - note.SustainStart);
+                    left += (ReadSample(source, note, incoming, 0) - left) * weight;
+                    if (source.Channels == 1) right = left;
+                    else right += (ReadSample(source, note, incoming, 1) - right) * weight;
+                }
                 Span<float> contribution = _signals is null ? interleavedOutput : _signals[note.ContributionIndex];
                 if (_plan.Channels == 1) contribution[frame] += (float)((left + right) * 0.5 * gain);
                 else
@@ -882,7 +894,8 @@ public sealed class OfflineSampler : IDisposable
         int index = (int)cursor;
         double fraction = cursor - index;
         long end = note.SustainEnd > 0 ? note.SustainEnd : Math.Min(source.Frames, note.SourceOffset + note.SourceLength);
-        double second = index + 1 < end ? source.Samples[(index + 1) * source.Channels + channel] : 0;
+        double second = index + 1 < end ? source.Samples[(index + 1) * source.Channels + channel]
+            : note.SustainCrossfade > 0 ? source.Samples[index * source.Channels + channel] : 0;
         return source.Samples[index * source.Channels + channel] * (1 - fraction) + second * fraction;
     }
 

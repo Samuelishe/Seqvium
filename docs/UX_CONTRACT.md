@@ -469,13 +469,21 @@ SoundDefinition. Independent sounds using the same WAV keep independent ranges/l
 
 The real mono/stereo waveform shows the audible prefix/range and sustain region. Upper Start/End and
 lower Loop Start/End flags have distinct positions and colors; disabled retained loop flags are muted.
-Crowded flags omit colliding captions; the four exact fields retain their labels. Dragging previews
+Crowded flags omit colliding captions; the exact fields retain their labels. Dragging previews
 one proposal and commits once on release; Escape/capture loss/target or generation change discards it.
 Markers never cross each other or silently change another boundary. Wheel/+/- zoom around a viewport
 anchor, pan scrolls the source-frame viewport, Fit shows the whole source. Zoom changes no musical data.
 Fields accept exact integer source frames; Enter/Apply commits a valid block, invalid values leave the
 project unchanged. Endpoints are exclusive. Loop toggle retains its explicit endpoints when disabled;
 first enabling chooses the visible sample range. Short/outside/reversed loops are refused.
+
+Crossfade accepts exact source frames. Zero preserves F1's seam fade; a positive value mixes the
+loop tail with the equally sized area before Loop Start, shown by complementary ramps on both
+waveform areas. Width is limited to 4096 frames, half the loop and available audio between Sample
+Start and Loop Start. Out-of-range input is refused with an actionable error; no marker or width
+is silently changed. Marker proposals must retain valid crossfade handles. Tooltips explain the
+zero mode and limits without permanent technical paragraphs on the working surface. Edits use
+one shared-sound transaction and the same voice-retirement policy as range changes.
 
 Hold note previews the root note while stopped; Release starts configured release and Stop ends the
 preview. A ten-second safety gate bounds forgotten holds. Preview bypasses downstream processing and

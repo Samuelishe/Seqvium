@@ -7,10 +7,12 @@ dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll sam
 ```
 
 Uses an authored stereo WAV, the existing Rack Sound Editor and bound Source double-click routes.
-Checks exact range/loop fields, short-loop refusal, one drag/Undo, Escape/capture loss, zoom/pan/Fit,
-RU/EN Dark/Light ordinary/reduced windows and 32 field alignments. Save/New/Open after deleting the
+Checks exact range/loop/crossfade fields, short-loop refusal, one drag/Undo, Escape/capture loss, zoom/pan/Fit,
+RU/EN Dark/Light ordinary/reduced windows and 40 field alignments. Save/New/Open after deleting the
 external WAV preserves intent; production Pattern export and finite R8 run on reopened media.
-Optional native exact Start/Apply and optional physical Hold past source EOF/Release/Stop are recorded
+The same production kernel writes percussion/sustain/melodic F1/zero/short/long WAV comparisons;
+zero is byte-identical to F1, and acoustic preference remains unassessed. Optional native exact
+Start/crossfade/Apply and optional physical Hold past source EOF/Release/Stop are recorded
 separately in input-audio.json; these do not establish subjective loop quality or pressure acceptance.
 Outputs remain ignored and governed by existing retention. The
 [report](../../docs/experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) records actual outcomes and limitations.

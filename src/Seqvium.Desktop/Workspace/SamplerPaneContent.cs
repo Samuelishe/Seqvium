@@ -92,7 +92,7 @@ internal sealed class SamplerPaneContent : ScrollViewer, IDisposable
         };
         body.Children.Add(_loop);
         var fields = new WrapPanel { Orientation = Orientation.Horizontal };
-        foreach (string key in new[] { "Start", "End", "LoopStart", "LoopEnd" })
+        foreach (string key in new[] { "Start", "End", "LoopStart", "LoopEnd", "Crossfade" })
         {
             var label = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
             var text = new TextBox { Width = 96, Classes = { "numeric" } };
@@ -189,8 +189,9 @@ internal sealed class SamplerPaneContent : ScrollViewer, IDisposable
         bool Frame(string key, out long value) => long.TryParse(_fields[key].Text,
             NumberStyles.None, CultureInfo.InvariantCulture, out value);
         if (!Frame("Start", out var start) || !Frame("End", out var end) ||
-            !Frame("LoopStart", out var loopStart) || !Frame("LoopEnd", out var loopEnd)) return false;
-        p = new(start, end, _loop.IsChecked == true, loopStart, loopEnd); return true;
+            !Frame("LoopStart", out var loopStart) || !Frame("LoopEnd", out var loopEnd) ||
+            !Frame("Crossfade", out var crossfade)) return false;
+        p = new(start, end, _loop.IsChecked == true, loopStart, loopEnd, crossfade); return true;
     }
     private void FillFields(SamplerPlayback p)
     {
@@ -199,6 +200,7 @@ internal sealed class SamplerPaneContent : ScrollViewer, IDisposable
         _fields["End"].Text = p.End.ToString(CultureInfo.InvariantCulture);
         _fields["LoopStart"].Text = p.LoopStart.ToString(CultureInfo.InvariantCulture);
         _fields["LoopEnd"].Text = p.LoopEnd.ToString(CultureInfo.InvariantCulture);
+        _fields["Crossfade"].Text = p.Crossfade.ToString(CultureInfo.InvariantCulture);
         _loop.IsChecked = p.Loop;
         _refreshing = false;
     }
@@ -207,7 +209,7 @@ internal sealed class SamplerPaneContent : ScrollViewer, IDisposable
         if (_target is null || _audio is null || !TryRead(out var p))
         { _status.Text = _shell["Sampler.Invalid"]; _status.IsVisible = true; return; }
         try { p.Validate(_audio.Frames); }
-        catch (ArgumentException) { _status.Text = _shell["Sampler.Invalid"]; _status.IsVisible = true; return; }
+        catch (ArgumentException) { _status.Text = _shell[p.Crossfade < 0 || p.Crossfade > p.CrossfadeLimit ? "Sampler.CrossfadeInvalid" : "Sampler.Invalid"]; _status.IsVisible = true; return; }
         bool changed = await _workflow.SetSamplerPlaybackAsync(_target, _generation, p);
         _draft = null; _textDraft = false; Refresh();
         if (!changed && _workflow.State.Detail is not null) { _status.Text = _shell[_workflow.State.Detail]; _status.IsVisible = true; }
@@ -228,7 +230,7 @@ internal sealed class SamplerPaneContent : ScrollViewer, IDisposable
         {
             _labels[key].Text = _shell["Sampler." + key];
             AutomationProperties.SetName(text, _shell["Sampler." + key]);
-            ToolTip.SetTip(text, _shell["Sampler.Frames"]);
+            ToolTip.SetTip(text, _shell[key == "Crossfade" ? "Sampler.CrossfadeTip" : "Sampler.Frames"]);
             text.IsEnabled = _audio is not null && !_workflow.State.Busy;
         }
         if (_audio is null) { _status.Text = _shell[_inspectionError ? "Sampler.Unavailable" : "Sampler.Loading"]; _status.IsVisible = true; return; }
@@ -240,7 +242,7 @@ internal sealed class SamplerPaneContent : ScrollViewer, IDisposable
         {
             bool valid = TryRead(out var entered);
             if (valid) try { entered.Validate(_audio.Frames); } catch (ArgumentException) { valid = false; }
-            if (!valid) { _status.Text = _shell["Sampler.Invalid"]; _status.IsVisible = true; }
+            if (!valid) { _status.Text = _shell[entered.Crossfade < 0 || entered.Crossfade > entered.CrossfadeLimit ? "Sampler.CrossfadeInvalid" : "Sampler.Invalid"]; _status.IsVisible = true; }
         }
     }
     internal void Suspend()

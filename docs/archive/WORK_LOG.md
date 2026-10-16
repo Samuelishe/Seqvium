@@ -2223,3 +2223,16 @@ portable history, replacement reset and selective reader 1.9 are implemented wit
 media owner or editor window. The [report](../experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) owns actual
 checks, harness corrections, input/physical distinctions and limits. Version is 0.1.13.0000, one PATCH
 with BUILD reset; no Git publication. Existing R4-F2 pressure and subjective/platform gaps remain.
+
+
+## SEQ-SAMPLER-LOOP-QUALITY-F2 — 2026-10-16
+
+The existing PCM instrument gains a bounded complementary pre-loop crossfade without shortening
+the B-A period or reinterpreting zero/F1 PCM. Shared intent, reader 1.10, source reset/history,
+exact editor/ramp UI and safe voice retirement retain existing owners. One BUILD selects
+0.1.13.0001. The [report](../experiments/SEQ-SAMPLER-LOOP-QUALITY-F2_REPORT.md) records green
+Release 1655/1655, final test-only expansion/focused 134/134, real localized/native/physical
+evidence, initial fixture/physical failures and retained comparison WAVs. Subjective quality
+and R4-F2 pressure gaps remain. Personal performance diagnostics stay local and ignored;
+the existing collector was stopped through its requested stop file, with no other processes
+terminated and no global settings or Git index/history/remote changed.

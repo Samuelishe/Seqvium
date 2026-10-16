@@ -39,7 +39,8 @@ for the logo, typography, alternative directions and publication resources.
   can span 1–32 bars; draw steps, melodies and chords, resize notes and audition pitches.
   Replace a shared WAV instrument from its channel menu while retaining notes, processing and Mixer routing.
 - Open a WAV instrument's **Sound Editor** for a zoomable waveform, non-destructive Start/End and
-  optional Sustain loop. Hold/release preview tests long notes; changes apply to that sound in every Pattern.
+  optional Sustain loop with adjustable crossfade. Hold/release preview tests long notes;
+  changes apply to that sound in every Pattern.
 - Use built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim, editable envelopes and sound presets,
   or pitched WAV samples. Linked hats can choke each other.
 - Arrange overlapping Patterns and Audio Clips together. Name/color the 32 organizational tracks,

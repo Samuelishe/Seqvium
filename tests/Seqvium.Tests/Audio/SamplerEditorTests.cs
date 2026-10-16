@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Seqvium.Tests;
 
-public sealed class SamplerEditorTests
+public sealed partial class SamplerEditorTests
 {
     private sealed class Fixture : IDisposable
     {
@@ -131,10 +131,11 @@ public sealed class SamplerEditorTests
         Assert.True(f.Document.Redo()); Assert.True(SamplerPlayback.Read(f.Definition, 256).Loop);
     }
 
-    [Fact]
-    public async Task PolyphonyRetiresEachOccurrenceAndCapacityUsesLoopLifetimeRatherThanSourceEof()
+    [Theory]
+    [InlineData(0)] [InlineData(16)]
+    public async Task PolyphonyRetiresEachOccurrenceAndCapacityUsesLoopLifetimeRatherThanSourceEof(long crossfade)
     {
-        using var f = await Fixture.Create(); f.Set(new(0, 256, true, 32, 224));
+        using var f = await Fixture.Create(); f.Set(new(0, 256, true, 32, 224, crossfade));
         f.Document.Edit("Overlap", e => e.AddNote(f.Pattern, f.Part, new(19200), new(19200), 72, .25m));
         Assert.Throws<NotSupportedException>(() => SamplerPreparation.PreparePattern(f.Document, f.Pattern, 48000, 1, voiceCapacity: 1));
         using var poly = SamplerPreparation.PreparePattern(f.Document, f.Pattern, 48000, 1, voiceCapacity: 2);
@@ -144,10 +145,10 @@ public sealed class SamplerEditorTests
     }
 
     [Theory]
-    [InlineData(44100)] [InlineData(48000)]
-    public async Task RealtimeOfflinePacketParityStopPanicAndWarmCallbackAllocation(int rate)
+    [InlineData(44100, 0)] [InlineData(48000, 0)] [InlineData(44100, 16)] [InlineData(48000, 16)]
+    public async Task RealtimeOfflinePacketParityStopPanicAndWarmCallbackAllocation(int rate, long crossfade)
     {
-        using var f = await Fixture.Create(graph: true); f.Set(new(16, 224, true, 64, 192));
+        using var f = await Fixture.Create(graph: true); f.Set(new(16, 224, true, 64, 192, crossfade));
         using var expectedPlan = GraphPreparation.Prepare(f.Document, f.Attachment.Id, rate, 2, 128, cancellationToken: TestContext.Current.CancellationToken);
         var expected = Render(expectedPlan, [128]);
         using var realtime = new RealtimeSampler(rate, 2, 128);
@@ -168,10 +169,11 @@ public sealed class SamplerEditorTests
         realtime.Panic(); realtime.Process(packet); Assert.All(packet, value => Assert.Equal(0, value));
     }
 
-    [Fact]
-    public async Task HeldPreviewUsesReleaseAndCannotRestartOrOutliveFiniteSafetyGate()
+    [Theory]
+    [InlineData(0)] [InlineData(16)]
+    public async Task HeldPreviewUsesReleaseAndCannotRestartOrOutliveFiniteSafetyGate(long crossfade)
     {
-        using var f = await Fixture.Create(release: 3); f.Set(new(0, 256, true, 32, 224));
+        using var f = await Fixture.Create(release: 3); f.Set(new(0, 256, true, 32, 224, crossfade));
         using var pcm = ProjectMedia.Decode(f.Document, f.Definition.ResourceIds[0]);
         var drySound = f.Definition with { Parameters = f.Definition.Parameters.RemoveRange(SamplerPlayback.Keys) };
         using var natural = SamplerPreparation.PrepareSamplerAudition(pcm, drySound, 48000, 1, 60, 1, held: true);
@@ -197,10 +199,11 @@ public sealed class SamplerEditorTests
         realtime.RetireCompleted(); Assert.Equal(0, realtime.LivePreparedStates);
     }
 
-    [Fact]
-    public async Task LiveLoopEditRetiresChangedVoiceWithoutRetriggerAndKeepsPatternClock()
+    [Theory]
+    [InlineData(0)] [InlineData(16)]
+    public async Task LiveLoopEditRetiresChangedVoiceWithoutRetriggerAndKeepsPatternClock(long crossfade)
     {
-        using var f = await Fixture.Create(graph: true); f.Set(new(0, 256, true, 32, 224));
+        using var f = await Fixture.Create(graph: true); f.Set(new(0, 256, true, 32, 224, crossfade));
         using var realtime = new RealtimeSampler(48000, 2, 64); realtime.SetLooping(true);
         async Task Publish()
         {
@@ -211,7 +214,8 @@ public sealed class SamplerEditorTests
         }
         await Publish(); realtime.Start(); var packet = new float[128]; realtime.Process(packet);
         var before = realtime.ReadStatus(); Assert.Equal(1, before.Voices);
-        f.Set(new(16, 224, true, 64, 192)); await Publish();
+        // The positive case changes only width while its note is held.
+        f.Set(crossfade == 0 ? new(16, 224, true, 64, 192) : new(0, 256, true, 32, 224, 24)); await Publish();
         realtime.Process(packet); var after = realtime.ReadStatus();
         Assert.Equal(before.Epoch, after.Epoch); Assert.Equal(before.Position + 64, after.Position);
         Assert.Equal(0, after.Voices); Assert.All(packet, v => Assert.Equal(0, v));
@@ -225,16 +229,17 @@ public sealed class SamplerEditorTests
         realtime.TerminateExecution(); Assert.Equal(0, realtime.ReadStatus().Voices);
     }
 
-    [Fact]
-    public async Task LiveRangeEditKeepsUnrelatedLoopVoiceAndItsExactPcmAge()
+    [Theory]
+    [InlineData(0)] [InlineData(16)]
+    public async Task LiveRangeEditKeepsUnrelatedLoopVoiceAndItsExactPcmAge(long crossfade)
     {
-        using var f = await Fixture.Create(graph: true); f.Set(new(0, 256, true, 32, 224));
+        using var f = await Fixture.Create(graph: true); f.Set(new(0, 256, true, 32, 224, crossfade));
         f.Document.Edit("Independent second sound on same PCM", e =>
         {
             var other = e.AddSound("Other", PcmSampler.Algorithm, f.Definition.ResourceIds);
             e.ConfigurePcmSampler(other, f.Definition.ResourceIds[0], 60, 1);
             var definition = f.Definition with { Id = other };
-            e.SetSoundParameters(other, new SamplerPlayback(8, 240, true, 48, 208).Apply(definition, 256));
+            e.SetSoundParameters(other, new SamplerPlayback(8, 240, true, 48, 208, crossfade).Apply(definition, 256));
             var part = e.AddPart(f.Pattern, "Other", other);
             e.AddNote(f.Pattern, part, new(0), new(38400), 48, .3m);
             var graph = f.Document.Current.State.Graphs.Single(); var source = graph.Nodes.Single(n => n.Type == GraphBuiltIns.Source);
@@ -260,16 +265,16 @@ public sealed class SamplerEditorTests
         }
         await Publish(); realtime.Start(); var packet = new float[128]; realtime.Process(packet);
         Assert.Equal(2, realtime.ReadStatus().Voices); long epoch = realtime.ReadStatus().Epoch;
-        f.Set(new(16, 224, true, 64, 192)); await Publish(); realtime.Process(packet);
+        f.Set(new(16, 224, true, 64, 192, crossfade == 0 ? 0 : 24)); await Publish(); realtime.Process(packet);
         Assert.Equal(epoch, realtime.ReadStatus().Epoch); Assert.Equal(1, realtime.ReadStatus().Voices);
         Assert.Equal(expected.Skip(128).Take(128), packet); oracle.Close();
     }
 
     [Theory]
-    [InlineData(44100)] [InlineData(48000)]
-    public async Task SongSeekReconstructsWrappedCursorAndReleaseWithoutStaleVoices(int rate)
+    [InlineData(44100, 0)] [InlineData(48000, 0)] [InlineData(44100, 16)] [InlineData(48000, 16)]
+    public async Task SongSeekReconstructsWrappedCursorAndReleaseWithoutStaleVoices(int rate, long crossfade)
     {
-        using var f = await Fixture.Create(graph: true); f.Set(new(16, 224, true, 64, 192));
+        using var f = await Fixture.Create(graph: true); f.Set(new(16, 224, true, 64, 192, crossfade));
         f.Document.Edit("Song", e => e.AddArrangementClip(f.Document.Current.State.Placements.Single().Id, new(0)));
         using var plan = ArrangementPreparation.Prepare(f.Document, rate, 2, 128, TestContext.Current.CancellationToken);
         var reference = Render(plan, [128]);
@@ -307,10 +312,11 @@ public sealed class SamplerEditorTests
         reopened.Close();
     }
 
-    [Fact]
-    public async Task ReplacementResetsRangeAndLoopAtomicallyAndUndoRestoresOriginalSourceIntent()
+    [Theory]
+    [InlineData(0)] [InlineData(16)]
+    public async Task ReplacementResetsRangeAndLoopAtomicallyAndUndoRestoresOriginalSourceIntent(long crossfade)
     {
-        using var f = await Fixture.Create(); f.Set(new(16, 224, true, 64, 192));
+        using var f = await Fixture.Create(); f.Set(new(16, 224, true, 64, 192, crossfade == 0 ? 0 : 24));
         var before = f.Document.Current;
         using var replace = ProjectMedia.BeginImport(f.Document, "Shorter", 63, 17, f.Sound);
         using var bytes = new MemoryStream(WavFixtures.Create([.25f, -.25f]));
@@ -388,10 +394,11 @@ public sealed class SamplerEditorTests
         finally { loaded.Close(); }
     }
 
-    [Fact]
-    public async Task R8IsFiniteThroughNoteOffReleaseAndExcludesMixerWhileSongUsesSameVoice()
+    [Theory]
+    [InlineData(0)] [InlineData(16)]
+    public async Task R8IsFiniteThroughNoteOffReleaseAndExcludesMixerWhileSongUsesSameVoice(long crossfade)
     {
-        using var f = await Fixture.Create(graph: true, release: 10); f.Set(new(16, 224, true, 64, 192));
+        using var f = await Fixture.Create(graph: true, release: 10); f.Set(new(16, 224, true, 64, 192, crossfade == 0 ? 0 : 24));
         var dry = await PatternResampling.RenderAsync(f.Document, f.Attachment.Id, TestContext.Current.CancellationToken);
         Assert.Equal(1440, dry.Frames);
         using var decoded = WavDecoder.Decode(dry.Wave);

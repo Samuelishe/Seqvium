@@ -81,6 +81,8 @@ internal sealed class SamplerWaveform : Control
             2 => p with { LoopStart = Math.Clamp(frame, p.Start, p.LoopEnd - 4) },
             _ => p with { LoopEnd = Math.Clamp(frame, p.LoopStart + 4, p.End) }
         };
+        try { p.Validate(wave.Frames); }
+        catch (ArgumentException) { return; }
         Playback = p; Preview?.Invoke(p); InvalidateVisual(); e.Handled = true;
     }
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
@@ -117,6 +119,19 @@ internal sealed class SamplerWaveform : Control
             {
                 double a = Math.Clamp(X(p.LoopStart), 0, Bounds.Width), b = Math.Clamp(X(p.LoopEnd), 0, Bounds.Width);
                 context.DrawRectangle(Brush("Surface.Accent"), null, new Rect(a, 24, Math.Max(0, b - a), Math.Max(0, Bounds.Height - 48)));
+                if (p.Crossfade > 0)
+                {
+                    // Show both actual overlap regions; markers and the source remain untouched.
+                    foreach (long end in new[] { p.LoopStart, p.LoopEnd })
+                    {
+                        double from = X(end - p.Crossfade), to = X(end);
+                        context.DrawRectangle(null, new Pen(Brush("Status.Playing")),
+                            new Rect(from, 24, Math.Max(0, to - from), Math.Max(0, Bounds.Height - 48)));
+                        context.DrawLine(new Pen(Brush("Status.Playing"), 2),
+                            new(from, end == p.LoopStart ? Bounds.Height - 24 : 24),
+                            new(to, end == p.LoopStart ? 24 : Bounds.Height - 24));
+                    }
+                }
             }
             double channelHeight = Math.Max(1, Bounds.Height - 52) / wave.Channels;
             for (int c = 0; c < wave.Channels; c++)

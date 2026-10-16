@@ -146,6 +146,8 @@ No shared control template, numeric minimum, palette or theme token changes acco
 
 ## Sampler waveform composition
 
+Complementary ramps identify the two actual F2 overlap areas; positive crossfade never moves source
+or loop markers. The fifth exact field uses the same parameter-row geometry and local reflow.
 The existing Source Editor hosts SamplerPaneContent/SamplerWaveform with standard controls, shared
 parameterRow/numeric fields and HostVisual typography/brushes. No palette, global preference, window
 registry or shared template is added. The waveform uses Surface.Workspace/Selected/Accent,
@@ -153,7 +155,8 @@ Accent.Action for sample flags and Status.Playing for enabled loop flags; muted 
 Text.Secondary. Upper/lower handle lanes keep overlapping ranges addressable; crowded captions yield
 to exact labeled fields. A large stereo surface, zoom/pan and responsive wrapped fields keep the
 working signal dominant. Real RU/EN Dark/Light ordinary/reduced captures and field alignment are
-required; [the report](experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) owns measured evidence.
+required; the [F1 report](experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) and
+[crossfade report](experiments/SEQ-SAMPLER-LOOP-QUALITY-F2_REPORT.md) own measured evidence.
 
 ## Browser composition
 

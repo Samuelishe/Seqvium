@@ -11,8 +11,8 @@ Not authoritative for: Arrangement, group identity, final port ABI/compiler, DSP
 SEQ-SAMPLER-EDITOR-F1 specializes the existing bound Source editor for a supported PCM sampler.
 The Channel Rack Sound Editor action and graph body double-click/context Open Editor keep the same
 NodeEditorTarget and singleton pane. It resolves the shared SoundDefinition through the attachment's
-source binding; no graph node parameter, media descriptor or additional musical document owns range
-or loop. Existing Gain/drum/unsupported detail surfaces retain their roles. Waveform observations are
+source binding; no graph node parameter, media descriptor or additional musical document owns range,
+loop or crossfade. Existing Gain/drum/unsupported detail surfaces retain their roles. Waveform observations are
 worker-built using the existing AudioWaveform hierarchy with fine PCM inspection; cancellation and
 captured target/generation protect delivery. Views own no execution/device leases.
 [UX](UX_CONTRACT.md#sampler-source-editor), [audio](AUDIO_ENGINE.md#sampler-source-range-and-sustain-loop-seq-sampler-editor-f1)

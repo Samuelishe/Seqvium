@@ -7,7 +7,19 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.13.0000**, **SEQ-SAMPLER-EDITOR-F1 — Waveform, Source Range and Sustain Loop**.
+Product alpha **0.1.13.0001**, **SEQ-SAMPLER-LOOP-QUALITY-F2 — Musical Sustain Loop Crossfade**.
+The existing Source Editor adds exact source-frame Crossfade and complementary overlap ramps.
+Positive width mixes the tail with available pre-loop audio at unchanged pitch and B-A period;
+no marker, source PCM or musical clock moves. Width is bounded by 4096 frames, half the loop and
+Loop Start minus Sample Start. Zero/omission retains F1 PCM exactly. Positive canonical state is
+shared-sound intent, with ordinary history/replacement/portable media and selective reader 1.10.
+Compatible live edits retire affected voices and retain clock/unrelated voices without retrigger.
+The [musical report](experiments/SEQ-SAMPLER-LOOP-QUALITY-F2_REPORT.md) owns verification and listening
+limits. The separate local performance report and personal process measurements remain ignored
+under `.artifacts/development-performance/`; they are not product contracts or public evidence.
+No R4-F2 pressure gap is closed.
+
+Previous **0.1.13.0000**, **SEQ-SAMPLER-EDITOR-F1 — Waveform, Source Range and Sustain Loop**.
 The existing PCM Source/Sound Editor now exposes a real zoomable mono/stereo waveform, exclusive
 source-frame range and optional sustain loop, exact fields and held/released preview. State belongs
 to the shared SoundDefinition; independent sounds can share PCM while retaining their own settings.
@@ -210,7 +222,26 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-SAMPLER-EDITOR-F1, 2026-10-16**. Full Release solution build has
+Latest L0/L1/L2/L3: **SEQ-SAMPLER-LOOP-QUALITY-F2, 2026-10-16**. Final production Release solution
+build: zero warnings/errors, **36.06 s**. Full Release **1655/1655**, zero skips, one thread,
+**75.180 s CLI**. Final test-only rate/crossfade parity/Seek expansion adds four cases: affected
+Release rebuild **3.04 s**, focused sampler **134/134**, **3.896 s**. No second full run after
+that test-only extension; production is unchanged after green L3. A final width-only held-note
+publication refinement passes **134/134** again (**3.819 s**, zero-warning rebuild **7.20 s**).
+Independent overlapping PCM,
+constant/periodic signals, short/fractional/extreme pitch, shared finite voices/live publication,
+Song/R8/FX, history/portable media/replacement and selective reader 1.10 pass. Warm callbacks
+measure zero bytes within the selected scope, not R4-F2 pressure acceptance.
+
+Actual RU/EN Dark/Light ordinary/reduced editor, 40 zero-DIP exact fields, native Start/Crossfade/
+Apply/marker drag, portable Open and final Samsung 48-kHz stereo Hold/Release/Stop/join pass.
+The first physical preview attempt failed without a captured cause; the repeat passes. Twelve
+comparison WAVs retain finite F1/zero/short/long PCM for owner listening; subjective quality,
+arbitrary phase cancellation, high-pitch aliasing and stress/platform limits remain explicit.
+The [report](experiments/SEQ-SAMPLER-LOOP-QUALITY-F2_REPORT.md) records first-run fixture failures,
+the 124.664-s full-test overrun, final checks and retained evidence. L3 cadence resets here.
+
+Prior L0/L1/L2/L3: **SEQ-SAMPLER-EDITOR-F1, 2026-10-16**. Full Release solution build has
 zero warnings/errors (8.65 s); **1593/1593 tests pass**, zero skips, one thread (**70.629 s CLI**). The 68 added cases cover independent PCM
 range/loop/pitch/seam/release oracles, channel/rate/packet parity, polyphony/capacity, live source
 retirement/unrelated voice age, Pattern loop/Stop/Panic/Seek, R8 versus finite Song Delay/Reverb,

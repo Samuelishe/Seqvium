@@ -68,11 +68,11 @@ remain future capabilities, not an implicit universal render service.
 Imported PCM instruments now expose a real waveform in the existing Source/Sound Editor. Range and
 loop belong to the shared SoundDefinition, independent of the WAV and of Playlist Audio Clip trim.
 See [Source Editor UX](UX_CONTRACT.md#sampler-source-editor). Replace WAV, including Sample Lab
-replacement, resets source-specific range/loop while retaining root/release under each replacement's
+replacement, resets source-specific range/loop/crossfade while retaining root/release under each replacement's
 tuning policy. Contextual Sample Lab audition hears the complete candidate, without applying stale
 original-source coordinates; accepting replacement follows the same reset.
 
-R8 reuses the extended sampler kernel. A sustain loop is finite for object rendering: musical NoteOff
+R8 reuses the extended sampler kernel, including F2 crossfade without changing loop period. A sustain loop is finite for object rendering: musical NoteOff
 plus bounded release limits its lifetime even when source PCM would otherwise repeat indefinitely.
 The existing frozen request, local Output before Mixer, size/admission/cancellation/generation gates,
 joined teardown and managed acceptance/history are unchanged. No Song/Master capture is substituted.

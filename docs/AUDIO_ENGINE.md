@@ -527,11 +527,28 @@ release even at a seam; it never resumes the post-loop source region. Zero relea
 Each occurrence owns its own age/release; there are no loop NoteOns. Disabled loop is exact legacy
 PCM for a full source. Existing root, velocity, channel conversion and independent voices remain.
 
-Seam treatment is a gain dip inside the explicit loop: linear fade down to zero at the last loop
+With crossfade omitted or zero, seam treatment remains the exact F1 gain dip inside the explicit loop: linear fade down to zero at the last loop
 frame and fade up after each wrap. Fade width is `min(64, floor(sourceRate/1000), floor(loopLength/4))`
 source frames (at least one). The initial prefix does not receive the wrapped fade-in. This limits
 clicks without moving markers, changing PCM, shortening the loop period or creating a derived resource.
 It can audibly pulse on short loops and promises neither perfect arbitrary seams nor anti-aliasing.
+
+Positive `loopCrossfadeFrames` selects the F2 overlap in the same voice/kernel. For loop `[A,B)`
+and width `X`, the last `[B-X,B)` mixes with pre-loop `[A-X,A)` at unchanged source step.
+`t=(cursor-(B-X))/X`, incoming weight `t*t*(3-2*t)`, outgoing `1-weight`. Complementary
+smoothstep avoids equal-power gain boost for correlated sustained tones; it cannot prevent phase
+cancellation or make arbitrary material seamless. Both stereo channels share the same phase/weights.
+The first approach to Loop End also crossfades. The source cursor still wraps exactly B to A with
+period B-A, derived from absolute voice age; there is no skipped head, shortened period, accumulated
+phase state, hidden marker movement, source mutation or preparation on the callback.
+
+`X` is an integer in `0..min(4096, floor((B-A)/2), A-SampleStart)` (about 85/93 ms at 48/44.1 kHz).
+It requires explicit available pre-loop audio inside the selected source range, even when retained
+while Loop is off. Loop Start equal to Sample Start admits only zero; the editor never moves either
+marker to supply handles. Positive crossfade holds the primary interpolation's final valid frame
+instead of reading beyond B or interpolating to silence; the incoming head interpolates through A
+inside the selected range. Zero keeps F1 interpolation and PCM exactly. A one-frame fade can offer
+little benefit at coarse/high pitch steps; linear resampling still has no anti-aliasing guarantee.
 
 Loop source lifetime is bounded by musical NoteOff + release, not source EOF. Capacity admission,
 R8 local rendering, Song/export and seek use that same finite lifetime. Stop/Panic and Pattern/range

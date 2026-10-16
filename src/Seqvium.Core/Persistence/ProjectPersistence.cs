@@ -37,7 +37,7 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 9;
+    public const int ReaderMinor = 10;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     private static bool HasReverb(ProjectState state) => state.Mixer is { } mixer &&
@@ -64,7 +64,7 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = snapshot.State.Sounds.Any(SamplerPlayback.HasIntent) ? 9 : HasReverb(snapshot.State) ? 8 : HasDelay(snapshot.State) ? 7 : snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
+        int required = snapshot.State.Sounds.Any(SamplerPlayback.HasCrossfadeIntent) ? 10 : snapshot.State.Sounds.Any(SamplerPlayback.HasIntent) ? 9 : HasReverb(snapshot.State) ? 8 : HasDelay(snapshot.State) ? 7 : snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
             HasSongStructure(snapshot.State) ? 5 : HasAudio(snapshot.State) ? 4 :
             snapshot.State.Mixer is not null ? 3 :
             !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
@@ -128,6 +128,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (file.State.Sounds.Any(SamplerPlayback.HasCrossfadeIntent) && file.MinimumReaderMinor < 10)
+                throw new ProjectFormatException("Sampler crossfade requires minimumReaderMinor >= 10.");
             if (file.State.Sounds.Any(SamplerPlayback.HasIntent) && file.MinimumReaderMinor < 9)
                 throw new ProjectFormatException("Sampler range/loop requires minimumReaderMinor >= 9.");
             if (HasReverb(file.State) && file.MinimumReaderMinor < 8)
@@ -251,6 +253,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (snapshot.State.Sounds.Any(SamplerPlayback.HasCrossfadeIntent))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(10, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(10, document.Compatibility.MinimumReaderMinor)
+                };
             if (snapshot.State.Sounds.Any(SamplerPlayback.HasIntent))
                 document.Compatibility = document.Compatibility with
                 {

@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 9. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 10. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
@@ -27,6 +27,20 @@ require the source package or generator and never regenerates accepted audio. No
 candidate history is promised. Existing `ExtensionState` and unknown node/sound payload preservation
 and dependency-scoped execution refusal remain unchanged; R6 provides no realtime extension processor.
 See [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
+
+## Sampler loop crossfade (reader 1.10)
+
+Optional SoundDefinition parameter `loopCrossfadeFrames` extends the complete reader-1.9 sampler
+block. Its integer source-frame value must be nonnegative and no greater than 4096, half the loop,
+or Loop Start minus Sample Start. Retained values are validated with Loop disabled too. Missing or
+zero selects exact F1 seam treatment, including its gain dip. Canonical edits omit zero; positive
+values and any externally supplied key (including malformed/zero) require reader 1.10. Documents
+without the key keep existing requirements; saving retains the established compatibility floor.
+A lower declared gate is refused. Partial, fractional, invalid and unknown state remains preserved
+and unavailable for execution. Replace WAV removes crossfade with the source range/loop in one
+transaction. History, portable media and prepared publication retain their existing owners.
+[Audio](AUDIO_ENGINE.md#sampler-source-range-and-sustain-loop-seq-sampler-editor-f1) defines the
+period-preserving pre-loop overlap; it creates neither a new media resource nor a document model.
 
 ## Sampler range and sustain loop (reader 1.9)
 

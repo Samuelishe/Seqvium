@@ -114,6 +114,13 @@ internal static partial class Program
         Click("ZoomIn"); await Refresh(); Require(wave.ViewLength == 12000, "Zoom failed.");
         ((Slider)Id("Pan")).Value = 3000; Require(wave.ViewStart == 3000, "Pan failed.");
         Click("Fit"); await Refresh(); Require(wave.ViewLength == 24000, "Fit failed.");
+        before = workflow.State.Snapshot; undo = workflow.State.UndoCount;
+        Text("Crossfade", "4801"); Click("Apply"); await Refresh();
+        Require(workflow.State.Snapshot == before, "Unavailable pre-loop frames were silently adopted.");
+        Text("Crossfade", "2048"); Click("Apply"); await Refresh();
+        Require(Current().Crossfade == 2048 && workflow.State.UndoCount == undo + 1, "Crossfade did not commit once.");
+        Require(await workflow.UndoAsync(), "Crossfade Undo failed."); await Refresh(); Require(Current().Crossfade == 0, "Crossfade Undo lost F1.");
+        Require(await workflow.UndoAsync(true), "Crossfade Redo failed."); await Refresh();
         var alignments = new List<object>();
         foreach (var language in new[] { HostLanguage.English, HostLanguage.Russian })
         {
@@ -126,7 +133,7 @@ internal static partial class Program
                     main.Width = width; main.Height = width == 1400 ? 900 : 600;
                     workspace.State.SetBounds(WorkspaceState.NodeEditorId, new(0, 0, width == 1400 ? 760 : 480, 520));
                     workspace.Commit(); await Refresh();
-                    foreach (string key in new[] { "Start", "End", "LoopStart", "LoopEnd" })
+                    foreach (string key in new[] { "Start", "End", "LoopStart", "LoopEnd", "Crossfade" })
                     {
                         var field = Id(key); var row = (Grid)field.Parent!;
                         alignments.Add(FieldAlignment.Verify(field, row.Children.OfType<TextBlock>().Single(), row, $"{language}-{theme}-{width}-{key}"));
@@ -151,7 +158,10 @@ internal static partial class Program
                 await input.TraceDrag(wave, [marker, marker + new Vector(16, 0), marker + new Vector(32, 0)]);
                 await Refresh(); Require(Current().Start > 2400, "Native marker drag failed.");
                 Require(await workflow.UndoAsync(), "Native marker Undo failed."); await Refresh();
-                nativeResult = new { Result = "passed", Checks = "Native exact Start/Apply and waveform marker drag; setup routed" };
+                await input.Exact(Id("Crossfade"), "1024"); await input.Click(Id("Apply")); await Refresh();
+                Require(Current().Crossfade == 1024, "Native crossfade commit failed.");
+                Require(await workflow.UndoAsync(), "Native crossfade Undo failed."); await Refresh();
+                nativeResult = new { Result = "passed", Checks = "Native exact Start, crossfade/Apply and waveform marker drag; setup routed" };
             }
             catch (Exception error) { nativeResult = new { Result = "refused-or-failed", Reason = error.Message }; }
         }
@@ -165,7 +175,8 @@ internal static partial class Program
                 for (int i = 0; i < 100 && !workflow.SamplerPreviewPlaying; i++) await Task.Delay(20);
                 Require(workflow.SamplerPreviewPlaying, workflow.State.Detail ?? "Held preview failed.");
                 var previewOutput = Field<WorkflowOutput>(workflow, "_noteOutput");
-                await Task.Delay(500); Require(workflow.SamplerPreviewPlaying && previewOutput.ReadFailure() is null, "Sustain ended at source EOF or output faulted.");
+                await Task.Delay(500); Require(workflow.SamplerPreviewPlaying && previewOutput.ReadFailure() is null,
+                    $"Held preview stopped or faulted: {previewOutput.Sampler.ReadStatus()}; fault={previewOutput.ReadFailure() ?? "none"}.");
                 Click("Hold"); await Refresh();
                 for (int i = 0; i < 100 && workflow.SamplerPreviewPlaying; i++) await Task.Delay(20);
                 Require(!workflow.SamplerPreviewPlaying && workflow.State.Snapshot == before && workflow.State.UndoCount == undo,
@@ -209,12 +220,14 @@ internal static partial class Program
             reopenedAttachment.Sources.Single().NodeId);
         Invoke(main, "OpenNodeEditor", reopenedTarget); await Refresh();
         Require(((TextBox)Id("Start")).Text == expected.Start.ToString(), "Reopened editor lost exact range.");
+        Require(((TextBox)Id("Crossfade")).Text == expected.Crossfade.ToString(), "Reopened editor lost crossfade.");
         string export = Path.Combine(output, "sampler-pattern.wav");
         Require(await workflow.ExportWaveAsync(Basis(), export), "Pattern export failed.");
         var sample = await PatternResampling.RenderAsync(workflow.State.Document, reopenedAttachment.Id);
         Require(sample.Frames >= 96000 && sample.Frames < 200000, "R8 loop render not finite/musically gated.");
         Json(output, "sampler", new { Routed = "passed", Portable = true, Range = Current(), R8Frames = sample.Frames,
             Native = nativeResult, Physical = physical, SubjectiveLoopQuality = "not-assessed" });
+        await SamplerLoopComparisonsAsync(output);
     }
     private static void WriteSamplerStudy(string path)
     {
