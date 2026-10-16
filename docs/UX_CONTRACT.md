@@ -71,11 +71,22 @@ creating a bus does not silently reroute anything. Rack's Open Mixer action targ
 Output/send selectors expose real routes; cyclic intent fails without history or partial publication.
 
 The bank offers dB faders (-90 silence through +12), bipolar stereo balance, Mute/Solo, measured stereo
-levels/peak hold and a compact EQ/compression summary. Master stays locatable. Contextual inspector
+levels/peak hold and a compact EQ/compression/Delay summary. Master stays locatable. Contextual inspector
 provides trim (-24 through +36), editable EQ response, exact filter/dynamics controls, output, pre/post
 sends, name, assignments and channel deletion. Curve means analytical response, not live spectrum.
 Peak/GR readouts derive from the audio engine; stopped meters are not animated. Reset peaks does not
 alter music or consume Undo. Master sample-peak protection is explicit and saved.
+
+The Delay inspector tab offers Enabled, Time (10–1000 ms), Feedback (0–75%) and Mix (0–100%).
+Defaults are disabled, 250 ms, 35% and 25%. Each valid exact edit commits through the same history,
+including during playback; Enter/focus loss accepts and Escape cancels. Invalid values retain intent.
+Delay processes the selected channel/bus/Master after Compressor, before pan/level and pre-fader sends.
+Feedback controls decaying repetitions; 0% gives one echo, Mix 0% gives dry, 100% gives wet. Bypass
+returns to dry smoothly. Time transitions blend taps over 20 ms; other changes smooth over five ms.
+Ordinary Pattern repeats keep echoes; Stop/Panic and Seek/range wrap clear them. Full Pattern/Song
+WAV includes a finite final tail, while explicit hard boundaries remain hard. Save/Open and Undo/Redo
+preserve the parameters. This is not tempo sync, ping-pong, automation or a reorderable rack. Exact
+finite bounds and memory/refusal policy belong to [audio](AUDIO_ENGINE.md#musical-delay-v1-seq-r11-delay-f1).
 
 Fader/dial/EQ handle drag previews visually and commits once on release. Fader/dial offer Shift fine adjustment;
 double-click level/pan restores unity/center. Keyboard fader arrows/Home/End and exact numeric fields

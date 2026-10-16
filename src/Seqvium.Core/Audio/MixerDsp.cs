@@ -79,9 +79,11 @@ internal sealed class MixerRuntime
         internal double Gain, Trim, Left, Right, Reduction;
         internal float Held;
         internal long Overloads, Invalid, Frames;
+        internal MixerDelayDsp Delay;
 
-        internal Strip(PreparedMixerStrip p)
+        internal Strip(PreparedMixerStrip p, int rate)
         {
+            Delay = new(p.Delay, rate);
             Filters = (BiquadCoefficients[])p.Filters.Clone();
             Gain = p.Gain;
             Trim = p.Trim;
@@ -102,7 +104,7 @@ internal sealed class MixerRuntime
     internal MixerRuntime(PreparedMixer plan)
     {
         _plan = plan;
-        _strips = plan.Strips.Select(p => new Strip(p)).ToArray();
+        _strips = plan.Strips.Select(p => new Strip(p, plan.SampleRate)).ToArray();
         int count = _strips.Length;
         _left = new double[count];
         _right = new double[count];
@@ -132,6 +134,8 @@ internal sealed class MixerRuntime
             if (previous < 0) continue;
             var source = old._strips[previous];
             var target = _strips[i];
+            // Old execution is retired immediately after continuation; transfer the sole consumer's line.
+            (target.Delay, source.Delay) = (source.Delay, target.Delay);
             Array.Copy(source.Z1, target.Z1, 8);
             Array.Copy(source.Z2, target.Z2, 8);
             Array.Copy(source.Filters, target.Filters, 4);
@@ -158,6 +162,7 @@ internal sealed class MixerRuntime
             Array.Clear(strip.Z1);
             Array.Clear(strip.Z2);
             strip.Reduction = 0;
+            strip.Delay.Reset(prepared.Delay);
             Array.Copy(prepared.Filters, strip.Filters, 4);
             strip.Trim = prepared.Trim;
             strip.Gain = prepared.Gain;
@@ -269,6 +274,7 @@ internal sealed class MixerRuntime
                 double compression = (s.Reduction < 1e-10 ? 1 : Math.Pow(10, -s.Reduction / 20)) * p.Makeup;
                 l *= compression;
                 r *= compression;
+                s.Delay.Process(ref l, ref r, p.Delay);
                 double preL = l * s.Left, preR = r * s.Right;
                 l = preL * s.Gain;
                 r = preR * s.Gain;
@@ -280,6 +286,7 @@ internal sealed class MixerRuntime
                     Array.Clear(s.Z1);
                     Array.Clear(s.Z2);
                     s.Reduction = 0;
+                    s.Delay.Reset(p.Delay);
                 }
 
                 double peak = Math.Max(Math.Abs(l), Math.Abs(r));

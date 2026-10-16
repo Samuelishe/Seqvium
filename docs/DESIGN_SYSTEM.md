@@ -178,7 +178,10 @@ It is never drawn over musical grids or signal plots. No raster/third-party asse
 `MixerFader` combines a nonlinear dB track and real stereo peak/RMS ladder, with a held-overload light.
 `GainDialControl.Compact` is the shared compact pan variant; its default instrument variant is unchanged.
 `MixerResponsePlot` draws calibrated analytical EQ/transfer curves, not measured spectral analysis.
-The side inspector uses standard controls, host-owned tabs and local scrolling. Its disclosure is a
+The side inspector uses standard controls, host-owned tabs and local scrolling. Its compact EQ,
+Comp, Routing and Delay tabs fit the existing inspector in RU/EN. Delay reuses ordinary parameterRow/
+numeric fields for milliseconds and percentages plus a standard Enabled toggle; it adds no template,
+palette, global option, explanatory paragraph or strip meter. The strip's D mark shows enabled state. Its disclosure is a
 ToggleButton, not an empty expanded content region. The bank stays narrow as the pane grows.
 
 `mixerControl` and `mixerValue` are deliberate small strip variants. The strip field height is below

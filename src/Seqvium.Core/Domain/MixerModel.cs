@@ -26,6 +26,14 @@ public sealed record MixerCompressor : CanonicalData
     public decimal MakeupDb { get; init; }
 }
 
+public sealed record MixerDelay : CanonicalData
+{
+    public bool Enabled { get; init; }
+    public decimal TimeMs { get; init; } = 250;
+    public decimal Feedback { get; init; } = .35m;
+    public decimal Mix { get; init; } = .25m;
+}
+
 public sealed record MixerStripSettings : CanonicalData
 {
     public decimal TrimDb { get; init; }
@@ -37,6 +45,7 @@ public sealed record MixerStripSettings : CanonicalData
     public bool Solo { get; init; }
     public MixerEq Eq { get; init; } = new();
     public MixerCompressor Compressor { get; init; } = new();
+    public MixerDelay Delay { get; init; } = new();
 }
 
 public sealed record MixerSend(Id<MixerChannel> Target, decimal LevelDb, bool PreFader) : CanonicalData;
@@ -110,7 +119,7 @@ public static class MixerValidation
 
     private static void Settings(MixerStripSettings s)
     {
-        ProjectValidation.Require(s is not null && s.Eq is not null && s.Compressor is not null,
+        ProjectValidation.Require(s is not null && s.Eq is not null && s.Compressor is not null && s.Delay is not null,
             "Mixer settings are required.");
         ProjectValidation.Require(
             s.TrimDb is >= -24 and <= 36 && s.LevelDb is >= -90 and <= 12 && s.Pan is >= -1 and <= 1,
@@ -121,6 +130,9 @@ public static class MixerValidation
                                   e.HighDb is >= -18 and <= 18 &&
                                   e.MidHz is >= 40 and <= 16000 && e.MidQ is >= .2m and <= 10, "Invalid Mixer EQ.");
         var c = s.Compressor;
+        ProjectValidation.Require(s.Delay.TimeMs is >= 10 and <= 1000 &&
+                                  s.Delay.Feedback is >= 0 and <= .75m && s.Delay.Mix is >= 0 and <= 1,
+            "Invalid Mixer delay.");
         ProjectValidation.Require(c.ThresholdDb is >= -60 and <= 0 && c.Ratio is >= 1 and <= 20 &&
                                   c.AttackMs is >= .1m and <= 200 && c.ReleaseMs is >= 10 and <= 2000 &&
                                   c.KneeDb is >= 0 and <= 24 && c.MakeupDb is >= -12 and <= 24,
@@ -141,5 +153,5 @@ public static class MixerValidation
                                                         Known(mixer.Master);
 
     private static bool Known(MixerStripSettings s) => s.AdditionalData.IsEmpty && s.Eq.AdditionalData.IsEmpty &&
-                                                       s.Compressor.AdditionalData.IsEmpty;
+                                                       s.Compressor.AdditionalData.IsEmpty && s.Delay.AdditionalData.IsEmpty;
 }

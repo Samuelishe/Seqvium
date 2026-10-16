@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 6. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 7. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
@@ -109,6 +109,20 @@ state is preserved but refused for execution/overwriting, rather than guessed or
 future semantics still need the format gate. Mixer adds no resource container: copying a project
 requires its associated `.seqvium.media` folder with the same basename, or use normal Save As to
 establish its managed media. Never treat a lone JSON copy as an independent musical backup.
+
+### Mixer Delay (reader 1.7)
+
+Strip/Master `delay` stores Enabled, TimeMs, Feedback and Mix as canonical project intent. Missing
+Delay defaults to disabled, 250 ms, 0.35 feedback and 0.25 mix. The writer omits this exact default
+object, preserving the old JSON shape and existing reader gate for projects without Delay intent.
+Any non-default Delay, including bypassed custom parameters or unknown nested data, requires both
+`minor >= 7` and `minimumReaderMinor >= 7`. Save raises these markers monotonically; underdeclared
+files refuse Open. A frozen reader-1.6 envelope predicate rejects required 1.7 before interpreting
+music; no dry fallback silently removes an essential effect. This is an envelope test, not a build of
+a historical reader. Unknown Delay fields round-trip and block execution/destructive overwrite just
+like unknown EQ/compression state. Invalid/null/range violations refuse atomically. Live buffers,
+feedback histories, smoothing and tail countdowns remain derived and are never serialized. Existing
+Undo/Redo, managed media and portable Save As/Open own persistence; there is no new resource format.
 
 ## Drum Voice persistence
 

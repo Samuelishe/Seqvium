@@ -21,9 +21,14 @@ internal sealed record PreparedMixerStrip(
     double Gain,
     double Left,
     double Right,
-    double Makeup);
+    double Makeup,
+    PreparedDelay Delay);
 
-internal sealed record PreparedMixer(PreparedMixerStrip[] Strips, MixerTap[] Taps, bool ProtectOutput, int SampleRate);
+internal sealed record PreparedMixer(PreparedMixerStrip[] Strips, MixerTap[] Taps, bool ProtectOutput, int SampleRate,
+    long TailFrames)
+{
+    internal int DelayBytes => checked(Strips.Length * MixerDelayDsp.StorageBytes(SampleRate));
+}
 
 internal static class MixerPreparation
 {
@@ -34,6 +39,21 @@ internal static class MixerPreparation
         var ordered = MixerValidation.Order(mixer);
         var indices = ordered.Select((c, i) => (c.Id, Index: i)).ToDictionary(p => p.Id, p => p.Index);
         int master = ordered.Length;
+        if ((master + 1L) * MixerDelayDsp.StorageBytes(sampleRate) > MixerDelayDsp.MaximumBytes)
+            throw new GraphPreparationException(GraphPreparationReasons.Budget);
+        var tails = new long[master + 1];
+        foreach (var channel in ordered)
+        {
+            int index = indices[channel.Id];
+            tails[index] += MixerDelayDsp.TailFrames(channel.Settings.Delay, sampleRate);
+            int output = channel.Output is { } target ? indices[target] : master;
+            tails[output] = Math.Max(tails[output], tails[index]);
+            foreach (var send in channel.Sends)
+                tails[indices[send.Target]] = Math.Max(tails[indices[send.Target]], tails[index]);
+        }
+        tails[master] += MixerDelayDsp.TailFrames(mixer.Master.Delay, sampleRate);
+        if (tails[master] > sampleRate * 120L)
+            throw new GraphPreparationException(GraphPreparationReasons.Budget);
         var sounds = ordered.SelectMany(c => c.SoundIds.Select(s => (Sound: s, Index: indices[c.Id])))
             .ToDictionary(p => p.Sound, p => p.Index);
         var partSounds = state.Patterns.SelectMany(p => p.Parts).ToDictionary(p => p.Id, p => p.SoundId);
@@ -89,7 +109,8 @@ internal static class MixerPreparation
                 allow && !settings.Muted ? MixerDsp.Amplitude(settings.LevelDb) : 0,
                 settings.Pan > 0 ? Math.Cos((double)settings.Pan * Math.PI / 2) : 1,
                 settings.Pan < 0 ? Math.Cos((double)settings.Pan * Math.PI / 2) : 1,
-                settings.Compressor.Enabled ? MixerDsp.Amplitude(settings.Compressor.MakeupDb) : 1);
+                settings.Compressor.Enabled ? MixerDsp.Amplitude(settings.Compressor.MakeupDb) : 1,
+                MixerDelayDsp.Prepare(settings.Delay, sampleRate));
 
         return new([
             .. ordered.Select(c => Strip(c.Id.Value, c.Settings, !solo || audible.Contains(c.Id),
@@ -98,7 +119,7 @@ internal static class MixerPreparation
                     .. c.Sends.Select(s => new MixerRoute(indices[s.Target], MixerDsp.Amplitude(s.LevelDb), s.PreFader))
                 ])),
             Strip(Guid.Empty, mixer.Master, true, -1, [])
-        ], [.. taps], mixer.ProtectOutput, sampleRate);
+        ], [.. taps], mixer.ProtectOutput, sampleRate, tails[master]);
     }
 
     internal static bool SameTopology(MixerState? a, MixerState? b) => a is not null && b is not null &&

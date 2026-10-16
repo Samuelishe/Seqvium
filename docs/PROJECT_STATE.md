@@ -7,7 +7,20 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.10.0000**, **SEQ-R10-STRETCH-F1 — local Audio Clip time stretch**. Existing
+Product alpha **0.1.11.0000**, **SEQ-R11-DELAY-F1 — musical Delay / stateful Mixer FX**.
+Mixer Inspector exposes Enabled, Time 10–1000 ms, Feedback 0–75% and Mix 0–100% on channels,
+buses and Master. Delay follows Compressor before balance/fader/sends, using one consumer-owned
+stereo line per summed strip. Compatible edits preserve time/voices/history, smooth coefficients
+and crossfade Time taps. Natural Pattern/Song rendering includes a bounded late echo; ordinary
+Pattern loops retain state, Stop/Panic/Seek/range wrap clear it without long settling. Original note
+gates and R8's local before-Mixer tap remain intact. A 64 MiB per-state line budget, existing publication
+slots/work gates and maximum 120-s serial tail keep preparation/render finite. Default disabled Delay
+is omitted from JSON; non-default intent requires reader 1.7. Existing Undo/Redo/Save/Open/media own
+persistence. [Audio](AUDIO_ENGINE.md#musical-delay-v1-seq-r11-delay-f1),
+[UX](UX_CONTRACT.md#implemented-mixer-workflow), [format](PROJECT_FORMAT.md#mixer-delay-reader-17)
+and the [report](experiments/SEQ-R11-DELAY-F1_REPORT.md) own details/evidence/limits.
+
+Previous **0.1.10.0000**, **SEQ-R10-STRETCH-F1 — local Audio Clip time stretch**. Existing
 Playlist clip properties expose an explicit 50–200% duration multiplier and playback duration, with
 a distinct non-unity header cue. Worker-prepared stereo-linked WSOLA preserves local pitch for the
 bounded sustained/monophonic phrase scope. Original native ranges/fades and immutable managed media
@@ -75,7 +88,7 @@ The owner's follow-up also removes permanent instructional/technical clutter acr
 working surfaces. Sample Lab/Browser/Extensions lead with short actions and sound; redundant Gain/Mixer
 readouts and Piano/source-property explanations are reduced or disclosed. AGENTS/UI design require
 actual reference-image inspection and a density gate before future UI edits. Reader 1.5 covers
-sections/ancestry; reader 1.6 adds explicit local stretch. [Versioning](VERSIONING.md) owns identity.
+sections/ancestry; reader 1.6 adds explicit local stretch and reader 1.7 gates non-default Delay. [Versioning](VERSIONING.md) owns identity.
 No release, staging, commit, push or tag is performed. R1–R3 remain complete in their bounded scopes.
 R4 remains partial: F1 accepted-ready, F2 pressure acceptance unresolved, F3-A conditionally accepted,
 F3-B owner interaction/visual review pending. R5 Rack/music, R9 Piano, bounded R10 Playlist/audio and
@@ -151,13 +164,29 @@ and [architecture](ARCHITECTURE.md#song-structure-and-explicit-variations) own t
 
 Mixer retains explicit sound assignments, channels/buses/Master, level/trim/stereo balance,
 Mute/Solo, measured levels/reduction, acyclic output/pre/post sends, high-pass/three-band EQ,
-linked compression and optional sample-peak protection. Audio Clip contributions use this same
+linked compression, musical Delay and optional sample-peak protection. Audio Clip contributions use this same
 processing, not a parallel mixer. Compatible prepared changes retain time/unrelated voices.
 [Design system](DESIGN_SYSTEM.md) and [UI design](UI_DESIGN.md) own compact shared visual norms.
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-R10-STRETCH-F1, 2026-10-16**. Full Release solution build has zero
+Latest L0/L1/L2/L3: **SEQ-R11-DELAY-F1, 2026-10-16**. Full Release solution build has zero
+warnings/errors; **1471/1471 tests pass**, zero skips, one thread (**78.127 s CLI**). The 21 added
+Delay cases cover actual impulse/timing/decay/mix, mono/stereo, channel/bus/Master/sends/Mute/Solo,
+realtime/offline float and PCM16 export, late echoes, Stop/Seek/loop, live control/voice gates,
+state transfer, memory/tail bounds and history/reader/unknown state. Focused related checks pass
+112/112 (9.182 s), followed by 70/70 Delay/OfflineSampler boundary/memory cases (2.767 s).
+Warm callback paths measure zero allocation; unprimed observations and earlier failed runs remain
+explicit in the [report](experiments/SEQ-R11-DELAY-F1_REPORT.md), not hidden as pressure acceptance.
+
+Production windows pass RU/EN × Dark/Light ordinary/reduced empty/populated Mixer, 24 zero-DIP
+field alignments, real control edits/invalid input, history, Save/Open and 188400-frame WAV late echoes.
+Final guarded Windows Time/bypass/enable pass, with routed setup/selection. Physical Samsung USB C
+Earphones at 48 kHz stereo reaches natural Ended at frame 188400 with zero voices and unchanged epoch
+under live Mix. Earlier foreground refusals and harness corrections are recorded. Catalog passes.
+No subjective listening, full native authoring, stress/DPI/other-platform or R4-F2 closure follows.
+
+Prior L0/L1/L2/L3: **SEQ-R10-STRETCH-F1, 2026-10-16**. Full Release solution build has zero
 warnings/errors; **1450/1450 tests pass**, zero skips, one thread (**60.159 s** CLI summary). The
 **23 new stretch cases pass** (4.702 s); the earlier 162-case related audio/persistence/metadata
 subset passes (22.012 s), followed by the additional live Pattern-continuation case in L3.
@@ -249,8 +278,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected stretch L3 covers reader gates,
-prepared PCM, realtime publication and existing production regressions. No broader platform, aesthetic, pressure
+Completed repository tasks since this L3: **0**. This risk-selected Delay L3 covers reader gates,
+stateful lifetime/finite source and effect boundaries, realtime publication and existing production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
@@ -305,7 +334,7 @@ inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachm
 Browser inspection followed by preview decodes external sources twice; three-minute source latency
 and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 
-Delay/reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
+Reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
 wider Sample Lab context/reference models, MIDI, recording and recovery remain future work. Cold seek/range wrap
 resets Mixer FX without preroll. R4-F2 pressure failures, maximum-channel stress, aesthetic/acoustic
 review, Linux/macOS runtime, high/mixed DPI, cross-monitor and accessibility remain unevidenced.

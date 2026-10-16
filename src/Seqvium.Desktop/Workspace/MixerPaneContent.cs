@@ -422,9 +422,10 @@ internal sealed class MixerPaneContent : Grid, IDisposable
             if (faderBasis is not null && faderBasis.Generation != _state.Generation) fader.Cancel();
             if (!fader.HasGesture) fader.LevelDb = settings.LevelDb;
             fader.AccentRole = role;
-            effects.Content = (settings.Eq.Enabled ? "EQ·" : "EQ") + " " + (settings.Compressor.Enabled ? "C·" : "C");
+            effects.Content = (settings.Eq.Enabled ? "EQ·" : "EQ") + " " + (settings.Compressor.Enabled ? "C·" : "C") +
+                              (settings.Delay.Enabled ? " D·" : " D");
             ToolTip.SetTip(effects, _shell["Mixer.Processing"]);
-            effects.Classes.Set("primary", settings.Eq.Enabled || settings.Compressor.Enabled);
+            effects.Classes.Set("primary", settings.Eq.Enabled || settings.Compressor.Enabled || settings.Delay.Enabled);
             border.IsEnabled = !_state.Busy;
         });
         return border;
@@ -541,12 +542,29 @@ internal sealed class MixerPaneContent : Grid, IDisposable
         CompValue("Knee dB", 0, 24, c => c.KneeDb, (c, v) => c with { KneeDb = v });
         CompValue("Makeup dB", -12, 24, c => c.MakeupDb, (c, v) => c with { MakeupDb = v });
         compressor.Children.Add(compFields);
+        var delay = new StackPanel { Spacing = HostMetrics.Values["Space.Small"] };
+        var delayEnable = new ToggleButton
+        {
+            Content = _shell["Mixer.Enabled"], IsChecked = settings.Delay.Enabled,
+            HorizontalAlignment = HorizontalAlignment.Left
+        };
+        AutomationProperties.SetAutomationId(delayEnable, "Mixer.Detail.DelayEnable");
+        delayEnable.Click += (_, _) => StripEdit(_state, id,
+            s => s with { Delay = s.Delay with { Enabled = delayEnable.IsChecked == true } });
+        delay.Children.Add(delayEnable);
+        delay.Children.Add(Number(id, _shell["Mixer.DelayTime"], 10, 1000, s => s.Delay.TimeMs,
+            (s, v) => s with { Delay = s.Delay with { TimeMs = v } }, "Mixer.Detail.DelayTime"));
+        delay.Children.Add(Number(id, _shell["Mixer.DelayFeedback"], 0, 75, s => s.Delay.Feedback * 100,
+            (s, v) => s with { Delay = s.Delay with { Feedback = v / 100 } }, "Mixer.Detail.DelayFeedback"));
+        delay.Children.Add(Number(id, _shell["Mixer.DelayMix"], 0, 100, s => s.Delay.Mix * 100,
+            (s, v) => s with { Delay = s.Delay with { Mix = v / 100 } }, "Mixer.Detail.DelayMix"));
         var routing = Routing(id);
         tabs.ItemsSource = new TabItem[]
         {
-            new() { Header = _shell["Mixer.Eq"], Content = eq },
-            new() { Header = _shell["Mixer.Comp"], Content = compressor },
-            new() { Header = _shell["Mixer.Routing"], Content = routing }
+            new() { Header = _shell["Mixer.EqTab"], Content = eq },
+            new() { Header = _shell["Mixer.CompTab"], Content = compressor },
+            new() { Header = _shell["Mixer.Routing"], Content = routing },
+            new() { Header = _shell["Mixer.Delay"], Content = delay }
         };
         AutomationProperties.SetAutomationId(tabs, "Mixer.Detail.Tabs");
         _detail.Content = tabs;

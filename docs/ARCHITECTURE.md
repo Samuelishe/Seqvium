@@ -141,7 +141,7 @@ starting arrangement, never as hidden permanent identity. Unassigned sounds feed
 `MixerPreparation` projects the currently supported linear Source/Gain/Mix graphs into source
 contributions while preserving their exact local transfer gains. Song combines audible occurrences
 before compiling this projection. Each channel's stateful processing therefore executes once on its
-aggregate, not once per clip. `MixerDsp` owns filter/compressor state, routes, final protection and
+aggregate, not once per clip. `MixerDsp` owns filter/compressor/Delay state, routes, final protection and
 bounded measured taps inside the existing sampler; this is not a second renderer or backend.
 The existing graph operations also retain their node diagnostics. Stateful contributed graph nodes
 will require an explicit source/processor boundary instead of assuming linear decomposition.
@@ -151,7 +151,7 @@ gestures, context and immutable meter observations; prepared plans/runtime DSP/m
 Compatible control updates are owner-prepared, execution/authority-qualified and consumed at an audio
 packet boundary without rebuilding media or voices. Topology changes use existing prepared publication
 and retain compatible time/voice state. [Audio](AUDIO_ENGINE.md#project-mixer-execution) owns reset,
-memory and routing semantics; [format](PROJECT_FORMAT.md#mixer-persistence) owns the reader gate.
+memory, bounded Delay tail extension and constant-time line ownership transfer; [format](PROJECT_FORMAT.md#mixer-persistence) owns the reader gate.
 
 ## R3-F1 desktop host and presentation ownership
 

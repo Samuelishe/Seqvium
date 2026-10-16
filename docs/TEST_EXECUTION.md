@@ -7,6 +7,22 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Musical Delay verification
+
+`MixerDelayTests` uses authored impulse PCM through production Mixer/Pattern/Song execution. It checks
+repeat timing/decay/dry-wet, mono/stereo 44.1/48 kHz, channel/bus/Master aggregates, sends/Mute/Solo,
+full WAV late echoes and realtime/offline PCM, hard Stop/Panic/cold Seek/range wrap, ordinary Pattern
+loop retention, live publication/voice gates, topology line transfer, history/reader 1.7/unknown state,
+reserved memory and serial-tail refusal. Warm consumer allocation observations exclude preparation,
+harness arrays and assertions. They do not establish R4-F2 pressure acceptance.
+
+After the affected Release build, use `--filter-class "*MixerDelayTests"` with `*MixerTests`,
+`*ArrangementTests`, `*AudioClipTests`, `*PatternResamplingTests` and affected persistence/lifetime
+neighbours. This checkpoint selects L3 for state lifetime and finite boundary changes.
+[VisualCheck Delay](../tools/Seqvium.VisualCheck/README.md#musical-delay) owns actual localized compact
+fields, history/Save/Open/export and separately labelled guarded native/physical evidence. The
+[report](experiments/SEQ-R11-DELAY-F1_REPORT.md) records outcomes and failures.
+
 ## Sample Lab verification
 
 `PercussionLabTests` measures finite bounded PCM, nontrivial transient/decay, different Random PCM,

@@ -205,14 +205,14 @@ public sealed class ProductVersionTests
         Assert.Equal(minor, json["minor"]!.GetValue<int>());
         Assert.Equal(minor, json["minimumReaderMinor"]!.GetValue<int>());
         Assert.Equal("0.2.0-r2-f1", json["writerVersion"]!.GetValue<string>());
-        Assert.Equal(6, ProjectPersistence.ReaderMinor);
+        Assert.Equal(7, ProjectPersistence.ReaderMinor);
         Assert.DoesNotContain(CanonicalVersion().Display, json.ToJsonString());
         Assert.True(JsonNode.DeepEquals(json, GraphFixture.Json(GraphFixture.Read(json).Document)));
         json["major"] = 0;
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
         json["major"] = 1;
-        json["minor"] = 7;
-        json["minimumReaderMinor"] = 7;
+        json["minor"] = ProjectPersistence.ReaderMinor + 1;
+        json["minimumReaderMinor"] = ProjectPersistence.ReaderMinor + 1;
         Assert.Throws<ProjectFormatException>(() => GraphFixture.Read(json));
     }
 

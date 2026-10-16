@@ -1792,3 +1792,16 @@ not silently render non-unity intent at original duration. Copies share immutabl
 multiplier. The source-envelope and derived-memory limits make the first scope explicit; transient
 and dense-polyphony limitations are not disguised by universal quality claims. Current contracts
 live in Audio Engine, Architecture, UX and Project Format; the stretch report owns evidence.
+
+## SEQ-R11-DELAY-F1 — bounded built-in Mixer Delay, 2026-10-16
+
+Accepted for the authorized Delay V1: one independent stereo feedback line after Compressor and
+before balance/fader, 10–1000 ms, feedback at most 0.75, smooth live coefficients and 20-ms tap
+crossfade. Reserve bounded lines outside callback even in bypass; generation reset and exclusive
+identity-based transfer avoid callback clears/copies. Use a relative-decay finite allowance and
+120-s maximum serial extension, preserving hard Stop/Seek/range boundaries and original note gates.
+Default state is omitted from JSON; non-default bypassed or enabled intent requires reader 1.7.
+This provides a useful musical effect without a generic rack, stateful local graph ABI or FX preroll.
+Contracts are in [Audio](../AUDIO_ENGINE.md#musical-delay-v1-seq-r11-delay-f1) and
+[format](../PROJECT_FORMAT.md#mixer-delay-reader-17); the [report](../experiments/SEQ-R11-DELAY-F1_REPORT.md)
+records evidence. Q-057 remains open for wider stateful processors, latency, warm-up and acoustic settling.

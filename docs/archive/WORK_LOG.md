@@ -2176,3 +2176,14 @@ failed attempts, not overwritten with successful claims. The [report](../experim
 owns reproducible methods, material/range/budget/pressure/acoustic/platform limits and artifact
 retention. Current owners/public guides/state and wider Q-051 remainder are reconciled. Root
 ProjectStats reports are refreshed and inspected; no staging/commit/push/tag or release is performed.
+
+## SEQ-R11-DELAY-F1 — 2026-10-16
+
+Implemented musical Delay in the existing Mixer Inspector and shared sampler execution: channel/bus/
+Master Time/Feedback/Mix/bypass, bounded feedback line lifetime, smooth live publication, cold transport
+reset, Pattern loop continuity and finite full WAV tails. Canonical history/Save/Open and reader 1.7
+preserve intent; default Delay is omitted to retain older project compatibility. R8 stays before Mixer.
+One verified PATCH is 0.1.11.0000. Final zero-warning Release build and 1471/1471 tests pass; localized
+ordinary/reduced GUI, 24 field alignments, guarded native controls and physical 48-kHz Song/live Mix
+pass separately. Prior failed attempts, exact methods and pressure/acoustic/platform limitations are
+in the [report](../experiments/SEQ-R11-DELAY-F1_REPORT.md). No staging/commit/push/tag or general Q-057 closure.

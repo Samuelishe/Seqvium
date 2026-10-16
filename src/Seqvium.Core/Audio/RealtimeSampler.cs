@@ -150,7 +150,7 @@ public sealed class RealtimeSampler : IDisposable
     // Four slots include the sole reserved candidate. Event/note object allowance is separate from DSP scratch.
     public const long MaximumRetainedPcmAndScratchBytes =
         4L * (SamplerPreparation.MaximumDecodedBytes + AudioMedia.MaximumDecodedBytes +
-              GraphPreparation.MaximumScratchBytes);
+              GraphPreparation.MaximumScratchBytes + MixerDelayDsp.MaximumBytes);
 
     public const long MaximumPreparedTableAllowanceBytes = 4L * SamplerPreparation.MaximumEvents * 256;
 
@@ -162,13 +162,13 @@ public sealed class RealtimeSampler : IDisposable
     public long ReservedPcmAndScratchBytes => RetainedPcmAndScratchBytes + (Volatile.Read(ref _preparing) == 0
         ? 0
         : (long)SamplerPreparation.MaximumDecodedBytes + AudioMedia.MaximumDecodedBytes +
-          GraphPreparation.MaximumScratchBytes);
+          GraphPreparation.MaximumScratchBytes + MixerDelayDsp.MaximumBytes);
 
     public bool HasPending => Volatile.Read(ref _pending) is not null;
     internal long RejectedPreparedExecutionId => Volatile.Read(ref _rejectedPreparedExecutionId);
 
     private static long StateBytes(State? state) =>
-        state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes;
+        state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes + state.Plan.MixerDelayBytes;
 
     /// <summary>Thread-safe value observation. The reader may retry while the single consumer finishes its short status write.</summary>
     public SamplerExecutionStatus ReadStatus()
@@ -197,7 +197,7 @@ public sealed class RealtimeSampler : IDisposable
             _stopBoundary ? SamplerTransportState.Stopped :
             _playing ? SamplerTransportState.Playing :
             _active is null ? SamplerTransportState.Unprepared :
-            _active.Execution.Position == _active.Plan.EndFrame ? SamplerTransportState.Ended :
+            _active.Execution.Position == _active.Execution.EndFrame ? SamplerTransportState.Ended :
             SamplerTransportState.Ready,
             _active?.Plan.GraphAttachmentId, _active?.Authority ?? 0, _looping && _active?.Plan.Loop is not null,
             _active?.Execution.LoopPositionTicks ?? 0);
@@ -437,7 +437,9 @@ public sealed class RealtimeSampler : IDisposable
                     var old = _active;
                     bool continuing = _playing && old is not null &&
                                       (_looping || old.Plan.IsArrangement && pending.Plan.IsArrangement &&
-                                          old.Execution.Position < pending.Plan.EndFrame) &&
+                                          old.Execution.Position < (old.Execution.HasMixerTail
+                                              ? Math.Max(old.Execution.EndFrame, pending.Execution.EndFrame)
+                                              : pending.Execution.EndFrame)) &&
                                       pending.ContinuationAuthority == old.Authority &&
                                       pending.ContinuationNotes is { };
                     pending.Execution.SetLooping(_looping);
@@ -445,7 +447,7 @@ public sealed class RealtimeSampler : IDisposable
                     if (continuing) pending.Execution.ContinueFrom(old!.Execution, pending.ContinuationNotes!);
                     else if (_playing && old is not null && old.Plan.IsArrangement && pending.Plan.IsArrangement &&
                              pending.ContinuationAuthority == old.Authority &&
-                             old.Execution.Position >= pending.Plan.EndFrame)
+                             old.Execution.Position >= pending.Execution.EndFrame)
                     {
                         pending.Execution.Finish();
                         _playing = false;
@@ -546,14 +548,14 @@ public sealed class RealtimeSampler : IDisposable
         {
             active.Execution.SetLooping(_looping);
             var range = active.Plan.IsArrangement ? Volatile.Read(ref _songLoop) : null;
-            long loopEnd = Math.Min(range?.End ?? 0, active.Plan.EndFrame);
+            long loopEnd = Math.Min(range?.End ?? 0, active.Execution.EndFrame);
             bool rangeLoop = range is not null && range.Start < loopEnd;
             int remaining = output.Length / Channels;
             while (remaining > 0)
             {
                 active.Execution.SetRangeBoundary(rangeLoop ? loopEnd : long.MaxValue);
                 if (rangeLoop && active.Execution.Position >= loopEnd) active.Execution.Seek(range!.Start);
-                long end = rangeLoop ? loopEnd : active.Plan.EndFrame;
+                long end = rangeLoop ? loopEnd : active.Execution.EndFrame;
                 int frames = _looping && active.Plan.Loop is not null
                     ? remaining
                     : (int)Math.Max(0, Math.Min(remaining, end - active.Execution.Position));
@@ -565,7 +567,7 @@ public sealed class RealtimeSampler : IDisposable
 
             if (rangeLoop && active.Execution.Position >= loopEnd) active.Execution.Seek(range!.Start);
             if (!rangeLoop && (!_looping || active.Plan.Loop is null) &&
-                active.Execution.Position >= active.Plan.EndFrame)
+                active.Execution.Position >= active.Execution.EndFrame)
             {
                 active.Execution.Stop();
                 _playing = false;
@@ -590,7 +592,7 @@ public sealed class RealtimeSampler : IDisposable
         // Transient owners end at EOF/cancel/explicit Stop. Initial handoff may precede Start;
         // the Stop preceding publication must not prematurely retire that prepared source.
         if (active is { Transient: true } && !_playing && Volatile.Read(ref _retired) is null &&
-            (cancelled || active.Execution.Position == active.Plan.EndFrame || stop > active.StopAtPublication))
+            (cancelled || active.Execution.Position == active.Execution.EndFrame || stop > active.StopAtPublication))
         {
             _active = null;
             Volatile.Write(ref _retired, active);

@@ -37,8 +37,11 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 6;
+    public const int ReaderMinor = 7;
     private static readonly JsonSerializerOptions Options = CreateOptions();
+
+    private static bool HasDelay(ProjectState state) => state.Mixer is { } mixer &&
+        (mixer.Master.Delay != new MixerDelay() || mixer.Channels.Any(c => c.Settings.Delay != new MixerDelay()));
 
     private static bool HasAudio(ProjectState state) => !state.AudioClips.IsEmpty ||
                                                         state.Sounds.Any(s =>
@@ -58,7 +61,7 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
+        int required = HasDelay(snapshot.State) ? 7 : snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
             HasSongStructure(snapshot.State) ? 5 : HasAudio(snapshot.State) ? 4 :
             snapshot.State.Mixer is not null ? 3 :
             !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
@@ -69,6 +72,15 @@ public static class ProjectPersistence
         var node = JsonSerializer.SerializeToNode(file, Options)?.AsObject()
                    ?? throw new ProjectFormatException("Unable to encode project structure.");
         TransformAdditionalData(node, typeof(ProjectFile), loading: false);
+        // Older readers conservatively refuse unknown strip properties. Keep the original envelope/shape
+        // for projects with no Delay intent; non-default (even bypassed) intent requires reader 1.7.
+        if (snapshot.State.Mixer is { } mixer && node["state"]?["mixer"] is JsonObject mixerNode)
+        {
+            if (mixer.Master.Delay == new MixerDelay()) mixerNode["master"]!.AsObject().Remove("delay");
+            for (int i = 0; i < mixer.Channels.Length; i++)
+                if (mixer.Channels[i].Settings.Delay == new MixerDelay())
+                    mixerNode["channels"]![i]!["settings"]!.AsObject().Remove("delay");
+        }
         var bytes = JsonSerializer.SerializeToUtf8Bytes(node, Options);
         if (bytes.Length > MaximumBytes) throw new ProjectFormatException("Project exceeds the 16 MiB format limit.");
         return bytes;
@@ -106,6 +118,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (HasDelay(file.State) && file.MinimumReaderMinor < 7)
+                throw new ProjectFormatException("Mixer delay requires minimumReaderMinor >= 7.");
             if (file.State.AudioClips.Any(c => c.StretchRatio != 1) && file.MinimumReaderMinor < 6)
                 throw new ProjectFormatException("Audio clip stretch requires minimumReaderMinor >= 6.");
             if (HasSongStructure(file.State) && file.MinimumReaderMinor < 5)
@@ -223,6 +237,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (HasDelay(snapshot.State))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(7, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(7, document.Compatibility.MinimumReaderMinor)
+                };
             if (snapshot.State.AudioClips.Any(c => c.StretchRatio != 1))
                 document.Compatibility = document.Compatibility with
                 {

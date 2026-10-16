@@ -85,6 +85,9 @@ public sealed class PreparedSampler : IDisposable
     public int ZeroFrameNotes { get; }
     public long StartFrame { get; }
     public long EndFrame { get; }
+    internal long SourceEndFrame { get; init; }
+    internal bool AllowMixerTail { get; init; } = true;
+    public int MixerDelayBytes => Graph?.Mixer?.DelayBytes ?? 0;
     internal PreparedGraph? Graph { get; }
     public int DecodedBytes { get; }
 
@@ -111,6 +114,7 @@ public sealed class PreparedSampler : IDisposable
         VoiceCapacity = capacity;
         StartFrame = start;
         EndFrame = end;
+        SourceEndFrame = end;
         ZeroFrameNotes = zero;
         Notes = notes;
         Events = events;
@@ -327,7 +331,11 @@ public static class SamplerPreparation
             if (!objectBounds && stop is null && notes.Any(n => n.OneShot))
                 last = Math.Max(last,
                     notes.Where(n => n.OneShot).Max(n => checked(n.StartFrame + sources[n.SourceIndex].Frames)));
-            events.RemoveAll(item => item.Frame >= last);
+            long sourceEnd = last;
+            if (stop is null && graph?.Mixer is { } mixer) last = checked(last + mixer.TailFrames);
+            events.RemoveAll(item => item.Frame > last ||
+                                     item.Frame == last && (item.Kind != ExecutionEventKind.NoteOff ||
+                                         stop is not null || graph?.Mixer is null));
             events.Add(new(last, stopTicks, ExecutionEventKind.Stop, null, -1));
             // Conflict precedence is semantic before identity: Stop, release old voices, start new voices.
             var sorted = events.OrderBy(item => item.Frame).ThenBy(item => item.Kind)
@@ -346,7 +354,11 @@ public static class SamplerPreparation
             if (loopable && notes.Any(n => n.OneShot))
                 ValidateDrumLoopCapacity(notes, sources, voiceCapacity, clock);
             return new(snapshot.Revision, sampleRate, channels, voiceCapacity, first, last, zero, notes.ToImmutable(),
-                sorted, [.. sources], graph) { Loop = loopable ? clock : null, CanonicalBasis = state };
+                sorted, [.. sources], graph)
+            {
+                Loop = loopable ? clock : null, CanonicalBasis = state, SourceEndFrame = sourceEnd,
+                AllowMixerTail = stop is null
+            };
         }
         catch
         {
@@ -431,7 +443,13 @@ public sealed class OfflineSampler : IDisposable
     public MixerMeter ReadMixerMeter(Id<MixerChannel>? channel = null) =>
         _mixer?.Read(channel?.Value ?? Guid.Empty) ?? default;
 
-    internal void UpdateMixer(PreparedMixer mixer) => _mixer?.Update(mixer);
+    internal void UpdateMixer(PreparedMixer mixer)
+    {
+        _mixer?.Update(mixer);
+        if (_plan.AllowMixerTail) EndFrame = Math.Max(EndFrame, checked(_plan.SourceEndFrame + mixer.TailFrames));
+    }
+    internal long EndFrame { get; private set; }
+    internal bool HasMixerTail => _mixer is not null && EndFrame > _plan.SourceEndFrame;
     public void ResetMixerMeters() => _mixer?.ResetMeters();
     private int _lastSamples;
     private bool _looping;
@@ -463,6 +481,7 @@ public sealed class OfflineSampler : IDisposable
     internal OfflineSampler(PreparedSampler plan)
     {
         _plan = plan;
+        EndFrame = plan.EndFrame;
         _voices = Enumerable.Range(0, plan.VoiceCapacity).Select(_ => new Voice()).ToArray();
         Position = plan.StartFrame;
         if (plan.Graph is { } graph)
@@ -492,7 +511,7 @@ public sealed class OfflineSampler : IDisposable
     internal void Finish()
     {
         Stop();
-        Position = _plan.EndFrame;
+        Position = EndFrame;
     }
 
     /// <summary>Reconstruct stateless PCM destination context, including source age and release.
@@ -503,7 +522,7 @@ public sealed class OfflineSampler : IDisposable
         Stop();
         _stopped = false;
         _iteration = 0;
-        Position = Math.Clamp(frame, _plan.StartFrame, _plan.EndFrame);
+        Position = Math.Clamp(frame, _plan.StartFrame, EndFrame);
         int first = 0, last = _plan.Events.Length;
         while (first < last)
         {
@@ -537,6 +556,8 @@ public sealed class OfflineSampler : IDisposable
     internal void ContinueFrom(OfflineSampler old, int[] notes)
     {
         if (old._mixer is { } mixer) _mixer?.ContinueFrom(mixer);
+        if (_plan.AllowMixerTail && _mixer is not null && old.HasMixerTail)
+            EndFrame = Math.Max(EndFrame, old.EndFrame);
         Position = old.Position;
         _iteration = old._iteration;
         _stopped = old._stopped;
@@ -607,6 +628,7 @@ public sealed class OfflineSampler : IDisposable
     public void Stop()
     {
         CheckAvailable();
+        _mixer?.Reset();
         foreach (var voice in _voices) voice.Note = null;
         _stopped = true;
     }
@@ -619,7 +641,7 @@ public sealed class OfflineSampler : IDisposable
         int frames = interleavedOutput.Length / _plan.Channels;
         if (_plan.Graph is { } prepared && frames > prepared.MaximumPacketFrames)
             throw new ArgumentOutOfRangeException(nameof(interleavedOutput), "Graph packet exceeds prepared capacity.");
-        if (!_looping && frames > _plan.EndFrame - Position)
+        if (!_looping && frames > EndFrame - Position)
             throw new ArgumentOutOfRangeException(nameof(interleavedOutput),
                 "Block exceeds the prepared end boundary.");
         interleavedOutput.Clear();
@@ -680,7 +702,7 @@ public sealed class OfflineSampler : IDisposable
                         ? long.MaxValue
                         : _looping && _plan.Loop is { } loopClock
                             ? loopClock.Frame(loopClock.StartTicks + (_iteration + 1) * loopClock.LengthTicks)
-                            : _plan.EndFrame;
+                            : EndFrame;
                     remaining = Math.Min(remaining, Math.Min(end, _rangeBoundary) - Position);
                     gain *= Math.Clamp((remaining - 1) / BoundaryFadeFrames, 0, 1);
                 }
@@ -729,7 +751,7 @@ public sealed class OfflineSampler : IDisposable
         }
 
         // Events at block end belong to the following block, except final retirement is immediate.
-        if (!_looping && Position == _plan.EndFrame) Stop();
+        if (!_looping && Position == EndFrame) Stop();
     }
 
     /// <summary>Single-owner bounded diagnostics for the most recently processed packet, before or after Mix.</summary>
@@ -749,7 +771,7 @@ public sealed class OfflineSampler : IDisposable
             var item = _plan.Events[_eventIndex++];
             if (item.Kind == ExecutionEventKind.Stop)
             {
-                if (!_looping) Stop();
+                // Final retirement uses the execution boundary, which a live Mixer update can extend.
                 continue;
             }
 

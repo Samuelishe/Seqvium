@@ -1,5 +1,21 @@
 # Desktop visual and lifecycle verification
 
+## Musical Delay
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll delay "$PWD/.artifacts/delay-f1/review" native audio
+```
+
+Uses an authored quiet Kick rhythm through the production Mixer Inspector. Routed Enabled/Time/
+Feedback/Mix, invalid feedback, Undo/Redo, managed Save/Open and full Song WAV late echoes are checked.
+Real-window captures cover RU/EN × Dark/Light at ordinary/reduced sizes, empty/populated Mixer and
+24 rendered field alignments. Inspector rebuilds can defer field materialization; the harness waits
+for the visible field before input. Optional `native` separately guards Windows Time/bypass/enable;
+a covered/foreground-refused window is not a pass. Optional `audio` uses the actual output, changes
+Mix during Song and requires fault-free natural Ended, exact final position, zero voices and unchanged
+epoch. No subjective listening, pressure, full native authoring or platform/DPI acceptance follows.
+The [report](../../docs/experiments/SEQ-R11-DELAY-F1_REPORT.md) owns actual evidence and limits.
+
 ## Audio Clip time stretch
 
 ```powershell

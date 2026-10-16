@@ -114,13 +114,13 @@ before these taps; Playlist slots do not define Mixer buses.
 
 Routing is a validated directed acyclic graph, with at most 64 channels and eight distinct sends per
 channel. Output goes to another channel or Master. Sends have independent dB levels and pre/post-fader
-choice: pre means after trim, EQ, compression and stereo balance but before the fader. Muting cuts
+choice: pre means after trim, EQ, compression, Delay and stereo balance but before the fader. Muting cuts
 pre-fader sends too. Solo admits its ancestors and descendants, with explicit Mute taking precedence;
 unassigned direct-Master sources are suppressed while a channel is soloed. Feedback/self/cyclic routes
 are refused atomically, not processed with an arbitrary order or hidden delay.
 
 Each strip executes trim → high-pass/low shelf/parametric mid/high shelf → stereo-linked peak compressor
-→ stereo balance → fader → output/sends. Low/high shelves are fixed at 120 Hz/8 kHz; the mid has frequency,
+→ musical Delay → stereo balance → fader → output/sends. Low/high shelves are fixed at 120 Hz/8 kHz; the mid has frequency,
 gain and Q. The independent biquad implementation uses standard bilinear filter equations. Compression
 has threshold, ratio, soft knee, attack/release and explicit makeup, with no lookahead or sidechain.
 Center balance preserves stereo unity; moving toward one side attenuates the opposite side by cosine.
@@ -146,9 +146,58 @@ continuation and meter reads use fixed bounded storage, no callback allocation, 
 Realtime/offline parity is measured at the same host rate and reset/packet context; a 44.1-kHz device
 cannot be compared bitwise to a 48-kHz WAV. GUI export retains its 48-kHz stereo PCM16 boundary.
 Existing 32-voice limits, instrument synthesis, sample leases and backend lifetime remain unchanged.
-Delay/reverb, processor racks/reordering, external plugins, automation, latency compensation and FX
+Reverb, processor racks/reordering, external plugins, automation, latency compensation and FX
 preroll are not implemented. [Graph](NODE_GRAPH.md#mixer-projection-of-supported-graphs) owns the
 currently linear source-boundary restriction.
+
+### Musical Delay V1 (SEQ-R11-DELAY-F1)
+
+Every channel, bus and Master has one optional stereo feedback Delay after compression and before
+balance/fader. Time is **10–1000 ms**, Feedback **0–0.75**, Mix **0–1**; defaults are **250 ms,
+0.35, 0.25, disabled**. The dry/wet law is `dry*(1-Mix) + delayed*Mix`; the line writes
+`input + delayed*Feedback`. Independent left/right lines retain mono/stereo meaning, with no
+crossfeed, tempo sync, modulation, automation, rack or local stateful graph node. Delay has zero dry
+latency. Existing processing/sends/Mute/Solo/protection/meters operate at their established boundaries.
+
+Preparation rounds milliseconds to the nearest host frame, away from zero. Compatible packet-boundary
+updates preserve voices, transport and line contents. Feedback/Mix and enable/bypass use the existing
+five-ms exponential smoothing. Time changes crossfade old/new fixed taps over **20 ms**, avoiding a
+moving read head's pitch glide; changes arriving during that transition coalesce to the latest next
+target. Bypass smoothly returns to unity dry, then invalidates the line once wet is below `1e-8`.
+Re-enabling cannot resurrect cleared echoes. This bounded policy does not guarantee inaudible transitions
+for every signal or extreme edit. Acoustic assessment remains separate.
+
+Natural source completion continues through the shared Mixer with zero source input. For delay period
+`D` frames and feedback `F`, the prepared tail allowance is `D + rate/20` for zero feedback, otherwise
+`D*(ceil(log(0.0001)/log(F))+1) + rate/20`. This includes repeats through -80 dB **relative decay**,
+one additional period and 50 ms settling; it is not an absolute loudness/silence detector. Each line
+also expires after that many no-input frames, fades its last five ms and invalidates its history.
+The maximum is **34.05 s per strip**. Acyclic outputs/sends propagate the longest sum of tail allowances;
+more than **120 s** aggregate extension refuses preparation explicitly. Silent/muted routes can make
+this conservative bound longer than the audible result. There is no render-until-mathematical-zero loop.
+
+Finite Pattern and full Song exports append that allowance after the existing source/bar/release/EOF
+boundary, retaining original NoteOffs. Full Song includes the permitted final echo. An explicitly
+supplied Pattern stop remains hard and receives no extension. Existing GUI exports are full Pattern/Song;
+no new range-export UI is introduced. R8 PrepareObject remains before Mixer and excludes all Delay.
+Ordinary Pattern looping retains one line, without replaying wet output as a new source. Stop/Panic,
+Restart, cold Seek, explicit Song range wrap and natural execution retirement reset the line. Seek
+reconstructs sources without FX preroll. Project replacement uses existing joined retirement. Explicit
+Stop emits no multi-second tail. Compatible edits never shorten the active execution's already allowed
+completion; increasing Delay can extend it, without extending musical note gates or retriggering notes.
+
+Runtime reserves one stereo float ring and Int64 generation tags for each prepared strip, including
+bypassed strips, so enabling needs no callback allocation. At 48 kHz the payload is **768016 bytes per
+strip**, **49,921,040 bytes for 64 channels plus Master**, inside a separate **64 MiB per-state Delay
+budget**. Existing 16 MiB graph scratch and source PCM budgets stay separate. Realtime retained/reserved
+accounting includes this payload in each existing active/pending/retired/candidate slot; it is not a
+process working-set guarantee. Reset changes a generation in O(1). Topology continuation swaps line
+ownership by stable strip ID, without copying large rings; the retired execution receives the new empty
+line. Preparation allocates storage and derives times/tails off callback; rendering, reset, publication
+and transfer use fixed storage without I/O or blocking locks. Packet work reserves 256 units per strip
+per frame plus taps even in bypass. No R4-F2 pressure acceptance follows from short allocation tests.
+
+[Delay report](experiments/SEQ-R11-DELAY-F1_REPORT.md) owns numerical, GUI, physical and limitation evidence.
 
 ## Built-in Drum Voice
 
@@ -233,7 +282,7 @@ finite by default. A one-cycle prepared plan carries a derived LoopClock. Int128
 absolute iteration/event ticks matches constant-tempo rounding without callback BigInteger allocation
 or accumulation of rounded loop lengths. The consumer processes the next iteration inside the same
 packet; no output is dropped or zero-filled merely because a cycle ends. Source gates/voices end at
-the musical boundary. There are currently no stateful effects or effect-tail preservation claims.
+the musical boundary. Mixer Delay retains its single streaming line across ordinary Pattern iterations; explicit range wraps reset it.
 
 The control owner compares the new plan with the actual active canonical basis while ignoring notes,
 Pattern names, geometry and Gain. Matching format, tempo, length, placement, sound/resource and graph
@@ -923,6 +972,10 @@ rates, thresholds, cycle-breaking algorithm or plugin latency API are selected.
 
 ### Loop, seek, and playback Stop
 
+Implemented Mixer Delay follows the bounded [V1 policy](#musical-delay-v1-seq-r11-delay-f1): streaming
+ordinary Pattern loops, cold Seek/range resets and immediate explicit Stop/Panic. The following
+broader direction still applies to future processors and general acoustic settling.
+
 Ordinary looping may let an existing effect tail continue across the musical loop boundary while the
 source starts its next iteration. The loop mechanism must not recursively feed previously rendered
 tails back as new source or create unbounded duplicate processing state each iteration. Intentional
@@ -1093,7 +1146,8 @@ boundary or other intentional project silence. This option extends the capture r
 Export must remain finite. Tail inclusion is not rendering to mathematical zero forever: extremely slow
 decay, near-unity feedback, oscillation or non-decaying processors need bounded completion. Exact option
 label/UI, silence threshold, maximum extension, processor-tail reporting and non-decaying-tail handling
-are unselected. Q-057 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains finite completion, reset/warm-up,
+remain unselected for other processors; Mixer Delay uses the bounded V1 allowance above. Q-057 in
+[KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains general completion, reset/warm-up,
 loop state ownership, de-click and realtime/offline parity mechanisms; latency/cancellation also need evidence.
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics. F1's offline
 single-Pattern sampler, F2 realtime output, manual Pattern/Song export and bounded R8 object sampling

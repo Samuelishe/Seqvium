@@ -289,7 +289,12 @@ starting point. It does not rewrite notes or replace the existing graph Gain.
 
 The bank scrolls horizontally instead of widening every strip. Close its inspector to regain space
 in a small pane. Completed gestures/valid exact entry are one Undo; Escape cancels unfinished edits.
-There is currently no delay/reverb, automation, plugin rack or sidechain. See the
+In the Delay tab, enable processing and set Time (10–1000 ms), Feedback (0–75%) and Mix (0–100%).
+Start with 250 ms, 35% feedback and 25% mix, then adjust while playing. Feedback increases the decaying
+repetitions; Mix balances the original and echoes. Channels, buses and Master share this control.
+Ordinary Pattern loops retain echoes, Stop/Seek clear them, and full WAV export includes a finite
+final tail. Save/Open and Undo/Redo retain the settings. Tempo sync and ping-pong are unavailable.
+There is currently no reverb, automation, plugin rack or sidechain. See the
 [Mixer workflow](UX_CONTRACT.md#implemented-mixer-workflow) for detailed behavior.
 
 ## Try sample processing

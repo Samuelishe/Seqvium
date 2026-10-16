@@ -9,7 +9,7 @@
     <PropertyGroup>
         <SeqviumVersionMajor>0</SeqviumVersionMajor>
         <SeqviumVersionMinor>1</SeqviumVersionMinor>
-        <SeqviumVersionPatch>10</SeqviumVersionPatch>
+        <SeqviumVersionPatch>11</SeqviumVersionPatch>
         <SeqviumVersionBuild>0</SeqviumVersionBuild>
         <SeqviumDisplayVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$([System.Int32]::Parse('$(SeqviumVersionBuild)').ToString('D4'))</SeqviumDisplayVersion>
         <SeqviumNumericVersion>$(SeqviumVersionMajor).$(SeqviumVersionMinor).$(SeqviumVersionPatch).$(SeqviumVersionBuild)</SeqviumNumericVersion>

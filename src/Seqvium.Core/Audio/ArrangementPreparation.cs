@@ -272,7 +272,8 @@ public static class ArrangementPreparation
             if (notes.Any(n => n.OneShot))
                 last = Math.Max(last,
                     notes.Where(n => n.OneShot).Max(n => checked(n.StartFrame + sources[n.SourceIndex].Frames)));
-            events.RemoveAll(item => item.Frame >= last);
+            events.RemoveAll(item => item.Frame > last ||
+                                     item.Frame == last && (item.Kind != ExecutionEventKind.NoteOff || state.Mixer is null));
             events.Add(new(last, new(endTicks), ExecutionEventKind.Stop, null, -1));
             var sorted = events.OrderBy(e => e.Frame).ThenBy(e => e.Kind).ThenBy(e => e.Position.Ticks)
                 .ThenBy(e => e.Occurrence?.ClipId?.Value).ThenBy(e => e.Occurrence?.PartId.Value)
@@ -293,9 +294,17 @@ public static class ArrangementPreparation
                 BufferCount = bufferCount, MaximumPacketFrames = maximumPacketFrames, ScratchBytes = scratch
             };
             combined.Mixer = MixerPreparation.Compile(state, combined, sampleRate);
+            long sourceEnd = last;
+            if (combined.Mixer is { } mixer)
+            {
+                last = checked(last + mixer.TailFrames);
+                // Source NoteOffs retain their original boundaries; only the transport Stop moves.
+                sorted = [.. sorted.Where(e => e.Kind != ExecutionEventKind.Stop),
+                    new(last, new(endTicks), ExecutionEventKind.Stop, null, -1)];
+            }
             var result = new PreparedSampler(document.Current.Revision, sampleRate, channels, VoiceCapacity, 0, last,
                     zero, notes.ToImmutable(), sorted, [.. sources], combined)
-                { CanonicalBasis = state, IsArrangement = true };
+                { CanonicalBasis = state, IsArrangement = true, SourceEndFrame = sourceEnd };
             sources.Clear();
             try
             {
