@@ -358,6 +358,142 @@ public sealed class MixerDelayTests
     }
 
     [Fact]
+    public async Task BypassedBankRetainsThreeLineReservationsUnderPublicationBackpressure()
+    {
+        using var f = await Fixture.Create();
+        f.Document.Edit("Full bypassed bank", e => { for (int i = 1; i < 64; i++) e.AddMixerBus("Bus " + i); });
+        using var sampler = new RealtimeSampler(48000, 2, 127);
+        for (int i = 0; i < 3; i++)
+        {
+            using var request = sampler.BeginArrangementPreparation(f.Document, preservePlayback: true);
+            await request.PrepareAsync(TestContext.Current.CancellationToken);
+            int payload = request.Plan!.MixerDelayBytes;
+            long bytes = GC.GetAllocatedBytesForCurrentThread();
+            Assert.Equal(SamplerPublication.Accepted, request.Publish(TestContext.Current.CancellationToken));
+            long allocated = GC.GetAllocatedBytesForCurrentThread() - bytes;
+            Assert.InRange(allocated, payload, payload + 1024 * 1024L);
+            if (i < 2) sampler.Process(new float[254]);
+        }
+        Assert.Equal(3, sampler.LivePreparedStates);
+        Assert.True(sampler.HasPending);
+        Assert.InRange(sampler.RetainedPcmAndScratchBytes, 3L * 65 * 48001 * 16,
+            RealtimeSampler.MaximumRetainedPcmAndScratchBytes);
+        using (var candidate = sampler.BeginArrangementPreparation(f.Document))
+        {
+            await candidate.PrepareAsync(TestContext.Current.CancellationToken);
+            Assert.Equal(SamplerPublication.Capacity, candidate.Publish(TestContext.Current.CancellationToken));
+            Assert.Equal(3, sampler.LivePreparedStates);
+            Assert.InRange(sampler.ReservedPcmAndScratchBytes, sampler.RetainedPcmAndScratchBytes,
+                RealtimeSampler.MaximumRetainedPcmAndScratchBytes);
+        }
+        sampler.Dispose();
+        Assert.Equal(0, sampler.LivePreparedStates);
+    }
+
+    [Fact]
+    public async Task SequentialTopologyPublicationsKeepOneEchoHistoryAfterEachRetirement()
+    {
+        using var f = await Fixture.Create(frames: 4096); f.Delay(time: 20);
+        var expected = Render(f.Document);
+        using var sampler = new RealtimeSampler(48000, 2, 127);
+        async Task Publish()
+        {
+            using var request = sampler.BeginArrangementPreparation(f.Document, preservePlayback: true);
+            await request.PrepareAsync(TestContext.Current.CancellationToken);
+            Assert.Equal(SamplerPublication.Accepted, request.Publish(TestContext.Current.CancellationToken));
+        }
+        await Publish(); sampler.Start();
+        var actual = new float[expected.Length];
+        sampler.Process(actual.AsSpan(0, 254));
+        long epoch = sampler.ReadStatus().Epoch;
+        for (int i = 1; i <= 6; i++)
+        {
+            f.Document.Edit("Change bank", e =>
+            {
+                if (i % 2 == 1) e.AddMixerBus("Empty neighbour");
+                else e.SetMixer(f.Mixer with { Channels = [f.Mixer.Channels[0]] });
+            });
+            await Publish();
+            sampler.Process(actual.AsSpan(i * 254, 254));
+            sampler.RetireCompleted();
+            Assert.Equal(1, sampler.LivePreparedStates);
+            Assert.Equal(epoch, sampler.ReadStatus().Epoch);
+        }
+        for (int offset = 7 * 254; offset < actual.Length;)
+        {
+            int count = Math.Min(254, actual.Length - offset);
+            sampler.Process(actual.AsSpan(offset, count)); offset += count;
+        }
+        Assert.Equal(expected, actual);
+        Assert.Equal(SamplerTransportState.Ended, sampler.ReadStatus().Transport);
+        sampler.Dispose();
+        Assert.Equal(sampler.PreparedStatesCreated, sampler.PreparedStatesReleased);
+        Assert.Equal(0, sampler.RetainedPcmAndScratchBytes);
+    }
+
+    [Theory]
+    [InlineData("unused")] [InlineData("muted")] [InlineData("dry")]
+    public async Task ConservativeTailCanAppendOnlySilenceToAnOtherwiseIdenticalExport(string route)
+    {
+        using var f = await Fixture.Create();
+        var dry = Render(f.Document);
+        Id<MixerChannel> target = f.Channel;
+        if (route != "dry")
+            f.Document.Edit("Unused return", e => target = e.AddMixerBus("Unused"));
+        f.Delay(time: 1000, feedback: .75m, mix: route == "dry" ? 0 : .5m, target: target);
+        if (route == "muted") f.Document.Edit("Mute return", e => e.SetMixerStrip(target,
+            f.Mixer.Channels.Single(c => c.Id == target).Settings with { Muted = true }));
+        var extended = Render(f.Document);
+        Assert.Equal(48000 * 3405 / 100 * 2, extended.Length - dry.Length);
+        Assert.Equal(dry, extended.Take(dry.Length));
+        Assert.All(extended.Skip(dry.Length), v => Assert.Equal(0, v));
+    }
+
+    [Fact]
+    public async Task LiveTailBudgetRefusalKeepsAcceptedHistoryLastValidPlaybackAndUndoRepair()
+    {
+        using var f = await Fixture.Create();
+        var attachment = await f.Pattern();
+        f.Document.Edit("Serial bank", e =>
+        {
+            for (int i = 0; i < 3; i++) e.AddMixerBus("Return " + i);
+        });
+        f.Document.Edit("Three long delays", e => e.SetMixer(f.Mixer with { Channels =
+            [.. f.Mixer.Channels.Select((c, i) => c with
+            {
+                Output = i < 3 ? f.Mixer.Channels[i + 1].Id : null,
+                Settings = c.Settings with { Delay = new() { Enabled = i < 3, TimeMs = 1000, Feedback = .75m } }
+            })] }));
+        using var sampler = new RealtimeSampler(48000, 2, 127);
+        sampler.SetLooping(true);
+        var owner = new AudioOwnerContext();
+        GraphExecutionCoordinator coordinator = null!;
+        owner.Run(() => coordinator = new(f.Document, sampler, attachment.Id, owner, 8, 1, null, false));
+        try
+        {
+            await owner.Until(() => sampler.HasPending);
+            owner.Run(() => Assert.True(coordinator.Start()));
+            var packet = new float[254]; sampler.Process(packet);
+            var before = sampler.ReadStatus();
+            int history = f.Document.UndoCount;
+            owner.Run(() => f.Document.Edit("Fourth long delay", e => e.SetMixerStrip(f.Mixer.Channels[3].Id,
+                f.Mixer.Channels[3].Settings with { Delay = new() { Enabled = true, TimeMs = 1000, Feedback = .75m } })));
+            Assert.Equal(history + 1, f.Document.UndoCount);
+            Assert.Equal(GraphPreparationReasons.Budget, coordinator.ReadStatus().Blocker);
+            sampler.Process(packet);
+            Assert.True(coordinator.ReadStatus().LastValidPlaying);
+            Assert.Equal(before.ExecutingRevision, sampler.ReadStatus().ExecutingRevision);
+            owner.Run(() => Assert.True(f.Document.Undo()));
+            sampler.Process(packet);
+            Assert.False(coordinator.ReadStatus().InvalidCanonical);
+            Assert.Equal(f.Document.Current.Revision, sampler.ReadStatus().ExecutingRevision);
+            Assert.Equal(before.Epoch, sampler.ReadStatus().Epoch);
+            Assert.Equal(1, sampler.PreparedStatesCreated);
+        }
+        finally { await owner.Join(coordinator.DisposeAsync); }
+    }
+
+    [Fact]
     public async Task EnablingDelayBeforeFinitePatternEndDoesNotExtendTheLastNoteGate()
     {
         using var f = await Fixture.Create(); var attachment = await f.Pattern(gate: 9600);

@@ -276,12 +276,21 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                      ProjectDocument.HasSameContent(_basis.State with { Mixer = null, ArrangementSections = [] },
                          snapshot.State with { Mixer = null, ArrangementSections = [] }))
             {
-                if (_sampler.PublishMixerUpdate(snapshot, _startAuthority))
+                try
                 {
-                    _basis = snapshot;
-                    _executionRevision = snapshot.Revision;
+                    if (_sampler.PublishMixerUpdate(snapshot, _startAuthority))
+                    {
+                        _basis = snapshot;
+                        _executionRevision = snapshot.Revision;
+                    }
+                    else _dirty = true;
                 }
-                else _dirty = true;
+                catch (GraphPreparationException error)
+                {
+                    // Fast-path compilation has the same finite refusal boundary as worker preparation.
+                    // The canonical edit is already accepted; keep the identified last-valid execution.
+                    _blocker = error.Reason;
+                }
             }
             else if (!_arrangement && snapshot.State.Mixer is null && _basis is not null &&
                      _basisRoots.SequenceEqual(_document.MediaRoots) &&

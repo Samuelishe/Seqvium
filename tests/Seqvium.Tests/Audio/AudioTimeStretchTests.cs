@@ -129,6 +129,27 @@ public sealed class AudioTimeStretchTests
         Assert.Equal(1.33337m, f.Clip.StretchRatio);
     }
 
+    [Theory]
+    [InlineData("sampleRate", 44100, 1)] [InlineData("sampleRate", 44100, 1.5)]
+    [InlineData("frames", 96001, 1.5)] [InlineData("channels", 1, 1.5)]
+    public async Task SharedResourceWithConflictingSourceMetadataRefusesInsteadOfChangingStretchTiming(
+        string key, int value, double ratio)
+    {
+        using var f = await Fixture.Create();
+        var sound = f.Document.Current.State.Sounds.Single(s => s.Id == f.Clip.SoundId);
+        f.Document.Edit("Conflicting source metadata", e =>
+        {
+            var duplicate = e.AddSound("Conflicting clock", AudioClipSource.Algorithm, sound.ResourceIds);
+            e.SetSoundParameters(duplicate, sound.Parameters.SetItem(key, value));
+            var id = e.AddAudioClip(duplicate, new(0), 1, 0, 48000);
+            e.UpdateAudioClip(f.Clip with { Id = id, SoundId = duplicate, Lane = 1, LengthFrames = 48000,
+                StretchRatio = (decimal)ratio });
+        });
+        var failure = Assert.Throws<GraphPreparationException>(() => ArrangementPreparation.Prepare(f.Document,
+            48000, 2, 127, TestContext.Current.CancellationToken));
+        Assert.Equal(GraphPreparationReasons.Media, failure.Reason);
+    }
+
     [Fact]
     public async Task SaveAsOpenIsPortableAndReaderGatePreventsSilentPlaybackAtOriginalSpeed()
     {

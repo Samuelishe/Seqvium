@@ -152,6 +152,10 @@ Compatible control updates are owner-prepared, execution/authority-qualified and
 packet boundary without rebuilding media or voices. Topology changes use existing prepared publication
 and retain compatible time/voice state. [Audio](AUDIO_ENGINE.md#project-mixer-execution) owns reset,
 memory, bounded Delay tail extension and constant-time line ownership transfer; [format](PROJECT_FORMAT.md#mixer-persistence) owns the reader gate.
+Fast Mixer compilation refusals use the coordinator's same blocker/last-valid policy as worker
+preparation. They never escape the already accepted document edit/Undo notification. Temporary
+Sample Lab plan substitution preserves the original source completion and explicit hard-stop policy,
+so a later Mixer publication cannot append its tail twice or turn a hard boundary into a natural one.
 
 ## R3-F1 desktop host and presentation ownership
 

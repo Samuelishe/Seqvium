@@ -116,14 +116,17 @@ public static class ArrangementPreparation
                     if (audioBytes + expected > AudioMedia.MaximumDecodedBytes)
                         throw new GraphPreparationException(GraphPreparationReasons.Budget);
                     using var decoded = AudioMedia.Decode(document, sound.ResourceIds[0]);
-                    if (decoded.SampleRate != rate || decoded.Frames != AudioClipSource.Frames(sound) ||
-                        decoded.Channels != sound.Parameters["channels"])
-                        throw new GraphPreparationException(GraphPreparationReasons.Media);
                     sourceIndex = sources.Count;
                     sources.Add(decoded.Lease());
                     audioSources.Add(sound.ResourceIds[0], sourceIndex);
                     audioBytes += expected;
                 }
+                // One immutable resource can serve several sound definitions. Validate each definition,
+                // including cache hits, before using its clock/range to schedule or stretch shared PCM.
+                var source = sources[sourceIndex];
+                if (source.Rate != rate || source.Frames != AudioClipSource.Frames(sound) ||
+                    source.Channels != sound.Parameters["channels"])
+                    throw new GraphPreparationException(GraphPreparationReasons.Media);
 
                 int buffer = bufferCount++;
                 var node = new Id<GraphNode>(sound.Id.Value);

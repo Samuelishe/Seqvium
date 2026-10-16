@@ -7,7 +7,16 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.11.0000**, **SEQ-R11-DELAY-F1 — musical Delay / stateful Mixer FX**.
+Product alpha **0.1.11.0001**, **SEQ-RECENT-REGRESSION-AUDIT**. Live Mixer budget refusals now
+retain explicit last-valid status without escaping accepted edit notifications. Sample Lab substitution
+preserves natural source completion and hard-stop metadata; shared Audio Clip resource definitions
+each validate decoded metadata before scheduling/stretching. Fifteen added cases cover those fixes,
+serial Delay ownership/backpressure, silent tails and R8 → Stretch → Delay/media integration.
+The [audit](experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md) separates new regressions from the
+inherited metadata defect and executable reader/GUI/numerical evidence. Disabled-bank Delay storage
+and conservative silent-tail admission remain measured [debt](TECH_DEBT.md#bypassed-delay-storage-and-conservative-tail-reachability).
+
+Capability baseline **0.1.11.0000**, **SEQ-R11-DELAY-F1 — musical Delay / stateful Mixer FX**.
 Mixer Inspector exposes Enabled, Time 10–1000 ms, Feedback 0–75% and Mix 0–100% on channels,
 buses and Master. Delay follows Compressor before balance/fader/sends, using one consumer-owned
 stereo line per summed strip. Compatible edits preserve time/voices/history, smooth coefficients
@@ -170,7 +179,25 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-R11-DELAY-F1, 2026-10-16**. Full Release solution build has zero
+Latest L0/L1/L2/L3: **SEQ-RECENT-REGRESSION-AUDIT, 2026-10-16**. Full Release solution build:
+zero warnings/errors, 22.80 s; **1486/1486 tests pass**, zero skips, one thread, **72.389 s CLI**.
+Focused correction/integration checks pass 70/70 (23.093 s), then the final bypassed-bank case
+passes separately before inclusion in L3. New failure reproductions establish the three corrected
+paths. Six sequential topology transfers preserve exact PCM through retirement; the combined R8/
+stretch/channel+Master Delay case has exact same-rate realtime/offline PCM at 44.1/48 kHz, PCM16
+export agreement and portable media/history. Actual archived Core readers 1.5/1.6 plus current 1.7
+pass the acceptance/refusal and unknown-field preservation matrix. These are actual parser executions,
+not historical Desktop playback.
+
+Real-window Settings, R8/Browser, Stretch, Delay and all seven Drum/Gain/Mixer control scenarios pass
+with routed Avalonia input and localized ordinary/reduced matrices; four reduced renders are
+spot-reviewed. The control scenario records 81 checks/124 traces and eight repeated physical audition
+epochs through Samsung USB C Earphones, 48 kHz stereo, one output, no delayed backlog and local Stop.
+Native Windows input is not run. Numerical PCM, routed GUI, short physical delivery and subjective
+listening remain distinct. No prior allocation/starvation/device fault, R4-F2 pressure, platform or
+acoustic gap is closed. [Report](experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md) owns limits.
+
+Prior L0/L1/L2/L3: **SEQ-R11-DELAY-F1, 2026-10-16**. Full Release solution build has zero
 warnings/errors; **1471/1471 tests pass**, zero skips, one thread (**78.127 s CLI**). The 21 added
 Delay cases cover actual impulse/timing/decay/mix, mono/stereo, channel/bus/Master/sends/Mute/Solo,
 realtime/offline float and PCM16 export, late echoes, Stop/Seek/loop, live control/voice gates,
@@ -278,8 +305,9 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected Delay L3 covers reader gates,
-stateful lifetime/finite source and effect boundaries, realtime publication and existing production regressions. No broader platform, aesthetic, pressure
+Completed repository tasks since this L3: **0**. This risk-selected audit L3 covers cross-stage
+stateful lifetime/finite completion, live refusal, shared media clocks, reader gates and existing
+production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light

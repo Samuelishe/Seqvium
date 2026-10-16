@@ -60,6 +60,38 @@ public sealed class SampleAuditionTests
         document.Close();
     }
 
+    [Theory]
+    [InlineData(false, false)] [InlineData(true, false)] [InlineData(false, true)]
+    public async Task ContextAuditionKeepsDelayDeadlineAndHardStopAfterLiveMixerUpdate(bool song, bool hardStop)
+    {
+        using var directory = new TemporaryDirectory();
+        var document = ProjectDocument.Create();
+        try
+        {
+            var sound = await Import(document, directory, Enumerable.Repeat(.3f, 48000).ToArray(), true);
+            var attachment = document.Current.State.GraphAttachments.Single();
+            document.Edit("Delay", edit =>
+            {
+                edit.InitializeMixer();
+                edit.SetMixerStrip(null, new() { Delay = new() { Enabled = true, TimeMs = 100, Feedback = .5m } });
+                if (song) edit.AddArrangementClip(document.Current.State.Placements.Single().Id, default, 0, 1);
+            });
+            using var pcm = WavDecoder.Decode(WavFixtures.Create(Enumerable.Repeat(.1f, 48000).ToArray(), 48000));
+            using var source = new SampleAuditionSource(sound, Guid.NewGuid(), pcm);
+            using var canonical = song
+                ? ArrangementPreparation.Prepare(document, 48000, 2, 127, TestContext.Current.CancellationToken)
+                : GraphPreparation.Prepare(document, attachment.Id, 48000, 2, 127,
+                    stop: hardStop ? new(960000) : null, cancellationToken: TestContext.Current.CancellationToken);
+            using var audition = source.Apply(canonical);
+            using var execution = audition.CreateExecution();
+            execution.Process(new float[254]);
+            execution.UpdateMixer(canonical.Graph!.Mixer!);
+            Assert.Equal(canonical.EndFrame, execution.EndFrame);
+            Assert.Equal(!hardStop, execution.HasMixerTail);
+        }
+        finally { document.Close(); }
+    }
+
     [Fact]
     public async Task SwitchingAuditionRetainsUnrelatedVoiceAndTransportAtPacketBoundary()
     {

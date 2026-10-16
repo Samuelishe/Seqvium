@@ -53,6 +53,9 @@ Duration is bounded by `512*1024*1024 / (rate*channels*4)` seconds: ~1398 s at 4
 Pattern media retains its separate 128 MiB preparation budget; graph scratch remains 16 MiB and
 all occurrences share 32 simultaneous voices and existing event/packet-work gates. A muted source is
 not decoded for Song, though its media/waveform can remain in the document.
+Every audible sound definition must match its decoded resource's rate, frame count and channels,
+including definitions sharing an already leased resource. Contradictory metadata refuses preparation;
+it cannot supply another clock or range for the same PCM.
 
 Copy/duplicate/split do not decode or retain one PCM array per clip. Decode batches share legacy WAV
 arrays across Pattern plans; AudioMedia's document-scoped weak cache uses immutable managed locators

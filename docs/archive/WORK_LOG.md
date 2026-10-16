@@ -2187,3 +2187,14 @@ One verified PATCH is 0.1.11.0000. Final zero-warning Release build and 1471/147
 ordinary/reduced GUI, 24 field alignments, guarded native controls and physical 48-kHz Song/live Mix
 pass separately. Prior failed attempts, exact methods and pressure/acoustic/platform limitations are
 in the [report](../experiments/SEQ-R11-DELAY-F1_REPORT.md). No staging/commit/push/tag or general Q-057 closure.
+
+## SEQ-RECENT-REGRESSION-AUDIT — 2026-10-16
+
+Audited ecc3396..b862b3c9 across Settings/input, R8, Stretch and Delay. Corrected live Mixer
+refusal escaping accepted notifications, Sample Lab completion metadata loss and inherited shared
+Audio Clip resource metadata bypass. One BUILD is 0.1.11.0001; fifteen new cases and 1486/1486
+full Release tests pass with zero-warning solution build. Actual archived readers, combined PCM/
+portable media, sequential Delay retirement and routed production-window controls pass. Disabled
+Delay storage and silent-tail admission remain measured TECH_DEBT; earlier pressure/allocation/
+physical faults are not declared fixed. The [audit](../experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md)
+owns methods, failures and native/physical/acoustic limits. All task changes remain unstaged.

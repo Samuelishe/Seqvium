@@ -58,6 +58,85 @@ public sealed class ResamplingWorkflowTests
     }
 
     [Theory]
+    [InlineData(44100)] [InlineData(48000)]
+    public async Task ResampledStretchedAudioThroughDelayKeepsPcmHistoryAndPortableIntent(int rate)
+    {
+        using var f = await ResamplingFixture.Create();
+        var local = await f.Render(TestContext.Current.CancellationToken);
+        await using var w = new DesktopWorkflow(f.Document, mediaDirectory: f.Directory.File("accepted"));
+        await w.ObserveAsync();
+        Assert.True(await Render(w));
+        var resource = w.State.Resampling!.Resource!.Value;
+        Assert.True(await w.UseBrowserAudioAsync(ArrangementEditBasis.From(w.State),
+            new("Resampled", Resource: resource, Lifecycle: w.State.Document.LifecycleId, SamplerCompatible: true),
+            new(0), 0, TestContext.Current.CancellationToken));
+        var clip = w.State.Snapshot.State.AudioClips.Single();
+        Assert.True(await w.EditAudioClipAsync(ArrangementEditBasis.From(w.State), clip with
+            { StretchRatio = 1.33337m, Repeats = 2, FadeInFrames = 997, FadeOutFrames = 1733 }));
+        var stretched = w.State.Snapshot;
+        Assert.True(await w.UndoAsync());
+        Assert.Equal(1, w.State.Snapshot.State.AudioClips.Single().StretchRatio);
+        Assert.True(await w.UndoAsync(true)); Assert.Equal(stretched, w.State.Snapshot);
+        Assert.True(await w.EditMixerAsync(new(w.State.Document.LifecycleId, w.State.Generation), "Delay path", e =>
+        {
+            e.InitializeMixer();
+            var channel = e.AddMixerBus("Audio");
+            e.AssignMixerSound(clip.SoundId, channel);
+            e.SetMixerStrip(channel, new() { Delay = new() { Enabled = true, TimeMs = 37, Feedback = .5m, Mix = .4m } });
+            e.SetMixerStrip(null, new() { Delay = new() { Enabled = true, TimeMs = 73, Feedback = .35m, Mix = .3m } });
+        }));
+        Assert.Equal(local.Wave, (await f.Render(TestContext.Current.CancellationToken)).Wave);
+        float[] Offline(ProjectDocument document)
+        {
+            using var plan = ArrangementPreparation.Prepare(document, rate, 2, 127, TestContext.Current.CancellationToken);
+            using var execution = plan.CreateExecution(smoothBoundaries: true);
+            var data = new float[checked((int)plan.EndFrame * 2)];
+            for (int offset = 0; offset < data.Length;)
+            {
+                int samples = Math.Min(254, data.Length - offset);
+                execution.Process(data.AsSpan(offset, samples)); offset += samples;
+            }
+            return data;
+        }
+        var expected = Offline(w.State.Document);
+        using (var sampler = new RealtimeSampler(rate, 2, 127, smoothBoundaries: true))
+        {
+            using var request = sampler.BeginArrangementPreparation(w.State.Document);
+            await request.PrepareAsync(TestContext.Current.CancellationToken);
+            Assert.Equal(SamplerPublication.Accepted, request.Publish(TestContext.Current.CancellationToken));
+            sampler.Start();
+            var actual = new float[expected.Length];
+            for (int offset = 0; offset < actual.Length;)
+            {
+                int samples = Math.Min(254, actual.Length - offset);
+                sampler.Process(actual.AsSpan(offset, samples)); offset += samples;
+            }
+            Assert.Equal(expected, actual);
+            Assert.Equal(SamplerTransportState.Ended, sampler.ReadStatus().Transport);
+        }
+        if (rate == 48000)
+        {
+            string export = f.Directory.File("combined.wav");
+            await PatternWaveExport.ExportArrangementAsync(w.State.Document, export, TestContext.Current.CancellationToken);
+            using var pcm = WavDecoder.Decode(File.ReadAllBytes(export));
+            Assert.Equal(expected.Length / 2, pcm.Frames);
+            for (int i = 0; i < expected.Length; i++)
+                Assert.InRange(Math.Abs(expected[i] - pcm.Sample(i / 2, i % 2)), 0, 1d / 32768);
+        }
+        string first = f.Directory.File("first.seqvium"), portable = f.Directory.File("portable.seqvium");
+        Assert.True(await w.SaveAsync(first)); Assert.True(await w.SaveAsync(portable));
+        Assert.True(await w.NewAsync(UnsavedDecision.Discard));
+        System.IO.Directory.Delete(first + ".media", true);
+        foreach (string wave in System.IO.Directory.GetFiles(f.Directory.Path, "*.wav", SearchOption.AllDirectories)
+                     .Where(path => !path.StartsWith(portable + ".media" + Path.DirectorySeparatorChar,
+                         StringComparison.OrdinalIgnoreCase))) File.Delete(wave);
+        Assert.True(await w.OpenAsync(portable, UnsavedDecision.Discard));
+        Assert.Empty(w.State.Document.SavedMediaDiagnostics);
+        Assert.Equal(7, GraphFixture.Json(w.State.Document)["minimumReaderMinor"]!.GetValue<int>());
+        Assert.Equal(expected, Offline(w.State.Document));
+    }
+
+    [Theory]
     [InlineData("cancel")] [InlineData("edit")] [InlineData("delete")] [InlineData("undo-redo")]
     [InlineData("new")] [InlineData("open")] [InlineData("close")]
     public async Task LateCompletedRenderCannotCommitAfterCancellationEditsHistoryOrLifecycle(string action)

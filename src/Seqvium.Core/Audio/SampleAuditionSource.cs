@@ -42,6 +42,7 @@ internal sealed class SampleAuditionSource : IDisposable
                 original.StartFrame, original.EndFrame, original.ZeroFrameNotes, notes, original.Events, [.. sources], original.Graph)
             {
                 CanonicalBasis = state, Loop = original.Loop, IsArrangement = original.IsArrangement,
+                SourceEndFrame = original.SourceEndFrame, AllowMixerTail = original.AllowMixerTail,
                 AuditionSound = Sound, AuditionCandidate = Candidate
             };
         }

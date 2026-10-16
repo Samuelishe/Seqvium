@@ -7,6 +7,18 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Recent cross-stage regression audit
+
+The [recent audit](experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md) adds fifteen cases across
+`MixerDelayTests`, `SampleAuditionTests`, `AudioTimeStretchTests` and `ResamplingWorkflowTests`:
+live budget refusal/history/Undo repair, audition natural/hard completion, shared-resource metadata
+contradictions, sequential line transfer/retirement, bypassed-bank backpressure, conservative silent
+tails and R8 → stretched Audio Clip → serial Mixer Delay with portable media and numerical parity.
+Use the four `--filter-class` selections after the affected Release build. Audition completion and
+finite refusal corrections selected L3 independently of cadence; maximum-bank payload measurement
+does not establish realtime pressure acceptance. The report also distinguishes executable historical
+reader parsing, current PCM, routed GUI, short physical audition and unexecuted native input.
+
 ## Musical Delay verification
 
 `MixerDelayTests` uses authored impulse PCM through production Mixer/Pattern/Song execution. It checks
