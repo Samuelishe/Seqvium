@@ -541,6 +541,11 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     {
         if (!_acceptingResample) _resamplingCancellation?.Cancel();
         LabDocumentChanged();
+        if (_samplerAudition is { } sampler && sampler.Generation != _document.Generation)
+        {
+            _noteOutput?.Sampler.Stop();
+            _samplerAudition = null;
+        }
         // R6 uses strict generation relevance: an intervening musical edit expires pending/candidate work.
         foreach (var session in _generationSessions) session.Cancel();
         long end = ArrangementPreparation.EndTicks(_document.Current.State);

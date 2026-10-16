@@ -17,6 +17,15 @@ public sealed class AudioWaveform
         using var lease = pcm.Lease();
         return new(lease.Samples, pcm.Channels, cancellation);
     }
+    // Fine inspection retains immutable PCM under this disposable editor observation's GC lifetime.
+    private float[]? _detail;
+    public static AudioWaveform ForSampler(DecodedPcm pcm, CancellationToken cancellation = default)
+    {
+        using var lease = pcm.Lease();
+        var waveform = new AudioWaveform(lease.Samples, pcm.Channels, cancellation);
+        waveform._detail = lease.Samples;
+        return waveform;
+    }
     private readonly (float Min, float Max)[][] _levels;
     public int Channels { get; }
     public int Frames { get; }
@@ -68,6 +77,15 @@ public sealed class AudioWaveform
 
     public (float Min, float Max) Range(long start, long end, int channel)
     {
+        if (_detail is { } detail && end - start < 256)
+        {
+            float low = 0, high = 0;
+            long firstFrame = Math.Clamp(start, 0, Frames - 1);
+            long lastFrame = Math.Clamp(Math.Max(start + 1, end), firstFrame + 1, Frames);
+            for (long f = firstFrame; f < lastFrame; f++)
+            { float value = detail[f * Channels + channel]; low = Math.Min(low, value); high = Math.Max(high, value); }
+            return (low, high);
+        }
         int level = 0;
         long block = 256;
         while (level + 1 < _levels.Length && block * 2 <= Math.Max(1, end - start))

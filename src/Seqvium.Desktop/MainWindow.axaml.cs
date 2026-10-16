@@ -406,6 +406,14 @@ internal sealed partial class MainWindow : Window
                 _workspace.Commit();
             }
         }
+        if (differentTarget && sound is not null && SamplerPlayback.Supports(sound) &&
+            _workspace.State.Get(WorkspaceState.NodeEditorId).Dock == PaneDock.Floating)
+        {
+            var bounds = _workspace.State.Bounds(WorkspaceState.NodeEditorId);
+            _workspace.State.SetBounds(WorkspaceState.NodeEditorId, bounds with
+            { Width = Math.Max(720, bounds.Width), Height = Math.Max(520, bounds.Height) });
+            _workspace.Commit();
+        }
     }
 
     private void RefreshGainHierarchy()

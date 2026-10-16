@@ -70,7 +70,11 @@ internal sealed record PreparedNote(
     long EnvelopeOffset = 0,
     long EnvelopeLength = 0,
     long? SourceClockStart = null,
-    bool SmoothSourceEnd = true);
+    bool SmoothSourceEnd = true,
+    long SustainStart = 0,
+    long SustainEnd = 0,
+    long SustainFade = 0,
+    bool SamplerRange = false);
 
 /// <summary>Frozen single-Pattern execution, bounded repeats and source leases. Derived state, never persistent musical truth.</summary>
 public sealed class PreparedSampler : IDisposable
@@ -102,6 +106,7 @@ public sealed class PreparedSampler : IDisposable
     internal LoopClock? Loop { get; set; }
     internal ProjectState? CanonicalBasis { get; set; }
     internal bool IsArrangement { get; init; }
+    internal bool HeldAudition { get; init; }
     internal Id<SoundDefinition>? AuditionSound { get; init; }
     internal Guid? AuditionCandidate { get; init; }
 
@@ -160,6 +165,27 @@ public static class SamplerPreparation
                 new(0, default, ExecutionEventKind.NoteOn, default(ExecutionOccurrence), 0),
                 new(end, default, ExecutionEventKind.Stop, null, -1)
             ], [source.Lease()]);
+    }
+
+    public static PreparedSampler PrepareSamplerAudition(DecodedPcm source, SoundDefinition sound,
+        int sampleRate, int channels, decimal pitch, decimal intensity, bool held = false)
+    {
+        if (!SamplerPlayback.Supports(sound) || channels is not (1 or 2) || intensity is < 0 or > 1)
+            throw new ArgumentException("Unsupported sampler audition.");
+        var playback = SamplerPlayback.Read(sound, source.Frames);
+        double step = PcmSampler.Step(source.SampleRate, sampleRate, sound.Parameters["rootPitch"], pitch);
+        int release = (int)decimal.Round(sound.Parameters["releaseMilliseconds"] * sampleRate / 1000,
+            0, MidpointRounding.AwayFromZero);
+        long gate = sampleRate * (held ? 10L : 2L);
+        var note = playback.Apply(new(default, 0, step, (float)intensity, 0, gate, release), source.SampleRate);
+        long end = Math.Min(SourceEnd(note, source.Frames), gate + release);
+        ImmutableArray<PreparedEvent> events =
+            [new(0, default, ExecutionEventKind.NoteOn, default(ExecutionOccurrence), 0),
+             new(end, default, ExecutionEventKind.Stop, null, -1)];
+        if (gate < end)
+            events = events.Insert(1, new(gate, default, ExecutionEventKind.NoteOff, default(ExecutionOccurrence), 0));
+        return new(Guid.Empty, sampleRate, channels, 1, 0, end, 0, [note], events,
+            [source.Lease()]) { HeldAudition = held };
     }
 
     /// <summary>Ephemeral raw source at native pitch. Empty revision/occurrence denotes no canonical music;
@@ -261,6 +287,7 @@ public static class SamplerPreparation
                     resourceIndices.Add(resource, sources.Count);
                     sources.Add(lease);
                 }
+                SamplerPlayback.Read(sound, sources[resourceIndices[resource]].Frames);
             }
 
             if (!pattern.AdditionalData.IsEmpty || graph is null && state.Placements.Any(placement =>
@@ -308,9 +335,11 @@ public static class SamplerPreparation
                     var occurrence =
                         new ExecutionOccurrence(patternId, part.Id, note.Id, iteration, graph?.PlacementId);
                     int index = notes.Count;
-                    notes.Add(new(occurrence, sourceIndex, step, (float)note.Intensity, on, off, release,
+                    var prepared = new PreparedNote(occurrence, sourceIndex, step, (float)note.Intensity, on, off, release,
                         graph?.SourceBuffer(part.Id) ?? 0, drum, drum ? DrumInstruments.ChokeGroup(sound) : 0,
-                        DrumInstruments.Find(sound.Algorithm)?.Key == "ClosedHat" ? 1 : 0));
+                        DrumInstruments.Find(sound.Algorithm)?.Key == "ClosedHat" ? 1 : 0);
+                    notes.Add(drum ? prepared : SamplerPlayback.Read(sound, sources[sourceIndex].Frames)
+                        .Apply(prepared, sources[sourceIndex].Rate));
                     events.Add(new(on, position, ExecutionEventKind.NoteOn, occurrence, index));
                     events.Add(new(off, end, ExecutionEventKind.NoteOff, occurrence, index));
                 }
@@ -324,7 +353,7 @@ public static class SamplerPreparation
                 // Source/Gain/Mix have no stateful tail; one-shots end at EOF, gated PCM at release or EOF.
                 foreach (var note in notes)
                 {
-                    long eof = checked(note.StartFrame + (long)Math.Ceiling(sources[note.SourceIndex].Frames / note.Step));
+                    long eof = SourceEnd(note, sources[note.SourceIndex].Frames);
                     last = Math.Max(last, note.OneShot ? eof : Math.Min(eof, checked(note.EndFrame + note.ReleaseFrames)));
                 }
             }
@@ -368,6 +397,10 @@ public static class SamplerPreparation
         }
     }
 
+    internal static long SourceEnd(PreparedNote note, long frames) => note.SustainEnd > 0 ? long.MaxValue :
+        checked(note.StartFrame + (long)Math.Ceiling((note.SamplerRange
+            ? Math.Min(frames - note.SourceOffset, note.SourceLength) : frames) / note.Step));
+
     internal static void ValidateCapacity(ImmutableArray<PreparedEvent> events,
         ImmutableArray<PreparedNote>.Builder notes,
         List<PcmLease> sources, int capacity, long stop)
@@ -378,7 +411,7 @@ public static class SamplerPreparation
         {
             ends.RemoveAll(end => end <= item.Frame);
             var note = notes[item.NoteIndex];
-            long eof = checked(note.StartFrame + (long)Math.Ceiling(sources[note.SourceIndex].Frames / note.Step));
+            long eof = SourceEnd(note, sources[note.SourceIndex].Frames);
             long end = Math.Min(stop, note.OneShot ? eof : Math.Min(eof, checked(note.EndFrame + note.ReleaseFrames)));
             end = Math.Min(end, note.ChokeFrames == long.MaxValue ? long.MaxValue : note.StartFrame + note.ChokeFrames);
             if (end > item.Frame) ends.Add(end);
@@ -617,10 +650,15 @@ public sealed class OfflineSampler : IDisposable
             }
     }
 
-    private static double SourceCursor(PreparedNote note, long age, long position) =>
-        note.SourceClockStart is { } origin
+    private static double SourceCursor(PreparedNote note, long age, long position)
+    {
+        double cursor = note.SourceClockStart is { } origin
             ? note.SourceOffset - note.EnvelopeOffset + (position - origin) * note.Step
             : note.SourceOffset + age * note.Step;
+        return note.SustainEnd > 0 && cursor >= note.SustainEnd
+            ? note.SustainStart + (cursor - note.SustainStart) % (note.SustainEnd - note.SustainStart)
+            : cursor;
+    }
 
     private long EventFrame(PreparedEvent item) => _looping && _plan.Loop is { } clock
         ? clock.Frame(item.Position.Ticks + _iteration * clock.LengthTicks)
@@ -698,8 +736,8 @@ public sealed class OfflineSampler : IDisposable
                 {
                     // Finish inside the permitted boundary, preserving exact silence after it.
                     // PCM source EOF, zero-release gate and the Pattern/Song end each own a boundary.
-                    double remaining = (source.Frames - cursor) / note.Step;
-                    if (note.SmoothSourceEnd)
+                    double remaining = note.SustainEnd > 0 ? double.PositiveInfinity : (source.Frames - cursor) / note.Step;
+                    if (note.SmoothSourceEnd && note.SustainEnd == 0)
                         remaining = Math.Min(remaining,
                             (note.SourceOffset + (double)note.SourceLength - cursor) / note.Step);
                     long gateAge = note.EndFrame - note.StartFrame;
@@ -714,8 +752,16 @@ public sealed class OfflineSampler : IDisposable
                     gain *= Math.Clamp((remaining - 1) / BoundaryFadeFrames, 0, 1);
                 }
 
-                double left = Interpolate(source, cursor, 0);
-                double right = source.Channels == 1 ? left : Interpolate(source, cursor, 1);
+                if (note.SustainEnd > 0 && cursor >= note.SustainStart)
+                {
+                    // A bounded dip at the explicit seam. Never shifts markers or changes source PCM.
+                    double fade = Math.Clamp((note.SustainEnd - cursor - 1) / note.SustainFade, 0, 1);
+                    if (note.SourceOffset + sourceAge >= note.SustainEnd)
+                        fade = Math.Min(fade, Math.Clamp((cursor - note.SustainStart) / note.SustainFade, 0, 1));
+                    gain *= fade;
+                }
+                double left = ReadSample(source, note, cursor, 0);
+                double right = source.Channels == 1 ? left : ReadSample(source, note, cursor, 1);
                 Span<float> contribution = _signals is null ? interleavedOutput : _signals[note.ContributionIndex];
                 if (_plan.Channels == 1) contribution[frame] += (float)((left + right) * 0.5 * gain);
                 else
@@ -726,7 +772,8 @@ public sealed class OfflineSampler : IDisposable
 
                 voice.Age++;
                 if (voice.ReleaseAge >= 0 && ++voice.ReleaseAge >= note.ReleaseFrames ||
-                    voice.Age * note.Step >= source.Frames || voice.Age >= voice.ChokeAge)
+                    note.SustainEnd == 0 && note.SourceOffset + voice.Age * note.Step >=
+                    Math.Min(source.Frames, note.SourceOffset + (double)note.SourceLength) || voice.Age >= voice.ChokeAge)
                     voice.Note = null;
             }
 
@@ -771,6 +818,21 @@ public sealed class OfflineSampler : IDisposable
 
     internal void UpdateCoefficients(float[] coefficients) => _coefficients = coefficients;
 
+    internal void ReleaseAudition()
+    {
+        if (!_plan.HeldAudition || _stopped) return;
+        ApplyEvents();
+        int release = 0;
+        foreach (var voice in _voices)
+            if (voice.Note is { } note && voice.ReleaseAge < 0)
+            {
+                release = Math.Max(release, note.ReleaseFrames);
+                if (note.ReleaseFrames == 0) voice.Note = null;
+                else voice.ReleaseAge = 0;
+            }
+        EndFrame = Math.Min(EndFrame, Position + release);
+    }
+
     private void ApplyEvents()
     {
         while (_eventIndex < _plan.Events.Length && EventFrame(_plan.Events[_eventIndex]) <= Position)
@@ -812,6 +874,16 @@ public sealed class OfflineSampler : IDisposable
                 voice.ChokeAge = ChokeAge(voice.Note, _iteration);
             }
         }
+    }
+
+    private static double ReadSample(PcmLease source, PreparedNote note, double cursor, int channel)
+    {
+        if (!note.SamplerRange) return Interpolate(source, cursor, channel);
+        int index = (int)cursor;
+        double fraction = cursor - index;
+        long end = note.SustainEnd > 0 ? note.SustainEnd : Math.Min(source.Frames, note.SourceOffset + note.SourceLength);
+        double second = index + 1 < end ? source.Samples[(index + 1) * source.Channels + channel] : 0;
+        return source.Samples[index * source.Channels + channel] * (1 - fraction) + second * fraction;
     }
 
     private static double Interpolate(PcmLease source, double cursor, int channel)

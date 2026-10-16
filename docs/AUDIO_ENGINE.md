@@ -508,6 +508,44 @@ opaque sound state, extra sound parameters, relevant unknown Pattern/part/note/s
 placement processing/route/shared-performance relationships are refused, rather than silently omitted.
 R4-F2 adds independent item-local contributions below; wider execution domains and plugins remain Q-047.
 
+### Sampler source range and sustain loop (SEQ-SAMPLER-EDITOR-F1)
+
+`SamplerPlayback` interprets optional `sampleStart`, `sampleEnd`, `loopEnabled`, `loopStart` and
+`loopEnd` on the identified PCM SoundDefinition. Source-frame intervals are half-open. Omission
+means the full source and no loop. Explicit range requires `0 <= Start < End <= actual Frames`;
+loop endpoints must lie inside that range and span at least four frames. Retained disabled loop
+endpoints are validated too. Preparation checks each sound against the decoded source even when
+another sound already leases those same bytes. Unknown, partial, fractional or invalid state is
+preserved but not executable. Replacement resets range/loop; PCM and resource descriptors never change.
+
+PreparedNote carries range and immutable loop/fade coefficients. The existing OfflineSampler derives
+its cursor from integer voice age and pitch/rate step, then wraps with modulo after Loop End. It
+plays the ordinary prefix once. Interpolation never reads beyond Sample End or Loop End; the final
+in-range sample interpolates toward zero. Existing raw Audio Clip interpolation stays separate.
+Looping continues under the bounded release envelope after NoteOff, allowing a short seamless
+release even at a seam; it never resumes the post-loop source region. Zero release retires immediately.
+Each occurrence owns its own age/release; there are no loop NoteOns. Disabled loop is exact legacy
+PCM for a full source. Existing root, velocity, channel conversion and independent voices remain.
+
+Seam treatment is a gain dip inside the explicit loop: linear fade down to zero at the last loop
+frame and fade up after each wrap. Fade width is `min(64, floor(sourceRate/1000), floor(loopLength/4))`
+source frames (at least one). The initial prefix does not receive the wrapped fade-in. This limits
+clicks without moving markers, changing PCM, shortening the loop period or creating a derived resource.
+It can audibly pulse on short loops and promises neither perfect arbitrary seams nor anti-aliasing.
+
+Loop source lifetime is bounded by musical NoteOff + release, not source EOF. Capacity admission,
+R8 local rendering, Song/export and seek use that same finite lifetime. Stop/Panic and Pattern/range
+boundaries keep existing hard retirement. A compatible live range/loop edit preserves clock and
+unrelated voices, retires changed-sound voices at publication, and waits for the next scheduled note;
+it never reconstructs/retriggers a held sampler voice. Continuous loop morphing is not supported.
+Invalid/stale preparation retains the existing explicitly reported last-valid policy.
+
+Source Editor Hold uses the existing transient NoteAuditionRequest/output, at root pitch and quiet
+audition gain, with a ten-second safety gate plus configured release. Release is an authority-bound
+consumer command; Stop/another preview/Play/edit/close invalidate or join the old lifetime. It does
+not create notes, history or project state. Piano PCM audition now observes the configured range/loop
+and release with its existing two-second gate; drum/raw Browser auditions keep their own policies.
+
 ### SEQ-R9 pitched note audition
 
 `NoteAuditionRequest` captures source authority and prepares one pitched PCM voice off-thread through
@@ -517,8 +555,8 @@ downstream graph processing deliberately. Desktop owns a dedicated transient ren
 publication revalidates lifecycle/revision/transport generation. Another preview, Play, Stop/Panic or
 close cancels and joins the previous lifetime. Preview is refused while Pattern/Song transport plays.
 Pitch ratio, intensity and source EOF use the same production kernel as offline/realtime execution.
-The bounded solo preview has zero release and its own finite gate; it is not a preview of a drawn
-note's duration/release or downstream graph envelope.
+Piano PCM preview uses the sound's release after its finite gate; raw resource/drum audition keeps
+zero release. It does not preview a drawn note's exact duration or downstream graph envelope.
 This is not another transport, synthesis engine, MIDI input or sustained live instrument mode.
 
 ### Timing, processing ranges and determinism

@@ -44,6 +44,8 @@ internal sealed record GraphRevisionUpdate(
     float[] Coefficients,
     long Authority);
 
+internal sealed record AuditionRelease(long Authority, long Command);
+
 internal sealed record SongSeek(long Frame, long Command);
 
 internal sealed record MixerRevisionUpdate(long ExecutionId, Guid Revision, PreparedMixer Mixer, long Authority);
@@ -89,6 +91,10 @@ public sealed class RealtimeSampler : IDisposable
     }
 
     private State? _pending, _active, _retired;
+    private AuditionRelease? _auditionRelease;
+    private long _seenAuditionRelease;
+    public void ReleaseAudition() => Volatile.Write(ref _auditionRelease,
+        new(Volatile.Read(ref _authority), Interlocked.Increment(ref _command)));
     private long _authority, _stop, _start, _seenStart, _command, _startAuthority;
     private int _preparing;
     private float _gain = 1;
@@ -567,6 +573,13 @@ public sealed class RealtimeSampler : IDisposable
             _transitionRemaining = 0;
         }
 
+        var releaseAudition = Volatile.Read(ref _auditionRelease);
+        if (_playing && active is { Transient: true } && releaseAudition is not null &&
+            releaseAudition.Authority == active.Authority && releaseAudition.Command != _seenAuditionRelease)
+        {
+            active.Execution.ReleaseAudition();
+            _seenAuditionRelease = releaseAudition.Command;
+        }
         int renderedFrames = 0;
         if (_playing && active is not null)
         {

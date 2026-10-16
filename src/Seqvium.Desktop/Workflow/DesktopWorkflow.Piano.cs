@@ -91,8 +91,7 @@ internal sealed partial class DesktopWorkflow
                 _noteOutput.Sampler.SetGain(0.12f);
                 using var request = DrumVoice.Supports(sound)
                     ? new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, pitch, intensity)
-                    : new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.ResourceIds.Single(),
-                        sound.Parameters["rootPitch"], pitch, intensity);
+                    : new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, pitch, intensity);
                 await request.PrepareAsync();
                 ValidateBeatBasis(basis, requireGrid: false);
                 if (auditionGeneration != _playGeneration)
@@ -114,6 +113,7 @@ internal sealed partial class DesktopWorkflow
 
     private async Task CloseNoteAuditionAsync(bool preserveDrumRequests = false)
     {
+        _samplerAudition = null;
         if (!preserveDrumRequests) InvalidateDrumAuditions();
         _drumAuditionOutput = false;
         _drumAuditionSource = null;

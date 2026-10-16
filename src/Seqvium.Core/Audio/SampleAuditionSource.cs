@@ -34,7 +34,8 @@ internal sealed class SampleAuditionSource : IDisposable
             {
                 if (!parts.TryGetValue(n.Occurrence.PartId, out var part)) return n;
                 var note = part.Notes.Single(note => note.Id == n.Occurrence.NoteId);
-                return n with { SourceIndex = index, Step = PcmSampler.Step(_pcm.Rate, original.SampleRate,
+                return n with { SourceIndex = index, SourceOffset = 0, SourceLength = long.MaxValue,
+                    SustainStart = 0, SustainEnd = 0, SustainFade = 0, Step = PcmSampler.Step(_pcm.Rate, original.SampleRate,
                     sound.Parameters["rootPitch"], note.Pitch) };
             }).ToImmutableArray();
             SamplerPreparation.ValidateCapacity(original.Events, notes.ToBuilder(), sources, original.VoiceCapacity, original.EndFrame);

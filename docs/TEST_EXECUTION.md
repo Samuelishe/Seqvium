@@ -7,6 +7,18 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## PCM Sampler Editor verification
+
+`SamplerEditorTests` uses independent PCM/rate/pitch/seam/release oracles and real shared execution,
+not source-mirroring assertions. It covers range/loop validity, legacy disabled behavior, polyphony,
+packet/realtime parity, live no-retrigger/unrelated age, seek/Stop/Panic/Pattern loop, R8 before Mixer,
+finite Song Delay/Reverb/PCM16, unknown/gate refusal, replacement, portable media/history and preview
+join. Select `--filter-class '*SamplerEditorTests'` with the inspected MTP/xUnit v3 command below.
+L3 is selected for this kernel/format checkpoint. Real VisualCheck `sampler-editor` separately records
+routed input, RU/EN Dark/Light empty/populated layouts, exact field alignment and optional guarded
+Windows/physical output. The [report](experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) owns measured results
+and limitations; zero selected callback allocation never establishes R4-F2 pressure acceptance.
+
 ## Musical Reverb verification
 
 `MixerReverbTests` drives the production FDN and Mixer through impulse/phrase/sustain fixtures,

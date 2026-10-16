@@ -32,6 +32,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     private readonly GainDialControl _dial;
     private readonly GainTransferPlot _plot;
     private readonly DrumVoicePaneContent _drum;
+    private readonly SamplerPaneContent _sampler;
     private readonly Grid _gain = new() { RowDefinitions = new("Auto,Auto,Auto,Auto"), Classes = { "parameterRow" } };
     private readonly Expander _curve;
     private readonly DispatcherTimer _changeNotice = new() { Interval = TimeSpan.FromSeconds(3) };
@@ -118,6 +119,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         Children.Add(_detailsScroll);
         SetRow(_status, 2);
         Children.Add(_status);
+        _sampler = new(shell, workflow);
+        SetRow(_sampler, 1); Children.Add(_sampler);
         _drum = new(shell, workflow);
         SetRow(_drum, 1);
         Children.Add(_drum);
@@ -255,7 +258,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
                 ? DrumEditorSession.Resolve(drumState, drumTarget)
                 : null;
             bool drum = drumSound is not null && DrumVoice.Supports(drumSound);
-            string title = drum ? _shell["Drum.Title"] : node is null ? _shell["Pane.NodeEditor"] : NodeName(node);
+            bool sampler = drumSound is not null && SamplerPlayback.Supports(drumSound);
+            string title = sampler ? _shell["Sampler.Title"] : drum ? _shell["Drum.Title"] : node is null ? _shell["Pane.NodeEditor"] : NodeName(node);
             if (title != Title)
             {
                 Title = title;
@@ -272,7 +276,9 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             AutomationProperties.SetHelpText(this, target?.NodeId.ToString() ?? "");
             bool gain = NodeEditorSession.SupportsGain(node);
             _gainScroll.IsVisible = gain;
-            _detailsScroll.IsVisible = !gain && !drum;
+            _detailsScroll.IsVisible = !gain && !drum && !sampler;
+            _sampler.IsVisible = sampler;
+            _sampler.Observe(sampler ? _editor.Target : null);
             _drum.IsVisible = drum;
             _drum.Observe(drum ? _editor.Target : null);
             _linear.Text = _shell["NodeEditor.LevelLabel"];
@@ -300,7 +306,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             _details.Classes.Set("secondary", node is null && _editor.Target is null);
             _details.Classes.Set("warning", node is null && _editor.Target is not null);
             RefreshPreview();
-            if (!drum && node is { Type: GraphBuiltIns.Source } && GraphConnectionRules.Supported(node) &&
+            if (!drum && !sampler && node is { Type: GraphBuiltIns.Source } && GraphConnectionRules.Supported(node) &&
                 IsEffectivelyVisible &&
                 target is not null && _sourceBasis != (target, _workflow.State.Generation))
             {
@@ -562,6 +568,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     public void CancelGesture()
     {
         _drum.Suspend();
+        _sampler.Suspend();
         _level.Cancel();
         _dial.Cancel();
         _editor.CancelDraft();
@@ -583,5 +590,6 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         _workflow.Changed -= WorkflowChanged;
         _shell.PropertyChanged -= PreferencesChanged;
         _drum.Dispose();
+        _sampler.Dispose();
     }
 }

@@ -81,6 +81,20 @@ available as Audio Clips. Reuse keeps existing media and creates an independent 
 does not change earlier instruments. Save and Save As retain project-owned media normally; keep
 the project's `.seqvium.media` directory beside the project file.
 
+## Edit a WAV instrument
+
+Open the channel menu's **Sound Editor**, or double-click its Source node. Drag the upper Start/End
+flags to select what plays. Enable **Sustain loop** and set the lower Loop Start/End flags for long
+notes in Piano Roll. Zoom with the wheel or +/−, pan with the slider, and use Fit for the whole source.
+The four fields accept exact source frames; End is excluded. Enter or Apply accepts a valid edit;
+Escape cancels a draft. Hold note previews at the root pitch; Release plays the configured release,
+and Stop ends preview. Stop music first. Forgotten holds end after ten seconds.
+
+The Shared sound cue means every Pattern using this instrument receives the edit. Another sound
+using the same WAV stays independent. WAV bytes remain unchanged. Loop seams use a short fade dip;
+short or unsuitable material may still pulse. Notes finish at NoteOff plus release. Replace WAV
+resets range/loop to the new complete source; Undo restores both. This does not trim Playlist clips.
+
 ## Create a sample from a Pattern
 
 Right-click the Pattern's card and choose **Create sample**. Browser opens with the ready sample

@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 7. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 9. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
@@ -27,6 +27,25 @@ require the source package or generator and never regenerates accepted audio. No
 candidate history is promised. Existing `ExtensionState` and unknown node/sound payload preservation
 and dependency-scoped execution refusal remain unchanged; R6 provides no realtime extension processor.
 See [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
+
+## Sampler range and sustain loop (reader 1.9)
+
+PCM SoundDefinition.parameters optionally holds all five decimal entries: `sampleStart`, `sampleEnd`,
+`loopEnabled`, `loopStart`, `loopEnd`. Frame values must be nonnegative integers within Int32;
+`loopEnabled` is exactly 0 or 1. Start/End are exclusive-end source PCM coordinates. All omitted
+means unchanged legacy full-source playback. Explicit blocks require a nonempty range and, if
+present/enabled, a loop of at least four frames contained in it. Disabled `0,0` loop endpoints mean
+no retained loop. Resource length is checked against real managed PCM during preparation/editing.
+Invalid/partial/unknown sound state remains round-trippable and unavailable for execution rather
+than silently corrected. ResourceDescriptor, WAV and musical note coordinates are unchanged.
+
+Any block, including disabled retained endpoints, requires minimum reader 1.9. A document with the
+block and a lower gate is refused. Documents without new sampler intent keep their existing gates;
+the writer lineage marker is unchanged. A successful Save retains the document's compatibility
+floor as usual. Canonical parameter edits use ordinary Undo/Redo and portable managed Save As/Open.
+Replace WAV atomically removes the block and adopts the complete new source; Undo restores the old
+resource and block together. Sample Lab replacement follows the same source-reset boundary.
+See [audio](AUDIO_ENGINE.md#sampler-source-range-and-sustain-loop-seq-sampler-editor-f1) for execution.
 
 ## Playlist sections and Pattern ancestry (reader 1.5)
 

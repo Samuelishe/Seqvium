@@ -310,7 +310,8 @@ Channel Rack's row menu replaces the supported WAV sampler's source with one nat
 The action updates all uses of the shared instrument, including musical variations, with one Undo
 transaction. Notes, placement and processing identities, release and Mixer routes/settings remain.
 A contextual hint makes shared scope and tuning behavior explicit. Known hash-verified catalog Root
-Pitch is adopted; otherwise existing tuning remains. This does not normalize level or switch sampler
+Pitch is adopted; otherwise existing tuning remains. Source range and sustain loop reset to the new
+complete source; Undo restores old media and endpoints together. This does not normalize level or switch sampler
 algorithms; Piano source tuning and Mixer trim remain explicit controls. Cancel/error/stale selection
 accept no partial edit. [Sample workflow](SAMPLE_WORKFLOW.md#shared-wav-replacement) owns durability.
 
@@ -458,6 +459,34 @@ Parameter commits during playback affect subsequent hits without restarting the 
 The time/frequency graph is analytical; its waveform is derived from the actual synthesized signal,
 not a live meter. Compact panes reflow audition/knobs and scroll locally, keeping every exact parameter
 reachable. [Workspace](WORKSPACE.md#drum-voice-editor-placement) owns retained sizing.
+
+## Sampler Source Editor
+
+Channel Rack's Sound Editor menu and a supported bound Source node's double-click/Open Editor target
+the existing singleton Node Editor. A PCM sound opens the waveform editor; opening alone never edits
+or auditions. Its named Shared sound cue means changes affect every Pattern using that identified
+SoundDefinition. Independent sounds using the same WAV keep independent ranges/loops.
+
+The real mono/stereo waveform shows the audible prefix/range and sustain region. Upper Start/End and
+lower Loop Start/End flags have distinct positions and colors; disabled retained loop flags are muted.
+Crowded flags omit colliding captions; the four exact fields retain their labels. Dragging previews
+one proposal and commits once on release; Escape/capture loss/target or generation change discards it.
+Markers never cross each other or silently change another boundary. Wheel/+/- zoom around a viewport
+anchor, pan scrolls the source-frame viewport, Fit shows the whole source. Zoom changes no musical data.
+Fields accept exact integer source frames; Enter/Apply commits a valid block, invalid values leave the
+project unchanged. Endpoints are exclusive. Loop toggle retains its explicit endpoints when disabled;
+first enabling chooses the visible sample range. Short/outside/reversed loops are refused.
+
+Hold note previews the root note while stopped; Release starts configured release and Stop ends the
+preview. A ten-second safety gate bounds forgotten holds. Preview bypasses downstream processing and
+never edits notes or history. Editing/retargeting/hiding/Play/close ends the prior preview lifetime.
+Source replacement explicitly resets range and loop to the complete replacement. Live playback edits
+retire that sound's old voices on publication and take effect on its next scheduled notes, preserving
+compatible transport/unrelated voices. Continuous held-note loop morphing is not promised.
+
+The waveform uses an enlarged existing floating pane and local scrolling at reduced sizes. Exact
+fields and shared-sound scope remain available in RU/EN and both themes. This is instrument source
+editing, independent of Playlist Audio Clip trim/stretch and its musical placement model.
 
 ## Detailed node editor access
 

@@ -2213,3 +2213,13 @@ Save/Open/export and physical Samsung 48-kHz finite playback pass. No subjective
 other-platform/DPI or owner aesthetic acceptance is inferred. [Report](../experiments/SEQ-R11-REVERB-F1_REPORT.md)
 retains algorithm/budget/attempt/limitation evidence and authored listening comparisons. No Git
 stage/commit/push/tag/index/history/remote mutation was performed.
+
+
+## SEQ-SAMPLER-EDITOR-F1 — 2026-10-16
+
+The existing PCM Source Editor gains real waveform/range/sustain-loop editing and bounded held/released
+preview. Shared sound intent, finite NoteOff/release execution, no-retrigger live publication,
+portable history, replacement reset and selective reader 1.9 are implemented without another engine,
+media owner or editor window. The [report](../experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) owns actual
+checks, harness corrections, input/physical distinctions and limits. Version is 0.1.13.0000, one PATCH
+with BUILD reset; no Git publication. Existing R4-F2 pressure and subjective/platform gaps remain.

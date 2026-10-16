@@ -236,6 +236,15 @@ Gain's compact default/disclosure and ordinary pane lifecycle are unchanged. Lay
 not instrument drafts, audition pitch/velocity or a document target. See
 [interaction](UX_CONTRACT.md#drum-voice-sound-design) and [evidence](experiments/SEQ-FIRST-DRUM_REPORT.md).
 
+## PCM Sampler editor placement
+
+The supported PCM Source Editor uses the same singleton Node Editor. A different sampler target may
+enlarge a compact floating pane to 720×520 DIP, clamped by existing workspace bounds; repeated opens
+retain the user's size. A real 240-DIP stereo waveform leads the composition, exact fields wrap,
+and local scrolling supports the existing 300×210 minimum. Preview/zoom/Apply stay together above
+the wave. Docking, collapse/hide, cancellation and focus use existing pane mechanisms; no global
+window registry or independent source window is introduced.
+
 ## Node editor placement proposal
 
 **SEQ-NODE-EDITOR-IMPL-F1 — one reusable internal pane accepted and implemented for the first slice.**

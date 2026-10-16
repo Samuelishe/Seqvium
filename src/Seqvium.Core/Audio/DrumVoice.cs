@@ -125,13 +125,5 @@ public static class DrumVoice
 /// <summary>The two implemented first-party sound capabilities, not an extension registry.</summary>
 public static class BuiltInSound
 {
-    public static bool Supports(SoundDefinition sound) => DrumVoice.Supports(sound) ||
-                                                          sound.Algorithm == PcmSampler.Algorithm &&
-                                                          sound.Extension is null && sound.AdditionalData.IsEmpty &&
-                                                          sound.ResourceIds.Length == 1 &&
-                                                          sound.Parameters.Count == 2 &&
-                                                          sound.Parameters.TryGetValue("rootPitch", out var root) &&
-                                                          root is >= 0 and <= 127 &&
-                                                          sound.Parameters.TryGetValue("releaseMilliseconds",
-                                                              out var release) && release is >= 0 and <= 1000;
+    public static bool Supports(SoundDefinition sound) => DrumVoice.Supports(sound) || SamplerPlayback.Supports(sound);
 }

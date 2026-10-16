@@ -1,5 +1,20 @@
 # Desktop visual and lifecycle verification
 
+## PCM Sampler Source Editor
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll sampler-editor "$PWD/.artifacts/sampler-editor-f1/review" native audio
+```
+
+Uses an authored stereo WAV, the existing Rack Sound Editor and bound Source double-click routes.
+Checks exact range/loop fields, short-loop refusal, one drag/Undo, Escape/capture loss, zoom/pan/Fit,
+RU/EN Dark/Light ordinary/reduced windows and 32 field alignments. Save/New/Open after deleting the
+external WAV preserves intent; production Pattern export and finite R8 run on reopened media.
+Optional native exact Start/Apply and optional physical Hold past source EOF/Release/Stop are recorded
+separately in input-audio.json; these do not establish subjective loop quality or pressure acceptance.
+Outputs remain ignored and governed by existing retention. The
+[report](../../docs/experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) records actual outcomes and limitations.
+
 ## Musical Reverb
 
 ```powershell

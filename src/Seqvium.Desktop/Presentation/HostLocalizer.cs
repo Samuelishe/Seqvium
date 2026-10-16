@@ -40,6 +40,26 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> English { get; } = new Dictionary<string, string>
     {
+        ["Sampler.Title"] = "Sampler",
+        ["Sampler.Start"] = "Start",
+        ["Sampler.End"] = "End",
+        ["Sampler.LoopStart"] = "Loop start",
+        ["Sampler.LoopEnd"] = "Loop end",
+        ["Sampler.Loop"] = "Sustain loop",
+        ["Sampler.Hold"] = "Hold note",
+        ["Sampler.Release"] = "Release",
+        ["Sampler.Stop"] = "Stop",
+        ["Sampler.ZoomIn"] = "+",
+        ["Sampler.ZoomOut"] = "−",
+        ["Sampler.Fit"] = "Fit",
+        ["Sampler.Apply"] = "Apply",
+        ["Sampler.Shared"] = "Shared sound",
+        ["Sampler.SharedTip"] = "Changes affect this sound in every Pattern.",
+        ["Sampler.Frames"] = "Source frames · end exclusive",
+        ["Sampler.Invalid"] = "Check source range; loops need at least four frames.",
+        ["Sampler.Unavailable"] = "Source unavailable or range invalid. Replace WAV to reset.",
+        ["Sampler.Loading"] = "Loading waveform…",
+
         ["Settings.Title"] = "Settings",
         ["Settings.General"] = "General",
         ["Settings.Controls"] = "Controls",
@@ -595,6 +615,26 @@ public sealed class HostLocalizer
 
     public static IReadOnlyDictionary<string, string> Russian { get; } = new Dictionary<string, string>
     {
+        ["Sampler.Title"] = "Сэмплер",
+        ["Sampler.Start"] = "Начало",
+        ["Sampler.End"] = "Конец",
+        ["Sampler.LoopStart"] = "Петля: начало",
+        ["Sampler.LoopEnd"] = "Петля: конец",
+        ["Sampler.Loop"] = "Sustain-петля",
+        ["Sampler.Hold"] = "Удерживать",
+        ["Sampler.Release"] = "Отпустить",
+        ["Sampler.Stop"] = "Стоп",
+        ["Sampler.ZoomIn"] = "+",
+        ["Sampler.ZoomOut"] = "−",
+        ["Sampler.Fit"] = "Вместить",
+        ["Sampler.Apply"] = "Применить",
+        ["Sampler.Shared"] = "Общий звук",
+        ["Sampler.SharedTip"] = "Изменения действуют на этот звук во всех Patterns.",
+        ["Sampler.Frames"] = "Кадры источника · конец не включается",
+        ["Sampler.Invalid"] = "Проверьте диапазон; петле нужно минимум четыре кадра.",
+        ["Sampler.Unavailable"] = "Источник недоступен или диапазон неверен. Замените WAV для сброса.",
+        ["Sampler.Loading"] = "Загрузка волны…",
+
         ["Settings.Title"] = "Настройки",
         ["Settings.General"] = "Общие",
         ["Settings.Controls"] = "Управление",

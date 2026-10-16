@@ -7,7 +7,21 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.12.0000**, **SEQ-R11-REVERB-F1 — Musical Algorithmic Reverb**. Mixer Inspector
+Product alpha **0.1.13.0000**, **SEQ-SAMPLER-EDITOR-F1 — Waveform, Source Range and Sustain Loop**.
+The existing PCM Source/Sound Editor now exposes a real zoomable mono/stereo waveform, exclusive
+source-frame range and optional sustain loop, exact fields and held/released preview. State belongs
+to the shared SoundDefinition; independent sounds can share PCM while retaining their own settings.
+WAV replacement resets source-specific intent, Undo restores it, and portable Save/Open retains it.
+Only documents carrying new intent require reader 1.9. The shared sampler preserves root/velocity/
+polyphony and bounds loop lifetime by NoteOff/release for realtime, Song/export and R8. A short
+in-loop seam fade dip retains explicit markers and original PCM. Compatible live edits retire
+changed voices without retrigger while retaining transport/unrelated voices. Continuous held-loop
+morphing, arbitrary perfect seams and anti-aliasing are not promised.
+[Audio](AUDIO_ENGINE.md#sampler-source-range-and-sustain-loop-seq-sampler-editor-f1),
+[UX](UX_CONTRACT.md#sampler-source-editor), [format](PROJECT_FORMAT.md#sampler-range-and-sustain-loop-reader-19)
+and the [report](experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) own contracts/evidence/limits.
+
+Previous **0.1.12.0000**, **SEQ-R11-REVERB-F1 — Musical Algorithmic Reverb**. Mixer Inspector
 now exposes Enabled, Decay 0.2–8 s, Size, Damping and Mix for channels, buses and Master. An eight-line
 diffused stereo FDN follows Delay before balance/fader/sends, using shared realtime/offline execution,
 history, managed media and WAV export. Default bypassed state is omitted; non-default intent requires
@@ -196,7 +210,25 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-R11-REVERB-F1, 2026-10-16**. Full Release solution build has zero
+Latest L0/L1/L2/L3: **SEQ-SAMPLER-EDITOR-F1, 2026-10-16**. Full Release solution build has
+zero warnings/errors (8.65 s); **1593/1593 tests pass**, zero skips, one thread (**70.629 s CLI**). The 68 added cases cover independent PCM
+range/loop/pitch/seam/release oracles, channel/rate/packet parity, polyphony/capacity, live source
+retirement/unrelated voice age, Pattern loop/Stop/Panic/Seek, R8 versus finite Song Delay/Reverb,
+unknown/stale refusal, replacement, host preview joins, history and portable media. Selected warm
+loop/release callbacks measure zero bytes; no R4-F2 pressure gap is closed.
+
+Actual-window Rack/menu and Source double-click, field/drag/cancel/zoom/pan/history and portable
+Save/New/Open pass, with populated/empty RU/EN Dark/Light ordinary/reduced captures and 32 zero-DIP
+field alignments. Physical Samsung USB C Earphones 48-kHz stereo preview holds past source EOF,
+releases and joins on Stop without musical edits. R8 renders the two-second note plus 80-ms release
+to 99,840 frames. Earlier native Start/Apply passes with routed setup; final expanded native drag
+attempt is foreground/coverage-refused. No subjective seam/stress/platform/DPI acceptance follows.
+A final bounded natural-EOF audition schedule refinement passes 112/112 sampler/Piano/metadata checks
+(17.903 s) with a zero-warning affected Release build (40.05 s; build servers disabled). This focused
+follow-up reuses the preceding L3. The [report](experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) records
+attempts, results and retained evidence.
+
+Prior L0/L1/L2/L3: **SEQ-R11-REVERB-F1, 2026-10-16**. Full Release solution build has zero
 warnings/errors (3.43 s final); **1525/1525 tests pass**, zero skips, one thread (**77.892 s CLI**).
 The 39 added Reverb cases cover real impulse/phrase/sustain/damping/space/decay/mix and maximum
 extremes, 44.1/48-kHz mono/stereo exact packet/realtime/offline parity, channel/bus/Master/sends/
@@ -342,8 +374,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected Reverb L3 covers stateful
-lifetime/admission, finite Pattern continuation, reachable serial FX completion, reader 1.8 and
+Completed repository tasks since this L3: **0**. This risk-selected Sampler Editor L3 covers the shared voice
+kernel, finite loop/release admission, Pattern/Song/R8/history/media integration, reader 1.9 and
 existing production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**

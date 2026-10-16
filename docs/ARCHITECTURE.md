@@ -36,6 +36,17 @@ authoritative rather than an instruction to regenerate. No project format or ass
 [Sample workflow](SAMPLE_WORKFLOW.md#implemented-pattern-resampling-seq-r8) owns product bounds;
 [audio](AUDIO_ENGINE.md#pattern-object-rendering-seq-r8) owns execution and tails.
 
+## PCM sampler editor ownership
+
+SEQ-SAMPLER-EDITOR-F1 adds source-frame playback intent to the existing identified sampler sound,
+interpreted by SamplerPlayback and compiled into PreparedNote. The immutable PCM/media owner remains
+unchanged. Source editor waveform observations reuse AudioWaveform, with retained immutable PCM only
+for bounded fine zoom. DesktopWorkflow serializes generation-checked edits and the existing solo
+preview lifetime; the pane owns proposals/viewport/observation, never output or prepared voices.
+Live compatible range/loop publication retires changed voices without retrigger, preserving time and
+unrelated occurrences. [Audio](AUDIO_ENGINE.md#sampler-source-range-and-sustain-loop-seq-sampler-editor-f1)
+and [format](PROJECT_FORMAT.md#sampler-range-and-sustain-loop-reader-19) own the exact bounds.
+
 ## Sample Lab ownership
 
 The optional Desktop `Generators/PercussionGenerator` is reachable only through its trusted R6

@@ -6,6 +6,18 @@ Authoritative for: Graph semantics and irreversible mixing boundaries, conceptua
 editable/prepared boundary.
 Not authoritative for: Arrangement, group identity, final port ABI/compiler, DSP algorithms, or pane infrastructure.
 
+## Implemented PCM Source Editor
+
+SEQ-SAMPLER-EDITOR-F1 specializes the existing bound Source editor for a supported PCM sampler.
+The Channel Rack Sound Editor action and graph body double-click/context Open Editor keep the same
+NodeEditorTarget and singleton pane. It resolves the shared SoundDefinition through the attachment's
+source binding; no graph node parameter, media descriptor or additional musical document owns range
+or loop. Existing Gain/drum/unsupported detail surfaces retain their roles. Waveform observations are
+worker-built using the existing AudioWaveform hierarchy with fine PCM inspection; cancellation and
+captured target/generation protect delivery. Views own no execution/device leases.
+[UX](UX_CONTRACT.md#sampler-source-editor), [audio](AUDIO_ENGINE.md#sampler-source-range-and-sustain-loop-seq-sampler-editor-f1)
+and [format](PROJECT_FORMAT.md#sampler-range-and-sustain-loop-reader-19) own interaction/execution/state.
+
 ## Mixer projection of supported graphs
 
 The project Mixer is now a working downstream processing/routing domain, not a visual duplicate of
@@ -198,11 +210,11 @@ under [UX](UX_CONTRACT.md#detailed-node-editor-access). Different targets stay a
 Persisted invalid Gain intent stays visible with its diagnostic and an explicit legal repair path;
 never silently clamp it to a slider value or portray an unsupported value as valid attenuation.
 
-Source, Mix and Output initially receive purposeful read-only details: Source's actual placement/Part
-binding and resource availability; Mix's identified input slots/connections and intentional aggregate;
-Output's local result/designation and upstream connection. These views use existing metadata and
-diagnostics, with repair in the graph; they do not imply a sampler instrument editor, Mixer/Master,
-device selector or editable unknown JSON.
+Supported PCM and drum Source nodes now open their specialized sound editors. Other Source, Mix
+and Output targets retain purposeful read-only details: actual placement/Part binding and resource
+availability, identified Mix inputs and intentional aggregate, or Output designation/upstream link.
+These structural views use existing metadata and diagnostics with repair in the graph; they do not
+imply Mixer/Master editing, a device selector or editable unknown JSON.
 
 ### Remaining owner decisions and risks
 

@@ -10,6 +10,7 @@ public sealed class NoteAuditionRequest : IDisposable
     private readonly ProjectDocument _document, _frozen;
     private readonly Id<ResourceDescriptor> _resource;
     private readonly decimal _root, _pitch, _intensity;
+    private readonly bool _held;
     private readonly Id<SoundDefinition>? _sound;
     private readonly long _generation, _authority;
     private PreparedSampler? _plan;
@@ -44,9 +45,12 @@ public sealed class NoteAuditionRequest : IDisposable
             {
                 cancellation.ThrowIfCancellationRequested();
                 var sound = _sound is { } id ? _frozen.Current.State.Sounds.Single(s => s.Id == id) : null;
-                using var pcm = sound is null
-                    ? ProjectMedia.Decode(_frozen, _resource)
+                using var pcm = sound is null ? ProjectMedia.Decode(_frozen, _resource)
+                    : sound.Algorithm == PcmSampler.Algorithm ? ProjectMedia.Decode(_frozen, sound.ResourceIds.Single())
                     : DrumVoice.Render(sound, _consumer.SampleRate, _pitch, cancellation);
+                if (sound?.Algorithm == PcmSampler.Algorithm)
+                    return SamplerPreparation.PrepareSamplerAudition(pcm, sound, _consumer.SampleRate,
+                        _consumer.Channels, _pitch, _intensity, _held);
                 return SamplerPreparation.PrepareNoteAudition(pcm, _consumer.SampleRate, _consumer.Channels, _root,
                     sound is null ? _pitch : _root, _intensity);
             }, cancellation).ConfigureAwait(false);
@@ -59,11 +63,12 @@ public sealed class NoteAuditionRequest : IDisposable
     }
 
     public NoteAuditionRequest(RealtimeSampler consumer, ProjectDocument document, Id<SoundDefinition> drumSound,
-        decimal pitch, decimal intensity) : this(consumer, document, default(Id<ResourceDescriptor>),
+        decimal pitch, decimal intensity, bool held = false) : this(consumer, document, default(Id<ResourceDescriptor>),
         DrumVoice.RootPitch, pitch, intensity)
     {
         var sound = _frozen.Current.State.Sounds.Single(s => s.Id == drumSound);
-        if (!DrumVoice.Supports(sound)) throw new NotSupportedException("Unsupported drum audition.");
+        if (!BuiltInSound.Supports(sound)) throw new NotSupportedException("Unsupported sound audition.");
+        _held = held;
         _sound = drumSound;
     }
 

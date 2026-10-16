@@ -89,7 +89,7 @@ public sealed partial class ProjectEdit
                     "Only a first-party PCM sampler can accept this configuration.");
                 return sound with
                 {
-                    ResourceIds = [resourceId], Parameters = sound.Parameters
+                    ResourceIds = [resourceId], Parameters = sound.Parameters.RemoveRange(SamplerPlayback.Keys)
                         .SetItem("rootPitch", rootPitch).SetItem("releaseMilliseconds", releaseMilliseconds)
                 };
             })
