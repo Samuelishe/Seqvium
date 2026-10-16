@@ -227,7 +227,8 @@ public static class GraphPreparation
                 Math.Max(maximumWindow, (frames / shortestCycle + 2) * plan.Events.Length));
         }
 
-        long work = checked((long)frames * plan.Channels * plan.VoiceCapacity * 16 +
+        long voiceWork = plan.Notes.Any(n => n.Synth is not null) ? 128 : 16;
+        long work = checked((long)frames * plan.Channels * plan.VoiceCapacity * voiceWork +
                             signalWork + (long)maximumWindow * plan.VoiceCapacity);
         if (plan.IsArrangement)
             work = checked(work + (long)plan.Notes.Length * 4 * (frames / Math.Max(1, plan.SampleRate / 100) + 2));

@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Presenters;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
@@ -91,6 +92,12 @@ internal static class ComponentCatalog
         ToolTip.SetTip(menuButton, tooltip);
         menuButton.ContextMenu = new ContextMenu { Items = { new MenuItem { Header = "Open editor" }, new MenuItem { Header = "Disabled", IsEnabled = false }, new MenuItem { Header = "Selected", ToggleType = MenuItemToggleType.CheckBox, IsChecked = true } } };
         statuses.Children.Add(menuButton); body.Children.Add(statuses);
+        var scrollContent = new Border { Width = 500, Height = 180, BorderThickness = new(1),
+            Child = new TextBlock { Text = "Scrollable content", Margin = new(8) } };
+        scrollContent.Bind(Border.BorderBrushProperty, scrollContent.GetResourceObservable("Border.Default"));
+        var twoAxisScroll = new ScrollViewer { Width = 400, Height = 100, Content = scrollContent,
+            HorizontalAlignment = HorizontalAlignment.Left, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto };
+        body.Children.Add(twoAxisScroll);
         var window = new Window { Title = "Seqvium component verification", Width = 1100, Height = 750,
             Content = new ScrollViewer { Content = body, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled } };
         window.Show(main);
@@ -99,6 +106,19 @@ internal static class ComponentCatalog
         {
             if (shell.Preferences.Theme != theme) await shell.ToggleThemeAsync(); app.ApplyTheme(theme);
             await Program.CaptureAsync(window, output, theme + "-catalog");
+            var scroll = (ScrollViewer)window.Content!;
+            var presenter = scroll.GetVisualDescendants().OfType<ScrollContentPresenter>().Single(p => p.Name == "PART_ContentPresenter" && p.TemplatedParent == scroll);
+            var vertical = scroll.GetVisualDescendants().OfType<ScrollBar>().Single(p => p.Name == "PART_VerticalScrollBar" && p.TemplatedParent == scroll);
+            double gutter = vertical.TranslatePoint(default, scroll)!.Value.X -
+                (presenter.TranslatePoint(default, scroll)!.Value.X + presenter.Bounds.Width);
+            Program.Require(!scroll.AllowAutoHide && gutter >= HostMetrics.Values["Space.Medium"], "Shared scrollbar overlays or crowds its content.");
+            Program.Json(output, theme + "-scroll-gutter", new { GutterDip = gutter, scroll.AllowAutoHide, Vertical = vertical.Bounds, Presenter = presenter.Bounds });
+            var horizontal = twoAxisScroll.GetVisualDescendants().OfType<ScrollBar>().Single(p => p.Name == "PART_HorizontalScrollBar" && p.TemplatedParent == twoAxisScroll);
+            var innerPresenter = twoAxisScroll.GetVisualDescendants().OfType<ScrollContentPresenter>().Single(p => p.TemplatedParent == twoAxisScroll);
+            double bottomGap = horizontal.TranslatePoint(default, twoAxisScroll)!.Value.Y -
+                (innerPresenter.TranslatePoint(default, twoAxisScroll)!.Value.Y + innerPresenter.Bounds.Height);
+            Program.Require(bottomGap >= HostMetrics.Values["Space.Medium"], "Shared horizontal scrollbar crowds content.");
+            scroll.ScrollToEnd(); await Program.CaptureAsync(window, output, theme + "-scroll-gutters"); scroll.ScrollToHome();
             foreach (var disclosure in disclosures)
             {
                 var header = disclosure.GetVisualDescendants().OfType<ToggleButton>().Single(c => c.Name == "ExpanderHeader");

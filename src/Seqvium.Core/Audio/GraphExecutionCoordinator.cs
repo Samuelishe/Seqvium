@@ -406,6 +406,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 [
                     .. state.Sounds.Select(sound => SamplerPlayback.Supports(sound)
                         ? sound with { Parameters = sound.Parameters.RemoveRange(SamplerPlayback.Keys) }
+                        : SynthVoice.Supports(sound) ? sound with { Parameters = SynthVoice.Defaults }
                         : DrumVoice.Supports(sound)
                         ? sound with { Parameters = DrumInstruments.Find(sound.Algorithm)!.Defaults }
                         : sound)

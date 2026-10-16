@@ -153,8 +153,17 @@
         <Setter Property="MinHeight" Value="{DynamicResource Pane.HeaderHeight}" />
         <Setter Property="CornerRadius" Value="{DynamicResource Control.Corner}" />
     </Style>
+    <Style Selector="ScrollViewer">
+        <Setter Property="AllowAutoHide" Value="False" />
+    </Style>
     <Style Selector="ScrollBar">
         <Setter Property="AllowAutoHide" Value="False" />
+    </Style>
+    <Style Selector="ScrollBar[Orientation=Vertical]">
+        <Setter Property="Margin" Value="{DynamicResource ScrollBar.VerticalGutter}" />
+    </Style>
+    <Style Selector="ScrollBar[Orientation=Horizontal]">
+        <Setter Property="Margin" Value="{DynamicResource ScrollBar.HorizontalGutter}" />
     </Style>
     <Style Selector="Button.command, Button.icon">
         <Setter Property="Width" Value="{DynamicResource Control.IconWidth}" />

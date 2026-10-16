@@ -52,11 +52,12 @@ internal sealed partial class DesktopWorkflow
             var (pattern, placement, attachment, graph) = ValidateBeatBasis(basis);
             if (BeatChannelRefusal(_document.Current.State, pattern, attachment, graph) is { } refusal)
                 throw new InvalidOperationException(refusal);
-            bool changed = _document.Edit("Add Drum Voice", edit =>
+            bool changed = _document.Edit(algorithm == SynthVoice.Algorithm ? "Add Synth" : "Add Drum Voice", edit =>
             {
-                var instrument = DrumInstruments.Find(algorithm) ?? throw new NotSupportedException("Unknown drum.");
+                var defaults = algorithm == SynthVoice.Algorithm ? SynthVoice.Presets[0].Values :
+                    (DrumInstruments.Find(algorithm) ?? throw new NotSupportedException("Unknown instrument.")).Defaults;
                 var sound = edit.AddSound(name, algorithm);
-                edit.SetSoundParameters(sound, instrument.Defaults);
+                edit.SetSoundParameters(sound, defaults);
                 var part = edit.AddPart(pattern.Id, name, sound);
                 var source = edit.AddGraphNode(graph.Id, GraphBuiltIns.Source, new(0, pattern.Parts.Length * 120));
                 edit.BindGraphSource(attachment.Id, source.Id, placement.Id, part);

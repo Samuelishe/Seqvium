@@ -48,7 +48,7 @@ internal static class BeatSteps
         var sound = state.Sounds.SingleOrDefault(s => s.Id == part.SoundId);
         if (!part.AdditionalData.IsEmpty || sound is null || !BuiltInSound.Supports(sound))
             return "Beat.SoundUnsupported";
-        decimal root = sound.Parameters["rootPitch"];
+        decimal root = sound.Parameters.GetValueOrDefault("rootPitch", 60);
         if (part.Notes.Any(note => Step(note) is not { } step || note.Position.Ticks >= length || note.Pitch != root ||
                                    note.Intensity != 1m ||
                                    note.Duration != Duration(step, length) || !note.AdditionalData.IsEmpty) ||

@@ -147,6 +147,16 @@ Detailed editor access uses body double-click alongside single-click selection/m
 controls. The first slice uses one reusable Workspace pane. Q-032 retains independent editors and
 future composition; the [editor boundary](#full-node-editors-proposal) defines the bounded capability.
 
+## Subtractive Synth source editor
+
+A Source bound to the first-party subtractive SoundDefinition opens SynthPaneContent in the same
+retained Node Editor as Gain, Drum and PCM sources. Rack and Source double-click retain the exact
+attachment/graph/node/sound target. Waveforms, balance/detune, ADSR, filter and factory snapshots edit
+shared sound intent rather than graph-local parameters or runtime voices. Unknown state retains
+host details/refusal, without a default substitution. [UX](UX_CONTRACT.md#subtractive-synth-sound-design)
+and [audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1) own interaction and execution.
+No graph node type, cable kind or plugin API is added.
+
 ## Drum Voice source editor
 
 A Source bound to a supported built-in Drum SoundDefinition opens the substantial built-in

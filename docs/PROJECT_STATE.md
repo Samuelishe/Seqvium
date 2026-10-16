@@ -7,7 +7,19 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.13.0001**, **SEQ-SAMPLER-LOOP-QUALITY-F2 — Musical Sustain Loop Crossfade**.
+Product alpha **0.1.14.0000**, **SEQ-SYNTH-F1 — Polyphonic Subtractive Synth**.
+Rack creates a media-free melodic synth and opens its specialized Source editor. Two corrected
+oscillators, balance/detune, amplitude ADSR and low-pass cutoff/resonance share canonical sound intent,
+notes, 32 graph voice slots, Pattern/Song/Mixer, finite export and local R8 release capture. Factory
+sounds, exact/drawn editing, held/released preview, history and portable Save/Open are implemented.
+Reader 1.11 gates only synth-bearing documents. Compatible live edits retain time/unrelated voices;
+changed synth voices retire without retrigger. Seek uses a cold filter. Numerical correctness,
+physical delivery and owner aesthetic/acoustic acceptance remain distinct under
+[the report](experiments/SEQ-SYNTH-F1_REPORT.md). Private comparative research stays local. The same-checkpoint UI correction removes service text/
+nested frames, keeps oscillators paired and pins an aligned icon preview; owner aesthetic acceptance
+remains pending.
+
+Previous **0.1.13.0001**, **SEQ-SAMPLER-LOOP-QUALITY-F2 — Musical Sustain Loop Crossfade**.
 The existing Source Editor adds exact source-frame Crossfade and complementary overlap ramps.
 Positive width mixes the tail with available pre-loop audio at unchanged pitch and B-A period;
 no marker, source PCM or musical clock moves. Width is bounded by 4096 frames, half the loop and
@@ -222,7 +234,33 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-SAMPLER-LOOP-QUALITY-F2, 2026-10-16**. Final production Release solution
+Latest L0/L1/L2/L3: **SEQ-SYNTH-F1, 2026-10-16**. Sequential single-worker full Release solution
+build: zero warnings/errors, **45.55 s**. Full Release **1690/1690**, zero skips, one test thread,
+**79.133 s CLI**. The 31 focused synth cases pass (**4.503 s**) before L3: frequency/fractional pitch,
+corrected oscillator spectrum, ADSR/filter extremes, mix/velocity/32 voices, packet/rate parity,
+loop release, live unrelated-voice preservation, Stop/Panic/cold seek, zero measured warmed callback
+allocations, R8 release/Mixer exclusion/overload, Song Delay/Reverb, history/reader gates/copies and
+controlled preview ownership. Existing old-project and production regressions pass in L3.
+
+The same-checkpoint corrective UI audit retains 114 actual window renders and eight enlarged Release
+inspection views across RU/EN, Dark/Light, ordinary/reduced/compact, short/long ADSR, held/released,
+focus/pressed, each parameter's local error/range and long names. All 96 field/unit and 128 dial/value axis checks have
+zero-DIP difference. Whole ordinary/reduced editors fit without scrolling; compact markers/fields
+remain reachable with the preview pinned. Release uses a centered falling-envelope icon/short label;
+unfinished values survive preset attempts and language changes. Parameter ranges appear below the
+rejected field. Shared non-overlay scrollbars gain token-derived gutters; compact Synth uses actual
+viewport width. The shared component catalog/workspace matrix pass. Piano/Rack composition is polished.
+Strict native Saw → Sine/Undo/Redo for both oscillators in reduced/compact, note selection, ADSR
+Release versus joined Stop, portable Save/Open and physical Samsung 48-kHz preview pass. The old
+unconfirmed waveform observation did not reproduce and lacks sufficient original trace for a cause;
+separate diagnosed harness failures/refusals remain distinguished in the report.
+Affected production/test Release build: zero warnings/errors, 21.99 s; focused Synth/DesignSystem/Piano/navigation
+**52/52**, zero skips, **4.799 s CLI**. Shared Settings/navigation and narrow Rack footer review also pass.
+This supplements the unchanged DSP/format L3 above. Four short
+factory WAVs remain local for listening. Owner aesthetic/acoustic, stress, wider platform/DPI and R4
+pressure closure do not follow. The report owns final review receipts and before/after evidence.
+
+Prior L0/L1/L2/L3: **SEQ-SAMPLER-LOOP-QUALITY-F2, 2026-10-16**. Final production Release solution
 build: zero warnings/errors, **36.06 s**. Full Release **1655/1655**, zero skips, one thread,
 **75.180 s CLI**. Final test-only rate/crossfade parity/Seek expansion adds four cases: affected
 Release rebuild **3.04 s**, focused sampler **134/134**, **3.896 s**. No second full run after
@@ -405,11 +443,10 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **1** (Synth F1 reference/design documentation only;
-no production or test change). This risk-selected Sampler Editor L3 covers the shared voice
-kernel, finite loop/release admission, Pattern/Song/R8/history/media integration, reader 1.9 and
-existing production regressions. No broader platform, aesthetic, pressure
-or acoustic closure follows.
+Completed repository tasks since this L3: **0**. This risk-selected synth L3 covers shared
+voice/event/transport execution, finite release, graph/Mixer/Song/R8, reader 1.11 and existing
+regressions. The same-checkpoint corrective UI pass reuses that DSP/format L3 with focused L1/L2
+and actual rendered/native L4. It does not establish pressure, acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
 FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell
@@ -452,11 +489,8 @@ Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
-SEQ-SYNTH-F1 has an accepted [reference/design supplement](UI_DESIGN.md#synth-f1-reference-assessment-and-direction)
-and [planning gate](ROADMAP.md#seq-synth-f1--reference-and-visual-quality-supplement).
-Local/official interface study is complete within its declared limits; the tonal Synth Editor,
-bounded DSP/feature brief and actual RU/EN × Dark/Light size-matrix acceptance remain pending.
-The existing product checkpoint and verification baseline are unchanged.
+The bounded Synth F1 baseline is implemented. Owner listening/aesthetic review and broader pressure/
+platform acceptance remain separate; later modulation or synthesis families need their own scope.
 
 Finish wider Playlist/container/warp and compact editor work only through their scoped owners.
 Audio is resident, not streamed: 512 MiB per source/unique audible Audio Clip PCM, separate 128 MiB

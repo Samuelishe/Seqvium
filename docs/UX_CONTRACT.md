@@ -9,6 +9,19 @@ Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or cur
 These are intended requirements except the explicitly implemented bounded R3 host, F3-A/F3-B workflows
 and the implemented Rack, Playlist and Piano Roll sections below; broader capabilities remain future work.
 
+## Working-surface discipline
+
+Across Seqvium, ordinary working surfaces must not contain decorative explanations, service or
+architecture descriptions, instructions for obvious actions or duplicate labels. Musical editors
+must feel like finished instruments rather than automatically generated parameter forms. Use
+icon-first controls for short actions only when the icon is recognizable; retain necessary parameter
+names, musical values, actionable errors and unavailability messages as text. Put optional guidance
+in short tooltips, contextual help and accessible names, not permanent workspace paragraphs. An
+ambiguous icon needs a clearer metaphor or concise visible label, not forced icon-only presentation.
+Icon and text must form one optically balanced control. Review actual glyphs, ink, baselines, spacing,
+contrast and states in rendered images; matching bounding boxes is insufficient. Localization is part
+of design: RU and EN each require real composition review, including long names and errors.
+
 ## Implemented Pattern resampling
 
 A Pattern navigator card's **Create sample** context action captures that explicit local occurrence,
@@ -188,6 +201,8 @@ empty/step-only rhythm opens Rack. No inferred instrument/pitch classification i
 Explicit editor/channel choices are remembered per shared Pattern for the document session, across
 occurrences. Missing/unsupported remembered Parts fall back to current content; replacement clears memory.
 Playlist's Pattern open gesture uses the same editor choice. Selection alone opens no pane.
+Rack/export shortcuts belong with the Pattern/Part identity row; ordinary editing tools remain
+grouped rather than stranding those secondary actions on a new toolbar row.
 
 One retained editor targets the selected occurrence's shared Pattern and explicit Part. Target and
 sharing are visible; opening it never detaches content. All three musical views, history, playback
@@ -433,6 +448,40 @@ contains no previous runtime fallback. Repair converges automatically through th
 [Workspace](WORKSPACE.md#r4-f3-b-retained-graph-pane), [graph](NODE_GRAPH.md#implemented-r4-f3-b-first-party-editor)
 and [sample workflow](SAMPLE_WORKFLOW.md#r4-f3-b-add-wav-to-current-item) own exact bounds. Actual owner
 canvas/interaction review remains required independently of pure tests and a quiet physical smoke.
+
+## Subtractive Synth sound design
+
+Rack's Add synth creates an empty melodic channel and opens its specialized Source editor. It adds
+no notes or demo song. The channel Sound Editor action and Source-node double-click address that
+same shared sound. New synth Patterns prefer Piano Roll; remembered explicit editor choices remain
+authoritative. Piano supplies pitch, fractional transposition, duration, velocity and chords.
+
+Two waveform selectors/analytical periods, balance/detune, cutoff/resonance and editable amplitude
+ADSR expose actual DSP. Warm Bass, Soft Pad, Bright Lead and Pluck each apply one factory snapshot.
+Dials, exact values and curve handles edit the canonical block with one Undo per gesture/commit.
+Enter/focus loss accepts valid text; Escape restores it; invalid input stays local. Pointer Escape,
+capture loss and intervening generations cancel drafts. Resize cancels gestures while preserving
+unfinished text. Theme/language changes preserve target and music. Shared edits affect every use;
+independent copies retain separate intent.
+Preset selection preserves unfinished numeric input: finish or cancel the value first. Invalid text
+stays in its field, including through language changes. A rejected exact value shows that parameter's
+allowed range directly below the field, with localized units; range help is also available on the
+field/dial. Escape or a valid commit clears the local error. Parameter errors do not use the preset
+header's action-feedback slot.
+
+Hold starts a local note at the selected pitch while transport is stopped; Release sends NoteOff,
+and Stop joins the existing output owner. Preview creates no notes/history and has a finite safety
+gate. Edits stop obsolete preview; hide/retarget/shutdown withdraw it. A fixed footer stays reachable
+as controls reflow and scroll locally. Note selection, Play/hold, Release and Stop share one
+aligned transport row. Release uses a falling-envelope icon and concise visible label, because an
+upward-arrow metaphor is ambiguous with export. The editable curve uses spare ordinary-pane height
+without adding decorative filler. Held state is visibly distinct from release; unavailable release/Stop are
+disabled. Stop remains available while this editor owns the output, including after the release tail,
+so it can explicitly join teardown. Shape selection has a stronger contour as well as color.
+Omit the redundant generic scope,
+textual signal-path sentence and repeated default instrument name. Preserved user names are document
+content, not UI translations. [Audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1)
+owns voice retirement and seek limits.
 
 ## Drum Voice sound design
 

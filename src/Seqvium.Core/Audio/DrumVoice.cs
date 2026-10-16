@@ -125,5 +125,5 @@ public static class DrumVoice
 /// <summary>The two implemented first-party sound capabilities, not an extension registry.</summary>
 public static class BuiltInSound
 {
-    public static bool Supports(SoundDefinition sound) => DrumVoice.Supports(sound) || SamplerPlayback.Supports(sound);
+    public static bool Supports(SoundDefinition sound) => SynthVoice.Supports(sound) || DrumVoice.Supports(sound) || SamplerPlayback.Supports(sound);
 }

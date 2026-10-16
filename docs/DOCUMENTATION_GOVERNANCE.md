@@ -256,6 +256,12 @@ Actual third-party code, assets, and services introduced into Seqvium still requ
 in [THIRD_PARTY](THIRD_PARTY.md). Research context is distinct from distributed-material provenance;
 this rule does not remove license/notice obligations or rewrite Git history.
 
+Commercial instruments may be studied as design references. Keep detailed interface comparisons,
+source links and private-library identifiers in ignored local research material. Public requirements
+describe Seqvium's own design, behavior and acceptance criteria. Do not copy third-party images,
+unique graphics or protected code into the product; preserve required licenses, attribution and
+provenance for actual distributed dependencies and resources.
+
 ## Status and conflict resolution
 
 Distinguish **accepted constraint/direction**, **proposal**, **open question**, and **implemented fact**.

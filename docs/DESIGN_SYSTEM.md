@@ -30,7 +30,7 @@ Piano. Resolving live brushes only inside `Render` is insufficient: a cached sce
 the previous theme until another visual change. Resource refresh never requires replacing editor content.
 
 SettingsWindow consumes shared compact Window, Button, ComboBox, CheckBox, TextBox and Expander
-styles. Its shortcut scroll gutter reuses Navigation.ScrollGutter; selected page borders use Accent.Action
+styles. Its shortcut list uses the shared scrollbar gutter; selected page borders use Accent.Action
 with weight/thickness cues. Shortcut rows reserve the shared icon width for custom-only reset; a
 dot/bold chord and tooltip identify changes without color alone. ThemeCatalog feeds the shared sun/moon/check icon family without new
 palette values or control templates. About retains Brand.AboutSize and embedded typography.
@@ -212,8 +212,11 @@ RU/EN inspector reachability through scrolling. Source remains the single numeri
 Rack pads use `Rack.StepHeight` for fixed width/minimum/maximum and height, with Auto-sized beat cells.
 `Rack.BarPadding` derives the additional bar gap from shared spacing. Rich-note previews still stretch.
 The inner cap, highlight/shade overlays and pressed recess retain existing semantic materials;
-playing outline and keyboard focus remain independent. `Navigation.ScrollGutter` reserves scrollbar
-width plus shared small spacing on the Pattern list; cards do not paint underneath the bar.
+playing outline and keyboard focus remain independent. Shared ScrollViewer disables overlay auto-hide;
+`ScrollBar.VerticalGutter` and `ScrollBar.HorizontalGutter` derive the content-to-bar gap from shared
+spacing. This applies to inspectors, lists, popups and standalone timeline scrollbars. Hidden bars
+reserve no gutter. Do not add a second per-panel scrollbar-width margin. Responsive content uses
+the actual viewport width; Pattern cards do not paint underneath the bar.
 Pattern cards use up to two wrapped name lines with ellipsis beyond that, a full-name/gesture tooltip
 and a continuously resizable navigator. Its focusable boundary uses shared spacing/border/accent
 roles; width limits and collapse behavior are workspace composition geometry. Selection styling and rhythm thumbnails still use the common
@@ -251,6 +254,27 @@ explicit [UI exceptions](UI_DESIGN.md#first-party-visual-design-rules).
 The pre-GUI Single Instance failure uses a narrow native Windows diagnostic (stderr elsewhere):
 exclusive ownership failed before Avalonia/document initialization, so the secondary must not construct
 the regular application just to report that failure. It is a lifecycle exception, not another component palette.
+
+## Synth instrument components
+
+SynthPaneContent uses existing Recess materials, GainDialControl, standard buttons/ComboBox
+and numeric parameter rows in one unboxed instrument surface. Paired oscillator regions retain
+four recognizable shape choices even at compact width; selected shape adds a stronger contour and
+accent ink. Original waveform selectors/period drawings show actual selected shapes.
+Exact values center on the dial axis; a reserved right column carries the unit without shifting
+the field. Release centers its icon/text group as one item and follows button state foreground.
+SynthEnvelopePlot uses separate logarithmic A/D/R segments and an untimed dashed sustain plateau:
+an analytical schematic, never measured output or a fixed note duration. Handles and exact controls
+share real parameters/history. Drawing uses live HostVisual resources and resource-change invalidation.
+No palette/template or third-party asset is added. Local scrolling and reflowing parameter groups
+retain compact reachability. A pinned preview aligns a 40-DIP note field and three 40-DIP-high icon
+buttons on one row. HostIcons' original falling-release vector and concise localized Release label
+supplement recognizable Play and Stop icons; short localized tooltips/accessibility names supply
+complete action names. Held Play adds the existing accent surface and a stronger outline. The
+envelope plot absorbs spare vertical space; its minimum remains usable in the scrolling compact body.
+Shared styles and Gain semantics remain unchanged.
+Actual exact-field/unit alignment and localized/theme/size checks belong to
+[the report](experiments/SEQ-SYNTH-F1_REPORT.md).
 
 ## Drum instrument components
 

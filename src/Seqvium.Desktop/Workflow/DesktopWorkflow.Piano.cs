@@ -61,11 +61,13 @@ internal sealed partial class DesktopWorkflow
             if (string.IsNullOrWhiteSpace(name)) throw new InvalidOperationException("Piano.NameRequired");
             if (sound.Algorithm == PcmSampler.Algorithm)
                 PcmSampler.ValidateConfiguration(root, sound.Parameters["releaseMilliseconds"]);
-            else if (root != DrumVoice.RootPitch) throw new InvalidOperationException("Beat.SoundUnsupported");
+            else if (root != (SynthVoice.Supports(sound) ? 60 : DrumVoice.RootPitch))
+                throw new InvalidOperationException("Beat.SoundUnsupported");
             bool changed = _document.Edit("Configure Piano Roll channel", edit =>
             {
                 edit.RenamePart(pattern.Id, part.Id, name);
-                edit.SetSoundParameters(sound.Id, sound.Parameters.SetItem("rootPitch", root));
+                if (sound.Algorithm == PcmSampler.Algorithm)
+                    edit.SetSoundParameters(sound.Id, sound.Parameters.SetItem("rootPitch", root));
             });
             _status = "Workflow.Ready";
             return Task.FromResult(changed);

@@ -215,12 +215,12 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             await workflow.PlayAsync();
         });
         AddButton(toolbar, "Stop", "Stop", async () => await workflow.StopAsync());
-        AddButton(toolbar, "Rack", "Rack", () =>
+        AddButton(target, "Rack", "Rack", () =>
         {
             openRack();
             return Task.CompletedTask;
         });
-        AddButton(toolbar, "Export", "Export", () => action("ExportWave"));
+        AddButton(target, "Export", "Export", () => action("ExportWave"));
         _warning.Margin = new(8, 0, 8, 6);
         SetRow(_warning, 2);
         Children.Add(_warning);

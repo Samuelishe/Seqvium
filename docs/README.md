@@ -196,6 +196,23 @@ the shared musical content. Up to eight channels and 32 simultaneous voices are 
 Song; excessive overlapping voices/media can block
 Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
 
+## Create a synth sound
+
+Create a Pattern in Channel Rack, then choose **Add synth**. Its Sound Editor opens with a usable
+bass setting. Choose **Warm Bass**, **Soft Pad**, **Bright Lead** or **Pluck** as a starting point.
+Select two waveforms, adjust balance/detune, open the filter and shape amplitude with ADSR handles
+or exact values. The waveform drawings show oscillator shapes, not a scope.
+
+Choose a preview note and use **Hold**, **Release** and **Stop** while transport is stopped. Preview
+does not write notes. Open **Piano Roll** from the channel actions to draw a melody or chord; the
+new synth also makes Piano Roll the default Pattern editor. Double-click its Source node or use
+the channel's Sound Editor action to return to the same instrument.
+
+Edits affect every use of that shared instrument and support Undo/Redo. Save the project to keep
+parameters without an external WAV. Pattern/Song WAV export and **Create sample** include the synth;
+the latter captures local processing before Mixer. Compact editors scroll controls with preview
+still reachable.
+
 ## Compose a melody
 
 1. Create a Pattern in Rack, choose its length, and add a melodic WAV. Double-click the channel name

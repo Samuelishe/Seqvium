@@ -71,7 +71,8 @@ public static class HostMetrics
         resources["Padding.Status"] = new Thickness(0, 0, Values["Space.Gap"], 0);
         resources["Padding.Icon"] = new Thickness(3);
         resources["Rack.BarPadding"] = new Thickness(0, 0, Values["Space.Medium"], 0);
-        resources["Navigation.ScrollGutter"] = new Thickness(0, 0, Values["ScrollBar.Size"] + Values["Space.Small"], 0);
+        resources["ScrollBar.VerticalGutter"] = new Thickness(Values["Space.Medium"], 0, 0, 0);
+        resources["ScrollBar.HorizontalGutter"] = new Thickness(0, Values["Space.Medium"], 0, 0);
         resources["Type.FontFamily"] = new FontFamily(FontFamilyName);
         resources["Type.BrandFamily"] = resources["Type.FontFamily"];
         resources["Type.BrandTracking"] = -.4d;

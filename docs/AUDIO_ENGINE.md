@@ -7,6 +7,42 @@ boundary, recording, item-local hard boundaries, manual export ranges, finite ta
 preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
+## Polyphonic subtractive synth (SEQ-SYNTH-F1)
+
+`core.subtractive-synth.polyblep-v1` is a built-in media-free SoundDefinition. Its two oscillators
+offer Sine, Triangle, Saw and fixed 50% Pulse, a linear blend and oscillator-2 detune of ±100 cents.
+Note pitch is MIDI 0–127 including fractional values. Saw/Pulse use polynomial step correction and
+Triangle its integrated slope correction. This limits aliasing without promising alias-free output.
+There is no wavetable, FM, pulse-width control or modulation matrix.
+
+Linear ADSR uses A/D 0–5000 ms, S 0–1, R 0–8000 ms. NoteOff releases from the actual current
+envelope level, including during Attack/Decay. Positive gates sustain without duration-sized PCM.
+Zero Release ends at NoteOff; positive Release ends exactly at its bound. A trapezoidal state-variable
+low-pass uses worker-prepared host-rate coefficients, cutoff 20–18000 Hz and resonance 0–1 mapped
+to positive damping 2–0.1. Oscillators feed filter, amplitude/velocity and a fixed 0.18 headroom factor.
+Resonant/polyphonic sums can overload; R8 refuses overload and WAV export reports clipping.
+
+PreparedNote carries immutable derived parameters; each existing fixed voice slot owns two phases
+and two filter integrators. OfflineSampler executes identical DSP in realtime, Pattern/Song, local
+Source/Gain/Mix/Output, Mixer and export. No second scheduler, engine or document is introduced.
+The callback performs bounded arithmetic without preparation, I/O, allocation, locks or document
+access. Preflight charges 128 voice work units per frame when synth notes occur, plus existing
+event/scratch/Mixer budgets. Graph polyphony remains 32 with explicit capacity refusal; raw plans
+retain their existing limits. Voice state fits the existing conservative per-slot allowance.
+
+Pattern loops retain releases across the musical boundary and preflight overlap with all sources.
+NoteOff targets the matching iteration without restarting older releases. Stop/Panic and hard
+boundaries clear voices/filter state. Seek reconstructs phase/ADSR age with a cold filter and no
+replay from note start; historical filter/FX preroll is absent. Compatible live edits retain clock
+and unchanged voice phases/integrators; changed voices retire without mid-note retrigger. Subsequent
+NoteOns use the new sound. Preview uses NoteAuditionRequest and its existing output owner, a
+30-second safety gate, explicit Release and joined Stop.
+
+R8 freezes parameters, renders through local Output before Mixer and includes release beyond the
+Pattern boundary where necessary. The filter precedes amplitude, with no post-release tail or added
+latency. Existing cancellation/generation/media/history owners remain. [Format](PROJECT_FORMAT.md#subtractive-synth-reader-111)
+owns persistent intent; [the report](experiments/SEQ-SYNTH-F1_REPORT.md) owns evidence and listening limits.
+
 ## Sample Lab contextual audition
 
 V1 replaces a supported shared PCM Rack source in the existing prepared Pattern/Song plan. The

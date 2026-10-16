@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 10. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 11. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
@@ -27,6 +27,22 @@ require the source package or generator and never regenerates accepted audio. No
 candidate history is promised. Existing `ExtensionState` and unknown node/sound payload preservation
 and dependency-scoped execution refusal remain unchanged; R6 provides no realtime extension processor.
 See [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
+
+## Subtractive synth (reader 1.11)
+
+SoundDefinition algorithm `core.subtractive-synth.polyblep-v1` has no resources or extension payload.
+Its complete decimal parameter block is `wave1`, `wave2`, `mix`, `detune`, `attack`, `decay`, `sustain`,
+`release`, `cutoff` and `resonance`; waveforms are integer enum values 0–3. Ranges/meaning belong to
+[audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1) and the source descriptor. Factory
+presets copy actual values into the shared sound, without a serialized preset-name dependency.
+Phase, filter integrators, voices, audition and editor drafts never enter persistent state.
+
+Presence of this algorithm requires minimum reader 1.11 on Encode and Read; a falsely older envelope
+is refused. Projects without synth intent retain their existing selective gates. Unsupported algorithms,
+unknown/partial/out-of-range parameter blocks and opaque fields retain existing preservation rules
+and are refused for execution/editor mutation, without default replacement. Independent sounds copy
+canonical values to a new identity; shared uses retain the original. Undo/Redo and portable Save/Save As/Open
+use the existing document and managed-media boundaries.
 
 ## Sampler loop crossfade (reader 1.10)
 

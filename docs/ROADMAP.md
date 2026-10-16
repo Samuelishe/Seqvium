@@ -542,26 +542,14 @@ The owner-authorized built-in drum family is implemented under
 [report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md). Further voices, click layers, user-defined
 choke groups and modulation remain follow-ups; built-in percussion does not complete or reorder R6/R7.
 Local Browser/find/audition/use is implemented; wider source/context integration remains future work.
+The first bounded polyphonic subtractive synth and specialized Source editor are implemented;
+[audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1) owns scope/limits and
+[the report](experiments/SEQ-SYNTH-F1_REPORT.md) owns verification. Richer synthesis remains later work.
 
 Wavetable/granular voices, path/LFO modulation and macro morphs remain exploratory under
-[I-006](IDEAS.md#i-006--expressive-synthesis-and-modulation-surfaces), beyond this initial candidate.
+[I-006](IDEAS.md#i-006--expressive-synthesis-and-modulation-surfaces), beyond the implemented subtractive instrument.
 All future editors require equal Dark/Light expressive quality, shared materials, economical text
 and meaningful icons alongside supported parameters; dark appearance must not regress for Light.
-
-### SEQ-SYNTH-F1 — reference and visual quality supplement
-
-The owner requires reference-led design for the first bounded tonal Synth Editor, with musical
-expression, usability and visual quality treated alongside DSP correctness. The
-[reference assessment and direction](UI_DESIGN.md#synth-f1-reference-assessment-and-direction)
-records inspected local images and official Vital, Surge XT, Polymer, Analog and 3x OSC sources,
-selected interaction/composition principles and explicit rejections. Retain Seqvium's own materials,
-RU/EN, Dark/Light and compact Workspace use; show only working synthesis capabilities.
-
-This supplement is accepted; the F1 DSP/feature implementation brief remains unspecified in the
-current repository. It does not select oscillator count, modulation, presets or voice execution,
-reorder R12, or mark a tonal synth implemented. F1 completion requires actual Synth Editor renders
-and interaction review across both languages/themes and ordinary/reduced/compact geometries,
-with a short reference comparison and explicit evidence limits under the linked acceptance gate.
 
 ## SEQ-R12 — First Track Release
 

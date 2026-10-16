@@ -74,7 +74,6 @@ internal sealed class PatternNavigator : Grid, IDisposable
                 Refresh();
             }
         };
-        _items.Bind(MarginProperty, this.GetResourceObservable("Navigation.ScrollGutter"));
         var scroll = new ScrollViewer
         {
             Content = _items, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,

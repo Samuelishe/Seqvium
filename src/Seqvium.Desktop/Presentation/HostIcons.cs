@@ -31,6 +31,7 @@ internal static class HostIcons
         ["Start"] = "M5 4V20 M19 5L8 12L19 19Z",
         ["SaveAs"] = "M5 3H17L21 7V11 M3 21V3H5 M7 3V9H16V3 M7 19V14H11 M13 21L14 17L20 11L23 14L17 20Z",
         ["Play"] = "M8 5L19 12L8 19Z",
+        ["NoteOff"] = "M3 5H6 M10 7L17 17 M8 3A2 2 0 1 1 8 7A2 2 0 1 1 8 3 M19 17A2 2 0 1 1 19 21A2 2 0 1 1 19 17 M3 21H13",
         ["Stop"] = "M6 6H18V18H6Z",
         ["Panic"] = "M8 3H16L21 8V16L16 21H8L3 16V8Z M12 7V13 M12 17V17.1",
         ["Undo"] = "M8 5L3 10L8 15 M3 10H13C19 10 21 15 19 19",

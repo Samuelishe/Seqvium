@@ -33,6 +33,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     private readonly GainTransferPlot _plot;
     private readonly DrumVoicePaneContent _drum;
     private readonly SamplerPaneContent _sampler;
+    private readonly SynthPaneContent _synth;
     private readonly Grid _gain = new() { RowDefinitions = new("Auto,Auto,Auto,Auto"), Classes = { "parameterRow" } };
     private readonly Expander _curve;
     private readonly DispatcherTimer _changeNotice = new() { Interval = TimeSpan.FromSeconds(3) };
@@ -119,6 +120,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         Children.Add(_detailsScroll);
         SetRow(_status, 2);
         Children.Add(_status);
+        _synth = new(shell, workflow); SetRow(_synth, 1); Children.Add(_synth);
         _sampler = new(shell, workflow);
         SetRow(_sampler, 1); Children.Add(_sampler);
         _drum = new(shell, workflow);
@@ -257,9 +259,10 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             var drumSound = _editor.Target is { } drumTarget && _editor.State is { } drumState
                 ? DrumEditorSession.Resolve(drumState, drumTarget)
                 : null;
+            bool synth = drumSound is not null && SynthVoice.Supports(drumSound);
             bool drum = drumSound is not null && DrumVoice.Supports(drumSound);
             bool sampler = drumSound is not null && SamplerPlayback.Supports(drumSound);
-            string title = sampler ? _shell["Sampler.Title"] : drum ? _shell["Drum.Title"] : node is null ? _shell["Pane.NodeEditor"] : NodeName(node);
+            string title = synth ? _shell["Synth.Title"] : sampler ? _shell["Sampler.Title"] : drum ? _shell["Drum.Title"] : node is null ? _shell["Pane.NodeEditor"] : NodeName(node);
             if (title != Title)
             {
                 Title = title;
@@ -267,7 +270,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             }
 
             _scope.Text = Scope();
-            _scope.IsVisible = _scope.Text.Length > 0;
+            _scope.IsVisible = !synth && _scope.Text.Length > 0;
+            SetRow(_synth, 0); SetRowSpan(_synth, 2);
             AutomationProperties.SetName(this,
                 Title + ". " + (node is null
                     ? _shell[_editor.Target is null ? "NodeEditor.NoTarget" : "NodeEditor.TargetMissing"]
@@ -276,7 +280,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             AutomationProperties.SetHelpText(this, target?.NodeId.ToString() ?? "");
             bool gain = NodeEditorSession.SupportsGain(node);
             _gainScroll.IsVisible = gain;
-            _detailsScroll.IsVisible = !gain && !drum && !sampler;
+            _detailsScroll.IsVisible = !gain && !drum && !sampler && !synth;
+            _synth.IsVisible = synth; _synth.Observe(synth ? _editor.Target : null);
             _sampler.IsVisible = sampler;
             _sampler.Observe(sampler ? _editor.Target : null);
             _drum.IsVisible = drum;
@@ -306,7 +311,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             _details.Classes.Set("secondary", node is null && _editor.Target is null);
             _details.Classes.Set("warning", node is null && _editor.Target is not null);
             RefreshPreview();
-            if (!drum && !sampler && node is { Type: GraphBuiltIns.Source } && GraphConnectionRules.Supported(node) &&
+            if (!drum && !sampler && !synth && node is { Type: GraphBuiltIns.Source } && GraphConnectionRules.Supported(node) &&
                 IsEffectivelyVisible &&
                 target is not null && _sourceBasis != (target, _workflow.State.Generation))
             {
@@ -569,6 +574,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     {
         _drum.Suspend();
         _sampler.Suspend();
+        _synth.Suspend();
         _level.Cancel();
         _dial.Cancel();
         _editor.CancelDraft();
@@ -591,5 +597,6 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         _shell.PropertyChanged -= PreferencesChanged;
         _drum.Dispose();
         _sampler.Dispose();
+        _synth.Dispose();
     }
 }

@@ -39,17 +39,28 @@ library below. If suitable local images are unavailable, search for and inspect 
 interfaces on the web before editing. Reading a catalog or relying on memory does not satisfy this
 gate. References inform composition and hierarchy; their graphics are not application assets.
 
-Working surfaces must not become documentation. Never add permanent tutorials, explanatory paragraphs,
-formulas, canonical/runtime terminology, UUIDs or redundant diagnostic counters to the musical flow.
+Across Seqvium, working surfaces must not become documentation. Never add decorative explanations,
+architecture/service descriptions, instructions for obvious actions, duplicate labels, permanent
+tutorials, formulas, canonical/runtime terminology, UUIDs or redundant diagnostic counters to the
+musical flow.
+Service comments and generated-sounding explanations are prohibited unless essential to the user's
+next action. A musical instrument must have a deliberate composition, not resemble an automatically
+generated parameter form. Express a clearly recognizable action primarily through an icon; put its
+localized name in a short tooltip and accessibility label. Add visible text only when the icon alone
+would make the action ambiguous. This applies especially to preview transport.
 Prefer familiar icons and one- or two-word actions. Show the selected sound, waveform, notes, controls
 and actual musical state. Keep tempo, pitch, position and useful levels where they support a decision;
 show exact source/recipe/engineering data only on deliberate inspection. Do not duplicate a value in
 several formats or replace a usable control with an explanatory sentence.
 
-Short tooltips name actions or essential scope; they are not a place to hide the same long tutorial.
-Concise errors, unavailable state and consequential shared-edit scope remain understandable.
+Short tooltips, contextual help and accessible names carry optional guidance, not permanent workspace
+paragraphs. They are not a place to hide the same long tutorial. Necessary parameter names, musical
+values, actionable errors, unavailable state and consequential shared-edit scope remain text.
 Review empty and populated panels together at normal and reduced sizes in RU/EN and Dark/Light.
 Remove unnecessary words/numbers before adding help text to explain an overloaded composition.
+Optical review is mandatory: control rectangles alone do not establish centered content. Inspect
+actual glyph bounds, icon ink, baseline, spacing, contrast and the combined icon/text visual center.
+RU and EN are separate compositions; verify both instead of assuming a translation fits unchanged.
 
 Playlist now separates form from events: a quiet named/color band directly beneath the bar ruler
 makes sections legible across a dense mixed arrangement. The section navigator gives precise access;
@@ -136,138 +147,80 @@ keep concise contextual menu labels. An icon does not replace a necessary musica
 
 ## Reference library and next-editor direction
 
-The home-machine library contains 34 inspected owner-supplied images: 19 earlier references, including
-the AVIF, and 15 new synth/drum/sampler/browser/dynamics references. Originals
-are catalogued outside Git under `%USERPROFILE%/Documents/Seqvium Resources/Design References`, with
-stable PR/PL/MX/EQ/SY/DS/SA/SB/CP IDs, original paths/names, SHA-256, dimensions, identification confidence and
-per-image observations/limits. The local `index.html` provides search and original-image access;
-`catalog.json`/CSV, `DESIGN-BRIEF.md` and the private `MUSICAL-EDITORS.md` preserve provenance and
-assessment. The new batch was copied, retaining inbox originals; its receipt records source/target
-hashes, sizes and modification times, and prior metadata editions are retained. Earlier IDs/records
-remain unchanged. Search includes bilingual tags, original names/paths, lessons and checksums, with
-category filtering. Original publication URLs
-and reuse rights were not supplied. These are private study references, never distributable assets.
-[Development](DEVELOPMENT.md#local-development-resources) owns the local-resource entry points.
-Earlier reference locations describe their originating machine; their absence on another machine
-does not invalidate the design owners or authorize reconstruction of missing personal material.
-The current work-machine catalog uses `WORK-`-prefixed IDs and local Previews. Inspect that actual
-catalog/images rather than assuming the home-machine count or identifiers are present unchanged.
+Actual reference images and comparative assessments remain in a local, ignored library.
+[Development](DEVELOPMENT.md#local-development-resources) owns its entry point. Inspect actual images
+before changing first-party UI; catalog metadata alone is insufficient. Missing personal material on
+another machine does not authorize reconstructing or distributing it. Screenshots establish visible
+composition, not source-product gestures, measured behavior or sound quality.
 
-The following are selected directions, not claims about source-DAW gestures or sound. The preparation
-implemented theme/control economy; SEQ-R9 now implements the bounded Piano surface below. Static
-images establish visible composition, not performance/acoustic evidence. [UX](UX_CONTRACT.md) owns
-Seqvium's implemented gestures; remaining reference-derived capabilities stay proposals.
+Public design requirements describe Seqvium itself:
 
-| Working area             | Selected solution and comparison with Seqvium                                                                                                                                                                                                                                                    | Implementation boundary                                                                                                                                                                 |
-|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Piano Roll               | PR-05 note bodies/pitch labels, PR-01 bracket, PR-03 aligned velocity and PR-02 dense-content review inform the implemented original SEQ-R9 composition below                                                                                                                                    | Shared NoteEvents/history, explicit Part, root/audition and Rack preservation are verified within the bounded report; PR-04 controller curves remain later                              |
-| Channel Rack             | Existing bevelled pads/beat groups remain the rhythm surface. Identified Part labels/menus open Piano Roll; rich rows show real note previews                                                                                                                                                    | No flattening into step pads; per-channel mix controls remain planned                                                                                                                   |
-| Playlist                 | PL-02's meaningful note/audio/automation distinction, PL-04's stable track/time composition and PL-03's saturated Light bodies with dark content ink. Keep the implemented fixed headings, overview, shared clips and scoped selection; improve existing compositions when musical work benefits | Current thumbnails show real notes. Waveforms, sections, automation and lower contextual editors require their actual owners; arrangement tracks do not imply Mixer channels            |
-| Node Graph / Node Editor | Retain the implemented free canvas, typed ports, nearest-cable selection and target-aware editor. EQ references favor a large meaningful visualization with optional exact parameter depth; a processing summary opens the graph rather than putting every cable in the music editor             | Gain's transfer curve is analytical, not a measured signal. New processors/editors need actual parameter/provider and lifecycle ownership                                               |
-| Synthesizers             | SY-02's oscillator cards and function-colored envelope/LFO/filter regions, SY-01's sculpted caps and meaningful waveform/modulation surfaces. Use graduated arcs, clear position and exact entry around supported musical functions                                                              | Instrument DSP, state, voices and modulation ownership first; visible path/granular controls do not prove algorithms or source gestures                                                 |
-| Mixer                    | MX-03's tactile knobs/recessed faders, MX-04's readable signal ladders and MX-01's aligned channel identity. Preserve a useful strip minimum and horizontal bank navigation; keep Master locatable, M/S distinct and routing depth contextual                                                    | Real level/pan/mute/solo, measured taps, channel identities and routing differ from Playlist organization; do not fabricate meters or copy touch-screen proportions                     |
-| Effects / EQ             | EQ-05's dominant curve/selected handles and EQ-03's selected-band Frequency/Gain/Q panel are strongest. EQ-01/EQ-02 link band colors to controls; EQ-04 keeps analysis subordinate to editable curves. Selected-band depth beats permanent all-band machinery                                    | Actual EQ/filter/analysis/automation capabilities and bounded measured data first; pitch tracking, dynamic EQ and transient/tonal separation remain processor work                      |
-| Browser / Sample Lab     | SB-02's waveform/duration results and selected preview player, SB-01's category/source hierarchy and SB-03's generous selected waveform. Lead with local find/audition/explicit use; disclose source/root/BPM details as needed                                                                  | Browser images supply composition evidence, not Sample Lab generation or implemented discovery UI. Preview/use/publication stay under SAMPLE_WORKFLOW; cloud/store scope is not implied |
+| Working area | Composition requirement | Boundary |
+| --- | --- | --- |
+| Piano Roll | Readable note bodies/pitch labels, selection brackets and aligned velocity | Preserve shared notes/history and Part identity; controller curves require implemented capability |
+| Channel Rack | Tactile beat groups, clear channel identity and real melodic note previews | Do not flatten rich notes into step pads |
+| Playlist | Stable track/time hierarchy, meaningful note/audio distinction and readable content in both themes | Arrangement organization remains distinct from Mixer routing |
+| Node Graph / Editor | Free canvas, typed ports, precise selection and a target-aware focused editor | Analytical curves are not measured signals |
+| Synthesizers | Clear oscillator choices, tactile controls and editable ADSR in a compact original instrument | Expose only actual DSP/state/voice capabilities |
+| Mixer | Recessed faders, readable levels and aligned channel identity; locatable Master | Display measured taps only; disclose routing contextually |
+| Effects / EQ | Prominent editable curve and selected-parameter depth | Analysis and additional processing modes require real implementation |
+| Browser / Sample Lab | Local find, selected waveform, audition and explicit use | Generation, preview and publication retain their existing owners |
 
-Physical character belongs mainly to controls and instrument panels. Grids and analytical plots need
-quiet surfaces so notes, connections and curves stay legible. Light's strongest supplied evidence is
-PL-03 (Pro Tools) and PL-05 (REAPER-style), with SB-01 supplying Light Browser structure;
-Light knobs/EQ/synth composition must be designed and
-reviewed independently, not claimed as observed in dark screenshots. Do not extract proprietary icons,
-panel textures or screenshots. Existing original vectors/derived materials cover this preparation;
-create new original assets only for a concrete editor need.
-
-[R9 planning](ROADMAP.md#seq-r9--piano-roll) and the existing later-stage follow-ups own deferred work.
-The [preparation report](experiments/SEQ-HOME-RESOURCES_REPORT.md) records actual verification limits.
+Physical character belongs mainly to controls and instrument panels; musical grids and plots need
+quiet surfaces. Review Light and Dark independently. Never extract third-party icons, textures,
+images or protected code. Existing original vectors and shared materials supply Seqvium's visual
+language; actual dependencies retain their required licenses and attribution.
 
 ### Synth F1 reference assessment and direction
 
-**Accepted design requirement for SEQ-SYNTH-F1; implementation and visual acceptance are pending.**
+**Implemented Synth F1 composition; owner aesthetic acceptance remains separate.**
 Musical expression, ease of sound exploration and visual quality have equal priority with correct DSP.
-This supplement defines the quality bar, not oscillator count, parameter ranges, voice architecture
-or additional synthesis features. Those need the bounded F1 implementation brief and their technical owners.
-No tonal Synth Editor exists in the inspected baseline; the implemented Drum/source editors are distinct.
+Detailed research belongs in ignored local study materials. Public contracts describe Seqvium's own
+behavior and design; reference study does not authorize copying images, graphics, protected code or
+unique assets. Actual distributed dependencies retain their required licenses and attribution.
 
-#### Reference evidence and musical workflow
+Use one original Seqvium instrument chassis with a quiet sound/preset identity row, two visually
+clear oscillator regions, balance beside the sources, filter controls along the real signal path,
+and a prominent editable amplitude ADSR. Show recognizable waveform choices and the actual analytical
+oscillator shape. Primary musical functions should remain simultaneously accessible rather than
+becoming a long settings form. Convey signal order through spatial grouping instead of a permanent
+explanatory arrow sentence: the envelope controls amplitude, rather than carrying audio.
+Include only working DSP parameters and supported capabilities.
 
-On 2026-10-16 the actual work-machine catalog contained 91 entries, rather than the home-machine
-34-image collection. Inspected local images include WORK-SY-004 (Vital), WORK-SY-001 (Serum 1),
-WORK-SY-003 (Serum 2) and WORK-DS-006 (KICK 2). Vital makes waveforms and envelopes visually dominant;
-Serum separates oscillator anatomy from modulation and gives caps a readable pointer/rim;
-KICK 2 gives a directly meaningful curve priority over secondary controls. These observations concern
-visible composition only. The home SY-01/SY-02 IDs must not be substituted for work-machine records.
-Private originals/catalogs remain outside Git and are not runtime assets.
+Spend space on meaningful waves/curves, comfortable tactile dials, readable pointers/scales and
+cutoff manipulation. Keep useful musical values beside their controls without redundant captions.
+Distinguish analytical shapes/responses from measured output; no fake scope, spectrum, modulation
+or voice activity. ADSR distinguishes A/D/R time from the S level and held-note duration. Curve and
+exact input edit the same parameters. Preserve capture/cancel, focus, keyboard precision and atomic
+Undo under the UX contract; audible live editing needs its own verified execution boundary.
 
-Official public pages, current manuals and their actual interface images were also inspected below.
-The latest Bitwig guide still labels its Polymer device image v3.3; the product-page animation is
-labelled 4.4. These are manufacturer-published references, not evidence of a locally installed latest
-build. Three sampled frames of the five-frame Polymer animation show stable module positions through
-model changes. Linked videos were located, but no video playback, hands-on use or acoustic comparison
-of these products was performed. The musical workflows below are derived from manuals, with Seqvium
-design conclusions explicitly separated from observations.
+Use shared HostPalette, HostMetrics, HostMaterials, original vectors, bundled typography and existing
+controls where their semantics fit. Dark retains slate/jade depth; Light uses cool-steel materials
+and strong curve/control ink. Both need independently readable selection, focus and active states.
+RU/EN labels, short tooltips and accessible names remain complete. No local language/theme settings,
+dormant processor panels, permanent tutorials or technical counters belong on the working surface.
 
-| Reference and evidence | Musician's workflow described by the source | Selected principle and deliberate rejection for F1 |
-| --- | --- | --- |
-| [Vital](https://vital.audio/), plus local WORK-SY-004 | Inspect oscillator waves, adjust source controls, shape envelopes and inspect filter response; the product describes visual modulation previews before committing a connection. | Make wave choice and envelope shape immediate, meaningful feedback. Reject wavetable stacks, macro columns, multiple modulation tabs and decorative animated signal displays unless F1 actually implements the corresponding capability. |
-| [Surge XT manual](https://surge-synthesizer.github.io/manual-xt/) and its full interface image | Select an oscillator, choose its algorithm, balance sources in the mixer, change cutoff/resonance and shape separate filter/amplitude envelopes. A muted oscillator's waveform dims. | Keep sound generation, balance and shaping visibly related; identify an envelope's destination. Reject dual scenes, modulation routing banks, multiple filter topologies and an always-visible effect rack for the smaller F1. |
-| [Polymer guide](https://www.bitwig.com/userguide/latest/synth/) and [product demonstration page](https://www.bitwig.com/polymer/) | Choose an oscillator, filter and envelope in dedicated slots; adjust cutoff and envelope stages in the same compact panel. The manufacturer animation changes models without moving these main regions. | Use a short, stable instrument composition and emphasize frequently manipulated controls. Reject module swapping, conversion to Grid, sub/noise/PM/FX areas unless independently included in F1; the reference is not a feature checklist. |
-| [Ableton Analog manual, sections 31.1.1–31.1.6](https://www.ableton.com/en/live-manual/12/live-instrument-reference/#analog), full device and envelope images | Choose wave and tuning/level in the shell, open the selected section's display for depth, then adjust filter frequency/resonance and ADSR. The display visualizes the selected section while primary controls remain available. | Preserve functional hierarchy and a readable source-to-filter-to-amplitude relationship. Reject its two parallel oscillator/filter/amplifier paths, dense global/MPE options and hiding the only amplitude envelope behind a section switch. |
-| [FL Studio 3x OSC manual](https://www.image-line.com/fl-studio-learning/fl-studio-online-manual/html/plugins/3x%20Osc.htm) and actual interface image | Select shapes with waveform buttons, adjust coarse/fine tuning and mix sources; filter/envelope work belongs to the integrated channel/Sampler controls. Oscillator 3's mix reduces the combined contribution of 1 and 2. | Offer direct shape choices and repeatable oscillator anatomy. Reject the order-dependent balance model, decorative branding area and moving essential F1 shaping into another settings surface. A blend control must represent F1's actual mix law. |
-
-#### Selected composition and interaction direction
-
-Use one original Seqvium instrument chassis: a quiet sound/preset identity row; compact oscillator
-regions with recognizable shape choices and an actual analytical wave; balance beside its sources;
-filter controls along the signal path; and a prominent editable amplitude ADSR. Prefer simultaneous
-access to these few musical functions over a long parameter form. The exact arrangement follows the
-implemented F1 signal order; do not draw audio flowing through an envelope generator when it actually
-controls an amplifier. Any filter envelope needs its own real DSP/state and a clear destination.
-
-Spend space on the waveform and editable curve, comfortable tactile dials, readable pointers/scales
-and the cutoff gesture. Keep a musical value beside its control without repeating it in captions.
-Draw only implemented shapes; distinguish an analytical oscillator period, analytical filter response
-and measured output. Do not show a fake scope/spectrum, animated voices or unsupported response curve.
-ADSR must distinguish time-based A/D/R from the S level and held-note duration: a drawn sustain plateau
-does not promise a fixed note length. Exact input and the curve must edit the same parameters.
-Capture/cancel, focus, keyboard precision and one-gesture/one-Undo follow existing UX contracts;
-live audible editing requires its own verified runtime boundary.
-
-Retain slate/jade materials, original vectors, Onest/JetBrains Mono and shared HostPalette,
-HostMetrics, HostMaterials, GainDialControl and standard field/button styles where their semantics fit.
-These are composition requirements, not a new implemented component API. Light needs its own cool-steel
-depth, strong curve/control ink and readable active state; it cannot be a washed-out inversion of Dark.
-Labels/tooltips/accessibility names work in RU/EN. No local language/theme controls, dormant processor
-panels, copied graphics, screenshot textures, permanent tutorials or technical counters belong here.
-
-Narrow panes reflow functional groups in the same musical order and scroll editor content locally,
-retaining useful grab targets and text size. Keep audition reachable while editing; reuse the existing
-instrument interaction language where appropriate, with actual held/released-note semantics verified
-for the synth. Comparing timbres can use repeatable audition, existing history and working presets;
-this does not authorize an unimplemented A/B bank, MIDI keyboard or new global shortcut.
+Narrow panes reflow functional groups in the same musical order and scroll content locally without
+shrinking text or useful grab targets. Keep held/released audition and Stop reachable while editing.
+Repeatable preview and working factory sounds support timbre comparison without a new sequencer,
+keyboard system, modulation bank or unsupported comparison mode.
 
 #### Required Synth Editor visual acceptance
 
-Render the actual production Synth Editor, rather than a mockup or a Drum editor labelled Synth.
-Review every RU/EN × Dark/Light combination in a FullHD workspace with neighbouring musical panes,
-a reduced main window and the smallest supported Synth pane. Record actual window/pane DIP sizes,
-display scale and screenshot paths; select final compact bounds from real implementation, not a
-scaled screenshot. Initial review targets are a 1920×1080 desktop and a 1280×800 reduced desktop,
-with compact pane geometry declared separately. These targets are not new host minimum dimensions.
+Render the actual production Synth Editor. Review every RU/EN × Dark/Light combination in a FullHD
+workspace with neighbouring musical panes, a reduced main window and the smallest supported Synth
+pane. Record actual window/pane DIP sizes, display scale and screenshot paths. Initial review targets
+are a 1920×1080 desktop and a 1280×800 reduced desktop; declare compact pane geometry separately.
+These targets do not change the host's minimum dimensions or justify scaling screenshots.
 
-At each configuration inspect initial/default and edited sounds, short/plucked and sustained/released
-envelopes, long RU labels/preset names, selection/focus and any supported unavailable/error state.
-Exercise shape choice, oscillator balance, ADSR handles/exact values, filter movement and repeated
-timbre audition. Check that visible changes affect the sound, released notes follow Release, and
-Undo/Redo and resize do not lose the selected sound or an input draft. Verify real field alignment,
-pointer capture/Escape/reversal, local scrolling and reachability at compact sizes. Reuse existing
-visual tooling; label routed versus native input evidence accurately.
-
-The F1 completion report must show representative real renders and record the complete matrix,
-then compare composition and manipulation against the inspected references: waveform/curve clarity
-from Vital, functional grouping from Surge, compactness from Polymer, hierarchy from Analog and
-shape selection from 3x OSC. Include deliberate rejections and reasons, defects found/fixed and any
-remaining limits. Rendering/input evidence is separate from owner aesthetic acceptance and DSP/audio
-evidence. This research pass supplies no Synth renders or completed acceptance claim.
+Inspect default and edited sounds, short/plucked and held/released envelopes, long localized names,
+selection/focus and supported unavailable/error states. Exercise waveform choice, oscillator balance,
+ADSR handles/exact values, filter movement, presets and repeated preview. Check the audible result,
+Release after NoteOff, Undo/Redo, preserved target/input drafts through resize, real field alignment,
+pointer capture/Escape/reversal, scrolling and compact reachability. Label routed/native evidence
+accurately. The [completion report](experiments/SEQ-SYNTH-F1_REPORT.md) records real renders, the complete matrix, usability
+findings, corrections and remaining limits against these Seqvium requirements. Render/input evidence,
+owner aesthetic acceptance and numerical/audio evidence remain distinct.
 
 ### Implemented Drum Voice composition
 
@@ -416,7 +369,7 @@ The [review report](experiments/SEQ-UI-REDESIGN_REPORT.md) records implementatio
 | Screenshots 6–7, Logic               | Track colors repeated in the grid, clear time ruler, integrated editing hierarchy                 | Shared Rack colors, real Playlist and SEQ-R9 Piano Roll; deeper integration remains separate         |
 | Screenshot 8, omniGRID               | Dense legible rhythm and contextual per-note depth                                                | Take direct editing and disclosure; avoid microscopic text and arbitrary knob inventory              |
 | FabFilter Pro-Q 4 image              | Large purposeful analytical surface, curves, quiet tools around the signal                        | Actual Gain transfer fill/glow now; live spectrum/EQ require real processing and measurement         |
-| Serum image                          | Layered instrument chassis, finely graduated knobs, shape/value feedback                          | Graduated captured Gain dial; future instruments inherit shared materials with their own composition |
+| Instrument material study            | Layered instrument chassis, finely graduated knobs, shape/value feedback                          | Graduated captured Gain dial; future instruments inherit shared materials with their own composition |
 | Reason rack image                    | Physical panel depth, coherent rack hardware, color/material character                            | Raised panels, bevels and light; decorative hardware must not displace musical work                  |
 
 The references justify material richness. Their tiny controls, cryptic abbreviations and excessive
@@ -435,8 +388,7 @@ RU/EN × Dark/Light at ordinary/reduced size; detailed results belong to the
 [stretch report](experiments/SEQ-R10-STRETCH-F1_REPORT.md).
 
 The owner-supplied five timeline images were inspected and moved from Desktop/screens to
-`%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`. Earlier Logic, Reason, Serum and FabFilter
-references were also reviewed for hierarchy/materials. These are private local visual targets, not
+`%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`. Earlier local studies were also reviewed for hierarchy/materials. These are private local visual targets, not
 distributed application assets; the implementation uses original vectors and shared host resources.
 
 | Reference                                               | Strong transferable solution                                                                                | Implemented / planned boundary                                                                                                                                                      |
@@ -446,7 +398,7 @@ distributed application assets; the implementation uses original vectors and sha
 | `1.-Color.jpg`, SONAR                                   | Strong colored track identity, substantial controls, visible editing tools and waveform/fade detail         | Adapt header/material depth and real gates; waveform trim/fades require supported audio-clip semantics, not decorative waveforms                                                    |
 | `VJPS1X.jpg`, Cubase                                    | Stable inspector/track column, musical range, organized groups, precise source editor and measured Master   | Fixed headings, committed contextual track settings and scalable view now; musical range now works; groups/sample editor/Master measurement require their owners                    |
 | `daw-software-editing.jpg`, stylized DAW illustration   | Rapid visual distinction of musical layers and a clear primary working area                                 | Adapt color hierarchy only; it is an illustration, not pixel/interaction authority or permission for simulated Mixer/meters                                                         |
-| Earlier Logic / Reason / Serum / FabFilter              | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light           | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability                                                     |
+| Earlier local composition studies                      | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light           | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability                                                     |
 
 Playlist is a recessed time surface with substantial fixed track headers and a compact tool area.
 Clip headers carry source names, bodies show real note position/duration/pitch, track tint connects the
@@ -772,7 +724,10 @@ Make keyboard focus, document selection, active pane and relevant command target
 without treating them as one visual state. Essential invalid/unavailable state and pending operations
 need non-color/structural cues where applicable, such as shape/outline, labels, icons and concise
 context explanation. Color and transient animation may supplement these cues but cannot be their
-only carrier. Pane chrome, controls and shortcut hints should support discoverable keyboard access
+only carrier. Invalid exact input keeps its draft and shows the allowed range beside the
+affected field, rather than a detached generic message. Shared scrollbars reserve a visible gap from
+content on both axes; panels must not paint controls beneath them or add duplicate compensating gutters.
+Pane chrome, controls and shortcut hints should support discoverable keyboard access
 under [UX](UX_CONTRACT.md#essential-accessibility-feedback) and
 [WORKSPACE](WORKSPACE.md#keyboard-access-and-focus-return). Exact focus visuals, contrast/dimensions,
 accessibility-tree representation and APIs need later design/evidence; no certification is claimed.

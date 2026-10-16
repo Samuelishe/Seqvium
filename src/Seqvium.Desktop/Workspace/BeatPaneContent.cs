@@ -40,7 +40,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
     internal event Action<Id<MusicalPart>>? PianoRequested;
     internal event Action<Id<MusicalPart>>? SoundRequested;
     internal event Action<Id<SoundDefinition>>? MixerRequested;
-    private readonly Button _drum = new();
+    private readonly Button _drum = new(), _synth = new();
     private readonly List<(MenuItem Item, string Key)> _menuLabels = [];
     private readonly ComboBox _bars = new() { MinWidth = 90 };
     private readonly Button _delete = new() { Classes = { "command", "danger" } };
@@ -126,13 +126,14 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         SetRow(tray, 2);
         Children.Add(tray);
         var footer = new Grid
-            { ColumnDefinitions = new("Auto,*,Auto"), Margin = new(12, 8, 12, 8), ColumnSpacing = 16 };
+            { ColumnDefinitions = new("*,Auto"), Margin = new(12, 8, 12, 8), ColumnSpacing = 8 };
         _add.Classes.Add("primary");
-        var addActions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        var addActions = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 8, LineSpacing = 4 };
+        addActions.Children.Add(_synth);
         addActions.Children.Add(_drum);
         addActions.Children.Add(_add);
         footer.Children.Add(addActions);
-        SetColumn(_position, 2);
+        SetColumn(_position, 1);
         footer.Children.Add(_position);
         SetRow(footer, 3);
         Children.Add(footer);
@@ -189,6 +190,16 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         });
         AutomationProperties.SetAutomationId(_create, "Beat.Create");
         AutomationProperties.SetAutomationId(_add, "Beat.AddWav");
+        AutomationProperties.SetAutomationId(_synth, "Beat.AddSynth");
+        _synth.Click += async (_, _) =>
+        {
+            if (_basis is not { } basis || !PendingCommand.IsCompleted) return;
+            var before = BeatSteps.Resolve(_workflow.State).Pattern!.Parts.Select(p => p.Id).ToHashSet();
+            PendingCommand = _workflow.AddDrumVoiceAsync(basis, _shell["Synth.Title"], SynthVoice.Algorithm);
+            await PendingCommand; Refresh();
+            var created = BeatSteps.Resolve(_workflow.State).Pattern?.Parts.SingleOrDefault(p => !before.Contains(p.Id));
+            if (created is not null) SoundRequested?.Invoke(created.Id);
+        };
         AutomationProperties.SetAutomationId(_drum, "Beat.AddDrum");
         _drum.Click += (_, _) =>
         {
@@ -313,6 +324,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 return;
             }
 
+            button.HorizontalContentAlignment = HorizontalAlignment.Center;
             var row = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "compact" } };
             row.Children.Add(HostIcons.Create(button == _add ? "Add" : "Rack", button, 16));
             row.Children.Add(new TextBlock { Text = text, VerticalAlignment = VerticalAlignment.Center });
@@ -354,6 +366,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             Label(_create, "Beat.Create");
             Label(_add, "Beat.AddWav");
             Label(_drum, "Drum.Add");
+            Label(_synth, "Synth.Add");
             Label(_name, "Beat.Name");
             Label(_apply, "Beat.ApplyName");
             Label(_target, "Beat.Target");
@@ -400,6 +413,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 : DesktopWorkflow.BeatChannelRefusal(state, pattern, attachment, graph);
             _add.IsEnabled = available && channelRefusal is null && basis is not null;
             _drum.IsEnabled = _add.IsEnabled;
+            _synth.IsEnabled = _add.IsEnabled; _synth.IsVisible = pattern is not null;
             _drum.IsVisible = pattern is not null;
             _add.IsVisible = pattern is not null;
             ToolTip.SetShowOnDisabled(_add, true);
@@ -601,7 +615,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             {
                 CancelGesture();
                 var sound = _workflow.State.Snapshot.State.Sounds.Single(s => s.Id == part.SoundId);
-                if (DrumVoice.Supports(sound)) SoundRequested?.Invoke(part.Id);
+                if (DrumVoice.Supports(sound) || SynthVoice.Supports(sound)) SoundRequested?.Invoke(part.Id);
                 else PianoRequested?.Invoke(part.Id);
                 e.Handled = true;
             }

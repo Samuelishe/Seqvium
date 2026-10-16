@@ -135,7 +135,6 @@ internal sealed class SettingsWindow : Window
 
     private Control ControlsPage()
     {
-        _commands.Bind(MarginProperty, _commands.GetResourceObservable("Navigation.ScrollGutter"));
         var body = new Grid { RowDefinitions = new("Auto,Auto,Auto,Auto,*,Auto"), RowSpacing = 8 };
         body.Children.Add(Label("Settings.Behavior", "section"));
         _localize.Add(() => _auto.Content = _shell["Browser.AutoPreview"]);

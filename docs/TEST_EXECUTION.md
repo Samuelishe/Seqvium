@@ -296,6 +296,31 @@ guarded native dial/pitch/amp handles, quiet audition, looping/live edits, finit
 It labels routed controls, native input and physical output separately; it does not claim acoustic
 listening or pressure acceptance. [Report](experiments/SEQ-FIRST-DRUM_REPORT.md) owns completed evidence.
 
+## Polyphonic subtractive synth verification
+
+SynthVoiceTests and SynthWorkflowTests cover fractional MIDI pitch/frequency, polynomial Saw/Pulse/
+Triangle spectral-folding reduction against naive forms, ADSR/current-level NoteOff, filter extremes,
+linear oscillator mix, velocity, independent/32 voices, packet/rate parity at 44.1/48 kHz, Pattern
+release overlap, live unchanged-voice continuation, Stop/Panic/cold seek and selected warmed callback
+allocation. R8 release/Mixer exclusion/overload, Song Delay/Reverb/WAV, selective reader/history/
+copies, generation/ABA refusal and controlled preview ownership exercise integration boundaries.
+
+Use the established SDK-10 MTP/xUnit command with `--filter-class "Seqvium.Tests.Synth*"` for this
+focused group. The first instrument checkpoint selects L3 for shared voice/serialization risk:
+full Release build and 1690/1690 tests, zero skips (79.133 s CLI), following 31/31 focused checks.
+VisualCheck's separate `synth` scenario owns actual window/control/field evidence; native,
+physical and owner aesthetic/acoustic evidence remain distinct in
+[the report](experiments/SEQ-SYNTH-F1_REPORT.md). The same-checkpoint UI correction selects focused
+Synth/DesignSystem/Piano/navigation checks and L4: 122 window/control inspection images, 96 field
+centers and 128 dial/value axes, preview geometry, no ordinary overflow, localized/theme/size/states,
+compact curve capture/wheel/cancel and native Saw/Sine/Undo/Redo/Save/Open plus note/Hold/NoteOff/Stop. It reuses the
+unchanged engine/serialization L3. Presenter reconciliation is explicit after workflow observations;
+command completion alone does not establish that posted UI updates have consumed the generation.
+Check readiness after dispatcher reconciliation and pending teardown. All eight exact parameters
+retain invalid drafts and show their own allowed range beside the field; 24 parse/range boundary
+checks and 32 compact error images cover this boundary. Shared scrollbar changes additionally pass
+the two-theme component catalog and populated workspace matrix, with actual non-overlay gutters.
+
 ## Required verification levels
 
 Daily music interaction uses `DesktopWorkflowTests`, `PatternEditorNavigationTests`,

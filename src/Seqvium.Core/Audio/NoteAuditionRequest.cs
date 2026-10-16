@@ -45,6 +45,9 @@ public sealed class NoteAuditionRequest : IDisposable
             {
                 cancellation.ThrowIfCancellationRequested();
                 var sound = _sound is { } id ? _frozen.Current.State.Sounds.Single(s => s.Id == id) : null;
+                if (sound is not null && SynthVoice.Supports(sound))
+                    return SamplerPreparation.PrepareSynthAudition(sound, _consumer.SampleRate, _consumer.Channels,
+                        _pitch, _intensity, _held);
                 using var pcm = sound is null ? ProjectMedia.Decode(_frozen, _resource)
                     : sound.Algorithm == PcmSampler.Algorithm ? ProjectMedia.Decode(_frozen, sound.ResourceIds.Single())
                     : DrumVoice.Render(sound, _consumer.SampleRate, _pitch, cancellation);

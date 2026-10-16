@@ -2239,10 +2239,41 @@ terminated and no global settings or Git index/history/remote changed.
 
 ## SEQ-SYNTH-F1 — reference and artistic direction supplement — 2026-10-16
 
-Inspected actual local Vital/Serum/KICK 2 images and official Vital, Surge XT, Polymer, Analog
-and 3x OSC interfaces/manuals, plus sampled Polymer demonstration-animation frames. Recorded
-workflow-derived choices, deliberate feature/composition rejections and the required real Synth
-render/input matrix in [UI design](../UI_DESIGN.md#synth-f1-reference-assessment-and-direction),
-with Roadmap/current-state routing. This is documentation-only preparation: no synth implementation,
-video playback, acoustic judgement, render acceptance or version bump is claimed. Private originals
-remain outside Git; downloaded public study images remain ignored local review evidence.
+Completed local interface research and recorded Seqvium's own requirements for visual oscillators,
+editable ADSR, functional hierarchy, original materials, compactness, accessibility and real
+localized/theme/size acceptance in [UI design](../UI_DESIGN.md#synth-f1-reference-assessment-and-direction).
+Detailed source comparisons and private-library metadata remain in ignored local study material.
+This preparation implements no synth and establishes no render, acoustic or aesthetic acceptance.
+No external assets or protected code were introduced; dependency licensing/attribution is unchanged.
+
+## SEQ-SYNTH-F1 — polyphonic subtractive instrument — 2026-10-16
+
+Implemented the media-free two-oscillator synth, polynomial waveform corrections, independent
+stateful voices, ADSR and bounded low-pass through existing execution/transport owners. Rack/Piano/
+Source editor, factory sounds, shared/independent intent/history, reader 1.11, portable Save/Open,
+Song/Mixer/export and local R8 release work together. One PATCH selects 0.1.14.0000 with BUILD reset.
+Full Release build: zero warnings/errors, 45.55 s; 1690/1690 tests, zero skips, 79.133 s CLI, including
+31 synth cases. Actual localized/theme/size editor, 96 aligned fields, routed editing/save/export,
+final guarded native controls and physical preview pass. [Report](../experiments/SEQ-SYNTH-F1_REPORT.md)
+retains failed attempts, local listening samples and limits. Public contracts describe Seqvium's own
+design; detailed comparisons stay ignored locally. No third-party assets/protected code, demo track
+or Git index/history/remote changes were introduced.
+
+The comprehensive owner-requested corrective UI audit belongs to the same Synth F1 checkpoint.
+Removed scope/path/default-name repetitions and nested frames; paired oscillators and a pinned,
+aligned preview replace the property-form composition. Final Release uses a centered original
+falling-envelope icon and concise localized label, with separately reviewed RU/EN ink bounds and
+enabled/disabled states. Values align with dial axes; spare height serves ADSR; preset attempts and
+language changes preserve unfinished input; captured curve dragging does not scroll. Piano's secondary
+Rack/Export actions move into the identity row; Rack creation wording is concise and the narrow Rack
+footer keeps its position indicator inside a bounded action layout. General UI/UX rules
+now prohibit service text, require recognizable icon-first controls, optical review, independent
+localization review and deliberate musical controls. Invalid exact values now retain the draft and
+show their parameter range directly below the field. Shared non-overlay scrollbars use token-derived
+gutters on both axes, with duplicate list compensation removed and Synth sized to its real viewport.
+Final focused Release 52/52 and the 122-image
+matrix supplement existing L3. Strict reduced/compact native Saw/Sine/history/Save/Open and preview
+pass; the earlier unconfirmed waveform click does not reproduce and is not assigned an invented cause.
+Shared catalog/workspace matrix also pass. The report distinguishes foreground refusals, publication readiness and a diagnosed instrumentation
+closure regression from product behavior. DSP/features and 0.1.14.0000 remain unchanged. No Git index,
+history, tag or remote mutation. Owner aesthetic/acoustic acceptance remains separate.

@@ -11,7 +11,7 @@ or final resource file format.
 
 **Create sample** in a Pattern navigator card's context menu renders that identified item-local
 Pattern occurrence once, at source time zero and the captured project tempo. It includes every
-supported PCM sampler/drum Part and its Source/Gain/Mix/Output paths, including an intentional local
+supported PCM sampler, drum or subtractive-synth Part and its Source/Gain/Mix/Output paths, including an intentional local
 submix. It stops before Mixer channels, buses, sends and Master. Navigator cards identify explicit
 attachments; no arbitrary Playlist placement, Song, selection or currently audible mix is inherited.
 The original Pattern, notes, sounds, graph, placements and routes remain editable and unchanged.
@@ -25,7 +25,8 @@ placement, Personal Library publication or generator dependency is added.
 
 Output is **48 kHz PCM16 WAV**, mono/stereo according to the complete local graph. It preserves the
 entire musical Pattern, including leading/trailing rests, and extends to gated PCM release/EOF and
-synthesized one-shot EOF. Stateless Gain/Mix have zero additional tail/latency. Source interpolation,
+synthesized one-shot EOF and subtractive-synth release. The synth filter precedes amplitude and adds
+no post-release tail/latency. Stateless Gain/Mix have zero additional tail/latency. Source interpolation,
 envelopes, hat choke, boundary smoothing and voice scheduling reuse OfflineSampler. PCM16 differs
 from float execution only by quantization. There is no normalization, implicit limiter, silence
 trimming, tempo stretching, preroll or state captured from live playback. An overloaded/nonfinite

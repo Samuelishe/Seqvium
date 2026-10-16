@@ -435,6 +435,14 @@ graph model/history, DSP, assembly, plugin registry or docking framework is intr
 
 ## Built-in instrument ownership
 
+The polyphonic subtractive synth uses the same SoundDefinition, canonical notes, Source bindings,
+prepared plans, fixed voice slots and transport. SynthVoice owns validated versioned parameters,
+factory snapshots and worker-prepared coefficients; each OfflineSampler voice owns independent
+phase/filter state, never serialized. SynthPaneContent edits an explicit bound Source through
+generation-checked workflow commands in the retained Node Editor. Sharing, independent copies,
+history and portable Save/Open retain existing owners. [Audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1)
+specifies execution, budgets and cold-seek limits.
+
 The seven-voice Drum family is a built-in SoundDefinition capability, separate from the removable R7 creative generator.
 Canonical decimal parameters and algorithm identity use existing document history/serialization.
 `DrumVoice` retains legacy kick synthesis/envelopes; `DrumInstruments` owns family descriptors,

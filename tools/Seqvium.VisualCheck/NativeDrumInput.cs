@@ -46,6 +46,45 @@ internal static partial class NativePointer
                 throw new ForegroundLostException();
         }
 
+        internal async Task WaitForForegroundAsync(TimeSpan timeout)
+        {
+            var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            void Foreground(nint hook, uint kind, nint handle, int objectId, int childId, uint thread, uint time)
+            {
+                if (handle == Handle && GetForegroundWindow() == Handle) completion.TrySetResult();
+            }
+            ForegroundCallback callback = Foreground;
+            nint hook = SetWinEventHook(3, 3, 0, callback, 0, 0, 0);
+            Program.Require(hook != 0, "Cannot observe native foreground readiness.");
+            try
+            {
+                if (GetForegroundWindow() == Handle) completion.TrySetResult();
+                try { await completion.Task.WaitAsync(timeout); }
+                catch (TimeoutException) { throw new InvalidOperationException("Native foreground readiness timed out; no input sent. Target=" + Handle + "; foreground=" + GetForegroundWindow()); }
+            }
+            finally { UnhookWinEvent(hook); GC.KeepAlive(callback); }
+        }
+
+        private delegate void ForegroundCallback(nint hook, uint kind, nint handle, int objectId, int childId, uint thread, uint time);
+        [DllImport("user32.dll")]
+        private static extern nint SetWinEventHook(uint minimum, uint maximum, nint module, ForegroundCallback callback, uint process, uint thread, uint flags);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWinEvent(nint hook);
+
+        internal object TargetEvidence(Control control)
+        {
+            var point = control.PointToScreen(new(control.Bounds.Width / 2, control.Bounds.Height / 2));
+            var hit = window.InputHitTest(window.PointToClient(point)) as Control;
+            GetCursorPos(out var cursor);
+            var osHit = WindowFromPoint(new(point.X, point.Y));
+            return new { Expected = Avalonia.Automation.AutomationProperties.GetAutomationId(control),
+                Screen = point.ToString(), Cursor = new { cursor.X, cursor.Y }, Window = Handle.ToInt64(), Foreground = GetForegroundWindow().ToInt64(),
+                OsHit = osHit.ToInt64(), OsRoot = GetAncestor(osHit, 2).ToInt64(),
+                ClientHit = hit?.GetType().Name, ClientHitId = hit is null ? null : Avalonia.Automation.AutomationProperties.GetAutomationId(hit),
+                control.IsEffectivelyVisible, control.IsEnabled };
+        }
+
         internal async Task Click(Control control, Point? point = null, bool allowOwnedDialog = false,
             int beforeMs = 80, int afterMs = 150)
         {
@@ -63,6 +102,9 @@ internal static partial class NativePointer
             }
 
             Program.Require(SetCursorPos(screen.X, screen.Y), "Native drum cursor failed.");
+            if (TopLevel.GetTopLevel(control) == window)
+                Program.Require(GetAncestor(WindowFromPoint(new(screen.X, screen.Y)), 2) == Handle,
+                    "Native target is covered at the OS hit-test; no input sent.");
             if (TopLevel.GetTopLevel(control) is { } root && root != window)
             {
                 await Task.Delay(60);

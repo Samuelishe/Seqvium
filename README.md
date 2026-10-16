@@ -43,6 +43,9 @@ for the logo, typography, alternative directions and publication resources.
   changes apply to that sound in every Pattern.
 - Use built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim, editable envelopes and sound presets,
   or pitched WAV samples. Linked hats can choke each other.
+- Create basses, leads, pads and plucks with the built-in polyphonic **Synth**. Choose two waveforms,
+  blend/detune them, shape ADSR and low-pass cutoff/resonance, and hold/release a preview. Factory
+  sounds are starting points; save the edited instrument with the project, without an external WAV.
 - Arrange overlapping Patterns and Audio Clips together. Name/color the 32 organizational tracks,
   use track Mute/Solo, snap, zoom, overview navigation, seek and ruler-range loops.
 - Name composition sections, navigate their ranges, move adjacent sections or insert a repeat with

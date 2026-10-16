@@ -39,8 +39,9 @@ internal sealed class PatternEditorNavigation
 
     private static bool IsMelodic(ProjectState state, Pattern pattern, MusicalPart part)
     {
-        if (part.Notes.IsEmpty) return false;
         var sound = state.Sounds.Single(s => s.Id == part.SoundId);
+        if (SynthVoice.Supports(sound)) return true;
+        if (part.Notes.IsEmpty) return false;
         decimal root = sound.Parameters.GetValueOrDefault("rootPitch", 60);
         return part.Notes.Any(n => n.Pitch != root) ||
                (!DrumVoice.Supports(sound) && BeatSteps.PartRefusal(state, part, pattern.Length.Ticks) is not null);

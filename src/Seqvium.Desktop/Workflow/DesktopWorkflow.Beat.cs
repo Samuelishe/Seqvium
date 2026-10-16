@@ -88,7 +88,7 @@ internal sealed partial class DesktopWorkflow
             if (step < 0 || step >= BeatSteps.StepCount(pattern)) throw new ArgumentOutOfRangeException(nameof(step));
             var position = BeatSteps.Position(step);
             var existing = part.Notes.SingleOrDefault(n => n.Position == position);
-            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters["rootPitch"];
+            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters.GetValueOrDefault("rootPitch", 60);
             bool changed = _document.Edit(existing is null ? "Enable beat step" : "Disable beat step", edit =>
             {
                 if (existing is null)
@@ -114,7 +114,7 @@ internal sealed partial class DesktopWorkflow
                        throw new InvalidOperationException("Beat.Stale");
             if (BeatSteps.PartRefusal(_document.Current.State, part, pattern.Length.Ticks) is { } refusal)
                 throw new InvalidOperationException(refusal);
-            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters["rootPitch"];
+            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters.GetValueOrDefault("rootPitch", 60);
             bool differs = Enumerable.Range(0, desired.Length)
                 .Any(i => desired[i] != part.Notes.Any(n => BeatSteps.Step(n) == i));
             if (!differs) return Task.FromResult(false);

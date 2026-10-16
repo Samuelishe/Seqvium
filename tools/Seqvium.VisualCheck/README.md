@@ -1,5 +1,32 @@
 # Desktop visual and lifecycle verification
 
+## Polyphonic Synth Source Editor
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll synth "$PWD/.artifacts/synth-f1/review" native audio --timeout-seconds=360
+```
+
+Creates an isolated synth channel via Rack, writes a chord through Piano, opens the same Source
+from the graph, and checks real parameters, invalid/draft/preset handling, locale changes, ADSR
+history/capture/cancel/wheel conflict, all factory snapshots and portable Save As/New/Open/export.
+All eight exact parameters reject malformed/below/above-range input without losing drafts or
+changing canonical state. Each shows its own range immediately below the field, with localized
+units and tooltip/accessibility help; compact error images cover each parameter in both themes/languages.
+RU/EN × Dark/Light uses 1920×1080, 1280×800 and 900×700 windows with 760×660, 640×630 and 360×520
+pane frames. It captures short/long envelopes, focus/pressed/error, actual held/released output and
+canonical long names. Separate 4× Release control renders and font-outline/ink metrics supplement
+visual review; they do not establish native high-DPI support. Field axes/centers, preview geometry,
+wave hit targets and overflow are checked. Four short PCM16 WAVs remain local listening fixtures.
+
+`native` waits for the real Windows foreground event, then retains foreground/hit-test guards.
+Activate the visible check window when needed; no input is sent through another application.
+In reduced and compact panes, each Saw → native Sine changes SoundDefinition/display, native Undo/
+Redo round-trips, and Save/Open retains the choices. Note selection, held state, live release tail,
+natural completion and joined Stop are checked. Native failure fails the scenario after receipts
+are written. The original Cutoff/waveform protocol is replayed once diagnostically, not retried to
+obtain a pass. `audio` adds physical preview and the playing/released matrix. No subjective listening
+or owner aesthetic acceptance is claimed. Images/audio and comparative study remain ignored.
+
 ## PCM Sampler Source Editor
 
 ```powershell
