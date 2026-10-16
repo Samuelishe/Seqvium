@@ -74,6 +74,8 @@ Its complete decimal parameter block is `wave1`, `wave2`, `mix`, `detune`, `atta
 [audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1) and the source descriptor. Factory
 presets copy actual values into the shared sound, without a serialized preset-name dependency.
 Phase, filter integrators, voices, audition and editor drafts never enter persistent state.
+Audible live-preview overrides also remain transient; Save and frozen render use accepted canonical
+parameters. Continuous Synth preview adds no field, algorithm version or minimum-reader gate.
 
 Presence of this algorithm requires minimum reader 1.11 on Encode and Read; a falsely older envelope
 is refused. Projects without synth intent retain their existing selective gates. Unsupported algorithms,

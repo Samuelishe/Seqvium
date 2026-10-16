@@ -452,7 +452,12 @@ phase/filter state, never serialized. SynthPaneContent edits an explicit bound S
 generation-checked workflow commands in the retained Node Editor. Sharing, independent copies,
 history and portable Save/Open retain existing
 owners. [Audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1)
-specifies execution, budgets and cold-seek limits.
+specifies execution, budgets and cold-seek limits. Continuous held Synth preview reuses this owner:
+DesktopWorkflow validates captured target/generation, prepares immutable parameters and publishes
+through RealtimeSampler's bounded audition mailbox. SynthPaneContent coalesces outstanding draft
+updates and submits one canonical edit on completion. Drafts do not enter Save, recovery, history,
+canonical graph preparation or R8. Source removal joins the withdrawn preview at command completion.
+Short Synth commands retain the shared command gate without broadcasting a workspace Busy pulse.
 
 The seven-voice Drum family is a built-in SoundDefinition capability, separate from the removable R7 creative generator.
 Canonical decimal parameters and algorithm identity use existing document history/serialization.

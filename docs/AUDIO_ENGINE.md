@@ -59,7 +59,8 @@ Source/Gain/Mix/Output, Mixer and export. No second scheduler, engine or documen
 The callback performs bounded arithmetic without preparation, I/O, allocation, locks or document
 access. Preflight charges 128 voice work units per frame when synth notes occur, plus existing
 event/scratch/Mixer budgets. Graph polyphony remains 32 with explicit capacity refusal; raw plans
-retain their existing limits. Voice state fits the existing conservative per-slot allowance.
+retain their existing limits. Scratch accounting reserves 256 bytes per voice slot, including
+the inline live-preview smoothing state.
 
 Pattern loops retain releases across the musical boundary and preflight overlap with all sources.
 NoteOff targets the matching iteration without restarting older releases. Stop/Panic and hard
@@ -68,6 +69,36 @@ replay from note start; historical filter/FX preroll is absent. Compatible live 
 and unchanged voice phases/integrators; changed voices retire without mid-note retrigger. Subsequent
 NoteOns use the new sound. Preview uses NoteAuditionRequest and its existing output owner, a
 30-second safety gate, explicit Release and joined Stop.
+
+### Continuous Synth preview (SEQ-SYNTH-LIVE-PREVIEW-F1)
+
+Held Source preview accepts immutable host-rate parameters through one latest-wins mailbox in
+RealtimeSampler. Only its identified transient, single-synth held plan is eligible. Preparation,
+validation and coefficient calculation stay on the control owner; the callback consumes at packet
+boundaries, checking execution authority and sticky Stop. No document access, allocation, lock,
+graph rebuild, voice replacement or output reopen occurs for a parameter update.
+
+The existing SynthState retains oscillator phases, filter integrators and note age. Approximately
+5-ms smoothing follows cutoff, damping, balance, detune/pitch and the age-derived held ADSR level;
+waveform weights crossfade at the existing oscillator phases, including rapid reversals. This fixed
+single-voice preview evaluates at most four shapes per oscillator. Song Cutoff automation retains
+the same prepared SynthVoice/kernel and its existing smoothing, without admitting preview overrides
+into Pattern, Song, Mixer, offline export or frozen R8 requests.
+
+Drafts are transient. Escape/capture loss restores current canonical parameters through the same
+mailbox; an accepted edit and Undo/Redo update the continuing preview. Incompatible target removal
+stops immediately and the serialized edit joins its output. Hide/retarget and document/application
+replacement retain joined teardown. Repeated Hold on a held voice is idempotent; a selected pitch
+change retunes it smoothly. Hold after Release/natural completion starts a new note on the healthy
+resident output; Stop joins it, and subsequent Hold deliberately opens a fresh output.
+
+NoteOff releases from the actual smoothed level and freezes the current Release duration. Subsequent
+edits and repeated Release cannot restart, shorten or extend that release. The 30-second gate remains;
+its plan reserves the maximum eight-second release, while execution ends at the actual NoteOff plus
+the frozen duration. Zero Release and hard Stop remain immediate. Pluck/zero Sustain may become
+silent while held; preview is not automatic note retrigger or an unlimited live instrument mode.
+Successful explicit Synth restart clears a previous output-failure status; actual failures still
+terminate/join and remain visible until recovery. No automatic device restart is added.
 
 R8 freezes parameters, renders through local Output before Mixer and includes release beyond the
 Pattern boundary where necessary. The filter precedes amplitude, with no post-release tail or added

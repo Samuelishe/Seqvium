@@ -169,6 +169,7 @@ internal sealed partial class DesktopWorkflow
     internal Task<bool> ReleaseSamplerAsync() => _owner.Run(() =>
     {
         if (_samplerAudition is null) return Task.FromResult(false);
+        if (_synthAudition is { } synth) Volatile.Write(ref _synthAudition, synth with { Held = false });
         _noteOutput?.Sampler.ReleaseAudition();
         return Task.FromResult(true);
     });

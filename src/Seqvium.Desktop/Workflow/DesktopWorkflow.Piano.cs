@@ -116,6 +116,7 @@ internal sealed partial class DesktopWorkflow
 
     private async Task CloseNoteAuditionAsync(bool preserveDrumRequests = false)
     {
+        Volatile.Write(ref _synthAudition, null);
         _samplerAudition = null;
         if (!preserveDrumRequests) InvalidateDrumAuditions();
         _drumAuditionOutput = false;
@@ -135,6 +136,7 @@ internal sealed partial class DesktopWorkflow
 
         _noteSession = null;
         _noteOutput = null;
+        _retireSynthAudition = false;
         _browserAudition?.Dispose();
         _browserAudition = null;
     }

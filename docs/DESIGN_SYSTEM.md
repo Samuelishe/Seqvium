@@ -310,6 +310,9 @@ supplement recognizable Play and Stop icons; short localized tooltips/accessibil
 complete action names. Held Play adds the existing accent surface and a stronger outline. The
 envelope plot absorbs spare vertical space; its minimum remains usable in the scrolling compact body.
 Shared styles and Gain semantics remain unchanged.
+Transport-only observations update transport state without redrawing every parameter projection.
+Synth Play/edits do not broadcast a workspace Busy pulse or toggle neighbouring control availability;
+the retained controls, active pointer capture and unfinished exact input remain in place.
 Actual exact-field/unit alignment and localized/theme/size checks belong to
 [the report](experiments/SEQ-SYNTH-F1_REPORT.md).
 

@@ -219,7 +219,11 @@ Select two waveforms, adjust balance/detune, open the filter and shape amplitude
 or exact values. The waveform drawings show oscillator shapes, not a scope.
 
 Choose a preview note and use **Hold**, **Release** and **Stop** while transport is stopped. Preview
-does not write notes. Open **Piano Roll** from the channel actions to draw a melody or chord; the
+does not write notes. Turn knobs or drag ADSR while held to hear changes during the gesture; release
+the mouse to keep one Undo operation, or press Escape to restore the accepted sound. Presets and
+Undo/Redo keep the note sounding. Repeated Hold keeps it held; changing the selected note retunes it.
+Release plays the current release envelope; Stop ends preview and closes its output. Forgotten holds
+release after 30 seconds. Open **Piano Roll** from the channel actions to draw a melody or chord; the
 new synth also makes Piano Roll the default Pattern editor. Double-click its Source node or use
 the channel's Sound Editor action to return to the same instrument.
 

@@ -7,7 +7,18 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0000**, **SEQ-SAMPLER-KEYMAP-F1 — Multisample Instruments**.
+Product alpha **0.1.16.0001**, **SEQ-SYNTH-LIVE-PREVIEW-F1 — Continuous Synth Editing**.
+Held Synth preview hears knob/ADSR drafts through the existing voice and a bounded immutable mailbox;
+commit, waveform/preset changes and Undo/Redo preserve its phase/filter/time. Escape/capture loss
+restores canonical sound without history. Repeated Hold is idempotent, note selection retunes,
+Release freezes its current duration/level, and Stop joins output. Short Synth commands retain
+serialization without a workspace Busy pulse; transport observations no longer redraw every parameter.
+Source removal joins preview; successful explicit output retry clears the stale failure status.
+The original reported device failure cannot be reconstructed from its generic message alone.
+No project schema/reader, Song automation, Pattern/Mixer/R8, new instrument or track is introduced.
+[Report](experiments/SEQ-SYNTH-LIVE-PREVIEW-F1_REPORT.md) owns numerical, GUI, physical evidence and limits.
+
+Previous **0.1.16.0000**, **SEQ-SAMPLER-KEYMAP-F1 — Multisample Instruments**.
 The existing PCM Source Editor adds managed multi-WAV import, confirmed per-source Root notes,
 automatic/manual key ranges and independent source range/loop/crossfade. Adaptive large keys,
 quiet full-map overview, free horizontal navigation and shared root/zone/key emphasis support
@@ -262,7 +273,19 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-SAMPLER-KEYMAP-F1, 2026-10-16**. Full Release solution build has zero
+Latest L0/L1/L2/L3: **SEQ-SYNTH-LIVE-PREVIEW-F1, 2026-10-16**. Full Release solution build has
+zero warnings/errors (**15.13 s**); **1760/1760** tests pass, zero skips, one thread (**66.298 s CLI**).
+Twenty-one new cases cover audible held updates, draft cancellation/phase convergence, mailbox
+authority/Stop, exact edited release/safety boundaries at both rates, allocation, resident output,
+history/presets, Source deletion/lifecycle and actual-fault/status recovery. Early L3 is justified by
+shared voice state/accounting, release-event execution and command teardown. No pressure, acoustic
+or wider-platform acceptance follows. The report owns actual native/physical/visual evidence.
+The final observation-stability correction passes a zero-warning affected rebuild and **114/114**
+focused cases (4.480 s), plus actual all-dial/ADSR native input, stable availability, RU/EN Dark/Light
+compact/ordinary renders and physical UR12 44.1-kHz held/released output. Earlier native/cursor and
+physical failures remain recorded; no original device-failure cause is invented.
+
+Previous L0/L1/L2/L3: **SEQ-SAMPLER-KEYMAP-F1, 2026-10-16**. Full Release solution build has zero
 warnings/errors (**9.33 s**); **1739/1739** tests pass, zero skips, one thread (**51.847 s CLI**).
 Twenty-seven added cases cover every key/fractional boundary, rate/channel/source/step oracles,
 mapped loops/chords, 32/33-voice limits, packet/realtime parity, selected primed allocation,
@@ -502,8 +525,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected key-map L3 covers shared
-voice/Mixer/Song execution, independent R8, managed media, reader 1.13 and existing regressions.
+Completed repository tasks since this L3: **0**. This risk-selected continuous-preview L3 covers
+shared voice/release execution and command lifetime, Song/Mixer/Automation/R8, media and readers.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
 subjective acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**
@@ -548,7 +571,8 @@ Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
-The bounded Multisample Key Mapping F1 baseline is implemented. Owner listening/aesthetic review and broader pressure/
+Continuous Synth preview and the bounded Multisample Key Mapping F1 baseline are implemented. Owner listening/aesthetic
+review and broader pressure/
 platform acceptance remain separate; later modulation or synthesis families need their own scope.
 
 Finish wider Playlist/container/warp and compact editor work only through their scoped owners.

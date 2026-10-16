@@ -46,6 +46,8 @@ internal sealed record GraphRevisionUpdate(
 
 internal sealed record AuditionRelease(long Authority, long Command);
 
+internal sealed record SynthAuditionUpdate(long Authority, long Stop, PreparedSynth Parameters);
+
 internal sealed record SongSeek(long Frame, long Command);
 
 internal sealed record MixerRevisionUpdate(long ExecutionId, Guid Revision, PreparedMixer Mixer, long Authority);
@@ -93,8 +95,26 @@ public sealed class RealtimeSampler : IDisposable
     private State? _pending, _active, _retired;
     private AuditionRelease? _auditionRelease;
     private long _seenAuditionRelease;
+    private SynthAuditionUpdate? _synthAuditionUpdate;
+
+    /// <summary>Control-owner, latest-wins update of an existing held synth audition only.
+    /// Coefficients are prepared here; the consumer retains phase, envelope and filter state.</summary>
+    public bool UpdateSynthAudition(SoundDefinition sound, decimal pitch)
+    {
+        if (_disposed || IsTerminated) return false;
+        var state = Volatile.Read(ref _pending) ?? Volatile.Read(ref _active);
+        if (state is not { Transient: true } || !state.Plan.HeldAudition ||
+            state.Plan.Notes.Length != 1 || state.Plan.Notes[0].Synth is null ||
+            state.Authority != Volatile.Read(ref _authority) || Volatile.Read(ref _stop) > state.StopAtPublication)
+            return false;
+        var parameters = SynthVoice.Prepare(sound, SampleRate, pitch);
+        Volatile.Write(ref _synthAuditionUpdate, new(state.Authority, Volatile.Read(ref _stop), parameters));
+        return true;
+    }
+
     public void ReleaseAudition() => Volatile.Write(ref _auditionRelease,
         new(Volatile.Read(ref _authority), Interlocked.Increment(ref _command)));
+
     private long _authority, _stop, _start, _seenStart, _command, _startAuthority;
     private int _preparing;
     private float _gain = 1;
@@ -128,12 +148,14 @@ public sealed class RealtimeSampler : IDisposable
             !mixer.Strips.Select(s => s.Id).SequenceEqual(graph.Mixer.Strips.Select(s => s.Id))) return false;
         mixer = MixerPreparation.ReserveContinuation(mixer, active.MixerBudget);
         if (mixer.Strips.Where((s, i) => s.Reverb.Enabled &&
-                (!graph.Mixer.Strips[i].Reverb.Enabled || s.Reverb.Size != graph.Mixer.Strips[i].Reverb.Size)).Any())
+                                         (!graph.Mixer.Strips[i].Reverb.Enabled ||
+                                          s.Reverb.Size != graph.Mixer.Strips[i].Reverb.Size)).Any())
             return false;
         long work = active.Plan.PacketWork - (long)MaximumPacketFrames *
-            graph.Mixer.Strips.Count(s => s.Reverb.Admitted) * 512 +
-            (long)MaximumPacketFrames * mixer.Strips.Count(s => s.Reverb.Admitted) * 512;
-        if (work > GraphPreparation.MaximumPacketWork) throw new GraphPreparationException(GraphPreparationReasons.Budget);
+                    graph.Mixer.Strips.Count(s => s.Reverb.Admitted) * 512 +
+                    (long)MaximumPacketFrames * mixer.Strips.Count(s => s.Reverb.Admitted) * 512;
+        if (work > GraphPreparation.MaximumPacketWork)
+            throw new GraphPreparationException(GraphPreparationReasons.Budget);
         long authority = InvalidatePreparation();
         active.MixerBudget = mixer;
         Volatile.Write(ref _mixerUpdate, new(executionId, snapshot.Revision, mixer, authority));
@@ -187,7 +209,10 @@ public sealed class RealtimeSampler : IDisposable
     internal long RejectedPreparedExecutionId => Volatile.Read(ref _rejectedPreparedExecutionId);
 
     private static long StateBytes(State? state) =>
-        state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes + state.Plan.MixerDelayBytes + state.Plan.MixerReverbBytes;
+        state is null
+            ? 0
+            : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes + state.Plan.MixerDelayBytes +
+              state.Plan.MixerReverbBytes;
 
     /// <summary>Thread-safe value observation. The reader may retry while the single consumer finishes its short status write.</summary>
     public SamplerExecutionStatus ReadStatus()
@@ -321,6 +346,7 @@ public sealed class RealtimeSampler : IDisposable
             plan.Graph.Mixer = MixerPreparation.ReserveContinuation(nextMixer, active?.MixerBudget);
             GraphPreparation.Preflight(plan, MaximumPacketFrames);
         }
+
         var state = new State(plan, authority, transient, lifetimeCancellation, Volatile.Read(ref _stop));
         if (preservePlayback && active is not null &&
             (plan.IsArrangement && active.Plan.IsArrangement || plan.Loop is { } clock &&
@@ -344,7 +370,8 @@ public sealed class RealtimeSampler : IDisposable
                     : -1).ToArray();
             state.ContinuationAuthority = active.Authority;
             state.MixerOnlyContinuation = plan.GraphAttachmentId == active.Plan.GraphAttachmentId &&
-                ProjectDocument.HasSameContent(oldBasis with { Mixer = null }, nextBasis with { Mixer = null });
+                                          ProjectDocument.HasSameContent(oldBasis with { Mixer = null },
+                                              nextBasis with { Mixer = null });
         }
 
         Volatile.Write(ref _pending, state);
@@ -358,15 +385,17 @@ public sealed class RealtimeSampler : IDisposable
         var before = left.AudioClips.Single(c => c.Id == id);
         var after = right.AudioClips.SingleOrDefault(c => c.Id == id);
         if (after is null) return false;
-        return before.SoundId == after.SoundId && before.StretchRatio == after.StretchRatio && (before.StretchRatio == 1 ||
-            before.OffsetFrames - before.EnvelopeOffsetFrames == after.OffsetFrames - after.EnvelopeOffsetFrames &&
-            AudioClipSource.EnvelopeLength(before) == AudioClipSource.EnvelopeLength(after));
+        return before.SoundId == after.SoundId && before.StretchRatio == after.StretchRatio &&
+               (before.StretchRatio == 1 ||
+                before.OffsetFrames - before.EnvelopeOffsetFrames == after.OffsetFrames - after.EnvelopeOffsetFrames &&
+                AudioClipSource.EnvelopeLength(before) == AudioClipSource.EnvelopeLength(after));
     }
 
     private static bool SameAuditionSource(PreparedSampler left, PreparedSampler right, ExecutionOccurrence occurrence)
     {
         if (left.AuditionCandidate == right.AuditionCandidate) return true;
-        var part = right.CanonicalBasis?.Patterns.SelectMany(p => p.Parts).SingleOrDefault(p => p.Id == occurrence.PartId);
+        var part = right.CanonicalBasis?.Patterns.SelectMany(p => p.Parts)
+            .SingleOrDefault(p => p.Id == occurrence.PartId);
         return part is null || part.SoundId != left.AuditionSound && part.SoundId != right.AuditionSound;
     }
 
@@ -406,6 +435,7 @@ public sealed class RealtimeSampler : IDisposable
             StartPrepared(authority);
             return true;
         }
+
         return false;
     }
 
@@ -466,7 +496,7 @@ public sealed class RealtimeSampler : IDisposable
                     var old = _active;
                     bool continuing = _playing && old is not null &&
                                       (_looping || (old.Plan.IsArrangement && pending.Plan.IsArrangement ||
-                                          pending.MixerOnlyContinuation) &&
+                                                    pending.MixerOnlyContinuation) &&
                                           old.Execution.Position < (old.Execution.HasMixerTail
                                               ? Math.Max(old.Execution.EndFrame, pending.Execution.EndFrame)
                                               : pending.Execution.EndFrame)) &&
@@ -557,6 +587,11 @@ public sealed class RealtimeSampler : IDisposable
         }
 
         var active = _active;
+        var synthUpdate = Interlocked.Exchange(ref _synthAuditionUpdate, null);
+        if (active is { Transient: true } && synthUpdate is not null &&
+            synthUpdate.Authority == active.Authority && synthUpdate.Authority == Volatile.Read(ref _authority) &&
+            synthUpdate.Stop == stop && _playing)
+            active.Execution.UpdateSynthAudition(synthUpdate.Parameters);
         var seek = Volatile.Read(ref _seek);
         if (active?.Plan.IsArrangement == true && seek is not null && seek.Command != _seenSeek)
         {
@@ -581,6 +616,7 @@ public sealed class RealtimeSampler : IDisposable
             active.Execution.ReleaseAudition();
             _seenAuditionRelease = releaseAudition.Command;
         }
+
         int renderedFrames = 0;
         if (_playing && active is not null)
         {
@@ -798,7 +834,8 @@ public sealed class SamplerPreparationRequest : IDisposable
 
     public void Dispose()
     {
-        Audition?.Dispose(); Audition = null;
+        Audition?.Dispose();
+        Audition = null;
         _plan?.Dispose();
         _plan = null;
         _ended = true;

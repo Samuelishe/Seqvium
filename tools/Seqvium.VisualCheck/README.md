@@ -39,6 +39,11 @@ visual review; they do not establish native high-DPI support. Field axes/centers
 wave hit targets and overflow are checked. Four short PCM16 WAVs remain local listening fixtures.
 
 `native` waits for the real Windows foreground event, then retains foreground/hit-test guards.
+With `audio`, the compact RU/EN × Dark/Light matrix also exercises all eight dials and the ADSR
+curve on a held voice: draft isolation, one commit, Undo and Escape, stable epoch/voice/output and
+no neighbouring availability pulse. `native` repeats those trajectories through Windows input;
+repeated Hold must not toggle workspace control availability. Per-trajectory JSON and captures stay
+in the same ignored run. These checks establish physical delivery, not subjective sound quality.
 Activate the visible check window when needed; no input is sent through another application.
 In reduced and compact panes, each Saw → native Sine changes SoundDefinition/display, native Undo/
 Redo round-trips, and Save/Open retains the choices. Note selection, held state, live release tail,

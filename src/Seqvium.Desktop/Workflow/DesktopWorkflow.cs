@@ -74,7 +74,10 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         GraphExecutionCoordinator> _createCoordinator;
 
     private readonly string? _mediaDirectory;
-    private readonly Func<ProjectDocument, Id<GraphAttachment>, CancellationToken, Action<int>?, Task<PatternSample>> _renderPattern;
+
+    private readonly Func<ProjectDocument, Id<GraphAttachment>, CancellationToken, Action<int>?, Task<PatternSample>>
+        _renderPattern;
+
     private readonly Timer _poll;
     private ProjectDocument _document;
     private AudioDeviceSession? _deviceSession;
@@ -95,7 +98,8 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         string? mediaDirectory = null,
         Func<ProjectDocument, RealtimeSampler, Id<GraphAttachment>, SynchronizationContext,
             GraphExecutionCoordinator>? createCoordinator = null, ExtensionHost? extensions = null,
-        Func<ProjectDocument, Id<GraphAttachment>, CancellationToken, Action<int>?, Task<PatternSample>>? renderPattern = null)
+        Func<ProjectDocument, Id<GraphAttachment>, CancellationToken, Action<int>?, Task<PatternSample>>?
+            renderPattern = null)
     {
         if (extensions is not null) Extensions = extensions;
         _document = document;
@@ -167,15 +171,17 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         }
     }
 
-    private Task<bool> Command(string failureKey, Func<Task<bool>> operation) => _owner.Run(async () =>
+    private Task<bool> Command(string failureKey, Func<Task<bool>> operation) => Command(failureKey, true, operation);
+
+    private Task<bool> Command(string failureKey, bool showBusy, Func<Task<bool>> operation) => _owner.Run(async () =>
     {
         await _commands.WaitAsync();
         try
         {
             ObjectDisposedException.ThrowIf(_closed, this);
-            _busy = true;
+            _busy = showBusy;
             _detail = null;
-            Publish();
+            if (showBusy) Publish();
             bool accepted = await operation();
             if (accepted && _status == failureKey) _status = "Workflow.Ready";
             return accepted;
@@ -193,9 +199,23 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         }
         finally
         {
-            _busy = false;
-            Publish();
-            _commands.Release();
+            try
+            {
+                // A removed/replaced Source withdraws sound at its edit boundary and joins its
+                // borrowing output before this serialized command completes.
+                if (_retireSynthAudition) await CloseNoteAuditionAsync();
+            }
+            catch (Exception error)
+            {
+                _status = "Workflow.DeviceFault";
+                _detail = error.Message;
+            }
+            finally
+            {
+                _busy = false;
+                Publish();
+                _commands.Release();
+            }
         }
     });
 
@@ -367,23 +387,25 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             });
 
     public Task<bool> NewAsync(UnsavedDecision decision, string? savePath = null)
-        => decision == UnsavedDecision.Cancel ? Task.FromResult(false) : Command("Workflow.NewFailed", async () =>
-        {
-            if (!CanReplace(decision, savePath)) return false;
-            await CloseAudioAsync();
-            await CloseGeneratorsAsync();
-            _document.Changed -= DocumentChanged;
-            _document.Close();
-            _document = ProjectDocument.Create();
-            _document.Changed += DocumentChanged;
-            _selected = null;
-            _songMode = false;
-            _audioWaveforms = _audioWaveforms.Clear();
-            _songCursor = _loopStart = _loopEnd = 0;
-            _songLoopEnabled = false;
-            _status = "Workflow.Empty";
-            return true;
-        });
+        => decision == UnsavedDecision.Cancel
+            ? Task.FromResult(false)
+            : Command("Workflow.NewFailed", async () =>
+            {
+                if (!CanReplace(decision, savePath)) return false;
+                await CloseAudioAsync();
+                await CloseGeneratorsAsync();
+                _document.Changed -= DocumentChanged;
+                _document.Close();
+                _document = ProjectDocument.Create();
+                _document.Changed += DocumentChanged;
+                _selected = null;
+                _songMode = false;
+                _audioWaveforms = _audioWaveforms.Clear();
+                _songCursor = _loopStart = _loopEnd = 0;
+                _songLoopEnabled = false;
+                _status = "Workflow.Empty";
+                return true;
+            });
 
     public Task<bool> PlayAsync() => Command("Workflow.DeviceFault", async () =>
     {
@@ -519,7 +541,12 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         if (decision == UnsavedDecision.Cancel) return false;
         // Withdraw pending Start intent so Close can enter the command gate during preparation.
         // Existing playback remains intact until Save succeeds and joined audio close begins.
-        await _owner.Run(() => { InvalidateDrumAuditions(); _playGeneration++; return Task.FromResult(true); });
+        await _owner.Run(() =>
+        {
+            InvalidateDrumAuditions();
+            _playGeneration++;
+            return Task.FromResult(true);
+        });
         return await Command("Workflow.CloseFailed", async () =>
         {
             if (!CanReplace(decision, savePath)) return false;
@@ -543,9 +570,15 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         LabDocumentChanged();
         if (_samplerAudition is { } sampler && sampler.Generation != _document.Generation)
         {
-            _noteOutput?.Sampler.Stop();
-            _samplerAudition = null;
+            if (!RefreshSynthAudition())
+            {
+                _noteOutput?.Sampler.Stop();
+                _retireSynthAudition = _synthAudition is not null;
+                Volatile.Write(ref _synthAudition, null);
+                _samplerAudition = null;
+            }
         }
+
         // R6 uses strict generation relevance: an intervening musical edit expires pending/candidate work.
         foreach (var session in _generationSessions) session.Cancel();
         long end = ArrangementPreparation.EndTicks(_document.Current.State);

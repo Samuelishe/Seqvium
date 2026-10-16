@@ -495,7 +495,15 @@ header's action-feedback slot.
 
 Hold starts a local note at the selected pitch while transport is stopped; Release sends NoteOff,
 and Stop joins the existing output owner. Preview creates no notes/history and has a finite safety
-gate. Edits stop obsolete preview; hide/retarget/shutdown withdraw it. A fixed footer stays reachable
+gate. Knobs and ADSR handles change the held sound during capture without a canonical edit. Escape,
+capture loss or resize restores the canonical sound; release commits one Undo operation. Accepted
+values, waveforms, presets and Undo/Redo preserve the held voice; conflicting generations cancel
+drafts. Presets still require unfinished text to be resolved. Repeated Play while held keeps the
+same note; changing its selected pitch retunes it. Play after Release starts a new note on the same
+healthy output. Release freezes its current duration and actual envelope level, so later editing or
+repeated Release does not prolong it. Stop joins the output, and subsequent Play opens it deliberately.
+Play/short sound edits preserve neighbouring control availability and unfinished text. Source removal,
+hide/retarget/shutdown withdraw preview. A fixed footer stays reachable
 as controls reflow and scroll locally. Note selection, Play/hold, Release and Stop share one
 aligned transport row. Release uses a falling-envelope icon and concise visible label, because an
 upward-arrow metaphor is ambiguous with export. The editable curve uses spare ordinary-pane height

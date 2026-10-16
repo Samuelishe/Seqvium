@@ -185,7 +185,7 @@ public static class GraphPreparation
 
         // Includes buffer payload and conservative voice/operation/index storage, not only float arrays.
         int scratch = checked(count * checked(frames * channels * sizeof(float)) +
-                              graph.Nodes.Length * 256 + graph.Connections.Length * 16 + voices * 128);
+                              graph.Nodes.Length * 256 + graph.Connections.Length * 16 + voices * 256);
         if (scratch > MaximumScratchBytes)
             throw new GraphPreparationException(GraphPreparationReasons.Budget);
         return new()
@@ -235,7 +235,9 @@ public static class GraphPreparation
             work = checked(work + (long)plan.Notes.Length * 4 * (frames / Math.Max(1, plan.SampleRate / 100) + 2));
         if (work > MaximumPacketWork) throw new GraphPreparationException(GraphPreparationReasons.Budget);
         if (plan.Graph?.Mixer is { } mixer)
-            work = checked(work + (long)frames * (mixer.Strips.Length * 256 + mixer.Strips.Count(s => s.Reverb.Admitted) * 512 + mixer.Taps.Length * 8));
+            work = checked(work + (long)frames * (mixer.Strips.Length * 256 +
+                                                  mixer.Strips.Count(s => s.Reverb.Admitted) * 512 +
+                                                  mixer.Taps.Length * 8));
         if (work > MaximumPacketWork || plan.ScratchBytes > MaximumScratchBytes)
             throw new GraphPreparationException(GraphPreparationReasons.Budget);
         plan.MaximumPacketEvents = maximumWindow;

@@ -330,6 +330,16 @@ listening or pressure acceptance. [Report](experiments/SEQ-FIRST-DRUM_REPORT.md)
 
 ## Polyphonic subtractive synth verification
 
+Continuous-preview regressions additionally cover audible draft updates to every held parameter,
+Cutoff cancel convergence against an independent uninterrupted voice, preserved epoch/position,
+exact edited NoteOff/safety bounds at both rates, frozen release duration and primed zero callback
+allocation. Workflow cases protect one output across preview/edit/history/preset/retrigger, generation
+refusal, Source removal/join, no resurrection by Undo and explicit recovery from an injected fault.
+VisualCheck `synth ... native audio` exercises all eight dials and ADSR capture while physically
+playing, one Undo/Escape, stable output/epoch/voice and neighbouring availability. Routed localized
+matrix, native delivery and subjective listening remain separate. The
+[live-preview report](experiments/SEQ-SYNTH-LIVE-PREVIEW-F1_REPORT.md) owns current results/limits.
+
 SynthVoiceTests and SynthWorkflowTests cover fractional MIDI pitch/frequency, polynomial Saw/Pulse/
 Triangle spectral-folding reduction against naive forms, ADSR/current-level NoteOff, filter extremes,
 linear oscillator mix, velocity, independent/32 voices, packet/rate parity at 44.1/48 kHz, Pattern

@@ -163,7 +163,7 @@ public static class SamplerPreparation
             throw new ArgumentOutOfRangeException(nameof(intensity));
         var synth = SynthVoice.Prepare(sound, sampleRate, pitch);
         // A held preview has a finite safety gate, without PCM proportional to its duration.
-        long gate = sampleRate * (held ? 30L : 1L), end = gate + synth.Release;
+        long gate = sampleRate * (held ? 30L : 1L), end = gate + (held ? sampleRate * 8L : synth.Release);
         return new(Guid.Empty, sampleRate, channels, 1, 0, end, 0,
             [new(default, -1, 1, (float)intensity, 0, gate, synth.Release, Synth: synth)],
             [
@@ -518,6 +518,7 @@ public sealed class OfflineSampler : IDisposable
         internal long ChokeAge = long.MaxValue;
         internal long StartIteration;
         internal SynthState Synth;
+        internal int AuditionReleaseFrames;
     }
 
     private readonly PreparedSampler _plan;
@@ -530,6 +531,13 @@ public sealed class OfflineSampler : IDisposable
     private float[]? _coefficients;
     private readonly MixerRuntime? _mixer;
     private long _tailSourceEnd;
+    private PreparedSynth? _synthAudition;
+
+    internal void UpdateSynthAudition(PreparedSynth parameters)
+    {
+        if (!_plan.HeldAudition || _plan.Notes.Length != 1 || _plan.Notes[0].Synth is null) return;
+        _synthAudition = parameters;
+    }
 
     public MixerMeter ReadMixerMeter(Id<MixerChannel>? channel = null) =>
         _mixer?.Read(channel?.Value ?? Guid.Empty) ?? default;
@@ -574,6 +582,7 @@ public sealed class OfflineSampler : IDisposable
     {
         _automationValues = new double[plan.Automation.Length];
         _plan = plan;
+        _synthAudition = plan.HeldAudition && plan.Notes.Length == 1 ? plan.Notes[0].Synth : null;
         EndFrame = plan.EndFrame;
         _tailSourceEnd = plan.SourceEndFrame;
         _voices = Enumerable.Range(0, plan.VoiceCapacity).Select(_ => new Voice()).ToArray();
@@ -787,15 +796,19 @@ public sealed class OfflineSampler : IDisposable
             }
 
             ApplyEvents();
+            if (_synthAudition is not null && Position >= EndFrame) break;
             for (int i = 0; i < _automationValues.Length; i++) _automationValues[i] = _plan.Automation[i].At(Position);
             foreach (var voice in _voices)
             {
                 if (voice.Note is not { } note) continue;
                 if (note.Synth is { } synth)
                 {
-                    double sample = voice.Synth.Next(synth, voice.Age, voice.ReleaseAge,
-                        note.AutomationIndex < 0 ? synth.G : _automationValues[note.AutomationIndex],
-                        _plan.SampleRate) * note.Gain;
+                    double sample = _synthAudition is { } live
+                        ? voice.Synth.NextLive(live, voice.Age, voice.ReleaseAge, voice.AuditionReleaseFrames,
+                            _plan.SampleRate) * note.Gain
+                        : voice.Synth.Next(synth, voice.Age, voice.ReleaseAge,
+                            note.AutomationIndex < 0 ? synth.G : _automationValues[note.AutomationIndex],
+                            _plan.SampleRate) * note.Gain;
                     if (_smoothBoundaries)
                     {
                         long end = Math.Min(_looping ? long.MaxValue : EndFrame, _rangeBoundary);
@@ -806,7 +819,8 @@ public sealed class OfflineSampler : IDisposable
                     target[frame * _plan.Channels] += (float)sample;
                     if (_plan.Channels == 2) target[frame * 2 + 1] += (float)sample;
                     voice.Age++;
-                    if (voice.ReleaseAge >= 0 && ++voice.ReleaseAge >= note.ReleaseFrames) voice.Note = null;
+                    if (voice.ReleaseAge >= 0 && ++voice.ReleaseAge >=
+                        (_synthAudition is null ? note.ReleaseFrames : voice.AuditionReleaseFrames)) voice.Note = null;
                     continue;
                 }
 
@@ -938,15 +952,19 @@ public sealed class OfflineSampler : IDisposable
         if (!_plan.HeldAudition || _stopped) return;
         ApplyEvents();
         int release = 0;
+        bool released = false;
         foreach (var voice in _voices)
             if (voice.Note is { } note && voice.ReleaseAge < 0)
             {
-                release = Math.Max(release, note.ReleaseFrames);
-                if (note.ReleaseFrames == 0) voice.Note = null;
+                int frames = _synthAudition?.Release ?? note.ReleaseFrames;
+                released = true;
+                voice.AuditionReleaseFrames = frames;
+                release = Math.Max(release, frames);
+                if (frames == 0) voice.Note = null;
                 else voice.ReleaseAge = 0;
             }
 
-        EndFrame = Math.Min(EndFrame, Position + release);
+        if (released) EndFrame = Math.Min(EndFrame, Position + release);
     }
 
     private void ApplyEvents()
@@ -967,7 +985,10 @@ public sealed class OfflineSampler : IDisposable
                     if (voice.Note is { OneShot: false } active && voice.ReleaseAge < 0 &&
                         (!_looping || voice.StartIteration == _iteration) && active.Occurrence == item.Occurrence)
                     {
-                        if (active.ReleaseFrames == 0) voice.Note = null;
+                        int frames = _synthAudition?.Release ?? active.ReleaseFrames;
+                        voice.AuditionReleaseFrames = frames;
+                        if (_synthAudition is not null) EndFrame = Math.Min(EndFrame, Position + frames);
+                        if (frames == 0) voice.Note = null;
                         else voice.ReleaseAge = 0;
                     }
             }
