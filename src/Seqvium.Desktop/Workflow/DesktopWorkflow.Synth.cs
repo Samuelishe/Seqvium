@@ -89,7 +89,8 @@ internal sealed partial class DesktopWorkflow
                     _noteSession.AttachOutput(_noteOutput.Lifetime, _noteOutput.Sampler);
                 }
 
-                _noteOutput.Sampler.SetGain(.7f);
+                _noteOutput.Sampler.SetGain(1);
+                _noteOutput.Sampler.ProtectSourceAudition();
                 using var request = new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, pitch, intensity,
                     held: true);
                 await request.PrepareAsync();

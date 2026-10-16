@@ -400,33 +400,33 @@ internal static partial class Program
             var hits = new List<object>();
             for (int i = 0; i < 8; i++)
             {
-                long before = sampler.TransportEpoch;
+                long before = sampler.DrumAuditionHits;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 await input.RapidClick(button);
-                while (sampler.TransportEpoch == before && watch.ElapsedMilliseconds < 400) await Task.Delay(2);
-                Require(sampler.TransportEpoch > before, "Rapid audition click did not reach the physical renderer.");
-                hits.Add(new { Index = i, Epoch = sampler.TransportEpoch, Milliseconds = watch.Elapsed.TotalMilliseconds });
+                while (sampler.DrumAuditionHits == before && watch.ElapsedMilliseconds < 400) await Task.Delay(2);
+                Require(sampler.DrumAuditionHits > before, "Rapid audition click did not reach the physical renderer.");
+                hits.Add(new { Index = i, Hit = sampler.DrumAuditionHits, Milliseconds = watch.Elapsed.TotalMilliseconds });
                 Require(ReferenceEquals(sampler, Field<WorkflowOutput>(workflow, "_noteOutput").Sampler),
                     "Rapid audition reopened the output.");
                 await Task.Delay(80);
             }
             await pane.PendingCommand;
-            long last = sampler.TransportEpoch;
+            long last = sampler.DrumAuditionHits;
             await Task.Delay(450);
-            Require(sampler.TransportEpoch == last, "Delayed audition backlog remained after rapid clicks.");
+            Require(sampler.DrumAuditionHits == last, "Delayed audition backlog remained after rapid clicks.");
             Require(sampler.PreparedStatesCreated == prepared, "Ready retriggers rendered new PCM.");
             string? physicalFailure = device.ReadFailure();
             Require(physicalFailure is null, "Physical audition output failed: " + physicalFailure);
             await input.RapidClick(button);
             await pane.PendingCommand;
-            for (int i = 0; i < 100 && !sampler.ReadStatus().Playing; i++) await Task.Delay(2);
-            Require(sampler.ReadStatus().Playing, "Stop fixture had no active sample.");
+            for (int i = 0; i < 100 && sampler.DrumAuditionVoices == 0; i++) await Task.Delay(2);
+            Require(sampler.DrumAuditionVoices > 0, "Stop fixture had no active sample.");
             await input.RapidClick(Id("Drum.StopAudition"));
-            for (int i = 0; i < 100 && sampler.ReadStatus().Playing; i++) await Task.Delay(2);
-            Require(!sampler.ReadStatus().Playing, "Local sample Stop did not reach the renderer.");
-            long stoppedEpoch = sampler.TransportEpoch;
+            for (int i = 0; i < 100 && sampler.DrumAuditionVoices > 0; i++) await Task.Delay(2);
+            Require(sampler.DrumAuditionVoices == 0, "Local sample Stop did not reach the renderer.");
+            long stoppedEpoch = sampler.DrumAuditionHits;
             await Task.Delay(200);
-            Require(sampler.TransportEpoch == stoppedEpoch && !sampler.ReadStatus().Playing, "Stopped audition restarted late.");
+            Require(sampler.DrumAuditionHits == stoppedEpoch && sampler.DrumAuditionVoices == 0, "Stopped audition restarted late.");
             Json(output, "rapid-audition", new { NativeWindowsInput = !routed, device.Description,
                 PreparedStates = prepared, Hits = hits, NoDelayedBacklog = true, LocalSampleStop = true });
             checks.Add("native eight rapid audition clicks / one output / cached PCM / no delayed backlog / local Stop");

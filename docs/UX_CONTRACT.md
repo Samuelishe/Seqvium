@@ -534,8 +534,19 @@ editable start/shape/end points and the applicable exact envelope parameters. Pi
 Kick and Tom; other instruments expose amplitude and their actual waveform. Captured drag/fine
 adjustment, arrows/Home/End, default reset, Enter/focus-loss commit and Escape/capture-loss cancellation
 produce at most one logical edit. Uncommitted curves are dashed; intervening edits invalidate drafts.
-Audition selects a note/velocity and plays a quiet solo hit while transport is stopped, without history.
-Parameter commits during playback affect subsequent hits without restarting the rhythm.
+Audition selects a note/velocity and plays an immediate source hit, including over Pattern or Song,
+without notes, resources or history. Repeated Play overlaps bounded tails without restarting music
+or pulsing workspace Busy. Local Stop cuts only preview; global Stop/Panic includes music. Hiding,
+retargeting or removing the source withdraws preview. Parameter commits during playback affect
+subsequent hits without an automatic extra hit or rhythm restart.
+
+Drum/Synth source preview has the same base level as a corresponding unity-graph note at the same
+Velocity, with preview-only peak protection. It bypasses local Gain and project Mixer/Master, even
+Master Mute; project gain/effects/routing and dense preview overlap can therefore explain different
+levels. This is source comparison, not equal-loudness normalization. The
+[audio owner](AUDIO_ENGINE.md#drum-play-along-and-source-preview-levels-seq-drum-playalong-f1) defines
+the mixing boundary and headroom policy. Browser/Piano and Synth Hold retain their existing stopped-
+transport scope; Sample Lab contextual replacement retains its routed musical scope.
 
 The time/frequency graph is analytical; its waveform is derived from the actual synthesized signal,
 not a live meter. Compact panes reflow audition/knobs and scroll locally, keeping every exact parameter

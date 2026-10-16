@@ -466,6 +466,16 @@ presets and new synthesis, and `DrumChoke` derives prepared hat lifetimes. `Buil
 capabilities without introducing a public registry. Derived host-rate signals enter the existing
 source/lease scheduler under [Audio](AUDIO_ENGINE.md#built-in-drum-voice).
 
+Drum editor Play also owns a bounded transient source layer in that same RealtimeSampler callback,
+after musical Master. Desktop borrows the existing musical output when present; otherwise its joined
+solo owner opens one consumer. Immutable worker-rendered mono PCM, eight fixed preview cursors and
+eight command slots do not borrow graph publication or musical transport authority. Source gain is
+unity; linked preview protection uses remaining output headroom without altering music. Stop/hide/
+retarget/removal cancels preview intent independently; global Stop and joined output/project teardown
+include both layers. No preview note, resource, history, graph route or second device stream is created.
+The [audio contract](AUDIO_ENGINE.md#drum-play-along-and-source-preview-levels-seq-drum-playalong-f1)
+owns precise bounds, Master bypass and level semantics; contextual Sample Lab remains separate.
+
 The bound Source node opens `DrumVoicePaneContent` in the retained Node Editor. `DrumEditorSession`
 captures lifecycle/attachment/graph/node plus sound ID, generation and starting values; workflow commits
 revalidate all of them. Controls edit the shared sound, not a graph-local duplicate or physical voice.

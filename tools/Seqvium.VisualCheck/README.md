@@ -1,5 +1,20 @@
 # Desktop visual and lifecycle verification
 
+## Drum play-along
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll drum-playalong "$PWD/.artifacts/drum-playalong/review" native --timeout-seconds=180
+```
+
+Deliberately plays physical audio. Uses a small isolated API-created Kick fragment; guarded Windows
+input selects Snare in the real Rack menu, repeatedly plays over Pattern/Song, shapes/Undo/replays,
+uses local Stop/global Stop/Panic and hides the editor. Checks unchanged transport/output, no
+preview history/backlog/Busy availability pulses, localized theme/compact renders and joined
+document replacement with an active preview. Geometry, language/theme, Song placement and New
+are fixture setup, not native musical authoring. Omit `native` for explicitly routed fallback.
+No system volume/settings change or subjective listening claim. Submitted-PCM measurements use
+the separate [DeviceCheck](../Seqvium.DeviceCheck/README.md#drum-play-along) route.
+
 ## Playlist parameter automation
 
 ```powershell

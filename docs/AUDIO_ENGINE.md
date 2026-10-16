@@ -419,16 +419,56 @@ still cut voices; seek reconstructs source age from the frozen signal. Shared so
 transport position/epoch, retire changed voices and affect subsequent hits after publication. There is
 no continuous audible uncommitted drag preview. A successful changed Drum editor commit auditions the
 current source while musical transport is stopped; cancellation, unchanged/stale edits and Undo do not.
-The roomy Play and adjacent local Stop remain available outside the scrolling parameter area. Ready
-hits reuse one output and resident prepared transient PCM with authority-bound retrigger. EOF/Stop
-retire transient state as before; later Play may prepare again while retaining the healthy output. During preparation
-only the latest pending request survives: there is no queue of delayed hits. Stop/Panic, editor target
-changes and project close withdraw pending authority. A failed audition preserves the accepted edit
-and its Undo. Piano note audition retains its separate source validation and joined ownership transfer.
-Solo audition uses the same synthesis and quiet pitched
-audition lifetime, bypassing downstream Gain/Mix while transport is stopped. Offline, realtime and WAV
-use the same prepared kernel and boundary policy. See [family verification](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md)
+The roomy Play and adjacent local Stop remain available outside the scrolling parameter area.
+Explicit Play also works over Pattern/Song under the source-audition boundary below. A failed audition
+preserves the accepted edit and its Undo. Piano note audition retains its separate source validation
+and joined ownership transfer. Offline, realtime and WAV use the same prepared kernel and boundary
+policy. See [family verification](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md)
 and the [original kick evidence](experiments/SEQ-FIRST-DRUM_REPORT.md).
+
+### Drum play-along and source preview levels (SEQ-DRUM-PLAYALONG-F1)
+
+Drum editor Play injects a finite host-rate source hit into the existing RealtimeSampler consumer,
+after the musical graph/Mixer/Master and its meters, before the one physical output. It uses the
+same DrumVoice synthesis, selected pitch and linear Velocity exactly once. Source preview gain is
+unity, as is Synth editor and built-in Drum/Synth Piano audition. This matches a corresponding note
+through a unity local graph and neutral Mixer, rather than normalizing different instruments to
+equal loudness. Synth retains its fixed DSP headroom and held-preview envelope smoothing. Existing
+PCM, Browser and Sample Lab solo attenuation remains unchanged.
+
+This is deliberately dry source audition: graph Gain/Mix multiplicity, channel routing/Mute/Solo,
+Master fader/effects/protection and Song automation affect music, not the independent preview.
+Sample Lab contextual replacement still follows the musical graph; source preview does not enter
+saved notes, media, history, export or R8. Preview cannot excite or reset project FX or change their
+meters. A muted Master does not mute source audition. There is no new persistent/global gain.
+
+Only the preview contribution receives linked -1 dBFS sample-peak protection, with instantaneous
+attenuation and 50-ms recovery, no makeup. Its available headroom is the ceiling minus the larger
+absolute L/R musical sample. Music is never attenuated or changed. Dense overlap or loud music can
+therefore reduce preview; music already above the ceiling admits no preview at that sample and
+keeps its existing overload. This does not repair project clipping, measure LUFS or guarantee true
+peaks/acoustically click-free cuts. Solo built-in source preview uses the same ceiling without music.
+
+Eight fixed PCM cursors overlap independently of the unchanged 32 musical voice slots. Eight ring
+commands at most are consumed at each packet boundary; a full ring refuses the newest command with
+no retry/backlog. At voice capacity the oldest preview tail is replaced immediately. Hats audition
+independently of scheduled choke groups. Preparation runs off callback; one current source/pitch
+cache survives EOF/local Stop, and Velocity changes need no synthesis. A changed source/pitch has
+one worker and one replaceable latest intent, with cancellation and target/lifecycle/generation/
+transport validation before enqueue. Superseded preparation creates no delayed series of hits.
+The family bounds sources to 2.4 seconds mono at 44.1/48 kHz: eight active, eight queued, one cache
+and one candidate conservatively retain at most 8,294,400 PCM bytes, separately from musical plan
+budgets. Additional callback work is at most eight mono reads/additions per frame plus linked
+protection; there is no allocation, disposal, I/O, lock, document traversal or second transport.
+
+Desktop reuses the musical output whenever it exists, including stopped transport. Otherwise the
+joined solo output owner opens one silent consumer; starting music joins that solo lifetime first.
+No additional WASAPI stream opens for play-along. Local preview Stop/hide/retarget/source removal
+withdraw pending hits and clear only preview at the next boundary. Stop/Panic additionally stops
+music; project/output teardown cancels and joins preparation before joining the borrower and clearing
+all source references. Undo never retriggers preview. Parameter commits still auto-audition only
+when music is stopped; explicit Play hears accepted current parameters over music without Busy.
+The [report](experiments/SEQ-DRUM-PLAYALONG-F1_REPORT.md) owns measured levels and physical limits.
 
 ## R2-F1 offline sampler foundation
 
@@ -687,7 +727,8 @@ and release with its existing two-second gate; drum/raw Browser auditions keep t
 ### SEQ-R9 pitched note audition
 
 `NoteAuditionRequest` captures source authority and prepares one pitched PCM voice off-thread through
-the same sampler kernel, with a maximum two-second gate and quiet 0.12 audition gain. Natural EOF may
+the same sampler kernel, with a maximum two-second PCM gate and quiet 0.12 PCM audition gain.
+Built-in Drum/Synth use unity source gain and preview protection under the boundary above. Natural EOF may
 end earlier. It does not alter notes, history, shared root or the main execution plan, and bypasses
 downstream graph processing deliberately. Desktop owns a dedicated transient renderer/output session;
 publication revalidates lifecycle/revision/transport generation. Another preview, Play, Stop/Panic or

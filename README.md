@@ -46,7 +46,8 @@ for the logo, typography, alternative directions and publication resources.
   them across the keyboard. Adjust zone edges by mouse or note name; each WAV keeps its own range
   and sustain loop. The keyboard adapts to the pane width and scrolls through the full map.
 - Use built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim, editable envelopes and sound presets,
-  or pitched WAV samples. Linked hats can choke each other.
+  or pitched WAV samples. Linked hats can choke each other. Play hits in the Drum Voice editor over
+  your running Pattern or Song to shape sounds by ear; its local Stop leaves the music playing.
 - Create basses, leads, pads and plucks with the built-in polyphonic **Synth**. Choose two waveforms,
   blend/detune them, shape ADSR and low-pass cutoff/resonance while a held preview keeps sounding. Factory
   sounds are starting points; save the edited instrument with the project, without an external WAV.

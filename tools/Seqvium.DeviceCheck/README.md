@@ -1,5 +1,21 @@
 # Explicit Windows audio verification
 
+## Drum play-along
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll drum-playalong .artifacts/drum-playalong/physical
+```
+
+Measures all 21 factory Drum sounds at both rates, pitch 36/Velocity 0.8, recording full-envelope
+peak/RMS and the former solo gain versus unity/default Pattern gain. Then deliberately plays a
+small Kick Pattern with eight simultaneous low-velocity preview hits through one physical output.
+Captures submitted PCM, replays the actual partitions through a control mirror and records peak,
+error, allocation/miss counters and joined lifetime in `physical.json`. Source measurements are
+`levels.json`; `synth-levels.json` compares Warm Bass scheduled/held kernels and settled Sustain
+at both rates. These are local diagnostic files, not project media. No settings/system volume
+change, acoustic microphone/DAC measurement, GUI/native input or long-pressure acceptance is claimed.
+Use [VisualCheck](../Seqvium.VisualCheck/README.md#drum-play-along) separately for real input.
+
 This small Release harness exercises production Core PCM execution through `Seqvium.Audio.Windows`.
 It plays quiet project-authored WAV material on the current default console output; it changes no
 device/volume/rate settings. It is not the future workstation, an engine SDK or an ordinary unit test.

@@ -179,8 +179,10 @@ opens it; the left Rack icon or **Panes** menu reopens it. You can begin without
    Snare blends body and snappy noise; Clap spreads bursts; Tom exposes pitch drop and resonance.
    Rotate dials clockwise to increase and counterclockwise to decrease; Shift adjusts finely.
    Drag envelope points or enter exact values; each completed adjustment is one Undo and plays a
-   quiet hit when music is stopped. The large **▶** repeats the selected note/velocity immediately; **■** beside it cuts
-   the sample. The small save/open buttons exchange custom
+   source hit when music is stopped. The large **▶** plays the selected note/velocity, including over
+   a playing Pattern or Song; **■** beside it cuts only preview. Preview is dry, at the source level:
+   project Gain and Mixer/Master processing apply to music, while preview has its own peak protection.
+   The small save/open buttons exchange custom
    `.seqdrum` sound presets. Linked hats cut each other; switch **Hat choke** off for independent tails.
    Double-click the channel name or use **… → Open sound editor** to return. **Add sound** or a dropped
    WAV adds a sample channel. Sources mix automatically; rhythm stays in Rack.

@@ -118,6 +118,25 @@ public sealed class RealtimeSampler : IDisposable
     private long _authority, _stop, _start, _seenStart, _command, _startAuthority;
     private int _preparing;
     private float _gain = 1;
+    private readonly DrumAudition _drumAudition;
+    private readonly AuditionPeakProtection _sourceProtection;
+    private bool _protectSourceAudition;
+    public int DrumAuditionVoices => _drumAudition.ActiveVoices;
+    public long DrumAuditionHits => _drumAudition.Hits;
+    public long DrumAuditionOverflows => _drumAudition.Overflow;
+    public long DrumAuditionSteals => _drumAudition.Stolen;
+    public float DrumAuditionMinimumGain => _drumAudition.MinimumGain;
+
+    /// <summary>Control-owner source hit, independent of graph publication/transport and final project Gain.</summary>
+    public bool TriggerDrumAudition(PreparedDrumAudition source, decimal velocity)
+    {
+        if (_disposed || IsTerminated) return false;
+        if (source.SampleRate != SampleRate) throw new ArgumentException("Audition rate differs from output.");
+        return _drumAudition.Trigger(source, velocity);
+    }
+
+    public void StopDrumAudition() => _drumAudition.Stop();
+    public void ProtectSourceAudition() => _protectSourceAudition = true;
     private bool _playing, _disposed, _terminated;
     private bool _stopBoundary;
     private int _transitionRemaining;
@@ -257,6 +276,8 @@ public sealed class RealtimeSampler : IDisposable
         Channels = channels;
         MaximumPacketFrames = maximumPacketFrames;
         _smoothBoundaries = smoothBoundaries;
+        _drumAudition = new(sampleRate);
+        _sourceProtection = new(sampleRate);
     }
 
     /// <summary>Invalidates pending acceptance. The identified active revision may continue. Control owner only.</summary>
@@ -447,6 +468,7 @@ public sealed class RealtimeSampler : IDisposable
 
     public long Stop()
     {
+        StopDrumAudition();
         long command = Interlocked.Increment(ref _command);
         Volatile.Write(ref _stop, command);
         return command;
@@ -660,6 +682,16 @@ public sealed class RealtimeSampler : IDisposable
         if (!_playing) _transitionRemaining = 0;
         float gain = Volatile.Read(ref _gain);
         for (int i = 0; i < output.Length; i++) output[i] *= gain;
+        if (_protectSourceAudition && active is { Transient: true })
+            for (int i = 0; i < output.Length; i += Channels)
+            {
+                float peak = Math.Abs(output[i]);
+                if (Channels == 2) peak = Math.Max(peak, Math.Abs(output[i + 1]));
+                float protectedGain = _sourceProtection.Gain(peak);
+                for (int channel = 0; channel < Channels; channel++) output[i + channel] *= protectedGain;
+            }
+
+        _drumAudition.Process(output, Channels);
         Volatile.Write(ref _position, active?.Execution.Position ?? 0);
         Volatile.Write(ref _voices, active?.Execution.ActiveVoices ?? 0);
         Volatile.Write(ref _acknowledgedStop, stop);
@@ -682,6 +714,7 @@ public sealed class RealtimeSampler : IDisposable
     {
         if (_terminated) return;
         _active?.Execution.Stop();
+        _drumAudition.Clear();
         _playing = false;
         Volatile.Write(ref _terminated, true);
         TerminationBoundaries++;
@@ -705,6 +738,7 @@ public sealed class RealtimeSampler : IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+        _drumAudition.Clear();
         var pending = Interlocked.Exchange(ref _pending, null);
         if (pending is not null)
         {

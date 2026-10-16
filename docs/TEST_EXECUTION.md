@@ -305,6 +305,23 @@ plus actual populated Mixer/Playlist/Rack captures, not just geometry constants.
 
 ## Drum Voice verification
 
+`DrumPlayAlongTests` covers both rates, exact source PCM/Velocity parity, independent overlap,
+packet partitioning, eight-voice/ring bounds, oldest-tail replacement, full-ring refusal without
+backlog, local/global Stop, terminal ownership, preview-only protection and warmed zero allocation.
+`DrumAuditionTests` additionally compares every editor instrument to unity Pattern output (Synth's
+settled held level), proves unchanged Pattern/Song execution and history without Busy, and checks
+bit-identical musical Mixer taps/Delay/Reverb continuation, cancellation, source removal and joins.
+Existing Synth live-preview, Piano, Browser, Lab, Mixer, automation, export and R8 suites remain required
+dependencies when changing this shared consumer boundary.
+
+VisualCheck `drum-playalong <output> native` plays an isolated Kick fragment and uses guarded Windows
+input for Snare selection, rapid hits, parameter/Undo, local/global Stop, Song and editor hide; setup
+and document replacement are explicit API fixtures. RU/EN × Dark/Light ordinary/reduced actual
+windows remain separate from subjective listening. DeviceCheck's distinct `drum-playalong <output>`
+measures all factory Drum sources and a short physical PCM capture/partition mirror, misses,
+allocation and join. Neither is the long pressure qualification. The
+[report](experiments/SEQ-DRUM-PLAYALONG-F1_REPORT.md) owns executed evidence and Master-bypass limits.
+
 `rack-pads` verifies fixed square geometry/scroll reachability at three pane widths in RU/EN ×
 Dark/Light and native row painting, Undo/Redo and real playing-column rendering. `native-track`
 authors/reopens/balances/arranges/plays/exports the Neon Orchard score through native Windows input,

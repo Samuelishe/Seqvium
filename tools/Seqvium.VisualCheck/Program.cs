@@ -175,7 +175,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "automation" or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review"
-                or "control-input" or "rack-pads"
+                or "control-input" or "drum-playalong" or "rack-pads"
                 or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow"
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
                 or "sampler-editor" or "sampler-keymap" or "synth" or "reverb" or "delay" or "ui-density"
@@ -222,6 +222,8 @@ internal static partial class Program
                         args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "synth")
                     await SynthEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "drum-playalong")
+                    await DrumPlayAlongAsync(main, output, args.Contains("native"));
                 else if (args[0] == "automation")
                     await AutomationAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "reverb")

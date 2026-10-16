@@ -331,7 +331,9 @@ limit reversal in Drum, Gain and Mixer. Shared `GainLevelControl` draws a contin
 outlined thumb and captures the whole X gesture outside its visible bounds. Drum audition velocity
 reuses this control and its Escape/capture-loss behavior with a local 0.05–1 mapping, outside Undo.
 Instrument descriptors supply only the working knobs, preset selector and hat choke toggle. Portable
-preset actions use existing Save/Open vectors and standard buttons; repeated stopped audition remains enabled.
+preset actions use existing Save/Open vectors and standard buttons. Drum Play/Stop also remain
+enabled during Pattern/Song playback under the existing footer composition; source hits do not
+disable neighbouring controls through workspace Busy.
 The shared chassis, responsive audition/knob groups and local ScrollViewer preserve comfortable
 input dimensions. Rendered exact-text/unit centers and reachability are verified in both languages
 and themes under [the instrument report](experiments/SEQ-FIRST-DRUM_REPORT.md).

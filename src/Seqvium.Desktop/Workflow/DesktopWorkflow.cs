@@ -566,6 +566,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void DocumentChanged()
     {
+        DrumDocumentChanged();
         if (!_acceptingResample) _resamplingCancellation?.Cancel();
         LabDocumentChanged();
         if (_samplerAudition is { } sampler && sampler.Generation != _document.Generation)

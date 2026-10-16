@@ -106,6 +106,12 @@ internal static class DeviceCheck
         Console.Error.WriteLine(
             "WARNING: explicit physical verification plays sound on the selected output. No system volume/settings are changed.");
         if (mode == "audition-smoke") return await AuditionCheck.Run();
+        if (mode == "drum-playalong")
+        {
+            if (args.Length != 2) throw new ArgumentException("drum-playalong <report-directory>");
+            return await DrumPlayAlongCheck.Run(args[1]);
+        }
+
         if (mode == "loop-smoke") return await LoopCheck.Run();
         if (mode == "song-smoke") return await ArrangementCheck.Run();
         if (mode == "graph-measure") return await GraphCheck.Run(args);

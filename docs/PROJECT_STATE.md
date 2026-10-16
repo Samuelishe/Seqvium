@@ -7,7 +7,17 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0001**, **SEQ-SYNTH-LIVE-PREVIEW-F1 — Continuous Synth Editing**.
+Product alpha **0.1.16.0002**, **SEQ-DRUM-PLAYALONG-F1 — Drum Play-along and Source Levels**.
+Drum editor Play overlaps bounded source hits over Pattern/Song in the existing output callback,
+without restarting music, publishing a graph or creating notes/media/Undo. Local Stop/hide/removal
+withdraw preview; global Stop/Panic and project teardown include both layers. Drum/Synth source
+gain now matches unity Pattern at equal Velocity, with preview-only sample-peak protection and
+explicit dry Mixer/Master bypass. Existing PCM/Browser/Lab scope and continuous Synth preview remain.
+No reader/schema, persistent gain, additional stream, new instrument or composition is introduced.
+The [report](experiments/SEQ-DRUM-PLAYALONG-F1_REPORT.md) owns level measurements, native/UR12 evidence,
+failed attempts and listening/pressure limits.
+
+Previous **0.1.16.0001**, **SEQ-SYNTH-LIVE-PREVIEW-F1 — Continuous Synth Editing**.
 Held Synth preview hears knob/ADSR drafts through the existing voice and a bounded immutable mailbox;
 commit, waveform/preset changes and Undo/Redo preserve its phase/filter/time. Escape/capture loss
 restores canonical sound without history. Repeated Hold is idempotent, note selection retunes,
@@ -153,7 +163,9 @@ footer keeps spacious icon-only Play and local sample Stop accessible, auditions
 commits outside music and reuses resident ready PCM/output for retrigger. Dials shrink continuously to
 a usable minimum before wrapping within the allocated pane; Play/Stop stays outside parameter scrolling.
 Preparation keeps only the latest
-pending request; cancellation/transport/lifecycle relevance prevents stale starts. Evidence and limits
+pending request; cancellation/transport/lifecycle relevance prevents stale starts. Play-along now uses
+eight independent preview cursors and unity source level under the current checkpoint, superseding
+the former quiet single-transient retrigger. Evidence and limits
 belong to the [control input report](experiments/SEQ-CONTROL-INPUT_REPORT.md).
 
 A unified compact Settings window owns General,
@@ -273,7 +285,16 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-SYNTH-LIVE-PREVIEW-F1, 2026-10-16**. Full Release solution build has
+Latest L0/L1/L2/L3: **SEQ-DRUM-PLAYALONG-F1, 2026-10-16**. Full Release solution build has
+zero warnings/errors (**9.96 s**); **1801/1801** tests pass, zero skips, one thread (**65.656 s runner**).
+Forty-one added cases cover source/kernel/Pattern levels, overlap/ring bounds, cancellation/Stop,
+removal/join, no Busy, unchanged musical execution and bit-identical Mixer FX/taps. This requested
+L3 covers shared callback ownership plus Pattern/Song/automation/export/R8/readers. Native Drum
+play-along and the full existing Synth native/live/UR12 route pass separately; the report owns
+actual scopes, final lifecycle checks and retained failures. Physical capture is not subjective
+listening or closure of existing pressure/platform gaps.
+
+Previous L0/L1/L2/L3: **SEQ-SYNTH-LIVE-PREVIEW-F1, 2026-10-16**. Full Release solution build has
 zero warnings/errors (**15.13 s**); **1760/1760** tests pass, zero skips, one thread (**66.298 s CLI**).
 Twenty-one new cases cover audible held updates, draft cancellation/phase convergence, mailbox
 authority/Stop, exact edited release/safety boundaries at both rates, allocation, resident output,
@@ -525,8 +546,9 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected continuous-preview L3 covers
-shared voice/release execution and command lifetime, Song/Mixer/Automation/R8, media and readers.
+Completed repository tasks since this L3: **0**. This requested play-along L3 covers shared callback
+ownership, bounded preview overlap/protection, musical voice/release execution and command lifetime,
+Song/Mixer/Automation/R8, media and readers.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
 subjective acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**

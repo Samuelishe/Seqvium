@@ -91,7 +91,8 @@ internal sealed partial class DesktopWorkflow
             {
                 _noteSession = new();
                 _noteSession.AttachOutput(_noteOutput.Lifetime, _noteOutput.Sampler);
-                _noteOutput.Sampler.SetGain(0.12f);
+                _noteOutput.Sampler.SetGain(sound.Algorithm == PcmSampler.Algorithm ? .12f : 1f);
+                if (sound.Algorithm != PcmSampler.Algorithm) _noteOutput.Sampler.ProtectSourceAudition();
                 using var request = DrumVoice.Supports(sound)
                     ? new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, pitch, intensity)
                     : new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, pitch, intensity);
@@ -121,6 +122,7 @@ internal sealed partial class DesktopWorkflow
         if (!preserveDrumRequests) InvalidateDrumAuditions();
         _drumAuditionOutput = false;
         _drumAuditionSource = null;
+        _drumAuditionPcm = null;
         if (!_labContextual) _labAudible = null;
         _browserAudition?.EndLifetime();
         if (_noteSession?.OutputSampler is not null) await _noteSession.DisposeAsync();

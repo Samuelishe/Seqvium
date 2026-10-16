@@ -500,8 +500,7 @@ internal sealed class DrumVoicePaneContent : Grid, IDisposable
                     _plot.AmplitudeMode == (p.Parameter.Key is "attack" or "amplitudeCurve");
             }
 
-            _hit.IsEnabled = _session.Sound is { } available && DrumVoice.Supports(available) && !_presetBusy &&
-                             _workflow.State.Execution?.Execution.Playing != true;
+            _hit.IsEnabled = _session.Sound is { } available && DrumVoice.Supports(available) && !_presetBusy;
             _stop.IsEnabled = _hit.IsEnabled;
             _plot.IsEnabled = _session.CanEdit && _command.IsCompleted;
             AutomationProperties.SetName(_hit, _shell["Drum.Audition"]);

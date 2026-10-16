@@ -8,6 +8,23 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-DRUM-PLAYALONG-F1 — 2026-10-16
+
+Replaced the Drum editor's transport refusal and quiet transient retrigger with a bounded dry source
+layer inside the same RealtimeSampler callback. Reused the current musical output instead of opening
+a competing stream. Eight cursors/commands, latest-only worker preparation, sticky local/global Stop
+and joined teardown keep rapid hits finite. The chosen after-Master tap preserves musical graph/FX
+state and meters; preview-only linked protection consumes available headroom without ducking music.
+Unity Drum/Synth source gain matches corresponding unity-graph notes at equal Velocity, while DSP
+headroom/timbre and project Gain/Mixer remain audible reasons for differences. No persistent gain,
+schema/reader, new instrument, track or composition was added. Product 0.1.16.0002 is one BUILD.
+
+Full Release passes 1801/1801 with zero warnings/errors. Real native Pattern/Song play-along, localized
+ordinary/compact windows and the existing Synth live-preview regression run through UR12 at 44.1 kHz.
+Short physical capture has exact partition-mirror PCM and zero measured callback allocations/misses.
+The [report](../experiments/SEQ-DRUM-PLAYALONG-F1_REPORT.md) retains measurements, failures and
+subjective listening/pressure limits. No index/history/remote mutation was performed.
+
 ## SEQ-SYNTH-LIVE-PREVIEW-F1 — 2026-10-16
 
 Corrected interrupted Synth editing through the existing held voice and a bounded immutable parameter
