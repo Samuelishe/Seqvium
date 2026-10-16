@@ -76,7 +76,8 @@ internal sealed record PreparedNote(
     long SustainFade = 0,
     long SustainCrossfade = 0,
     bool SamplerRange = false,
-    PreparedSynth? Synth = null);
+    PreparedSynth? Synth = null,
+    int AutomationIndex = -1);
 
 /// <summary>Frozen single-Pattern execution, bounded repeats and source leases. Derived state, never persistent musical truth.</summary>
 public sealed class PreparedSampler : IDisposable
@@ -98,7 +99,7 @@ public sealed class PreparedSampler : IDisposable
     internal PreparedGraph? Graph { get; }
     public int DecodedBytes { get; }
 
-    public int ScratchBytes => (Graph?.ScratchBytes ?? 0) +
+    public int ScratchBytes => Automation.Sum(a => a.StorageBytes + sizeof(double)) + (Graph?.ScratchBytes ?? 0) +
                                (Graph?.Mixer is { } mixer ? mixer.Strips.Length * 2048 + mixer.Taps.Length * 64 : 0);
 
     public ImmutableArray<AudioContribution> Contributions => Graph?.Contributions ?? [];
@@ -108,6 +109,8 @@ public sealed class PreparedSampler : IDisposable
     internal LoopClock? Loop { get; set; }
     internal ProjectState? CanonicalBasis { get; set; }
     internal bool IsArrangement { get; init; }
+    internal PreparedAutomation[] Automation { get; init; } = [];
+    internal PreparedAutomation?[] MixerAutomation { get; init; } = [];
     internal bool HeldAudition { get; init; }
     internal Id<SoundDefinition>? AuditionSound { get; init; }
     internal Guid? AuditionCandidate { get; init; }
@@ -490,6 +493,7 @@ public sealed class OfflineSampler : IDisposable
     }
 
     private readonly PreparedSampler _plan;
+    private readonly double[] _automationValues;
     private readonly Voice[] _voices;
     private PcmLease[]? _sources;
     private int _eventIndex;
@@ -539,6 +543,7 @@ public sealed class OfflineSampler : IDisposable
 
     internal OfflineSampler(PreparedSampler plan)
     {
+        _automationValues = new double[plan.Automation.Length];
         _plan = plan;
         EndFrame = plan.EndFrame;
         _tailSourceEnd = plan.SourceEndFrame;
@@ -742,22 +747,27 @@ public sealed class OfflineSampler : IDisposable
                         else if (voice.ReleaseAge < 0) voice.ReleaseAge = 0;
                     }
                     else if (voice.Note is not { OneShot: true }) voice.Note = null;
+
                 _iteration++;
                 _eventIndex = 0;
             }
 
             ApplyEvents();
+            for (int i = 0; i < _automationValues.Length; i++) _automationValues[i] = _plan.Automation[i].At(Position);
             foreach (var voice in _voices)
             {
                 if (voice.Note is not { } note) continue;
                 if (note.Synth is { } synth)
                 {
-                    double sample = voice.Synth.Next(synth, voice.Age, voice.ReleaseAge) * note.Gain;
+                    double sample = voice.Synth.Next(synth, voice.Age, voice.ReleaseAge,
+                        note.AutomationIndex < 0 ? synth.G : _automationValues[note.AutomationIndex],
+                        _plan.SampleRate) * note.Gain;
                     if (_smoothBoundaries)
                     {
                         long end = Math.Min(_looping ? long.MaxValue : EndFrame, _rangeBoundary);
                         sample *= Math.Clamp((end - Position - 1d) / BoundaryFadeFrames, 0, 1);
                     }
+
                     Span<float> target = _signals is null ? interleavedOutput : _signals[note.ContributionIndex];
                     target[frame * _plan.Channels] += (float)sample;
                     if (_plan.Channels == 2) target[frame * 2 + 1] += (float)sample;
@@ -866,7 +876,7 @@ public sealed class OfflineSampler : IDisposable
             }
 
             _signals![graph.OutputBuffer].AsSpan(0, _lastSamples).CopyTo(interleavedOutput);
-            _mixer?.Process(_signals, interleavedOutput, _plan.Channels);
+            _mixer?.Process(_signals, interleavedOutput, _plan.Channels, Position - frames, _plan.MixerAutomation);
         }
 
         // Events at block end belong to the following block, except final retirement is immediate.

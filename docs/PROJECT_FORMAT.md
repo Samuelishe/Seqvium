@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 11. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 12. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
@@ -27,6 +27,27 @@ require the source package or generator and never regenerates accepted audio. No
 candidate history is promised. Existing `ExtensionState` and unknown node/sound payload preservation
 and dependency-scoped execution refusal remain unchanged; R6 provides no realtime extension processor.
 See [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
+
+## Parameter automation (reader 1.12)
+
+Optional `state.automationLanes` defaults to empty and is omitted on Encode when empty. Nonempty
+intent requires minimum reader 1.12, even if disabled or unresolved; a falsely older envelope is
+refused on Read. Existing non-automation projects retain their own required feature gate and PCM.
+Save retains the reader floor independently of later removal. Product version is not a reader gate.
+
+Each lane stores its UUID, Playlist `lane`, `targetName` fallback, typed `target`, `enabled` and
+ordered `points`. A target has `parameter` (`synthCutoff` or `mixerVolume`) and exactly one nonempty
+`soundId` or `channelId`, respectively; the other is null. Points store UUID, Int64 tick `position`,
+decimal normalized `value` in [0,1] and outgoing `transition` (`linear` or `smooth`). One target and
+one spatial slot may have only one automation lane. Music clips cannot occupy that dedicated slot.
+There are at most 32 lanes and 1024 points per lane, within the existing entity/JSON limits.
+
+Target deletion or source-kind change retains an unresolved envelope and its original identity.
+Opening reports unavailable targets; execution never searches names, lanes or current routes for a
+replacement. Undo restores the identified relationship when the original object returns. Unknown
+properties at lane/target/point boundaries round-trip normally; unresolved target IDs are deliberate
+retained intent, not a licence to tolerate arbitrary malformed target shapes or point ranges.
+History, selection, drafts, compiled coefficients, playhead and device state are not serialized.
 
 ## Subtractive synth (reader 1.11)
 
@@ -308,7 +329,7 @@ identified sound uses without defining runtime instances. `additionalData` is a 
 name, never emitted as a format field. Extension payloads and optional unknown values are opaque JSON.
 
 Only major 1 is understood. Higher compatible minor documents are retained at their original minor
-when `minimumReaderMinor <= 6`; unsupported major/required minor is refused. Graph-free 1.0 remains
+when `minimumReaderMinor <= 12`; unsupported major/required minor is refused. Graph-free 1.0 remains
 supported; the graph-aware gate below applies to meaningful graph intent. No legacy migration is
 claimed. Unknown JSON properties at envelope, state, settings and every entity/nested part/note are
 preserved semantically at the same object boundary, including through edits/Undo/Save. Reserved known

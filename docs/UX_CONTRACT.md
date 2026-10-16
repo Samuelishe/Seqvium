@@ -241,6 +241,28 @@ not downstream graph monitoring. Stop/Panic/Play/close withdraw and join that pr
 Scale/quantize/humanization, automation/controller curves, MIDI/QWERTY recording, MPE, multisample
 mapping and independent simultaneous Piano editor targets remain [follow-ups](ROADMAP.md#seq-r9--piano-roll).
 
+## Playlist parameter automation
+
+The Playlist Automation icon creates a dedicated lane for an existing synth Cutoff or Mixer
+channel/bus Volume. Headers identify the named target and parameter; curves, real point values and
+the shared ruler show its musical progression. Hover reveals its range. A power control bypasses
+the envelope without changing base settings; unavailable targets retain a visible warning and points.
+
+Click empty curve space to add a point; drag a point in time/value with existing snap, Shift beat
+snap or Alt free timing. Neighbours cannot be overwritten by dragging. One release is one Undo;
+Escape, capture loss, deactivation, replacement or changed generation cancels the draft. Double-click
+a point, use its context menu/Enter or the properties action for exact `bar:beat:tick`, Hz/dB and
+Linear/Smooth transition. The header opens lane settings. Invalid input stays editable with a concise
+error. Arrows nudge the selected point, Home/End select endpoints, and Delete removes a point while
+retaining at least one. Lane deletion is a separate explicit action. Global Undo/Redo and Save apply.
+
+These envelopes use absolute Song time and control the shared sound or channel aggregate across
+all its repeated/overlapping uses. They stay anchored when clips or sections move/duplicate; they
+are not automation clips or Pattern-local curves. Endpoints hold outside the point range. They do
+not lengthen Song playback, affect Pattern/preview/R8 or overwrite manual Synth/Mixer settings.
+Song seek/loop and full WAV use the same values with the audio owner's cold-entry/smoothing limits.
+Deleting/replacing a target never redirects by its name or route; Undo can restore the original.
+
 ## Playlist music workflow
 
 Ruler click moves the session Song cursor without starting audio; Play begins at that cursor.
@@ -313,7 +335,7 @@ timeline presentation and exact bar fields extend up to one million bars. Canoni
 time remains the persistence boundary. All 32 lanes
 are available by vertical scrolling even before they contain clips. The timeline anchors at TOP + LEFT;
 its horizontal extent fills an expanded viewport with editable bars up to the existing limit. It adds no
-audio stretch, automation or an in-clip velocity editor. Sections and explicit variations are below.
+in-clip velocity editor. Global automation is above; sections and explicit variations are below.
 Audio range/trim/split/fades are implemented below; stateful global processing belongs to Mixer.
 Shared velocity edits are in Piano Roll.
 Reference-informed follow-up lives

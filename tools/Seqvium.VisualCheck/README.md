@@ -1,5 +1,25 @@
 # Desktop visual and lifecycle verification
 
+## Playlist parameter automation
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll automation "$PWD/.artifacts/automation/review" native audio --timeout-seconds=120
+```
+
+Creates a four-bar held synth chord and two repeated Song uses through the production workflow.
+Actual Playlist controls create Cutoff/Volume lanes; captured point move/add/cancel/capture-loss,
+exact properties, invalid input, history and portable Save/New/Open are exercised. RU/EN × Dark/Light
+uses 1400×900, 900×700 and 640×480 windows with 1020×650, 440×480 and locally scrolled minimum
+pane frames. Real field presenters are
+measured; captures include the native popup screen and transparent popup content separately.
+The compact target/power/Position/Value/transition surface uses shared controls and icon actions.
+
+Exports `cutoff-sweep.wav`, `mixer-fade.wav` and `combined.wav`, each 16.25 seconds at 48 kHz PCM16,
+plus independent media-free projects. `native` separately attempts guarded Windows point dragging;
+`audio` plays the combined Song on the current output, edits a live curve and checks exact natural
+Ended/zero voices/unchanged epoch. Neither option turns routed setup/history into full native
+authoring or establishes subjective listening. No personal reference/sample library is required.
+
 ## Polyphonic Synth Source Editor
 
 ```powershell

@@ -94,24 +94,31 @@ internal sealed record PreparedSynth(SynthVoice.Wave Wave1, SynthVoice.Wave Wave
 
 internal struct SynthState
 {
-    private double _phase1, _phase2, _ic1, _ic2;
+    private double _phase1, _phase2, _ic1, _ic2, _g;
+
     internal void Reset(PreparedSynth p, long age = 0)
     {
         _phase1 = age * p.Step1 % 1; _phase2 = age * p.Step2 % 1;
         _ic1 = _ic2 = 0;
+        _g = double.NaN;
     }
-    internal double Next(PreparedSynth p, long age, int releaseAge)
+
+    internal double Next(PreparedSynth p, long age, int releaseAge, double g, int rate)
     {
         double input = (1 - p.Mix) * SynthVoice.Oscillator(p.Wave1, _phase1, p.Step1) +
                        p.Mix * SynthVoice.Oscillator(p.Wave2, _phase2, p.Step2);
         _phase1 += p.Step1; _phase1 -= Math.Floor(_phase1);
         _phase2 += p.Step2; _phase2 -= Math.Floor(_phase2);
         // Trapezoidal state-variable low-pass: positive damping, bounded cutoff below Nyquist.
-        // Solve both coupled integrators together; no coefficient changes or allocation here.
+        // Solve both coupled integrators together; automation supplies a worker-built coefficient lookup.
         double v3 = input - _ic2;
-        double v1 = (_ic1 + p.G * v3) * p.IntegratorGain;
-        double v2 = _ic2 + p.G * v1;
-        _ic1 = 2 * v1 - _ic1; _ic2 = 2 * v2 - _ic2;
+        // Smooth live curve replacement without touching phase/envelope or filter integrators.
+        _g = double.IsNaN(_g) ? g : _g + (g - _g) * (1d / (.005 * rate));
+        double integratorGain = _g == p.G ? p.IntegratorGain : 1 / (1 + _g * (_g + p.K));
+        double v1 = (_ic1 + _g * v3) * integratorGain;
+        double v2 = _ic2 + _g * v1;
+        _ic1 = 2 * v1 - _ic1;
+        _ic2 = 2 * v2 - _ic2;
         return .18 * v2 * p.Envelope(age, releaseAge);
     }
 }

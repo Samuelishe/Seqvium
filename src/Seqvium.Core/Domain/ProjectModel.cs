@@ -180,6 +180,7 @@ public sealed record ProjectState(
     public ImmutableArray<ArrangementTrack> ArrangementTracks { get; init; } = [];
     public ImmutableArray<ArrangementSection> ArrangementSections { get; init; } = [];
     public ImmutableArray<AudioClip> AudioClips { get; init; } = [];
+    public ImmutableArray<AutomationLane> AutomationLanes { get; init; } = [];
     public MixerState? Mixer { get; init; }
 }
 

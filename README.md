@@ -71,6 +71,10 @@ for the logo, typography, alternative directions and publication resources.
 - Create a fresh project with **New project / Ctrl+N**, switch playing Patterns from the navigator,
   and open a melody directly in Piano Roll. Empty documents start with one compact Channel Rack.
 
+Draw synth filter sweeps and Mixer channel fades directly in Playlist automation lanes. Drag points
+or enter exact musical positions and values; Song playback and WAV export follow the curves while
+the original sound and Mixer settings stay intact. See [parameter automation](docs/README.md#automate-a-parameter).
+
 Audio Clips do not change pitch or speed when moved or when BPM changes. Their start positions use
 musical time; their lengths, trims and fades use source frames. Clip properties offer explicit
 **Time stretch (50–200%)**, keeping pitch while changing duration. It works best on sustained,
@@ -102,7 +106,7 @@ refuses overload instead of silently dropping music. Heavy system load can still
 Audio split currently operates on a single occurrence; set repeats to one before splitting.
 Section rearrangement refuses clips that cross its boundaries, shows the source/track and offers
 direct navigation; explicitly split audio or adjust the section first. Dynamic track insertion,
-groups, automation, external realtime plugin hosting, MIDI input, recording and crash recovery are not
+groups, general parameter modulation, external realtime plugin hosting, MIDI input, recording and crash recovery are not
 implemented. Sampler pitching uses linear resampling, not time stretching. Mixer stereo pan is
 balance; its peak ceiling is sample-peak protection, not true-peak mastering.
 

@@ -52,6 +52,7 @@ internal sealed class ArrangementOverview : Control
         var state = observation.Snapshot.State;
         int lanes = Math.Max(4,
             state.ArrangementClips.Select(c => c.Lane + 1).Concat(state.AudioClips.Select(c => c.Lane + 1))
+                .Concat(state.AutomationLanes.Select(l => l.Lane + 1))
                 .DefaultIfEmpty(0).Max());
         double row = (Bounds.Height - 6) / lanes;
         foreach (var clip in state.ArrangementClips)
@@ -66,6 +67,14 @@ internal sealed class ArrangementOverview : Control
         }
 
         var accent = HostVisual.Brush(this, theme, "Accent.Action");
+        foreach (var lane in state.AutomationLanes)
+        {
+            using var opacity = context.PushOpacity(lane.Enabled && ParameterAutomation.IsResolved(state, lane.Target) ? 1 : .3);
+            Point At(double x) => new(x, 3 + lane.Lane * row +
+                (1 - ParameterAutomation.ValueAt(lane, (long)(x / Math.Max(1, Bounds.Width) * _totalTicks))) * Math.Max(1, row - 1));
+            for (double x = 2; x <= Bounds.Width; x += 2)
+                context.DrawLine(new Pen(accent, 1), At(x - 2), At(x));
+        }
         foreach (var clip in state.AudioClips)
         {
             int color = state.ArrangementTracks.SingleOrDefault(t => t.Lane == clip.Lane)?.ColorIndex ?? clip.Lane % 8;

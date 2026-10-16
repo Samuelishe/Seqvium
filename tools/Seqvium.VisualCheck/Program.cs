@@ -174,8 +174,12 @@ internal static partial class Program
 
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
-                or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "control-input" or "rack-pads"
-                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch" or "sampler-editor" or "synth" or "reverb" or "delay" or "ui-density" or "theme-navigation" or "settings",
+                or "automation" or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review"
+                or "control-input" or "rack-pads"
+                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow"
+                or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
+                or "sampler-editor" or "synth" or "reverb" or "delay" or "ui-density" or "theme-navigation"
+                or "settings",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -201,15 +205,26 @@ internal static partial class Program
                 }
                 else if (args[0] == "settings") await SettingsAsync(main, output, Path.GetFullPath(args[2]), args.Contains("native"));
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
-                else if (args[0] == "cross-stage") await CrossStageInputAsync(main, output, args.Length > 2 && args[2] == "native");
-                else if (args[0] == "extensions") await ExtensionFoundationAsync(main, output, args.Length > 2 && args[2] == "native");
-                else if (args[0] == "sample-lab") await SampleLabAsync(main, output, args.Contains("native"), args.Contains("audio"));
-                else if (args[0] == "resampling") await ResamplingAsync(main, output, args.Contains("native"), args.Contains("audio"));
-                else if (args[0] == "sampler-editor") await SamplerEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
-                else if (args[0] == "synth") await SynthEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
-                else if (args[0] == "reverb") await ReverbAsync(main, output, args.Contains("native"), args.Contains("audio"));
-                else if (args[0] == "delay") await DelayAsync(main, output, args.Contains("native"), args.Contains("audio"));
-                else if (args[0] == "stretch") await AudioStretchAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "cross-stage")
+                    await CrossStageInputAsync(main, output, args.Length > 2 && args[2] == "native");
+                else if (args[0] == "extensions")
+                    await ExtensionFoundationAsync(main, output, args.Length > 2 && args[2] == "native");
+                else if (args[0] == "sample-lab")
+                    await SampleLabAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "resampling")
+                    await ResamplingAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "sampler-editor")
+                    await SamplerEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "synth")
+                    await SynthEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "automation")
+                    await AutomationAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "reverb")
+                    await ReverbAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "delay")
+                    await DelayAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "stretch")
+                    await AudioStretchAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "ui-density") await UiDensityAsync(main, output, Path.GetFullPath(args[2]));
                 else if (args[0] == "theme-navigation") await ThemeNavigationAsync(main, output, Path.GetFullPath(args[2]), args.Contains("native"));
                 else if (args[0] == "browser") await SampleBrowserAsync(main, output, args.Length > 2 && args[2] == "native",

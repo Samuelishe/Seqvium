@@ -1528,13 +1528,29 @@ change a selected occurrence locally, and request independence when needed. Targ
 mix consequences must be understandable. Exact representation/UI/capability evidence remains open; the
 example establishes semantics rather than an implemented composition or the full R12 acceptance case.
 
+## Implemented Playlist automation ownership
+
+The bounded Playlist automation owner is `ProjectState.AutomationLanes`, edited through the same
+ProjectDocument transactions and frozen DesktopWorkflow authority as clips. A lane has one typed
+SoundDefinition or MixerChannel identity and absolute Song-time points. Neither Playlist lane number,
+name nor current routing can substitute for that target. Missing or incompatible targets retain their
+envelope as unresolved; Undo can restore the original identity. No target search by equal name occurs.
+
+Song preparation compiles bounded frame breakpoints/physical lookup tables into PreparedSampler.
+The existing OfflineSampler applies cutoff to its fixed synth voices and volume to the identified
+aggregate Mixer fader. Compatible publication transfers oscillator/filter/envelope ages and Mixer
+state; the GUI supplies no control clock. Base settings, Pattern execution and local R8 sampling
+remain independent. No generic modulation matrix, node connector, external processor automation or
+second engine/history owner is introduced. [Audio](AUDIO_ENGINE.md#musical-parameter-automation)
+and [format](PROJECT_FORMAT.md#parameter-automation-reader-112) own execution and persistence.
+
 ## Future parameter control
 
-Parameter modelling must leave room for future control rather than treating DSP parameters as
-permanently fixed primitive values. An eventual effective parameter may combine base/user value,
+Parameter modelling must leave room for wider control rather than treating DSP parameters as
+permanently fixed primitive values. Beyond F1, an effective parameter may combine base/user value,
 timeline automation, modulation, and envelopes/LFO/control-graph sources. This requirement does not
-select an abstraction or require an automation implementation now. Replace/add/multiply semantics,
-normalized versus physical domains, precedence, smoothing, and control rate remain unresolved.
+select a general composition abstraction. Wider replace/add/multiply semantics, domains,
+precedence, smoothing and control rates remain unresolved outside the bounded implementation above.
 [NODE_GRAPH](NODE_GRAPH.md) owns the preferred direction for optional parameter connectors.
 
 ## Host localization and UI resources

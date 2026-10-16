@@ -401,6 +401,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             AudioClips = [],
             ArrangementTracks = [],
             ArrangementSections = [],
+            AutomationLanes = [],
             Sounds = ignoreNotes
                 ?
                 [

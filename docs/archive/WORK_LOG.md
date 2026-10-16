@@ -2277,3 +2277,24 @@ pass; the earlier unconfirmed waveform click does not reproduce and is not assig
 Shared catalog/workspace matrix also pass. The report distinguishes foreground refusals, publication readiness and a diagnosed instrumentation
 closure regression from product behavior. DSP/features and 0.1.14.0000 remain unchanged. No Git index,
 history, tag or remote mutation. Owner aesthetic/acoustic acceptance remains separate.
+
+## SEQ-AUTOMATION-F1 — 2026-10-16
+
+Authorized home fetch/fast-forward-only pull reaches 64ae82f05b6837eff8c87c6670f6cd87cd4c5e5a from
+a clean master. Musical Parameter Automation becomes product 0.1.15.0000: dedicated Playlist lanes
+for synth Cutoff and Mixer channel/bus Volume, point capture/exact editing/history, selective reader
+1.12 and real frozen Song/WAV execution. Absolute Song envelopes were chosen for this bounded F1
+so repeated music shares one deterministic target curve without adding Pattern control data or an
+automation clip/modulation framework. Base settings remain independent. Typed identities retain
+unresolved intent after deletion, and compatible publication preserves held phases/filter/ADSR/time.
+
+Full Release build has zero warnings/errors; 1712/1712 tests pass, zero skips. GUI includes RU/EN
+Dark/Light ordinary/narrow/640×480 windows, 48 aligned fields, routed gesture/property/history and
+portable project/WAV checks. Guarded Windows point drag and UR12 44.1-kHz finite Song/live curve
+editing pass. The owner-requested popover correction uses shared target/power, compact musical time,
+value/transition and icon actions. Default accent Checkbox/form chrome is removed. Initial reader,
+empty-editor rendering and preview allocation failures remain explicit in the
+[report](../experiments/SEQ-AUTOMATION-F1_REPORT.md). Deferred Synth construction corrects the empty
+editor dependency; the preview allocation cause remains unestablished despite unchanged green repeats.
+Local WAV/project examples are retained for listening; no full new track, subjective acoustic/aesthetic,
+pressure or other-platform acceptance follows. No staging/commit/push/tag/history mutation occurs.

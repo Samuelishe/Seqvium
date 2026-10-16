@@ -144,6 +144,18 @@ strip controls, with peak/reduction observations in a tooltip and visible overlo
 editable value; dB conversion stays in inspection instead of duplicating percent/linear/dB readouts.
 No shared control template, numeric minimum, palette or theme token changes accompany this cleanup.
 
+## Playlist automation composition
+
+Playlist automation reuses the shared lane/header/ruler geometry, HostVisual curve/point drawing,
+overview and semantic surfaces. Selected envelopes add the shared selected surface; inactive lanes
+retain readable curves and physical point values. The original Automation and Power vectors join
+HostIcons. Exact point properties use one compact target header, the shared power ToggleButton,
+aligned Position/Value rows, transition selector and icon cancel/delete actions. No native titlebar,
+default accent Checkbox, new palette, private font or local control template is introduced. Empty
+feedback occupies space only when needed. Position keeps `bar:beat:tick` in an invariant numeric field;
+unit and actual text centers use the ordinary parameterRow contract. Review actual popup screen
+pixels as well as its transparent content render, in both themes/languages and narrow panes.
+
 ## Sampler waveform composition
 
 Complementary ramps identify the two actual F2 overlap areas; positive crossfade never moves source

@@ -7,6 +7,37 @@ boundary, recording, item-local hard boundaries, manual export ranges, finite ta
 preparation failure.
 Not authoritative for: Final language/backend/ABI, musical serialization, extension packaging, or UI design.
 
+## Musical parameter automation
+
+SEQ-AUTOMATION-F1 supports two absolute Song controls: shared subtractive-synth Cutoff and an
+identified Mixer channel/bus Volume. One dedicated Playlist lane per target stores 1–1024 strictly
+ordered normalized points; at most 32 lanes share the existing Playlist slots. Linear interpolation
+or a smoothstep segment joins points. The first value holds before the first point and the last
+holds afterwards, including permitted effect tails. Automation does not extend audible Song length.
+Pattern clip repeats and section operations do not repeat, copy or move the global Song envelope.
+
+Enabled, resolved automation replaces the effective parameter, preserving the canonical base value.
+Cutoff maps logarithmically from 20 to 18000 Hz. Volume maps linearly in dB from -90 to +12; the lower
+endpoint is exact silence. Volume executes after channel processing at the existing fader, so
+post-fader routes follow it, pre-fader sends retain their existing behavior, and Mute/Solo still win.
+Routing changes do not retarget an envelope. Missing/incompatible targets are retained but inactive;
+unknown envelope/target/point fields conservatively block Song preparation instead of being executed.
+
+Worker preparation converts each absolute tick boundary at the actual host rate. Multiple points
+rounding to one frame select the latest tick. A 4097-entry physical lookup per lane avoids callback
+trigonometry/exponentiation. The audio consumer performs bounded binary searches and interpolated
+lookups per sample; no UI timer, mutable canonical traversal, allocation, lock or event flood is used.
+Lookup/point storage is charged to the existing 16 MiB scratch gate and each lane adds 128 conservative
+work units per frame to preflight. Existing 44.1/48-kHz and voice/event/packet limits remain.
+
+Cutoff coefficient changes settle through a roughly 5-ms smoother while preserving phase, ADSR and
+filter integrators. Mixer uses its existing 5-ms gain smoother. Fresh start/cold seek initializes
+automation at the destination value; seek/range wrap resets filter/FX state without historical
+preroll. Compatible live curve/enable/delete/history publications preserve held voices, time and
+transport epoch. Pattern mode, source preview and R8 local sampling use base settings. Full Song WAV
+uses the same frozen executor, curve and smoothing. This is a replacement layer for two parameters,
+not general modulation, automation recording, tempo maps or arbitrary plugin control.
+
 ## Polyphonic subtractive synth (SEQ-SYNTH-F1)
 
 `core.subtractive-synth.polyblep-v1` is a built-in media-free SoundDefinition. Its two oscillators

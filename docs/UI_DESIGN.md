@@ -379,6 +379,13 @@ belongs to the owner; screenshots and automated checks establish evidence, not a
 
 ## Playlist reference assessment and visual contract
 
+Automation lives on dedicated time lanes with a named target/parameter, continuous curve, editable
+points and concise physical values. Selection, bypass and missing-target warning remain distinct.
+Exact editing is a small contextual instrument popover: target header and power, musical position,
+parameter value, transition and compact actions. It uses Seqvium materials, fields and icons rather
+than an unstyled options window. No instructional paragraph, redundant counter or permanent form
+replaces the musical surface. Narrow layouts retain the curve and reachable local scrolling.
+
 Local Audio Clip stretch reuses compact exact properties: source range, explicit percentage and
 one playback duration. A non-unity `↔` percentage in the clip header distinguishes it from edge trim
 and repeat count. The existing local FL Playlist and waveform-editor images were inspected for

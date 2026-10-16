@@ -102,6 +102,7 @@ internal sealed class MixerRuntime
     private readonly double _smoothing;
     private double _ceilingGain = 1;
     private int _sequence;
+    private bool _automationStarted;
 
     internal MixerRuntime(PreparedMixer plan)
     {
@@ -123,6 +124,7 @@ internal sealed class MixerRuntime
 
     internal void ContinueFrom(MixerRuntime old)
     {
+        _automationStarted = old._automationStarted;
         for (int i = 0; i < _strips.Length; i++)
         {
             int previous = -1;
@@ -178,6 +180,7 @@ internal sealed class MixerRuntime
         }
 
         _ceilingGain = 1;
+        _automationStarted = false;
     }
 
     internal void ResetMeters()
@@ -218,7 +221,8 @@ internal sealed class MixerRuntime
         return default;
     }
 
-    internal void Process(float[][] signals, Span<float> output, int channels)
+    internal void Process(float[][] signals, Span<float> output, int channels, long startFrame,
+        PreparedAutomation?[] automation)
     {
         int frames = output.Length / channels;
         Array.Clear(_energyLeft);
@@ -243,7 +247,12 @@ internal sealed class MixerRuntime
                 var s = _strips[i];
                 double Smooth(double value, double target) => value + (target - value) * _smoothing;
                 s.Trim = Smooth(s.Trim, p.Trim);
-                s.Gain = Smooth(s.Gain, p.Gain);
+                double gain = i < automation.Length && automation[i] is { } curve
+                    ? p.Audible ? curve.At(startFrame + frame) : 0
+                    : p.Gain;
+                s.Gain = !_automationStarted && frame == 0 && i < automation.Length && automation[i] is not null
+                    ? gain
+                    : Smooth(s.Gain, gain);
                 s.Left = Smooth(s.Left, p.Left);
                 s.Right = Smooth(s.Right, p.Right);
                 double l = _left[i] * s.Trim, r = _right[i] * s.Trim;
@@ -335,6 +344,7 @@ internal sealed class MixerRuntime
             }
         }
 
+        _automationStarted = true;
         Interlocked.Increment(ref _sequence);
         for (int i = 0; i < _strips.Length; i++)
         {

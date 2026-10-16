@@ -146,7 +146,8 @@ internal sealed partial class ArrangementPaneContent
                 "SectionEarlier" => choices.Length > 0 && Array.FindIndex(choices, s => s.Id == selected) > 0,
                 "SectionLater" => selected is not null && Array.FindIndex(choices, s => s.Id == selected) is var index && index >= 0 && index < choices.Length - 1,
                 "Variation" => _canvas.Selection.Length == 1 && _canvas.AudioSelection.Length == 0,
-                "Properties" => _canvas.Selection.Length + _canvas.AudioSelection.Length > 0,
+                "Properties" => _canvas.SelectedAutomation is not null ||
+                                _canvas.Selection.Length + _canvas.AudioSelection.Length > 0,
                 _ => true
             };
         }
@@ -247,6 +248,12 @@ internal sealed partial class ArrangementPaneContent
 
     private void OpenClipProperties()
     {
+        if (_canvas.SelectedAutomation is not null)
+        {
+            OpenAutomation();
+            return;
+        }
+
         var state = _workflow.State.Snapshot.State;
         var patternIds = _canvas.Selection; var audioIds = _canvas.AudioSelection;
         var starts = state.ArrangementClips.Where(c => patternIds.Contains(c.Id)).Select(c => c.Position.Ticks)

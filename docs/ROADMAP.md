@@ -19,6 +19,13 @@ for later stages. The separately authorized ProjectStats developer tool is imple
 [Open questions](KNOWN_PROBLEMS.md), including First Track Release dependency closure Q-061, do not
 reorder stages or make recording, automation, external hosting or ProjectStats implicit prerequisites.
 
+## Automation follow-ups
+
+Bounded synth Cutoff and Mixer channel/bus Volume automation is implemented in Playlist under
+[the workflow contract](UX_CONTRACT.md#playlist-parameter-automation). Further parameter families,
+automation clips/section-following envelopes, recording/controllers and general modulation require
+separate scope; this checkpoint does not start another composition or complete wider R10/R11.
+
 ## Settings and control follow-ups
 
 Global Settings is implemented under [Settings](SETTINGS.md#unified-global-settings-center); new global
@@ -496,7 +503,7 @@ finite reachable tails, bounded off-callback admission and shared realtime/offli
 from unestablished subjective acoustic quality and long-pressure acceptance.
 
 Further processing remains planned, not part of the implemented chain: a reorderable processor rack,
-arbitrary parametric bands, sidechains, automation and latency compensation. Each needs
+arbitrary parametric bands, sidechains, further parameter automation and latency compensation. Each needs
 canonical state, lifetime/reset/tail and measured execution tests; no speculative generic FX framework
 is required before a useful processor. FX seek preroll and a future stateful graph/source split require
 explicit execution boundaries. Long-pressure/platform and owner aesthetic/acoustic acceptance remain

@@ -228,6 +228,7 @@ public static class GraphPreparation
         }
 
         long voiceWork = plan.Notes.Any(n => n.Synth is not null) ? 128 : 16;
+        signalWork += (long)frames * plan.Automation.Length * 128;
         long work = checked((long)frames * plan.Channels * plan.VoiceCapacity * voiceWork +
                             signalWork + (long)maximumWindow * plan.VoiceCapacity);
         if (plan.IsArrangement)

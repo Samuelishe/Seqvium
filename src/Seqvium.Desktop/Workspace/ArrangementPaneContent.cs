@@ -105,6 +105,12 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
             }
         };
         toolbar.Children.Add(_source);
+        AddButton(toolbar, "Automation", "Automation", () =>
+        {
+            OpenAutomation(create: true);
+            return Task.CompletedTask;
+        });
+        _canvas.AutomationPropertiesRequested += () => OpenAutomation();
         AddButton(toolbar, "ImportAudio", "Import", () => action("ImportAudio"));
         AddButton(toolbar, "CancelAudio", "Close", () =>
         {
@@ -230,6 +236,12 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
         };
         _scroll.AddHandler(PointerWheelChangedEvent, (_, e) =>
         {
+            if (_canvas.HasGesture)
+            {
+                e.Handled = true;
+                return;
+            }
+
             if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
                 ZoomAt(e.Delta.Y > 0, e.GetPosition(_scroll).X);
             else if (e.KeyModifiers.HasFlag(KeyModifiers.Shift) || Math.Abs(e.Delta.X) > 0)
@@ -281,6 +293,12 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
 
     private Task SelectionCommand(bool duplicate = false, bool delete = false)
     {
+        if (delete && _canvas.SelectedAutomation is not null)
+        {
+            PendingCommand = _canvas.DeleteAutomationPoint();
+            return PendingCommand;
+        }
+
         PendingCommand = _canvas.EditSelection(duplicate, delete);
         return PendingCommand;
     }
@@ -369,6 +387,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
                         {
                             "Play" => ArrangementPreparation.Refusal(state) is null,
                             "Export" => !state.ArrangementClips.IsEmpty || !state.AudioClips.IsEmpty,
+                            "Delete" when _canvas.SelectedAutomationPoint is not null => true,
                             "Duplicate" or "Delete" => _canvas.Selection.Length > 0 ||
                                                        _canvas.AudioSelection.Length > 0,
                             "AudioProperties" => audio is not null,
@@ -418,6 +437,7 @@ internal sealed partial class ArrangementPaneContent : Grid, IDisposable
         _audioFlyout?.Hide();
         _sectionFlyout.Hide();
         _clipFlyout.Hide();
+        _automationFlyout?.Hide();
     }
 
     internal void FocusEditor()

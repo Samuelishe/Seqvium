@@ -37,7 +37,7 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 11;
+    public const int ReaderMinor = 12;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     private static bool HasReverb(ProjectState state) => state.Mixer is { } mixer &&
@@ -53,19 +53,24 @@ public static class ProjectPersistence
 
     private static bool HasSongStructure(ProjectState state) => !state.ArrangementSections.IsEmpty ||
         state.Patterns.Any(p => p.VariationOf is not null);
-
     public static byte[] Encode(ProjectDocument document)
     {
         document.CheckAvailable();
         return Encode(document.Current, document.Compatibility);
     }
-
     private static byte[] Encode(ProjectSnapshot snapshot, ProjectCompatibility compatibility)
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = snapshot.State.Sounds.Any(SynthVoice.HasIntent) ? 11 : snapshot.State.Sounds.Any(SamplerPlayback.HasCrossfadeIntent) ? 10 : snapshot.State.Sounds.Any(SamplerPlayback.HasIntent) ? 9 : HasReverb(snapshot.State) ? 8 : HasDelay(snapshot.State) ? 7 : snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
-            HasSongStructure(snapshot.State) ? 5 : HasAudio(snapshot.State) ? 4 :
+        int required = !snapshot.State.AutomationLanes.IsEmpty ? 12 :
+            snapshot.State.Sounds.Any(SynthVoice.HasIntent) ? 11 :
+            snapshot.State.Sounds.Any(SamplerPlayback.HasCrossfadeIntent) ? 10 :
+            snapshot.State.Sounds.Any(SamplerPlayback.HasIntent) ? 9 :
+            HasReverb(snapshot.State) ? 8 :
+            HasDelay(snapshot.State) ? 7 :
+            snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
+            HasSongStructure(snapshot.State) ? 5 :
+            HasAudio(snapshot.State) ? 4 :
             snapshot.State.Mixer is not null ? 3 :
             !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
             hasGraphs ? 1 : 0;
@@ -75,6 +80,7 @@ public static class ProjectPersistence
         var node = JsonSerializer.SerializeToNode(file, Options)?.AsObject()
                    ?? throw new ProjectFormatException("Unable to encode project structure.");
         TransformAdditionalData(node, typeof(ProjectFile), loading: false);
+        if (snapshot.State.AutomationLanes.IsEmpty) node["state"]!.AsObject().Remove("automationLanes");
         // Older readers conservatively refuse unknown strip properties. Keep the original envelope/shape
         // for projects with no Delay intent; non-default (even bypassed) intent requires reader 1.7.
         if (snapshot.State.Mixer is { } mixer && node["state"]?["mixer"] is JsonObject mixerNode)
@@ -128,6 +134,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (!file.State.AutomationLanes.IsEmpty && file.MinimumReaderMinor < 12)
+                throw new ProjectFormatException("Parameter automation requires minimumReaderMinor >= 12.");
             if (file.State.Sounds.Any(SynthVoice.HasIntent) && file.MinimumReaderMinor < 11)
                 throw new ProjectFormatException("Subtractive synth requires minimumReaderMinor >= 11.");
             if (file.State.Sounds.Any(SamplerPlayback.HasCrossfadeIntent) && file.MinimumReaderMinor < 10)
@@ -159,6 +167,9 @@ public static class ProjectPersistence
             var document = ProjectDocument.Reopen(new(file.State, file.Revision));
             document.Compatibility = new(file.Minor, file.MinimumReaderMinor) { AdditionalData = file.AdditionalData };
             var diagnostics = ImmutableArray.CreateBuilder<string>();
+            foreach (var lane in file.State.AutomationLanes.Where(l =>
+                         !ParameterAutomation.IsResolved(file.State, l.Target)))
+                diagnostics.Add($"Automation target '{lane.TargetName}' is unavailable; its envelope is retained.");
             foreach (var resource in file.State.Resources)
                 if (availableResources?.Contains(resource.Id) != true)
                     diagnostics.Add($"Resource {resource.Id} is unavailable or has not been validated.");
@@ -255,6 +266,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (!snapshot.State.AutomationLanes.IsEmpty)
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(12, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(12, document.Compatibility.MinimumReaderMinor)
+                };
             if (snapshot.State.Sounds.Any(SynthVoice.HasIntent))
                 document.Compatibility = document.Compatibility with
                 {

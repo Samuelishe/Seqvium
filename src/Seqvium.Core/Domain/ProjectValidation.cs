@@ -235,6 +235,39 @@ public static class ProjectValidation
             }
         }
 
+        Present(state.AutomationLanes);
+        Require(state.AutomationLanes.Length <= ParameterAutomation.MaximumLanes, "Too many automation lanes.");
+        Unique(state.AutomationLanes.Select(l => l.Lane));
+        Require(state.AutomationLanes.All(l => l.Target is not null), "Automation target is required.");
+        Unique(state.AutomationLanes.Select(l => (l.Target.Parameter, l.Target.SoundId, l.Target.ChannelId)));
+        foreach (var lane in state.AutomationLanes)
+        {
+            Identity(lane.Id);
+            Text(lane.TargetName);
+            Require(lane.Target is not null && Enum.IsDefined(lane.Target.Parameter), "Invalid automation target.");
+            Require(lane.Target.Parameter == AutomationParameter.SynthCutoff
+                    ? lane.Target.SoundId is { } soundId && soundId.Value != Guid.Empty && lane.Target.ChannelId is null
+                    : lane.Target.ChannelId is { } channelId && channelId.Value != Guid.Empty &&
+                      lane.Target.SoundId is null,
+                "Automation requires exactly one typed target.");
+            Require(lane.Lane is >= 0 and < 32 && !state.ArrangementClips.Any(c => c.Lane == lane.Lane) &&
+                    !state.AudioClips.Any(c => c.Lane == lane.Lane) &&
+                    !state.ArrangementTracks.Any(t => t.Lane == lane.Lane && (t.Muted || t.Solo)),
+                "Automation requires a dedicated Playlist lane without track Mute/Solo.");
+            Present(lane.Points);
+            Require(lane.Points.Length is > 0 and <= ParameterAutomation.MaximumPoints,
+                "Invalid automation point count.");
+            long previous = -1;
+            foreach (var point in lane.Points)
+            {
+                Identity(point.Id);
+                Require(point.Position.Ticks > previous && point.Value is >= 0 and <= 1 &&
+                        Enum.IsDefined(point.Transition),
+                    "Automation points must have unique ordered times and normalized values.");
+                previous = point.Position.Ticks;
+            }
+        }
+
         void CheckContext(Id<ProcessingContext>? id, LocalProcessingLevel level)
         {
             if (id is { } value)

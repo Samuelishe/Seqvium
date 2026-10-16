@@ -25,6 +25,9 @@ public static class ArrangementPreparation
     public static string? Refusal(ProjectState state)
     {
         if (state.ArrangementClips.IsEmpty && state.AudioClips.IsEmpty) return "Arrangement.Empty";
+        if (state.AutomationLanes.Any(l => !l.AdditionalData.IsEmpty || !l.Target.AdditionalData.IsEmpty ||
+                                           l.Points.Any(p => !p.AdditionalData.IsEmpty)))
+            return "Arrangement.Unsupported";
         if (state.AudioClips.Any(c => !c.AdditionalData.IsEmpty)) return "Arrangement.Unsupported";
         foreach (var clip in state.AudioClips)
         {
@@ -297,6 +300,24 @@ public static class ArrangementPreparation
                 BufferCount = bufferCount, MaximumPacketFrames = maximumPacketFrames, ScratchBytes = scratch
             };
             combined.Mixer = MixerPreparation.Compile(state, combined, sampleRate);
+            var lanes = state.AutomationLanes.Where(l => l.Enabled && ParameterAutomation.IsResolved(state, l.Target))
+                .OrderBy(l => l.Id.Value).ToArray();
+            var automation = lanes.Select(l => new PreparedAutomation(l, state.Settings.Tempo, sampleRate)).ToArray();
+            var partSounds = state.Patterns.SelectMany(p => p.Parts).ToDictionary(p => p.Id, p => p.SoundId);
+            for (int n = 0; n < notes.Count; n++)
+                if (notes[n].Synth is not null)
+                    notes[n] = notes[n] with
+                    {
+                        AutomationIndex = Array.FindIndex(lanes,
+                            l => l.Target.Parameter == AutomationParameter.SynthCutoff &&
+                                 l.Target.SoundId == partSounds[notes[n].Occurrence.PartId])
+                    };
+            var mixerAutomation = combined.Mixer?.Strips.Select(s =>
+            {
+                int i = Array.FindIndex(lanes, l => l.Target.Parameter == AutomationParameter.MixerVolume &&
+                                                    l.Target.ChannelId?.Value == s.Id);
+                return i < 0 ? null : automation[i];
+            }).ToArray() ?? [];
             long sourceEnd = last;
             if (combined.Mixer is { } mixer)
             {
@@ -306,8 +327,11 @@ public static class ArrangementPreparation
                     new(last, new(endTicks), ExecutionEventKind.Stop, null, -1)];
             }
             var result = new PreparedSampler(document.Current.Revision, sampleRate, channels, VoiceCapacity, 0, last,
-                    zero, notes.ToImmutable(), sorted, [.. sources], combined)
-                { CanonicalBasis = state, IsArrangement = true, SourceEndFrame = sourceEnd };
+                zero, notes.ToImmutable(), sorted, [.. sources], combined)
+            {
+                CanonicalBasis = state, IsArrangement = true, SourceEndFrame = sourceEnd,
+                Automation = automation, MixerAutomation = mixerAutomation
+            };
             sources.Clear();
             try
             {

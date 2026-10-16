@@ -295,10 +295,28 @@ presentation/exact bar entry up to one million bars. Slots organize
 compatible musical material; they do not assign instruments or create Mixer channels. The engine
 checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
 are available now; Audio Clips have separate range/trim/split/fade controls. Nested sections, flexible
-cross-boundary rearrangement, dynamic track groups, warp/tempo following and automation remain planned. WAV channel
+cross-boundary rearrangement, dynamic track groups and warp/tempo following remain planned. WAV channel
 add/delete/Undo/Redo keeps the current clock and other voices for the supported source/mix tree.
 Other incompatible topology changes retain their restart policy.
 See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).
+
+## Automate a parameter
+
+In Playlist, click the curve icon and choose a synth's **Cutoff** or a Mixer channel's **Volume**,
+then **Create lane**. Add a Mixer first if you want to automate its channel. The dedicated lane shows
+the target, parameter and real point values beside the Song ruler.
+
+Click the curve area to add a point, then drag points to shape the sweep or fade. Playlist snap applies;
+Alt moves freely. Double-click a point or press Enter for exact **Position** (`bar:beat:tick`), Hz/dB
+and **Linear/Smooth** transition. Arrows nudge; Delete removes a point. Use the lane header for power
+and explicit lane deletion. Each gesture or Apply is one Undo; Escape cancels a drag or popup.
+
+Play in **Song** mode or export Song WAV to hear the envelope. Base sound/Mixer values remain intact;
+Pattern playback and source preview use those base values. These are global Song envelopes: repeated
+Patterns follow absolute time, and clip/section rearrangement leaves the curve anchored. End values
+hold; points beyond the last audible clip do not lengthen the Song. Missing targets keep their curve
+with a warning, without taking over another same-named instrument/channel. Save/Open retains the lanes.
+See [the workflow contract](UX_CONTRACT.md#playlist-parameter-automation).
 
 ## Mix your music
 
@@ -331,7 +349,8 @@ Ordinary Pattern loops retain echoes, Stop/Seek clear them, and full WAV export 
 final tail. Save/Open and Undo/Redo retain the settings. Tempo sync and ping-pong are unavailable.
 The Reverb tab adds a diffuse space with Decay, Size, Damping and Mix. Enable it on a channel, bus
 or Master; its natural tail is included in full WAV exports. Stop and Seek clear the tail.
-There is currently no automation, plugin rack or sidechain. See the
+Playlist supports channel Volume automation; there is currently no general effect automation,
+plugin rack or sidechain. See the
 [Mixer workflow](UX_CONTRACT.md#implemented-mixer-workflow) for detailed behavior.
 
 ## Try sample processing

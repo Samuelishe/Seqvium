@@ -336,7 +336,8 @@ public sealed class RealtimeSampler : IDisposable
                 SameAudioSource(oldBasis, nextBasis, note.Occurrence) &&
                 next.note == note with
                 {
-                    SourceIndex = next.note.SourceIndex, ContributionIndex = next.note.ContributionIndex
+                    SourceIndex = next.note.SourceIndex, ContributionIndex = next.note.ContributionIndex,
+                    AutomationIndex = next.note.AutomationIndex
                 } &&
                 (!note.OneShot || SameDrumSound(oldBasis, nextBasis, note.Occurrence))
                     ? next.index

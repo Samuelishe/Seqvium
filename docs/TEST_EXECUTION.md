@@ -7,6 +7,21 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Parameter automation verification
+
+`AutomationTests` covers held-chord spectral movement, an independent smoothed fader oracle,
+44.1/48-kHz realtime/offline/packet/Seek/range parity, live voice/epoch retention, primed allocation,
+silence/bus routing, selective reader 1.12, legacy omission, nested unknown data, unresolved targets,
+history, invalid edits, stale/cancelled preparation and Song PCM16 versus local R8 exclusion.
+Use the installed MTP class filter `--filter-class "*AutomationTests"` after an affected Release build;
+related routes include Arrangement, SynthVoice, Mixer, Persistence and desktop presentation tests.
+
+VisualCheck's `automation <output> [native] [audio]` exercises actual Playlist creation/point gestures,
+capture cancellation, exact properties/history, localized/theme/ordinary/narrow windows, presenter
+alignment and portable projects/WAV examples. Native Windows point input and physical output are
+reported separately; rendered/routed evidence is not native musical authoring or subjective listening.
+The [report](experiments/SEQ-AUTOMATION-F1_REPORT.md) records results and limits.
+
 ## PCM Sampler Editor verification
 
 `SamplerEditorTests` uses independent PCM/rate/pitch/seam/release oracles and real shared execution,

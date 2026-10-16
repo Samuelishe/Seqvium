@@ -161,6 +161,7 @@ public sealed class ProjectDocument
                 ArrangementClips = right.ArrangementClips,
                 ArrangementSections = right.ArrangementSections,
                 AudioClips = right.AudioClips,
+                AutomationLanes = right.AutomationLanes,
                 ArrangementTracks = right.ArrangementTracks, Mixer = right.Mixer
             } == right && MixerValidation.Same(left.Mixer, right.Mixer)
                        && SameSequence(left.Patterns, right.Patterns, (a, b) =>
@@ -181,6 +182,8 @@ public sealed class ProjectDocument
                        left.ArrangementClips.SequenceEqual(right.ArrangementClips)
                        && left.ArrangementSections.SequenceEqual(right.ArrangementSections)
                        && left.AudioClips.SequenceEqual(right.AudioClips)
+                       && SameSequence(left.AutomationLanes, right.AutomationLanes, (a, b) =>
+                           a with { Points = b.Points } == b && a.Points.SequenceEqual(b.Points))
                        && left.ArrangementTracks.SequenceEqual(right.ArrangementTracks)
                        && GraphContent.Same(left.Graphs, right.Graphs) &&
                        GraphContent.Same(left.GraphAttachments, right.GraphAttachments);

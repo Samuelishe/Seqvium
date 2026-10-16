@@ -33,7 +33,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     private readonly GainTransferPlot _plot;
     private readonly DrumVoicePaneContent _drum;
     private readonly SamplerPaneContent _sampler;
-    private readonly SynthPaneContent _synth;
+    private SynthPaneContent? _synth;
     private readonly Grid _gain = new() { RowDefinitions = new("Auto,Auto,Auto,Auto"), Classes = { "parameterRow" } };
     private readonly Expander _curve;
     private readonly DispatcherTimer _changeNotice = new() { Interval = TimeSpan.FromSeconds(3) };
@@ -120,7 +120,6 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         Children.Add(_detailsScroll);
         SetRow(_status, 2);
         Children.Add(_status);
-        _synth = new(shell, workflow); SetRow(_synth, 1); Children.Add(_synth);
         _sampler = new(shell, workflow);
         SetRow(_sampler, 1); Children.Add(_sampler);
         _drum = new(shell, workflow);
@@ -271,7 +270,12 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
 
             _scope.Text = Scope();
             _scope.IsVisible = !synth && _scope.Text.Length > 0;
-            SetRow(_synth, 0); SetRowSpan(_synth, 2);
+            if (synth && _synth is null)
+            {
+                // Empty/Gain editors do not require a graphical synth or its vector/render backend.
+                _synth = new(_shell, _workflow);
+                SetRow(_synth, 0); SetRowSpan(_synth, 2); Children.Add(_synth);
+            }
             AutomationProperties.SetName(this,
                 Title + ". " + (node is null
                     ? _shell[_editor.Target is null ? "NodeEditor.NoTarget" : "NodeEditor.TargetMissing"]
@@ -281,7 +285,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             bool gain = NodeEditorSession.SupportsGain(node);
             _gainScroll.IsVisible = gain;
             _detailsScroll.IsVisible = !gain && !drum && !sampler && !synth;
-            _synth.IsVisible = synth; _synth.Observe(synth ? _editor.Target : null);
+            if (_synth is { } synthEditor)
+            { synthEditor.IsVisible = synth; synthEditor.Observe(synth ? _editor.Target : null); }
             _sampler.IsVisible = sampler;
             _sampler.Observe(sampler ? _editor.Target : null);
             _drum.IsVisible = drum;
@@ -574,7 +579,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
     {
         _drum.Suspend();
         _sampler.Suspend();
-        _synth.Suspend();
+        _synth?.Suspend();
         _level.Cancel();
         _dial.Cancel();
         _editor.CancelDraft();
@@ -597,6 +602,6 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         _shell.PropertyChanged -= PreferencesChanged;
         _drum.Dispose();
         _sampler.Dispose();
-        _synth.Dispose();
+        _synth?.Dispose();
     }
 }

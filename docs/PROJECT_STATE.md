@@ -7,7 +7,19 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.14.0000**, **SEQ-SYNTH-F1 — Polyphonic Subtractive Synth**.
+Product alpha **0.1.15.0000**, **SEQ-AUTOMATION-F1 — Musical Parameter Automation**.
+Playlist has dedicated synth Cutoff and Mixer channel/bus Volume lanes, captured point editing,
+exact musical position/value/transition, bypass and the existing Undo/Save/Open. Independent canonical
+envelopes replace effective Song values while preserving base settings; stable targets remain
+unresolved after deletion rather than following names or routes. Shared realtime/offline execution
+keeps held voices/time under compatible curve edits and supports cold Seek/Loop and WAV export.
+Reader 1.12 gates only nonempty automation. Envelopes use absolute Song time, including repeated
+Patterns, and remain anchored during section/clip rearrangement. Pattern/preview/R8 use base values.
+The compact contextual editor reuses host materials/power/icons/fields in both themes/languages.
+[The report](experiments/SEQ-AUTOMATION-F1_REPORT.md) owns numerical, GUI, physical and listening limits.
+No new full composition or Git publication is performed.
+
+Previous **0.1.14.0000**, **SEQ-SYNTH-F1 — Polyphonic Subtractive Synth**.
 Rack creates a media-free melodic synth and opens its specialized Source editor. Two corrected
 oscillators, balance/detune, amplitude ADSR and low-pass cutoff/resonance share canonical sound intent,
 notes, 32 graph voice slots, Pattern/Song/Mixer, finite export and local R8 release capture. Factory
@@ -234,7 +246,17 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-SYNTH-F1, 2026-10-16**. Sequential single-worker full Release solution
+Latest L0/L1/L2/L3: **SEQ-AUTOMATION-F1, 2026-10-16**. Full Release solution build: zero
+warnings/errors, **14.41 s**; **1712/1712 tests**, zero skips, one thread, **67.684 s CLI**.
+Twenty-two new cases cover held cutoff/fader signal oracles, rate/packet/realtime/offline/Seek/loop,
+history/portable reader 1.12, stable unresolved targets, stale/cancelled preparation and primed
+allocation. RU/EN Dark/Light actual ordinary/narrow/minimum windows and 48 zero-DIP field alignments,
+guarded Windows point drag, Save/Open/WAV and shared catalog pass. Physical UR12 44.1-kHz combined
+Song reaches exact Ended/zero voices under a live curve edit without an epoch change. Three local
+WAV examples remain for listening. The [report](experiments/SEQ-AUTOMATION-F1_REPORT.md) retains
+initial failures, corrections and explicit acoustic/pressure/platform limits.
+
+Previous L0/L1/L2/L3: **SEQ-SYNTH-F1, 2026-10-16**. Sequential single-worker full Release solution
 build: zero warnings/errors, **45.55 s**. Full Release **1690/1690**, zero skips, one test thread,
 **79.133 s CLI**. The 31 focused synth cases pass (**4.503 s**) before L3: frequency/fractional pitch,
 corrected oscillator spectrum, ADSR/filter extremes, mix/velocity/32 voices, packet/rate parity,
@@ -443,10 +465,10 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected synth L3 covers shared
-voice/event/transport execution, finite release, graph/Mixer/Song/R8, reader 1.11 and existing
-regressions. The same-checkpoint corrective UI pass reuses that DSP/format L3 with focused L1/L2
-and actual rendered/native L4. It does not establish pressure, acoustic/aesthetic or platform acceptance.
+Completed repository tasks since this L3: **0**. This risk-selected automation L3 covers shared
+voice/Mixer/Song execution, independent R8/base parameters, reader 1.12 and existing regressions.
+Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
+subjective acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
 FullHD/reduced workspace/About/Piano, component catalog and broader field matrix. Real EXE, Shell
@@ -489,7 +511,7 @@ Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
-The bounded Synth F1 baseline is implemented. Owner listening/aesthetic review and broader pressure/
+The bounded Automation F1 baseline is implemented. Owner listening/aesthetic review and broader pressure/
 platform acceptance remain separate; later modulation or synthesis families need their own scope.
 
 Finish wider Playlist/container/warp and compact editor work only through their scoped owners.
@@ -503,7 +525,7 @@ inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachm
 Browser inspection followed by preview decodes external sources twice; three-minute source latency
 and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 
-Automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
+Wider automation/modulation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
 wider Sample Lab context/reference models, MIDI, recording and recovery remain future work. Cold seek/range wrap
 resets Mixer FX without preroll. R4-F2 pressure failures, maximum-channel stress, aesthetic/acoustic
 review, Linux/macOS runtime, high/mixed DPI, cross-monitor and accessibility remain unevidenced.
