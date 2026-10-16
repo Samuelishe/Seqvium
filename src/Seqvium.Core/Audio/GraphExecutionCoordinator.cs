@@ -98,6 +98,33 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
 
     internal RealtimeSampler Sampler => _sampler;
 
+    /// <summary>Temporary Gain on the current validated execution only; never edits or prepares a document.</summary>
+    public bool PreviewGain(long generation, Id<GraphAttachment> attachment, Id<GraphNode> node, decimal amplitude)
+    {
+        CheckOwner();
+        if (_closed || _dirty || _busy || _candidate is not null || _blocker is not null || _basis is null ||
+            generation != _document.Generation || _basis.Revision != _document.Current.Revision ||
+            amplitude is < 0 or > 1 || !_arrangement && attachment != _target) return false;
+        var definition = _document.Current.State.GraphAttachments.SingleOrDefault(a => a.Id == attachment);
+        if (definition is null || !_document.Current.State.Graphs.Single(g => g.Id == definition.GraphId).Nodes
+                .Any(n => n.Id == node && n.Type == GraphBuiltIns.Gain)) return false;
+        try
+        {
+            return _sampler.PreviewGraphGain(_document.Current, _startAuthority, node, amplitude);
+        }
+        catch (GraphPreparationException)
+        {
+            CancelGainPreview();
+            return false;
+        }
+    }
+
+    public void CancelGainPreview()
+    {
+        CheckOwner();
+        _sampler.ClearGraphGainPreview();
+    }
+
     /// <summary>Mode changes end the old transport intent and prepare a finite song or continuous Rack target.</summary>
     public void SelectArrangement(bool arrangement)
     {
@@ -134,12 +161,14 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
     public long Stop()
     {
         CheckOwner();
+        CancelGainPreview();
         return _sampler.Stop();
     }
 
     public long Panic()
     {
         CheckOwner();
+        CancelGainPreview();
         return _sampler.Panic();
     }
 
@@ -157,6 +186,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         CheckOwner();
         if (_closed) return;
         _desired++;
+        CancelGainPreview();
         _desiredRoots = [.. _document.MediaRoots];
         _sampler.InvalidatePreparation();
         if (_busy) _supersessions++;
@@ -293,26 +323,39 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                     _blocker = error.Reason;
                 }
             }
-            else if (!_arrangement && snapshot.State.Mixer is null && _basis is not null &&
+            else if (_basis is not null && Equals(_basis.State.Mixer, snapshot.State.Mixer) &&
                      _basisRoots.SequenceEqual(_document.MediaRoots) &&
                      SameExecution(_basis.State, snapshot.State, ignoreGain: true) &&
+                     (!_arrangement || SameAudioContent(_basis.State with
+                     {
+                         Graphs = snapshot.State.Graphs, GraphAttachments = snapshot.State.GraphAttachments
+                     }, snapshot.State)) &&
                      ownsExecution && !_sampler.HasPending)
             {
                 bool geometry = SameExecution(_basis.State, snapshot.State, ignoreGain: false);
-                var graph = snapshot.State.Graphs.Single(item => item.Id == attachment!.GraphId);
-                // No source decoding, scratch allocation or topology construction for geometry/Gain edits.
-                float[] coefficients = _gainNodes.Select(id =>
-                    (float)graph.Nodes.Single(node => node.Id == id).Parameters[GraphBuiltIns.GainAmplitude]
-                        .GetDecimal()).ToArray();
-                long authority = _sampler.InvalidatePreparation();
-                Guid executingRevision = geometry ? _executionRevision : snapshot.Revision;
-                if (_sampler.PublishGraphUpdate(_startAuthority, _target, executingRevision, snapshot.Revision,
-                        coefficients, authority))
+                bool published;
+                try
+                {
+                    published = geometry && !_arrangement && snapshot.State.Mixer is null
+                        ? _sampler.PublishGraphUpdate(_startAuthority, _target, _executionRevision, snapshot.Revision,
+                            _gainNodes.Select(id => (float)snapshot.State.Graphs.SelectMany(g => g.Nodes)
+                                    .Single(n => n.Id == id).Parameters[GraphBuiltIns.GainAmplitude].GetDecimal())
+                                .ToArray(),
+                            _sampler.InvalidatePreparation())
+                        : _sampler.PublishGainUpdate(snapshot, _startAuthority);
+                }
+                catch (GraphPreparationException error)
+                {
+                    _blocker = error.Reason;
+                    published = false;
+                }
+
+                if (published)
                 {
                     _basis = snapshot;
-                    _executionRevision = executingRevision;
+                    if (!geometry) _executionRevision = snapshot.Revision;
                 }
-                else _dirty = true;
+                else if (_blocker is null) _dirty = true;
             }
             else
             {

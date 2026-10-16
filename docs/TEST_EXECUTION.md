@@ -382,6 +382,20 @@ the two-theme component catalog and populated workspace matrix, with actual non-
 
 ## Rack workflow verification
 
+SEQ-RACK-GAIN-AUDIT-R1 adds nineteen RackWorkflow cases: actual prepared PCM before release and after
+cancel/commit/Undo/Redo at both rates in Pattern/Song with/without Mixer, unchanged plan/voices/clock,
+canonical Save/frozen-render isolation, pending cancellation/Stop/Panic/New/edit-Undo ABA, selection
+ABA, stopped/no-op editing, latest gesture ownership, primed apply/cancel allocation, atomic coalesced
+Gain/geometry/Mixer parameters, and exact continuing Delay/Reverb PCM versus separately prepared
+canonical oracles. Use `--filter-class '*RackWorkflowTests'` with GraphRealtime/Mixer/Automation neighbours.
+This checkpoint selects L3 because realtime parameter publication changes.
+VisualCheck `rack-gain <output> native` deliberately opens physical output and checks actual held
+fader input against DSP meters before release, Escape, one Undo/Redo, unchanged execution/voices,
+no Busy, playing reorder/Ctrl-copy and routed surface/reflow/capture/Stop cancellation. Use the existing
+`rack-workflow` route separately for localized/theme/width/invalid/exact/empty visual review.
+The [audit report](experiments/SEQ-RACK-GAIN-AUDIT-R1_REPORT.md) distinguishes PCM/native/physical evidence
+from subjective listening and broader pressure/platform acceptance.
+
 SEQ-RACK-WORKFLOW-F1 uses `RackWorkflowTests` for independent Drum/Synth/PCM copies, fresh map IDs,
 exact musical values, graph binding/signal parity, bit-identical reordered output at 44.1/48 kHz,
 one-edit history, unsafe/stale/ABA refusal and portable media after original deletion. Active Pattern/

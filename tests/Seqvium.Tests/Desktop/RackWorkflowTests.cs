@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Seqvium.Tests;
 
-public sealed class RackWorkflowTests
+public sealed partial class RackWorkflowTests
 {
     private sealed class Fixture : IAsyncDisposable
     {

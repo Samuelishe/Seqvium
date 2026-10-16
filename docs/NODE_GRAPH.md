@@ -224,8 +224,10 @@ future tabs. Unity and Silence edit the existing parameter; they are not new sto
 
 One changed level release or Enter/Apply creates one existing document transaction; Escape, no-op,
 capture loss or stale basis creates none. Numerical conversions/curve data are derived presentation,
-not additional saved values. No audible gesture preview occurs in this first slice: canonical
-commit converges through the existing F2 coordinator. Existing quick controls synchronize through
+not additional saved values. Graph and detailed Node Editor drafts remain visual until canonical
+commit converges through the existing coordinator. The toolbar Pattern Gain fader also has a bounded
+audible draft on that same execution under [audio](AUDIO_ENGINE.md#application-convergence-and-revision-observation).
+Existing quick controls synchronize through
 the [single-state boundary](ARCHITECTURE.md#node-editor-state-and-lifetime-proposal); duplicate controls
 for the exact same parameter yield to the visible expanded Node Editor, then the visible Graph,
 under [UX](UX_CONTRACT.md#detailed-node-editor-access). Different targets stay available.

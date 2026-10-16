@@ -529,6 +529,8 @@ public sealed class OfflineSampler : IDisposable
     private bool _stopped;
     private readonly float[][]? _signals;
     private float[]? _coefficients;
+    private GraphGainParameters? _gainPreview;
+    private PreparedMixer? _canonicalMixer;
     private readonly MixerRuntime? _mixer;
     private long _tailSourceEnd;
     private PreparedSynth? _synthAudition;
@@ -544,8 +546,20 @@ public sealed class OfflineSampler : IDisposable
 
     internal void UpdateMixer(PreparedMixer mixer)
     {
+        _canonicalMixer = mixer;
         _mixer?.Update(mixer);
         if (_plan.AllowMixerTail) EndFrame = Math.Max(EndFrame, checked(_tailSourceEnd + mixer.TailFrames));
+    }
+
+    internal void SetGraphGainPreview(GraphGainParameters? preview)
+    {
+        _gainPreview = preview;
+        if (_mixer is not null && (preview?.Mixer ?? _canonicalMixer) is { } mixer)
+            _mixer.Update(mixer);
+        // A temporary input can excite existing effects. Keep their finite runtime tail allowance;
+        // cancelling the input does not rewind their consumer-owned histories.
+        if (_plan.AllowMixerTail && preview?.Mixer is { } previewMixer)
+            EndFrame = Math.Max(EndFrame, checked(_tailSourceEnd + previewMixer.TailFrames));
     }
 
     internal long EndFrame { get; private set; }
@@ -592,7 +606,11 @@ public sealed class OfflineSampler : IDisposable
             _signals = Enumerable.Range(0, graph.BufferCount)
                 .Select(_ => new float[checked(graph.MaximumPacketFrames * plan.Channels)]).ToArray();
             _coefficients = graph.Coefficients;
-            if (graph.Mixer is { } mixer) _mixer = new(mixer);
+            if (graph.Mixer is { } mixer)
+            {
+                _canonicalMixer = mixer;
+                _mixer = new(mixer);
+            }
         }
 
         _sources = plan.LeaseSources();
@@ -919,7 +937,7 @@ public sealed class OfflineSampler : IDisposable
                 {
                     if (operation.Inputs.Length == 0) continue; // Empty Channel Rack is a silent contribution.
                     var input = _signals[operation.Inputs[0]];
-                    float amplitude = _coefficients![operation.Coefficient];
+                    float amplitude = (_gainPreview?.Coefficients ?? _coefficients)![operation.Coefficient];
                     for (int index = 0; index < destination.Length; index++)
                         destination[index] = input[index] * amplitude;
                 }

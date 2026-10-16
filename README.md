@@ -39,7 +39,8 @@ for the logo, typography, alternative directions and publication resources.
 - Compose in Channel Rack and Piano Roll using shared notes, pitch, duration and velocity. Patterns
   can span 1–32 bars; draw steps, melodies and chords, resize notes and audition pitches.
   Duplicate a channel for an independent instrument and rhythm; drag its name to reorder or Ctrl-drag
-  to copy into a new position. A compact Pattern Gain fader retains exact entry and Undo.
+  to copy into a new position. Hear Pattern Gain while dragging its compact fader; cancel to restore
+  its accepted level, or release for one Undo step. Exact entry remains available.
   Replace a shared WAV instrument from its channel menu while retaining notes, processing and Mixer routing.
 - Open a WAV instrument's **Sound Editor** for a zoomable waveform, non-destructive Start/End and
   optional Sustain loop with adjustable crossfade. Hold/release preview tests long notes;

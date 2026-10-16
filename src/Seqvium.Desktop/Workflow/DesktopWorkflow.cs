@@ -264,6 +264,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     {
         if (!_document.Current.State.GraphAttachments.Any(item => item.Id == target)) return false;
         if (_selected == target) return true;
+        CancelGainPreview();
         if (!_songMode) ClearLabAudition();
         bool resume = !_songMode && _coordinator?.ReadStatus().Execution.Playing == true;
         long generation = _playGeneration;
@@ -497,6 +498,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     // Emergency transport bypasses the async command gate: Stop during preparation cancels pending Start intent.
     public Task<bool> StopAsync(bool panic = false) => _owner.Run(() =>
     {
+        CancelGainPreview();
         InvalidateDrumAuditions();
         ClearLabAudition();
         _playGeneration++;
@@ -511,6 +513,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private async Task CloseAudioAsync()
     {
+        CancelGainPreview();
         ClearLabAudition();
         await CloseNoteAuditionAsync();
         _playGeneration++;
@@ -566,6 +569,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void DocumentChanged()
     {
+        CancelGainPreview();
         DrumDocumentChanged();
         if (!_acceptingResample) _resamplingCancellation?.Cancel();
         LabDocumentChanged();

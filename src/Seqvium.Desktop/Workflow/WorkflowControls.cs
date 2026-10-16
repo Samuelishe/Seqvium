@@ -68,7 +68,7 @@ internal sealed class WorkflowControls : Grid
         { Orientation = Orientation.Horizontal, Classes = { "parameterRow" } };
 
     private readonly Border _gainSlot = new(), _overflowGain = new();
-    private (GraphEditBasis Basis, Id<GraphNode> Node, decimal Value)? _gainGesture;
+    private (GraphEditBasis Basis, Id<GraphNode> Node, decimal Value, Guid Id, long Transport)? _gainGesture;
 
     private readonly Button _information = new() { Classes = { "shell", "command" } };
     private readonly Button _overflow = new() { Classes = { "shell", "command" } };
@@ -89,6 +89,8 @@ internal sealed class WorkflowControls : Grid
     internal bool OccurrenceShownElsewhere { get; set; }
     internal Task PendingTempoCommand { get; private set; } = Task.CompletedTask;
     internal Task PendingGainCommand { get; private set; } = Task.CompletedTask;
+    internal Task PendingGainPreview { get; private set; } = Task.CompletedTask;
+    internal void CancelGainGesture() => _gainLevel.Cancel();
 
     internal Button StatusControl { get; } = new()
     {
@@ -112,7 +114,9 @@ internal sealed class WorkflowControls : Grid
             if (_gain.Classes.Contains("invalid") || !_gain.IsEnabled) return false;
             BeginGainEdit();
             if (_gainBasis is not { } basis || workflow.State.Gain is not { } value) return false;
-            _gainGesture = (basis.Basis, basis.Node, value);
+            var id = Guid.NewGuid();
+            _gainGesture = (basis.Basis, basis.Node, value, id, workflow.State.TransportGeneration);
+            PendingGainPreview = workflow.BeginGainPreviewAsync(id, basis.Basis, basis.Node);
             _gainBasis = null;
             return true;
         };
@@ -120,6 +124,7 @@ internal sealed class WorkflowControls : Grid
         {
             if (_gainGesture is not { } gesture) return;
             _gainGesture = gesture with { Value = value };
+            PendingGainPreview = workflow.PreviewGainAsync(gesture.Id, value);
             _refreshing = true;
             _gain.Value = value;
             _gain.Text = value.ToString(GainFormat, System.Globalization.CultureInfo.InvariantCulture);
@@ -131,12 +136,14 @@ internal sealed class WorkflowControls : Grid
         {
             if (_gainGesture is not { } gesture) return;
             _gainGesture = null;
-            PendingGainCommand = workflow.SetGraphGainAsync(gesture.Basis, gesture.Node, gesture.Value);
+            PendingGainCommand = workflow.CompleteGainPreviewAsync(gesture.Id, gesture.Value);
             await PendingGainCommand;
             Refresh();
         };
         _gainLevel.Cancelled += () =>
         {
+            if (_gainGesture is { } gesture)
+                PendingGainPreview = workflow.CancelGainPreviewAsync(gesture.Id);
             _gainGesture = null;
             Refresh();
         };
@@ -558,10 +565,13 @@ internal sealed class WorkflowControls : Grid
             if (_gainGesture is { } gesture && (gesture.Basis.Lifecycle != state.Document.LifecycleId ||
                                                 gesture.Basis.Generation != state.Generation ||
                                                 gesture.Basis.Attachment != state.Selected ||
+                                                gesture.Transport != state.TransportGeneration ||
                                                 interactionBlocked || GainShownElsewhere || state.IsClosed))
             {
-                _gainGesture = null;
                 _gainLevel.Cancel();
+                if (_gainGesture is { } stale)
+                    PendingGainPreview = _workflow.CancelGainPreviewAsync(stale.Id);
+                _gainGesture = null;
             }
 
             if (_gainBasis is null && _gainGesture is null)

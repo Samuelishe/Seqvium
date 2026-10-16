@@ -278,8 +278,13 @@ and history lifetime stay with their existing owners. Unknown identity-bearing c
 Parts array order is durable Rack presentation. Audio equivalence normalizes this order independently
 of canonical equality, so reordering can acknowledge an equivalent revision without preparing a new
 plan or resetting voices/time. Compatible worker continuation also ignores row order when other edits
-are pending. The toolbar fader reuses GainLevelControl capture and the existing frozen graph command;
-it owns no audio preview, saved parameter or history.
+are pending. The toolbar fader reuses GainLevelControl capture. DesktopWorkflow owns a uniquely
+identified gesture with frozen lifecycle/generation/attachment/node and starting amplitude, independent
+of the ordinary Busy command pulse. GraphExecutionCoordinator validates its active prepared execution;
+RealtimeSampler receives immutable latest parameter tables qualified by execution, authority and Stop.
+OfflineSampler temporarily overlays these on its accepted coefficients/Mixer parameters while retaining
+voices and FX histories. Cancellation withdraws the overlay; completion uses one existing document edit.
+Neither the control nor the overlay owns a document, history, device gain or alternate renderer.
 
 `Workspace/BeatPaneContent` is a retained projection of the selected occurrence's shared Pattern,
 parts and notes. `Workflow/BeatSteps` supplies exact grid projection/refusals and frozen lifecycle,

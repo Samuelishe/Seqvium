@@ -18,7 +18,8 @@ SEQ-RACK-WORKFLOW-F1 introduces no field or reader gate. Pattern `parts` array o
 order. An independent channel owns fresh sound/Part/note/sampler-zone and Source graph identities;
 immutable WAV resource references and the explicit Mixer assignment may remain shared. Save/Open,
 Save As, history and retained-media policy use their existing boundaries. Fader drafts never enter
-serialization; invalid persisted graph Gain remains savable and requires explicit repair.
+serialization, even when temporarily audible through the live Pattern Gain overlay. Frozen export and
+R8 also use accepted canonical intent. Invalid persisted graph Gain remains savable and requires explicit repair.
 
 ## R6 optional modules and accepted media
 

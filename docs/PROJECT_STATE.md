@@ -7,17 +7,17 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0003**, **SEQ-RACK-WORKFLOW-F1 — Channels and Pattern Gain**.
-Rack Duplicate and Ctrl-name-drag create independent Drum/Synth/PCM sounds, notes and mapped-zone
-identities through one canonical graph/history edit. Name drag reorders durable Parts without changing
-time, binding or audio. Existing unshared-tree/eight-Source limits and unknown-content refusals remain;
-WAV resources and the explicit Mixer route remain shared. Pattern Gain now pairs a sculpted shared
-horizontal fader with exact input/keyboard and narrow overflow. Capture/Escape/stale cancellation,
-legacy invalid values and same-parameter Graph/Editor priority retain their existing owners. Audio
-equivalence now treats Parts order as presentation, preserving active plans/voices/clock on reorder.
-No schema/reader, engine, instrument, global setting or composition is introduced.
-The [report](experiments/SEQ-RACK-WORKFLOW-F1_REPORT.md) records automated/native/visual/UR12 evidence,
-initial failures, retained local artifacts and acoustic/platform limits.
+Product alpha **0.1.16.0004**, **SEQ-RACK-GAIN-AUDIT-R1 — Live Pattern Gain**.
+The toolbar fader now changes the identified executing Gain during capture, including before-Mixer
+source transfers in applicable Pattern/Song playback. Immutable temporary parameters retain the same
+prepared plan, voices, transport and FX. Escape/capture loss, surface/reflow, stale generation/selection,
+Stop/Panic and lifecycle cancellation restore accepted feedback without history. Release accepts one
+Undo; Undo/Redo update sound. Drafts never enter Save/frozen offline/R8; no global device gain is used.
+Exact/invalid values, original fader materials, keyboard, accessibility and Graph/Editor priority remain.
+Rack Duplicate/reorder/Ctrl-copy and Drum/Synth/PCM/keymap independence pass addressed audit without
+further production changes. Copies retain the explicit shared Mixer route. No schema/reader, engine,
+instrument, setting or composition is added. The [report](experiments/SEQ-RACK-GAIN-AUDIT-R1_REPORT.md)
+owns PCM/native/UR12/visual results, first-run allocation failure and explicit evidence limits.
 
 Previous **0.1.16.0002**, **SEQ-DRUM-PLAYALONG-F1 — Drum Play-along and Source Levels**.
 Drum editor Play overlaps bounded source hits over Pattern/Song in the existing output callback,
@@ -297,19 +297,16 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-RACK-WORKFLOW-F1, 2026-10-16**. Full Release solution build has zero
-warnings/errors (**6.06 s**); **1820/1820** tests pass, zero skips, one thread (**74.088 s CLI**).
-Nineteen new cases cover independent
-configured Drum/Synth/PCM copies, mapped media/history, graph signal/order parity and active Pattern/
-Song/Mixer/voice continuity. Focused strengthened preset/signal/independence and shared UI checks pass
-31/31 (2.177 s CLI). A final readout-only precision correction additionally passes an affected Release
-build (8.72 s) and native/window checks, reusing the full DSP/Project regression. Actual RU/EN
-Dark/Light 1400/1000/640-DIP populated/empty/overflow windows, long names and twelve
-zero-DIP field alignments pass. Guarded native Duplicate/reorder/Ctrl-copy/history/editor double-click/
-fader/exact input and physical UR12 44.1-kHz live Gain/reorder pass separately. Shared catalog and the
-extended Graph/Gain matrix pass, including 32 field checks within one DIP and native graph input.
-The report owns final
-timings, shared catalog/hierarchy checks, failures and explicit evidence limits.
+Latest L0/L1/L2/L3: **SEQ-RACK-GAIN-AUDIT-R1, 2026-10-17**. Full Release build: zero warnings/errors (**6.01 s**);
+**1839/1839** tests pass, zero skips, one thread (**72.783 s CLI**). Nineteen new cases
+protect actual live draft PCM, cancel/history/ABA, canonical Save/frozen PCM isolation, no prepared
+restart, warmed callback allocation and exact continuing Delay/Reverb histories. Focused Rack passes
+38/38 (2.852 s); earlier related audio subset 162/162 (17.093 s). The first L3 allocation assertion
+failure remains recorded; it passes unchanged both separately and in the final full run.
+Guarded native held Gain/Escape/commit/Undo/Redo and playing Rack operations pass on UR12 44.1-kHz
+stereo. Routed surface/reflow/Stop cancellation and actual RU/EN Dark/Light ordinary/reduced/empty/
+overflow/invalid review pass, including twelve zero-DIP field pairs. The report separates numerical,
+native/physical, subjective listening and pressure/platform limits. No visual redesign/style change.
 
 Previous L0/L1/L2/L3: **SEQ-DRUM-PLAYALONG-F1, 2026-10-16**. Full Release solution build has
 zero warnings/errors (**9.96 s**); **1801/1801** tests pass, zero skips, one thread (**65.656 s runner**).
@@ -572,8 +569,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This requested Rack workflow L3 covers canonical
-channel identity/history/media, graph/audio equivalence, Pattern/Song/Mixer/Gain/Automation/R8,
+Completed repository tasks since this L3: **0**. This requested live Gain L3 covers canonical
+channel identity/history/media, realtime parameters, Pattern/Song/Mixer/Gain/Automation/R8,
 existing instruments/readers and shared Desktop contracts.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
 subjective acoustic/aesthetic or platform acceptance.

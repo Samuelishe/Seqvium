@@ -175,7 +175,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "automation" or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review"
-                or "control-input" or "drum-playalong" or "rack-pads" or "rack-workflow"
+                or "control-input" or "drum-playalong" or "rack-pads" or "rack-workflow" or "rack-gain"
                 or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow"
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
                 or "sampler-editor" or "sampler-keymap" or "synth" or "reverb" or "delay" or "ui-density"
@@ -209,6 +209,8 @@ internal static partial class Program
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
                 else if (args[0] == "rack-workflow")
                     await RackWorkflowAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "rack-gain")
+                    await RackGainAuditAsync(main, output, args.Contains("native"));
                 else if (args[0] == "cross-stage")
                     await CrossStageInputAsync(main, output, args.Length > 2 && args[2] == "native");
                 else if (args[0] == "extensions")

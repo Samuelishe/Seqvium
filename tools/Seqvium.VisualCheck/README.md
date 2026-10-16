@@ -2,6 +2,13 @@
 
 ## Rack channels and Pattern Gain
 
+For live Gain acceptance, `rack-gain <output> native` deliberately plays a small isolated sustained
+Synth fixture on the current physical output. Guarded native held fader trajectories must change
+actual DSP meters before release without canonical history or execution/voice reset; Escape restores,
+release accepts one Undo and native Undo/Redo restore sound. Playing reorder/cancel/Ctrl-copy and
+routed Graph/Editor/overflow/capture/Stop cancellation are recorded separately in `live-gain.json`.
+This is physical delivery and numerical DSP evidence, not subjective listening. No system volume changes.
+
 ```powershell
 dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll rack-workflow "$PWD/.artifacts/rack-workflow/review" native audio --timeout-seconds=180
 ```

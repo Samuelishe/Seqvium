@@ -142,8 +142,12 @@ or playback clock. Row order survives Save/Open and history.
 **Pattern Gain** in the toolbar controls the selected occurrence's existing graph Gain. Its shared
 horizontal fader, exact field and Left/Right/Home/End keys edit linear 0–1: zero is silence, one is
 unity. A completed pointer gesture is one Undo; Escape/capture loss or stale authority cancels it.
-The draft moves visually; accepted values use existing live publication without restarting transport
-or voices. Narrow windows move the same retained controls into toolbar overflow. The same parameter
+While music plays, the draft also updates the identified executing Gain at packet boundaries, including
+its before-Mixer source transfers in Pattern/Song. Transport, voices and effects continue. Escape,
+capture loss, surface handoff/reflow, conflicting edits, target/lifecycle changes and Stop/Panic withdraw
+the draft; cancellation restores current accepted Gain without Undo. Release accepts one canonical edit;
+Undo/Redo update the same continuing execution. Drafts never enter Save/recovery/offline rendering.
+Narrow windows move the same retained controls into toolbar overflow. The same parameter
 yields to a visible Graph quick control or detailed Gain Editor. Loaded invalid values remain exact
 and visibly invalid, without a legal fader thumb; exact entry provides explicit repair and Undo.
 

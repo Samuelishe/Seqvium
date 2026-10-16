@@ -50,14 +50,12 @@ internal sealed record SynthAuditionUpdate(long Authority, long Stop, PreparedSy
 
 internal sealed record SongSeek(long Frame, long Command);
 
-internal sealed record MixerRevisionUpdate(long ExecutionId, Guid Revision, PreparedMixer Mixer, long Authority);
-
 internal sealed record SongLoop(long Start, long End);
 
 /// <summary>One serialized control owner, one sequential consumer. Dispose only after the consumer has joined.
 /// Active, one pending and one retired execution are the only retained slots. Gain is latest-wins;
 /// Stop/Panic generations survive a subsequent Start. Musical events remain in the complete F1 plan.</summary>
-public sealed class RealtimeSampler : IDisposable
+public sealed partial class RealtimeSampler : IDisposable
 {
     internal sealed class State : IDisposable
     {
@@ -150,7 +148,6 @@ public sealed class RealtimeSampler : IDisposable
     private long _songStart, _seenSeek;
     private Guid _revision;
     private GraphRevisionUpdate? _update;
-    private MixerRevisionUpdate? _mixerUpdate;
     private long _meterReset, _seenMeterReset;
     public void ResetMixerMeters() => Interlocked.Increment(ref _meterReset);
 
@@ -162,10 +159,10 @@ public sealed class RealtimeSampler : IDisposable
         var active = Volatile.Read(ref _active);
         if (_disposed || IsTerminated || HasPending || active is null || active.Authority != executionId ||
             active.Plan.Graph is not { } graph || graph.Mixer is null) return false;
-        var mixer = MixerPreparation.Compile(snapshot.State, graph, SampleRate);
+        var parameters = GainParameters(active, snapshot.State);
+        var mixer = parameters.Mixer;
         if (mixer is null || mixer.Strips.Length != graph.Mixer.Strips.Length ||
             !mixer.Strips.Select(s => s.Id).SequenceEqual(graph.Mixer.Strips.Select(s => s.Id))) return false;
-        mixer = MixerPreparation.ReserveContinuation(mixer, active.MixerBudget);
         if (mixer.Strips.Where((s, i) => s.Reverb.Enabled &&
                                          (!graph.Mixer.Strips[i].Reverb.Enabled ||
                                           s.Reverb.Size != graph.Mixer.Strips[i].Reverb.Size)).Any())
@@ -177,7 +174,7 @@ public sealed class RealtimeSampler : IDisposable
             throw new GraphPreparationException(GraphPreparationReasons.Budget);
         long authority = InvalidatePreparation();
         active.MixerBudget = mixer;
-        Volatile.Write(ref _mixerUpdate, new(executionId, snapshot.Revision, mixer, authority));
+        Volatile.Write(ref _gainUpdate, new(executionId, authority, snapshot.Revision, parameters));
         return true;
     }
 
@@ -547,6 +544,9 @@ public sealed class RealtimeSampler : IDisposable
         }
 
         var update = Interlocked.Exchange(ref _update, null);
+        // Withdraw drafts before applying any canonical tables. Authority and Stop are monotonic,
+        // so even an unconsumed preview cannot return after Edit/Undo ABA or transport teardown.
+        _active?.Execution.SetGraphGainPreview(null);
         if (update is not null && update.Authority == Volatile.Read(ref _authority) &&
             _active is { } updated && updated.Authority == update.PreparedExecutionId &&
             updated.Plan.GraphAttachmentId == update.Attachment)
@@ -564,14 +564,21 @@ public sealed class RealtimeSampler : IDisposable
             _seenMeterReset = reset;
         }
 
-        var mixerUpdate = Interlocked.Exchange(ref _mixerUpdate, null);
-        if (mixerUpdate is not null && mixerUpdate.Authority == Volatile.Read(ref _authority) &&
-            _active is { } mixed && mixed.Authority == mixerUpdate.ExecutionId)
+        var gainUpdate = Interlocked.Exchange(ref _gainUpdate, null);
+        if (gainUpdate is not null && gainUpdate.Authority == Volatile.Read(ref _authority) &&
+            _active is { } gained && gained.Authority == gainUpdate.Execution)
         {
-            mixed.Execution.UpdateMixer(mixerUpdate.Mixer);
-            mixed.Revision = mixed.EquivalentRevision = mixerUpdate.Revision;
-            _revision = mixed.Revision;
+            gained.Execution.UpdateCoefficients(gainUpdate.Parameters.Coefficients);
+            if (gainUpdate.Parameters.Mixer is { } mixer) gained.Execution.UpdateMixer(mixer);
+            gained.Revision = gained.EquivalentRevision = gainUpdate.Revision;
+            _revision = gained.Revision;
         }
+
+        var preview = Volatile.Read(ref _gainPreview);
+        if (preview is not null && preview.Authority == Volatile.Read(ref _authority) &&
+            preview.Stop == Volatile.Read(ref _stop) && _active is { } previewed &&
+            previewed.Authority == preview.Execution)
+            previewed.Execution.SetGraphGainPreview(preview.Parameters);
 
         long stop = Volatile.Read(ref _stop);
         long start = Volatile.Read(ref _start);

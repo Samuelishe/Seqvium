@@ -162,6 +162,7 @@ internal sealed partial class MainWindow : Window
         AddHandler(KeyUpEvent, WindowKeyUp, RoutingStrategies.Tunnel);
         Deactivated += (_, _) =>
         {
+            _workflowControls.CancelGainGesture();
             _systemMenuRequested = false;
             _workspace.CancelGestures();
         };

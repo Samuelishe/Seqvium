@@ -2366,3 +2366,19 @@ refusals and earlier eager-icon/allocation failures remain explicit in the
 Two local identical-fragment single/multisample WAVs remain for owner listening, not a new track.
 No third-party audio enters Git, no acoustic/aesthetic/pressure approval is inferred, and all work
 remains unstaged with index/history/remote unchanged.
+
+## SEQ-RACK-GAIN-AUDIT-R1 — 2026-10-17
+
+One BUILD, 0.1.16.0003 → 0.1.16.0004. Toolbar Pattern Gain now publishes temporary execution-bound
+parameters while dragging; cancel restores accepted sound, release is one canonical Undo, and history
+updates the continuing DSP. Mixer source transfers share the update; transport, voices and FX retain
+ownership. Save/offline/R8 see canonical intent only. Original fader and independent Rack copy/reorder
+contracts remain. No additional cloning/reorder defect was reproduced.
+
+Full Release build has zero warnings/errors (6.01 s); final full suite passes 1839/1839, zero skips (72.783 s CLI).
+Nineteen added cases protect PCM, authority/history, DSP continuity and selected callback
+allocation. Native UR12 held Gain/Escape/commit/history/playing Rack operations and localized/theme/width
+windows pass. The first full run's unchanged EQ/Compressor allocation failure passes separately and on
+full repeat; cause remains unknown. [Report](../experiments/SEQ-RACK-GAIN-AUDIT-R1_REPORT.md) retains
+measurements, failed attempts, local evidence and acoustic/pressure/platform limits. Work remains
+unstaged; no index/history/remote operation is performed.

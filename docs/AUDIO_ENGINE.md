@@ -920,6 +920,19 @@ Compatible loop note edits retain position/voices under the R5 continuation abov
 Start; deliberate coordinator Start
 requires the current validated publication authority. Stop/Panic remain sticky through completion/retry.
 
+The toolbar Pattern Gain gesture additionally publishes temporary coefficient/Mixer parameter tables
+on the serialized control owner. These address the existing Gain operation and its linear source
+transfers before Mixer, including applicable Song occurrences; global RealtimeSampler.SetGain is not
+used. The consumer overlays accepted parameters only while execution identity, publication authority
+and Stop stamp match. Canonical Edit/Undo/Redo, selection/lifecycle changes, surface cancellation and
+Stop/Panic withdraw preview, including queued updates and ABA. Release creates one canonical Edit.
+Accepted Gain and later Mixer updates carry complete current graph coefficients atomically, so a
+coalesced update cannot resurrect the original prepared Gain. No decode, graph/schedule/scratch rebuild,
+callback allocation/lock or new audio stream is involved. Voice cursors, transport and FX histories stay
+owned by the same execution. A temporary input can excite existing effects; cancellation restores the
+accepted input rather than rewinding their histories. Their finite runtime tail allowance remains
+conservative. Save, frozen export and R8 prepare accepted intent without reading this overlay.
+
 `RealtimeSampler.ReadStatus` returns a value snapshot protected by a single-consumer sequence counter;
 it distinguishes origin prepared revision, executing audio revision, equivalent canonical revision,
 executing attachment, transport/epoch/position/voices, real Stop acknowledgment and termination.

@@ -109,6 +109,9 @@ explicit overflow/details; Inspector retains musical parameters. No new editor p
 is added. Project replacement updates retained Inspector content without changing pane identity. New
 uses the empty-document composition; opening music can restore the retained musical layout.
 Technical details require deliberate disclosure; the existing status strip carries persistent blockers.
+Pattern Gain's audible draft is cancelled when its controls move into/out of overflow, yield to the
+same Graph/Node Editor parameter, lose capture or the main window deactivates. Stop/Panic and document
+authority changes also restore accepted feedback. These cancellations create no musical history.
 
 Native storage pickers remain OS-owned modals. The unsaved first-party confirmation is an owned,
 content-sized Avalonia modal with no system decorations, centered on its owner; initial focus is Cancel,
