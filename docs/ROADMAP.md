@@ -25,7 +25,7 @@ Global Settings is implemented under [Settings](SETTINGS.md#unified-global-setti
 options must go there. The next control stage may add editor-scoped remapping after explicit context,
 conflict and text/focus contracts; alternatives/profiles/controllers remain separately scoped work.
 Future VST, audio I/O and MIDI stages add working preferences to this center, without placeholder pages
-or changes to project-owned sound/timing state. This does not start or reorder R8.
+or changes to project-owned sound/timing state. This does not reorder musical stages.
 
 ## Sequencing philosophy
 
@@ -73,8 +73,8 @@ and processing without duplicate DSP. Demonstrate degraded access plus deliberat
 removal for a missing managed sample, and recovery of a captured unnamed/unsaved revision after simulated
 interruption. Recovery does not promise every edit or unpersisted audio survives.
 
-R7 generation and R8 object resampling require their own bounded acceptance and integration into project
-reuse by R12; using them in this composition is optional. The core sample path must finish the track
+R7 generation and bounded R8 Pattern resampling are integrated with managed project reuse under
+[Sample workflow](SAMPLE_WORKFLOW.md); using them in this composition is optional. The core sample path must finish the track
 when the removable generator is absent, and accepted generated audio must remain usable without it.
 Unavailable required processing still blocks its dependent render; removal is not permission for silent
 bypass. An external effect/plugin host is unnecessary to exercise the recoverable-media failure case.
@@ -401,19 +401,6 @@ to the [R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md). Completed work a
 Owner acoustic/aesthetic judgement and ordinary native-input evidence remain separate from the
 implemented capability. Broader reference inputs, one-use detachment, other context types, durable
 recipes and Personal Library are evidence-led follow-ups, not prerequisites silently claimed by V1.
-
-## SEQ-R8 — Resampling
-
-Render a pattern or another bounded selected object to a reusable sample through its own semantic/local
-processing boundary. Keep object sampling distinct from broader audible-selection capture under
-[SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md#resampling); resolve the implemented scope's concrete boundary
-and tails with evidence. Preserve the source and enable immediate reuse. Any optional replace-with-sample
-operation must be undoable and avoid silently reapplying exact baked processing. Full audible-context,
-arrangement, and multiple-source capture need not arrive together. Render the frozen canonical scope,
-block required invalid/unavailable dependencies, handle preparation finitely and revalidate the target
-before asynchronous acceptance; exact taps/transactions remain open.
-Use the selected content/occurrence/container's semantic ownership rather than infer it from a label
-or editor entry point; rendering one use cannot silently transform every shared reference.
 
 ## SEQ-R9 — Piano Roll
 

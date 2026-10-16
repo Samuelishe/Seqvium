@@ -9,6 +9,18 @@ Not authoritative for: Pixel-perfect design, DSP behavior, serialization, or cur
 These are intended requirements except the explicitly implemented bounded R3 host, F3-A/F3-B workflows
 and the implemented Rack, Playlist and Piano Roll sections below; broader capabilities remain future work.
 
+## Implemented Pattern resampling
+
+A Pattern navigator card's **Create sample** context action captures that explicit local occurrence,
+not the current transport mix. Temporary rendering progress and Cancel stay beside the Pattern list;
+there is no separate render editor, file picker or routing questionnaire. Success opens Browser's
+Project resources with the new sample selected, waveform/preview and existing Rack/Playlist use.
+Delayed search notifications must not clear this reveal. The source remains editable; no replacement
+or automatic placement is implied. Render refusal names a supported reason without accepting partial
+audio. A changed project discards the old request and asks for a fresh render. Selection does not
+retarget it. Errors/progress use shared localized controls and can be dismissed.
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-pattern-resampling-seq-r8) owns exact bounds.
+
 ## Implemented Sample Lab V1
 
 The rail/Panes opens standalone exploration; a PCM Rack channel menu captures contextual identity.

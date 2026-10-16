@@ -1760,3 +1760,21 @@ remapping requires its own contextual stage. A separate bounded controls file pr
 appearance/layout compatibility and unsafe originals without mixing preferences with musical history.
 Canonical current policy lives in SETTINGS; AGENTS/INDEX/PROJECT_STATE make it discoverable to future
 sessions without inventing an unimplemented RAG service. The 2026-10-15 report owns verification limits.
+
+## SEQ-R8 — explicit local Pattern tap and managed sample acceptance — 2026-10-16
+
+Pattern export already compiled Mixer and therefore could not implement Create Sample from Object
+without silently expanding its semantic scope. Add a narrow PrepareObject entry to the existing
+graph preparation/kernel, rather than a parallel engine or arbitrary-object renderer. The selected
+navigator attachment defines the local owner and source-time-zero range; Source/Gain/Mix have zero
+latency/stateful tail. Unknown required local dependencies block. All downstream Mixer/Master state
+stays outside the object, independently of the surface exposing its controls.
+
+Reuse the established managed sampler WAV limit, PCM16 encoding and WavImport prepare/store/validate/
+commit transaction. Refuse oversize or over-unity audio instead of silently truncating, normalizing
+or clipping. Freeze canonical input, conservatively expire on every edit/history change, and join
+withdrawn work across New/Open/Close. No stale candidate history or source replacement is needed to
+make this first musical action useful: Browser reveal and existing preview/Rack/Playlist reuse close
+the workflow. State-bearing processors, broader objects/capture and replacement require their own
+execution/dependency/tail semantics before extending this boundary. Current truth belongs to Sample
+Workflow, Audio Engine and Architecture; the R8 report owns verified evidence and limits.

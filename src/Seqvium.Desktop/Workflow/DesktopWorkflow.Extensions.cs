@@ -67,6 +67,7 @@ internal sealed partial class DesktopWorkflow
 
     private async Task CloseGeneratorsAsync()
     {
+        await CloseResamplingAsync();
         await CloseLabAsync();
         foreach (var session in _generationSessions) await session.DisposeAsync();
         _generationSessions.Clear();

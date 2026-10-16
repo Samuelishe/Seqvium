@@ -49,6 +49,7 @@ internal sealed record WorkflowState(
     internal long TransportGeneration { get; init; }
     internal bool BrowserPreviewPlaying { get; init; }
     internal SampleLabState? Lab { get; init; }
+    internal ResamplingState? Resampling { get; init; }
 
     internal System.Collections.Immutable.ImmutableDictionary<Id<SoundDefinition>, AudioWaveform> AudioWaveforms
     {
@@ -73,6 +74,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         GraphExecutionCoordinator> _createCoordinator;
 
     private readonly string? _mediaDirectory;
+    private readonly Func<ProjectDocument, Id<GraphAttachment>, CancellationToken, Action<int>?, Task<PatternSample>> _renderPattern;
     private readonly Timer _poll;
     private ProjectDocument _document;
     private AudioDeviceSession? _deviceSession;
@@ -92,7 +94,8 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
     internal DesktopWorkflow(ProjectDocument document, Func<WorkflowOutput>? openOutput = null,
         string? mediaDirectory = null,
         Func<ProjectDocument, RealtimeSampler, Id<GraphAttachment>, SynchronizationContext,
-            GraphExecutionCoordinator>? createCoordinator = null, ExtensionHost? extensions = null)
+            GraphExecutionCoordinator>? createCoordinator = null, ExtensionHost? extensions = null,
+        Func<ProjectDocument, Id<GraphAttachment>, CancellationToken, Action<int>?, Task<PatternSample>>? renderPattern = null)
     {
         if (extensions is not null) Extensions = extensions;
         _document = document;
@@ -100,6 +103,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
         _createCoordinator = createCoordinator ?? ((doc, sampler, target, owner) =>
             new(doc, sampler, target, owner, voiceCapacity: GraphPreparation.MaximumVoices));
         _mediaDirectory = mediaDirectory;
+        _renderPattern = renderPattern ?? PatternResampling.RenderAsync;
         _selected = document.Current.State.GraphAttachments.FirstOrDefault()?.Id;
         _songMode = !document.Current.State.ArrangementClips.IsEmpty || !document.Current.State.AudioClips.IsEmpty;
         _state = new(document, [], _selected, null, "", "", _status, null, null, false, false, false, null);
@@ -535,6 +539,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
 
     private void DocumentChanged()
     {
+        if (!_acceptingResample) _resamplingCancellation?.Cancel();
         LabDocumentChanged();
         // R6 uses strict generation relevance: an intervening musical edit expires pending/candidate work.
         foreach (var session in _generationSessions) session.Cancel();
@@ -645,6 +650,7 @@ internal sealed partial class DesktopWorkflow : IAsyncDisposable
             AudioWaveforms = _audioWaveforms,
             BrowserPreviewPlaying = _browserAudition?.Processor.ReadStatus().Playing == true,
             Lab = ObserveLab(),
+            Resampling = _resampling,
             MixerMeters = state.Mixer is { } mixer
                 ? System.Collections.Immutable.ImmutableDictionary.ToImmutableDictionary(
                     mixer.Channels.Select(c => c.Id.Value).Append(Guid.Empty), id => id,

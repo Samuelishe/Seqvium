@@ -81,6 +81,23 @@ available as Audio Clips. Reuse keeps existing media and creates an independent 
 does not change earlier instruments. Save and Save As retain project-owned media normally; keep
 the project's `.seqvium.media` directory beside the project file.
 
+## Create a sample from a Pattern
+
+Right-click the Pattern's card and choose **Create sample**. Browser opens with the ready sample
+selected in **Project resources**. Preview it, then choose **+ Rack**, **+ Playlist**, or drag it into
+the music. Your original Pattern remains editable. Ctrl+Z/Y undoes/redoes accepting the sample;
+later musical uses have their own Undo actions.
+
+The sample contains that Pattern's instruments and local Source/Gain/Mix processing, before Mixer
+channels, buses and Master. It includes the whole phrase and supported release/drum tails. Save As
+and moving the project together with its `.seqvium.media` directory keep the result self-contained.
+
+Rendering can be cancelled beside the Pattern list. Editing the project while it runs discards the
+outdated result; run the action again after editing. Unsupported local processing/dependencies and
+unavailable source audio produce an error. Output is 48 kHz mono/stereo PCM16 within the Rack's
+16 MiB WAV limit (about 87 seconds stereo). A longer result is refused; overload asks you to lower
+local Gain. Audible-mix capture, source replacement and VST are not available.
+
 ## Work with audio clips
 
 Open **Playlist** from the left rail. Drop WAV, MP3 or FLAC from Explorer onto a lane, or use Playlist's **Import

@@ -27,6 +27,12 @@ system/text/editor focus ownership; local editor remapping remains a separate sc
 Add settings sections only with working capabilities; future VST, audio I/O and MIDI settings belong
 in this same center when implemented. Sound/timing/project-instance state remains project-owned.
 
+Pattern resampling is implemented: read [the R8 contract](docs/SAMPLE_WORKFLOW.md#implemented-pattern-resampling-seq-r8) before modifying rendering
+or acceptance. Preserve the explicit local Output tap before Mixer, frozen canonical request,
+generation/lifecycle invalidation, joined teardown and existing managed-media/Undo ownership. Adding
+stateful local processors requires tail/latency/dependency support before they can be resampled.
+Do not substitute PatternWaveExport, live playing state or Song/Master capture for this action.
+
 Do not depend on earlier chat history or load the whole knowledge base by default.
 Active docs contain current truth/policy/plans/open questions/state; history belongs in `docs/archive/`.
 Exclude `docs/archive/**` from normal startup, selected owner reading, ordinary task context, generated

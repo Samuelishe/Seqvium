@@ -357,6 +357,12 @@ over the same ResourceId/managed locator, with no duplicate WAV or semantic dedu
 imported equal files remain distinct resources. Save As transfers a shared resource once per destination
 under the existing integrity/retention rules.
 
+R8 Pattern sampling uses this same `wav/` layout and WavImport integrity/ownership transaction.
+Its resource origin records source Pattern/attachment/revision and local boundary as provenance;
+accepted PCM is authoritative. Resource and independent sampler sound are one Undo edit, without
+rewriting the source. Save As/reopen never regenerate the sample. No format/reader change is needed.
+See [sample workflow](SAMPLE_WORKFLOW.md#implemented-pattern-resampling-seq-r8) for supported limits.
+
 ## Required direction
 
 - Carry project/schema format version, the Seqvium version that saved the project, and relevant

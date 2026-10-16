@@ -12,6 +12,30 @@ SEQ-R1 selects a bounded managed canonical foundation below. R2-F1 adds managed 
 offline PCM execution. R2-F2 reuses that execution behind a bounded realtime boundary and a narrow Windows
 output adapter; graph, presentation and permanent engine choices remain separate.
 
+## Pattern resampling ownership
+
+`PatternResampling` is a bounded Core operation over one captured item-local Pattern attachment.
+`GraphPreparation.PrepareObject` prepares its source-time-zero local graph without compiling Mixer,
+reusing existing prepared tables and OfflineSampler. Ordinary preparation and WAV export retain
+their Mixer behavior. This explicit boundary avoids treating exported downstream audio as an object
+sample, without creating a second renderer or general object hierarchy.
+
+DesktopWorkflow owns one asynchronous request, cancellation/deadline/progress and final managed
+acceptance. It does not hold the ordinary command semaphore during computation, so edits, transport,
+Cancel and lifecycle commands remain responsive. A frozen document is closed in worker completion;
+live canonical edits permanently withdraw acceptance authority. New/Open/Close cancel/join the work
+while their command gate prevents a late commit; they never dispose its owner context first.
+The same managed WavImport owns the durable candidate and rolls back unaccepted files. Its existing
+generation/lifecycle/integrity gate and one Edit accept resource/sampler identity atomically. A narrow
+accepting flag excludes that transaction's own post-edit notification from request invalidation.
+
+Browser consumes the accepted ResourceId and exposes existing preview/reuse; selection is never a
+commit target. No temporary render bytes enter Undo. Undo/Redo retain accepted media through existing
+storage policy. Provenance records Pattern/attachment/revision and local tap; durable PCM is
+authoritative rather than an instruction to regenerate. No project format or assembly is added.
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-pattern-resampling-seq-r8) owns product bounds;
+[audio](AUDIO_ENGINE.md#pattern-object-rendering-seq-r8) owns execution and tails.
+
 ## Sample Lab ownership
 
 The optional Desktop `Generators/PercussionGenerator` is reachable only through its trusted R6

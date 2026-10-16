@@ -28,6 +28,9 @@ for the logo, typography, alternative directions and publication resources.
 - Create your own **Kick and Clap** samples in **Sample Lab**. Generate variations, lock a useful
   characteristic, compare recent sounds, then keep them in the project or add them to Rack/Playlist.
   A PCM Rack channel can audition a candidate through its existing processing while music plays.
+- Right-click a Pattern and choose **Create sample** to keep its instruments and local processing
+  as reusable project audio. Find it selected in Browser, preview it, then add it to Rack or Playlist.
+  The source stays editable; downstream Mixer/Master is excluded. [Resampling limits](docs/README.md#create-a-sample-from-a-pattern) apply.
 
 - Drop **WAV, MP3 or FLAC from Windows Explorer directly onto Playlist**. Audio Clips are independent
   of Patterns and Channel Rack. See real mono/stereo waveforms, move or Ctrl-copy clips, trim their

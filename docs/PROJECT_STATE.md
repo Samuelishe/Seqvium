@@ -7,7 +7,19 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.8.0004**, SEQ-CONTROL-INPUT. The first real drum-editing crash is corrected from
+Product alpha **0.1.9.0000**, **SEQ-R8 — Resampling**. Pattern navigator **Create sample** renders
+the identified Pattern through its supported local graph, before Mixer/Master, into independently
+managed reusable project audio. Browser opens with the result selected, ready for preview/Rack/
+Playlist. Source content remains editable. The fixed 48-kHz mono/stereo PCM16 result includes musical
+rests, release and one-shot tails; unsupported required local dependencies, overload and the 16 MiB
+sampler limit are explicit refusals. A frozen request has progress/Cancel, a cooperative deadline,
+strict generation/lifecycle invalidation and joined teardown. Durable placement and acceptance reuse
+WavImport with one Undo edit; media survives Redo/Save As/relocation/Open without original sources.
+No automatic replacement, Song/audible capture, VST or new roadmap stage is included.
+[Sample workflow](SAMPLE_WORKFLOW.md#implemented-pattern-resampling-seq-r8) owns bounds;
+[R8 report](experiments/SEQ-R8_REPORT.md) owns evidence and remaining limits.
+
+The first real drum-editing crash is corrected from
 its reproduced `KeyNotFoundException: pitchAmount` in amplitude pointer capture. Shared Drum/Gain/Mixer
 dials follow relative circular motion; captured horizontal levels follow X off the track. The Drum
 footer keeps spacious icon-only Play and local sample Stop accessible, auditions changed accepted
@@ -15,7 +27,7 @@ commits outside music and reuses resident ready PCM/output for retrigger. Dials 
 a usable minimum before wrapping within the allocated pane; Play/Stop stays outside parameter scrolling.
 Preparation keeps only the latest
 pending request; cancellation/transport/lifecycle relevance prevents stale starts. Evidence and limits
-belong to the [control input report](experiments/SEQ-CONTROL-INPUT_REPORT.md). R8 is not started.
+belong to the [control input report](experiments/SEQ-CONTROL-INPUT_REPORT.md).
 
 A unified compact Settings window owns General,
 Controls and branded About/version. Language/theme duplication and the Appearance UI are retired;
@@ -26,7 +38,7 @@ files remain compatible and musical project/Undo ownership is unchanged. New glo
 this center and new application keys must use HostCommands. These rules are routed through AGENTS,
 INDEX and [Settings](SETTINGS.md#unified-global-settings-center), the current Markdown knowledge base;
 no executable RAG index is installed. Editor-local remapping/profiles/controllers and actual future
-VST/audio I/O/MIDI pages remain separately scoped work. R8 is not started.
+VST/audio I/O/MIDI pages remain separately scoped work.
 
 An ordered shared left zone places rail, Browser,
 Patterns and musical workspace side by side. Each right boundary resizes only its left panel;
@@ -132,7 +144,23 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2: **SEQ-CONTROL-INPUT, 2026-10-15**. Affected Release builds have zero warnings/errors;
+Latest L0/L1/L2/L3: **SEQ-R8, 2026-10-16**. Full Release solution build has zero warnings/errors;
+**1427/1427 tests pass**, zero skips, one thread (**70.769 s** final CLI summary). New focused checks pass
+**27/27** (5.133 s): independent two-instrument local signal/release oracles, seven drum tails,
+mono/stereo and 44.1/48-kHz source conversion, Mixer exclusion, frozen state, packet cancellation,
+unsupported/missing dependencies, overload/size refusal, stale late completion, lifecycle joins,
+one managed Undo/Redo, Rack/Playlist reuse and relocation after original media removal.
+
+The real-window routed three-instrument workflow passes with exact accepted/local PCM, stable Browser
+reveal, reuse, history and Save As/New/Open. Native Windows right-click, popup action and independent
+managed acceptance pass separately. Physical source and Browser sample output pass on Samsung USB C
+Earphones at 48 kHz stereo. RU/EN × Dark/Light ordinary/reduced empty windows, context menus and
+populated Browser are reviewed. An active search is cleared and the result stays selected after
+deferred notifications. [R8 report](experiments/SEQ-R8_REPORT.md) records evidence, corrected search/polling
+selection races, final GUI refinement and limits. Physical delivery is not subjective listening,
+pressure/DPI/platform/aesthetic acceptance. Existing R4 pressure gaps remain open.
+
+Prior L0/L1/L2: **SEQ-CONTROL-INPUT, 2026-10-15**. Affected Release builds have zero warnings/errors;
 **265/265 focused tests pass**, zero skips, one thread (**27.285 s**). This includes drum commit/Undo,
 burst coalescing, Stop/Panic/close, ready retrigger authority, long-sample Stop/restart and Piano audition
 ownership. Final aligned-label refinement additionally passes **97/97 focused presentation/editor tests**
@@ -142,7 +170,7 @@ pitch-only key read in amplitude capture. The [report](experiments/SEQ-CONTROL-I
 native mouse/output checks, routed all-owner coverage, responsive layout/precision fixtures and remaining
 foreground/input-delivery limits. This is focused verification, not a new L3 or pressure/acoustic acceptance.
 
-Latest L3: **SEQ-SETTINGS-F1, 2026-10-15**. Full Release solution build has zero warnings/errors;
+Prior L3: **SEQ-SETTINGS-F1, 2026-10-15**. Full Release solution build has zero warnings/errors;
 **1384/1384 tests pass**, zero skips, one thread (**99.262 s** CLI summary). Final minimum-size/custom-reset/theme-affordance refinement reuses that L3 with **105/105 focused
 tests** (17.642 s), zero skips and a zero-warning affected Release build. Real production windows pass RU/EN × Dark/Light at
 720×570 and 500×340 settings, with main window down to 640×480, search/capture/conflict/default/reset,
@@ -189,8 +217,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **1**. This risk-selected L3 covers global shortcut routing,
-preference persistence and existing production regressions. No broader platform, aesthetic, pressure
+Completed repository tasks since this L3: **0**. This risk-selected R8 L3 covers shared sampler/media
+preparation, async acceptance and existing production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light

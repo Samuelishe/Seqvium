@@ -29,7 +29,7 @@ historical retrieval explicitly opts in only for history/provenance/why/superses
 | [WORKSPACE](WORKSPACE.md) | Main-window chrome/keyboard window actions, pane reachability/escape and focus return, activation/front behavior, docking, user layout state |
 | [SETTINGS](SETTINGS.md) | Unified global Settings center, remappable application commands/conflicts/defaults, behavior preferences, compatible user files, future subsystem sections, user/project separation, bounded reset and production diagnostics |
 | [EXTENSIONS](EXTENSIONS.md) | Optional capabilities, preset-template versus project-instance state, graded compatibility/fallback, package lifecycle/removal safety, native UI-resource contribution availability/retirement, degraded access and dependency blockers |
-| [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Browser/source discovery and preview/use, Personal Library ownership/publication, project-resource reuse, standalone/contextual Sample Lab, acceptance, object render with frozen external dependencies and audible capture |
+| [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) | Browser/source discovery and preview/use, project-resource reuse, Sample Lab, implemented bounded R8 Pattern/local-graph resampling with managed acceptance; future Personal Library, wider object dependencies and audible capture |
 | [PROJECT_FORMAT](PROJECT_FORMAT.md) | Canonical Save/reopen, rolling recovery, failure-safe managed-media durability, degraded resource access, migration and unknown-data preservation |
 | [CODING_GUIDELINES](CODING_GUIDELINES.md) | C# implementation/refactoring, English source language, async/lifetime, warning baseline |
 | [DEVELOPMENT](DEVELOPMENT.md) | Developer environment, local tools, SDK/version authority, eventual entry points, text consistency |

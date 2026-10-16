@@ -87,6 +87,19 @@ public static class GraphPreparation
     public static PreparedSampler Prepare(ProjectDocument document, Id<GraphAttachment> attachmentId,
         int sampleRate, int channels, int maximumPacketFrames, int voiceCapacity = 8, int repeats = 1,
         MusicalPosition? stop = null, CancellationToken cancellationToken = default)
+        => PrepareCore(document, attachmentId, sampleRate, channels, maximumPacketFrames, voiceCapacity,
+            repeats, stop, false, cancellationToken);
+
+    /// <summary>One item-local Pattern occurrence at source time zero, before all Mixer routing/processing.
+    /// Required unknown local dependencies still block preparation. No transport or output-device state is used.</summary>
+    public static PreparedSampler PrepareObject(ProjectDocument document, Id<GraphAttachment> attachmentId,
+        int sampleRate, int channels, int maximumPacketFrames, CancellationToken cancellationToken = default)
+        => PrepareCore(document, attachmentId, sampleRate, channels, maximumPacketFrames, MaximumVoices,
+            1, null, true, cancellationToken);
+
+    private static PreparedSampler PrepareCore(ProjectDocument document, Id<GraphAttachment> attachmentId,
+        int sampleRate, int channels, int maximumPacketFrames, int voiceCapacity, int repeats,
+        MusicalPosition? stop, bool objectRender, CancellationToken cancellationToken)
     {
         document.CheckAvailable();
         cancellationToken.ThrowIfCancellationRequested();
@@ -109,12 +122,13 @@ public static class GraphPreparation
             throw new GraphPreparationException(GraphPreparationReasons.Format);
         var placement = state.Placements.Single(item => item.ItemContextId == attachment.ContextId);
         var program = Compile(graph, attachment, placement.Id, channels, maximumPacketFrames, voiceCapacity, silent);
-        program.Mixer = MixerPreparation.Compile(state, program, sampleRate);
+        if (!objectRender) program.Mixer = MixerPreparation.Compile(state, program, sampleRate);
         PreparedSampler? plan = null;
         try
         {
             plan = SamplerPreparation.PreparePatternCore(document, placement.PatternId, sampleRate, channels,
-                voiceCapacity, placement.Position, repeats, stop, program, cancellationToken);
+                voiceCapacity, objectRender ? new(0) : placement.Position, repeats, stop, program, cancellationToken,
+                objectRender);
             Preflight(plan, maximumPacketFrames);
             cancellationToken.ThrowIfCancellationRequested();
             return plan;

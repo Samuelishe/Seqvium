@@ -186,7 +186,7 @@ public static class SamplerPreparation
 
     internal static PreparedSampler PreparePatternCore(ProjectDocument document, Id<Pattern> patternId, int sampleRate,
         int channels, int voiceCapacity, MusicalPosition start, int repeats, MusicalPosition? stop,
-        PreparedGraph? graph = null, CancellationToken cancellationToken = default)
+        PreparedGraph? graph = null, CancellationToken cancellationToken = default, bool objectBounds = false)
     {
         document.CheckAvailable();
         if (sampleRate is not (44100 or 48000) || channels is not (1 or 2) || voiceCapacity < 1 ||
@@ -313,8 +313,18 @@ public static class SamplerPreparation
             long first = ConstantTempoConversion.ToFrames(start, state.Settings.Tempo, sampleRate);
             var stopTicks = stop ?? new MusicalPosition(musicalEnd);
             long last = ConstantTempoConversion.ToFrames(stopTicks, state.Settings.Tempo, sampleRate);
-            if (stop is null) last = checked(last + maximumRelease);
-            if (stop is null && notes.Any(n => n.OneShot))
+            if (objectBounds)
+            {
+                // Preserve the musical bar (including rests), then only the actual supported source tails.
+                // Source/Gain/Mix have no stateful tail; one-shots end at EOF, gated PCM at release or EOF.
+                foreach (var note in notes)
+                {
+                    long eof = checked(note.StartFrame + (long)Math.Ceiling(sources[note.SourceIndex].Frames / note.Step));
+                    last = Math.Max(last, note.OneShot ? eof : Math.Min(eof, checked(note.EndFrame + note.ReleaseFrames)));
+                }
+            }
+            else if (stop is null) last = checked(last + maximumRelease);
+            if (!objectBounds && stop is null && notes.Any(n => n.OneShot))
                 last = Math.Max(last,
                     notes.Where(n => n.OneShot).Max(n => checked(n.StartFrame + sources[n.SourceIndex].Frames)));
             events.RemoveAll(item => item.Frame >= last);
@@ -328,7 +338,7 @@ public static class SamplerPreparation
             // Different tick boundaries must stay ordered after every fractional-frame loop shift.
             // Sub-frame content retains finite execution instead of silently losing/reordering events.
             var boundaries = sorted.Select(item => item.Position.Ticks).Distinct().Order().ToArray();
-            bool loopable = repeats == 1 && zero == 0 && clock.SpansFrame(pattern.Length.Ticks) &&
+            bool loopable = !objectBounds && repeats == 1 && zero == 0 && clock.SpansFrame(pattern.Length.Ticks) &&
                             boundaries.Zip(boundaries.Skip(1), (left, right) => clock.SpansFrame(right - left))
                                 .All(distinct => distinct);
             DrumChoke.Prepare(notes, sorted, state.Settings.Tempo, sampleRate, loopable ? clock : null);

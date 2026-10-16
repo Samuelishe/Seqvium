@@ -49,6 +49,25 @@ It renders RU/EN Dark/Light plus reduced disclosure/list/preview geometry. Route
 Windows input, decoded PCM and physical/acoustic evidence remain distinct. A failed native click
 delivery is not a pass, even when the corresponding routed scenario succeeds.
 
+## Pattern resampling
+
+`PatternResamplingTests` checks an independent two-path signal/release oracle across mono/stereo and
+44.1/48-kHz source rates, all seven synthesized one-shot tails, source-time-zero placement, frozen
+state after edit/Close, packet cancellation, required dependencies, unavailable media, overload and
+size refusal. `ResamplingWorkflowTests` covers real managed acceptance, source preservation, exact
+PCM, one Undo/Redo, Rack/Playlist reuse, relocation with original media removed, durable write failure,
+late uncooperative completion after Cancel/edit/delete/Undo-Redo/New/Open/Close and joined teardown.
+
+```text
+dotnet build tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-restore
+dotnet test --project tests/Seqvium.Tests/Seqvium.Tests.csproj -c Release --no-build --no-restore --filter-class "*PatternResamplingTests" --filter-class "*ResamplingWorkflowTests" --max-threads 1
+```
+
+The R8 checkpoint requires full Release regression because it touches sampler preparation and media
+acceptance. [VisualCheck resampling](../tools/Seqvium.VisualCheck/README.md#pattern-resampling) owns
+real-window localized menus/Browser, native action input and physical source/sample output, with
+each tier recorded separately. [Report](experiments/SEQ-R8_REPORT.md) owns actual results and limits.
+
 ## Global settings and command bindings
 
 `ControlPreferencesTests` covers real resolver/default removal, explicit conflict transfer, reserved

@@ -54,10 +54,13 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
     private readonly Stack<string?> _history = [];
     private BrowserDirectory? _directory;
     private string? _currentPath;
+    private string _requestedQuery = "";
+    private Id<ResourceDescriptor>[] _requestedResources = [];
     private BrowserSource? _selected;
     private CancellationTokenSource _cancellation = new();
     private bool _refreshing, _disposed, _using, _loaded;
     private Guid _lifecycle;
+    private Id<ResourceDescriptor>? _revealedSample;
     private string _message = "Browser.Empty";
     internal Task PendingCommand { get; private set; } = Task.CompletedTask;
 
@@ -159,7 +162,12 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         _back.Click += (_, _) => { if (_history.TryPop(out var p)) Navigate(p, false); };
         _refresh.Click += (_, _) => Navigate(_currentPath, false);
         _more.Click += (_, _) => Enqueue(() => LoadPageAsync(_cancellation.Token));
-        _search.TextChanged += (_, _) => { if (!_refreshing) { _searchDelay.Stop(); _searchDelay.Start(); } };
+        _search.TextChanged += (_, _) =>
+        {
+            // TextChanged may arrive after programmatic reveal/navigation has ended its refresh guard.
+            if (!_refreshing && (_search.Text ?? "") != _requestedQuery)
+            { _searchDelay.Stop(); _searchDelay.Start(); }
+        };
         _searchDelay.Tick += (_, _) => { _searchDelay.Stop(); Navigate(_currentPath, false); };
         _list.SelectionChanged += (_, _) => { if (!_refreshing) SelectSource(); };
         _list.DoubleTapped += (_, _) => ActivateSelected();
@@ -198,6 +206,7 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
             {
                 _saved = await _store.LoadAsync(); RebuildLocations();
                 Navigate(_saved.Last, false);
+                RevealResampledResource();
             });
         };
         Refresh();
@@ -239,6 +248,10 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
         RenewCancellation();
         var cancellation = _cancellation.Token;
         string query = _search.Text ?? "";
+        _requestedQuery = query; _searchDelay.Stop();
+        if (string.IsNullOrWhiteSpace(path))
+            _requestedResources = _workflow.State.Snapshot.State.Resources
+                .Where(r => r.Name.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(r => r.Id).ToArray();
         Enqueue(async () =>
         {
             cancellation.ThrowIfCancellationRequested();
@@ -417,13 +430,31 @@ internal sealed class BrowserPaneContent : Grid, IDisposable
     private void WorkflowChanged(WorkflowState state) => Dispatcher.UIThread.Post(() =>
     {
         if (_disposed) return;
+        state = _workflow.State; // A queued older observation cannot re-request an obsolete resource list.
         if (_lifecycle != state.Document.LifecycleId)
         { _lifecycle = state.Document.LifecycleId; if (!_using) Navigate(_currentPath, false); }
-        else if (_currentPath is null && !_using && !_entries.Select(e => e.Resource).SequenceEqual(
-            state.Snapshot.State.Resources.Where(r => r.Name.Contains(_search.Text ?? "", StringComparison.OrdinalIgnoreCase)).Select(r => (Id<ResourceDescriptor>?)r.Id)))
+        else if (_currentPath is null && !_using && !_requestedResources.SequenceEqual(
+            state.Snapshot.State.Resources.Where(r => r.Name.Contains(_search.Text ?? "", StringComparison.OrdinalIgnoreCase)).Select(r => r.Id)))
             Navigate(null, false);
-        Refresh();
+        RevealResampledResource(); Refresh();
     });
+
+    private void RevealResampledResource()
+    {
+        if (!_loaded || _using || _workflow.State.Resampling is not { Resource: { } resource } ||
+            resource == _revealedSample || !_workflow.State.Snapshot.State.Resources.Any(r => r.Id == resource)) return;
+        _revealedSample = resource;
+        _refreshing = true;
+        if (!string.IsNullOrEmpty(_search.Text)) _search.Text = "";
+        _refreshing = false;
+        Navigate(null);
+        Enqueue(() =>
+        {
+            _list.SelectedItem = _entries.FirstOrDefault(e => e.Resource == resource);
+            if (_list.SelectedItem is { } item) _list.ScrollIntoView(item);
+            return Task.CompletedTask;
+        });
+    }
     private void PreferencesChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (_disposed) return;

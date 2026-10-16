@@ -17,6 +17,7 @@ public sealed class WavImport : IDisposable
     private readonly Id<ProjectState> _project;
     private readonly Id<SoundDefinition>? _target;
     private readonly string _name;
+    private readonly string _editName, _provenance;
     private readonly decimal _rootPitch, _releaseMilliseconds;
     private readonly string _root;
     private string? _locator;
@@ -24,10 +25,11 @@ public sealed class WavImport : IDisposable
     private CancellationToken _preparationCancellation;
 
     internal WavImport(ProjectDocument document, string name, Id<SoundDefinition>? target,
-        decimal rootPitch, decimal releaseMilliseconds, string root)
+        decimal rootPitch, decimal releaseMilliseconds, string root, string editName, string provenance)
     {
         _document = document;
         _name = name;
+        _editName = editName; _provenance = provenance;
         _target = target;
         _root = root;
         _rootPitch = rootPitch;
@@ -111,10 +113,10 @@ public sealed class WavImport : IDisposable
         CheckCancellation(cancellationToken);
         Id<ResourceDescriptor> resource = default;
         Id<SoundDefinition> sound = default;
-        _document.Edit("Import project WAV", edit =>
+        _document.Edit(_editName, edit =>
         {
             CheckCancellation(cancellationToken);
-            resource = edit.AddResource(_name, _locator, "Imported WAV");
+            resource = edit.AddResource(_name, _locator, _provenance);
             sound = _target ?? edit.AddSound(_name, PcmSampler.Algorithm, [resource]);
             edit.ConfigurePcmSampler(sound, resource, _rootPitch, _releaseMilliseconds);
             createUse?.Invoke(edit, new(resource, sound));
@@ -175,13 +177,17 @@ public static partial class ProjectMedia
     private static partial Regex LocatorPattern();
 
     public static WavImport BeginImport(ProjectDocument document, string name, decimal rootPitch = 60m,
-        decimal releaseMilliseconds = 5m, Id<SoundDefinition>? target = null, string? ownedMediaDirectory = null)
+        decimal releaseMilliseconds = 5m, Id<SoundDefinition>? target = null, string? ownedMediaDirectory = null,
+        string editName = "Import project WAV", string provenance = "Imported WAV")
     {
         document.CheckAvailable();
         ProjectValidation.Require(
             !string.IsNullOrWhiteSpace(name) && name.Length <= ProjectValidation.MaximumTextLength,
             "Invalid media name.");
         PcmSampler.ValidateConfiguration(rootPitch, releaseMilliseconds);
+        ProjectValidation.Require(!string.IsNullOrWhiteSpace(editName) && editName.Length <= ProjectValidation.MaximumTextLength &&
+            !string.IsNullOrWhiteSpace(provenance) && provenance.Length <= ProjectValidation.MaximumTextLength,
+            "Invalid media acceptance description.");
         if (target is { } id)
             ProjectValidation.Require(document.Current.State.Sounds.Any(sound => sound.Id == id &&
                     sound.Algorithm == PcmSampler.Algorithm && sound.Extension is null),
@@ -195,7 +201,7 @@ public static partial class ProjectMedia
             document.MediaRoots.Add(document.UnnamedMediaRoot);
         }
 
-        return new(document, name, target, rootPitch, releaseMilliseconds, document.UnnamedMediaRoot);
+        return new(document, name, target, rootPitch, releaseMilliseconds, document.UnnamedMediaRoot, editName, provenance);
     }
 
     public static DecodedPcm Decode(ProjectDocument document, Id<ResourceDescriptor> resourceId)

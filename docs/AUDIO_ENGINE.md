@@ -440,6 +440,35 @@ does not establish measured DAC/acoustic latency, physical dropout counts, lower
 multi-hour stability, all endpoints, platform parity or clean distribution. F2's hard Stop preserves F1;
 the broader user-facing settling/de-click and stateful seek/tail mechanisms remain Q-057.
 
+## Pattern object rendering (SEQ-R8)
+
+`GraphPreparation.PrepareObject` compiles one validated item-local attachment at source time zero,
+without `MixerPreparation.Compile`. Independent instrument paths converge through their authored
+local graph; ordinary dependency/layout/source/budget diagnostics remain mandatory. This is the
+local Output tap, not removal of processing from an already mixed signal. Ordinary Prepare/export/
+realtime paths are unchanged. No device, Song contribution, last-valid plan or live DSP state is read.
+
+`PatternResampling` freezes canonical state/media roots on the document owner, prepares/renders on a
+worker and returns one bounded PCM16 WAV. It uses smooth-boundary OfflineSampler with fixed packets
+and never loops. The plan includes the full Pattern range and extends to each source's release/EOF
+(gated PCM) or EOF (drum one-shot), rather than indiscriminately appending the largest release to the
+Pattern. Empty/rest-only content preserves its musical length. Hat choke is prepared within this
+finite occurrence; loop-only voice-capacity checks do not reject a finite render. Source/Gain/Mix/
+Output have no stateful tail or algorithmic latency, so neither preroll, arbitrary silence detection
+nor latency compensation is needed for this supported set. Required unsupported local controls/
+processors/dependencies block instead of being bypassed. Mixer EQ/compression/sends and Master,
+including their tails, are outside the object.
+
+Output is fixed 48 kHz with mono/stereo matching graph ports. Source-rate/pitch adaptation reuses the
+sampler kernel; channels are not silently rewired. Frame count/encoded size are checked before the
+packet loop against the existing 16 MiB sampler media bound. Nonfinite/over-unity output refuses the
+entire result; successful PCM16 encoding has at most one quantization step error relative to float
+local playback. There is no normalization or mastering-quality conversion claim. Cooperative
+cancellation is checked at preparation boundaries and each packet; Desktop also owns a finite deadline
+and revalidates acceptance under [sample workflow](SAMPLE_WORKFLOW.md#implemented-pattern-resampling-seq-r8).
+Broader stateful tails, external detectors, latency-bearing paths, audible capture and additional
+objects remain future work. [R8 evidence](experiments/SEQ-R8_REPORT.md) owns verification.
+
 ## R4-F2 independent contributions and realtime convergence
 
 [GraphPreparation](../src/Seqvium.Core/Audio/GraphPreparation.cs) prepares one identified item-local
@@ -1026,4 +1055,5 @@ label/UI, silence threshold, maximum extension, processor-tail reporting and non
 are unselected. Q-057 in [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) retains finite completion, reset/warm-up,
 loop state ownership, de-click and realtime/offline parity mechanisms; latency/cancellation also need evidence.
 [SAMPLE_WORKFLOW](SAMPLE_WORKFLOW.md) owns resampling source and acceptance semantics. F1's offline
-single-Pattern sampler and F2 realtime output are implemented above; product render/export remains future work.
+single-Pattern sampler, F2 realtime output, manual Pattern/Song export and bounded R8 object sampling
+are implemented above; broader object/capture render mechanisms remain future work.

@@ -7,6 +7,62 @@ Lab exploration/reference/locks/history, candidate acceptance, durable audio, ob
 Not authoritative for: Generator algorithms, DSP/render details, package/preset compatibility, library storage/indexing,
 or final resource file format.
 
+## Implemented Pattern resampling (SEQ-R8)
+
+**Create sample** in a Pattern navigator card's context menu renders that identified item-local
+Pattern occurrence once, at source time zero and the captured project tempo. It includes every
+supported PCM sampler/drum Part and its Source/Gain/Mix/Output paths, including an intentional local
+submix. It stops before Mixer channels, buses, sends and Master. Navigator cards identify explicit
+attachments; no arbitrary Playlist placement, Song, selection or currently audible mix is inherited.
+The original Pattern, notes, sounds, graph, placements and routes remain editable and unchanged.
+
+The result becomes a separately named managed project sample and independent sampler sound in one
+**Create sample from Pattern** Undo transaction. Browser opens Project resources with the result
+selected and its waveform available. Its existing preview, + Rack, + Playlist and drag reuse apply;
+reuse creates its own musical edit and does not copy the resource or bake the old graph a second time.
+Repeated renders receive distinct resource identities/names. No automatic source replacement,
+placement, Personal Library publication or generator dependency is added.
+
+Output is **48 kHz PCM16 WAV**, mono/stereo according to the complete local graph. It preserves the
+entire musical Pattern, including leading/trailing rests, and extends to gated PCM release/EOF and
+synthesized one-shot EOF. Stateless Gain/Mix have zero additional tail/latency. Source interpolation,
+envelopes, hat choke, boundary smoothing and voice scheduling reuse OfflineSampler. PCM16 differs
+from float execution only by quantization. There is no normalization, implicit limiter, silence
+trimming, tempo stretching, preroll or state captured from live playback. An overloaded/nonfinite
+result is refused with a request to lower local Gain. Output must fit the existing **16 MiB** managed
+sampler WAV limit including header (about **87.38 s stereo**, **174.76 s mono**); a longer Pattern/tail
+is refused before rendering rather than truncated. Source decoding, graph/event/scratch budgets and
+the shared 32-voice ceiling still apply.
+
+Preparation freezes canonical state and media roots before yielding and validates immutable managed
+source hashes. Unknown local sound/Part/note/graph state, missing/corrupt sources, unsupported nodes,
+ports, scope or required external/control/performance relationships block the whole operation. Mixer
+state is outside this semantic boundary; unavailable unrelated downstream processing is not a required
+dependency. No stateful/latency-bearing local processor or external detector is supported in R8;
+adding one requires its execution, tail/entry-state and dependency handling before claiming parity.
+
+One render may be active per document workflow. Temporary progress and Cancel live in the navigator;
+render/storage run off the GUI/audio threads with packet/source cancellation and a **30-second
+cooperative deadline**. A source decode/hash or durable validation remains one bounded synchronous unit.
+Selection changes do not retarget the request. Any canonical edit, deletion or Undo/Redo permanently
+invalidates it, including edit-then-Undo; unrelated edits conservatively invalidate too. No stale
+candidate history/rebase is offered. New/Open/Close cancel and join the worker before document teardown;
+the ordinary command gate also prevents a finishing render from committing into a lifecycle operation.
+
+Acceptance begins an existing WavImport at the original lifecycle/generation, prepares and flushes
+durable managed bytes, then revalidates and accepts on the document owner. Errors/cancellation/stale
+completion create no descriptor, use or Undo entry; the pending import disposes exclusively owned
+unaccepted files. Undo removes accepted active relationships, retaining bytes for Redo. Save/Save As
+and moving the project plus its `.media` directory preserve the sample independently of original
+external sources, its source Pattern and synthesis code. Ordinary managed-media integrity,
+degraded-save and no-accepted-GC policy remains; no schema or crash-recovery promise is added.
+
+[Audio execution](AUDIO_ENGINE.md#pattern-object-rendering-seq-r8) owns the tap and kernel;
+[architecture](ARCHITECTURE.md#pattern-resampling-ownership) owns async lifetime and acceptance;
+[verification](experiments/SEQ-R8_REPORT.md) separates deterministic, routed, native and physical evidence.
+Other objects, audible-context capture, stateful local effects, replacement and larger sampler media
+remain future capabilities, not an implicit universal render service.
+
 ## Implemented Sample Lab V1
 
 Sample Lab is a retained workspace instrument with standalone entry from the rail/Panes and contextual
@@ -933,6 +989,7 @@ reversible transformation may be evaluated later. None is selected. Accepting a 
 or mutate its source by default. Start with one bounded source in SEQ-R8 rather than treating the full
 candidate list or both complete operations as required initial scope.
 
-Musical bounds, tails, insert/send inclusion, routing capture, normalization, sample rate, channels,
-latency compensation, and cancellation are open. [AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction)
+The bounded Pattern choices are implemented above. Broader objects/capture still need musical bounds,
+stateful tails, routing capture, output policy, latency compensation and cancellation evidence.
+[AUDIO_ENGINE](AUDIO_ENGINE.md#offline-rendering-direction)
 owns execution/render semantics; [KNOWN_PROBLEMS](KNOWN_PROBLEMS.md) records validation gaps.

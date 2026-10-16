@@ -1,5 +1,23 @@
 # Desktop visual and lifecycle verification
 
+## Pattern resampling
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll resampling "$PWD/.artifacts/r8/review" native audio
+```
+
+Uses isolated production Desktop/preferences and an authored Kick/Clap/Open Hat Pattern. Routed
+context action, stable Browser reveal after deferred search, exact accepted/local PCM, one Undo/Redo,
+Rack/Playlist resource reuse and Save As/New/Open are checked. Captures cover actual context menus and
+populated Browser at 1400×900/800×600 in RU/EN × Dark/Light. Empty startup is also captured. Fixture
+creation uses workflow commands; it is not native musical authoring. Optional `native` separately
+records guarded Windows right-click/popup-action/managed acceptance, with refusal/failure retained.
+Optional `audio` separately plays the source and Browser sample through real default output without
+changing device settings; physical delivery does not establish subjective listening or pressure
+acceptance. `resampling.json`, `reveal-stability.json` and captures remain ignored retention-managed
+evidence. Unit tests own controlled cancellation/stale/lifecycle interleavings and relocation after
+removing original media, not timing-sensitive GUI sleeps.
+
 ## Global Settings
 
 ```powershell

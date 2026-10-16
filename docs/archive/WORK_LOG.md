@@ -2127,3 +2127,35 @@ No R8, reader change or release. Initial Git status was clean; product source, r
 reusable verification tools are intentional. Transient logs/renders remain ignored under .artifacts
 with rolling retention; owner screenshots and breakpoints are preserved. Root ProjectStats reports
 are regenerated separately. No staging/index/history mutation, commit, push or tag is performed.
+
+## SEQ-R8 — 2026-10-16
+
+Completed bounded Create Sample from Object for Pattern navigator attachments. The explicit local
+Output tap excludes Mixer/Master while preserving independent Source/Gain/Mix paths. Source-time-zero
+finite OfflineSampler rendering includes musical rests, gated release/EOF and drum one-shots. Fixed
+48-kHz mono/stereo PCM16 must fit the existing 16 MiB sampler WAV bound; overload, missing/unknown
+required dependencies and oversize results refuse rather than silently clip, omit or truncate.
+
+The captured cancellable request owns progress and a cooperative deadline. Any canonical edit/history
+change permanently invalidates it; lifecycle replacement cancels/joins before teardown. Existing
+WavImport provides flushed managed placement, revalidation and one acceptance Undo transaction.
+Source content stays editable; Browser reveals the result for preview and ordinary Rack/Playlist
+reuse. Undo/Redo, Save As and relocated project/sidecar reopen survive without original media.
+
+Full Release solution build passes with zero warnings/errors; final suite passes 1427/1427, zero
+skips, one thread, 70.769 seconds. New focused coverage passes 27/27; a related 105-case media/Browser/
+metadata subset also passes. Real-window RU/EN Dark/Light ordinary/reduced empty/menu/populated views,
+active-filter reveal stability, exact three-instrument accepted/local PCM, history/reuse and Save/Open
+pass. Real Windows right-click/popup action and separate physical original/sample playback through
+Samsung USB C Earphones at 48-kHz stereo pass. These are distinct evidence tiers; no subjective
+acoustic, pressure, DPI/platform or owner aesthetic acceptance follows.
+
+The GUI probe found delayed search and pending-resource-list polling races that cleared reveal;
+requested query/resource coalescing fixes both and the final scenario exercises them. Rider's existing
+configurations did not support the required CLI launch overrides; no debugger frame claim, config
+change or breakpoint mutation is made. The R8 report owns detailed commands, earlier failures,
+retained ignored artifacts and limits. One PATCH is 0.1.9.0000, BUILD reset, unchanged reader/schema.
+Current contracts/state/agent routing and wider unresolved questions are updated; completed R8 planning
+is removed from the active Roadmap. No new functional stage, staging/index/history mutation, commit,
+push or tag. ProjectStats root reports are regenerated after final edits; reusable sources/tests/tools
+are retained and transient artifacts use the existing rolling retention policy.

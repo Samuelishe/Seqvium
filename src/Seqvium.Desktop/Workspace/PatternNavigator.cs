@@ -23,6 +23,10 @@ internal sealed class PatternNavigator : Grid, IDisposable
     private readonly Func<Id<GraphAttachment>, string?, Id<MusicalPart>?, Task> _openEditor;
     private readonly TextBlock _title = new() { Classes = { "caption" } };
     private readonly Button _create = new() { Classes = { "command" } };
+    private readonly Grid _renderStatus = new() { ColumnDefinitions = new("*,Auto") };
+    private readonly TextBlock _renderMessage = new() { Classes = { "caption" }, TextWrapping = TextWrapping.Wrap,
+        VerticalAlignment = VerticalAlignment.Center };
+    private readonly Button _cancelRender = new() { Classes = { "command" } };
     private readonly StackPanel _items = new() { Classes = { "compact" } };
     private readonly Dictionary<Id<GraphAttachment>, Button> _choices = [];
     private bool _disposed;
@@ -42,7 +46,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
         _workspace = workspace;
         _openEditor = openEditor;
         Width = 240;
-        RowDefinitions = new("Auto,*");
+        RowDefinitions = new("Auto,Auto,*");
         Margin = new(10, 12, 10, 8);
         var header = new Grid { ColumnDefinitions = new("*,Auto") };
         _title.VerticalAlignment = VerticalAlignment.Center;
@@ -51,6 +55,12 @@ internal sealed class PatternNavigator : Grid, IDisposable
         SetColumn(_create, 1);
         header.Children.Add(_create);
         Children.Add(header);
+        _renderStatus.Children.Add(_renderMessage);
+        _cancelRender.Content = HostIcons.Create("Close", _cancelRender, 16);
+        AutomationProperties.SetAutomationId(_cancelRender, "Resample.Cancel");
+        _cancelRender.Click += async (_, _) => await workflow.CancelResamplingAsync();
+        SetColumn(_cancelRender, 1); _renderStatus.Children.Add(_cancelRender);
+        SetRow(_renderStatus, 1); Children.Add(_renderStatus);
         AutomationProperties.SetAutomationId(_create, "Navigator.Create");
         _create.Click += async (_, _) =>
         {
@@ -70,7 +80,7 @@ internal sealed class PatternNavigator : Grid, IDisposable
             Content = _items, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
             Margin = new(0, 10, 0, 0)
         };
-        SetRow(scroll, 1);
+        SetRow(scroll, 2);
         Children.Add(scroll);
         workflow.Changed += WorkflowChanged;
         shell.PropertyChanged += PreferencesChanged;
@@ -88,6 +98,16 @@ internal sealed class PatternNavigator : Grid, IDisposable
     {
         if (_disposed) return;
         var observation = _workflow.State;
+        var render = observation.Resampling;
+        _renderStatus.IsVisible = render is not null;
+        if (render is not null)
+        {
+            _renderMessage.Text = _shell[render.Detail is { } reason && HostLocalizer.English.ContainsKey(reason) ? reason : render.Message] +
+                (render.Busy ? $" {render.Progress}%" : "");
+            ToolTip.SetTip(_renderMessage, render.Name + (render.Detail is { } detail ? "\n" + detail : ""));
+            ToolTip.SetTip(_cancelRender, _shell[render.Busy ? "Resample.Cancel" : "Window.Close"]);
+            AutomationProperties.SetName(_cancelRender, _shell[render.Busy ? "Resample.Cancel" : "Window.Close"]);
+        }
         var state = observation.Snapshot.State;
         var basis = (observation.Document.LifecycleId, observation.Generation, observation.Selected, observation.Busy,
             observation.IsClosed, _shell.Preferences);
@@ -224,6 +244,23 @@ internal sealed class PatternNavigator : Grid, IDisposable
         }
         piano.IsEnabled = piano.Items.Cast<MenuItem>().Any(i => i.IsEnabled);
         menu.Items.Add(piano);
+        menu.Items.Add(new Separator());
+        var resample = new MenuItem { Header = _shell["Resample.Create"],
+            IsEnabled = basis.Resampling?.Busy != true };
+        ToolTip.SetTip(resample, _shell["Resample.Scope"]);
+        AutomationProperties.SetAutomationId(resample, "Resample.Create");
+        resample.Click += async (_, _) =>
+        {
+            PendingCommand = RenderAsync();
+            await PendingCommand;
+            async Task RenderAsync()
+            {
+                bool accepted = await _workflow.ResamplePatternAsync(basis.Document.LifecycleId, basis.Generation, id);
+                if (accepted && !_disposed && _workflow.State.Document.LifecycleId == basis.Document.LifecycleId)
+                    _workspace.Open(WorkspaceState.BrowserId);
+            }
+        };
+        menu.Items.Add(resample);
         button.ContextMenu = menu;
         menu.Open(button);
     }
