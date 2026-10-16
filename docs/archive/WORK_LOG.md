@@ -2382,3 +2382,22 @@ windows pass. The first full run's unchanged EQ/Compressor allocation failure pa
 full repeat; cause remains unknown. [Report](../experiments/SEQ-RACK-GAIN-AUDIT-R1_REPORT.md) retains
 measurements, failed attempts, local evidence and acoustic/pressure/platform limits. Work remains
 unstaged; no index/history/remote operation is performed.
+
+## SEQ-PIANO-RACK-UI-FIX-R1 — 2026-10-17
+
+One BUILD, 0.1.16.0004 → 0.1.16.0005. Native playback reproduces repeated Piano ComboBox
+ItemsSource resets and rejected mouse selection. Unchanged choices/selection now survive transport
+observations. Rack thumbnails use the same fixed pad/beat/bar geometry as steps and ruler, with
+aligned starts/endpoints and common horizontal scrolling. Canonical music, history, reader, DSP,
+Mixer and Live Gain remain unchanged; no new composition or capability is added.
+
+Final full Release build has zero warnings/errors (1.527 s CLI, incremental); 1845/1845 tests pass,
+zero skips (65.868 s CLI). Six geometry regressions join 240 focused passing cases. Native matrix
+passes 48 selections with zero source resets and at least 60 observations per long Popup hold;
+60 rendered Rack layouts cover 1/2/4/8/32 bars, both languages/themes and three widths. Native
+scrollbar, note/step/history, resize/layout restore and short UR12 Pattern/Song checks pass, as do
+the existing Piano and repeated native Rack workflow routes. First full-run preview allocation
+failure passes unchanged alone and on full repeat; cause remains unknown. Legacy Tempo/focus/helper,
+initial Duplicate timeout and intermediate output-status evidence remain explicit in the
+[report](../experiments/SEQ-PIANO-RACK-UI-FIX-R1_REPORT.md). Local screenshot/fixture evidence follows
+ordinary retention; no pressure/acoustic/platform closure or Git index/history/remote mutation.

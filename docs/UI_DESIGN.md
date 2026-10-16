@@ -348,7 +348,8 @@ The compact Pattern name/header, length selector, sixteenth-note ruler and fixed
 the rhythm readable as music. Whole-bar extension repeats four beat groups without shrinking pads.
 Pads are compact fixed squares, not width-filling cells. Narrow panes scroll horizontally; larger
 beat and bar gaps retain hierarchy. Inner caps, bevels, hover highlights and pressed shade/recess
-provide tactile states in both themes. Rich-note previews continue to fill their row. Pattern cards
+provide tactile states in both themes. Rich-note previews use the same fixed time geometry as the
+pads and ruler, including beat/bar gaps; additional pane width remains empty. Pattern cards
 reserve a separate scrollbar gutter so their right edges remain intact.
 The 16–512 sculpted pads share a channel tint, active indicator and glow. The actual current column
 uses the shared playing outline independently of checked state and keyboard focus; the footer gives

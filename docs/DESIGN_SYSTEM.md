@@ -245,8 +245,12 @@ Shared density changes require catalog, field-alignment and populated workspace 
 Keep normal exact-field text/unit centers aligned, review small-strip readability separately, and verify
 RU/EN inspector reachability through scrolling. Source remains the single numeric/color authority.
 
-Rack pads use `Rack.StepHeight` for fixed width/minimum/maximum and height, with Auto-sized beat cells.
-`Rack.BarPadding` derives the additional bar gap from shared spacing. Rich-note previews still stretch.
+Rack pads use `Rack.StepHeight` for fixed width/minimum/maximum and height.
+`RackTimelineGeometry` shares that width, `Space.Small` step gaps, `Space.Large` beat gaps and
+`Rack.BarPadding` with step groups, ruler and melodic previews. Preview note endpoints interpolate
+between actual step starts, including gaps; the Pattern ends at the last pad's right edge, without
+a trailing gap. The preview button adds no horizontal content inset. Its intrinsic width stays fixed
+when the pane grows; the existing Rack ScrollViewer moves all rows and ruler together.
 The inner cap, highlight/shade overlays and pressed recess retain existing semantic materials;
 playing outline and keyboard focus remain independent. Shared ScrollViewer disables overlay auto-hide;
 `ScrollBar.VerticalGutter` and `ScrollBar.HorizontalGutter` derive the content-to-bar gap from shared

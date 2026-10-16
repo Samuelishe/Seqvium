@@ -526,6 +526,13 @@ stress/device measurements; ordinary musical time and concurrency use controlled
 
 ## SEQ-R9 Piano Roll verification
 
+`RackTimelineTests` protects fixed whole-bar widths, beat/bar gaps, fractional and crossing-note
+endpoints. `VisualCheck piano-rack` is the real-window regression for transport-stable ComboBox
+ItemsSource/selection and shared step/ruler/thumbnail geometry. It measures actual rendered controls,
+requires native mouse/wheel input, checks both languages/themes and compact panes, and separates
+physical Pattern continuity from native note/history checks. See the
+[tool guide](../tools/Seqvium.VisualCheck/README.md#piano-roll-selectors-and-rack-time-geometry).
+
 `PianoRollTests` covers shared canonical chords/mixed notes, Rack refusal, atomic stale/unknown/invalid
 edits, no-op order, group boundaries, rich length preservation, roots/metadata, Undo/Save/Open/export
 and joined pitched preview. `OfflineSamplerTests` adds full MIDI-range preparation and independent

@@ -495,11 +495,13 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             }
 
             int snapIndex = Math.Max(0, Array.IndexOf(SnapValues, Canvas.SnapTicks));
-            _snap.ItemsSource = new[] { "1/4", "1/8", "1/16", "1/32", "1/8 T", _shell["Arrangement.SnapOff"] };
-            _snap.SelectedIndex = snapIndex;
+            string[] snaps = ["1/4", "1/8", "1/16", "1/32", "1/8 T", _shell["Arrangement.SnapOff"]];
+            if (!_snap.Items.OfType<string>().SequenceEqual(snaps)) _snap.ItemsSource = snaps;
+            if (_snap.SelectedIndex != snapIndex) _snap.SelectedIndex = snapIndex;
             int lengthIndex = Array.IndexOf(LengthValues, Canvas.DefaultDuration);
-            _length.ItemsSource = new[] { "1/16", "1/8", "1/4", "1/2", "1/1" };
-            _length.SelectedIndex = lengthIndex;
+            string[] lengths = ["1/16", "1/8", "1/4", "1/2", "1/1"];
+            if (!_length.Items.OfType<string>().SequenceEqual(lengths)) _length.ItemsSource = lengths;
+            if (_length.SelectedIndex != lengthIndex) _length.SelectedIndex = lengthIndex;
             decimal? root = observation.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == Canvas.Part?.SoundId)
                 ?.Parameters.GetValueOrDefault("rootPitch", 60);
             _root.Content = _shell["Piano.Root"] + ": " + (root is { } midi ? PianoNotes.Name(midi) : "—");

@@ -180,7 +180,7 @@ internal static partial class Program
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
                 or "sampler-editor" or "sampler-keymap" or "synth" or "reverb" or "delay" or "ui-density"
                 or "theme-navigation"
-                or "settings",
+                or "settings" or "piano-rack",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -211,6 +211,8 @@ internal static partial class Program
                     await RackWorkflowAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "rack-gain")
                     await RackGainAuditAsync(main, output, args.Contains("native"));
+                else if (args[0] == "piano-rack")
+                    await PianoRackAsync(main, output, args.Contains("baseline"), args.Contains("geometry"));
                 else if (args[0] == "cross-stage")
                     await CrossStageInputAsync(main, output, args.Length > 2 && args[2] == "native");
                 else if (args[0] == "extensions")

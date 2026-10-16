@@ -540,6 +540,24 @@ It requests ordinary activation only; it never bypasses the guard or exercises a
 media/projects/PNG/JSON are ignored run artifacts,
 subject to the same rolling retention. Device-independent musical PCM checks stay in Tests.
 
+## Piano Roll selectors and Rack time geometry
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll piano-rack "$PWD/.artifacts/piano-rack" --timeout-seconds=300
+```
+
+This route always requires guarded native Windows input and physical Pattern playback. It creates
+only two isolated Synth Parts. RU/EN × Dark/Light ordinary/compact Piano checks hold each real Popup
+over dozens of workflow observations, count ItemsSource changes, compare realized row identity and
+screen coordinates, select by mouse and verify canvas values/history/Part switching. Constrained
+Popups additionally require native wheel scrolling and mouse selection. Rack checks measure actual
+pad/ruler/thumbnail coordinates for 1/2/4/8/32 bars at three pane widths, native horizontal scrolling,
+far-end alignment and crossing notes. Screen captures and rendered images remain local; native
+thumbnail opening, note draw/move/Undo/Redo, captured step paint/cancel, native resize/layout restore
+and short physical Song with native selectors have separate receipts. `geometry` skips the already
+verified selector matrix for focused Rack/gesture reruns. `baseline` records the old
+selector/width failure without asserting it passes; it is useful only on affected sources.
+
 ## Piano Roll and physical musical check
 
 ```powershell

@@ -155,7 +155,9 @@ and visibly invalid, without a legal fader thumb; exact entry provides explicit 
 
 Step pads keep a compact fixed square geometry at every pane width; insufficient room scrolls
 horizontally instead of stretching or shrinking musical cells. Beat/bar gaps remain distinct.
-Rich melodic thumbnails use the available row width and never become step pads. The Pattern
+Rich melodic thumbnails share the pads' fixed time geometry, including beat/bar gaps, and never
+become step pads. Their start, subdivisions and Pattern end align with the ruler and step rows;
+extra pane width stays empty and narrow panes scroll all three together. The Pattern
 navigator reserves a scrollbar gutter, keeping complete card edges outside its vertical scrollbar.
 
 The Rack rail action (or Panes → Channel Rack) provides New pattern, Add sound and a committed
@@ -255,7 +257,10 @@ Compatible note changes use existing live preparation/continuation, not a separa
 Fixed keyboard/ruler, bar/beat/subdivision hierarchy, Pattern-end bracket, selected outlines, edge
 cursors, preview bodies and aligned velocity communicate editing. Snap offers quarter/eighth/sixteenth/
 thirty-second, eighth-triplet and free; Alt temporarily bypasses snap. Wheel scrolls pitch, Shift-wheel
-time, Ctrl-wheel anchors horizontal zoom, middle-drag pans. View/selection/ghost/clipboard state is session-only.
+time, Ctrl-wheel anchors horizontal zoom, middle-drag pans. Snap and Note Length keep unchanged
+choices alive during transport observations, including an open mouse-operated Popup. Language
+changes refresh localized labels. Their selection updates the canvas and survives Part switching
+within the session without changing musical content or Undo. View/selection/ghost/clipboard state is session-only.
 Other Parts are noninteractive ghosts. Pattern/Song playhead comes from renderer state, not measured latency.
 
 Root Pitch/source settings update shared SoundDefinition root and Part name in one validated transaction;

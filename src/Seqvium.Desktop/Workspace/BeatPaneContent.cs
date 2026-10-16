@@ -457,7 +457,7 @@ internal sealed partial class BeatPaneContent : Grid, IDisposable
                 if (melody)
                     projection.Preview.Content =
                         new PartNoteThumbnail(_shell, pattern, part, pattern.Parts.IndexOf(part))
-                            { Height = 34, HorizontalAlignment = HorizontalAlignment.Stretch };
+                            { Height = 34 };
                 ToolTip.SetTip(projection.Preview, part.Name + " · " + _shell["Piano.Open"]);
                 channel.Warning.Text = partRefusal is null ? "" : _shell[partRefusal];
                 channel.Warning.IsVisible = partRefusal is not null && !melody;
@@ -755,7 +755,14 @@ internal sealed partial class BeatPaneContent : Grid, IDisposable
         SetColumn(groups, 1);
         row.Children.Add(groups);
         var preview = new Button
-            { HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new(0, 4, 8, 4), IsVisible = false };
+        {
+            HorizontalAlignment = HorizontalAlignment.Left,
+            HorizontalContentAlignment = HorizontalAlignment.Left,
+            Padding = new(0),
+            BorderThickness = new(0),
+            Margin = new(0, 4, 8, 4),
+            IsVisible = false
+        };
         AutomationProperties.SetAutomationId(preview, $"Beat.Melody.{part.Id}");
         AutomationProperties.SetName(preview, part.Name + " · " + _shell["Piano.Open"]);
         preview.Click += (_, _) =>
@@ -815,18 +822,21 @@ internal sealed partial class BeatPaneContent : Grid, IDisposable
 
     private Grid StepGroups(Func<int, Control> create)
     {
+        var geometry = RackTimelineGeometry.For(this, _stepCount);
         var groups = new Grid
         {
             ColumnDefinitions = new(string.Join(",", Enumerable.Repeat("Auto", _stepCount / 4))),
-            Margin = new(0, 0, 8, 0), HorizontalAlignment = HorizontalAlignment.Left
+            Margin = new(0, 0, 8, 0),
+            HorizontalAlignment = HorizontalAlignment.Left
         };
-        groups.Bind(ColumnSpacingProperty, this.GetResourceObservable("Space.Large"));
+        groups.ColumnSpacing = geometry.BeatGap;
         for (int beat = 0; beat < _stepCount / 4; beat++)
         {
-            var group = new Grid { ColumnDefinitions = new("Auto,Auto,Auto,Auto") };
-            group.Bind(ColumnSpacingProperty, this.GetResourceObservable("Space.Small"));
+            var group = new Grid { ColumnSpacing = geometry.StepGap };
+            for (int offset = 0; offset < 4; offset++)
+                group.ColumnDefinitions.Add(new(new GridLength(geometry.StepWidth)));
             if (beat % 4 == 3 && beat + 1 < _stepCount / 4)
-                group.Bind(MarginProperty, this.GetResourceObservable("Rack.BarPadding"));
+                group.Margin = new(0, 0, geometry.BarGap, 0);
             SetColumn(group, beat);
             groups.Children.Add(group);
             for (int offset = 0; offset < 4; offset++)

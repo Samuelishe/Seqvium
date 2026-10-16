@@ -7,7 +7,16 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0004**, **SEQ-RACK-GAIN-AUDIT-R1 — Live Pattern Gain**.
+Product alpha **0.1.16.0005**, **SEQ-PIANO-RACK-UI-FIX-R1 — Piano selectors and Rack time geometry**.
+Piano Snap/Note Length retain unchanged choices during transport observations; native Popup hover,
+scrolling and mouse selection preserve canvas values, Part switching and musical history. Rack pads,
+ruler and melodic thumbnails share fixed step/beat/bar geometry and the common horizontal scroll;
+window width leaves extra space instead of stretching musical time. No model/reader, audio engine,
+DSP, Mixer or Live Gain changes. The [report](experiments/SEQ-PIANO-RACK-UI-FIX-R1_REPORT.md) owns
+48 native selections, 60 rendered layouts, native note/step/resize/restore checks and UR12 Pattern/Song
+evidence, the first full-run allocation failure, legacy harness failures and explicit limits.
+
+Previous **0.1.16.0004**, **SEQ-RACK-GAIN-AUDIT-R1 — Live Pattern Gain**.
 The toolbar fader now changes the identified executing Gain during capture, including before-Mixer
 source transfers in applicable Pattern/Song playback. Immutable temporary parameters retain the same
 prepared plan, voices, transport and FX. Escape/capture loss, surface/reflow, stale generation/selection,
@@ -297,7 +306,17 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-RACK-GAIN-AUDIT-R1, 2026-10-17**. Full Release build: zero warnings/errors (**6.01 s**);
+Latest L0/L1/L2/L3: **SEQ-PIANO-RACK-UI-FIX-R1, 2026-10-17**. Full Release solution build:
+zero warnings/errors (**1.527 s CLI**, valid incremental outputs); **1845/1845** tests pass, zero skips,
+one thread (**65.868 s CLI**). Six new fixed Rack geometry cases join **240/240** focused checks.
+Native selectors, actual pad/ruler/thumbnail metrics, common scrollbar input, note/step/history,
+native floating resize/layout restore, existing Rack workflow and Piano matrices pass. UR12 physical
+Pattern/Song retains execution during selector interaction. First full run: 1844/1845, with 3736 bytes
+in an unchanged preview allocation assertion; its isolated 1/1 and full repeat pass without code,
+threshold or environment changes. Cause is unestablished. Legacy Tempo/focus/helper and intermediate
+output-status evidence remain in the report; no general pressure/platform acceptance is inferred.
+
+Previous L0/L1/L2/L3: **SEQ-RACK-GAIN-AUDIT-R1, 2026-10-17**. Full Release build: zero warnings/errors (**6.01 s**);
 **1839/1839** tests pass, zero skips, one thread (**72.783 s CLI**). Nineteen new cases
 protect actual live draft PCM, cancel/history/ABA, canonical Save/frozen PCM isolation, no prepared
 restart, warmed callback allocation and exact continuing Delay/Reverb histories. Focused Rack passes
@@ -569,9 +588,10 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This requested live Gain L3 covers canonical
-channel identity/history/media, realtime parameters, Pattern/Song/Mixer/Gain/Automation/R8,
-existing instruments/readers and shared Desktop contracts.
+Completed repository tasks since this L3: **0**. The owner-requested Piano/Rack L3 includes all
+1845 current cases: new shared Rack time geometry plus existing note/channel/history, workspace,
+Pattern/Song/Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. It does not resolve
+the intermittent allocation evidence recorded above.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
 subjective acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**

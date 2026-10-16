@@ -194,6 +194,10 @@ invalidate held actions; reopening resolves current state. Picker return resolve
 target rather than whichever object later becomes selected. [UX](UX_CONTRACT.md#implemented-r5-f1-step-sequencing)
 owns editing/refusals. No dynamic instance registration or second transport is introduced.
 
+Step rows, the ruler and read-only melodic thumbnails share fixed Rack time geometry through
+`RackTimelineGeometry`, including beat/bar gaps and the last pad's right edge. Widening leaves space
+after the Pattern; narrowing uses their existing common ScrollViewer, without per-row scaling.
+
 ## Retained Playlist pane
 
 `arrangement.main` / `arrangement` is the fixed Playlist pane, opened by rail or Panes. It shares
