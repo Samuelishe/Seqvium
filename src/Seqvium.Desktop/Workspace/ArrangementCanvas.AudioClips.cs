@@ -170,7 +170,9 @@ internal sealed partial class ArrangementCanvas
         using (context.PushOpacity(.22)) context.DrawRectangle(Brush($"Rack.Channel{color}"), null, rect);
         context.DrawRectangle(Brush("Material.Bevel"), null, new Rect(rect.X, rect.Y, rect.Width, 18));
         context.DrawRectangle(Brush($"Rack.Channel{color}"), null, new Rect(rect.X, rect.Y, 3, rect.Height));
-        string name = "∿  " + sound.Name + (clip.Repeats > 1 ? $"  ×{clip.Repeats}" : "");
+        string name = "∿  " + (clip.StretchRatio != 1
+            ? "↔ " + (clip.StretchRatio * 100).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "%  " : "") +
+            sound.Name + (clip.Repeats > 1 ? $"  ×{clip.Repeats}" : "");
         context.DrawText(new FormattedText(name, System.Globalization.CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 HostVisual.Typeface(this), HostVisual.Metric(this, "Type.Caption"), Brush("Text.Primary")),
@@ -341,16 +343,18 @@ internal sealed partial class ArrangementCanvas
         var state = _observation.Snapshot.State;
         int rate = AudioClipSource.Rate(state.Sounds.Single(s => s.Id == clip.SoundId));
         long deltaTicks = (long)Math.Round((point.X - _pressed.X) / TickPixels);
+        long editOrigin = _audioGesture == 2 ? AudioClipSource.EndTicks(state, clip) : clip.Position.Ticks;
         long position = e.KeyModifiers.HasFlag(KeyModifiers.Alt)
-            ? Math.Max(0, clip.Position.Ticks + deltaTicks)
-            : TickAt(HeaderWidth + (clip.Position.Ticks + deltaTicks) * TickPixels);
+            ? Math.Max(0, editOrigin + deltaTicks)
+            : TickAt(HeaderWidth + (editOrigin + deltaTicks) * TickPixels);
         double framesPerTick =
-            rate * 60d / (double)state.Settings.Tempo.BeatsPerMinute / MusicalPosition.TicksPerQuarter;
-        long frames = (long)Math.Round((position - clip.Position.Ticks) * framesPerTick);
+            rate * 60d / (double)state.Settings.Tempo.BeatsPerMinute / MusicalPosition.TicksPerQuarter /
+            (double)clip.StretchRatio;
+        long frames = (long)Math.Round((position - editOrigin) * framesPerTick);
         if (_audioGesture == 1)
         {
             frames = Math.Clamp(frames, -clip.OffsetFrames, clip.LengthFrames - 1);
-            long shift = AudioClipSource.DurationTicks(Math.Abs(frames), rate, state.Settings.Tempo) *
+            long shift = AudioClipSource.DurationTicks(AudioClipSource.StretchedFrames(Math.Abs(frames), clip.StretchRatio), rate, state.Settings.Tempo) *
                          Math.Sign(frames);
             if (clip.Position.Ticks + shift < 0) return true;
             _audioDraft = clip with

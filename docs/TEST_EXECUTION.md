@@ -108,6 +108,26 @@ owns invocation; [report](experiments/SEQ-SAMPLE-BROWSER_REPORT.md) owns evidenc
 
 ## Audio Clip verification
 
+### Local time stretch
+
+`AudioTimeStretchTests` covers duration/fundamental/stereo preservation, an authored changing-note
+phrase, anchored endpoints, 44.1/48-kHz source/output combinations, arbitrary-ratio split PCM with
+crossing fades, cumulative repeats, copy/BPM independence, portable Save As/Open and reader gates.
+Realtime/offline PCM is exact with equivalent smoothing/Mixer settings; production PCM16 WAV is
+checked within one quantization step. Live derived-range changes keep the clock and unrelated Pattern
+voice, including the equal-output-bounds source-identity case. Seek/loop callback allocation, explicit
+budget/short/long range refusal, cancellation and stale/closed publication are checked separately.
+
+Use `--filter-class "*AudioTimeStretchTests"` plus affected `*AudioClipTests`, `*PersistenceTests` and
+`*ProductVersionTests` after the Release test-project build. Reader and DSP/publication changes select
+L3 for this checkpoint. VisualCheck `stretch <output> [native] [audio]` provides actual-window
+localized ordinary/reduced properties, exact field alignment, invalid/dismissed edits, history,
+portable Open and production export. Optional guarded native field input and production physical
+output report their own outcomes; a device fault never counts as successful playback.
+The [report](experiments/SEQ-R10-STRETCH-F1_REPORT.md) owns actual results, attempts and limits.
+
+### Related Playlist contracts
+
 `SongStructureTests` covers non-overlap/reader gates and unknown fields, section swaps with gaps,
 shared repeat insertion, crossing refusal, mixed clamping/clipboard geometry, and exact history.
 Variation cases check declared graph identity remapping, source isolation, opaque-state refusal,

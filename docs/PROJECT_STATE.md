@@ -7,7 +7,20 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.9.0000**, **SEQ-R8 — Resampling**. Pattern navigator **Create sample** renders
+Product alpha **0.1.10.0000**, **SEQ-R10-STRETCH-F1 — local Audio Clip time stretch**. Existing
+Playlist clip properties expose an explicit 50–200% duration multiplier and playback duration, with
+a distinct non-unity header cue. Worker-prepared stereo-linked WSOLA preserves local pitch for the
+bounded sustained/monophonic phrase scope. Original native ranges/fades and immutable managed media
+remain canonical; copies own independent stretch. Split preserves common derivation/phase, repeats
+use cumulative playback frames, and BPM never changes physical duration or enables stretch.
+Realtime/offline retain the same sampler/Mixer/publication/export owners. Reader 1.6 gates non-unity
+intent; old projects default to unity without raising their gate. Source envelopes are 0.1–60 s and
+unique derived PCM totals at most 128 MiB inside the existing audio aggregate. There is no Follow
+Tempo, warp editor or guarantee for transients/dense polyphony. [Audio](AUDIO_ENGINE.md#local-audio-clip-time-stretch),
+[UX](UX_CONTRACT.md#implemented-audio-clip-workflow), [format](PROJECT_FORMAT.md#local-time-stretch-reader-16)
+and the [report](experiments/SEQ-R10-STRETCH-F1_REPORT.md) own contracts/evidence.
+
+**SEQ-R8 — Resampling** remains implemented. Pattern navigator **Create sample** renders
 the identified Pattern through its supported local graph, before Mixer/Master, into independently
 managed reusable project audio. Browser opens with the result selected, ready for preview/Rack/
 Playlist. Source content remains editable. The fixed 48-kHz mono/stereo PCM16 result includes musical
@@ -46,7 +59,7 @@ content reflows, then clips, and collapses only near the edge. Independent rail 
 last usable width. Sidebar icons form a separate top group. Reduced windows fit both panels without
 changing preferences, and New/Open retain sidebar visibility. Optional compatible workspace fields
 store usable/clipped widths outside project/history. [Workspace](WORKSPACE.md#shared-left-panel-zone)
-owns behavior. This is one BUILD for interface refinement; reader 1.5 and musical capabilities remain.
+owns behavior. That interface refinement adds no musical capability or reader gate.
 Theme changes continue to invalidate retained custom drawings without replacing their controls.
 
 The optional default-enabled Percussion Lab
@@ -61,8 +74,8 @@ owns scope; the [R7 report](experiments/SEQ-R7-SAMPLE-LAB-V1_REPORT.md) owns evi
 The owner's follow-up also removes permanent instructional/technical clutter across the first-party
 working surfaces. Sample Lab/Browser/Extensions lead with short actions and sound; redundant Gain/Mixer
 readouts and Piano/source-property explanations are reduced or disclosed. AGENTS/UI design require
-actual reference-image inspection and a density gate before future UI edits. Reader 1.5 remains the
-separate sections/ancestry compatibility boundary. [Versioning](VERSIONING.md) owns identity.
+actual reference-image inspection and a density gate before future UI edits. Reader 1.5 covers
+sections/ancestry; reader 1.6 adds explicit local stretch. [Versioning](VERSIONING.md) owns identity.
 No release, staging, commit, push or tag is performed. R1–R3 remain complete in their bounded scopes.
 R4 remains partial: F1 accepted-ready, F2 pressure acceptance unresolved, F3-A conditionally accepted,
 F3-B owner interaction/visual review pending. R5 Rack/music, R9 Piano, bounded R10 Playlist/audio and
@@ -120,7 +133,7 @@ custom sound presets reuse shared sound intent. Legacy Rack/graph WAV import rem
 
 Playlist mixes overlapping/repeated Patterns with independent Audio Clips. Explorer WAV/MP3/FLAC
 drop and Playlist picker need no Pattern/Rack. Real mono/stereo waveform, move/copy/trim/split/fades,
-exact range/gain, fixed-speed repeats and explicit shared-source Mixer routes use existing history,
+exact range/gain, explicit local stretch/repeats and shared-source Mixer routes use existing history,
 managed Save/Open/portable Save As and realtime/offline Song export. BPM/placement do not imply
 stretch/pitch. Musical ticks and native PCM frames remain distinct; split preserves envelope/phase.
 32 organizational lanes, track Mute/Solo, snap/overview/seek/range loop remain independent of Mixer.
@@ -144,7 +157,26 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-R8, 2026-10-16**. Full Release solution build has zero warnings/errors;
+Latest L0/L1/L2/L3: **SEQ-R10-STRETCH-F1, 2026-10-16**. Full Release solution build has zero
+warnings/errors; **1450/1450 tests pass**, zero skips, one thread (**60.159 s** CLI summary). The
+**23 new stretch cases pass** (4.702 s); the earlier 162-case related audio/persistence/metadata
+subset passes (22.012 s), followed by the additional live Pattern-continuation case in L3.
+Final source-identity and right-edge-trim refinement passes **48/48** focused stretch/AudioClip cases
+(4.932 s), with a zero-warning affected Release build (6.56 s) and captured left/right trim GUI checks.
+Tests establish duration/fundamental/stereo/endpoints, exact realtime/offline PCM, production PCM16
+export, split/fades/repeats/tempo/copy independence, bounded allocation/cancel/stale/closed publication,
+zero callback allocations in the selected seek/loop check, history and portable media.
+
+Real production windows pass localized ordinary/reduced properties, empty startup/populated Playlist,
+48 zero-DIP field alignments, rejected/dismissed edits, one Undo/Redo, portable Save/Open and four-second
+export. Guarded Windows properties/percentage/Apply pass with routed clip selection. Physical output
+passes through Samsung USB C Earphones, 48 kHz stereo, ending at 192000 frames with zero voices.
+An earlier run reached DeviceFault and is not a physical pass; its initial overly permissive tool
+summary is explicitly superseded by strict EOF/fault checks and the successful repeat. No subjective
+listening, full native musical authoring, stress, DPI or other-platform acceptance follows.
+The [report](experiments/SEQ-R10-STRETCH-F1_REPORT.md) retains methods, attempts and limitations.
+
+Prior L0/L1/L2/L3: **SEQ-R8, 2026-10-16**. Full Release solution build has zero warnings/errors;
 **1427/1427 tests pass**, zero skips, one thread (**70.769 s** final CLI summary). New focused checks pass
 **27/27** (5.133 s): independent two-instrument local signal/release oracles, seven drum tails,
 mono/stereo and 44.1/48-kHz source conversion, Mixer exclusion, frozen state, packet cancellation,
@@ -217,8 +249,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected R8 L3 covers shared sampler/media
-preparation, async acceptance and existing production regressions. No broader platform, aesthetic, pressure
+Completed repository tasks since this L3: **0**. This risk-selected stretch L3 covers reader gates,
+prepared PCM, realtime publication and existing production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
@@ -262,11 +294,12 @@ Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
-Finish wider Playlist/container/stretch and compact editor work only through their scoped owners.
+Finish wider Playlist/container/warp and compact editor work only through their scoped owners.
 Audio is resident, not streamed: 512 MiB per source/unique audible Audio Clip PCM, separate 128 MiB
 Pattern PCM, shared 32 voices. Old prepared states, waveforms/codec/UI and managed-media/history disk
 consume more; no global media quota. MP3/FLAC use Windows-only Media Foundation via NAudio, not a
-portable universal decoder. Surround and time stretch/warp are absent. Sections are organization,
+portable universal decoder. Surround, tempo following and warp maps are absent; bounded local stretch
+has material/range/budget limits documented above. Sections are organization,
 not processing containers; crossing clips need explicit split/range adjustment. Variations do not
 inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachment remain absent.
 Browser inspection followed by preview decodes external sources twice; three-minute source latency

@@ -103,7 +103,8 @@ public static class ArrangementPreparation
 
             long endTicks = EndTicks(state);
             var audioSources = new Dictionary<Id<ResourceDescriptor>, int>();
-            long audioBytes = 0;
+            var stretches = new Dictionary<(Id<ResourceDescriptor>, long Offset, long Length, decimal Ratio), int>();
+            long audioBytes = 0, stretchBytes = 0;
             foreach (var group in state.AudioClips.Where(c => IsAudible(state, c.Lane)).GroupBy(c => c.SoundId))
             {
                 cancellation.ThrowIfCancellationRequested();
@@ -134,6 +135,37 @@ public static class ArrangementPreparation
                     .ToLookup(c => (c.OffsetFrames, c.EnvelopeOffsetFrames));
                 foreach (var clip in group)
                 {
+                    cancellation.ThrowIfCancellationRequested();
+                    int clipSource = sourceIndex;
+                    long playbackOffset = clip.OffsetFrames, playbackLength = clip.LengthFrames;
+                    long envelopeOffset = clip.EnvelopeOffsetFrames, envelopeLength = AudioClipSource.EnvelopeLength(clip);
+                    long fadeIn = clip.FadeInFrames, fadeOut = clip.FadeOutFrames;
+                    if (clip.StretchRatio != 1)
+                    {
+                        var key = (sound.ResourceIds[0], clip.OffsetFrames - clip.EnvelopeOffsetFrames,
+                            AudioClipSource.EnvelopeLength(clip), clip.StretchRatio);
+                        if (!stretches.TryGetValue(key, out clipSource))
+                        {
+                            long bytes = AudioTimeStretch.RequiredBytes(key.Item3, rate,
+                                sources[sourceIndex].Channels, clip.StretchRatio);
+                            if (stretchBytes + bytes > AudioTimeStretch.MaximumDerivedBytes ||
+                                audioBytes + bytes > AudioMedia.MaximumDecodedBytes)
+                                throw new GraphPreparationException(GraphPreparationReasons.Budget);
+                            var stretched = AudioTimeStretch.Prepare(sources[sourceIndex], key.Item2, key.Item3,
+                                clip.StretchRatio, cancellation);
+                            clipSource = sources.Count;
+                            sources.Add(stretched);
+                            stretches.Add(key, clipSource);
+                            stretchBytes += bytes;
+                            audioBytes += bytes;
+                        }
+                        playbackOffset = AudioClipSource.StretchedFrames(clip.EnvelopeOffsetFrames, clip.StretchRatio);
+                        playbackLength = AudioClipSource.PlaybackLength(clip);
+                        envelopeOffset = playbackOffset;
+                        envelopeLength = AudioClipSource.StretchedFrames(envelopeLength, clip.StretchRatio);
+                        fadeIn = AudioClipSource.StretchedFrames(fadeIn, clip.StretchRatio);
+                        fadeOut = AudioClipSource.StretchedFrames(fadeOut, clip.StretchRatio);
+                    }
                     if (events.Count + clip.Repeats * 2L + 1 > SamplerPreparation.MaximumEvents)
                         throw new GraphPreparationException(GraphPreparationReasons.Budget);
                     var bounds = AudioClipSource.ExecutionBounds(clip, state.Settings.Tempo, rate, sampleRate);
@@ -146,15 +178,16 @@ public static class ArrangementPreparation
                                           next.GainDb == clip.GainDb && next.FadeInFrames == clip.FadeInFrames &&
                                           next.FadeOutFrames == clip.FadeOutFrames &&
                                           next.EnvelopeLengthFrames == clip.EnvelopeLengthFrames &&
+                                          next.StretchRatio == clip.StretchRatio &&
                                           AudioClipSource.ExecutionBounds(next, state.Settings.Tempo, rate, sampleRate)
                                               .Start == bounds.End);
                     for (int repeat = 0; repeat < clip.Repeats; repeat++)
                     {
-                        long on = start + AudioClipSource.ConvertFrames(clip.LengthFrames * repeat, rate, sampleRate);
+                        long on = start + AudioClipSource.ConvertFrames(playbackLength * repeat, rate, sampleRate);
                         long off = bounds.Origin is not null
                             ? bounds.End
                             : start +
-                              AudioClipSource.ConvertFrames(clip.LengthFrames * (repeat + 1), rate, sampleRate);
+                              AudioClipSource.ConvertFrames(playbackLength * (repeat + 1), rate, sampleRate);
                         if (on == off)
                         {
                             zero++;
@@ -164,12 +197,12 @@ public static class ArrangementPreparation
                         int index = notes.Count;
                         var occurrence =
                             new ExecutionOccurrence(default, default, default, repeat, AudioClipId: clip.Id);
-                        notes.Add(new(occurrence, sourceIndex, (double)rate / sampleRate,
+                        notes.Add(new(occurrence, clipSource, (double)rate / sampleRate,
                             clip.GainDb == -90 ? 0 : (float)Math.Pow(10, (double)clip.GainDb / 20), on, off, 0, buffer,
-                            SourceOffset: clip.OffsetFrames, SourceLength: clip.LengthFrames,
-                            FadeIn: clip.FadeInFrames, FadeOut: clip.FadeOutFrames,
-                            EnvelopeOffset: clip.EnvelopeOffsetFrames,
-                            EnvelopeLength: AudioClipSource.EnvelopeLength(clip),
+                            SourceOffset: playbackOffset, SourceLength: playbackLength,
+                            FadeIn: fadeIn, FadeOut: fadeOut,
+                            EnvelopeOffset: envelopeOffset,
+                            EnvelopeLength: envelopeLength,
                             SourceClockStart: bounds.Origin, SmoothSourceEnd: !joined));
                         events.Add(new(on, ConstantTempoConversion.FromFrames(on, state.Settings.Tempo, sampleRate),
                             ExecutionEventKind.NoteOn, occurrence, index));

@@ -2,7 +2,7 @@
 
 namespace Seqvium.Core;
 
-/// <summary>Fixed-speed audio. Placement uses musical time; range and fades use native source frames.
+/// <summary>Audio with explicit local time stretch. Range and fades retain native source frames.
 /// Copies share a source sound and its Mixer assignment, never a Pattern or Playlist lane route.</summary>
 public sealed record AudioClip(
     Id<AudioClip> Id,
@@ -16,7 +16,8 @@ public sealed record AudioClip(
     decimal GainDb = 0,
     int Repeats = 1,
     long EnvelopeOffsetFrames = 0,
-    long EnvelopeLengthFrames = 0) : CanonicalData;
+    long EnvelopeLengthFrames = 0,
+    decimal StretchRatio = 1) : CanonicalData;
 
 public static class AudioClipSource
 {
@@ -30,6 +31,13 @@ public static class AudioClipSource
     public static long EnvelopeLength(AudioClip clip) =>
         clip.EnvelopeLengthFrames == 0 ? clip.LengthFrames : clip.EnvelopeLengthFrames;
 
+    public static long StretchedFrames(long frames, decimal ratio) =>
+        checked((long)decimal.Round(frames * ratio, 0, MidpointRounding.AwayFromZero));
+
+    public static long PlaybackLength(AudioClip clip) =>
+        StretchedFrames(clip.EnvelopeOffsetFrames + clip.LengthFrames, clip.StretchRatio) -
+        StretchedFrames(clip.EnvelopeOffsetFrames, clip.StretchRatio);
+
     // Split pieces retain the original source clock, including its resampling phase. The virtual
     // origin may precede zero when a later piece is moved to the beginning of the Song.
     public static (long Start, long End, long? Origin) ExecutionBounds(AudioClip clip, Tempo tempo,
@@ -37,13 +45,14 @@ public static class AudioClipSource
     {
         long start = ConstantTempoConversion.ToFrames(clip.Position, tempo, outputRate);
         if (clip.EnvelopeLengthFrames == 0 || clip.Repeats != 1)
-            return (start, checked(start + ConvertFrames(clip.LengthFrames * clip.Repeats, sourceRate, outputRate)),
+            return (start, checked(start + ConvertFrames(PlaybackLength(clip) * clip.Repeats, sourceRate, outputRate)),
                 null);
         long ticks = clip.Position.Ticks -
-                     ConstantTempoConversion.FromFrames(clip.EnvelopeOffsetFrames, tempo, sourceRate).Ticks;
+                     ConstantTempoConversion.FromFrames(StretchedFrames(clip.EnvelopeOffsetFrames, clip.StretchRatio),
+                         tempo, sourceRate).Ticks;
         long origin = Math.Sign(ticks) * ConstantTempoConversion.ToFrames(new(Math.Abs(ticks)), tempo, outputRate);
-        return (checked(origin + ConvertFrames(clip.EnvelopeOffsetFrames, sourceRate, outputRate)),
-            checked(origin + ConvertFrames(clip.EnvelopeOffsetFrames + clip.LengthFrames, sourceRate, outputRate)),
+        return (checked(origin + ConvertFrames(StretchedFrames(clip.EnvelopeOffsetFrames, clip.StretchRatio), sourceRate, outputRate)),
+            checked(origin + ConvertFrames(StretchedFrames(clip.EnvelopeOffsetFrames + clip.LengthFrames, clip.StretchRatio), sourceRate, outputRate)),
             origin);
     }
 
@@ -51,7 +60,7 @@ public static class AudioClipSource
         Math.Max(1, ConstantTempoConversion.FromFrames(frames, tempo, rate).Ticks);
 
     public static long LengthTicks(ProjectState state, AudioClip clip) => DurationTicks(
-        checked(clip.LengthFrames * clip.Repeats), Rate(state.Sounds.Single(s => s.Id == clip.SoundId)),
+        checked(PlaybackLength(clip) * clip.Repeats), Rate(state.Sounds.Single(s => s.Id == clip.SoundId)),
         state.Settings.Tempo);
 
     public static long EndTicks(ProjectState state, AudioClip clip) =>

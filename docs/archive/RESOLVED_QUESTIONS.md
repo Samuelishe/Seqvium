@@ -546,3 +546,16 @@ history/contextual audition. Current truth is in [Extensions](../EXTENSIONS.md#i
 
 Broader scopes and evidence remain open under [Known problems](../KNOWN_PROBLEMS.md). The current
 contract is [Sample workflow](../SAMPLE_WORKFLOW.md#implemented-sample-lab-v1), not this history.
+
+## R10-STRETCH-F1 resolved portions — Q-051 — 2026-10-16
+
+The bounded local Audio Clip path now selects canonical decimal duration ratio (0.5–2, unity
+default), worker WSOLA, source-frame range/fades and rounded absolute playback-envelope endpoints.
+Split shares the original derivation/phase; repeats use cumulative playback frames. Compact clip
+properties expose Time stretch and playback duration, with a separate percentage cue and one
+Undo/Redo transaction. Native managed media, source Mixer routes and other uses are unchanged.
+Reader 1.6 prevents old readers from losing essential timing; old projects remain unity by default.
+Deterministic signal/PCM/history/portability, actual localized GUI and scoped native/physical evidence
+are in the [report](../experiments/SEQ-R10-STRETCH-F1_REPORT.md). These resolve local representation,
+algorithm, labels/defaults and trim/split/fade/repeat interactions. Wider tempo following, warp maps,
+transient handling and material/platform quality remain open in [Known problems](../KNOWN_PROBLEMS.md).

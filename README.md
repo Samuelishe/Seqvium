@@ -66,7 +66,10 @@ for the logo, typography, alternative directions and publication resources.
   and open a melody directly in Piano Roll. Empty documents start with one compact Channel Rack.
 
 Audio Clips do not change pitch or speed when moved or when BPM changes. Their start positions use
-musical time; their lengths, trims and fades use source frames. There is **no time stretch or warp**.
+musical time; their lengths, trims and fades use source frames. Clip properties offer explicit
+**Time stretch (50–200%)**, keeping pitch while changing duration. It works best on sustained,
+monophonic phrases; dense mixes and sharp attacks can develop artifacts. Tempo following and warp
+markers are not available.
 Copies reuse a source and its Mixer assignment rather than duplicating decoded audio.
 
 Try [Sample Lab](docs/README.md#create-a-sound), [the Sample Browser](docs/README.md#find-and-use-sounds), [Audio Clips](docs/README.md#work-with-audio-clips),

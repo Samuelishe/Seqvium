@@ -345,16 +345,24 @@ capture/stale-basis cancellation retain existing owner semantics. Delete, Ctrl+D
 operate on the common Pattern/Audio selection described above.
 
 Slice clicks or Split at cursor split only a single-repeat range. Source range and original fade
-envelope survive split without an artificial seam. Repeats loop that range at natural speed, not BPM.
+envelope survive split without an artificial seam. Repeats loop that range at its explicit local ratio, not BPM.
 Double-click/Enter opens compact exact offset/duration/fade/gain fields and the shared source's Mixer
 route; creating a Mixer channel is explicit. Route/gain/range edit uses existing project/history, and
-copies share route but own range/fades/gain. Moving/BPM changes never silently stretch or transpose.
+copies share route but own range/fades/gain/stretch. **Time stretch / Растяжение** in these same
+properties is a 50–200% duration multiplier, default 100%; the compact playback duration updates
+before Apply. At non-unity the clip header shows `↔` and its percentage, independently of repeat `×`.
+An explicit Apply is one Undo transaction; dismissing the popup commits nothing. Invalid values
+retain the document and show a short error. The existing edge gesture continues to trim, including
+conversion through the current ratio; upper corners continue to edit source-frame fades, which scale
+with stretch. Moving/BPM changes never silently stretch or transpose. No Follow Tempo control exists.
 
 Audio and Patterns play/export together through the existing Mixer. Track Mute/Solo gates occurrences;
 Mixer Mute/Solo/effects/routing operate on summed shared sources. Save/Open/Save As preserve media and
 intent, with unavailable waveform/status for damaged managed media and no unsafe fallback export.
 The external original is unnecessary after accepted managed import. Limits are in
-[audio](AUDIO_ENGINE.md#standalone-audio-clips); no stretch/warp, surround downmix or recording is implied.
+[audio](AUDIO_ENGINE.md#local-audio-clip-time-stretch). Stretch targets sustained/monophonic phrases;
+its 0.1–60-s source-envelope limit and transient/polyphonic artifacts remain explicit. No general warp,
+surround downmix or recording is implied.
 
 ## Implemented R4-F3-A bounded workflow
 
@@ -810,8 +818,9 @@ Keep these edit intentions distinct rather than overload one gesture ambiguously
 
 An ordinary trim must not accidentally change playback speed. Project-wide tempo changes and local
 clip stretch are also distinct; [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) owns the
-tempo-following versus fixed/source-time model. Final labels, defaults, gestures, modifiers, and tools
-remain UI design work; no time-stretch algorithm is selected.
+tempo-following versus fixed/source-time model. The implemented Audio Clip properties choose explicit
+50–200% WSOLA stretch; ordinary trim/move never enables it. Richer warp gestures and tempo following
+remain future work, not implicit behavior of this control.
 
 A natural source end may allow a local effect tail. Deliberately shortening/trimming the clip/item's
 right boundary means its own audible result ends there, including item-local processing tails. A tiny

@@ -73,6 +73,11 @@ fit visual amplitude without altering audio gain or claiming a meter. Contextual
 fields use shared `parameterRow`/`numeric` styles, including actual TextPresenter vertical alignment.
 Do not introduce a private audio-clip palette or locally stretched control templates.
 
+Local time stretch adds one ordinary numeric percentage row to those same clip properties and a
+single playback-duration caption. Non-unity `↔`/percentage precedes the source name in the existing
+drawn header, distinct from repeat `×`. Both use existing typography/palette and actual field alignment;
+there is no new editor, control template, theme token or global preference.
+
 All color roles exist in Dark and Light. `HostPalette.For` is also the fallback for a detached
 drawing control; application resources are the live authority after attachment.
 

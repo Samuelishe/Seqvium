@@ -2159,3 +2159,20 @@ Current contracts/state/agent routing and wider unresolved questions are updated
 is removed from the active Roadmap. No new functional stage, staging/index/history mutation, commit,
 push or tag. ProjectStats root reports are regenerated after final edits; reusable sources/tests/tools
 are retained and transient artifacts use the existing rolling retention policy.
+
+## SEQ-R10-STRETCH-F1 — 2026-10-16
+
+Implemented explicit local pitch-preserving Audio Clip time stretch through existing prepared
+sampler/Mixer/Song export: clip-owned 50–200% ratio, bounded WSOLA, source-frame ranges/fades,
+phase-preserving split/repeats, worker cancellation and derived-source-aware live continuation.
+Compact properties and non-unity header cue retain existing trim/repeat intentions. Reader 1.6,
+history and portable Save As/Open preserve intent and original media. PATCH 0.1.10.0000 resets BUILD.
+
+Full Release build has zero warnings/errors and 1450/1450 tests pass; focused new stretch coverage
+passes 23/23. Actual RU/EN Dark/Light ordinary/reduced properties and zero-DIP field alignment,
+invalid/dismiss/history/portable/export routes, guarded native field/Apply and strict physical
+48-kHz natural EOF pass. Earlier device-fault and invalid tool/capture summaries are retained as
+failed attempts, not overwritten with successful claims. The [report](../experiments/SEQ-R10-STRETCH-F1_REPORT.md)
+owns reproducible methods, material/range/budget/pressure/acoustic/platform limits and artifact
+retention. Current owners/public guides/state and wider Q-051 remainder are reconciled. Root
+ProjectStats reports are refreshed and inspected; no staging/commit/push/tag or release is performed.

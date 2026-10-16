@@ -46,17 +46,20 @@ public sealed partial class ProjectEdit
         var clip = State.AudioClips.Single(c => c.Id == id);
         ProjectValidation.Require(clip.Repeats == 1, "Split a single audio occurrence; unfold repeats first.");
         int rate = AudioClipSource.Rate(State.Sounds.Single(s => s.Id == clip.SoundId));
-        long cut = ConstantTempoConversion.ToFrames(new(position.Ticks - clip.Position.Ticks), State.Settings.Tempo,
+        long elapsed = ConstantTempoConversion.ToFrames(new(position.Ticks - clip.Position.Ticks), State.Settings.Tempo,
             rate);
+        long cut = checked((long)decimal.Round(elapsed / clip.StretchRatio, 0, MidpointRounding.AwayFromZero));
         ProjectValidation.Require(cut > 0 && cut < clip.LengthFrames, "Split must be inside the source range.");
         long remaining = clip.LengthFrames - cut;
         long envelope = AudioClipSource.EnvelopeLength(clip);
         long envelopeOffset = clip.EnvelopeOffsetFrames + cut;
-        long origin = clip.Position.Ticks - ConstantTempoConversion.FromFrames(clip.EnvelopeOffsetFrames,
+        long origin = clip.Position.Ticks - ConstantTempoConversion.FromFrames(
+            AudioClipSource.StretchedFrames(clip.EnvelopeOffsetFrames, clip.StretchRatio),
             State.Settings.Tempo, rate).Ticks;
         var right = clip with
         {
-            Id = Id<AudioClip>.New(), Position = new(origin + ConstantTempoConversion.FromFrames(envelopeOffset,
+            Id = Id<AudioClip>.New(), Position = new(origin + ConstantTempoConversion.FromFrames(
+                AudioClipSource.StretchedFrames(envelopeOffset, clip.StretchRatio),
                 State.Settings.Tempo, rate).Ticks),
             OffsetFrames = clip.OffsetFrames + cut,
             LengthFrames = remaining, EnvelopeOffsetFrames = envelopeOffset, EnvelopeLengthFrames = envelope

@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 5. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 6. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
@@ -74,6 +74,21 @@ Imports accept source/resource/clip together as one Undo edit; cancellation/fail
 Source bounds, envelope/fade lengths, metadata, identities and musical overflow are validated.
 See [execution limits](AUDIO_ENGINE.md#standalone-audio-clips); the legacy Rack WAV limit below does
 not apply to normalized Audio Clip media. Global durable-media disk quota remains unselected.
+
+### Local time stretch (reader 1.6)
+
+Optional `AudioClip.stretchRatio` stores the decimal playback-duration multiplier, default 1,
+bounded to 0.5–2. Unity is omitted on Save; absent fields in old projects retain original playback.
+Non-unity intent requires `minor >= 6` and `minimumReaderMinor >= 6`; a forged lower gate is refused.
+Save never lowers an already loaded/saved gate, including after reset to unity. Existing projects
+without stretch keep their applicable gates. Readers through 1.5 must refuse required 1.6 semantics.
+
+Offset/length/fades and split envelope coordinates still refer to original native source frames;
+the ratio belongs only to the occurrence, not its shared SoundDefinition or immutable resource.
+Save/Open, copy, section/clipboard edits and Undo retain it through the existing canonical record.
+Prepared WSOLA PCM is derived, never saved or substituted for managed audio. Save As copies the
+original source through existing integrity/portable-locator rules; no migration or codec/provider
+dependency is added. [Audio](AUDIO_ENGINE.md#local-audio-clip-time-stretch) owns limits/rounding.
 
 ## Mixer persistence
 
@@ -218,7 +233,7 @@ identified sound uses without defining runtime instances. `additionalData` is a 
 name, never emitted as a format field. Extension payloads and optional unknown values are opaque JSON.
 
 Only major 1 is understood. Higher compatible minor documents are retained at their original minor
-when `minimumReaderMinor <= 5`; unsupported major/required minor is refused. Graph-free 1.0 remains
+when `minimumReaderMinor <= 6`; unsupported major/required minor is refused. Graph-free 1.0 remains
 supported; the graph-aware gate below applies to meaningful graph intent. No legacy migration is
 claimed. Unknown JSON properties at envelope, state, settings and every entity/nested part/note are
 preserved semantically at the same object boundary, including through edits/Undo/Save. Reserved known
@@ -546,7 +561,7 @@ sounds, an independently editable sound's resource references, and reused media 
 Moves/deletion/Undo preserve or deliberately change the identified relationships under
 [architecture](ARCHITECTURE.md#deletion-scope-and-retained-relationships), rather than rely on heuristics.
 R1 domain IDs, musical time and basic copy/reference operations are implemented. Later migrations,
-graph attachments, expanded edit workflows and audio-time mappings remain Q-009/Q-019/Q-029/Q-051;
+graph attachments and expanded edit workflows remain Q-009/Q-019/Q-029;
 no runtime instance history is selected.
 
 Preserve shared sound-definition settings/content references and canonical relationships needed to
@@ -590,7 +605,8 @@ Preserve non-destructive trim ranges, split-piece references/placements, and dis
 stretch intentions without rewriting the original durable audio resource through ordinary timeline
 editing. Preserve project-wide tempo and audio tempo-following versus fixed/source-time relationships,
 with independent local stretch, under [ARCHITECTURE](ARCHITECTURE.md#project-tempo-and-audio-time) and
-[UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing). This does not select time/stretch encoding.
+[UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing). The bounded local multiplier is implemented
+above; tempo-following and richer warp encoding remain future work.
 An explicit operation creating/committing a new cropped/consolidated/rendered resource is separate
 from normal trim/split; edit-structure changes do not inherently modify source media destructively.
 

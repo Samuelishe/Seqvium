@@ -111,10 +111,14 @@ Windows prevents Explorer from dropping files into an administrator process.
    unfinished gestures; Ctrl+Z/Y undo/redo completed edits.
 3. Use **Slice** and click inside a clip, or **Split at cursor**. Splitting preserves the original
    fade envelope and source continuity. Set repeats to one before splitting. **Repeats** repeats the
-   selected source range; it is not tempo stretching. Ctrl+D duplicates the selected audio group.
+   selected source range at its current local stretch; it does not follow BPM. Ctrl+D duplicates the selected audio group.
 4. Clip properties choose the shared source's Mixer route or create an explicit channel. Copies share
    this route. Playlist track Mute/Solo gates occurrences, while Mixer Mute/Solo affects routed audio.
-5. Use Playlist Play, ruler seek/range loop and Song WAV export just as with Patterns. Mixed audio and
+5. To change duration while keeping pitch, open clip properties and set **Time stretch**:
+   **200%** turns two seconds into four; **50%** turns two seconds into one. **100%** restores original
+   timing. The playback duration and the clip's `↔` percentage distinguish this from trim or repeats.
+   Apply makes one Undo edit; closing without Apply cancels. Copies keep independent stretch values.
+6. Use Playlist Play, ruler seek/range loop and Song WAV export just as with Patterns. Mixed audio and
    Patterns pass through the existing Mixer. Save As creates an independent project and managed media;
    keep the associated `.seqvium.media` folder with it. Original imports can subsequently be unavailable.
 
@@ -123,7 +127,11 @@ Undo history unchanged. WAV PCM16/24/32 and float32, MP3 and FLAC are accepted a
 only. MP3/FLAC require available Windows Media Foundation codecs. Audio is resident, not disk-streamed:
 one source and a prepared Song's unique Audio Clip PCM each have a 512 MiB decoded limit (about
 23:18 at 48 kHz stereo). Copies do not multiply source PCM; other preparation/UI/history memory remains.
-Pattern media has a separate budget and all playback shares 32 voices. No time stretch/warp is available.
+Pattern media has a separate budget and all playback shares 32 voices. Time stretch accepts a source
+range of 0.1–60 seconds, with a shared 128 MiB derived-audio budget inside the Song's audio budget.
+It works best with sustained, monophonic phrases; sharp attacks and dense polyphony can smear or
+flutter, especially near 50/200%. Fades stretch with the audio. Splits preserve the original stretch;
+an independent trim below 0.1 seconds requires resetting to 100%. There is no tempo following or warp editor.
 See [audio execution limits](AUDIO_ENGINE.md#standalone-audio-clips).
 
 ## Create a drum pattern
@@ -252,7 +260,7 @@ presentation/exact bar entry up to one million bars. Slots organize
 compatible musical material; they do not assign instruments or create Mixer channels. The engine
 checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
 are available now; Audio Clips have separate range/trim/split/fade controls. Nested sections, flexible
-cross-boundary rearrangement, dynamic track groups, stretch and automation remain planned. WAV channel
+cross-boundary rearrangement, dynamic track groups, warp/tempo following and automation remain planned. WAV channel
 add/delete/Undo/Redo keeps the current clock and other voices for the supported source/mix tree.
 Other incompatible topology changes retain their restart policy.
 See [Playlist scope](UX_CONTRACT.md#implemented-playlist-arrangement).

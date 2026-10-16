@@ -337,6 +337,14 @@ belongs to the owner; screenshots and automated checks establish evidence, not a
 
 ## Playlist reference assessment and visual contract
 
+Local Audio Clip stretch reuses compact exact properties: source range, explicit percentage and
+one playback duration. A non-unity `↔` percentage in the clip header distinguishes it from edge trim
+and repeat count. The existing local FL Playlist and waveform-editor images were inspected for
+this change; their identifiable audio bodies and compact contextual controls inform the composition.
+No reference graphics are distributed. The property/error and empty/populated window review covers
+RU/EN × Dark/Light at ordinary/reduced size; detailed results belong to the
+[stretch report](experiments/SEQ-R10-STRETCH-F1_REPORT.md).
+
 The owner-supplied five timeline images were inspected and moved from Desktop/screens to
 `%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`. Earlier Logic, Reason, Serum and FabFilter
 references were also reviewed for hierarchy/materials. These are private local visual targets, not

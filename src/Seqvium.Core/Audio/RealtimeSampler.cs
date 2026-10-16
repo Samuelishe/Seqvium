@@ -307,6 +307,7 @@ public sealed class RealtimeSampler : IDisposable
             state.ContinuationNotes = active.Plan.Notes.Select(note =>
                 indices.TryGetValue(note.Occurrence, out var next) &&
                 SameAuditionSource(active.Plan, plan, note.Occurrence) &&
+                SameAudioSource(oldBasis, nextBasis, note.Occurrence) &&
                 next.note == note with
                 {
                     SourceIndex = next.note.SourceIndex, ContributionIndex = next.note.ContributionIndex
@@ -320,6 +321,17 @@ public sealed class RealtimeSampler : IDisposable
         Volatile.Write(ref _pending, state);
         PreparedStatesCreated++;
         return SamplerPublication.Accepted;
+    }
+
+    private static bool SameAudioSource(ProjectState left, ProjectState right, ExecutionOccurrence occurrence)
+    {
+        if (occurrence.AudioClipId is not { } id) return true;
+        var before = left.AudioClips.Single(c => c.Id == id);
+        var after = right.AudioClips.SingleOrDefault(c => c.Id == id);
+        if (after is null) return false;
+        return before.SoundId == after.SoundId && before.StretchRatio == after.StretchRatio && (before.StretchRatio == 1 ||
+            before.OffsetFrames - before.EnvelopeOffsetFrames == after.OffsetFrames - after.EnvelopeOffsetFrames &&
+            AudioClipSource.EnvelopeLength(before) == AudioClipSource.EnvelopeLength(after));
     }
 
     private static bool SameAuditionSource(PreparedSampler left, PreparedSampler right, ExecutionOccurrence occurrence)

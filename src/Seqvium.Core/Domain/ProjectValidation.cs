@@ -217,6 +217,12 @@ public static class ProjectValidation
                     AudioClipSource.EnvelopeLength(clip) <= AudioClipSource.Frames(sound) &&
                     clip.FadeInFrames <= AudioClipSource.EnvelopeLength(clip) &&
                     clip.FadeOutFrames <= AudioClipSource.EnvelopeLength(clip) &&
+                    clip.StretchRatio is >= .5m and <= 2m &&
+                    (clip.StretchRatio == 1 ||
+                     AudioClipSource.EnvelopeLength(clip) >= AudioClipSource.Rate(sound) / 10 &&
+                     AudioClipSource.EnvelopeLength(clip) <= (long)AudioClipSource.Rate(sound) * 60 &&
+                     clip.OffsetFrames - clip.EnvelopeOffsetFrames <=
+                     AudioClipSource.Frames(sound) - AudioClipSource.EnvelopeLength(clip)) &&
                     clip.GainDb is >= -90 and <= 24 && clip.Position.Ticks >= 0,
                 "Invalid audio clip range, fade, level or lane.");
             try

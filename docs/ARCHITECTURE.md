@@ -118,12 +118,17 @@ Playlist lanes remain independent of Mixer channels. Gain/fades/range/repeats be
 Desktop's worker codec adapter normalizes supported sources to immutable managed float WAV. Core
 owns portable metadata, validation, history, media integrity and prepared PCM/waveform derivations.
 Windows Media Foundation is confined to compressed-source import, never the realtime callback.
-Arrangement preparation leases each unique resource once, schedules unpitched PCM through the
+Arrangement preparation leases each unique resource once, prepares bounded explicit local WSOLA
+derivations when requested by AudioClip intent, and schedules unpitched PCM through the
 existing sampler, and contributes it to the existing global Mixer. No parallel transport/mixing owner
 or obligatory Channel Rack editor is introduced. Frozen preparation/export documents share the
 document's weak PCM cache; prepared states own strong leases. Save As revalidates relocated bytes
 before reusing those arrays. [Audio](AUDIO_ENGINE.md#standalone-audio-clips) owns limits/clocks;
-[format](PROJECT_FORMAT.md#audio-clips-reader-14) owns persistence.
+[format](PROJECT_FORMAT.md#audio-clips-reader-14) owns persistence. A clip-local decimal ratio is
+separate from resource, source sound/Mixer route and project tempo. Shared immutable derivations
+inside one prepared plan do not make other clips inherit edits. Existing coordinator invalidation,
+joined lifetime and frozen export remain the only execution owners; no parallel stretching player,
+UI-thread DSP or callback preparation is introduced.
 
 ## Implemented project Mixer boundary
 
@@ -1030,8 +1035,10 @@ must express concepts equivalent to:
 - **Fixed/source time:** audio retains its physical playback duration unless explicitly stretched.
 
 A clip also supports local stretch independently of changing global tempo. Global tempo changes
-and local clip stretch are distinct operations. Public labels, defaults, time/stretch representation,
-and algorithms remain open. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns distinct trim,
+and local clip stretch are distinct operations. Audio Clips implement fixed/source time with an
+explicit 0.5–2 local duration multiplier and worker-prepared WSOLA; default 1 retains original PCM.
+Follow project tempo remains a future capability with no dormant control. Broader warp/tempo-map
+representations remain open. [UX_CONTRACT](UX_CONTRACT.md#audio-timeline-editing) owns distinct trim,
 loop/repeat, and stretch intentions and ordinary non-destructive timeline edits;
 [PROJECT_FORMAT](PROJECT_FORMAT.md) owns preserving those relationships, not a selected schema.
 

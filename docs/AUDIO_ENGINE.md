@@ -25,8 +25,9 @@ substitution, generalized effect hosting or guaranteed click-free transition. Se
 ## Standalone audio clips
 
 Playlist Audio Clips use the same prepared sampler, realtime publication/seek/range loop and offline
-Song exporter as Patterns. They schedule native mono/stereo PCM at a fixed `sourceRate/outputRate`
-step; placement/BPM never imply pitch or stretch. Output remains 44.1/48 kHz in the current adapter.
+Song exporter as Patterns. Unity clips schedule original mono/stereo PCM; explicit local stretch
+schedules derived PCM at the same unpitched `sourceRate/outputRate` step. Placement/BPM never enable
+stretch or alter its ratio. Output remains 44.1/48 kHz in the current adapter.
 Clip gain and linear source-frame fades precede the shared Mixer; source assignments, buses, sends,
 Mute/Solo, EQ/compression and Master protection retain the existing processing chain.
 
@@ -44,7 +45,7 @@ native 8–192 kHz rate. Surround/multichannel is explicitly rejected, not silen
 use available Windows Media Foundation codecs via a Desktop-only adapter; WAV and Core media do not
 depend on Windows codecs. Malformed/nonfinite/empty sources fail before canonical acceptance.
 Cancellation is cooperative between worker decode/copy stages; a stalled OS codec cannot be forcibly
-interrupted. There is no disk streaming, stretch/warp or input recording.
+interrupted. There is no disk streaming, tempo following, warp map or input recording.
 
 One source and aggregate unique audible Audio Clip PCM per prepared Song are bounded to **512 MiB**.
 Duration is bounded by `512*1024*1024 / (rate*channels*4)` seconds: ~1398 s at 48 kHz stereo,
@@ -62,6 +63,46 @@ an allocated PCM arena or a total working-set guarantee. Distinct sources/old ve
 waveforms, native decoder buffers and UI consume additional memory. Managed media/history/import
 temporary disk space has no global project quota yet. All file/codec/hash/waveform work stays outside
 the callback; execution performs bounded allocation-free PCM reads and existing Mixer processing.
+
+### Local Audio Clip time stretch
+
+`AudioClip.StretchRatio` is an explicit decimal duration multiplier, **0.5–2**, default **1**.
+Native offset/length/fades remain source intent; musical placement remains ticks. BPM does not alter
+the multiplier or physical duration. Repeats repeat the stretched range; trim changes source range
+without changing this multiplier. Source-frame fades scale with stretch. Exact unity bypasses DSP.
+
+Worker preparation uses independent host WSOLA: 40-ms windows, 20-ms output hops, ±10-ms normalized
+waveform correlation, coarse search near 12 kHz followed by sample refinement and raised-cosine
+overlap blending. Channel-wise energy/dot products select one common stereo offset, including
+anti-phase sources. Both endpoints are anchored; the last frame ends at source EOF. It targets
+sustained/monophonic musical phrases, not transparent processing of arbitrary complete mixes.
+Transient doubling/smearing, flutter and chorused polyphony can occur, particularly near 50/200%.
+No beat detection, transient lock, formant model or acoustic-quality guarantee is provided.
+
+The underlying source envelope must span **0.1–60 s** for non-unity stretch; split pieces may be
+shorter because they retain that envelope. Explicit range/fade edits reset the envelope as before,
+so a newly independent trimmed range shorter than 0.1 s is refused until stretch is reset to 100%.
+Derived PCM across unique `(resource, envelope start, envelope length, ratio)` keys is bounded to
+**128 MiB**, also counted inside the existing **512 MiB** Audio Clip source/prepared aggregate.
+Limits are checked before derived allocation. Original/derived resident arrays and old prepared
+states still consume memory; this is not a total working-set or preparation-latency guarantee.
+Copies, repeats and split pieces share an identical derivation within one preparation; there is no
+permanent derived cache or durable rendered resource. Preparation may run again after an edit/Open.
+
+Round absolute envelope positions multiplied by the ratio once to native playback frames, away
+from zero. A piece length is the difference of those rounded endpoints. Repeat boundaries convert
+absolute cumulative playback frames to output frames, avoiding repeated duration-rounding drift.
+Split retains the original derivation and common virtual clock, including cross-rate interpolation
+phase; adjacent matching pieces suppress only their artificial internal boundary smoothing.
+Placement rounding remains the existing musical-tick/output-frame policy, not a beat-warp clock.
+
+Existing frozen preparation/export, cancellation between synthesis hops, generation/lifecycle and
+publication/retirement gates own DSP work. No WSOLA, allocation, locking, file access or mutable clip
+lookup enters the callback. Compatible live edits retain transport and unrelated voices; changed
+derived-source identity also retires/reconstructs a voice even if its numeric output bounds match.
+Stop/Panic and cold seek/range-loop policy remain unchanged. Realtime/offline use the identical
+prepared PCM and existing smoothing/Mixer; GUI WAV differs only by its PCM16 quantization.
+[Verification report](experiments/SEQ-R10-STRETCH-F1_REPORT.md) owns measurements and limitations.
 
 ## Project Mixer execution
 

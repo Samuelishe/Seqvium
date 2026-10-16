@@ -1778,3 +1778,17 @@ make this first musical action useful: Browser reveal and existing preview/Rack/
 the workflow. State-bearing processors, broader objects/capture and replacement require their own
 execution/dependency/tail semantics before extending this boundary. Current truth belongs to Sample
 Workflow, Audio Engine and Architecture; the R8 report owns verified evidence and limits.
+
+## SEQ-R10-STRETCH-F1 — fixed-time multiplier and prepared WSOLA — 2026-10-16
+
+Use an explicit clip-local 0.5–2 decimal duration multiplier with unity bypass; retain source-frame
+ranges/fades and musical placement rather than baking a speed change into shared media or deriving
+stretch from BPM. Bounded worker WSOLA closes a useful monophonic/sustained-phrase path without a
+new realtime processor, native dependency or warp subsystem. One common stereo alignment, anchored
+endpoints and shared full-envelope derivation preserve pitch relationships and exact split PCM.
+Cumulative playback frames preserve repeat boundaries. Existing preparation/publication/retirement,
+Mixer and frozen Song export retain ownership. Reader 1.6 is necessary because an old reader must
+not silently render non-unity intent at original duration. Copies share immutable sources, not the
+multiplier. The source-envelope and derived-memory limits make the first scope explicit; transient
+and dense-polyphony limitations are not disguised by universal quality claims. Current contracts
+live in Audio Engine, Architecture, UX and Project Format; the stretch report owns evidence.

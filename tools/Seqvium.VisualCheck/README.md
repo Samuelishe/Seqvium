@@ -1,5 +1,23 @@
 # Desktop visual and lifecycle verification
 
+## Audio Clip time stretch
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll stretch "$PWD/.artifacts/stretch-f1/review" native audio
+```
+
+An authored two-second stereo melodic phrase enters the production Playlist import path. Actual
+properties Apply 200%, verify one Undo/Redo, reject 201%, dismiss an uncommitted edit, export four
+seconds and reopen managed media after removing the external WAV. The real-window matrix covers
+RU/EN × Dark/Light at 1400×900/800×600, empty startup/populated Playlist and all six parameter rows. Capture
+the popup TopLevel so inherited backgrounds and compositor transforms are included. Native input
+separately checks opening properties, exact percentage entry and Apply; selection/setup remain routed.
+Optional `audio` polls the real default output through natural EOF and refuses any device fault or
+missing execution. `stretch.json` separates native, physical and routed evidence. Unit tests own
+numerical pitch/PCM, deterministic cancellation, budgets and concurrent-edit publication evidence.
+No subjective listening, stress or other-platform acceptance follows. Outputs use existing ignored
+rolling retention; the [report](../../docs/experiments/SEQ-R10-STRETCH-F1_REPORT.md) owns observations.
+
 ## Pattern resampling
 
 ```powershell

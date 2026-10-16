@@ -30,13 +30,14 @@ internal sealed partial class ArrangementPaneContent
         var basis = ArrangementEditBasis.From(state);
         var body = new StackPanel { MinWidth = 300, MaxWidth = 360, Classes = { "spaced" } };
         body.Children.Add(new TextBlock { Text = sound.Name, Classes = { "section" } });
-        body.Children.Add(new TextBlock
-            { Text = _shell["AudioClip.FixedSpeed"] + $" · {rate / 1000d:0.###} kHz", Classes = { "caption" } });
+        var duration = new TextBlock { Classes = { "caption" } };
+        body.Children.Add(duration);
         var fields = new Dictionary<string, TextBox>();
         foreach (var (key, value, unit) in new (string, decimal, string)[]
                  {
                      ("Offset", (decimal)clip.OffsetFrames / rate, "s"),
                      ("Length", (decimal)clip.LengthFrames / rate, "s"),
+                     ("Stretch", clip.StretchRatio * 100, "%"),
                      ("FadeIn", (decimal)clip.FadeInFrames / rate * 1000, "ms"),
                      ("FadeOut", (decimal)clip.FadeOutFrames / rate * 1000, "ms"),
                      ("Gain", clip.GainDb, "dB")
@@ -50,6 +51,7 @@ internal sealed partial class ArrangementPaneContent
             AutomationProperties.SetAutomationId(field, "AudioClip." + key);
             AutomationProperties.SetName(field, _shell["AudioClip." + key]);
             fields.Add(key, field);
+            if (key == "Stretch") ToolTip.SetTip(field, _shell["AudioClip.StretchHint"]);
             Grid.SetColumn(field, 1);
             row.Children.Add(field);
             var units = new TextBlock { Text = unit, VerticalAlignment = VerticalAlignment.Center, Margin = new(6, 0) };
@@ -57,6 +59,19 @@ internal sealed partial class ArrangementPaneContent
             row.Children.Add(units);
             body.Children.Add(row);
         }
+
+        void UpdateDuration()
+        {
+            if (decimal.TryParse(fields["Stretch"].Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) &&
+                decimal.TryParse(fields["Length"].Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var length) &&
+                percent is >= 50 and <= 200 && length > 0 && length <= (decimal)AudioClipSource.Frames(sound) / rate)
+                duration.Text = _shell["AudioClip.Playback"] + " · " +
+                    (length * percent / 100).ToString("0.###", CultureInfo.InvariantCulture) + " s";
+            else duration.Text = _shell["AudioClip.StretchRange"];
+        }
+        fields["Stretch"].TextChanged += (_, _) => UpdateDuration();
+        fields["Length"].TextChanged += (_, _) => UpdateDuration();
+        UpdateDuration();
 
         var routing = new ComboBox { HorizontalAlignment = HorizontalAlignment.Stretch };
         var channels = state.Snapshot.State.Mixer?.Channels.ToArray() ?? [];
@@ -98,11 +113,19 @@ internal sealed partial class ArrangementPaneContent
                 var updated = clip with
                 {
                     OffsetFrames = Frame("Offset"), LengthFrames = Frame("Length"),
-                    FadeInFrames = Frame("FadeIn", 1000), FadeOutFrames = Frame("FadeOut", 1000), GainDb = Read("Gain")
+                    FadeInFrames = Frame("FadeIn", 1000), FadeOutFrames = Frame("FadeOut", 1000), GainDb = Read("Gain"),
+                    StretchRatio = Read("Stretch") / 100
                 };
                 if (updated.OffsetFrames != clip.OffsetFrames || updated.LengthFrames != clip.LengthFrames ||
                     updated.FadeInFrames != clip.FadeInFrames || updated.FadeOutFrames != clip.FadeOutFrames)
                     updated = updated with { EnvelopeOffsetFrames = 0, EnvelopeLengthFrames = 0 };
+                if (updated.StretchRatio is < .5m or > 2m || updated.StretchRatio != 1 &&
+                    (AudioClipSource.EnvelopeLength(updated) < rate / 10 ||
+                     AudioClipSource.EnvelopeLength(updated) > rate * 60L))
+                {
+                    error.Text = _shell["AudioClip.StretchRange"];
+                    return;
+                }
                 var route = routing.SelectedIndex > 0
                     ? channels[routing.SelectedIndex - 1].Id
                     : (Id<MixerChannel>?)null;

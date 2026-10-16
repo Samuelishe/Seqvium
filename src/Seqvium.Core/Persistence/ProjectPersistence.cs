@@ -37,7 +37,7 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 5;
+    public const int ReaderMinor = 6;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     private static bool HasAudio(ProjectState state) => !state.AudioClips.IsEmpty ||
@@ -58,7 +58,8 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = HasSongStructure(snapshot.State) ? 5 : HasAudio(snapshot.State) ? 4 :
+        int required = snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
+            HasSongStructure(snapshot.State) ? 5 : HasAudio(snapshot.State) ? 4 :
             snapshot.State.Mixer is not null ? 3 :
             !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
             hasGraphs ? 1 : 0;
@@ -105,6 +106,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (file.State.AudioClips.Any(c => c.StretchRatio != 1) && file.MinimumReaderMinor < 6)
+                throw new ProjectFormatException("Audio clip stretch requires minimumReaderMinor >= 6.");
             if (HasSongStructure(file.State) && file.MinimumReaderMinor < 5)
                 throw new ProjectFormatException("Playlist sections and Pattern ancestry require minimumReaderMinor >= 5.");
             if (HasAudio(file.State) && file.MinimumReaderMinor < 4)
@@ -220,6 +223,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (snapshot.State.AudioClips.Any(c => c.StretchRatio != 1))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(6, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(6, document.Compatibility.MinimumReaderMinor)
+                };
             if (HasSongStructure(snapshot.State))
                 document.Compatibility = document.Compatibility with
                 {
@@ -307,6 +316,8 @@ public static class ProjectPersistence
         }
         else
         {
+            if (type == typeof(AudioClip) && node["stretchRatio"]?.GetValue<decimal>() == 1)
+                node.Remove("stretchRatio");
             var extra = node[storageKey] as JsonObject;
             node.Remove(storageKey);
             if (extra is not null)
