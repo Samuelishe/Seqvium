@@ -17,6 +17,11 @@ Owner references and selected review images live outside Git; generated fixtures
 
 ## Bounded probe discipline
 
+[SEQ-RT-ALLOCATION-AUDIT-R1](SEQ-RT-ALLOCATION-AUDIT-R1_REPORT.md) records unchanged serial Mixer
+failures and bounded arithmetic/audio counter controls under background GC. Its optional Core-only
+[probe](../../tools/Seqvium.AllocationCheck/README.md) preserves strict raw observations; sampled
+EventPipe and green repeats do not establish an allocation fix or close historical attribution.
+
 SEQ-R2-F2's [protocol](SEQ-R2-F2_PROTOCOL.md), [report](SEQ-R2-F2_REPORT.md) and
 [explicit Release harness](../../tools/Seqvium.DeviceCheck/README.md) evaluate production F1 PCM
 through the scoped Windows output adapter. Reports own measurements; audio/architecture owners retain

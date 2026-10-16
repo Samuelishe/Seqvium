@@ -2401,3 +2401,13 @@ failure passes unchanged alone and on full repeat; cause remains unknown. Legacy
 initial Duplicate timeout and intermediate output-status evidence remain explicit in the
 [report](../experiments/SEQ-PIANO-RACK-UI-FIX-R1_REPORT.md). Local screenshot/fixture evidence follows
 ordinary retention; no pressure/acoustic/platform closure or Git index/history/remote mutation.
+
+## SEQ-RT-ALLOCATION-AUDIT-R1 — 2026-10-17
+
+Diagnostic outcome, version remains 0.1.16.0005. Unchanged Mixer strict allocation test reproduces
+6672 bytes in serial and profiled 93-case runs. A bounded Core-only arithmetic/audio probe reproduces
+positive current-thread counter deltas under background GC without a runner, including on a dedicated
+thread. Sampled EventPipe does not attribute every historical byte; no DSP/test assertion is changed.
+1845/1845 full Release tests and zero-warning solution/probe builds coexist with the red subset.
+The [report](../experiments/SEQ-RT-ALLOCATION-AUDIT-R1_REPORT.md) and permanent probe retain controls,
+reproduction and the all-object/runtime-comparison follow-up. No index/history/remote mutation.

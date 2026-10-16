@@ -13,12 +13,16 @@ intent belongs to [ROADMAP](ROADMAP.md). No entry below is implementation debt.
 
 ## Cross-stage measurement gaps
 
-The [cross-stage audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md#physical-pressure-and-test-isolation)
-reproduces a 4,136-byte preview zero-allocation assertion in a bounded parallel run; the exact current
-and retained-baseline cases pass alone. Allocation origin remains unattributed. Preserve the strict
-requirement and investigate with a bounded allocation trace or isolated consumer-thread observation,
-recording source/runtime/runner/concurrency. Serial green is not evidence of a permanent correction.
-The earlier measured-loop assertion defect is already fixed and is a separate issue.
+The [allocation audit](experiments/SEQ-RT-ALLOCATION-AUDIT-R1_REPORT.md) reproduces a 6,672-byte
+unchanged Mixer assertion in serial execution and under EventPipe. Its Core-only diagnostic also
+reproduces positive deltas in an arithmetic-only interval under background GC, without DSP or a test
+runner, on both console and dedicated threads. Runtime allocation-context accounting is a supported
+mechanism, but individual historical bytes remain unattributed: sampled EventPipe cannot exclude tiny
+objects. Preserve strict zero and use the retained bounded probe for all-object profiling or a validated
+runtime-fix comparison; do not discard GC-overlapped windows or treat serial green/thread isolation as
+a correction. The [cross-stage](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md#physical-pressure-and-test-isolation)
+4,136-byte Preview failure and later observations remain evidence. The earlier measured-loop assertion
+defect is already fixed and separate. No production allocation fix or general reliability closure is claimed.
 Key Mapping F1 later observes 1,184 additional bytes in the existing Automation volume live-edit
 callback assertion during one serial full run; unchanged focused and final full runs pass. Its
 [report](experiments/SEQ-SAMPLER-KEYMAP-F1_REPORT.md#failures-corrections-and-limits) retains the

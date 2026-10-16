@@ -7,6 +7,20 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Realtime allocation diagnostics
+
+Keep strict zero-byte assertions. A green repeat cannot explain a red measurement. The
+[allocation audit](experiments/SEQ-RT-ALLOCATION-AUDIT-R1_REPORT.md) reproduces positive current-thread
+deltas in a no-DSP arithmetic interval under background GC, including on a dedicated thread; individual
+historical events remain unattributed. Do not suppress GC-overlapped windows, subtract presumed slack,
+disable GC or extend warm-up as an unsupported fix. Sampled EventPipe cannot exclude small objects.
+
+The optional Core-only [AllocationCheck guide](../tools/Seqvium.AllocationCheck/README.md) specifies
+bounded empty/known-allocation/audio controls, host/load comparisons, raw JSON and opt-in trace markers.
+It is outside the solution and normal test discovery; exit 1 retains anomalous observations. Separate
+profiled/unprofiled runs and fixture/preparation work from the exact counter boundary. An all-object
+allocation trace or validated runtime-fix comparison is the next attribution gate, not another green suite.
+
 ## Parameter automation verification
 
 `AutomationTests` covers held-chord spectral movement, an independent smoothed fader oracle,

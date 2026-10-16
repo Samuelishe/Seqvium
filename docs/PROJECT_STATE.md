@@ -306,7 +306,18 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-PIANO-RACK-UI-FIX-R1, 2026-10-17**. Full Release solution build:
+Latest diagnostic work: **SEQ-RT-ALLOCATION-AUDIT-R1, 2026-10-17**, product stays **0.1.16.0005**.
+The unchanged Mixer assertion reproduces **6672 bytes** in a serial 93-case subset and under EventPipe;
+isolated cases and the 1845-case full Release suite pass (59.495 s reported). A Core-only bounded
+1536-window probe reproduces positive arithmetic-only and audio-loop counter deltas under background
+GC on console/dedicated threads. This excludes DSP/runner/parallelism as necessary for that reproduction,
+not every tiny production allocation. Sampled stacks do not attribute each historical event; strict
+tests and production remain unchanged. Full solution/probe builds have zero warnings/errors.
+[Report](experiments/SEQ-RT-ALLOCATION-AUDIT-R1_REPORT.md) owns red/green runs, controls, traces and limits;
+[probe guide](../tools/Seqvium.AllocationCheck/README.md) supplies repeatable diagnostics. No version bump,
+starvation/import work or pressure acceptance.
+
+Previous product L0/L1/L2/L3: **SEQ-PIANO-RACK-UI-FIX-R1, 2026-10-17**. Full Release solution build:
 zero warnings/errors (**1.527 s CLI**, valid incremental outputs); **1845/1845** tests pass, zero skips,
 one thread (**65.868 s CLI**). Six new fixed Rack geometry cases join **240/240** focused checks.
 Native selectors, actual pad/ruler/thumbnail metrics, common scrollbar input, note/step/history,
@@ -588,7 +599,9 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. The owner-requested Piano/Rack L3 includes all
+Completed repository tasks since this L3: **0**. Allocation audit R1 repeats the full Release suite
+on unchanged production/tests (1845/1845); its later red 93-case subset remains an unresolved
+measurement failure, not replaced by that green suite. The owner-requested Piano/Rack L3 includes all
 1845 current cases: new shared Rack time geometry plus existing note/channel/history, workspace,
 Pattern/Song/Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. It does not resolve
 the intermittent allocation evidence recorded above.
