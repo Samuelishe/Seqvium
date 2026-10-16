@@ -178,7 +178,8 @@ internal static partial class Program
                 or "control-input" or "rack-pads"
                 or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow"
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
-                or "sampler-editor" or "synth" or "reverb" or "delay" or "ui-density" or "theme-navigation"
+                or "sampler-editor" or "sampler-keymap" or "synth" or "reverb" or "delay" or "ui-density"
+                or "theme-navigation"
                 or "settings",
             "Unknown scenario.");
         using var run =
@@ -203,7 +204,8 @@ internal static partial class Program
                     Require(args.Length == 3, "identity <output> <project-file>");
                     await IdentityAsync(main, output, Path.GetFullPath(args[2]));
                 }
-                else if (args[0] == "settings") await SettingsAsync(main, output, Path.GetFullPath(args[2]), args.Contains("native"));
+                else if (args[0] == "settings")
+                    await SettingsAsync(main, output, Path.GetFullPath(args[2]), args.Contains("native"));
                 else if (args[0] == "steps") await StepMatrixAsync(main, output);
                 else if (args[0] == "cross-stage")
                     await CrossStageInputAsync(main, output, args.Length > 2 && args[2] == "native");
@@ -215,6 +217,9 @@ internal static partial class Program
                     await ResamplingAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "sampler-editor")
                     await SamplerEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "sampler-keymap")
+                    await SamplerKeymapAsync(main, output, Path.GetFullPath(args[2]), Path.GetFullPath(args[3]),
+                        args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "synth")
                     await SynthEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "automation")
@@ -226,9 +231,11 @@ internal static partial class Program
                 else if (args[0] == "stretch")
                     await AudioStretchAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "ui-density") await UiDensityAsync(main, output, Path.GetFullPath(args[2]));
-                else if (args[0] == "theme-navigation") await ThemeNavigationAsync(main, output, Path.GetFullPath(args[2]), args.Contains("native"));
-                else if (args[0] == "browser") await SampleBrowserAsync(main, output, args.Length > 2 && args[2] == "native",
-                    args.Length > 2 && args[2] == "audio", args.Length > 3 ? Path.GetFullPath(args[3]) : null);
+                else if (args[0] == "theme-navigation")
+                    await ThemeNavigationAsync(main, output, Path.GetFullPath(args[2]), args.Contains("native"));
+                else if (args[0] == "browser")
+                    await SampleBrowserAsync(main, output, args.Length > 2 && args[2] == "native",
+                        args.Length > 2 && args[2] == "audio", args.Length > 3 ? Path.GetFullPath(args[3]) : null);
                 else if (args[0] == "daily-workflow")
                 {
                     Require(args.Length is 3 or 4, "daily-workflow <output> <independent-project> [routed]");
@@ -252,7 +259,9 @@ internal static partial class Program
                     Require(args.Length == 4, "native-audio <output> <independent-project> <author|review|play>");
                     await NativeAudioClipsAsync(main, output, Path.GetFullPath(args[2]), args[3]);
                 }
-                else if (args[0] == "control-input") await ControlInputAsync(main, output, args.Contains("reproduce"), args.Contains("routed"), args.Contains("gain-mixer"), args.Contains("velocity-only"));
+                else if (args[0] == "control-input")
+                    await ControlInputAsync(main, output, args.Contains("reproduce"), args.Contains("routed"),
+                        args.Contains("gain-mixer"), args.Contains("velocity-only"));
                 else if (args[0] == "drum") await DrumMusicAsync(main, output, args.Length > 2 ? args[2] : null);
                 else if (args[0] == "drum-kit")
                 {

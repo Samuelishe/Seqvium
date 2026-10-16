@@ -54,7 +54,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         CheckOwner();
         ObjectDisposedException.ThrowIf(_closed, this);
         var next = pcm is null ? null : new SampleAuditionSource(sound, candidate, pcm);
-        _sampleAudition?.Dispose(); _sampleAudition = next;
+        _sampleAudition?.Dispose();
+        _sampleAudition = next;
         _basis = null;
         Refresh();
     }
@@ -397,6 +398,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         ProjectState Normalize(ProjectState state) => state with
         {
             Mixer = ignoreGain ? null : state.Mixer,
+            Resources = ignoreNotes ? [] : state.Resources,
             ArrangementClips = [],
             AudioClips = [],
             ArrangementTracks = [],
@@ -406,11 +408,16 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 ?
                 [
                     .. state.Sounds.Select(sound => SamplerPlayback.Supports(sound)
-                        ? sound with { Parameters = sound.Parameters.RemoveRange(SamplerPlayback.Keys) }
-                        : SynthVoice.Supports(sound) ? sound with { Parameters = SynthVoice.Defaults }
-                        : DrumVoice.Supports(sound)
-                        ? sound with { Parameters = DrumInstruments.Find(sound.Algorithm)!.Defaults }
-                        : sound)
+                        ? sound with
+                        {
+                            SamplerZones = [], ResourceIds = [],
+                            Parameters = sound.Parameters.RemoveRange(SamplerPlayback.Keys).SetItem("rootPitch", 60)
+                        }
+                        : SynthVoice.Supports(sound)
+                            ? sound with { Parameters = SynthVoice.Defaults }
+                            : DrumVoice.Supports(sound)
+                                ? sound with { Parameters = DrumInstruments.Find(sound.Algorithm)!.Defaults }
+                                : sound)
                 ]
                 : state.Sounds,
             Patterns = ignoreNotes
@@ -554,7 +561,8 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         _document.Closed -= BeginClose;
         _cancellation?.Dispose();
         _basis = null;
-        _sampleAudition?.Dispose(); _sampleAudition = null;
+        _sampleAudition?.Dispose();
+        _sampleAudition = null;
     }
 
     private void CheckOwner()

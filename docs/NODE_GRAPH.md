@@ -8,6 +8,10 @@ Not authoritative for: Arrangement, group identity, final port ABI/compiler, DSP
 
 ## Implemented PCM Source Editor
 
+Multisample maps remain one bound Source/SoundDefinition. The selected editor zone is observation,
+not a graph binding, node parameter, separate instrument or Mixer channel. Existing Source editor
+routes, note events, local processing and R8 tap apply to all zones.
+
 SEQ-SAMPLER-EDITOR-F1 specializes the existing bound Source editor for a supported PCM sampler.
 The Channel Rack Sound Editor action and graph body double-click/context Open Editor keep the same
 NodeEditorTarget and singleton pane. It resolves the shared SoundDefinition through the attachment's

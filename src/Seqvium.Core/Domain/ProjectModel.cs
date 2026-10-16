@@ -97,7 +97,10 @@ public sealed record SoundDefinition(
     string Algorithm,
     ImmutableDictionary<string, decimal> Parameters,
     ImmutableArray<Id<ResourceDescriptor>> ResourceIds,
-    ExtensionState? Extension) : CanonicalData;
+    ExtensionState? Extension) : CanonicalData
+{
+    public ImmutableArray<SamplerZone> SamplerZones { get; init; } = [];
+}
 
 public sealed record ResourceDescriptor(
     Id<ResourceDescriptor> Id,
@@ -158,8 +161,12 @@ public sealed record ArrangementTrack(
     bool Solo) : CanonicalData;
 
 /// <summary>A named, non-overlapping musical range. Organization only; no processing or routing ownership.</summary>
-public sealed record ArrangementSection(Id<ArrangementSection> Id, string Name,
-    MusicalPosition Position, MusicalDuration Length, int ColorIndex) : CanonicalData;
+public sealed record ArrangementSection(
+    Id<ArrangementSection> Id,
+    string Name,
+    MusicalPosition Position,
+    MusicalDuration Length,
+    int ColorIndex) : CanonicalData;
 
 public sealed record ProjectState(
     Id<ProjectState> Id,

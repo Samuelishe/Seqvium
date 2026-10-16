@@ -71,7 +71,8 @@ NoteOns use the new sound. Preview uses NoteAuditionRequest and its existing out
 
 R8 freezes parameters, renders through local Output before Mixer and includes release beyond the
 Pattern boundary where necessary. The filter precedes amplitude, with no post-release tail or added
-latency. Existing cancellation/generation/media/history owners remain. [Format](PROJECT_FORMAT.md#subtractive-synth-reader-111)
+latency. Existing cancellation/generation/media/history owners
+remain. [Format](PROJECT_FORMAT.md#subtractive-synth-reader-111)
 owns persistent intent; [the report](experiments/SEQ-SYNTH-F1_REPORT.md) owns evidence and listening limits.
 
 ## Sample Lab contextual audition
@@ -152,8 +153,8 @@ No beat detection, transient lock, formant model or acoustic-quality guarantee i
 The underlying source envelope must span **0.1–60 s** for non-unity stretch; split pieces may be
 shorter because they retain that envelope. Explicit range/fade edits reset the envelope as before,
 so a newly independent trimmed range shorter than 0.1 s is refused until stretch is reset to 100%.
-Derived PCM across unique `(resource, envelope start, envelope length, ratio)` keys is bounded to
-**128 MiB**, also counted inside the existing **512 MiB** Audio Clip source/prepared aggregate.
+Derived PCM across unique `(resource, envelope start, envelope length, ratio)` keys is bounded to **128 MiB**, also
+counted inside the existing **512 MiB** Audio Clip source/prepared aggregate.
 Limits are checked before derived allocation. Original/derived resident arrays and old prepared
 states still consume memory; this is not a total working-set or preparation-latency guarantee.
 Copies, repeats and split pieces share an identical derivation within one preparation; there is no
@@ -190,7 +191,8 @@ unassigned direct-Master sources are suppressed while a channel is soloed. Feedb
 are refused atomically, not processed with an arbitrary order or hidden delay.
 
 Each strip executes trim → high-pass/low shelf/parametric mid/high shelf → stereo-linked peak compressor
-→ musical Delay → algorithmic Reverb → stereo balance → fader → output/sends. Low/high shelves are fixed at 120 Hz/8 kHz; the mid has frequency,
+→ musical Delay → algorithmic Reverb → stereo balance → fader → output/sends. Low/high shelves are fixed at 120 Hz/8
+kHz; the mid has frequency,
 gain and Q. The independent biquad implementation uses standard bilinear filter equations. Compression
 has threshold, ratio, soft knee, attack/release and explicit makeup, with no lookahead or sidechain.
 Center balance preserves stereo unity; moving toward one side attenuates the opposite side by cosine.
@@ -264,7 +266,7 @@ bypassed strips, so enabling needs no callback allocation. At 48 kHz the payload
 strip**, **49,921,040 bytes for 64 channels plus Master**, inside a separate **64 MiB per-state Delay
 budget**. Existing 16 MiB graph scratch and source PCM budgets stay separate. Realtime retained/reserved
 accounting includes this payload in each existing active/pending/retired/candidate slot; it is not a
-process working-set guarantee. Reset changes a generation in O(1). Topology continuation swaps line
+process working-set guarantee. Reset changes a generation in O (1). Topology continuation swaps line
 ownership by stable strip ID, without copying large rings; the retired execution receives the new empty
 line. Preparation allocates storage and derives times/tails off callback; rendering, reset, publication
 and transfer use fixed storage without I/O or blocking locks. Packet work reserves 256 units per strip
@@ -332,7 +334,7 @@ existing Delay/graph/source budgets are separate. Continuations reserve the unio
 identities before publication; bypassed histories move without allocating another disabled bank and
 stay accounted until execution retirement/removal. This bounded lifetime may refuse a later enable
 while earlier bypassed identities remain admitted; a fresh execution has fresh admission. No heavy
-reclamation or array clear occurs in rendering: generation resets invalidate long lines in O(1),
+reclamation or array clear occurs in rendering: generation resets invalidate long lines in O (1),
 while bounded filter state is cleared. A completed Size crossfade retains its second bank until
 retirement, never drops its last reference from the callback. Four-slot reserved accounting includes
 the Reverb allowance. Packet preflight adds **512 work units per admitted strip/frame**, covering
@@ -428,7 +430,8 @@ finite by default. A one-cycle prepared plan carries a derived LoopClock. Int128
 absolute iteration/event ticks matches constant-tempo rounding without callback BigInteger allocation
 or accumulation of rounded loop lengths. The consumer processes the next iteration inside the same
 packet; no output is dropped or zero-filled merely because a cycle ends. Source gates/voices end at
-the musical boundary. Mixer Delay retains its single streaming line across ordinary Pattern iterations; explicit range wraps reset it.
+the musical boundary. Mixer Delay retains its single streaming line across ordinary Pattern iterations; explicit range
+wraps reset it.
 
 The control owner compares the new plan with the actual active canonical basis while ignoring notes,
 Pattern names, geometry and Gain. Matching format, tempo, length, placement, sound/resource and graph
@@ -551,7 +554,7 @@ Lease creation/disposal remains owner-serialized; F2's handoff protocol below pr
 
 ### Pitches, voices and output
 
-`core.pcm-sampler.linear-v1` uses exactly one resource and explicit decimal `rootPitch` (0–127) and
+Legacy `core.pcm-sampler.linear-v1` uses one resource and explicit decimal `rootPitch` (0–127) and
 `releaseMilliseconds` (0–1000) in R1's sound parameters. MIDI-like note pitch permits fractional
 semitones throughout canonical [0,127] (SEQ-R9 removes the former root ±12 preparation/graph refusal).
 Source cursor step is
@@ -577,6 +580,25 @@ R4-F2 adds independent item-local contributions below; wider execution domains a
 
 ### Sampler source range and sustain loop (SEQ-SAMPLER-EDITOR-F1)
 
+#### Multisample key mapping (SEQ-SAMPLER-KEYMAP-F1)
+
+An optional SoundDefinition key map contains up to 128 identified zones. Each zone owns a resource,
+decimal Root Pitch and source range/loop/crossfade parameters. Release remains instrument-wide.
+Inclusive integer MIDI bounds may have silent gaps but cannot overlap. A fractional note belongs
+to its lower integer key; its exact decimal pitch still determines transposition. Auto map sorts
+distinct confirmed roots, splits at floor (midpoint), gives a tie to the lower root and extends the
+outer zones to keys 0/127. Duplicate/too-close roots require manual resolution, not layering.
+
+Preparation validates and leases all map sources under the existing 128 MiB unique decoded Pattern
+budget and compiles one source/step/range per note. OfflineSampler remains the only voice kernel,
+with the same graph/Mixer, 32 graph voices, finite NoteOff/release, realtime/offline/Song/R8 paths.
+Starting another pitch never changes an existing voice's source. Compatible live publication keeps
+unchanged notes/age/clock; notes whose selected resource, step or playback changes retire without
+retrigger. Continuous live remapping of a held changed voice is not implemented. Resource identity
+participates in continuation even when two WAVs happen to have equal lengths and pitch settings.
+Legacy omitted maps retain the original PCM behavior. Missing/unknown required map dependencies
+refuse preparation rather than falling back to the first WAV. No velocity layers or round-robin.
+
 `SamplerPlayback` interprets optional `sampleStart`, `sampleEnd`, `loopEnabled`, `loopStart` and
 `loopEnd` on the identified PCM SoundDefinition. Source-frame intervals are half-open. Omission
 means the full source and no loop. Explicit range requires `0 <= Start < End <= actual Frames`;
@@ -594,7 +616,8 @@ release even at a seam; it never resumes the post-loop source region. Zero relea
 Each occurrence owns its own age/release; there are no loop NoteOns. Disabled loop is exact legacy
 PCM for a full source. Existing root, velocity, channel conversion and independent voices remain.
 
-With crossfade omitted or zero, seam treatment remains the exact F1 gain dip inside the explicit loop: linear fade down to zero at the last loop
+With crossfade omitted or zero, seam treatment remains the exact F1 gain dip inside the explicit loop: linear fade down
+to zero at the last loop
 frame and fade up after each wrap. Fade width is `min(64, floor(sourceRate/1000), floor(loopLength/4))`
 source frames (at least one). The initial prefix does not receive the wrapped fade-in. This limits
 clicks without moving markers, changing PCM, shortening the loop period or creating a derived resource.
@@ -741,8 +764,8 @@ realtime paths are unchanged. No device, Song contribution, last-valid plan or l
 
 `PatternResampling` freezes canonical state/media roots on the document owner, prepares/renders on a
 worker and returns one bounded PCM16 WAV. It uses smooth-boundary OfflineSampler with fixed packets
-and never loops. The plan includes the full Pattern range and extends to each source's release/EOF
-(gated PCM) or EOF (drum one-shot), rather than indiscriminately appending the largest release to the
+and never loops. The plan includes the full Pattern range and extends to each source's release/EOF (gated PCM) or EOF
+(drum one-shot), rather than indiscriminately appending the largest release to the
 Pattern. Empty/rest-only content preserves its musical length. Hat choke is prepared within this
 finite occurrence; loop-only voice-capacity checks do not reject a finite render. Source/Gain/Mix/
 Output have no stateful tail or algorithmic latency, so neither preroll, arbitrary silence detection

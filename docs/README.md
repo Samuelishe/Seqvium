@@ -53,8 +53,8 @@ media and play after saving/reopening without the generator. See the
 
 ## Find and use sounds
 
-Browser also includes **Extensions**. Choose the optional **Found Sounds** pack and
-**Sounds** for three original short sounds, then preview/add them like other WAVs. **Disable**
+Browser also includes **Extensions**. Choose the optional **Found Sounds** pack and **Sounds** for three original short
+sounds, then preview/add them like other WAVs. **Disable**
 hides the pack from new uses while imported audio stays in the project; **Enable** restores it.
 The disclosure explains unavailable packages. There is no external plugin installer.
 
@@ -65,8 +65,8 @@ available next time; forgetting a location does not delete its files.
 
 Type a name such as `Kick` into search. Search covers the open folder; **Load next page** continues
 large folders without scanning your whole library. Select a file to see format, duration, sample
-rate, channels and its real waveform. Press Space/Enter or the preview triangle to listen. Optional
-**Auto preview** plays each new selection; Stop/Escape ends it. If music is playing, stop transport
+rate, channels and its real waveform. Press Space/Enter or the preview triangle to listen. Optional **Auto preview**
+plays each new selection; Stop/Escape ends it. If music is playing, stop transport
 explicitly before solo preview. Browsing/listening never imports audio or consumes Undo.
 
 Drag a WAV into **Channel Rack** to create an empty sampler channel, or choose **+ Rack** for the
@@ -82,6 +82,20 @@ does not change earlier instruments. Save and Save As retain project-owned media
 the project's `.seqvium.media` directory beside the project file.
 
 ## Edit a WAV instrument
+
+To build a multisample instrument, choose **Add WAVs…** in Sound Editor. Known verified Root notes
+are prefilled; assign unknown roots explicitly. Auto map places boundaries halfway between distinct
+roots. Click a zone or choose its WAV, then drag the Root/Low/High handles or enter note names (C4 = MIDI 60). The
+overview and horizontal scrollbar navigate the map; the wheel zooms and
+Shift-wheel pans. The center button returns to the selected root. Smaller panes show fewer, larger
+keys. Free scrolling stays where you put it until a new source selection needs to be revealed.
+
+The source menu contains Auto map and Remove WAV. Removing a source leaves a gap until you edit
+the neighbouring boundaries or run Auto map. Each selected WAV has its own waveform, Source range,
+Sustain loop and Crossfade; exact source-frame endpoints are in **Source range**. Full source names
+and shared-edit scope remain available in tooltips. All sources are saved as managed project media.
+Velocity layers and round-robin are not available. Whole-instrument Replace WAV clears the map;
+Undo restores it.
 
 Open the channel menu's **Sound Editor**, or double-click its Source node. Drag the upper Start/End
 flags to select what plays. Enable **Sustain loop** and set the lower Loop Start/End flags for long
@@ -129,7 +143,8 @@ Windows prevents Explorer from dropping files into an administrator process.
    unfinished gestures; Ctrl+Z/Y undo/redo completed edits.
 3. Use **Slice** and click inside a clip, or **Split at cursor**. Splitting preserves the original
    fade envelope and source continuity. Set repeats to one before splitting. **Repeats** repeats the
-   selected source range at its current local stretch; it does not follow BPM. Ctrl+D duplicates the selected audio group.
+   selected source range at its current local stretch; it does not follow BPM. Ctrl+D duplicates the selected audio
+   group.
 4. Clip properties choose the shared source's Mixer route or create an explicit channel. Copies share
    this route. Playlist track Mute/Solo gates occurrences, while Mixer Mute/Solo affects routed audio.
 5. To change duration while keeping pitch, open clip properties and set **Time stretch**:
@@ -164,8 +179,8 @@ opens it; the left Rack icon or **Panes** menu reopens it. You can begin without
    Snare blends body and snappy noise; Clap spreads bursts; Tom exposes pitch drop and resonance.
    Rotate dials clockwise to increase and counterclockwise to decrease; Shift adjusts finely.
    Drag envelope points or enter exact values; each completed adjustment is one Undo and plays a
-   quiet hit when music is stopped. The large **▶** repeats the selected note/velocity immediately;
-   **■** beside it cuts the sample. The small save/open buttons exchange custom
+   quiet hit when music is stopped. The large **▶** repeats the selected note/velocity immediately; **■** beside it cuts
+   the sample. The small save/open buttons exchange custom
    `.seqdrum` sound presets. Linked hats cut each other; switch **Hat choke** off for independent tails.
    Double-click the channel name or use **… → Open sound editor** to return. **Add sound** or a dropped
    WAV adds a sample channel. Sources mix automatically; rhythm stays in Rack.
@@ -283,8 +298,8 @@ Root Pitch stays unchanged. Check source tuning and Mixer trim when the new reco
    musical material and shifts later music. The context menu selects its clips, loops it or removes
    only the label. A crossing clip blocks restructuring with its name/track and **Show crossing clip**;
    adjust the range or explicitly split audio, then retry. Every accepted edit is one Undo.
-9. Shared clips show **≋**. Their Rack/Piano edits affect the shared Pattern. Select one clip and choose
-   **Make variation** for a fill or altered phrase: it opens an independent Pattern target in its editor,
+9. Shared clips show **≋**. Their Rack/Piano edits affect the shared Pattern. Select one clip and choose **Make
+   variation** for a fill or altered phrase: it opens an independent Pattern target in its editor,
    with **↗** ancestry and its own notes/processing. Instruments and Mixer routes remain shared.
    Rename it and edit through Piano Roll; other uses retain their original notes. Copying that variation
    shares its new Pattern. A clip's internal repeats still use one Pattern; separate the desired

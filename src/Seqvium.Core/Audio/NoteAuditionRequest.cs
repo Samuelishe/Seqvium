@@ -12,6 +12,7 @@ public sealed class NoteAuditionRequest : IDisposable
     private readonly decimal _root, _pitch, _intensity;
     private readonly bool _held;
     private readonly Id<SoundDefinition>? _sound;
+    private readonly Id<SamplerZone>? _previewZone;
     private readonly long _generation, _authority;
     private PreparedSampler? _plan;
     private bool _started, _ended, _reserved;
@@ -45,9 +46,14 @@ public sealed class NoteAuditionRequest : IDisposable
             {
                 cancellation.ThrowIfCancellationRequested();
                 var sound = _sound is { } id ? _frozen.Current.State.Sounds.Single(s => s.Id == id) : null;
+                if (sound is not null && _previewZone is { } zoneId)
+                    sound = SamplerKeymap.Source(sound, SamplerKeymap.Zones(sound).Single(z => z.Id == zoneId));
                 if (sound is not null && SynthVoice.Supports(sound))
                     return SamplerPreparation.PrepareSynthAudition(sound, _consumer.SampleRate, _consumer.Channels,
                         _pitch, _intensity, _held);
+                if (sound?.Algorithm == PcmSampler.Algorithm)
+                    sound = SamplerKeymap.Select(sound, _pitch) ??
+                            throw new ArgumentException("No sample on this key.");
                 using var pcm = sound is null ? ProjectMedia.Decode(_frozen, _resource)
                     : sound.Algorithm == PcmSampler.Algorithm ? ProjectMedia.Decode(_frozen, sound.ResourceIds.Single())
                     : DrumVoice.Render(sound, _consumer.SampleRate, _pitch, cancellation);
@@ -89,6 +95,12 @@ public sealed class NoteAuditionRequest : IDisposable
         if (result == SamplerPublication.Accepted) _consumer.StartPrepared(_authority);
         return result;
     }
+
+    public NoteAuditionRequest(RealtimeSampler consumer, ProjectDocument document, Id<SoundDefinition> soundId,
+        Id<SamplerZone> zoneId, decimal intensity) : this(consumer, document, soundId,
+        SamplerKeymap.Zones(document.Current.State.Sounds.Single(s => s.Id == soundId)).Single(z => z.Id == zoneId)
+            .RootPitch,
+        intensity, held: true) => _previewZone = zoneId;
 
     private void Release()
     {

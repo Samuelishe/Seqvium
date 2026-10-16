@@ -238,8 +238,9 @@ belongs to [sample workflow](SAMPLE_WORKFLOW.md#seq-r9-source-root-pitch).
 Keyboard and enabled edit audition use a quiet, bounded solo source voice while transport is stopped,
 not downstream graph monitoring. Stop/Panic/Play/close withdraw and join that preview. Creation/Open stay silent.
 
-Scale/quantize/humanization, automation/controller curves, MIDI/QWERTY recording, MPE, multisample
-mapping and independent simultaneous Piano editor targets remain [follow-ups](ROADMAP.md#seq-r9--piano-roll).
+Scale/quantize/humanization, Piano-local controller curves, MIDI/QWERTY recording, MPE and independent
+simultaneous Piano editor targets remain [follow-ups](ROADMAP.md#seq-r9--piano-roll). Pitch-only
+multisample mapping belongs to the shared Source Editor below; Playlist automation is separate.
 
 ## Playlist parameter automation
 
@@ -295,7 +296,8 @@ dense supported piano parts are not limited to one active voice per channel.
 
 Playlist is one retained editor of canonical ArrangementClips, with shared source-placement references,
 absolute tick positions, a fixed lane slot and whole-Pattern repeat count. Notes/resources/graphs are
-not copied by placement, duplication or Ctrl-drag. Double-click/Enter opens the source Pattern's preferred editor; subsequent
+not copied by placement, duplication or Ctrl-drag. Double-click/Enter opens the source Pattern's preferred editor;
+subsequent
 Pattern edits affect every referring clip. A placement's source graph applies to all its song uses.
 Same-lane overlaps are legal and audible; tracks are not instrument or Mixer ownership.
 
@@ -532,6 +534,35 @@ not a live meter. Compact panes reflow audition/knobs and scroll locally, keepin
 reachable. [Workspace](WORKSPACE.md#drum-voice-editor-placement) owns retained sizing.
 
 ## Sampler Source Editor
+
+Key Mapping adds WAVs to this same instrument in one batch/Undo action. A compact source selector,
+full-map overview and adaptive working keyboard handle dozens of sources without a growing
+table. The scrollbar/overview move left or right; wheel zooms, Shift-wheel pans, and the center action
+returns to the selected root. Source selection reveals its root when outside the viewport. Resize
+keeps a previously visible selected root in view; ordinary observation never undoes deliberate panning.
+Compact panes show fewer large keys. A single instrument deck joins source identity and zone values
+above the keyboard; wide panes put them in one row. The selector shows root and concise source name, with full name and
+shared-edit scope on inspection. Zone management is grouped in its menu; preview belongs to waveform.
+Black keys are shorter than white keys in the normal 2+3 pattern. The focused keyboard's arrows
+select neighbouring zones; these are local controls, not new application shortcuts.
+
+Click a zone or choose its source to inspect that WAV. Drag selected Low/High handles or the Root
+marker; exact fields accept musical note names or MIDI numbers (C4 = 60). Bounds are inclusive,
+cannot overlap and may leave silent gaps. Capture/Escape/stale generation cancels a proposal; a
+release commits once. Auto map explicitly redistributes all ranges by confirmed Root Note.
+Import reviews roots in a compact source selector; unknown roots are blank and block acceptance
+until assigned. Distinct roots are required for auto map. No filename/audio pitch guessing occurs.
+
+Selected WAV range/loop/crossfade edits belong only to that zone. Source range discloses exact
+frame endpoints; Sustain Loop and Crossfade remain separately visible below the waveform.
+Sustain Loop uses a labeled loop toggle, with distinct checked/focus states, rather than a detached checkbox.
+Hold/release previews its source
+at its own root, even if that root lies outside its manual key range. Removing a zone leaves the
+other bounds unchanged; Auto map can close the resulting gap. At least one source remains.
+The old Piano source-root field is disabled for maps; tune their roots in Sound Editor.
+Whole-instrument Replace WAV (including explicit Sample Lab replacement) clears the map; Undo restores
+it. Live edits preserve unaffected voices; changed source/step/range voices retire without switching
+to another WAV or retriggering. Velocity layers, round-robin and articulation switching are absent.
 
 Channel Rack's Sound Editor menu and a supported bound Source node's double-click/Open Editor target
 the existing singleton Node Editor. A PCM sound opens the waveform editor; opening alone never edits

@@ -64,6 +64,22 @@ separately in input-audio.json; these do not establish subjective loop quality o
 Outputs remain ignored and governed by existing retention. The
 [report](../../docs/experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) records actual outcomes and limitations.
 
+## Multisample Key Mapping
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll sampler-keymap "$PWD/.artifacts/sampler-keymap" 'C:/path/to/Seqvium Sample Library' 'C:/path/to/local-comparisons' native audio
+```
+
+The optional local library must contain verified piano catalog roots. No personal WAV is a build/test
+dependency or distributed fixture. This route exercises batch import/history, mapped source selection,
+range isolation, key boundary capture/cancel, 26-zone density, adaptive key widths/reveal/free pan,
+RU/EN Dark/Light ordinary/reduced fields and source selector states, unknown-root refusal and portable
+Save/Open. The same short acceptance fragment is exported to single/mapped PCM16 WAVs in the supplied
+delivery directory. It is not a new song. Optional native Root/boundary input and physical preview/
+Pattern output have independent results. Run `sampler-editor` for the legacy waveform/loop/crossfade
+surface and empty-state matrix. [Report](../../docs/experiments/SEQ-SAMPLER-KEYMAP-F1_REPORT.md) owns
+actual results/limits; ignored GUI evidence uses the existing retention policy.
+
 ## Musical Reverb
 
 ```powershell

@@ -89,11 +89,30 @@ public sealed partial class ProjectEdit
                     "Only a first-party PCM sampler can accept this configuration.");
                 return sound with
                 {
-                    ResourceIds = [resourceId], Parameters = sound.Parameters.RemoveRange(SamplerPlayback.Keys)
+                    SamplerZones = [], ResourceIds = [resourceId], Parameters = sound.Parameters
+                        .RemoveRange(SamplerPlayback.Keys)
                         .SetItem("rootPitch", rootPitch).SetItem("releaseMilliseconds", releaseMilliseconds)
                 };
             })
         };
+    }
+
+    public void SetSamplerZones(Id<SoundDefinition> soundId, ImmutableArray<SamplerZone> zones)
+    {
+        CheckActive();
+        var sound = State.Sounds.Single(s => s.Id == soundId);
+        ProjectValidation.Require(SamplerPlayback.Supports(sound), "Unsupported sampler key map.");
+        var desired = sound with
+        {
+            SamplerZones = zones, ResourceIds = [.. zones.Select(z => z.ResourceId).Distinct()],
+            Parameters = sound.Parameters.RemoveRange(SamplerPlayback.Keys)
+        };
+        ProjectValidation.Require(!zones.IsDefaultOrEmpty && zones.All(z => z.AdditionalData.IsEmpty),
+            "At least one understood zone is required.");
+        SamplerKeymap.Validate(desired);
+        if (ProjectDocument.HasSameContent(State,
+                State with { Sounds = Replace(State.Sounds, s => s.Id == soundId, _ => desired) })) return;
+        State = State with { Sounds = Replace(State.Sounds, s => s.Id == soundId, _ => desired) };
     }
 
     public Id<InstrumentGroup> AddGroup(string name, params Id<SoundDefinition>[] soundIds)

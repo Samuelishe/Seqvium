@@ -29,7 +29,8 @@ public sealed class WavImport : IDisposable
     {
         _document = document;
         _name = name;
-        _editName = editName; _provenance = provenance;
+        _editName = editName;
+        _provenance = provenance;
         _target = target;
         _root = root;
         _rootPitch = rootPitch;
@@ -137,6 +138,28 @@ public sealed class WavImport : IDisposable
         }
     }
 
+    internal void ValidateCandidate(CancellationToken cancellation)
+    {
+        if (_finished || _locator is null) throw new InvalidOperationException("Import is not prepared.");
+        CheckCancellation(cancellation);
+        _document.CheckAvailable();
+        if (_document.LifecycleId != _lifecycle || _document.Generation != _generation ||
+            _document.Current.State.Id != _project) throw new InvalidOperationException("Stale key map import.");
+        using var pcm = ProjectMedia.DecodePath(ProjectMedia.PathFor(_root, _locator), _locator);
+    }
+
+    internal Id<ResourceDescriptor> AddCandidate(ProjectEdit edit) =>
+        edit.AddResource(_name, _locator ?? throw new InvalidOperationException("Import is not prepared."),
+            _provenance);
+
+    internal void CompleteCandidate()
+    {
+        _accepted = true;
+        _finished = true;
+    }
+
+    internal void CheckCandidateCancellation(CancellationToken cancellation) => CheckCancellation(cancellation);
+
     public void Dispose()
     {
         if (!_accepted && _locator is { } locator)
@@ -185,8 +208,10 @@ public static partial class ProjectMedia
             !string.IsNullOrWhiteSpace(name) && name.Length <= ProjectValidation.MaximumTextLength,
             "Invalid media name.");
         PcmSampler.ValidateConfiguration(rootPitch, releaseMilliseconds);
-        ProjectValidation.Require(!string.IsNullOrWhiteSpace(editName) && editName.Length <= ProjectValidation.MaximumTextLength &&
-            !string.IsNullOrWhiteSpace(provenance) && provenance.Length <= ProjectValidation.MaximumTextLength,
+        ProjectValidation.Require(!string.IsNullOrWhiteSpace(editName) &&
+                                  editName.Length <= ProjectValidation.MaximumTextLength &&
+                                  !string.IsNullOrWhiteSpace(provenance) &&
+                                  provenance.Length <= ProjectValidation.MaximumTextLength,
             "Invalid media acceptance description.");
         if (target is { } id)
             ProjectValidation.Require(document.Current.State.Sounds.Any(sound => sound.Id == id &&
@@ -201,7 +226,8 @@ public static partial class ProjectMedia
             document.MediaRoots.Add(document.UnnamedMediaRoot);
         }
 
-        return new(document, name, target, rootPitch, releaseMilliseconds, document.UnnamedMediaRoot, editName, provenance);
+        return new(document, name, target, rootPitch, releaseMilliseconds, document.UnnamedMediaRoot, editName,
+            provenance);
     }
 
     public static DecodedPcm Decode(ProjectDocument document, Id<ResourceDescriptor> resourceId)

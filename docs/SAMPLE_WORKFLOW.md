@@ -11,13 +11,14 @@ or final resource file format.
 
 **Create sample** in a Pattern navigator card's context menu renders that identified item-local
 Pattern occurrence once, at source time zero and the captured project tempo. It includes every
-supported PCM sampler, drum or subtractive-synth Part and its Source/Gain/Mix/Output paths, including an intentional local
+supported PCM sampler, drum or subtractive-synth Part and its Source/Gain/Mix/Output paths, including an intentional
+local
 submix. It stops before Mixer channels, buses, sends and Master. Navigator cards identify explicit
 attachments; no arbitrary Playlist placement, Song, selection or currently audible mix is inherited.
 The original Pattern, notes, sounds, graph, placements and routes remain editable and unchanged.
 
-The result becomes a separately named managed project sample and independent sampler sound in one
-**Create sample from Pattern** Undo transaction. Browser opens Project resources with the result
+The result becomes a separately named managed project sample and independent sampler sound in one **Create sample from
+Pattern** Undo transaction. Browser opens Project resources with the result
 selected and its waveform available. Its existing preview, + Rack, + Playlist and drag reuse apply;
 reuse creates its own musical edit and does not copy the resource or bake the old graph a second time.
 Repeated renders receive distinct resource identities/names. No automatic source replacement,
@@ -66,6 +67,19 @@ remain future capabilities, not an implicit universal render service.
 
 ## Instrument source range and sustain loop
 
+Multisample instruments use multiple managed WAVs in the same SoundDefinition, with confirmed Root
+Notes and key ranges. Batch import prepares durable WAV candidates off the GUI/audio threads and
+accepts the map/resources as one Undo edit; errors, cancellation and stale generations accept none.
+Optional exact-path/hash-verified catalog roots remain the known-root authority. Other roots require
+explicit assignment; source names and audio are not analysed for pitch. Existing per-WAV 16 MiB and
+aggregate prepared PCM limits remain. Local personal samples are verification inputs, not bundled
+resources. [Key Mapping UX](UX_CONTRACT.md#sampler-source-editor) owns the editor.
+
+R8 captures the selected Pattern's mapped sources through the same local Output before Mixer,
+including each zone's range/loop/crossfade and finite release. Its frozen request, managed acceptance,
+generation/lifecycle invalidation and joined teardown remain unchanged. It never follows the editor's
+currently selected WAV or live sounding state.
+
 Imported PCM instruments now expose a real waveform in the existing Source/Sound Editor. Range and
 loop belong to the shared SoundDefinition, independent of the WAV and of Playlist Audio Clip trim.
 See [Source Editor UX](UX_CONTRACT.md#sampler-source-editor). Replace WAV, including Sample Lab
@@ -73,7 +87,8 @@ replacement, resets source-specific range/loop/crossfade while retaining root/re
 tuning policy. Contextual Sample Lab audition hears the complete candidate, without applying stale
 original-source coordinates; accepting replacement follows the same reset.
 
-R8 reuses the extended sampler kernel, including F2 crossfade without changing loop period. A sustain loop is finite for object rendering: musical NoteOff
+R8 reuses the extended sampler kernel, including F2 crossfade without changing loop period. A sustain loop is finite for
+object rendering: musical NoteOff
 plus bounded release limits its lifetime even when source PCM would otherwise repeat indefinitely.
 The existing frozen request, local Output before Mixer, size/admission/cancellation/generation gates,
 joined teardown and managed acceptance/history are unchanged. No Song/Master capture is substituted.
@@ -125,8 +140,8 @@ Restoration prepares current canonical state; no launch snapshot is written back
 remain canonical. Drum Voice, Audio Clip targets and arbitrary future processors are outside V1 context.
 
 **Keep** imports a durable project sample without placement. **+ Rack** creates an independent channel
-in the captured current Rack, or a new Pattern with a native-pitch hit when none is selected.
-**+ Playlist** adds an Audio Clip at the cursor on lane 1. **Replace shared** explicitly updates the
+in the captured current Rack, or a new Pattern with a native-pitch hit when none is selected. **+ Playlist** adds an
+Audio Clip at the cursor on lane 1. **Replace shared** explicitly updates the
 captured PCM sound across its Patterns, retaining notes/root/release/graphs/Mixer assignment. V1 does
 not offer one-use detachment. Each acceptance uses existing managed WAV preparation plus one guarded
 document/Undo transaction; failure preserves canonical state. Acceptance does not remove history or
@@ -202,7 +217,8 @@ routed-drop and physical-output evidence from the foreground-refused native mous
 The later [cross-stage audit](experiments/SEQ-CROSS-STAGE-AUDIT_REPORT.md) adds guarded native row-origin
 drag and whitespace refusal, shortcut and held-selection evidence; broader folder-picker/native
 musical authoring acceptance remains separate. Inspection followed by preview currently decodes
-external audio twice; measured cost and a bounded follow-up are in [technical debt](TECH_DEBT.md#browser-selected-source-decode-cost).
+external audio twice; measured cost and a bounded follow-up are
+in [technical debt](TECH_DEBT.md#browser-selected-source-decode-cost).
 
 ## Playlist audio import
 
@@ -594,7 +610,8 @@ The first generator should be local/procedural and cover one or two bounded fami
 
 ## Intentional and lazy exploration
 
-The following accepted semantics include the bounded V1 above and wider future exploration. Start with sound: choose a supported family, generate, listen, explore a related variant,
+The following accepted semantics include the bounded V1 above and wider future exploration. Start with sound: choose a
+supported family, generate, listen, explore a related variant,
 and explicitly accept useful material. Detailed parameter knowledge is optional. Advanced controls
 appear progressively under [UX](UX_CONTRACT.md#sample-lab-exploration-feedback); final widgets/layout
 remain open. Generation is bounded asynchronous work outside realtime audio.

@@ -38,6 +38,14 @@ authoritative rather than an instruction to regenerate. No project format or ass
 
 ## PCM sampler editor ownership
 
+SEQ-SAMPLER-KEYMAP-F1 extends that same sound with identified per-source zones. SamplerKeymap selects
+a source during preparation; immutable PreparedNote retains its resource identity, pitch step and
+range. There is no second engine, graph node type or Mixer assignment per zone. SamplerMapImport
+borrows WavImport's durable candidates and rollback, then accepts every descriptor and the map in
+one generation-checked document transaction. Unknown roots are explicit Desktop proposals, never
+inferred musical data. The Source pane owns selected-zone/view state independently of canonical map
+intent; source inspection and captured edits retain target/generation checks.
+
 SEQ-SAMPLER-EDITOR-F1 adds source-frame playback intent to the existing identified sampler sound,
 interpreted by SamplerPlayback and compiled into PreparedNote. The immutable PCM/media owner remains
 unchanged. Source editor waveform observations reuse AudioWaveform, with retained immutable PCM only
@@ -83,7 +91,8 @@ them before New/Open/Close retires that document; application Close then retires
 The acceptance seam captures a Rack destination, validates lifecycle/generation and candidate identity,
 and commits through the existing managed WAV import inside the final synchronous session gate.
 The R6 adapter adds no UI or second save/Undo system. The Sample Lab surface and prepared audition
-above retain those owners; musical semantics remain with [Sample workflow](SAMPLE_WORKFLOW.md#r6-module-sources-and-candidate-boundary).
+above retain those owners; musical semantics remain
+with [Sample workflow](SAMPLE_WORKFLOW.md#r6-module-sources-and-candidate-boundary).
 
 ## Implemented Browser composition
 
@@ -162,7 +171,8 @@ gestures, context and immutable meter observations; prepared plans/runtime DSP/m
 Compatible control updates are owner-prepared, execution/authority-qualified and consumed at an audio
 packet boundary without rebuilding media or voices. Topology changes use existing prepared publication
 and retain compatible time/voice state. [Audio](AUDIO_ENGINE.md#project-mixer-execution) owns reset,
-memory, bounded reachable Delay/Reverb tail extension, admitted Reverb banks and constant-time line ownership transfer; [format](PROJECT_FORMAT.md#mixer-persistence) owns the reader gate.
+memory, bounded reachable Delay/Reverb tail extension, admitted Reverb banks and constant-time line ownership
+transfer; [format](PROJECT_FORMAT.md#mixer-persistence) owns the reader gate.
 Fast Mixer compilation refusals use the coordinator's same blocker/last-valid policy as worker
 preparation. They never escape the already accepted document edit/Undo notification. Temporary
 Sample Lab plan substitution preserves the original source completion and explicit hard-stop policy,
@@ -440,7 +450,8 @@ prepared plans, fixed voice slots and transport. SynthVoice owns validated versi
 factory snapshots and worker-prepared coefficients; each OfflineSampler voice owns independent
 phase/filter state, never serialized. SynthPaneContent edits an explicit bound Source through
 generation-checked workflow commands in the retained Node Editor. Sharing, independent copies,
-history and portable Save/Open retain existing owners. [Audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1)
+history and portable Save/Open retain existing
+owners. [Audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1)
 specifies execution, budgets and cold-seek limits.
 
 The seven-voice Drum family is a built-in SoundDefinition capability, separate from the removable R7 creative generator.

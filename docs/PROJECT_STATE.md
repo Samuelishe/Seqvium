@@ -7,7 +7,20 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.15.0000**, **SEQ-AUTOMATION-F1 — Musical Parameter Automation**.
+Product alpha **0.1.16.0000**, **SEQ-SAMPLER-KEYMAP-F1 — Multisample Instruments**.
+The existing PCM Source Editor adds managed multi-WAV import, confirmed per-source Root notes,
+automatic/manual key ranges and independent source range/loop/crossfade. Adaptive large keys,
+quiet full-map overview, free horizontal navigation and shared root/zone/key emphasis support
+compact panels and dozens of sources. A recessed instrument deck joins source/zone identity above
+bevelled keys, with a one/two-row adaptive header and labeled loop switch. Source names retain theme contrast and
+full-name inspection;
+zone actions, preview and source properties have distinct groups. No additional engine or track.
+Reader 1.13 gates nonempty maps; legacy single-source PCM, notes/graphs/Mixer, history, portable
+media and finite R8 remain shared. Changed live source/step/range voices retire without retrigger;
+unaffected voices continue. Velocity layers, round-robin and articulations remain future scope.
+[Report](experiments/SEQ-SAMPLER-KEYMAP-F1_REPORT.md) owns checks, local comparative WAVs and limits.
+
+Previous **0.1.15.0000**, **SEQ-AUTOMATION-F1 — Musical Parameter Automation**.
 Playlist has dedicated synth Cutoff and Mixer channel/bus Volume lanes, captured point editing,
 exact musical position/value/transition, bypass and the existing Undo/Save/Open. Independent canonical
 envelopes replace effective Song values while preserving base settings; stable targets remain
@@ -27,7 +40,8 @@ sounds, exact/drawn editing, held/released preview, history and portable Save/Op
 Reader 1.11 gates only synth-bearing documents. Compatible live edits retain time/unrelated voices;
 changed synth voices retire without retrigger. Seek uses a cold filter. Numerical correctness,
 physical delivery and owner aesthetic/acoustic acceptance remain distinct under
-[the report](experiments/SEQ-SYNTH-F1_REPORT.md). Private comparative research stays local. The same-checkpoint UI correction removes service text/
+[the report](experiments/SEQ-SYNTH-F1_REPORT.md). Private comparative research stays local. The same-checkpoint UI
+correction removes service text/
 nested frames, keeps oscillators paired and pins an aligned icon preview; owner aesthetic acceptance
 remains pending.
 
@@ -164,7 +178,8 @@ The owner's follow-up also removes permanent instructional/technical clutter acr
 working surfaces. Sample Lab/Browser/Extensions lead with short actions and sound; redundant Gain/Mixer
 readouts and Piano/source-property explanations are reduced or disclosed. AGENTS/UI design require
 actual reference-image inspection and a density gate before future UI edits. Reader 1.5 covers
-sections/ancestry; reader 1.6 adds explicit local stretch, reader 1.7 gates non-default Delay and reader 1.8 gates Reverb. [Versioning](VERSIONING.md) owns identity.
+sections/ancestry; reader 1.6 adds explicit local stretch, reader 1.7 gates non-default Delay and reader 1.8 gates
+Reverb. [Versioning](VERSIONING.md) owns identity.
 No release, staging, commit, push or tag is performed. R1–R3 remain complete in their bounded scopes.
 R4 remains partial: F1 accepted-ready, F2 pressure acceptance unresolved, F3-A conditionally accepted,
 F3-B owner interaction/visual review pending. R5 Rack/music, R9 Piano, bounded R10 Playlist/audio and
@@ -240,13 +255,31 @@ and [architecture](ARCHITECTURE.md#song-structure-and-explicit-variations) own t
 
 Mixer retains explicit sound assignments, channels/buses/Master, level/trim/stereo balance,
 Mute/Solo, measured levels/reduction, acyclic output/pre/post sends, high-pass/three-band EQ,
-linked compression, musical Delay, algorithmic Reverb and optional sample-peak protection. Audio Clip contributions use this same
+linked compression, musical Delay, algorithmic Reverb and optional sample-peak protection. Audio Clip contributions use
+this same
 processing, not a parallel mixer. Compatible prepared changes retain time/unrelated voices.
 [Design system](DESIGN_SYSTEM.md) and [UI design](UI_DESIGN.md) own compact shared visual norms.
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-AUTOMATION-F1, 2026-10-16**. Full Release solution build: zero
+Latest L0/L1/L2/L3: **SEQ-SAMPLER-KEYMAP-F1, 2026-10-16**. Full Release solution build has zero
+warnings/errors (**9.33 s**); **1739/1739** tests pass, zero skips, one thread (**51.847 s CLI**).
+Twenty-seven added cases cover every key/fractional boundary, rate/channel/source/step oracles,
+mapped loops/chords, 32/33-voice limits, packet/realtime parity, selected primed allocation,
+independent ranges, frozen/live media identity, R8, legacy PCM, reader/history/portable media,
+unknown state and cancelled/stale batch import. Final focused 95/95 (3.559 s) includes mapping,
+Automation, design aliases and empty Node Editor. The report retains two intervening failed runs:
+seven eager-icon construction failures (fixed) and one unexplained Automation allocation observation;
+the unchanged latter assertion passes focused and final full verification, without a pressure claim.
+Actual RU/EN × Dark/Light ordinary/reduced source windows, 64 aligned fields, selector popup/disabled
+contrast, adaptive root reveal/free pan, exact/group containment, unknown-root review and Save/Open
+pass. The shared component catalog also passes after source popup states adopt host theme roles.
+Guarded native Root/boundary and UR12 44.1-kHz preview/Pattern pass separately. The legacy
+waveform/loop/crossfade/empty-state route passes, with its final native input foreground-refused.
+Five verified local piano sources and a 26-zone density fixture are exercised; no external audio is
+added to Git. Two local 4.08-second PCM16 comparisons remain for owner listening.
+
+Previous L0/L1/L2/L3: **SEQ-AUTOMATION-F1, 2026-10-16**. Full Release solution build: zero
 warnings/errors, **14.41 s**; **1712/1712 tests**, zero skips, one thread, **67.684 s CLI**.
 Twenty-two new cases cover held cutoff/fader signal oracles, rate/packet/realtime/offline/Seek/loop,
 history/portable reader 1.12, stable unresolved targets, stale/cancelled preparation and primed
@@ -257,8 +290,8 @@ WAV examples remain for listening. The [report](experiments/SEQ-AUTOMATION-F1_RE
 initial failures, corrections and explicit acoustic/pressure/platform limits.
 
 Previous L0/L1/L2/L3: **SEQ-SYNTH-F1, 2026-10-16**. Sequential single-worker full Release solution
-build: zero warnings/errors, **45.55 s**. Full Release **1690/1690**, zero skips, one test thread,
-**79.133 s CLI**. The 31 focused synth cases pass (**4.503 s**) before L3: frequency/fractional pitch,
+build: zero warnings/errors, **45.55 s**. Full Release **1690/1690**, zero skips, one test thread, **79.133 s CLI**. The
+31 focused synth cases pass (**4.503 s**) before L3: frequency/fractional pitch,
 corrected oscillator spectrum, ADSR/filter extremes, mix/velocity/32 voices, packet/rate parity,
 loop release, live unrelated-voice preservation, Stop/Panic/cold seek, zero measured warmed callback
 allocations, R8 release/Mixer exclusion/overload, Song Delay/Reverb, history/reader gates/copies and
@@ -283,8 +316,8 @@ factory WAVs remain local for listening. Owner aesthetic/acoustic, stress, wider
 pressure closure do not follow. The report owns final review receipts and before/after evidence.
 
 Prior L0/L1/L2/L3: **SEQ-SAMPLER-LOOP-QUALITY-F2, 2026-10-16**. Final production Release solution
-build: zero warnings/errors, **36.06 s**. Full Release **1655/1655**, zero skips, one thread,
-**75.180 s CLI**. Final test-only rate/crossfade parity/Seek expansion adds four cases: affected
+build: zero warnings/errors, **36.06 s**. Full Release **1655/1655**, zero skips, one thread, **75.180 s CLI**. Final
+test-only rate/crossfade parity/Seek expansion adds four cases: affected
 Release rebuild **3.04 s**, focused sampler **134/134**, **3.896 s**. No second full run after
 that test-only extension; production is unchanged after green L3. A final width-only held-note
 publication refinement passes **134/134** again (**3.819 s**, zero-warning rebuild **7.20 s**).
@@ -302,7 +335,8 @@ The [report](experiments/SEQ-SAMPLER-LOOP-QUALITY-F2_REPORT.md) records first-ru
 the 124.664-s full-test overrun, final checks and retained evidence. L3 cadence resets here.
 
 Prior L0/L1/L2/L3: **SEQ-SAMPLER-EDITOR-F1, 2026-10-16**. Full Release solution build has
-zero warnings/errors (8.65 s); **1593/1593 tests pass**, zero skips, one thread (**70.629 s CLI**). The 68 added cases cover independent PCM
+zero warnings/errors (8.65 s); **1593/1593 tests pass**, zero skips, one thread (**70.629 s CLI**). The 68 added cases
+cover independent PCM
 range/loop/pitch/seam/release oracles, channel/rate/packet parity, polyphony/capacity, live source
 retirement/unrelated voice age, Pattern loop/Stop/Panic/Seek, R8 versus finite Song Delay/Reverb,
 unknown/stale refusal, replacement, host preview joins, history and portable media. Selected warm
@@ -314,8 +348,8 @@ field alignments. Physical Samsung USB C Earphones 48-kHz stereo preview holds p
 releases and joins on Stop without musical edits. R8 renders the two-second note plus 80-ms release
 to 99,840 frames. Earlier native Start/Apply passes with routed setup; final expanded native drag
 attempt is foreground/coverage-refused. No subjective seam/stress/platform/DPI acceptance follows.
-A final bounded natural-EOF audition schedule refinement passes 112/112 sampler/Piano/metadata checks
-(17.903 s) with a zero-warning affected Release build (40.05 s; build servers disabled). This focused
+A final bounded natural-EOF audition schedule refinement passes 112/112 sampler/Piano/metadata checks (17.903 s) with a
+zero-warning affected Release build (40.05 s; build servers disabled). This focused
 follow-up reuses the preceding L3. The [report](experiments/SEQ-SAMPLER-EDITOR-F1_REPORT.md) records
 attempts, results and retained evidence.
 
@@ -374,11 +408,11 @@ under live Mix. Earlier foreground refusals and harness corrections are recorded
 No subjective listening, full native authoring, stress/DPI/other-platform or R4-F2 closure follows.
 
 Prior L0/L1/L2/L3: **SEQ-R10-STRETCH-F1, 2026-10-16**. Full Release solution build has zero
-warnings/errors; **1450/1450 tests pass**, zero skips, one thread (**60.159 s** CLI summary). The
-**23 new stretch cases pass** (4.702 s); the earlier 162-case related audio/persistence/metadata
+warnings/errors; **1450/1450 tests pass**, zero skips, one thread (**60.159 s** CLI summary). The **23 new stretch cases
+pass** (4.702 s); the earlier 162-case related audio/persistence/metadata
 subset passes (22.012 s), followed by the additional live Pattern-continuation case in L3.
-Final source-identity and right-edge-trim refinement passes **48/48** focused stretch/AudioClip cases
-(4.932 s), with a zero-warning affected Release build (6.56 s) and captured left/right trim GUI checks.
+Final source-identity and right-edge-trim refinement passes **48/48** focused stretch/AudioClip cases (4.932 s), with a
+zero-warning affected Release build (6.56 s) and captured left/right trim GUI checks.
 Tests establish duration/fundamental/stereo/endpoints, exact realtime/offline PCM, production PCM16
 export, split/fades/repeats/tempo/copy independence, bounded allocation/cancel/stale/closed publication,
 zero callback allocations in the selected seek/loop check, history and portable media.
@@ -392,9 +426,9 @@ summary is explicitly superseded by strict EOF/fault checks and the successful r
 listening, full native musical authoring, stress, DPI or other-platform acceptance follows.
 The [report](experiments/SEQ-R10-STRETCH-F1_REPORT.md) retains methods, attempts and limitations.
 
-Prior L0/L1/L2/L3: **SEQ-R8, 2026-10-16**. Full Release solution build has zero warnings/errors;
-**1427/1427 tests pass**, zero skips, one thread (**70.769 s** final CLI summary). New focused checks pass
-**27/27** (5.133 s): independent two-instrument local signal/release oracles, seven drum tails,
+Prior L0/L1/L2/L3: **SEQ-R8, 2026-10-16**. Full Release solution build has zero warnings/errors; **1427/1427 tests
+pass**, zero skips, one thread (**70.769 s** final CLI summary). New focused checks pass **27/27** (5.133 s):
+independent two-instrument local signal/release oracles, seven drum tails,
 mono/stereo and 44.1/48-kHz source conversion, Mixer exclusion, frozen state, packet cancellation,
 unsupported/missing dependencies, overload/size refusal, stale late completion, lifecycle joins,
 one managed Undo/Redo, Rack/Playlist reuse and relocation after original media removal.
@@ -408,8 +442,8 @@ deferred notifications. [R8 report](experiments/SEQ-R8_REPORT.md) records eviden
 selection races, final GUI refinement and limits. Physical delivery is not subjective listening,
 pressure/DPI/platform/aesthetic acceptance. Existing R4 pressure gaps remain open.
 
-Prior L0/L1/L2: **SEQ-CONTROL-INPUT, 2026-10-15**. Affected Release builds have zero warnings/errors;
-**265/265 focused tests pass**, zero skips, one thread (**27.285 s**). This includes drum commit/Undo,
+Prior L0/L1/L2: **SEQ-CONTROL-INPUT, 2026-10-15**. Affected Release builds have zero warnings/errors; **265/265 focused
+tests pass**, zero skips, one thread (**27.285 s**). This includes drum commit/Undo,
 burst coalescing, Stop/Panic/close, ready retrigger authority, long-sample Stop/restart and Piano audition
 ownership. Final aligned-label refinement additionally passes **97/97 focused presentation/editor tests**
 (16.492 s), localized ordinary/reduced layout/precision fixtures with native focus/Escape/Undo and
@@ -418,9 +452,11 @@ pitch-only key read in amplitude capture. The [report](experiments/SEQ-CONTROL-I
 native mouse/output checks, routed all-owner coverage, responsive layout/precision fixtures and remaining
 foreground/input-delivery limits. This is focused verification, not a new L3 or pressure/acoustic acceptance.
 
-Prior L3: **SEQ-SETTINGS-F1, 2026-10-15**. Full Release solution build has zero warnings/errors;
-**1384/1384 tests pass**, zero skips, one thread (**99.262 s** CLI summary). Final minimum-size/custom-reset/theme-affordance refinement reuses that L3 with **105/105 focused
-tests** (17.642 s), zero skips and a zero-warning affected Release build. Real production windows pass RU/EN × Dark/Light at
+Prior L3: **SEQ-SETTINGS-F1, 2026-10-15**. Full Release solution build has zero warnings/errors; **1384/1384 tests
+pass**, zero skips, one thread (**99.262 s** CLI summary). Final minimum-size/custom-reset/theme-affordance refinement
+reuses that L3 with **105/105 focused
+tests** (17.642 s), zero skips and a zero-warning affected Release build. Real production windows pass RU/EN ×
+Dark/Light at
 720×570 and 500×340 settings, with main window down to 640×480, search/capture/conflict/default/reset,
 file reload, real binding dispatch/old-key removal, text-local history, About and explicit quick-theme
 selection. The shared component catalog passes. A narrow Settings-source corpus exception additionally passes
@@ -432,7 +468,8 @@ DPI, accessibility certification or owner aesthetic acceptance follows. The
 
 Prior L0/L1/L2: **SEQ-LEFT-PANELS, 2026-10-15**. Affected Release test-project build and its
 production/tool references: zero warnings/errors; **260/260 focused tests** pass, zero skips,
-one thread (19.270 s), including 75 ProjectStats cases. Eight added layout cases cover independent usable/clipped widths,
+one thread (19.270 s), including 75 ProjectStats cases. Eight added layout cases cover independent usable/clipped
+widths,
 malformed-file
 preservation and Browser separation from musical docks/empty layout. Actual Windows mouse checks
 cover both boundaries, independent collapse/reopen, neighbour-width stability and ordered displacement
@@ -446,8 +483,8 @@ This is focused verification, not L3, physical audio, other-platform/DPI or subj
 Commands, observations and bounded native refusals belong to the
 [work log](archive/WORK_LOG.md#seq-left-panels--2026-10-15).
 
-Earlier L3: **SEQ-R7-SAMPLE-LAB-V1, 2026-10-15**. Full Release solution build: zero warnings/errors;
-**1341/1341 tests pass**, zero skips, one test thread (**62.326 s** CLI summary). Numerical tests cover
+Earlier L3: **SEQ-R7-SAMPLE-LAB-V1, 2026-10-15**. Full Release solution build: zero warnings/errors; **1341/1341 tests
+pass**, zero skips, one test thread (**62.326 s** CLI summary). Numerical tests cover
 finite/transient/decay/spectral differences, actual reference/lock behavior, exact processed-audition
 versus accepted-PCM agreement and unrelated voice/time continuation. Host tests cover cancellation,
 late results, lifecycle, captured/stale targets and managed history/portability.
@@ -465,8 +502,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected automation L3 covers shared
-voice/Mixer/Song execution, independent R8/base parameters, reader 1.12 and existing regressions.
+Completed repository tasks since this L3: **0**. This risk-selected key-map L3 covers shared
+voice/Mixer/Song execution, independent R8, managed media, reader 1.13 and existing regressions.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
 subjective acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**
@@ -511,7 +548,7 @@ Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
-The bounded Automation F1 baseline is implemented. Owner listening/aesthetic review and broader pressure/
+The bounded Multisample Key Mapping F1 baseline is implemented. Owner listening/aesthetic review and broader pressure/
 platform acceptance remain separate; later modulation or synthesis families need their own scope.
 
 Finish wider Playlist/container/warp and compact editor work only through their scoped owners.

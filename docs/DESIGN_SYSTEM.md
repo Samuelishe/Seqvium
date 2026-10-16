@@ -24,6 +24,8 @@ a new first-party editor inherits the system without adding a class to every con
 [HostFluentResources](../src/Seqvium.Desktop/Presentation/HostFluentResources.cs) maps the installed
 Fluent template resource names to these same tokens. These aliases contain no independent colors.
 Application resource replacement synchronizes aliases; theme changes retain existing controls.
+ComboBox item normal/hover/pressed/selected/disabled states also resolve host surfaces and ink;
+selected popup rows must not fall back to the framework accent. Their padding follows Padding.Control.
 Every custom drawing surface subscribes to its own `IResourceHost.ResourcesChanged` and invalidates
 its visual, including retained Pattern/Part thumbnails, Gain transfer, Playlist overview/timeline and
 Piano. Resolving live brushes only inside `Render` is insufficient: a cached scene may otherwise keep
@@ -32,7 +34,8 @@ the previous theme until another visual change. Resource refresh never requires 
 SettingsWindow consumes shared compact Window, Button, ComboBox, CheckBox, TextBox and Expander
 styles. Its shortcut list uses the shared scrollbar gutter; selected page borders use Accent.Action
 with weight/thickness cues. Shortcut rows reserve the shared icon width for custom-only reset; a
-dot/bold chord and tooltip identify changes without color alone. ThemeCatalog feeds the shared sun/moon/check icon family without new
+dot/bold chord and tooltip identify changes without color alone. ThemeCatalog feeds the shared sun/moon/check icon
+family without new
 palette values or control templates. About retains Brand.AboutSize and embedded typography.
 
 ## Token catalog
@@ -110,7 +113,7 @@ Geometry and typography resources are declared in `HostMetrics.Values` and its t
 | Typography       | `Type.Body`, `Type.Caption`, `Type.Section`, `Type.PaneTitle`, `Type.Numeric`, `Type.Transport`, `Type.FontFamily`, `Type.MonospaceFamily`                                             | Body/caption/section/pane/numeric/transport emphasis; monospace for technical or fixed-column content |
 | Level/scroll     | `Level.Height`, `Level.TrackHeight`, `Level.ThumbSize`, `Level.Inset`, `ScrollBar.Size`                                                                                                | Real hit area, drawn/templated geometry, visible local scrolling                                      |
 | Rack/navigation  | `Rack.StepHeight`, `Rack.RowHeight`, `Rack.StepCorner`, `Rail.Width`                                                                                                                   | Pad hit geometry, rhythmic row and navigation rail                                                    |
-| Playlist         | `Playlist.LaneHeight`, `Playlist.RulerHeight`, `Playlist.HeaderWidth`, `Playlist.OverviewHeight`, `Playlist.SectionHeight`                                                                                       | Musical lane/header hit geometry and the derived song overview                                        |
+| Playlist         | `Playlist.LaneHeight`, `Playlist.RulerHeight`, `Playlist.HeaderWidth`, `Playlist.OverviewHeight`, `Playlist.SectionHeight`                                                             | Musical lane/header hit geometry and the derived song overview                                        |
 | Piano Roll       | `Piano.KeyWidth`, `Piano.RowHeight`, `Piano.RulerHeight`, `Piano.VelocityHeight`, `Piano.NoteCorner`                                                                                   | Keyboard/grid alignment, velocity lane and bevelled note geometry                                     |
 | Numeric template | `Control.NumericInnerHeight`                                                                                                                                                           | Derived inner height respecting outer control/border; do not set a second local template minimum      |
 
@@ -157,6 +160,26 @@ unit and actual text centers use the ordinary parameterRow contract. Review actu
 pixels as well as its transparent content render, in both themes/languages and narrow panes.
 
 ## Sampler waveform composition
+
+Key Mapping adds SamplerKeyboard, a quiet full-range overview and an adaptive working view,
+shared horizontal ScrollBar, centered-root action, source ComboBox and three aligned note fields.
+A single recessed Material.Panel deck joins source identity and exact zone controls above the keys;
+its header reflows from one row to two. The root field uses the selected-zone accent. Key and zone
+bevels use Material.Bevel/Shade, not private gradients or bitmap assets. Source choices include roots
+so zones sharing one WAV remain distinguishable. Sustain Loop is a labeled shared ToggleButton with
+the original Loop vector; its checked/focus state remains separate from Crossfade.
+Drawing uses HostVisual, Piano key roles and Rack.Step identity fills. Short black keys sit over
+white keys; the main view pans independently of canonical source/zone edits. Separate upper/lower
+boundary lanes and root marker keep narrow zones addressable. The full pitch range does not increase
+editor height. Default scale targets shared control-sized key widths; reduced panes display about
+one octave instead of shrinking three octaves. A visible selected root remains visible through resize,
+while deliberate panning is not reset by observation. Source TextBlocks explicitly bind Text.Primary,
+including popup items. Display names omit catalog prefixes/hashes; full names remain in tooltips.
+Root/range fields stay in the adaptive musical header; exact source-frame properties use a disclosure.
+Preview and waveform navigation form one row. Sustain Loop and Crossfade have separate groups,
+token spacing and a quiet boundary. Actual minimum geometry prevents waveform/control overlap.
+The import
+review uses standard dialog controls with one selected source, no file table or private palette.
 
 Complementary ramps identify the two actual F2 overlap areas; positive crossfade never moves source
 or loop markers. The fifth exact field uses the same parameter-row geometry and local reflow.
@@ -207,7 +230,8 @@ It is never drawn over musical grids or signal plots. No raster/third-party asse
 The side inspector uses standard controls, host-owned tabs and local scrolling. Its compact EQ,
 Comp, Routing and Delay tabs fit the existing inspector in RU/EN. Delay reuses ordinary parameterRow/
 numeric fields for milliseconds and percentages plus a standard Enabled toggle; it adds no template,
-palette, global option, explanatory paragraph or strip meter. The strip's D mark shows enabled state. Its disclosure is a
+palette, global option, explanatory paragraph or strip meter. The strip's D mark shows enabled state. Its disclosure is
+a
 ToggleButton, not an empty expanded content region. The bank stays narrow as the pane grows.
 
 `mixerControl` and `mixerValue` are deliberate small strip variants. The strip field height is below
@@ -231,7 +255,8 @@ reserve no gutter. Do not add a second per-panel scrollbar-width margin. Respons
 the actual viewport width; Pattern cards do not paint underneath the bar.
 Pattern cards use up to two wrapped name lines with ellipsis beyond that, a full-name/gesture tooltip
 and a continuously resizable navigator. Its focusable boundary uses shared spacing/border/accent
-roles; width limits and collapse behavior are workspace composition geometry. Selection styling and rhythm thumbnails still use the common
+roles; width limits and collapse behavior are workspace composition geometry. Selection styling and rhythm thumbnails
+still use the common
 Button/material/channel roles; editor menus use the standard ContextMenu rather than a private popup.
 Browser and Patterns use the same `SidePanelHost` clipped surface and focusable boundary, with shared
 spacing, border and accent resources. Static caption rows use the common control height, never window

@@ -66,7 +66,7 @@ internal sealed class HostFluentResources
         foreach (var prefix in new[]
                  {
                      "Button", "ToggleButton", "ComboBox", "TextControlButton", "MenuFlyoutItem", "ScrollBarButton",
-                     "ExpanderHeader"
+                     "ExpanderHeader", "ComboBoxItem"
                  })
         {
             States(prefix + "Background", "Surface.Raised", "Surface.Hover", "Surface.Pressed", "Surface.Background");
@@ -81,6 +81,17 @@ internal sealed class HostFluentResources
 
         Add("Surface.Selected", "ToggleButtonBackgroundChecked", "ToggleButtonBackgroundCheckedPointerOver",
             "ToggleButtonBackgroundCheckedPressed");
+        foreach (string suffix in new[] { "", "PointerOver", "Pressed", "Disabled" })
+        {
+            Add(suffix == "Disabled" ? "Surface.Background" : "Surface.Selected",
+                "ComboBoxItemBackgroundSelected" + suffix);
+            Add(suffix == "Disabled" ? "State.Unavailable" : "Text.Primary",
+                "ComboBoxItemForegroundSelected" + suffix);
+            Add(suffix == "Disabled" ? "Border.Default" : "Accent.Action",
+                "ComboBoxItemBorderBrushSelected" + suffix);
+        }
+
+        Add("Padding.Control", "ComboBoxItemThemePadding");
         Add("Surface.Background", "ToggleButtonBackgroundCheckedDisabled", "TextControlBackground",
             "TextControlBackgroundFocused", "TextControlBackgroundDisabled", "ExpanderContentBackground");
         Add("Surface.Hover", "TextControlBackgroundPointerOver");

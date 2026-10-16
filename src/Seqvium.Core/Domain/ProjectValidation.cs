@@ -63,6 +63,16 @@ public static class ProjectValidation
             Unique(sound.ResourceIds);
             Require(sound.ResourceIds.All(resources.Contains), "Sound references an unknown resource.");
             Extension(sound.Extension);
+            try
+            {
+                SamplerKeymap.Validate(sound);
+            }
+            catch (ArgumentException error)
+            {
+                throw new ProjectValidationException(error.Message);
+            }
+
+            foreach (var zone in sound.SamplerZones) Identity(zone.Id);
         }
 
         var sounds = state.Sounds.ToDictionary(item => item.Id);
@@ -71,7 +81,9 @@ public static class ProjectValidation
         {
             Identity(pattern.Id);
             Text(pattern.Name);
-            Require(pattern.VariationOf is null || pattern.VariationOf.Value.Value != Guid.Empty && pattern.VariationOf != pattern.Id,
+            Require(
+                pattern.VariationOf is null ||
+                pattern.VariationOf.Value.Value != Guid.Empty && pattern.VariationOf != pattern.Id,
                 "Invalid Pattern variation ancestry.");
             Present(pattern.Parts);
             Require(pattern.Length.Ticks > 0, "Pattern length must be positive.");
@@ -172,6 +184,7 @@ public static class ProjectValidation
                 "Playlist sections must have positive, non-overlapping ranges and a supported color.");
             sectionEnd = section.Position.Ticks + section.Length.Ticks;
         }
+
         Unique(state.ArrangementTracks.Select(track => track.Lane));
         foreach (var track in state.ArrangementTracks)
         {

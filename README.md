@@ -30,7 +30,8 @@ for the logo, typography, alternative directions and publication resources.
   A PCM Rack channel can audition a candidate through its existing processing while music plays.
 - Right-click a Pattern and choose **Create sample** to keep its instruments and local processing
   as reusable project audio. Find it selected in Browser, preview it, then add it to Rack or Playlist.
-  The source stays editable; downstream Mixer/Master is excluded. [Resampling limits](docs/README.md#create-a-sample-from-a-pattern) apply.
+  The source stays editable; downstream Mixer/Master is
+  excluded. [Resampling limits](docs/README.md#create-a-sample-from-a-pattern) apply.
 
 - Drop **WAV, MP3 or FLAC from Windows Explorer directly onto Playlist**. Audio Clips are independent
   of Patterns and Channel Rack. See real mono/stereo waveforms, move or Ctrl-copy clips, trim their
@@ -41,6 +42,9 @@ for the logo, typography, alternative directions and publication resources.
 - Open a WAV instrument's **Sound Editor** for a zoomable waveform, non-destructive Start/End and
   optional Sustain loop with adjustable crossfade. Hold/release preview tests long notes;
   changes apply to that sound in every Pattern.
+- Build a **multisample instrument** in the same editor: add WAVs, assign Root notes and auto-map
+  them across the keyboard. Adjust zone edges by mouse or note name; each WAV keeps its own range
+  and sustain loop. The keyboard adapts to the pane width and scrolls through the full map.
 - Use built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim, editable envelopes and sound presets,
   or pitched WAV samples. Linked hats can choke each other.
 - Create basses, leads, pads and plucks with the built-in polyphonic **Synth**. Choose two waveforms,
@@ -53,7 +57,8 @@ for the logo, typography, alternative directions and publication resources.
   Make a variation of one Pattern clip for a fill or changed phrase while keeping shared instruments
   and Mixer routes. Other uses of the original Pattern keep their notes.
 - Mix shared sound sources through channels, buses and pre/post sends, with level, stereo balance,
-  Mute/Solo, real meters, high-pass/three-band EQ, linked compression, musical Delay, algorithmic Reverb and optional Master sample-peak
+  Mute/Solo, real meters, high-pass/three-band EQ, linked compression, musical Delay, algorithmic Reverb and optional
+  Master sample-peak
   protection. Playlist tracks do not automatically become Mixer channels.
 - Edit Source → Gain → Mix → Output graphs, reuse sound editors, and arrange movable/resizable panes.
 - Undo/redo musical edits, save/reopen projects with managed media, and export a Pattern or the full
@@ -76,8 +81,8 @@ or enter exact musical positions and values; Song playback and WAV export follow
 the original sound and Mixer settings stay intact. See [parameter automation](docs/README.md#automate-a-parameter).
 
 Audio Clips do not change pitch or speed when moved or when BPM changes. Their start positions use
-musical time; their lengths, trims and fades use source frames. Clip properties offer explicit
-**Time stretch (50–200%)**, keeping pitch while changing duration. It works best on sustained,
+musical time; their lengths, trims and fades use source frames. Clip properties offer explicit **Time stretch (
+50–200%)**, keeping pitch while changing duration. It works best on sustained,
 monophonic phrases; dense mixes and sharp attacks can develop artifacts. Tempo following and warp
 markers are not available.
 Copies reuse a source and its Mixer assignment rather than duplicating decoded audio.

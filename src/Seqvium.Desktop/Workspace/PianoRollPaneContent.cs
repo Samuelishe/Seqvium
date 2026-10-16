@@ -327,7 +327,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         var sound = _workflow.State.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == Canvas.Part?.SoundId);
         _originalRoot = sound?.Parameters.TryGetValue("rootPitch", out var root) == true ? root : 60m;
         _rootPitch.SelectedIndex = (int)_originalRoot;
-        _rootPitch.IsEnabled = sound?.Algorithm == PcmSampler.Algorithm;
+        _rootPitch.IsEnabled = sound?.Algorithm == PcmSampler.Algorithm && !SamplerKeymap.HasIntent(sound);
         ToolTip.SetTip(_rootPitch, _shell["Piano.RootHint"]);
     }
 
@@ -461,9 +461,10 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             }
 
             if (pattern?.Parts.Any(p => p.Id == _selectedPart) != true)
-                _selectedPart = pattern is null ? null :
-                    PatternEditorNavigation.PreferredPart(observation.Snapshot.State, pattern)?.Id ??
-                    pattern.Parts.FirstOrDefault()?.Id;
+                _selectedPart = pattern is null
+                    ? null
+                    : PatternEditorNavigation.PreferredPart(observation.Snapshot.State, pattern)?.Id ??
+                      pattern.Parts.FirstOrDefault()?.Id;
             if (pattern is not null && _selectedPart is { } selected) _partMemory[pattern.Id] = selected;
             if (!_pattern.Items.OfType<OccurrenceChoice>().SequenceEqual(observation.Occurrences))
                 _pattern.ItemsSource = observation.Occurrences;

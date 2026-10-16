@@ -24,6 +24,23 @@ The [report](experiments/SEQ-AUTOMATION-F1_REPORT.md) records results and limits
 
 ## PCM Sampler Editor verification
 
+`SamplerKeymapTests` adds every integer key plus fractional boundary signal oracles at 44.1/48 kHz,
+mono/stereo, mapped chords/loops/release, packet and realtime parity, 32/33-voice admission, selected
+primed allocation, frozen/live source identity, independent zone settings, gaps/overlap, R8 Mixer
+exclusion, reader 1.13/unknown preservation, legacy PCM and portable history, replacement/missing
+media and atomic stale/cancelled batch import. Use `--filter-class '*SamplerKeymapTests'` together
+with SamplerEditor, ManagedMedia, SampleReplacement, PianoRoll and Persistence neighbours.
+The checkpoint selects L3 for source selection/preparation and serialization risk.
+
+VisualCheck `sampler-keymap <output> <local-library> <local-delivery> [native] [audio]` reads optional
+verified-catalog piano sources, exports the same fragment through single/mapped instruments, exercises
+source selection, exact fields, captured boundary edits/cancel/history, 26-zone density, adaptive key
+size, free pan/reveal/resize, source text/popup/disabled theme states, source-group containment and
+unknown-root refusal. Actual RU/EN Dark/Light ordinary/reduced fields and windows are separate from
+guarded Windows input and physical output. The legacy `sampler-editor` route remains required for
+the source range/loop/crossfade surface. [Report](experiments/SEQ-SAMPLER-KEYMAP-F1_REPORT.md) owns
+results, failed attempts and retained local WAVs; these do not establish subjective listening.
+
 `SamplerEditorTests` uses independent PCM/rate/pitch/seam/release oracles and real shared execution,
 not source-mirroring assertions. It covers range/loop validity, legacy disabled behavior, polyphony,
 packet/realtime parity, live no-retrigger/unrelated age, seek/Stop/Panic/Pattern loop, R8 before Mixer,

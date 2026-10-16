@@ -42,6 +42,7 @@ internal sealed partial class DesktopWorkflow
             var sound = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId);
             if (PianoNotes.SoundRefusal(sound) is { } refusal) throw new InvalidOperationException(refusal);
             if (sound.Algorithm != PcmSampler.Algorithm) throw new InvalidOperationException("Beat.SoundUnsupported");
+            if (SamplerKeymap.HasIntent(sound)) throw new InvalidOperationException("Beat.SoundUnsupported");
             PcmSampler.ValidateConfiguration(root, sound.Parameters["releaseMilliseconds"]);
             bool changed = _document.Edit("Set sample root pitch",
                 edit => edit.SetSoundParameters(sound.Id, sound.Parameters.SetItem("rootPitch", root)));
@@ -66,7 +67,7 @@ internal sealed partial class DesktopWorkflow
             bool changed = _document.Edit("Configure Piano Roll channel", edit =>
             {
                 edit.RenamePart(pattern.Id, part.Id, name);
-                if (sound.Algorithm == PcmSampler.Algorithm)
+                if (sound.Algorithm == PcmSampler.Algorithm && !SamplerKeymap.HasIntent(sound))
                     edit.SetSoundParameters(sound.Id, sound.Parameters.SetItem("rootPitch", root));
             });
             _status = "Workflow.Ready";

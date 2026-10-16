@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 12. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 13. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## R6 optional modules and accepted media
@@ -27,6 +27,23 @@ require the source package or generator and never regenerates accepted audio. No
 candidate history is promised. Existing `ExtensionState` and unknown node/sound payload preservation
 and dependency-scoped execution refusal remain unchanged; R6 provides no realtime extension processor.
 See [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
+
+## Sampler key mapping (reader 1.13)
+
+Optional SoundDefinition `samplerZones` is an array of identified zone objects: `id`, `resourceId`,
+decimal `rootPitch`, inclusive integer `lowKey`/`highKey` and `parameters` containing the existing
+source-frame range/loop/crossfade block. Sound `resourceIds` is exactly the distinct set used by
+zones; resource order does not select a sound. Top-level root/release remain present for legacy
+identity and shared release. Range/loop intent moves into individual zones when a legacy source
+is promoted. One explicit zone is still map intent and requires reader 1.13.
+
+An omitted/empty array remains legacy and is omitted on Encode; its reader floor does not increase.
+Nonempty maps require `minor` and `minimumReaderMinor` at least 13, with underdeclared files refused.
+Save preserves the floor monotonically. Zone IDs are globally distinct canonical entities; maps
+are bounded to 128 non-overlapping zones within MIDI 0–127. Unknown nested fields/parameters round-trip
+at their own boundary and block execution/destructive map edits. Managed `wav/` storage, history,
+Save As collection and integrity checks are unchanged. Removing a zone retains media for history;
+explicit whole-instrument Replace WAV resets the map with the source, and Undo restores it.
 
 ## Parameter automation (reader 1.12)
 
@@ -329,7 +346,7 @@ identified sound uses without defining runtime instances. `additionalData` is a 
 name, never emitted as a format field. Extension payloads and optional unknown values are opaque JSON.
 
 Only major 1 is understood. Higher compatible minor documents are retained at their original minor
-when `minimumReaderMinor <= 12`; unsupported major/required minor is refused. Graph-free 1.0 remains
+when `minimumReaderMinor <= 13`; unsupported major/required minor is refused. Graph-free 1.0 remains
 supported; the graph-aware gate below applies to meaningful graph intent. No legacy migration is
 claimed. Unknown JSON properties at envelope, state, settings and every entity/nested part/note are
 preserved semantically at the same object boundary, including through edits/Undo/Save. Reserved known

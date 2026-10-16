@@ -37,14 +37,17 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 12;
+    public const int ReaderMinor = 13;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     private static bool HasReverb(ProjectState state) => state.Mixer is { } mixer &&
-        (mixer.Master.Reverb != new MixerReverb() || mixer.Channels.Any(c => c.Settings.Reverb != new MixerReverb()));
+                                                         (mixer.Master.Reverb != new MixerReverb() ||
+                                                          mixer.Channels.Any(c =>
+                                                              c.Settings.Reverb != new MixerReverb()));
 
     private static bool HasDelay(ProjectState state) => state.Mixer is { } mixer &&
-        (mixer.Master.Delay != new MixerDelay() || mixer.Channels.Any(c => c.Settings.Delay != new MixerDelay()));
+                                                        (mixer.Master.Delay != new MixerDelay() ||
+                                                         mixer.Channels.Any(c => c.Settings.Delay != new MixerDelay()));
 
     private static bool HasAudio(ProjectState state) => !state.AudioClips.IsEmpty ||
                                                         state.Sounds.Any(s =>
@@ -52,17 +55,20 @@ public static class ProjectPersistence
                                                         state.Resources.Any(AudioMedia.IsManaged);
 
     private static bool HasSongStructure(ProjectState state) => !state.ArrangementSections.IsEmpty ||
-        state.Patterns.Any(p => p.VariationOf is not null);
+                                                                state.Patterns.Any(p => p.VariationOf is not null);
+
     public static byte[] Encode(ProjectDocument document)
     {
         document.CheckAvailable();
         return Encode(document.Current, document.Compatibility);
     }
+
     private static byte[] Encode(ProjectSnapshot snapshot, ProjectCompatibility compatibility)
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = !snapshot.State.AutomationLanes.IsEmpty ? 12 :
+        int required = snapshot.State.Sounds.Any(SamplerKeymap.HasIntent) ? 13 :
+            !snapshot.State.AutomationLanes.IsEmpty ? 12 :
             snapshot.State.Sounds.Any(SynthVoice.HasIntent) ? 11 :
             snapshot.State.Sounds.Any(SamplerPlayback.HasCrossfadeIntent) ? 10 :
             snapshot.State.Sounds.Any(SamplerPlayback.HasIntent) ? 9 :
@@ -90,6 +96,7 @@ public static class ProjectPersistence
                 if (mixer.Channels[i].Settings.Delay == new MixerDelay())
                     mixerNode["channels"]![i]!["settings"]!.AsObject().Remove("delay");
         }
+
         if (snapshot.State.Mixer is { } reverbMixer && node["state"]?["mixer"] is JsonObject reverbNode)
         {
             if (reverbMixer.Master.Reverb == new MixerReverb()) reverbNode["master"]!.AsObject().Remove("reverb");
@@ -97,6 +104,7 @@ public static class ProjectPersistence
                 if (reverbMixer.Channels[i].Settings.Reverb == new MixerReverb())
                     reverbNode["channels"]![i]!["settings"]!.AsObject().Remove("reverb");
         }
+
         var bytes = JsonSerializer.SerializeToUtf8Bytes(node, Options);
         if (bytes.Length > MaximumBytes) throw new ProjectFormatException("Project exceeds the 16 MiB format limit.");
         return bytes;
@@ -134,6 +142,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (file.State.Sounds.Any(SamplerKeymap.HasIntent) && file.MinimumReaderMinor < 13)
+                throw new ProjectFormatException("Sampler key mapping requires minimumReaderMinor >= 13.");
             if (!file.State.AutomationLanes.IsEmpty && file.MinimumReaderMinor < 12)
                 throw new ProjectFormatException("Parameter automation requires minimumReaderMinor >= 12.");
             if (file.State.Sounds.Any(SynthVoice.HasIntent) && file.MinimumReaderMinor < 11)
@@ -149,7 +159,8 @@ public static class ProjectPersistence
             if (file.State.AudioClips.Any(c => c.StretchRatio != 1) && file.MinimumReaderMinor < 6)
                 throw new ProjectFormatException("Audio clip stretch requires minimumReaderMinor >= 6.");
             if (HasSongStructure(file.State) && file.MinimumReaderMinor < 5)
-                throw new ProjectFormatException("Playlist sections and Pattern ancestry require minimumReaderMinor >= 5.");
+                throw new ProjectFormatException(
+                    "Playlist sections and Pattern ancestry require minimumReaderMinor >= 5.");
             if (HasAudio(file.State) && file.MinimumReaderMinor < 4)
                 throw new ProjectFormatException("Audio clips require minimumReaderMinor >= 4.");
             if (file.State.Mixer is not null && file.MinimumReaderMinor < 3)
@@ -266,6 +277,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (snapshot.State.Sounds.Any(SamplerKeymap.HasIntent))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(13, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(13, document.Compatibility.MinimumReaderMinor)
+                };
             if (!snapshot.State.AutomationLanes.IsEmpty)
                 document.Compatibility = document.Compatibility with
                 {
@@ -395,6 +412,8 @@ public static class ProjectPersistence
         }
         else
         {
+            if (type == typeof(SoundDefinition) && node["samplerZones"] is JsonArray { Count: 0 })
+                node.Remove("samplerZones");
             if (type == typeof(AudioClip) && node["stretchRatio"]?.GetValue<decimal>() == 1)
                 node.Remove("stretchRatio");
             var extra = node[storageKey] as JsonObject;

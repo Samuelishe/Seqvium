@@ -121,7 +121,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
         SetRow(_status, 2);
         Children.Add(_status);
         _sampler = new(shell, workflow);
-        SetRow(_sampler, 1); Children.Add(_sampler);
+        SetRow(_sampler, 1);
+        Children.Add(_sampler);
         _drum = new(shell, workflow);
         SetRow(_drum, 1);
         Children.Add(_drum);
@@ -261,7 +262,10 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             bool synth = drumSound is not null && SynthVoice.Supports(drumSound);
             bool drum = drumSound is not null && DrumVoice.Supports(drumSound);
             bool sampler = drumSound is not null && SamplerPlayback.Supports(drumSound);
-            string title = synth ? _shell["Synth.Title"] : sampler ? _shell["Sampler.Title"] : drum ? _shell["Drum.Title"] : node is null ? _shell["Pane.NodeEditor"] : NodeName(node);
+            string title = synth ? _shell["Synth.Title"] :
+                sampler ? _shell["Sampler.Title"] :
+                drum ? _shell["Drum.Title"] :
+                node is null ? _shell["Pane.NodeEditor"] : NodeName(node);
             if (title != Title)
             {
                 Title = title;
@@ -269,13 +273,16 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             }
 
             _scope.Text = Scope();
-            _scope.IsVisible = !synth && _scope.Text.Length > 0;
+            _scope.IsVisible = !synth && !sampler && _scope.Text.Length > 0;
             if (synth && _synth is null)
             {
                 // Empty/Gain editors do not require a graphical synth or its vector/render backend.
                 _synth = new(_shell, _workflow);
-                SetRow(_synth, 0); SetRowSpan(_synth, 2); Children.Add(_synth);
+                SetRow(_synth, 0);
+                SetRowSpan(_synth, 2);
+                Children.Add(_synth);
             }
+
             AutomationProperties.SetName(this,
                 Title + ". " + (node is null
                     ? _shell[_editor.Target is null ? "NodeEditor.NoTarget" : "NodeEditor.TargetMissing"]
@@ -286,7 +293,11 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             _gainScroll.IsVisible = gain;
             _detailsScroll.IsVisible = !gain && !drum && !sampler && !synth;
             if (_synth is { } synthEditor)
-            { synthEditor.IsVisible = synth; synthEditor.Observe(synth ? _editor.Target : null); }
+            {
+                synthEditor.IsVisible = synth;
+                synthEditor.Observe(synth ? _editor.Target : null);
+            }
+
             _sampler.IsVisible = sampler;
             _sampler.Observe(sampler ? _editor.Target : null);
             _drum.IsVisible = drum;
@@ -316,7 +327,8 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
             _details.Classes.Set("secondary", node is null && _editor.Target is null);
             _details.Classes.Set("warning", node is null && _editor.Target is not null);
             RefreshPreview();
-            if (!drum && !sampler && !synth && node is { Type: GraphBuiltIns.Source } && GraphConnectionRules.Supported(node) &&
+            if (!drum && !sampler && !synth && node is { Type: GraphBuiltIns.Source } &&
+                GraphConnectionRules.Supported(node) &&
                 IsEffectivelyVisible &&
                 target is not null && _sourceBasis != (target, _workflow.State.Generation))
             {
@@ -372,6 +384,7 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
                 _diagnosticState = state;
                 _diagnosticNode = node.Id;
             }
+
             var reasons = _diagnosticReasons.Select(reason => _shell[reason]);
             if (reasons.Any())
             {
@@ -455,8 +468,10 @@ internal sealed class NodeEditorPaneContent : Grid, IDisposable
                 var observed = _sources?.Sources.SingleOrDefault(r => r.ResourceId == resourceId);
                 if (observed?.Availability != SourceAvailability.Supported)
                     lines.Add(_shell[observed is null ? "NodeEditor.Checking" : "NodeEditor.ResourceUnavailable"]);
-                else ToolTip.SetTip(_details, (resource?.Name ?? sound?.Name) + " · " +
-                    ((double)observed.Frames!.Value / observed.Rate!.Value).ToString("0.00", CultureInfo.InvariantCulture) + " s");
+                else
+                    ToolTip.SetTip(_details, (resource?.Name ?? sound?.Name) + " · " +
+                                             ((double)observed.Frames!.Value / observed.Rate!.Value).ToString("0.00",
+                                                 CultureInfo.InvariantCulture) + " s");
             }
 
             if (sound is null || sound.ResourceIds.IsEmpty) lines.Add(_shell["NodeEditor.ResourceUnavailable"]);

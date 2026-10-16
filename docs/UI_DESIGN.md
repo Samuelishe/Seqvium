@@ -111,6 +111,10 @@ the other editors; rendered evidence is not owner aesthetic acceptance.
 ## Instrument materials and hierarchy
 
 Use a slate chassis, illuminated jade actions, colored channel identities and sculpted controls.
+The sampler mapping deck joins source/root identity, exact zone bounds and its keyboard. Recessed
+materials, bevelled keys and a quiet map overview establish instrument hierarchy; additional width
+collapses the source/zone header into one row instead of inflating controls. A labeled loop switch
+and separate Crossfade field retain the existing source workflow. Reference study remains local.
 Depth has a deliberate structure: workspace recess, raised instrument panel, bevelled control,
 active light. Highlights, shadows, gradients and controlled glow create character and explain
 manipulation. Detailed knobs and graphical editors are encouraged when they support a real parameter.
@@ -155,16 +159,16 @@ composition, not source-product gestures, measured behavior or sound quality.
 
 Public design requirements describe Seqvium itself:
 
-| Working area | Composition requirement | Boundary |
-| --- | --- | --- |
-| Piano Roll | Readable note bodies/pitch labels, selection brackets and aligned velocity | Preserve shared notes/history and Part identity; controller curves require implemented capability |
-| Channel Rack | Tactile beat groups, clear channel identity and real melodic note previews | Do not flatten rich notes into step pads |
-| Playlist | Stable track/time hierarchy, meaningful note/audio distinction and readable content in both themes | Arrangement organization remains distinct from Mixer routing |
-| Node Graph / Editor | Free canvas, typed ports, precise selection and a target-aware focused editor | Analytical curves are not measured signals |
-| Synthesizers | Clear oscillator choices, tactile controls and editable ADSR in a compact original instrument | Expose only actual DSP/state/voice capabilities |
-| Mixer | Recessed faders, readable levels and aligned channel identity; locatable Master | Display measured taps only; disclose routing contextually |
-| Effects / EQ | Prominent editable curve and selected-parameter depth | Analysis and additional processing modes require real implementation |
-| Browser / Sample Lab | Local find, selected waveform, audition and explicit use | Generation, preview and publication retain their existing owners |
+| Working area         | Composition requirement                                                                            | Boundary                                                                                          |
+|----------------------|----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Piano Roll           | Readable note bodies/pitch labels, selection brackets and aligned velocity                         | Preserve shared notes/history and Part identity; controller curves require implemented capability |
+| Channel Rack         | Tactile beat groups, clear channel identity and real melodic note previews                         | Do not flatten rich notes into step pads                                                          |
+| Playlist             | Stable track/time hierarchy, meaningful note/audio distinction and readable content in both themes | Arrangement organization remains distinct from Mixer routing                                      |
+| Node Graph / Editor  | Free canvas, typed ports, precise selection and a target-aware focused editor                      | Analytical curves are not measured signals                                                        |
+| Synthesizers         | Clear oscillator choices, tactile controls and editable ADSR in a compact original instrument      | Expose only actual DSP/state/voice capabilities                                                   |
+| Mixer                | Recessed faders, readable levels and aligned channel identity; locatable Master                    | Display measured taps only; disclose routing contextually                                         |
+| Effects / EQ         | Prominent editable curve and selected-parameter depth                                              | Analysis and additional processing modes require real implementation                              |
+| Browser / Sample Lab | Local find, selected waveform, audition and explicit use                                           | Generation, preview and publication retain their existing owners                                  |
 
 Physical character belongs mainly to controls and instrument panels; musical grids and plots need
 quiet surfaces. Review Light and Dark independently. Never extract third-party icons, textures,
@@ -218,7 +222,8 @@ selection/focus and supported unavailable/error states. Exercise waveform choice
 ADSR handles/exact values, filter movement, presets and repeated preview. Check the audible result,
 Release after NoteOff, Undo/Redo, preserved target/input drafts through resize, real field alignment,
 pointer capture/Escape/reversal, scrolling and compact reachability. Label routed/native evidence
-accurately. The [completion report](experiments/SEQ-SYNTH-F1_REPORT.md) records real renders, the complete matrix, usability
+accurately. The [completion report](experiments/SEQ-SYNTH-F1_REPORT.md) records real renders, the complete matrix,
+usability
 findings, corrections and remaining limits against these Seqvium requirements. Render/input evidence,
 owner aesthetic acceptance and numerical/audio evidence remain distinct.
 
@@ -247,12 +252,12 @@ annotations do not prove gestures. Detailed per-image judgments and identificati
 in the private catalog. The comparison uses existing R9 Dark/Light captures and the current
 Node Editor owners; this preparation does not repeat Piano Roll verification.
 
-| Area              | Strongest direction                                                                                                                                        | Seqvium comparison and capability gate                                                                                                                                                                                                                                |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Drum sound design | DS-03: dominant pitch envelope with note/Hz and time context; DS-01: oscillator/noise anatomy; DS-02: selected identity in one sound editor                | Seven built-in drum families now adapt controls, pitch/amplitude envelopes and previews to actual DSP, with factory/custom presets and linked hats. Layers, modulation and custom groups remain future work; DS-02 is a sample-pad reference, not synthesis evidence. |
-| Sampler           | SA-04: stereo range/loop flags and overview navigation; SA-01: slice-to-key continuity; SA-02: compact waveform-first composition; SA-05: root-key context | Root Pitch, actual PCM waveform, source-frame range/sustain loop and held/released preview are implemented in the existing Source Editor. Mapping/slicing remain future work; Playlist trim uses a separate timing model                                                  |
-| Dynamics          | CP-02: readable physical caps and threshold/knee curve; CP-01: selected-band controls beside reduction history                                             | Gain keeps its useful compact level/optional analytical Curve. Future compression needs real stateful DSP and measured taps; history, analytical transfer and waveform must have distinct meaning                                                                     |
-| Control shape     | Raised cap, readable pointer, skirt/arc and recessed base; shape buttons for discrete waveform/filter choices                                              | Use the shared material/token family. Bipolar controls need meaningful center feedback, unipolar controls an endpoint, and exact values/units on demand. Comfortable targets beat miniature screenshot proportions                                                    |
+| Area              | Strongest direction                                                                                                                         | Seqvium comparison and capability gate                                                                                                                                                                                                                                                                                                |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Drum sound design | DS-03: dominant pitch envelope with note/Hz and time context; DS-01: oscillator/noise anatomy; DS-02: selected identity in one sound editor | Seven built-in drum families now adapt controls, pitch/amplitude envelopes and previews to actual DSP, with factory/custom presets and linked hats. Layers, modulation and custom groups remain future work; DS-02 is a sample-pad reference, not synthesis evidence.                                                                 |
+| Sampler           | Dominant waveform, range/loop flags and root-key context                                                                                    | Pitch key mapping, source ranges, sustain loops and crossfade share the existing Source Editor. Adaptive large keys, quiet full-map navigation, linked root/zone/key emphasis and a readable concise source selector lead the composition. Precise source frames stay in disclosure; slicing and velocity mapping remain future work. |
+| Dynamics          | CP-02: readable physical caps and threshold/knee curve; CP-01: selected-band controls beside reduction history                              | Gain keeps its useful compact level/optional analytical Curve. Future compression needs real stateful DSP and measured taps; history, analytical transfer and waveform must have distinct meaning                                                                                                                                     |
+| Control shape     | Raised cap, readable pointer, skirt/arc and recessed base; shape buttons for discrete waveform/filter choices                               | Use the shared material/token family. Bipolar controls need meaningful center feedback, unipolar controls an endpoint, and exact values/units on demand. Comfortable targets beat miniature screenshot proportions                                                                                                                    |
 
 For later rich Node Editors, let the meaningful graph own space and reveal exact selected-parameter
 depth nearby. Keep the small Gain editor small. Colored modulation context may eventually connect
@@ -395,7 +400,8 @@ RU/EN × Dark/Light at ordinary/reduced size; detailed results belong to the
 [stretch report](experiments/SEQ-R10-STRETCH-F1_REPORT.md).
 
 The owner-supplied five timeline images were inspected and moved from Desktop/screens to
-`%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`. Earlier local studies were also reviewed for hierarchy/materials. These are private local visual targets, not
+`%LOCALAPPDATA%/Seqvium/DesignReferences/SEQ-R10-PLAYLIST`. Earlier local studies were also reviewed for
+hierarchy/materials. These are private local visual targets, not
 distributed application assets; the implementation uses original vectors and shared host resources.
 
 | Reference                                               | Strong transferable solution                                                                                | Implemented / planned boundary                                                                                                                                                      |
@@ -405,7 +411,7 @@ distributed application assets; the implementation uses original vectors and sha
 | `1.-Color.jpg`, SONAR                                   | Strong colored track identity, substantial controls, visible editing tools and waveform/fade detail         | Adapt header/material depth and real gates; waveform trim/fades require supported audio-clip semantics, not decorative waveforms                                                    |
 | `VJPS1X.jpg`, Cubase                                    | Stable inspector/track column, musical range, organized groups, precise source editor and measured Master   | Fixed headings, committed contextual track settings and scalable view now; musical range now works; groups/sample editor/Master measurement require their owners                    |
 | `daw-software-editing.jpg`, stylized DAW illustration   | Rapid visual distinction of musical layers and a clear primary working area                                 | Adapt color hierarchy only; it is an illustration, not pixel/interaction authority or permission for simulated Mixer/meters                                                         |
-| Earlier local composition studies                      | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light           | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability                                                     |
+| Earlier local composition studies                       | Rhythmic clarity, purposeful graphical surfaces, layered instrument material and restrained light           | Continue shared tactile controls and data-derived previews; processors/spectrum/instruments must be backed by actual capability                                                     |
 
 Playlist is a recessed time surface with substantial fixed track headers and a compact tool area.
 Clip headers carry source names, bodies show real note position/duration/pitch, track tint connects the
@@ -760,12 +766,14 @@ should develop this guide from concrete workflows rather than fill in a complete
 
 The Settings center uses compact left navigation, ordinary shared controls, aligned preference rows
 and local content scrolling. General, Controls and About are implemented; no empty future pages.
-Keyboard rows lead with the action and assigned chord, with a small default action only for custom bindings. A dot/bold chord marks an effective custom
+Keyboard rows lead with the action and assigned chord, with a small default action only for custom bindings. A dot/bold
+chord marks an effective custom
 assignment; default rows have no reset icon. Search and a
 short temporary capture/conflict area provide depth without permanent instructions. Fixed-key details
 stay behind disclosure. About retains the brand mark/wordmark/tagline, runtime version and short scope.
 Toolbar chrome offers Settings and Panes; the small title-row sun/moon opens explicit checked theme
-selection, with a disclosure chevron and Choose theme tooltip. [Settings](SETTINGS.md#unified-global-settings-center) owns routing and behavior.
+selection, with a disclosure chevron and Choose theme tooltip. [Settings](SETTINGS.md#unified-global-settings-center)
+owns routing and behavior.
 
 The owner's four Desktop screenshots and local WORK-EQ-001 (FabFilter), WORK-OT-001 (Reason) and
 WORK-CR-001 (SONAR) images were inspected for this composition. Transfer compact action density,
