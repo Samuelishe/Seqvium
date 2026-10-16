@@ -180,6 +180,95 @@ create new original assets only for a concrete editor need.
 [R9 planning](ROADMAP.md#seq-r9--piano-roll) and the existing later-stage follow-ups own deferred work.
 The [preparation report](experiments/SEQ-HOME-RESOURCES_REPORT.md) records actual verification limits.
 
+### Synth F1 reference assessment and direction
+
+**Accepted design requirement for SEQ-SYNTH-F1; implementation and visual acceptance are pending.**
+Musical expression, ease of sound exploration and visual quality have equal priority with correct DSP.
+This supplement defines the quality bar, not oscillator count, parameter ranges, voice architecture
+or additional synthesis features. Those need the bounded F1 implementation brief and their technical owners.
+No tonal Synth Editor exists in the inspected baseline; the implemented Drum/source editors are distinct.
+
+#### Reference evidence and musical workflow
+
+On 2026-10-16 the actual work-machine catalog contained 91 entries, rather than the home-machine
+34-image collection. Inspected local images include WORK-SY-004 (Vital), WORK-SY-001 (Serum 1),
+WORK-SY-003 (Serum 2) and WORK-DS-006 (KICK 2). Vital makes waveforms and envelopes visually dominant;
+Serum separates oscillator anatomy from modulation and gives caps a readable pointer/rim;
+KICK 2 gives a directly meaningful curve priority over secondary controls. These observations concern
+visible composition only. The home SY-01/SY-02 IDs must not be substituted for work-machine records.
+Private originals/catalogs remain outside Git and are not runtime assets.
+
+Official public pages, current manuals and their actual interface images were also inspected below.
+The latest Bitwig guide still labels its Polymer device image v3.3; the product-page animation is
+labelled 4.4. These are manufacturer-published references, not evidence of a locally installed latest
+build. Three sampled frames of the five-frame Polymer animation show stable module positions through
+model changes. Linked videos were located, but no video playback, hands-on use or acoustic comparison
+of these products was performed. The musical workflows below are derived from manuals, with Seqvium
+design conclusions explicitly separated from observations.
+
+| Reference and evidence | Musician's workflow described by the source | Selected principle and deliberate rejection for F1 |
+| --- | --- | --- |
+| [Vital](https://vital.audio/), plus local WORK-SY-004 | Inspect oscillator waves, adjust source controls, shape envelopes and inspect filter response; the product describes visual modulation previews before committing a connection. | Make wave choice and envelope shape immediate, meaningful feedback. Reject wavetable stacks, macro columns, multiple modulation tabs and decorative animated signal displays unless F1 actually implements the corresponding capability. |
+| [Surge XT manual](https://surge-synthesizer.github.io/manual-xt/) and its full interface image | Select an oscillator, choose its algorithm, balance sources in the mixer, change cutoff/resonance and shape separate filter/amplitude envelopes. A muted oscillator's waveform dims. | Keep sound generation, balance and shaping visibly related; identify an envelope's destination. Reject dual scenes, modulation routing banks, multiple filter topologies and an always-visible effect rack for the smaller F1. |
+| [Polymer guide](https://www.bitwig.com/userguide/latest/synth/) and [product demonstration page](https://www.bitwig.com/polymer/) | Choose an oscillator, filter and envelope in dedicated slots; adjust cutoff and envelope stages in the same compact panel. The manufacturer animation changes models without moving these main regions. | Use a short, stable instrument composition and emphasize frequently manipulated controls. Reject module swapping, conversion to Grid, sub/noise/PM/FX areas unless independently included in F1; the reference is not a feature checklist. |
+| [Ableton Analog manual, sections 31.1.1–31.1.6](https://www.ableton.com/en/live-manual/12/live-instrument-reference/#analog), full device and envelope images | Choose wave and tuning/level in the shell, open the selected section's display for depth, then adjust filter frequency/resonance and ADSR. The display visualizes the selected section while primary controls remain available. | Preserve functional hierarchy and a readable source-to-filter-to-amplitude relationship. Reject its two parallel oscillator/filter/amplifier paths, dense global/MPE options and hiding the only amplitude envelope behind a section switch. |
+| [FL Studio 3x OSC manual](https://www.image-line.com/fl-studio-learning/fl-studio-online-manual/html/plugins/3x%20Osc.htm) and actual interface image | Select shapes with waveform buttons, adjust coarse/fine tuning and mix sources; filter/envelope work belongs to the integrated channel/Sampler controls. Oscillator 3's mix reduces the combined contribution of 1 and 2. | Offer direct shape choices and repeatable oscillator anatomy. Reject the order-dependent balance model, decorative branding area and moving essential F1 shaping into another settings surface. A blend control must represent F1's actual mix law. |
+
+#### Selected composition and interaction direction
+
+Use one original Seqvium instrument chassis: a quiet sound/preset identity row; compact oscillator
+regions with recognizable shape choices and an actual analytical wave; balance beside its sources;
+filter controls along the signal path; and a prominent editable amplitude ADSR. Prefer simultaneous
+access to these few musical functions over a long parameter form. The exact arrangement follows the
+implemented F1 signal order; do not draw audio flowing through an envelope generator when it actually
+controls an amplifier. Any filter envelope needs its own real DSP/state and a clear destination.
+
+Spend space on the waveform and editable curve, comfortable tactile dials, readable pointers/scales
+and the cutoff gesture. Keep a musical value beside its control without repeating it in captions.
+Draw only implemented shapes; distinguish an analytical oscillator period, analytical filter response
+and measured output. Do not show a fake scope/spectrum, animated voices or unsupported response curve.
+ADSR must distinguish time-based A/D/R from the S level and held-note duration: a drawn sustain plateau
+does not promise a fixed note length. Exact input and the curve must edit the same parameters.
+Capture/cancel, focus, keyboard precision and one-gesture/one-Undo follow existing UX contracts;
+live audible editing requires its own verified runtime boundary.
+
+Retain slate/jade materials, original vectors, Onest/JetBrains Mono and shared HostPalette,
+HostMetrics, HostMaterials, GainDialControl and standard field/button styles where their semantics fit.
+These are composition requirements, not a new implemented component API. Light needs its own cool-steel
+depth, strong curve/control ink and readable active state; it cannot be a washed-out inversion of Dark.
+Labels/tooltips/accessibility names work in RU/EN. No local language/theme controls, dormant processor
+panels, copied graphics, screenshot textures, permanent tutorials or technical counters belong here.
+
+Narrow panes reflow functional groups in the same musical order and scroll editor content locally,
+retaining useful grab targets and text size. Keep audition reachable while editing; reuse the existing
+instrument interaction language where appropriate, with actual held/released-note semantics verified
+for the synth. Comparing timbres can use repeatable audition, existing history and working presets;
+this does not authorize an unimplemented A/B bank, MIDI keyboard or new global shortcut.
+
+#### Required Synth Editor visual acceptance
+
+Render the actual production Synth Editor, rather than a mockup or a Drum editor labelled Synth.
+Review every RU/EN × Dark/Light combination in a FullHD workspace with neighbouring musical panes,
+a reduced main window and the smallest supported Synth pane. Record actual window/pane DIP sizes,
+display scale and screenshot paths; select final compact bounds from real implementation, not a
+scaled screenshot. Initial review targets are a 1920×1080 desktop and a 1280×800 reduced desktop,
+with compact pane geometry declared separately. These targets are not new host minimum dimensions.
+
+At each configuration inspect initial/default and edited sounds, short/plucked and sustained/released
+envelopes, long RU labels/preset names, selection/focus and any supported unavailable/error state.
+Exercise shape choice, oscillator balance, ADSR handles/exact values, filter movement and repeated
+timbre audition. Check that visible changes affect the sound, released notes follow Release, and
+Undo/Redo and resize do not lose the selected sound or an input draft. Verify real field alignment,
+pointer capture/Escape/reversal, local scrolling and reachability at compact sizes. Reuse existing
+visual tooling; label routed versus native input evidence accurately.
+
+The F1 completion report must show representative real renders and record the complete matrix,
+then compare composition and manipulation against the inspected references: waveform/curve clarity
+from Vital, functional grouping from Surge, compactness from Polymer, hierarchy from Analog and
+shape selection from 3x OSC. Include deliberate rejections and reasons, defects found/fixed and any
+remaining limits. Rendering/input evidence is separate from owner aesthetic acceptance and DSP/audio
+evidence. This research pass supplies no Synth renders or completed acceptance claim.
+
 ### Implemented Drum Voice composition
 
 The built-in drum family adopts DS-03's meaningful pitch/time surface, DS-01's oscillator/noise anatomy and

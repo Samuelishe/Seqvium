@@ -548,6 +548,21 @@ Wavetable/granular voices, path/LFO modulation and macro morphs remain explorato
 All future editors require equal Dark/Light expressive quality, shared materials, economical text
 and meaningful icons alongside supported parameters; dark appearance must not regress for Light.
 
+### SEQ-SYNTH-F1 — reference and visual quality supplement
+
+The owner requires reference-led design for the first bounded tonal Synth Editor, with musical
+expression, usability and visual quality treated alongside DSP correctness. The
+[reference assessment and direction](UI_DESIGN.md#synth-f1-reference-assessment-and-direction)
+records inspected local images and official Vital, Surge XT, Polymer, Analog and 3x OSC sources,
+selected interaction/composition principles and explicit rejections. Retain Seqvium's own materials,
+RU/EN, Dark/Light and compact Workspace use; show only working synthesis capabilities.
+
+This supplement is accepted; the F1 DSP/feature implementation brief remains unspecified in the
+current repository. It does not select oscillator count, modulation, presets or voice execution,
+reorder R12, or mark a tonal synth implemented. F1 completion requires actual Synth Editor renders
+and interaction review across both languages/themes and ordinary/reduced/compact geometries,
+with a short reference comparison and explicit evidence limits under the linked acceptance gate.
+
 ## SEQ-R12 — First Track Release
 
 Reach a version in which a user can reasonably finish a small track: strengthened save/load,

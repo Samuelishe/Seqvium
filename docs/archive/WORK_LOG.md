@@ -2236,3 +2236,13 @@ evidence, initial fixture/physical failures and retained comparison WAVs. Subjec
 and R4-F2 pressure gaps remain. Personal performance diagnostics stay local and ignored;
 the existing collector was stopped through its requested stop file, with no other processes
 terminated and no global settings or Git index/history/remote changed.
+
+## SEQ-SYNTH-F1 — reference and artistic direction supplement — 2026-10-16
+
+Inspected actual local Vital/Serum/KICK 2 images and official Vital, Surge XT, Polymer, Analog
+and 3x OSC interfaces/manuals, plus sampled Polymer demonstration-animation frames. Recorded
+workflow-derived choices, deliberate feature/composition rejections and the required real Synth
+render/input matrix in [UI design](../UI_DESIGN.md#synth-f1-reference-assessment-and-direction),
+with Roadmap/current-state routing. This is documentation-only preparation: no synth implementation,
+video playback, acoustic judgement, render acceptance or version bump is claimed. Private originals
+remain outside Git; downloaded public study images remain ignored local review evidence.

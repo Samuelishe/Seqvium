@@ -405,7 +405,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected Sampler Editor L3 covers the shared voice
+Completed repository tasks since this L3: **1** (Synth F1 reference/design documentation only;
+no production or test change). This risk-selected Sampler Editor L3 covers the shared voice
 kernel, finite loop/release admission, Pattern/Song/R8/history/media integration, reader 1.9 and
 existing production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
@@ -450,6 +451,12 @@ distinguishes these observations from subjective listening, callback/pressure an
 Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
+
+SEQ-SYNTH-F1 has an accepted [reference/design supplement](UI_DESIGN.md#synth-f1-reference-assessment-and-direction)
+and [planning gate](ROADMAP.md#seq-synth-f1--reference-and-visual-quality-supplement).
+Local/official interface study is complete within its declared limits; the tonal Synth Editor,
+bounded DSP/feature brief and actual RU/EN × Dark/Light size-matrix acceptance remain pending.
+The existing product checkpoint and verification baseline are unchanged.
 
 Finish wider Playlist/container/warp and compact editor work only through their scoped owners.
 Audio is resident, not streamed: 512 MiB per source/unique audible Audio Clip PCM, separate 128 MiB
