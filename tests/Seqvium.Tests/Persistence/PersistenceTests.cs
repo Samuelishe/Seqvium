@@ -62,7 +62,7 @@ public sealed class PersistenceTests
     [Theory]
     [InlineData(2, 0, 0)]
     [InlineData(0, 0, 0)]
-    [InlineData(1, 8, 8)]
+    [InlineData(1, 9, 9)]
     [InlineData(1, -1, 0)]
     [InlineData(1, 0, -1)]
     [InlineData(1, 0, 1)]

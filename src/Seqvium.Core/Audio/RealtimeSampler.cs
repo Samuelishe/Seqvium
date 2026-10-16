@@ -66,10 +66,13 @@ public sealed class RealtimeSampler : IDisposable
         internal Guid Revision, EquivalentRevision;
         internal long ContinuationAuthority;
         internal int[]? ContinuationNotes;
+        internal bool MixerOnlyContinuation;
+        internal PreparedMixer? MixerBudget;
 
         internal State(PreparedSampler plan, long authority, bool transient, CancellationToken cancellation, long stop)
         {
             Plan = plan;
+            MixerBudget = plan.Graph?.Mixer;
             Authority = authority;
             Transient = transient;
             Cancellation = cancellation;
@@ -115,8 +118,18 @@ public sealed class RealtimeSampler : IDisposable
         if (_disposed || IsTerminated || HasPending || active is null || active.Authority != executionId ||
             active.Plan.Graph is not { } graph || graph.Mixer is null) return false;
         var mixer = MixerPreparation.Compile(snapshot.State, graph, SampleRate);
-        if (mixer is null) return false;
+        if (mixer is null || mixer.Strips.Length != graph.Mixer.Strips.Length ||
+            !mixer.Strips.Select(s => s.Id).SequenceEqual(graph.Mixer.Strips.Select(s => s.Id))) return false;
+        mixer = MixerPreparation.ReserveContinuation(mixer, active.MixerBudget);
+        if (mixer.Strips.Where((s, i) => s.Reverb.Enabled &&
+                (!graph.Mixer.Strips[i].Reverb.Enabled || s.Reverb.Size != graph.Mixer.Strips[i].Reverb.Size)).Any())
+            return false;
+        long work = active.Plan.PacketWork - (long)MaximumPacketFrames *
+            graph.Mixer.Strips.Count(s => s.Reverb.Admitted) * 512 +
+            (long)MaximumPacketFrames * mixer.Strips.Count(s => s.Reverb.Admitted) * 512;
+        if (work > GraphPreparation.MaximumPacketWork) throw new GraphPreparationException(GraphPreparationReasons.Budget);
         long authority = InvalidatePreparation();
+        active.MixerBudget = mixer;
         Volatile.Write(ref _mixerUpdate, new(executionId, snapshot.Revision, mixer, authority));
         return true;
     }
@@ -150,7 +163,7 @@ public sealed class RealtimeSampler : IDisposable
     // Four slots include the sole reserved candidate. Event/note object allowance is separate from DSP scratch.
     public const long MaximumRetainedPcmAndScratchBytes =
         4L * (SamplerPreparation.MaximumDecodedBytes + AudioMedia.MaximumDecodedBytes +
-              GraphPreparation.MaximumScratchBytes + MixerDelayDsp.MaximumBytes);
+              GraphPreparation.MaximumScratchBytes + MixerDelayDsp.MaximumBytes + MixerReverbDsp.MaximumBytes);
 
     public const long MaximumPreparedTableAllowanceBytes = 4L * SamplerPreparation.MaximumEvents * 256;
 
@@ -162,13 +175,13 @@ public sealed class RealtimeSampler : IDisposable
     public long ReservedPcmAndScratchBytes => RetainedPcmAndScratchBytes + (Volatile.Read(ref _preparing) == 0
         ? 0
         : (long)SamplerPreparation.MaximumDecodedBytes + AudioMedia.MaximumDecodedBytes +
-          GraphPreparation.MaximumScratchBytes + MixerDelayDsp.MaximumBytes);
+          GraphPreparation.MaximumScratchBytes + MixerDelayDsp.MaximumBytes + MixerReverbDsp.MaximumBytes);
 
     public bool HasPending => Volatile.Read(ref _pending) is not null;
     internal long RejectedPreparedExecutionId => Volatile.Read(ref _rejectedPreparedExecutionId);
 
     private static long StateBytes(State? state) =>
-        state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes + state.Plan.MixerDelayBytes;
+        state is null ? 0 : (long)state.Plan.DecodedBytes + state.Plan.ScratchBytes + state.Plan.MixerDelayBytes + state.Plan.MixerReverbBytes;
 
     /// <summary>Thread-safe value observation. The reader may retry while the single consumer finishes its short status write.</summary>
     public SamplerExecutionStatus ReadStatus()
@@ -294,8 +307,15 @@ public sealed class RealtimeSampler : IDisposable
             if (count > 64) throw new NotSupportedException("Realtime event density exceeds 64 events per frame.");
         }
 
-        var state = new State(plan, authority, transient, lifetimeCancellation, Volatile.Read(ref _stop));
         var active = Volatile.Read(ref _active);
+        if (preservePlayback && plan.Graph?.Mixer is { } nextMixer)
+        {
+            // Account inherited bypass/fading storage before the new execution is allocated/published.
+            // Disabled fresh strips still allocate no line payload; the consumer moves the old owner.
+            plan.Graph.Mixer = MixerPreparation.ReserveContinuation(nextMixer, active?.MixerBudget);
+            GraphPreparation.Preflight(plan, MaximumPacketFrames);
+        }
+        var state = new State(plan, authority, transient, lifetimeCancellation, Volatile.Read(ref _stop));
         if (preservePlayback && active is not null &&
             (plan.IsArrangement && active.Plan.IsArrangement || plan.Loop is { } clock &&
                 active.Plan.Loop is { } previous && clock.Compatible(previous)) &&
@@ -316,6 +336,8 @@ public sealed class RealtimeSampler : IDisposable
                     ? next.index
                     : -1).ToArray();
             state.ContinuationAuthority = active.Authority;
+            state.MixerOnlyContinuation = plan.GraphAttachmentId == active.Plan.GraphAttachmentId &&
+                ProjectDocument.HasSameContent(oldBasis with { Mixer = null }, nextBasis with { Mixer = null });
         }
 
         Volatile.Write(ref _pending, state);
@@ -436,7 +458,8 @@ public sealed class RealtimeSampler : IDisposable
                 {
                     var old = _active;
                     bool continuing = _playing && old is not null &&
-                                      (_looping || old.Plan.IsArrangement && pending.Plan.IsArrangement &&
+                                      (_looping || (old.Plan.IsArrangement && pending.Plan.IsArrangement ||
+                                          pending.MixerOnlyContinuation) &&
                                           old.Execution.Position < (old.Execution.HasMixerTail
                                               ? Math.Max(old.Execution.EndFrame, pending.Execution.EndFrame)
                                               : pending.Execution.EndFrame)) &&
@@ -445,7 +468,8 @@ public sealed class RealtimeSampler : IDisposable
                     pending.Execution.SetLooping(_looping);
                     pending.Execution.SetBoundarySmoothing(_smoothBoundaries);
                     if (continuing) pending.Execution.ContinueFrom(old!.Execution, pending.ContinuationNotes!);
-                    else if (_playing && old is not null && old.Plan.IsArrangement && pending.Plan.IsArrangement &&
+                    else if (_playing && old is not null &&
+                             (old.Plan.IsArrangement && pending.Plan.IsArrangement || pending.MixerOnlyContinuation) &&
                              pending.ContinuationAuthority == old.Authority &&
                              old.Execution.Position >= pending.Execution.EndFrame)
                     {

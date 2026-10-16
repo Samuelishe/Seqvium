@@ -7,6 +7,27 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Musical Reverb verification
+
+`MixerReverbTests` drives the production FDN and Mixer through impulse/phrase/sustain fixtures,
+density/stereo/energy/decay/damping/Size/Mix extremes, 44.1/48-kHz mono/stereo exact realtime/offline
+and packet parity, routing/sends/Mute/Solo/Delay/compression, finite WAV quantization, hard transport
+boundaries, Pattern looping and R8 exclusion. It checks live coefficient/geometry/bypass transfer,
+finite Pattern enable without note retrigger, last-valid refusal/Undo repair, zero disabled payload,
+slot/cancel/stale/admission bounds, removed-source/new-downstream history excitation, inherited-tail
+refusal, portable history/reader 1.8/unknown-state and export cancellation.
+Warm consumer checks isolate measured calls from harness assertions, preparation and source allocation.
+Unprimed/JIT, allocation pressure and subjective acoustic quality remain separate limits.
+
+Use `--filter-class "*MixerReverbTests"` alongside Mixer/Delay, GraphRealtime, PatternResampling,
+Arrangement, AudioClip and persistence/metadata neighbours after the affected Release build. This
+checkpoint additionally selects L3 for state lifetime, finite Pattern continuation, shared tail
+reachability and reader changes. VisualCheck `reverb ... native audio` owns actual localized empty/
+populated compact fields, native Decay/bypass/enable, managed Save/Open/export and physical final-tail
+checks. Its direct-DSP listening study writes authored percussion/phrase/sustain comparisons and
+numerical summaries; generated audio and physical delivery are not subjective listening. The
+[report](experiments/SEQ-R11-REVERB-F1_REPORT.md) records actual results and limitations.
+
 ## Recent cross-stage regression audit
 
 The [recent audit](experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md) adds fifteen cases across

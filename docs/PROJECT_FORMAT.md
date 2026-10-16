@@ -124,6 +124,18 @@ like unknown EQ/compression state. Invalid/null/range violations refuse atomical
 feedback histories, smoothing and tail countdowns remain derived and are never serialized. Existing
 Undo/Redo, managed media and portable Save As/Open own persistence; there is no new resource format.
 
+### Mixer Reverb (reader 1.8)
+
+Strip/Master `reverb` stores Enabled, DecaySeconds, Size, Damping and Mix. Missing state defaults to
+`false, 1.8, 0.5, 0.5, 0.2`. The exact default object is omitted, keeping old documents' shape/gate.
+Any non-default intent, including bypassed custom values or unknown nested data, requires both
+`minor >= 8` and `minimumReaderMinor >= 8`. Save promotes these monotonically; underdeclared or
+unsupported required state refuses Open, never silently drops the effect. Unknown nested fields
+round-trip but block execution/destructive overwrite; null and invalid ranges refuse atomically.
+Existing history, Save/Open and portable Save As own persistence. Buffers, geometry, admission,
+filters, transition histories and tail counters are derived runtime state and are never serialized.
+No media/resource or container format is added.
+
 ## Drum Voice persistence
 
 Built-in drums store their versioned algorithm and validated decimal parameters in the

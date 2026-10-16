@@ -80,10 +80,12 @@ internal sealed class MixerRuntime
         internal float Held;
         internal long Overloads, Invalid, Frames;
         internal MixerDelayDsp Delay;
+        internal MixerReverbDsp? Reverb;
 
         internal Strip(PreparedMixerStrip p, int rate)
         {
             Delay = new(p.Delay, rate);
+            if (p.Reverb.Enabled) Reverb = new(p.Reverb, rate);
             Filters = (BiquadCoefficients[])p.Filters.Clone();
             Gain = p.Gain;
             Trim = p.Trim;
@@ -136,6 +138,10 @@ internal sealed class MixerRuntime
             var target = _strips[i];
             // Old execution is retired immediately after continuation; transfer the sole consumer's line.
             (target.Delay, source.Delay) = (source.Delay, target.Delay);
+            if (target.Reverb is { } reverb && source.Reverb is { } previousReverb)
+                reverb.ContinueFrom(previousReverb);
+            else if (target.Reverb is null && _plan.Strips[i].Reverb.Admitted)
+                (target.Reverb, source.Reverb) = (source.Reverb, null);
             Array.Copy(source.Z1, target.Z1, 8);
             Array.Copy(source.Z2, target.Z2, 8);
             Array.Copy(source.Filters, target.Filters, 4);
@@ -163,6 +169,7 @@ internal sealed class MixerRuntime
             Array.Clear(strip.Z2);
             strip.Reduction = 0;
             strip.Delay.Reset(prepared.Delay);
+            strip.Reverb?.Reset(prepared.Reverb);
             Array.Copy(prepared.Filters, strip.Filters, 4);
             strip.Trim = prepared.Trim;
             strip.Gain = prepared.Gain;
@@ -275,6 +282,7 @@ internal sealed class MixerRuntime
                 l *= compression;
                 r *= compression;
                 s.Delay.Process(ref l, ref r, p.Delay);
+                s.Reverb?.Process(ref l, ref r, p.Reverb);
                 double preL = l * s.Left, preR = r * s.Right;
                 l = preL * s.Gain;
                 r = preR * s.Gain;
@@ -287,6 +295,7 @@ internal sealed class MixerRuntime
                     Array.Clear(s.Z2);
                     s.Reduction = 0;
                     s.Delay.Reset(p.Delay);
+                    s.Reverb?.Reset(p.Reverb);
                 }
 
                 double peak = Math.Max(Math.Abs(l), Math.Abs(r));

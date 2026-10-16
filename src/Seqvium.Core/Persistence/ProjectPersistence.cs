@@ -37,8 +37,11 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 7;
+    public const int ReaderMinor = 8;
     private static readonly JsonSerializerOptions Options = CreateOptions();
+
+    private static bool HasReverb(ProjectState state) => state.Mixer is { } mixer &&
+        (mixer.Master.Reverb != new MixerReverb() || mixer.Channels.Any(c => c.Settings.Reverb != new MixerReverb()));
 
     private static bool HasDelay(ProjectState state) => state.Mixer is { } mixer &&
         (mixer.Master.Delay != new MixerDelay() || mixer.Channels.Any(c => c.Settings.Delay != new MixerDelay()));
@@ -61,7 +64,7 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = HasDelay(snapshot.State) ? 7 : snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
+        int required = HasReverb(snapshot.State) ? 8 : HasDelay(snapshot.State) ? 7 : snapshot.State.AudioClips.Any(c => c.StretchRatio != 1) ? 6 :
             HasSongStructure(snapshot.State) ? 5 : HasAudio(snapshot.State) ? 4 :
             snapshot.State.Mixer is not null ? 3 :
             !snapshot.State.ArrangementClips.IsEmpty || !snapshot.State.ArrangementTracks.IsEmpty ? 2 :
@@ -80,6 +83,13 @@ public static class ProjectPersistence
             for (int i = 0; i < mixer.Channels.Length; i++)
                 if (mixer.Channels[i].Settings.Delay == new MixerDelay())
                     mixerNode["channels"]![i]!["settings"]!.AsObject().Remove("delay");
+        }
+        if (snapshot.State.Mixer is { } reverbMixer && node["state"]?["mixer"] is JsonObject reverbNode)
+        {
+            if (reverbMixer.Master.Reverb == new MixerReverb()) reverbNode["master"]!.AsObject().Remove("reverb");
+            for (int i = 0; i < reverbMixer.Channels.Length; i++)
+                if (reverbMixer.Channels[i].Settings.Reverb == new MixerReverb())
+                    reverbNode["channels"]![i]!["settings"]!.AsObject().Remove("reverb");
         }
         var bytes = JsonSerializer.SerializeToUtf8Bytes(node, Options);
         if (bytes.Length > MaximumBytes) throw new ProjectFormatException("Project exceeds the 16 MiB format limit.");
@@ -118,6 +128,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (HasReverb(file.State) && file.MinimumReaderMinor < 8)
+                throw new ProjectFormatException("Mixer reverb requires minimumReaderMinor >= 8.");
             if (HasDelay(file.State) && file.MinimumReaderMinor < 7)
                 throw new ProjectFormatException("Mixer delay requires minimumReaderMinor >= 7.");
             if (file.State.AudioClips.Any(c => c.StretchRatio != 1) && file.MinimumReaderMinor < 6)
@@ -237,6 +249,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (HasReverb(snapshot.State))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(8, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(8, document.Compatibility.MinimumReaderMinor)
+                };
             if (HasDelay(snapshot.State))
                 document.Compatibility = document.Compatibility with
                 {

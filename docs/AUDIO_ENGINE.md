@@ -117,13 +117,13 @@ before these taps; Playlist slots do not define Mixer buses.
 
 Routing is a validated directed acyclic graph, with at most 64 channels and eight distinct sends per
 channel. Output goes to another channel or Master. Sends have independent dB levels and pre/post-fader
-choice: pre means after trim, EQ, compression, Delay and stereo balance but before the fader. Muting cuts
+choice: pre means after trim, EQ, compression, Delay, Reverb and stereo balance but before the fader. Muting cuts
 pre-fader sends too. Solo admits its ancestors and descendants, with explicit Mute taking precedence;
 unassigned direct-Master sources are suppressed while a channel is soloed. Feedback/self/cyclic routes
 are refused atomically, not processed with an arbitrary order or hidden delay.
 
 Each strip executes trim → high-pass/low shelf/parametric mid/high shelf → stereo-linked peak compressor
-→ musical Delay → stereo balance → fader → output/sends. Low/high shelves are fixed at 120 Hz/8 kHz; the mid has frequency,
+→ musical Delay → algorithmic Reverb → stereo balance → fader → output/sends. Low/high shelves are fixed at 120 Hz/8 kHz; the mid has frequency,
 gain and Q. The independent biquad implementation uses standard bilinear filter equations. Compression
 has threshold, ratio, soft knee, attack/release and explicit makeup, with no lookahead or sidechain.
 Center balance preserves stereo unity; moving toward one side attenuates the opposite side by cosine.
@@ -149,7 +149,7 @@ continuation and meter reads use fixed bounded storage, no callback allocation, 
 Realtime/offline parity is measured at the same host rate and reset/packet context; a 44.1-kHz device
 cannot be compared bitwise to a 48-kHz WAV. GUI export retains its 48-kHz stereo PCM16 boundary.
 Existing 32-voice limits, instrument synthesis, sample leases and backend lifetime remain unchanged.
-Reverb, processor racks/reordering, external plugins, automation, latency compensation and FX
+Processor racks/reordering, external plugins, automation, latency compensation and FX
 preroll are not implemented. [Graph](NODE_GRAPH.md#mixer-projection-of-supported-graphs) owns the
 currently linear source-boundary restriction.
 
@@ -176,8 +176,11 @@ Natural source completion continues through the shared Mixer with zero source in
 one additional period and 50 ms settling; it is not an absolute loudness/silence detector. Each line
 also expires after that many no-input frames, fades its last five ms and invalidates its history.
 The maximum is **34.05 s per strip**. Acyclic outputs/sends propagate the longest sum of tail allowances;
-more than **120 s** aggregate extension refuses preparation explicitly. Silent/muted routes can make
-this conservative bound longer than the audible result. There is no render-until-mathematical-zero loop.
+more than **120 s** aggregate extension refuses preparation explicitly. Reverb V1 now derives the
+longest audible source-to-Master path for both effects, pruning Mute/Solo, zero local/trim gain,
+zero sends, post-fader silence and dry-only effects, while retaining pre-fader sends. This is static
+reachability, not sample-level silence detection; source rests and cancellation can still be silent.
+Already active live completion never shortens. There is no render-until-mathematical-zero loop.
 
 Finite Pattern and full Song exports append that allowance after the existing source/bar/release/EOF
 boundary, retaining original NoteOffs. Full Song includes the permitted final echo. An explicitly
@@ -201,6 +204,79 @@ and transfer use fixed storage without I/O or blocking locks. Packet work reserv
 per frame plus taps even in bypass. No R4-F2 pressure acceptance follows from short allocation tests.
 
 [Delay report](experiments/SEQ-R11-DELAY-F1_REPORT.md) owns numerical, GUI, physical and limitation evidence.
+
+### Musical Algorithmic Reverb V1 (SEQ-R11-REVERB-F1)
+
+The fixed chain is trim → EQ → Compressor → Delay → Reverb → stereo balance → fader → output/sends,
+including Master. Pre-fader sends include both effects. One shared consumer-owned processor operates
+on each summed strip; Audio Clips and instruments use the same routes and realtime/offline engine.
+R8's local Output tap remains before Mixer and includes neither effect. No rack/order controls,
+convolution, plugin, modulation, automation, local Reverb node or recording path is introduced.
+
+Canonical controls are Enabled, **Decay 0.2–8 seconds**, **Size 0–1**, **Damping 0–1**, **Mix 0–1**.
+Defaults: **disabled, 1.8 s, 0.5, 0.5, 0.2**. Decay describes nominal low-frequency RT60, not an exact
+room measurement. Mix is linear `dry*(1-Mix) + wet*Mix`, with zero dry latency. There is no separate
+Pre-delay: Size controls the onset and reflection density together, deliberately limiting V1.
+
+The independently authored DSP uses an eight-line normalized Hadamard feedback delay network, four
+serial allpass input diffusers per stereo side (gain 0.6), distinct odd host-frame lengths and two
+orthogonal stereo readouts. Size scales the nominal delay lengths by 0.5–1.5. Each feedback gain is
+`0.001^(lineFrames/(rate*Decay))`; a unity-DC one-pole low-pass in each line and its wet readout uses
+cutoff `16000*0.025^Damping` Hz (400–16000 Hz). The orthogonal matrix and strictly sub-unity gains
+make the stationary network dissipative; this is cross-coupled diffusion, not isolated Delay repeats.
+General theory is described in Julius O. Smith's
+[FDN chapter](https://www.dsprelated.com/freebooks/pasp/FDN_Reverberation.html). No external source,
+implementation, assets or dependency is copied/distributed. Static unmodulated FDNs can color sparse
+or sustained material; numerical density/decay and physical delivery do not establish acoustic quality.
+The report keeps subjective assessment explicitly open.
+
+Mix/enable/bypass smooth with a five-ms time constant. Feedback/damping coefficients smooth over
+20 ms. Enabling and Size changes use worker geometry preparation through the existing publication slots;
+execution construction admits/allocates line storage on the control owner, outside rendering.
+A Size change crossfades the old geometry into fresh geometry over 30 ms; it does not retune live
+read heads or preserve the entire old space indefinitely. Repeated Size edits retain at most two
+banks. Same-geometry publications transfer histories by identity without copying large arrays.
+Finite Pattern Mixer-only changes now preserve position/voices and original NoteOffs, as Song and
+ordinary Pattern loops do; unrelated incompatible publications retain their existing behavior.
+
+Each admitted strip has a finite no-input allowance of **2*Decay + 1 seconds**, at most **17 s**:
+two nominal RT60s plus diffusion/transition margin, with a final five-ms fade and generation reset.
+It is a relative-decay bound, not an absolute silence detector. Serial Delay/Reverb/bus paths add their
+allowances; parallel sends take the maximum, and the existing **120-s** extension gate remains.
+Natural source completion and full Pattern/Song WAV include the reachable final tail. Ordinary Pattern
+loops retain state. Stop/Panic, Restart, Seek, Song range wrap and explicit hard Pattern stop reset
+histories; cold seeks have no preroll. Compatible live changes retain the already allowed execution
+end even if the new route is dry/muted. Fresh exports use only frozen canonical intent, never live PCM.
+Live publication keeps a separate immutable history-budget view. It merges each surviving processor's
+maximum previous/current allowance and seeds possible already excited histories into the new routing,
+so removing/muting a source or bypassing a bus cannot hide its ability to excite a newly enabled
+Master/downstream effect. The inherited source-end basis is retained too. Repeated publications use
+per-identity maxima, not repeated sums of a global tail; the same 120-s gate is checked off callback
+before admission. This conservatively retains possible histories until removal/retirement and can
+refuse a live continuation whose fresh canonical export is valid. It does not sample mutable DSP
+state or dynamically trim silent histories. Stop/Seek reset actual histories; a fresh execution/export
+starts with canonical reachability alone.
+
+Fresh disabled strips allocate **no Reverb line payload**. Enabled strips allocate exact-size float
+lines and Int64 generation tags outside the callback. A separate **16 MiB per-state Reverb budget**
+reserves two maximum-Size banks per admitted identity: **687168 bytes at 44.1 kHz**, **747912 bytes at
+48 kHz**, admitting at most **24 / 22** identities respectively. Small arrays/object overhead and the
+existing Delay/graph/source budgets are separate. Continuations reserve the union of surviving admitted
+identities before publication; bypassed histories move without allocating another disabled bank and
+stay accounted until execution retirement/removal. This bounded lifetime may refuse a later enable
+while earlier bypassed identities remain admitted; a fresh execution has fresh admission. No heavy
+reclamation or array clear occurs in rendering: generation resets invalidate long lines in O(1),
+while bounded filter state is cleared. A completed Size crossfade retains its second bank until
+retirement, never drops its last reference from the callback. Four-slot reserved accounting includes
+the Reverb allowance. Packet preflight adds **512 work units per admitted strip/frame**, covering
+normal processing and the two-bank transition, to existing Mixer/tap work; the **64 Mi work-unit** gate
+remains. These are payload/work admission limits, not physical CPU or OS working-set guarantees.
+
+Preparation, inherited admission and fast coefficient publication refuse budgets before replacing
+last-valid audio. The coordinator exposes a blocker while canonical edits/history remain accepted;
+Undo can repair the intent. Unknown Reverb state blocks execution/overwrite. The
+[report](experiments/SEQ-R11-REVERB-F1_REPORT.md) owns actual numerical, GUI, native, physical and
+allocation evidence and remaining pressure/acoustic limits.
 
 ## Built-in Drum Voice
 

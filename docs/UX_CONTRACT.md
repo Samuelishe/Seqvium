@@ -71,7 +71,7 @@ creating a bus does not silently reroute anything. Rack's Open Mixer action targ
 Output/send selectors expose real routes; cyclic intent fails without history or partial publication.
 
 The bank offers dB faders (-90 silence through +12), bipolar stereo balance, Mute/Solo, measured stereo
-levels/peak hold and a compact EQ/compression/Delay summary. Master stays locatable. Contextual inspector
+levels/peak hold and a compact EQ/compression/Delay/Reverb summary. Master stays locatable. Contextual inspector
 provides trim (-24 through +36), editable EQ response, exact filter/dynamics controls, output, pre/post
 sends, name, assignments and channel deletion. Curve means analytical response, not live spectrum.
 Peak/GR readouts derive from the audio engine; stopped meters are not animated. Reset peaks does not
@@ -87,6 +87,17 @@ Ordinary Pattern repeats keep echoes; Stop/Panic and Seek/range wrap clear them.
 WAV includes a finite final tail, while explicit hard boundaries remain hard. Save/Open and Undo/Redo
 preserve the parameters. This is not tempo sync, ping-pong, automation or a reorderable rack. Exact
 finite bounds and memory/refusal policy belong to [audio](AUDIO_ENGINE.md#musical-delay-v1-seq-r11-delay-f1).
+
+The Reverb inspector tab offers Enabled, Decay (0.2–8 s), Size (0–100%), Damping (0–100%) and
+Mix (0–100%); defaults are disabled, 1.8 s, 50%, 50%, 20%. Each accepted edit changes the real
+channel/bus/Master processor and uses the same exact-field history/validation/cancel behavior.
+Reverb follows Delay before balance/level/pre-fader sends. Size changes spatial density/onset,
+Decay controls low-frequency decay and Damping darkens the tail. Mix 0% is dry, 100% wet; bypass
+returns smoothly to dry. Size prepares/crossfades geometry off the callback without restarting
+transport/notes. Natural playback/full WAV includes a finite tail, Pattern repeats retain it and
+Stop/Panic/Seek/range wrap clear it. R8 remains local before Mixer. This compact V1 has no separate
+Pre-delay or processor reordering. [Audio](AUDIO_ENGINE.md#musical-algorithmic-reverb-v1-seq-r11-reverb-f1)
+owns finite bounds, transition detail, admission refusal and acoustic limitations.
 
 Fader/dial/EQ handle drag previews visually and commits once on release. Fader/dial offer Shift fine adjustment;
 double-click level/pan restores unity/center. Keyboard fader arrows/Home/End and exact numeric fields

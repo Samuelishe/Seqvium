@@ -1,5 +1,23 @@
 # Desktop visual and lifecycle verification
 
+## Musical Reverb
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll reverb "$PWD/.artifacts/reverb-f1/review" native audio
+```
+
+Uses a quiet authored Kick rhythm in the production Mixer Inspector. Routed Enabled/Decay/Size/
+Damping/Mix edits, invalid/cancelled Decay, Undo/Redo, Save/New/Open and finite full Song WAV are checked.
+The actual-window matrix covers RU/EN × Dark/Light, ordinary/reduced empty/populated Mixer and
+32 field alignments. Optional `native` guards Windows Decay/bypass/enable; setup/selection stay routed.
+Optional `audio` checks the real default output, live Mix, exact natural Ended/position, zero voices,
+unchanged epoch and absence of device faults. No subjective listening or stress acceptance follows.
+`reverb-study.json` and twelve PCM16 `study-*.wav` files compare authored percussion, four-note phrase
+and sustained harmonics through dry/default/small-bright/large-dark direct DSP. The numerical summary
+records peak/tail energy/stereo difference and offline elapsed time, not callback deadline performance.
+Artifacts use existing ignored retention; the [report](../../docs/experiments/SEQ-R11-REVERB-F1_REPORT.md)
+owns observed outcomes and limits.
+
 ## Musical Delay
 
 ```powershell

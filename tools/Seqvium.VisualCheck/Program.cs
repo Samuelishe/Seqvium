@@ -175,7 +175,7 @@ internal static partial class Program
         Require(
             args[0] is "catalog" or "matrix" or "gestures" or "smoke" or "steps" or "arrangement" or "project"
                 or "piano" or "piano-music" or "drum" or "drum-kit" or "drum-kit-review" or "control-input" or "rack-pads"
-                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch" or "delay" or "ui-density" or "theme-navigation" or "settings",
+                or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow" or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch" or "reverb" or "delay" or "ui-density" or "theme-navigation" or "settings",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -205,6 +205,7 @@ internal static partial class Program
                 else if (args[0] == "extensions") await ExtensionFoundationAsync(main, output, args.Length > 2 && args[2] == "native");
                 else if (args[0] == "sample-lab") await SampleLabAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "resampling") await ResamplingAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "reverb") await ReverbAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "delay") await DelayAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "stretch") await AudioStretchAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "ui-density") await UiDensityAsync(main, output, Path.GetFullPath(args[2]));

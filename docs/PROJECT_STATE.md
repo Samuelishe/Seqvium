@@ -7,14 +7,31 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.11.0001**, **SEQ-RECENT-REGRESSION-AUDIT**. Live Mixer budget refusals now
-retain explicit last-valid status without escaping accepted edit notifications. Sample Lab substitution
-preserves natural source completion and hard-stop metadata; shared Audio Clip resource definitions
-each validate decoded metadata before scheduling/stretching. Fifteen added cases cover those fixes,
-serial Delay ownership/backpressure, silent tails and R8 → Stretch → Delay/media integration.
-The [audit](experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md) separates new regressions from the
-inherited metadata defect and executable reader/GUI/numerical evidence. Disabled-bank Delay storage
-and conservative silent-tail admission remain measured [debt](TECH_DEBT.md#bypassed-delay-storage-and-conservative-tail-reachability).
+Product alpha **0.1.12.0000**, **SEQ-R11-REVERB-F1 — Musical Algorithmic Reverb**. Mixer Inspector
+now exposes Enabled, Decay 0.2–8 s, Size, Damping and Mix for channels, buses and Master. An eight-line
+diffused stereo FDN follows Delay before balance/fader/sends, using shared realtime/offline execution,
+history, managed media and WAV export. Default bypassed state is omitted; non-default intent requires
+reader 1.8. Fresh disabled strips have no Reverb line payload; a 16 MiB per-state two-bank reservation
+admits at most 24 identities at 44.1 kHz / 22 at 48 kHz. Surviving admitted banks remain accounted
+through live bypass/continuation until removal/retirement. Size uses a 30-ms geometry crossfade;
+other parameters smooth without note/transport restart. Mixer-only finite Pattern worker publication
+now retains time/voices/original NoteOffs. Natural tails are finite (maximum 17 s per Reverb), hard
+Stop/Seek/range boundaries reset, ordinary Pattern loops retain state, and R8 remains before Mixer.
+Shared source-to-Master reachability now prunes silent new Delay/Reverb tail admission while preserving
+pre-fader sends. Live per-identity historical tail maxima/source-end basis seed possible excited
+histories through new downstream routes; repeated edits do not compound the bound, and inherited
+120-s refusals retain last-valid playback. Fresh exports have no historical allowance. Bypassed Delay storage remains
+[debt](TECH_DEBT.md#bypassed-delay-storage). Static-network coloration, no independent Pre-delay,
+retained bypass admission, cold seek, subjective listening and pressure acceptance remain explicit
+limits. [Audio](AUDIO_ENGINE.md#musical-algorithmic-reverb-v1-seq-r11-reverb-f1),
+[format](PROJECT_FORMAT.md#mixer-reverb-reader-18), [UX](UX_CONTRACT.md#implemented-mixer-workflow)
+and the [report](experiments/SEQ-R11-REVERB-F1_REPORT.md) own details and evidence.
+
+Previous **0.1.11.0001**, **SEQ-RECENT-REGRESSION-AUDIT** retains last-valid live refusal, correct
+Sample Lab natural/hard completion and shared Audio Clip metadata validation. Its
+[report](experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md) records the original three corrections,
+Delay/publication pressure and R8 → Stretch → Delay/media evidence. Reverb V1 supersedes its static
+silent-tail debt with the shared reachability calculation; it does not close R4 pressure or acoustics.
 
 Capability baseline **0.1.11.0000**, **SEQ-R11-DELAY-F1 — musical Delay / stateful Mixer FX**.
 Mixer Inspector exposes Enabled, Time 10–1000 ms, Feedback 0–75% and Mix 0–100% on channels,
@@ -97,7 +114,7 @@ The owner's follow-up also removes permanent instructional/technical clutter acr
 working surfaces. Sample Lab/Browser/Extensions lead with short actions and sound; redundant Gain/Mixer
 readouts and Piano/source-property explanations are reduced or disclosed. AGENTS/UI design require
 actual reference-image inspection and a density gate before future UI edits. Reader 1.5 covers
-sections/ancestry; reader 1.6 adds explicit local stretch and reader 1.7 gates non-default Delay. [Versioning](VERSIONING.md) owns identity.
+sections/ancestry; reader 1.6 adds explicit local stretch, reader 1.7 gates non-default Delay and reader 1.8 gates Reverb. [Versioning](VERSIONING.md) owns identity.
 No release, staging, commit, push or tag is performed. R1–R3 remain complete in their bounded scopes.
 R4 remains partial: F1 accepted-ready, F2 pressure acceptance unresolved, F3-A conditionally accepted,
 F3-B owner interaction/visual review pending. R5 Rack/music, R9 Piano, bounded R10 Playlist/audio and
@@ -173,13 +190,33 @@ and [architecture](ARCHITECTURE.md#song-structure-and-explicit-variations) own t
 
 Mixer retains explicit sound assignments, channels/buses/Master, level/trim/stereo balance,
 Mute/Solo, measured levels/reduction, acyclic output/pre/post sends, high-pass/three-band EQ,
-linked compression, musical Delay and optional sample-peak protection. Audio Clip contributions use this same
+linked compression, musical Delay, algorithmic Reverb and optional sample-peak protection. Audio Clip contributions use this same
 processing, not a parallel mixer. Compatible prepared changes retain time/unrelated voices.
 [Design system](DESIGN_SYSTEM.md) and [UI design](UI_DESIGN.md) own compact shared visual norms.
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-RECENT-REGRESSION-AUDIT, 2026-10-16**. Full Release solution build:
+Latest L0/L1/L2/L3: **SEQ-R11-REVERB-F1, 2026-10-16**. Full Release solution build has zero
+warnings/errors (3.43 s final); **1525/1525 tests pass**, zero skips, one thread (**77.892 s CLI**).
+The 39 added Reverb cases cover real impulse/phrase/sustain/damping/space/decay/mix and maximum
+extremes, 44.1/48-kHz mono/stereo exact packet/realtime/offline parity, channel/bus/Master/sends/
+Mute/Solo/Delay/compression, natural finite WAV/PCM16, hard boundaries/Pattern loops/R8 exclusion,
+live coefficients/geometry/bypass/topology/history/portable media and reader/cancel/budget/slot refusal.
+Selected primed processing/range-wrap/live coefficient callbacks allocate zero measured bytes;
+unprimed/JIT, maximum-load stress and general R4-F2 pressure remain unaccepted. Initial finite-enable
+epoch regression is corrected; the first L3's three obsolete reader fixture expectations are updated
+before the final green pass. Focused progress checks pass 45/45, 92/92 and 97/97 as scoped in the report.
+
+Actual RU/EN × Dark/Light empty/populated Mixer at ordinary/reduced sizes passes, with 32 zero-DIP
+field alignments, real routed edits/invalid/cancel/history/Save/New/Open and 259200-frame Song WAV.
+Earlier guarded native Windows Decay/bypass/enable passes with routed setup; the final repeat is
+foreground/coverage-refused and recorded separately. Physical Samsung USB C Earphones
+48-kHz stereo reaches natural Ended at the same frame, zero voices and unchanged epoch under live Mix.
+Twelve authored dry/default/small-bright/large-dark percussion/phrase/sustain WAVs support later
+listening review. Physical delivery and numerical signal quality are distinct from subjective acoustic
+approval. [Report](experiments/SEQ-R11-REVERB-F1_REPORT.md) retains methods, attempts and limits.
+
+Prior L0/L1/L2/L3: **SEQ-RECENT-REGRESSION-AUDIT, 2026-10-16**. Full Release solution build:
 zero warnings/errors, 22.80 s; **1486/1486 tests pass**, zero skips, one thread, **72.389 s CLI**.
 Focused correction/integration checks pass 70/70 (23.093 s), then the final bypassed-bank case
 passes separately before inclusion in L3. New failure reproductions establish the three corrected
@@ -305,9 +342,9 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This risk-selected audit L3 covers cross-stage
-stateful lifetime/finite completion, live refusal, shared media clocks, reader gates and existing
-production regressions. No broader platform, aesthetic, pressure
+Completed repository tasks since this L3: **0**. This risk-selected Reverb L3 covers stateful
+lifetime/admission, finite Pattern continuation, reachable serial FX completion, reader 1.8 and
+existing production regressions. No broader platform, aesthetic, pressure
 or acoustic closure follows.
 Prior visual identity passes **60/60 focused tests**
 (15.741 s CLI), zero-warning affected Release builds, actual font-stream hashes, RU/EN Dark/Light
@@ -362,7 +399,7 @@ inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachm
 Browser inspection followed by preview decodes external sources twice; three-minute source latency
 and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 
-Reverb, automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
+Automation, sidechain/plugin racks, true-peak/LUFS, latency compensation, Personal Library,
 wider Sample Lab context/reference models, MIDI, recording and recovery remain future work. Cold seek/range wrap
 resets Mixer FX without preroll. R4-F2 pressure failures, maximum-channel stress, aesthetic/acoustic
 review, Linux/macOS runtime, high/mixed DPI, cross-monitor and accessibility remain unevidenced.

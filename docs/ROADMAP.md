@@ -489,8 +489,13 @@ canonical history/reader 1.7, bounded state/tails and finite WAV completion. Its
 [report](experiments/SEQ-R11-DELAY-F1_REPORT.md) records the narrower stateful acceptance; it does not
 close general Q-057, pressure or acoustic evidence.
 
+Algorithmic Reverb V1 is implemented after Delay with Decay/Size/Damping/Mix/bypass, reader 1.8,
+finite reachable tails, bounded off-callback admission and shared realtime/offline execution. The
+[report](experiments/SEQ-R11-REVERB-F1_REPORT.md) separates numerical/GUI/native/physical evidence
+from unestablished subjective acoustic quality and long-pressure acceptance.
+
 Further processing remains planned, not part of the implemented chain: a reorderable processor rack,
-reverb, arbitrary parametric bands, sidechains, automation and latency compensation. Each needs
+arbitrary parametric bands, sidechains, automation and latency compensation. Each needs
 canonical state, lifetime/reset/tail and measured execution tests; no speculative generic FX framework
 is required before a useful processor. FX seek preroll and a future stateful graph/source split require
 explicit execution boundaries. Long-pressure/platform and owner aesthetic/acoustic acceptance remain

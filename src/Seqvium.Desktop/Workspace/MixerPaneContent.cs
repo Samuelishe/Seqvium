@@ -423,9 +423,9 @@ internal sealed class MixerPaneContent : Grid, IDisposable
             if (!fader.HasGesture) fader.LevelDb = settings.LevelDb;
             fader.AccentRole = role;
             effects.Content = (settings.Eq.Enabled ? "EQ·" : "EQ") + " " + (settings.Compressor.Enabled ? "C·" : "C") +
-                              (settings.Delay.Enabled ? " D·" : " D");
+                              (settings.Delay.Enabled ? " D·" : " D") + (settings.Reverb.Enabled ? " R·" : " R");
             ToolTip.SetTip(effects, _shell["Mixer.Processing"]);
-            effects.Classes.Set("primary", settings.Eq.Enabled || settings.Compressor.Enabled || settings.Delay.Enabled);
+            effects.Classes.Set("primary", settings.Eq.Enabled || settings.Compressor.Enabled || settings.Delay.Enabled || settings.Reverb.Enabled);
             border.IsEnabled = !_state.Busy;
         });
         return border;
@@ -558,13 +558,32 @@ internal sealed class MixerPaneContent : Grid, IDisposable
             (s, v) => s with { Delay = s.Delay with { Feedback = v / 100 } }, "Mixer.Detail.DelayFeedback"));
         delay.Children.Add(Number(id, _shell["Mixer.DelayMix"], 0, 100, s => s.Delay.Mix * 100,
             (s, v) => s with { Delay = s.Delay with { Mix = v / 100 } }, "Mixer.Detail.DelayMix"));
+        var reverb = new StackPanel { Spacing = HostMetrics.Values["Space.Small"] };
+        var reverbEnable = new ToggleButton
+        {
+            Content = _shell["Mixer.Enabled"], IsChecked = settings.Reverb.Enabled,
+            HorizontalAlignment = HorizontalAlignment.Left
+        };
+        AutomationProperties.SetAutomationId(reverbEnable, "Mixer.Detail.ReverbEnable");
+        reverbEnable.Click += (_, _) => StripEdit(_state, id,
+            s => s with { Reverb = s.Reverb with { Enabled = reverbEnable.IsChecked == true } });
+        reverb.Children.Add(reverbEnable);
+        reverb.Children.Add(Number(id, _shell["Mixer.ReverbDecay"], .2m, 8, s => s.Reverb.DecaySeconds,
+            (s, v) => s with { Reverb = s.Reverb with { DecaySeconds = v } }, "Mixer.Detail.ReverbDecay"));
+        reverb.Children.Add(Number(id, _shell["Mixer.ReverbSize"], 0, 100, s => s.Reverb.Size * 100,
+            (s, v) => s with { Reverb = s.Reverb with { Size = v / 100 } }, "Mixer.Detail.ReverbSize"));
+        reverb.Children.Add(Number(id, _shell["Mixer.ReverbDamping"], 0, 100, s => s.Reverb.Damping * 100,
+            (s, v) => s with { Reverb = s.Reverb with { Damping = v / 100 } }, "Mixer.Detail.ReverbDamping"));
+        reverb.Children.Add(Number(id, _shell["Mixer.ReverbMix"], 0, 100, s => s.Reverb.Mix * 100,
+            (s, v) => s with { Reverb = s.Reverb with { Mix = v / 100 } }, "Mixer.Detail.ReverbMix"));
         var routing = Routing(id);
         tabs.ItemsSource = new TabItem[]
         {
             new() { Header = _shell["Mixer.EqTab"], Content = eq },
             new() { Header = _shell["Mixer.CompTab"], Content = compressor },
             new() { Header = _shell["Mixer.Routing"], Content = routing },
-            new() { Header = _shell["Mixer.Delay"], Content = delay }
+            new() { Header = _shell["Mixer.Delay"], Content = delay },
+            new() { Header = _shell["Mixer.Reverb"], Content = reverb }
         };
         AutomationProperties.SetAutomationId(tabs, "Mixer.Detail.Tabs");
         _detail.Content = tabs;

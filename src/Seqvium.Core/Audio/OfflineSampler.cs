@@ -87,6 +87,7 @@ public sealed class PreparedSampler : IDisposable
     public long EndFrame { get; }
     internal long SourceEndFrame { get; init; }
     internal bool AllowMixerTail { get; init; } = true;
+    public int MixerReverbBytes => Graph?.Mixer?.ReverbBytes ?? 0;
     public int MixerDelayBytes => Graph?.Mixer?.DelayBytes ?? 0;
     internal PreparedGraph? Graph { get; }
     public int DecodedBytes { get; }
@@ -439,6 +440,7 @@ public sealed class OfflineSampler : IDisposable
     private readonly float[][]? _signals;
     private float[]? _coefficients;
     private readonly MixerRuntime? _mixer;
+    private long _tailSourceEnd;
 
     public MixerMeter ReadMixerMeter(Id<MixerChannel>? channel = null) =>
         _mixer?.Read(channel?.Value ?? Guid.Empty) ?? default;
@@ -446,7 +448,7 @@ public sealed class OfflineSampler : IDisposable
     internal void UpdateMixer(PreparedMixer mixer)
     {
         _mixer?.Update(mixer);
-        if (_plan.AllowMixerTail) EndFrame = Math.Max(EndFrame, checked(_plan.SourceEndFrame + mixer.TailFrames));
+        if (_plan.AllowMixerTail) EndFrame = Math.Max(EndFrame, checked(_tailSourceEnd + mixer.TailFrames));
     }
     internal long EndFrame { get; private set; }
     internal bool HasMixerTail => _mixer is not null && EndFrame > _plan.SourceEndFrame;
@@ -482,6 +484,7 @@ public sealed class OfflineSampler : IDisposable
     {
         _plan = plan;
         EndFrame = plan.EndFrame;
+        _tailSourceEnd = plan.SourceEndFrame;
         _voices = Enumerable.Range(0, plan.VoiceCapacity).Select(_ => new Voice()).ToArray();
         Position = plan.StartFrame;
         if (plan.Graph is { } graph)
@@ -557,7 +560,11 @@ public sealed class OfflineSampler : IDisposable
     {
         if (old._mixer is { } mixer) _mixer?.ContinueFrom(mixer);
         if (_plan.AllowMixerTail && _mixer is not null && old.HasMixerTail)
-            EndFrame = Math.Max(EndFrame, old.EndFrame);
+        {
+            _tailSourceEnd = Math.Max(_tailSourceEnd, old._tailSourceEnd);
+            EndFrame = Math.Max(Math.Max(EndFrame, old.EndFrame),
+                checked(_tailSourceEnd + _plan.Graph!.Mixer!.TailFrames));
+        }
         Position = old.Position;
         _iteration = old._iteration;
         _stopped = old._stopped;

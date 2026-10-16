@@ -433,7 +433,7 @@ public sealed class MixerDelayTests
 
     [Theory]
     [InlineData("unused")] [InlineData("muted")] [InlineData("dry")]
-    public async Task ConservativeTailCanAppendOnlySilenceToAnOtherwiseIdenticalExport(string route)
+    public async Task InaudibleDelayDoesNotAppendSilentExportTail(string route)
     {
         using var f = await Fixture.Create();
         var dry = Render(f.Document);
@@ -444,7 +444,7 @@ public sealed class MixerDelayTests
         if (route == "muted") f.Document.Edit("Mute return", e => e.SetMixerStrip(target,
             f.Mixer.Channels.Single(c => c.Id == target).Settings with { Muted = true }));
         var extended = Render(f.Document);
-        Assert.Equal(48000 * 3405 / 100 * 2, extended.Length - dry.Length);
+        Assert.Equal(dry.Length, extended.Length);
         Assert.Equal(dry, extended.Take(dry.Length));
         Assert.All(extended.Skip(dry.Length), v => Assert.Equal(0, v));
     }

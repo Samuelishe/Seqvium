@@ -294,7 +294,9 @@ Start with 250 ms, 35% feedback and 25% mix, then adjust while playing. Feedback
 repetitions; Mix balances the original and echoes. Channels, buses and Master share this control.
 Ordinary Pattern loops retain echoes, Stop/Seek clear them, and full WAV export includes a finite
 final tail. Save/Open and Undo/Redo retain the settings. Tempo sync and ping-pong are unavailable.
-There is currently no reverb, automation, plugin rack or sidechain. See the
+The Reverb tab adds a diffuse space with Decay, Size, Damping and Mix. Enable it on a channel, bus
+or Master; its natural tail is included in full WAV exports. Stop and Seek clear the tail.
+There is currently no automation, plugin rack or sidechain. See the
 [Mixer workflow](UX_CONTRACT.md#implemented-mixer-workflow) for detailed behavior.
 
 ## Try sample processing

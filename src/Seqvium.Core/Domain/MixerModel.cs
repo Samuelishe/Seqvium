@@ -34,6 +34,15 @@ public sealed record MixerDelay : CanonicalData
     public decimal Mix { get; init; } = .25m;
 }
 
+public sealed record MixerReverb : CanonicalData
+{
+    public bool Enabled { get; init; }
+    public decimal DecaySeconds { get; init; } = 1.8m;
+    public decimal Size { get; init; } = .5m;
+    public decimal Damping { get; init; } = .5m;
+    public decimal Mix { get; init; } = .2m;
+}
+
 public sealed record MixerStripSettings : CanonicalData
 {
     public decimal TrimDb { get; init; }
@@ -46,6 +55,7 @@ public sealed record MixerStripSettings : CanonicalData
     public MixerEq Eq { get; init; } = new();
     public MixerCompressor Compressor { get; init; } = new();
     public MixerDelay Delay { get; init; } = new();
+    public MixerReverb Reverb { get; init; } = new();
 }
 
 public sealed record MixerSend(Id<MixerChannel> Target, decimal LevelDb, bool PreFader) : CanonicalData;
@@ -119,7 +129,7 @@ public static class MixerValidation
 
     private static void Settings(MixerStripSettings s)
     {
-        ProjectValidation.Require(s is not null && s.Eq is not null && s.Compressor is not null && s.Delay is not null,
+        ProjectValidation.Require(s is not null && s.Eq is not null && s.Compressor is not null && s.Delay is not null && s.Reverb is not null,
             "Mixer settings are required.");
         ProjectValidation.Require(
             s.TrimDb is >= -24 and <= 36 && s.LevelDb is >= -90 and <= 12 && s.Pan is >= -1 and <= 1,
@@ -129,6 +139,9 @@ public static class MixerValidation
                                   e.LowDb is >= -18 and <= 18 && e.MidDb is >= -18 and <= 18 &&
                                   e.HighDb is >= -18 and <= 18 &&
                                   e.MidHz is >= 40 and <= 16000 && e.MidQ is >= .2m and <= 10, "Invalid Mixer EQ.");
+        ProjectValidation.Require(s.Reverb.DecaySeconds is >= .2m and <= 8 &&
+                                  s.Reverb.Size is >= 0 and <= 1 && s.Reverb.Damping is >= 0 and <= 1 &&
+                                  s.Reverb.Mix is >= 0 and <= 1, "Invalid Mixer reverb.");
         var c = s.Compressor;
         ProjectValidation.Require(s.Delay.TimeMs is >= 10 and <= 1000 &&
                                   s.Delay.Feedback is >= 0 and <= .75m && s.Delay.Mix is >= 0 and <= 1,
@@ -153,5 +166,5 @@ public static class MixerValidation
                                                         Known(mixer.Master);
 
     private static bool Known(MixerStripSettings s) => s.AdditionalData.IsEmpty && s.Eq.AdditionalData.IsEmpty &&
-                                                       s.Compressor.AdditionalData.IsEmpty && s.Delay.AdditionalData.IsEmpty;
+                                                       s.Compressor.AdditionalData.IsEmpty && s.Delay.AdditionalData.IsEmpty && s.Reverb.AdditionalData.IsEmpty;
 }

@@ -1805,3 +1805,19 @@ This provides a useful musical effect without a generic rack, stateful local gra
 Contracts are in [Audio](../AUDIO_ENGINE.md#musical-delay-v1-seq-r11-delay-f1) and
 [format](../PROJECT_FORMAT.md#mixer-delay-reader-17); the [report](../experiments/SEQ-R11-DELAY-F1_REPORT.md)
 records evidence. Q-057 remains open for wider stateful processors, latency, warm-up and acoustic settling.
+
+## SEQ-R11-REVERB-F1 — bounded diffused FDN and admission, 2026-10-16
+
+Choose an independently authored eight-line orthogonal FDN with stereo allpass diffusion and
+per-line RT60/damping losses for a compact musical Reverb V1. It follows Delay before balance/fader;
+no general rack, modulation or local resampling dependency is introduced. Reserve two maximum-size
+banks only for admitted identities inside 16 MiB per state, retaining inherited bypass ownership
+until removal/retirement to keep callback lifetime safe. Geometry changes prepare/crossfade rather
+than retune heads. Use finite relative-decay allowance and shared audible source-to-Master reachability
+for serial Delay/Reverb, keeping existing permitted live completion. Live per-identity history maxima
+and inherited source-end basis preserve excitation into new downstream effects without repeatedly
+summing the global tail; inherited 120-s refusal is checked before publication. This corrects static silent-tail
+admission without redesigning old disabled Delay storage. Numerical/GUI/native/physical evidence
+supports the bounded capability, not subjective naturalness or pressure acceptance. Current contracts
+are in [Audio](../AUDIO_ENGINE.md#musical-algorithmic-reverb-v1-seq-r11-reverb-f1); the
+[report](../experiments/SEQ-R11-REVERB-F1_REPORT.md) owns evidence and remaining limitations.

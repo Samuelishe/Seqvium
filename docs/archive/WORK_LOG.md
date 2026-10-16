@@ -2198,3 +2198,18 @@ portable media, sequential Delay retirement and routed production-window control
 Delay storage and silent-tail admission remain measured TECH_DEBT; earlier pressure/allocation/
 physical faults are not declared fixed. The [audit](../experiments/SEQ-RECENT-REGRESSION-AUDIT_REPORT.md)
 owns methods, failures and native/physical/acoustic limits. All task changes remain unstaged.
+
+## SEQ-R11-REVERB-F1 — 2026-10-16
+
+Completed bounded algorithmic Reverb in the existing Mixer: eight-line diffused stereo FDN,
+Decay/Size/Damping/Mix/bypass, channel/bus/Master/sends, shared finite WAV and canonical reader 1.8.
+Fresh disabled banks allocate no line payload; admitted two-bank reservations and inherited bypass
+ownership stay bounded through publication/retirement. Shared reachable-tail calculation supersedes
+the audit's unused/muted/dry Delay silence extension; bypassed Delay storage remains debt. A failing
+finite Pattern enable test led to scoped Mixer-only continuation preserving epoch/NoteOffs.
+Version PATCH 0.1.11.0001 → 0.1.12.0000; full Release build zero warnings/errors, 1525/1525 tests
+(77.892 s CLI), 39 new cases. Localized GUI/native Decay/bypass/enable, 32 field alignments,
+Save/Open/export and physical Samsung 48-kHz finite playback pass. No subjective sound, pressure,
+other-platform/DPI or owner aesthetic acceptance is inferred. [Report](../experiments/SEQ-R11-REVERB-F1_REPORT.md)
+retains algorithm/budget/attempt/limitation evidence and authored listening comparisons. No Git
+stage/commit/push/tag/index/history/remote mutation was performed.

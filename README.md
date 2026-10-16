@@ -47,7 +47,7 @@ for the logo, typography, alternative directions and publication resources.
   Make a variation of one Pattern clip for a fill or changed phrase while keeping shared instruments
   and Mixer routes. Other uses of the original Pattern keep their notes.
 - Mix shared sound sources through channels, buses and pre/post sends, with level, stereo balance,
-  Mute/Solo, real meters, high-pass/three-band EQ, linked compression, musical Delay and optional Master sample-peak
+  Mute/Solo, real meters, high-pass/three-band EQ, linked compression, musical Delay, algorithmic Reverb and optional Master sample-peak
   protection. Playlist tracks do not automatically become Mixer channels.
 - Edit Source → Gain → Mix → Output graphs, reuse sound editors, and arrange movable/resizable panes.
 - Undo/redo musical edits, save/reopen projects with managed media, and export a Pattern or the full
@@ -96,7 +96,7 @@ refuses overload instead of silently dropping music. Heavy system load can still
 Audio split currently operates on a single occurrence; set repeats to one before splitting.
 Section rearrangement refuses clips that cross its boundaries, shows the source/track and offers
 direct navigation; explicitly split audio or adjust the section first. Dynamic track insertion,
-groups, automation, reverb, external realtime plugin hosting, MIDI input, recording and crash recovery are not
+groups, automation, external realtime plugin hosting, MIDI input, recording and crash recovery are not
 implemented. Sampler pitching uses linear resampling, not time stretching. Mixer stereo pan is
 balance; its peak ceiling is sample-peak protection, not true-peak mastering.
 

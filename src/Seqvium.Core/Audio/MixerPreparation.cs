@@ -22,11 +22,17 @@ internal sealed record PreparedMixerStrip(
     double Left,
     double Right,
     double Makeup,
-    PreparedDelay Delay);
+    PreparedDelay Delay, PreparedReverb Reverb)
+{
+    internal long HistoryDelayFrames { get; init; } = Settings.Delay.Mix > 0 ? Delay.TailFrames : 0;
+    internal long HistoryReverbFrames { get; init; } = Reverb.TailFrames;
+    internal bool HasHistory { get; init; }
+}
 
 internal sealed record PreparedMixer(PreparedMixerStrip[] Strips, MixerTap[] Taps, bool ProtectOutput, int SampleRate,
     long TailFrames)
 {
+    internal int ReverbBytes => checked(Strips.Count(s => s.Reverb.Admitted) * MixerReverbDsp.StorageBytes(SampleRate));
     internal int DelayBytes => checked(Strips.Length * MixerDelayDsp.StorageBytes(SampleRate));
 }
 
@@ -40,19 +46,6 @@ internal static class MixerPreparation
         var indices = ordered.Select((c, i) => (c.Id, Index: i)).ToDictionary(p => p.Id, p => p.Index);
         int master = ordered.Length;
         if ((master + 1L) * MixerDelayDsp.StorageBytes(sampleRate) > MixerDelayDsp.MaximumBytes)
-            throw new GraphPreparationException(GraphPreparationReasons.Budget);
-        var tails = new long[master + 1];
-        foreach (var channel in ordered)
-        {
-            int index = indices[channel.Id];
-            tails[index] += MixerDelayDsp.TailFrames(channel.Settings.Delay, sampleRate);
-            int output = channel.Output is { } target ? indices[target] : master;
-            tails[output] = Math.Max(tails[output], tails[index]);
-            foreach (var send in channel.Sends)
-                tails[indices[send.Target]] = Math.Max(tails[indices[send.Target]], tails[index]);
-        }
-        tails[master] += MixerDelayDsp.TailFrames(mixer.Master.Delay, sampleRate);
-        if (tails[master] > sampleRate * 120L)
             throw new GraphPreparationException(GraphPreparationReasons.Budget);
         var sounds = ordered.SelectMany(c => c.SoundIds.Select(s => (Sound: s, Index: indices[c.Id])))
             .ToDictionary(p => p.Sound, p => p.Index);
@@ -110,22 +103,73 @@ internal static class MixerPreparation
                 settings.Pan > 0 ? Math.Cos((double)settings.Pan * Math.PI / 2) : 1,
                 settings.Pan < 0 ? Math.Cos((double)settings.Pan * Math.PI / 2) : 1,
                 settings.Compressor.Enabled ? MixerDsp.Amplitude(settings.Compressor.MakeupDb) : 1,
-                MixerDelayDsp.Prepare(settings.Delay, sampleRate));
+                MixerDelayDsp.Prepare(settings.Delay, sampleRate), MixerReverbDsp.Prepare(settings.Reverb, sampleRate));
 
-        return new([
+        PreparedMixerStrip[] strips = [
             .. ordered.Select(c => Strip(c.Id.Value, c.Settings, !solo || audible.Contains(c.Id),
                 c.Output is { } output ? indices[output] : master,
                 [
                     .. c.Sends.Select(s => new MixerRoute(indices[s.Target], MixerDsp.Amplitude(s.LevelDb), s.PreFader))
                 ])),
             Strip(Guid.Empty, mixer.Master, true, -1, [])
-        ], [.. taps], mixer.ProtectOutput, sampleRate, tails[master]);
+        ];
+        if ((long)strips.Count(s => s.Reverb.Enabled) * MixerReverbDsp.StorageBytes(sampleRate) > MixerReverbDsp.MaximumBytes)
+            throw new GraphPreparationException(GraphPreparationReasons.Budget);
+        long extension = TailFrames(strips, [.. taps], sampleRate, inherit: false);
+        return new(strips, [.. taps], mixer.ProtectOutput, sampleRate, extension);
+    }
+
+    private static long TailFrames(PreparedMixerStrip[] strips, MixerTap[] taps, int sampleRate, bool inherit)
+    {
+        // Fresh renders seed only real source paths. Live continuations additionally seed processor
+        // histories that could already be excited, even after their canonical source is removed.
+        var tails = Enumerable.Repeat(-1L, strips.Length).ToArray();
+        foreach (var tap in taps)
+            if (tap.Gain != 0) tails[tap.Channel] = 0;
+        if (inherit)
+            for (int i = 0; i < strips.Length; i++)
+                if (strips[i].HasHistory) tails[i] = Math.Max(0, tails[i]);
+        for (int i = 0; i < strips.Length; i++)
+        {
+            var p = strips[i];
+            if (tails[i] < 0 || !p.Audible || p.Trim == 0) { tails[i] = -1; continue; }
+            long tail = checked(tails[i] + p.HistoryDelayFrames + p.HistoryReverbFrames);
+            if (p.HistoryDelayFrames > 0 || p.HistoryReverbFrames > 0)
+                strips[i] = p with { HasHistory = true };
+            if (p.Output >= 0 && p.Gain != 0) tails[p.Output] = Math.Max(tails[p.Output], tail);
+            foreach (var send in p.Sends)
+                if (send.Gain != 0 && (send.PreFader || p.Gain != 0))
+                    tails[send.Target] = Math.Max(tails[send.Target], tail);
+            tails[i] = p.Gain != 0 ? tail : -1;
+        }
+        long extension = Math.Max(0, tails[^1]);
+        if (extension > sampleRate * 120L) throw new GraphPreparationException(GraphPreparationReasons.Budget);
+        return extension;
+    }
+
+    internal static PreparedMixer ReserveContinuation(PreparedMixer next, PreparedMixer? previous)
+    {
+        if (previous is null) return next;
+        var prior = previous.Strips.ToDictionary(s => s.Id);
+        var strips = next.Strips.Select(s => prior.TryGetValue(s.Id, out var old)
+            ? s with
+            {
+                Reverb = s.Reverb with { Admitted = s.Reverb.Admitted || old.Reverb.Admitted },
+                HistoryDelayFrames = old.HasHistory ? Math.Max(s.HistoryDelayFrames, old.HistoryDelayFrames) : s.HistoryDelayFrames,
+                HistoryReverbFrames = old.HasHistory ? Math.Max(s.HistoryReverbFrames, old.HistoryReverbFrames) : s.HistoryReverbFrames,
+                HasHistory = s.HasHistory || old.HasHistory
+            } : s).ToArray();
+        if ((long)strips.Count(s => s.Reverb.Admitted) * MixerReverbDsp.StorageBytes(next.SampleRate) > MixerReverbDsp.MaximumBytes)
+            throw new GraphPreparationException(GraphPreparationReasons.Budget);
+        return next with { Strips = strips, TailFrames = TailFrames(strips, next.Taps, next.SampleRate, inherit: true) };
     }
 
     internal static bool SameTopology(MixerState? a, MixerState? b) => a is not null && b is not null &&
-                                                                       a.Channels.Length == b.Channels.Length && a
+                                                                       a.Channels.Length == b.Channels.Length &&
+                                                                       ReverbCompatible(a.Master.Reverb, b.Master.Reverb) && a
                                                                            .Channels.Zip(b.Channels).All(p =>
                                                                                p.First.Id == p.Second.Id &&
+                                                                               ReverbCompatible(p.First.Settings.Reverb, p.Second.Settings.Reverb) &&
                                                                                p.First.Output == p.Second.Output &&
                                                                                p.First.SoundIds.SequenceEqual(
                                                                                    p.Second.SoundIds) &&
@@ -134,4 +178,9 @@ internal static class MixerPreparation
                                                                                    .SequenceEqual(
                                                                                        p.Second.Sends.Select(s =>
                                                                                            (s.Target, s.PreFader))));
+    // Enabling and geometry changes need worker-prepared exclusive storage. Bypass is a coefficient
+    // update: the admitted bank remains owned/accounted by the active execution until retirement.
+    private static bool ReverbCompatible(MixerReverb a, MixerReverb b) =>
+        (!b.Enabled || a.Enabled) && a.Size == b.Size;
+
 }
