@@ -124,6 +124,29 @@ Source names remain available in tooltips when truncated. Solo opens upstream/do
 Mute still wins, including pre-fader sends. Playlist Mute/Solo independently removes occurrences before
 Mixer input. Original note/rhythm editing and quiet source audition retain their established behavior.
 
+## Channel duplication, order and Pattern Gain (SEQ-RACK-WORKFLOW-F1)
+
+The channel actions menu offers **Duplicate channel** for supported Drum, Synth and PCM instruments,
+including key maps. It inserts an independently editable sound and copied notes immediately below
+the source. Unknown content, shared-Pattern expansion, unsupported graphs and capacity limits disable
+the action with a reason. Media bytes remain shared immutable resources; the copy keeps the source's
+explicit Mixer channel assignment. Sound-targeted automation remains attached to its original identity.
+
+Drag the channel name to reorder rows; Ctrl at drag activation copies independently into the indicated
+gap. A movement threshold preserves ordinary clicks and instrument-editor double-click. The thin
+insertion line uses the host focus material. Step painting, row actions and Browser drops retain their
+own targets. Release accepts one Undo operation; Escape, capture loss, outside drop, hidden/retired
+content or changed document authority accepts none. Reorder changes no musical time, graph binding
+or playback clock. Row order survives Save/Open and history.
+
+**Pattern Gain** in the toolbar controls the selected occurrence's existing graph Gain. Its shared
+horizontal fader, exact field and Left/Right/Home/End keys edit linear 0–1: zero is silence, one is
+unity. A completed pointer gesture is one Undo; Escape/capture loss or stale authority cancels it.
+The draft moves visually; accepted values use existing live publication without restarting transport
+or voices. Narrow windows move the same retained controls into toolbar overflow. The same parameter
+yields to a visible Graph quick control or detailed Gain Editor. Loaded invalid values remain exact
+and visibly invalid, without a legal fader thumb; exact entry provides explicit repair and Undo.
+
 ## Implemented R5-F1 step sequencing
 
 Step pads keep a compact fixed square geometry at every pane width; insufficient room scrolls

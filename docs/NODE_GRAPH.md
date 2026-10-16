@@ -54,6 +54,14 @@ that separation and the musical model.
 
 ## R5-F1 channel composition
 
+Rack Duplicate uses this same safe expansion path. One transaction creates fresh SoundDefinition,
+Part, NoteEvent and sampler-zone identities, then adds a new Source/ports/binding and the required
+Mix/cables. Existing Gain/Output and surviving graph identities remain intact. Duplicating into a
+visual row gap does not derive routing from that gap. PCM descriptors/bytes and the original explicit
+Mixer channel assignment remain shared; instrument parameters and musical content are independent.
+Opaque or unsupported content refuses duplication without an edit. The eight-Source bound and
+unshared-Pattern restriction remain. Reorder changes only Pattern Parts order, never graph topology.
+
 Beat creation supplies a real empty item graph: Gain (0.25) → Output. Without parts/sources this is
 intentionally unready for Play. First Add WAV Channel connects its bound Source to Gain; subsequent
 channels insert a built-in two-input Mix before that same Gain, combining its preceding Source/Mix

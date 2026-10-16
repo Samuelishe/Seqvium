@@ -133,6 +133,12 @@
     <Style Selector="TextBox.invalid /template/ Border#PART_BorderElement">
         <Setter Property="BorderBrush" Value="{DynamicResource Status.Critical}" />
     </Style>
+    <Style Selector="NumericUpDown.invalid">
+        <Setter Property="BorderBrush" Value="{DynamicResource Status.Critical}" />
+    </Style>
+    <Style Selector="NumericUpDown.invalid /template/ TextBox">
+        <Setter Property="BorderBrush" Value="{DynamicResource Status.Critical}" />
+    </Style>
     <Style Selector="TextBox.warning /template/ Border#PART_BorderElement">
         <Setter Property="BorderBrush" Value="{DynamicResource Status.Warning}" />
     </Style>

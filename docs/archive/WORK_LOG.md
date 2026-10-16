@@ -8,6 +8,18 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-RACK-WORKFLOW-F1 — 2026-10-16
+
+Added independent supported Rack channel duplication, captured name reorder/Ctrl-copy and a shared
+Pattern Gain fader with exact/keyboard input. Reused canonical Parts, immutable sound intent, graph
+expansion, Mixer assignment and retained managed media/history. Fresh mapped-zone IDs prevent identity
+collisions; unknown copied intent refuses. Reorder's initial transport restart exposed order-sensitive
+audio equivalence; normalizing Parts order only at the execution comparison fixes it without changing
+canonical equality or persistence. Legacy invalid Gain remains explicit and repairable.
+BUILD 0.1.16.0003 records an existing-workflow refinement, without reader/schema or later-stage scope.
+The [report](../experiments/SEQ-RACK-WORKFLOW-F1_REPORT.md) owns Release, focused, native/routed, visual
+and UR12 evidence plus failures/limits. No composition or Git publication was created.
+
 ## SEQ-DRUM-PLAYALONG-F1 — 2026-10-16
 
 Replaced the Drum editor's transport refusal and quiet transient retrigger with a bounded dry source

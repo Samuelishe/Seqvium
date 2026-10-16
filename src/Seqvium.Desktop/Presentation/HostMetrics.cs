@@ -11,7 +11,9 @@ public static class HostMetrics
 {
     public const string FontFamilyName = "avares://Seqvium.Desktop/Assets/Fonts/Onest#Onest";
     public const string MonospaceFamilyName = "avares://Seqvium.Desktop/Assets/Fonts/JetBrainsMono#JetBrains Mono";
-    public const string MusicSymbolFamilyName = "avares://Seqvium.Desktop/Assets/Fonts/NotoSansSymbols#Noto Sans Symbols";
+
+    public const string MusicSymbolFamilyName =
+        "avares://Seqvium.Desktop/Assets/Fonts/NotoSansSymbols#Noto Sans Symbols";
 
     public static IReadOnlyDictionary<string, double> Values { get; } = new Dictionary<string, double>
     {
@@ -44,7 +46,9 @@ public static class HostMetrics
         ["Piano.KeyWidth"] = 76, ["Piano.RowHeight"] = 20, ["Piano.RulerHeight"] = 32,
         ["Piano.VelocityHeight"] = 92, ["Piano.NoteCorner"] = 3,
         ["Level.Height"] = 26, ["Level.TrackHeight"] = 6, ["Level.ThumbSize"] = 10,
-        ["Level.Inset"] = 8, ["ScrollBar.Size"] = 12
+        ["Level.Inset"] = 8, ["ScrollBar.Size"] = 12,
+        ["Input.DragThreshold"] = 6,
+        ["Fader.Height"] = 32, ["Fader.TrackHeight"] = 6, ["Fader.ThumbSize"] = 18, ["Fader.Inset"] = 12
     }.ToFrozenDictionary(StringComparer.Ordinal);
 
     public static IReadOnlyDictionary<string, object> Resources { get; } = BuildResources();

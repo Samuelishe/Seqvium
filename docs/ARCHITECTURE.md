@@ -268,6 +268,19 @@ until Save succeeds. A failed Save keeps the document, output owner and Browser 
 
 ## R5-F1 musical editor composition
 
+SEQ-RACK-WORKFLOW-F1 adds `ProjectEdit.DuplicatePartIndependent` and `MovePart`, invoked through
+generation/lifecycle/selection-checked DesktopWorkflow channel commands. Duplication copies supported
+immutable intent to fresh sound/Part/note/zone identities and wires the existing Rack tree in the same
+Edit. Explicit Part routes retain their destination with independent performance keys; Mixer assignment
+retains the original aggregate. Automation lanes keep their original stable targets. Managed media
+and history lifetime stay with their existing owners. Unknown identity-bearing copied content refuses.
+
+Parts array order is durable Rack presentation. Audio equivalence normalizes this order independently
+of canonical equality, so reordering can acknowledge an equivalent revision without preparing a new
+plan or resetting voices/time. Compatible worker continuation also ignores row order when other edits
+are pending. The toolbar fader reuses GainLevelControl capture and the existing frozen graph command;
+it owns no audio preview, saved parameter or history.
+
 `Workspace/BeatPaneContent` is a retained projection of the selected occurrence's shared Pattern,
 parts and notes. `Workflow/BeatSteps` supplies exact grid projection/refusals and frozen lifecycle,
 generation, attachment and Pattern authority; it stores no editable steps. `DesktopWorkflow.Beat`

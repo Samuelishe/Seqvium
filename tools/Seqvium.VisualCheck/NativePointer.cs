@@ -164,10 +164,20 @@ internal static partial class NativePointer
             await DoubleClick(Body(source));
             Program.Require(nodeEditor.Target?.NodeId == source.Id && workflow.State.Document.UndoCount == undo,
                 "Native Source body double click failed or edited music.");
+            // A specialized Source editor may expand over the graph. This is layout fixture setup,
+            // not another native gesture; withdraw it before addressing the graph again.
+            workspace.State.Hide(WorkspaceState.NodeEditorId);
+            workspace.State.Activate(WorkspaceState.GraphId);
+            workspace.Commit();
+            await Task.Delay(80);
             await DoubleClick(Body(editor.Graph!.Nodes.Single(n => n.Id == target.NodeId)));
             Program.Require(nodeEditor.Target == target && workflow.State.Document.UndoCount == undo,
                 "Native Gain body double click failed or edited music.");
             Passed("native body double click opens Source then Gain without Undo");
+            workspace.State.Hide(WorkspaceState.NodeEditorId);
+            workspace.State.Activate(WorkspaceState.GraphId);
+            workspace.Commit();
+            await Task.Delay(80);
             foreach (double zoom in new[] { .5, 1, 2 })
             {
                 canvas.Fit();

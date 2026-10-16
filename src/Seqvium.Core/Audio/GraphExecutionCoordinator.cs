@@ -258,7 +258,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 _blocker = report?.Diagnostics[0].Reason ?? GraphPreparationReasons.Target;
             else if (_basis is not null && ownsExecution && !_sampler.HasPending &&
                      snapshot.State.Mixer is null && _basisRoots.SequenceEqual(_document.MediaRoots) &&
-                     ProjectDocument.HasSameContent(_basis.State with { ArrangementSections = [] },
+                     SameAudioContent(_basis.State with { ArrangementSections = [] },
                          snapshot.State with { ArrangementSections = [] }))
             {
                 // Labels do not own music. Republish equivalent revision/Gain coefficients only;
@@ -274,7 +274,7 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
             else if (_basis is not null && ownsExecution && !_sampler.HasPending &&
                      _basisRoots.SequenceEqual(_document.MediaRoots) &&
                      MixerPreparation.SameTopology(_basis.State.Mixer, snapshot.State.Mixer) &&
-                     ProjectDocument.HasSameContent(_basis.State with { Mixer = null, ArrangementSections = [] },
+                     SameAudioContent(_basis.State with { Mixer = null, ArrangementSections = [] },
                          snapshot.State with { Mixer = null, ArrangementSections = [] }))
             {
                 try
@@ -452,6 +452,18 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
                 .. state.GraphAttachments.OrderBy(item => item.Id.Value)
                     .Select(item => item with { Sources = [.. item.Sources.OrderBy(binding => binding.Id.Value)] })
             ]
+        };
+
+        return SameAudioContent(Normalize(left), Normalize(right));
+    }
+
+    // Parts order is Rack presentation. Notes execute by musical time and stable identities,
+    // and Source bindings own graph order. Canonical equality/persistence still retain the row order.
+    private static bool SameAudioContent(ProjectState left, ProjectState right)
+    {
+        static ProjectState Normalize(ProjectState state) => state with
+        {
+            Patterns = [.. state.Patterns.Select(p => p with { Parts = [.. p.Parts.OrderBy(part => part.Id.Value)] })]
         };
 
         return ProjectDocument.HasSameContent(Normalize(left), Normalize(right));

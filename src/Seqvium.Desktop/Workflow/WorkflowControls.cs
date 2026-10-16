@@ -15,6 +15,7 @@ namespace Seqvium.Desktop.Workflow;
 /// <summary>One retained command row in the R3 frame. Diagnostics require an explicit details action.</summary>
 internal sealed class WorkflowControls : Grid
 {
+    private const string GainFormat = "0.00##########################";
     private readonly ShellSession _shell;
     private readonly DesktopWorkflow _workflow;
     private readonly Func<string, Task> _action;
@@ -54,12 +55,20 @@ internal sealed class WorkflowControls : Grid
     private readonly NumericUpDown _gain = new()
     {
         Classes = { "workflow" }, Minimum = 0, Maximum = 1,
-        Increment = 0.05m, FormatString = "0.00", Width = 64, ShowButtonSpinner = false,
+        Increment = 0.05m, FormatString = GainFormat, Width = 64, ShowButtonSpinner = false,
         NumberFormat = System.Globalization.CultureInfo.InvariantCulture.NumberFormat
     };
 
     private readonly TextBlock _gainLabel = new()
         { VerticalAlignment = VerticalAlignment.Center, Margin = new(4, 0, 4, 0) };
+
+    private readonly GainLevelControl _gainLevel;
+
+    private readonly StackPanel _gainGroup = new()
+        { Orientation = Orientation.Horizontal, Classes = { "parameterRow" } };
+
+    private readonly Border _gainSlot = new(), _overflowGain = new();
+    private (GraphEditBasis Basis, Id<GraphNode> Node, decimal Value)? _gainGesture;
 
     private readonly Button _information = new() { Classes = { "shell", "command" } };
     private readonly Button _overflow = new() { Classes = { "shell", "command" } };
@@ -92,6 +101,45 @@ internal sealed class WorkflowControls : Grid
         _shell = shell;
         _workflow = workflow;
         _action = action;
+        _gainLevel = new(shell) { SizeRole = "Fader", Fader = true, Width = 112, Focusable = true };
+        AutomationProperties.SetAutomationId(_gainLevel, "Workflow.GainLevel");
+        _gainGroup.Children.Add(_gainLabel);
+        _gainGroup.Children.Add(_gainLevel);
+        _gainGroup.Children.Add(_gain);
+        _gainSlot.Child = _gainGroup;
+        _gainLevel.Begin = () =>
+        {
+            if (_gain.Classes.Contains("invalid") || !_gain.IsEnabled) return false;
+            BeginGainEdit();
+            if (_gainBasis is not { } basis || workflow.State.Gain is not { } value) return false;
+            _gainGesture = (basis.Basis, basis.Node, value);
+            _gainBasis = null;
+            return true;
+        };
+        _gainLevel.Preview += value =>
+        {
+            if (_gainGesture is not { } gesture) return;
+            _gainGesture = gesture with { Value = value };
+            _refreshing = true;
+            _gain.Value = value;
+            _gain.Text = value.ToString(GainFormat, System.Globalization.CultureInfo.InvariantCulture);
+            _refreshing = false;
+            _gainLevel.Amplitude = value;
+            _gainLevel.InvalidateVisual();
+        };
+        _gainLevel.Completed += async () =>
+        {
+            if (_gainGesture is not { } gesture) return;
+            _gainGesture = null;
+            PendingGainCommand = workflow.SetGraphGainAsync(gesture.Basis, gesture.Node, gesture.Value);
+            await PendingGainCommand;
+            Refresh();
+        };
+        _gainLevel.Cancelled += () =>
+        {
+            _gainGesture = null;
+            Refresh();
+        };
         this.Bind(HeightProperty, this.GetResourceObservable("Toolbar.Height"));
         ColumnDefinitions = new("Auto,*,Auto");
         var commands = new StackPanel
@@ -194,8 +242,7 @@ internal sealed class WorkflowControls : Grid
             Classes = { "parameterRow" }
         };
         right.Children.Add(_selectionSlot);
-        right.Children.Add(_gainLabel);
-        right.Children.Add(_gain);
+        right.Children.Add(_gainSlot);
         right.Children.Add(_information);
         right.Children.Add(_overflow);
         Grid.SetColumn(right, 1);
@@ -212,6 +259,7 @@ internal sealed class WorkflowControls : Grid
         AddOverflow("Graph");
         AddOverflow("CancelImport", "Close");
         _overflowBody.Children.Add(_overflowParameters);
+        _overflowBody.Children.Add(_overflowGain);
         _overflow.Flyout = new Flyout { Content = _overflowBody };
         var body = new StackPanel { Width = 330, Classes = { "spaced" } };
         body.Children.Add(_selectionPopup);
@@ -237,11 +285,6 @@ internal sealed class WorkflowControls : Grid
         {
             if (!_refreshing && _occurrences.SelectedItem is OccurrenceChoice choice && choice.Id != _selection)
                 await workflow.SelectAsync(choice.Id);
-        };
-        _gain.ValueChanged += async (_, _) =>
-        {
-            if (!_refreshing && _gainBasis is null && !_gain.IsKeyboardFocusWithin && _gain.Value is { } gain)
-                await workflow.SetGainAsync(gain);
         };
         _gain.GotFocus += (_, _) => BeginGainEdit();
         _gain.LostFocus += async (_, _) =>
@@ -357,7 +400,7 @@ internal sealed class WorkflowControls : Grid
     private void Adapt()
     {
         // Reparent retained controls into explicit overflow, never add another command row.
-        bool compact = Bounds.Width < 780, moveOpen = Bounds.Width < 560;
+        bool compact = Bounds.Width < 1050, moveOpen = Bounds.Width < 560;
         if (_compact != compact)
         {
             bool focused = _occurrences.IsKeyboardFocusWithin;
@@ -400,7 +443,24 @@ internal sealed class WorkflowControls : Grid
             if (focused) _overflow.Focus();
         }
 
-        _gainLabel.IsVisible = Bounds.Width >= 440;
+        bool gainInOverflow = Bounds.Width < 880;
+        if (gainInOverflow != (_overflowGain.Child is not null))
+        {
+            _gainLevel.Cancel();
+            _gainGesture = null;
+            if (gainInOverflow)
+            {
+                _gainSlot.Child = null;
+                _overflowGain.Child = _gainGroup;
+            }
+            else
+            {
+                _overflowGain.Child = null;
+                _gainSlot.Child = _gainGroup;
+            }
+        }
+
+        _overflowGain.IsVisible = gainInOverflow;
         bool parametersInOverflow = Bounds.Width < 510;
         if (parametersInOverflow != (_overflowParameters.Child is not null))
         {
@@ -458,7 +518,8 @@ internal sealed class WorkflowControls : Grid
                         "Redo" => state.RedoCount > 0, _ => true
                     };
                 var shortcut = HostCommands.All.Any(command => command.Id == key)
-                    ? HostCommands.Display(_shell.Controls.Binding(key)) : WorkflowPresentation.Shortcut(key);
+                    ? HostCommands.Display(_shell.Controls.Binding(key))
+                    : WorkflowPresentation.Shortcut(key);
                 var label = _shell["Workflow." + key];
                 AutomationProperties.SetName(button, label);
                 AutomationProperties.SetAcceleratorKey(button, shortcut);
@@ -483,25 +544,41 @@ internal sealed class WorkflowControls : Grid
             ToolTip.SetTip(_occurrences,
                 state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ??
                 _shell["Workflow.NoSelection"]);
-            _gainLabel.Text = "Gain";
+            _gainLabel.Text = _shell["Workflow.PatternGain"];
             AutomationProperties.SetName(_gain, _shell["Workflow.Gain"]);
             ToolTip.SetTip(_gain, _shell["Workflow.GainUnit"]);
+            ToolTip.SetTip(_gainLevel, _shell["Workflow.GainUnit"]);
+            AutomationProperties.SetName(_gainLevel, _shell["Workflow.Gain"]);
             _gain.Minimum = Math.Min(0m, state.Gain ?? 0m);
             _gain.Maximum = Math.Max(1m, state.Gain ?? 1m);
             if (_gainBasis is { } gainDraft && (gainDraft.Basis.Lifecycle != state.Document.LifecycleId ||
                                                 gainDraft.Basis.Generation != state.Generation ||
                                                 gainDraft.Basis.Attachment != state.Selected || interactionBlocked))
                 _gainBasis = null;
-            if (_gainBasis is null)
+            if (_gainGesture is { } gesture && (gesture.Basis.Lifecycle != state.Document.LifecycleId ||
+                                                gesture.Basis.Generation != state.Generation ||
+                                                gesture.Basis.Attachment != state.Selected ||
+                                                interactionBlocked || GainShownElsewhere || state.IsClosed))
+            {
+                _gainGesture = null;
+                _gainLevel.Cancel();
+            }
+
+            if (_gainBasis is null && _gainGesture is null)
             {
                 _gain.Value = state.Gain;
-                _gain.Text = state.Gain?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                _gain.Text = state.Gain?.ToString(state.Gain is < 0 or > 1 ? "G29" : GainFormat,
+                    System.Globalization.CultureInfo.InvariantCulture);
                 _gain.Classes.Remove("invalid");
             }
 
             _gain.IsEnabled = !interactionBlocked && !state.Busy && state.Gain.HasValue;
-            _gain.IsVisible = state.Gain.HasValue && !GainShownElsewhere && Bounds.Width >= 690;
-            _gainLabel.IsVisible = _gain.IsVisible && Bounds.Width >= 440;
+            _gainLevel.IsEnabled = _gain.IsEnabled;
+            _gainLevel.Amplitude = _gainGesture?.Value ?? state.Gain;
+            _gainLevel.InvalidateVisual();
+            _gainGroup.IsVisible = state.Gain.HasValue && !GainShownElsewhere;
+            _gain.Classes.Set("invalid", state.Gain is < 0 or > 1 && _gainBasis is null && _gainGesture is null ||
+                                         _gain.Classes.Contains("invalid"));
             _source.Text = state.Occurrences.SingleOrDefault(item => item.Id == state.Selected)?.Label ??
                            _shell["Workflow.NoSelection"];
             _source.IsVisible = state.Selected is not null && !_compact;

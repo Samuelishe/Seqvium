@@ -1,5 +1,20 @@
 # Desktop visual and lifecycle verification
 
+## Rack channels and Pattern Gain
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll rack-workflow "$PWD/.artifacts/rack-workflow/review" native audio --timeout-seconds=180
+```
+
+An isolated three-hit Snare fixture exercises menu Duplicate, name reorder, Ctrl-drag insertion,
+history, editor double-click, fader/exact input and Save/New/Open. `native` uses guarded Windows input
+for these gestures; explicit routed micro/capture-loss/outside/stale/ABA probes remain separate.
+RU/EN Dark/Light at 1400/1000/640 DIP includes long names, overflow, field alignment and empty states.
+A legacy invalid Gain fixture verifies exact display/repair/history and fader keyboard endpoints.
+`audio` deliberately uses the real current output and checks live Gain/reorder without transport reset
+or device failure. Device delivery is not subjective listening. JSON/captures and failed/refused runs
+remain ignored under existing rolling retention. No composition or system-volume change is made.
+
 ## Drum play-along
 
 ```powershell

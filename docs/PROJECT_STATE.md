@@ -7,7 +7,19 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0002**, **SEQ-DRUM-PLAYALONG-F1 — Drum Play-along and Source Levels**.
+Product alpha **0.1.16.0003**, **SEQ-RACK-WORKFLOW-F1 — Channels and Pattern Gain**.
+Rack Duplicate and Ctrl-name-drag create independent Drum/Synth/PCM sounds, notes and mapped-zone
+identities through one canonical graph/history edit. Name drag reorders durable Parts without changing
+time, binding or audio. Existing unshared-tree/eight-Source limits and unknown-content refusals remain;
+WAV resources and the explicit Mixer route remain shared. Pattern Gain now pairs a sculpted shared
+horizontal fader with exact input/keyboard and narrow overflow. Capture/Escape/stale cancellation,
+legacy invalid values and same-parameter Graph/Editor priority retain their existing owners. Audio
+equivalence now treats Parts order as presentation, preserving active plans/voices/clock on reorder.
+No schema/reader, engine, instrument, global setting or composition is introduced.
+The [report](experiments/SEQ-RACK-WORKFLOW-F1_REPORT.md) records automated/native/visual/UR12 evidence,
+initial failures, retained local artifacts and acoustic/platform limits.
+
+Previous **0.1.16.0002**, **SEQ-DRUM-PLAYALONG-F1 — Drum Play-along and Source Levels**.
 Drum editor Play overlaps bounded source hits over Pattern/Song in the existing output callback,
 without restarting music, publishing a graph or creating notes/media/Undo. Local Stop/hide/removal
 withdraw preview; global Stop/Panic and project teardown include both layers. Drum/Synth source
@@ -285,7 +297,21 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Latest L0/L1/L2/L3: **SEQ-DRUM-PLAYALONG-F1, 2026-10-16**. Full Release solution build has
+Latest L0/L1/L2/L3: **SEQ-RACK-WORKFLOW-F1, 2026-10-16**. Full Release solution build has zero
+warnings/errors (**6.06 s**); **1820/1820** tests pass, zero skips, one thread (**74.088 s CLI**).
+Nineteen new cases cover independent
+configured Drum/Synth/PCM copies, mapped media/history, graph signal/order parity and active Pattern/
+Song/Mixer/voice continuity. Focused strengthened preset/signal/independence and shared UI checks pass
+31/31 (2.177 s CLI). A final readout-only precision correction additionally passes an affected Release
+build (8.72 s) and native/window checks, reusing the full DSP/Project regression. Actual RU/EN
+Dark/Light 1400/1000/640-DIP populated/empty/overflow windows, long names and twelve
+zero-DIP field alignments pass. Guarded native Duplicate/reorder/Ctrl-copy/history/editor double-click/
+fader/exact input and physical UR12 44.1-kHz live Gain/reorder pass separately. Shared catalog and the
+extended Graph/Gain matrix pass, including 32 field checks within one DIP and native graph input.
+The report owns final
+timings, shared catalog/hierarchy checks, failures and explicit evidence limits.
+
+Previous L0/L1/L2/L3: **SEQ-DRUM-PLAYALONG-F1, 2026-10-16**. Full Release solution build has
 zero warnings/errors (**9.96 s**); **1801/1801** tests pass, zero skips, one thread (**65.656 s runner**).
 Forty-one added cases cover source/kernel/Pattern levels, overlap/ring bounds, cancellation/Stop,
 removal/join, no Busy, unchanged musical execution and bit-identical Mixer FX/taps. This requested
@@ -546,9 +572,9 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. This requested play-along L3 covers shared callback
-ownership, bounded preview overlap/protection, musical voice/release execution and command lifetime,
-Song/Mixer/Automation/R8, media and readers.
+Completed repository tasks since this L3: **0**. This requested Rack workflow L3 covers canonical
+channel identity/history/media, graph/audio equivalence, Pattern/Song/Mixer/Gain/Automation/R8,
+existing instruments/readers and shared Desktop contracts.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
 subjective acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**

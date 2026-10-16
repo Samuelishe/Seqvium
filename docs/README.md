@@ -21,6 +21,15 @@ Click its rail icon to restore the last comfortable width. Each panel remembers 
 visibility with the workspace, independently of the music. Smaller windows fit both panels without
 automatically closing either one.
 
+## Copy channels and set Pattern Gain
+
+In Channel Rack, choose **Duplicate channel** from a row's actions menu to create an independently
+editable copy of its instrument and notes. Drag the name to reorder; Ctrl-drag copies into the marked
+gap. Undo reverses each accepted action. Supported instruments include Drum, Synth and PCM key maps;
+unavailable actions explain their limitation. Immutable WAV media and the current Mixer route stay shared.
+The top **Pattern Gain** fader controls the selected occurrence's graph level; its adjacent field
+retains exact input. Narrow windows keep it in the toolbar's **More** menu.
+
 ## Application settings
 
 Open **Settings** at the right end of the toolbar (default **Ctrl+,**). General selects language and

@@ -18,9 +18,10 @@ using Seqvium.Desktop.Workflow;
 namespace Seqvium.Desktop.Workspace;
 
 /// <summary>Retained, locally scrolling projection of canonical Pattern parts and notes.</summary>
-internal sealed class BeatPaneContent : Grid, IDisposable
+internal sealed partial class BeatPaneContent : Grid, IDisposable
 {
     internal event Action<Id<MusicalPart>>? SampleLabRequested;
+
     private sealed record Channel(Id<MusicalPart> Part, TextBlock Label, TextBlock Warning, ToggleButton[] Steps);
 
     private readonly ShellSession _shell;
@@ -139,7 +140,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         Children.Add(footer);
         AddHandler(KeyDownEvent, (_, args) =>
         {
-            if (args.Key != Key.Escape || _paint is null) return;
+            if (args.Key != Key.Escape || _paint is null && _channelDrag is null) return;
             CancelGesture();
             Refresh();
             args.Handled = true;
@@ -150,11 +151,13 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             if (e.DataTransfer.TryGetValue(BrowserPaneContent.DragFormat) is { } source)
             {
                 e.DragEffects = source.SamplerCompatible && !_workflow.State.Busy && PendingCommand.IsCompleted
-                    ? DragDropEffects.Copy : DragDropEffects.None;
+                    ? DragDropEffects.Copy
+                    : DragDropEffects.None;
                 Classes.Set("dropReady", e.DragEffects == DragDropEffects.Copy);
                 e.Handled = true;
                 return;
             }
+
             var files = e.DataTransfer.TryGetFiles()?.ToArray();
             e.DragEffects = _add.IsEnabled && PendingCommand.IsCompleted && files is { Length: 1 } &&
                             files[0].TryGetLocalPath() is { } path && Path.GetExtension(path)
@@ -171,13 +174,16 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             if (e.DataTransfer.TryGetValue(BrowserPaneContent.DragFormat) is { } source)
             {
                 e.Handled = true;
-                if (_disposed || !source.SamplerCompatible || _workflow.State.Busy || !PendingCommand.IsCompleted) return;
+                if (_disposed || !source.SamplerCompatible || _workflow.State.Busy ||
+                    !PendingCommand.IsCompleted) return;
                 var before = _workflow.State;
-                PendingCommand = _workflow.UseBrowserRackAsync(ArrangementEditBasis.From(before), before.Selected, source);
+                PendingCommand =
+                    _workflow.UseBrowserRackAsync(ArrangementEditBasis.From(before), before.Selected, source);
                 await PendingCommand;
                 Refresh();
                 return;
             }
+
             var files = e.DataTransfer.TryGetFiles()?.ToArray();
             if (_disposed || !_add.IsEnabled || !PendingCommand.IsCompleted || _basis is not { } basis ||
                 files is not { Length: 1 } || files[0].TryGetLocalPath() is not { } path ||
@@ -196,8 +202,10 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             if (_basis is not { } basis || !PendingCommand.IsCompleted) return;
             var before = BeatSteps.Resolve(_workflow.State).Pattern!.Parts.Select(p => p.Id).ToHashSet();
             PendingCommand = _workflow.AddDrumVoiceAsync(basis, _shell["Synth.Title"], SynthVoice.Algorithm);
-            await PendingCommand; Refresh();
-            var created = BeatSteps.Resolve(_workflow.State).Pattern?.Parts.SingleOrDefault(p => !before.Contains(p.Id));
+            await PendingCommand;
+            Refresh();
+            var created = BeatSteps.Resolve(_workflow.State).Pattern?.Parts
+                .SingleOrDefault(p => !before.Contains(p.Id));
             if (created is not null) SoundRequested?.Invoke(created.Id);
         };
         AutomationProperties.SetAutomationId(_drum, "Beat.AddDrum");
@@ -413,7 +421,8 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 : DesktopWorkflow.BeatChannelRefusal(state, pattern, attachment, graph);
             _add.IsEnabled = available && channelRefusal is null && basis is not null;
             _drum.IsEnabled = _add.IsEnabled;
-            _synth.IsEnabled = _add.IsEnabled; _synth.IsVisible = pattern is not null;
+            _synth.IsEnabled = _add.IsEnabled;
+            _synth.IsVisible = pattern is not null;
             _drum.IsVisible = pattern is not null;
             _add.IsVisible = pattern is not null;
             ToolTip.SetShowOnDisabled(_add, true);
@@ -423,6 +432,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 !_channels.Select(c => c.Part).SequenceEqual(pattern.Parts.Select(p => p.Id)))
             {
                 _rows.Children.Clear();
+                _channelRows.Clear();
                 _channels.Clear();
                 _melodies.Clear();
                 _menuLabels.Clear();
@@ -506,12 +516,14 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         int index = _channels.Count;
         var label = new TextBlock
         {
+            Background = Avalonia.Media.Brushes.Transparent,
             VerticalAlignment = VerticalAlignment.Center,
             FontWeight = Avalonia.Media.FontWeight.SemiBold,
             TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis
         };
         var warning = new TextBlock
             { TextWrapping = Avalonia.Media.TextWrapping.Wrap, Classes = { "warning", "caption" }, MaxWidth = 760 };
+        AutomationProperties.SetAutomationId(label, $"Beat.Name.{part.Id}");
         var row = RackRow();
         row.Bind(HeightProperty, this.GetResourceObservable("Rack.RowHeight"));
         row.Bind(BackgroundProperty,
@@ -537,6 +549,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         var menu = new ContextMenu();
         more.ContextMenu = menu;
         more.Click += (_, _) => menu.Open(more);
+        AddDuplicateAction(menu, part);
         var pianoAction = new MenuItem { Header = _shell["Piano.Open"] };
         AutomationProperties.SetAutomationId(pianoAction, $"Beat.Piano.{part.Id}");
         _menuLabels.Add((pianoAction, "Piano.Open"));
@@ -552,7 +565,11 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         var labAction = new MenuItem { Header = _shell["Pane.SampleLab"] };
         _menuLabels.Add((labAction, "Pane.SampleLab"));
         AutomationProperties.SetAutomationId(labAction, $"Beat.SampleLab.{part.Id}");
-        labAction.Click += (_, _) => { CancelGesture(); SampleLabRequested?.Invoke(part.Id); };
+        labAction.Click += (_, _) =>
+        {
+            CancelGesture();
+            SampleLabRequested?.Invoke(part.Id);
+        };
         menu.Items.Add(labAction);
         BeatEditBasis? replaceBasis = null;
         menu.Opened += (_, _) =>
@@ -560,7 +577,8 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             replaceBasis = _basis;
             var sound = _workflow.State.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == part.SoundId);
             replaceAction.IsEnabled = !_workflow.State.Busy && replaceBasis is not null &&
-                sound is { Algorithm: PcmSampler.Algorithm, Extension: null } && sound.AdditionalData.IsEmpty;
+                                      sound is { Algorithm: PcmSampler.Algorithm, Extension: null } &&
+                                      sound.AdditionalData.IsEmpty;
             labAction.IsEnabled = replaceAction.IsEnabled;
             ToolTip.SetTip(replaceAction, _shell["Beat.ReplaceWavHint"]);
         };
@@ -587,7 +605,11 @@ internal sealed class BeatPaneContent : Grid, IDisposable
             {
                 if (!_disposed) await _workflow.ReportFailureAsync(error.Message);
             }
-            finally { foreach (var file in files) file.Dispose(); }
+            finally
+            {
+                foreach (var file in files) file.Dispose();
+            }
+
             Refresh();
         };
         var mixerAction = new MenuItem { Header = _shell["Pane.Mixer"] };
@@ -611,7 +633,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         };
         label.PointerPressed += (_, e) =>
         {
-            if (e.ClickCount == 2)
+            if (e.ClickCount == 2 && e.GetCurrentPoint(label).Properties.IsLeftButtonPressed)
             {
                 CancelGesture();
                 var sound = _workflow.State.Snapshot.State.Sounds.Single(s => s.Id == part.SoundId);
@@ -619,6 +641,13 @@ internal sealed class BeatPaneContent : Grid, IDisposable
                 else PianoRequested?.Invoke(part.Id);
                 e.Handled = true;
             }
+            else ArmChannelDrag(part.Id, label, e);
+        };
+        label.PointerMoved += (_, e) => MoveChannelDrag(e);
+        label.PointerReleased += async (_, e) => await EndChannelDragAsync(e);
+        label.PointerCaptureLost += (_, e) =>
+        {
+            if (_channelDrag?.Pointer == e.Pointer) CancelChannelDrag();
         };
         ToolTip.SetTip(more, _shell["Beat.ChannelActions"]);
         AutomationProperties.SetName(more, _shell["Beat.ChannelActions"] + " · " + part.Name);
@@ -739,6 +768,11 @@ internal sealed class BeatPaneContent : Grid, IDisposable
         _melodies.Add(part.Id, (groups, preview));
         var channel = new Channel(part.Id, label, warning, buttons);
         _channels.Add(channel);
+        var insertion = new Border { Height = 2, IsHitTestVisible = false, IsVisible = false };
+        insertion.Bind(Border.BackgroundProperty, this.GetResourceObservable("Focus.Active"));
+        SetColumnSpan(insertion, 2);
+        row.Children.Add(insertion);
+        _channelRows.Add(part.Id, (row, insertion));
         row.AddHandler(PointerPressedEvent, (_, e) => BeginPaint(channel, row, e), RoutingStrategies.Tunnel);
         row.PointerMoved += (_, e) => MovePaint(e);
         row.PointerReleased += async (_, e) => await EndPaintAsync(e);
@@ -879,6 +913,7 @@ internal sealed class BeatPaneContent : Grid, IDisposable
 
     public void CancelGesture()
     {
+        CancelChannelDrag();
         var pointer = _paint?.Pointer;
         _paint = null;
         pointer?.Capture(null);

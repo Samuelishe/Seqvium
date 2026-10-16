@@ -88,7 +88,8 @@ internal sealed partial class DesktopWorkflow
             if (step < 0 || step >= BeatSteps.StepCount(pattern)) throw new ArgumentOutOfRangeException(nameof(step));
             var position = BeatSteps.Position(step);
             var existing = part.Notes.SingleOrDefault(n => n.Position == position);
-            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters.GetValueOrDefault("rootPitch", 60);
+            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters
+                .GetValueOrDefault("rootPitch", 60);
             bool changed = _document.Edit(existing is null ? "Enable beat step" : "Disable beat step", edit =>
             {
                 if (existing is null)
@@ -114,7 +115,8 @@ internal sealed partial class DesktopWorkflow
                        throw new InvalidOperationException("Beat.Stale");
             if (BeatSteps.PartRefusal(_document.Current.State, part, pattern.Length.Ticks) is { } refusal)
                 throw new InvalidOperationException(refusal);
-            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters.GetValueOrDefault("rootPitch", 60);
+            var root = _document.Current.State.Sounds.Single(s => s.Id == part.SoundId).Parameters
+                .GetValueOrDefault("rootPitch", 60);
             bool differs = Enumerable.Range(0, desired.Length)
                 .Any(i => desired[i] != part.Notes.Any(n => BeatSteps.Step(n) == i));
             if (!differs) return Task.FromResult(false);
@@ -271,10 +273,9 @@ internal sealed partial class DesktopWorkflow
             using (var stream = new MemoryStream(prepared.Bytes, writable: false))
                 await request.PrepareAsync(stream, cancellation);
             ValidateBeatBasis(basis);
-            request.Accept((edit, media) =>
-            {
-                AttachBeatSound(edit, pattern, placement, attachment, graph, media.SoundId, name);
-            }, cancellation);
+            request.Accept(
+                (edit, media) => { AttachBeatSound(edit, pattern, placement, attachment, graph, media.SoundId, name); },
+                cancellation);
             _status = "Workflow.Ready";
             return true;
         });
@@ -283,6 +284,12 @@ internal sealed partial class DesktopWorkflow
         GraphAttachment attachment, GraphDefinition graph, Id<SoundDefinition> sound, string name)
     {
         var part = edit.AddPart(pattern.Id, name, sound);
+        WireBeatPart(edit, pattern, placement, attachment, graph, part);
+    }
+
+    private static void WireBeatPart(ProjectEdit edit, Pattern pattern, PatternPlacement placement,
+        GraphAttachment attachment, GraphDefinition graph, Id<MusicalPart> part)
+    {
         var source = edit.AddGraphNode(graph.Id, GraphBuiltIns.Source, new(0, pattern.Parts.Length * 120));
         edit.BindGraphSource(attachment.Id, source.Id, placement.Id, part);
         var gain = graph.Nodes.Single(n => n.Type == GraphBuiltIns.Gain);

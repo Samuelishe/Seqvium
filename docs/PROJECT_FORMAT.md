@@ -12,6 +12,14 @@ Recovery, broader packaging and later migrations remain open; this is not a fina
 The current reader supports major 1 / minor 13. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
+## Channel copies and row order
+
+SEQ-RACK-WORKFLOW-F1 introduces no field or reader gate. Pattern `parts` array order stores Rack row
+order. An independent channel owns fresh sound/Part/note/sampler-zone and Source graph identities;
+immutable WAV resource references and the explicit Mixer assignment may remain shared. Save/Open,
+Save As, history and retained-media policy use their existing boundaries. Fader drafts never enter
+serialization; invalid persisted graph Gain remains savable and requires explicit repair.
+
 ## R6 optional modules and accepted media
 
 Sample Lab V1 also adds no project fields/reader gate. Temporary candidates, recipes, locks,

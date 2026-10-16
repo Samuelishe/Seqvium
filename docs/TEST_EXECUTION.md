@@ -380,6 +380,18 @@ retain invalid drafts and show their own allowed range beside the field; 24 pars
 checks and 32 compact error images cover this boundary. Shared scrollbar changes additionally pass
 the two-theme component catalog and populated workspace matrix, with actual non-overlay gutters.
 
+## Rack workflow verification
+
+SEQ-RACK-WORKFLOW-F1 uses `RackWorkflowTests` for independent Drum/Synth/PCM copies, fresh map IDs,
+exact musical values, graph binding/signal parity, bit-identical reordered output at 44.1/48 kHz,
+one-edit history, unsafe/stale/ABA refusal and portable media after original deletion. Active Pattern/
+Song with/without Mixer verifies unchanged plans/time/voices on reorder and compatible live Gain.
+The `rack-workflow` VisualCheck route separately exercises actual menus, name drag/Ctrl-copy,
+double-click targeting, cancellation, exact/fader input, legacy invalid Gain repair and empty/populated
+RU/EN Dark/Light ordinary/reduced/overflow renders. Native and physical options are explicit; routed
+fixture/cancellation checks remain labeled. Shared catalog and hierarchy/field matrix remain required.
+The [report](experiments/SEQ-RACK-WORKFLOW-F1_REPORT.md) records results, failed attempts and limits.
+
 ## Required verification levels
 
 Daily music interaction uses `DesktopWorkflowTests`, `PatternEditorNavigationTests`,

@@ -110,6 +110,14 @@ the other editors; rendered evidence is not owner aesthetic acceptance.
 
 ## Instrument materials and hierarchy
 
+Pattern Gain uses a compact horizontal recessed track, graduated endpoints and a small sculpted
+metal cap beside one exact value. Its localized Pattern scope is visible; the tooltip identifies
+the selected occurrence. Quiet materials leave transport and music primary. At narrow widths the
+same group moves into toolbar overflow. Rack channel copying stays in the ordinary actions menu;
+name dragging uses one thin host-colored insertion line, without an explanatory panel or row-height
+change. Long names retain ellipsis and full-name inspection. Local reference images inform density
+and tactile hierarchy; no reference artwork is distributed.
+
 Use a slate chassis, illuminated jade actions, colored channel identities and sculpted controls.
 The sampler mapping deck joins source/root identity, exact zone bounds and its keyboard. Recessed
 materials, bevelled keys and a quiet map overview establish instrument hierarchy; additional width
