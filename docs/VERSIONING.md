@@ -174,7 +174,20 @@ retrieved only for explicit historical tasks.
 | `0.1.16.0005` | SEQ-PIANO-RACK-UI-FIX-R1              | Stable Piano selectors and shared fixed Rack time geometry; see checkpoint below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `0.1.16.0006` | SEQ-R10-REPEAT-VARIATION-F1 | One BUILD for pointed-repeat independence through existing canonical clips/variation/history and compatible Song publication. See checkpoint and report below. |
 | `0.1.16.0007` | SEQ-R9-PIANO-TOOLS-F1 | One BUILD for selected-start Quantize and session-only scale rows within the existing Piano editor. See checkpoint and report below. |
+| `0.1.16.0008` | SEQ-R9-PIANO-HUMANIZE-F1 | One BUILD for bounded selected-note timing/velocity Humanize within the existing Piano editor. Original checkpoint/report below retain 242 focused cases and native/physical scope. |
 | `0.1.16.0009` | SEQ-R10-UNFOLD-REPEATS-F1 | One BUILD for explicit shared-cycle unfolding through existing Playlist clips/history/publication. See checkpoint and report below. |
+| `0.1.16.0010` | SEQ-R9-PIANO-BATCH-TRANSFORM-F1 | One BUILD for relative selected-note Transform and corrected pitch-caption alignment in the existing Piano editor. See checkpoint and report below. |
+
+### SEQ-R9-PIANO-BATCH-TRANSFORM-F1 checkpoint
+
+`0.1.16.0009` to **`0.1.16.0010`**, one BUILD for relative selected-note pitch/duration/velocity
+Transform and the owner-requested Piano pitch-caption alignment repair. This extends the existing
+editor through canonical note editing/history/publication, with no standalone editor, schema/reader,
+DSP, setting or dependency. MAJOR/MINOR/PATCH remain unchanged. The
+[report](experiments/SEQ-R9-PIANO-BATCH-TRANSFORM-F1_REPORT.md) owns focused Release, exact arithmetic,
+history/persistence/locality, canonical PCM and actual-window evidence and limits. The missing
+0.1.16.0008 table row is restored from its unchanged original checkpoint/report; this is no new bump
+or historical reinterpretation. No automatic L3, staging, commit, push, tag or history operation.
 
 ### SEQ-R10-UNFOLD-REPEATS-F1 checkpoint
 

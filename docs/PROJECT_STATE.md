@@ -7,7 +7,21 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0009**, **SEQ-R10-UNFOLD-REPEATS-F1 — Unfold Pattern repeats**.
+Product alpha **0.1.16.0010**, **SEQ-R9-PIANO-BATCH-TRANSFORM-F1 — Relative Note Transform**.
+Piano's compact Transform flyout applies independent integer ±24-semitone shifts and 50–200%
+individual duration/velocity scales to selected active-Part notes. Drafts stay outside music;
+Apply uses one canonical Undo, exact Redo and no-op/history retention. Fractional pitch, note IDs,
+order, starts, shared Pattern uses and explicit independent variation/repeat ownership remain intact.
+Duration rounds midpoint away from zero with a one-tick floor; velocity clamps to [0,1]. Any Pitch
+or Pattern-end violation refuses the whole group. Frozen authority/Busy/Closed/unknown-data guards
+and existing Pattern/Song publication remain shared. The owner-requested note/key pitch-caption
+repair centers actual glyph ink, including the musical sharp fallback, above the velocity stripe.
+No schema/reader, DSP, global preference or new keyboard command. The
+[report](experiments/SEQ-R9-PIANO-BATCH-TRANSFORM-F1_REPORT.md) separates numerical, rendered/routed,
+native and physical evidence and limits. The missing 0.1.16.0008 ledger row is restored without
+changing its original classification or history.
+
+Previous **0.1.16.0009**, **SEQ-R10-UNFOLD-REPEATS-F1 — Unfold Pattern repeats**.
 Playlist's localized context action expands one pointed repeated Pattern clip into ordinary
 one-repeat clips at exact cycle boundaries, without Snap or musical cloning. The first retains
 its Clip ID; later IDs and array order survive exact Redo/Save/Open. All pieces retain the existing
@@ -347,7 +361,23 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Current L0/L1/L2: **SEQ-R10-UNFOLD-REPEATS-F1, 2026-10-19**. Affected Release builds have zero
+Current L0/L1/L2: **SEQ-R9-PIANO-BATCH-TRANSFORM-F1, 2026-10-19**. Affected Release build has zero
+warnings/errors (**15.54 s final build**). **309/309 focused tests** pass, zero skips, one thread (**103.543 s CLI**), including
+**42** Transform cases. Exact independent/combined arithmetic, Int64/one-tick/fractional bounds,
+atomic refusal, identities/order/locality, no-op/history, portable reopen, shared/independent uses,
+stale/Busy/Closed/unknown rejection and existing Pattern/Song publication pass. Complete transformed
+canonical stereo PCM matches realtime at 44.1/48 kHz after reopen within 1e-6; live comparisons include
+the transformed onset/gate/release and exact history without epoch reset. A final affected subset
+passes **93/93** (**17.936 s CLI**). Real RU/EN Dark/Light 1080/520/360-DIP populated/empty Piano
+and three numeric field centers pass; C4–D5 chromatic glyphs fit at 1080/360 DIP. Routed physical
+Pattern/Song Apply/Undo/Redo preserves epochs 2/5 through Samsung USB C Earphones at 48-kHz stereo;
+Popup/focus remains stable for 1600 ms. Final native input is foreground/coverage-refused; an earlier
+partial native attempt does not establish complete Apply/history acceptance. The
+[report](experiments/SEQ-R9-PIANO-BATCH-TRANSFORM-F1_REPORT.md) records actual-window/physical scope,
+pitch-caption review, failed harness attempts and the finite sub-frame fixture diagnosis. No L3,
+subjective listening, pressure or wider platform acceptance is inferred.
+
+Previous L0/L1/L2: **SEQ-R10-UNFOLD-REPEATS-F1, 2026-10-19**. Affected Release builds have zero
 warnings/errors (**22.95 s final build**). **172/172 focused tests** pass, zero skips, one thread (**24.290 s CLI**), including
 **20** new unfold geometry/history/refusal/PCM cases. Complete canonical Song offline/realtime
 comparison at 44.1/48 kHz mono/stereo stays within 2e-6 with chords, overlapping Pattern/Audio,
@@ -690,7 +720,7 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **2** (Humanize and Unfold: focused L0/L1/L2 and bounded L4).
+Completed repository tasks since this L3: **3** (Humanize, Unfold and Transform: focused L0/L1/L2 and bounded L4).
 The last L3, Piano tools F1, includes all **1913** cases:
 new Quantize/Scale/view/live PCM and prior repeat/publication plus note/channel/history, workspace, Pattern/Song/
 Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier

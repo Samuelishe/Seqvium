@@ -282,6 +282,12 @@ percentage points. Chords keep a common start and notes keep their duration insi
 Free Snap works too. One Undo restores the original values; repeated/shared Pattern uses hear the
 same result, so make a variation or repeat unique first when only one use should change.
 
+To reshape a phrase, select notes and choose **Transform / Преобразовать**. Transpose shifts them
+by up to two octaves; Duration and Velocity scale each note's own value from 50 to 200%. Starts
+stay fixed, and velocity stops at its maximum. Apply accepts one Undo; Cancel/Escape accepts nothing.
+If any note would exceed the pitch range or Pattern end, reduce the corresponding amount and retry.
+The tool works with Free Snap and edits every shared use of the same Pattern.
+
 To try another recording for an existing instrument, choose **Replace WAV…** from its Rack row
 menu. It updates every Pattern using that instrument while keeping notes, local processing and Mixer
 routing. Undo restores the original sample. Verified library tuning is used when available; otherwise

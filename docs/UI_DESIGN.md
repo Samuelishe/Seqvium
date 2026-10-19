@@ -309,7 +309,11 @@ fields keep music dominant. Rich Rack rows show real pitch/duration/intensity, n
 Quantize is a short localized action in the existing edit group. Scale uses one compact flyout
 button, with tonic/type selectors only on disclosure. Humanize sits beside Quantize and discloses
 two aligned strength rows with shared sliders, exact percentages and Apply/Cancel; it adds no
-permanent parameter row or technical range paragraph.
+permanent parameter row or technical range paragraph. Transform joins that group with a compact
+three-row exact-input flyout: Transpose, Duration and Velocity, visible units and Apply/Cancel.
+Pitch labels center actual glyph ink, including sharp-symbol fallback, above each note's intensity
+stripe; fixed text-origin offsets must not clip or lower chromatic names. Keyboard captions use
+the same ink alignment. No shared typeface, palette or control template changes.
 Scale rows tint the existing background with the semantic action brush, with a slightly stronger
 tonic; grid, hover, ghosts, note bodies, selection and playhead remain above that layer. Black/white
 key identity and outside-scale notes stay readable. Both themes use their existing materials.

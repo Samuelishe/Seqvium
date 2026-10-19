@@ -8,6 +8,22 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-R9-PIANO-BATCH-TRANSFORM-F1 — 2026-10-19
+
+Added a compact explicit relative Transform flyout through the existing Piano note/workflow owner.
+Integer transposition preserves fractional pitch; individual duration and intensity scales preserve
+differences until tick rounding/floor or intensity saturation. Decimal tick arithmetic and whole-group
+range checks precede one SetPartNotes transaction. Draft target/selection authority is retained during
+safe observations and retired by lifecycle/generation/selection/Busy/closed cancellation; no second
+music store, renderer, preference or command catalog entry. The owner's accompanying caption defect
+was caused by fixed text origins with differing sharp fallback metrics; actual glyph-ink centering
+repairs note/key labels without changing typography or musical geometry. One BUILD is 0.1.16.0010;
+the missing .0008 table entry is restored from its unchanged checkpoint. Focused Release checks pass
+309 cases, including 42 new Transform cases and complete accepted-state PCM at 44.1/48 kHz.
+The [report](../experiments/SEQ-R9-PIANO-BATCH-TRANSFORM-F1_REPORT.md) owns GUI/physical/native evidence,
+failed attempts and limits. The finite sub-frame fixture was diagnosed without a production audio
+change. Git staging/history/remotes and official musical resources remain untouched; cadence is three.
+
 ## SEQ-R9-PIANO-HUMANIZE-F1 — 2026-10-19
 
 Added bounded selected-note Humanize to the existing Piano workflow and retained flyout. Chose

@@ -9,6 +9,27 @@ internal sealed partial class DesktopWorkflow
     private WorkflowOutput? _noteOutput;
     private AudioDeviceSession? _noteSession;
 
+    internal Task<bool> TransformPianoNotesAsync(BeatEditBasis basis, Id<MusicalPart> partId,
+        IReadOnlySet<Id<NoteEvent>> selection, int transpose, decimal durationPercent, decimal velocityPercent)
+    {
+        if (State.Busy || State.IsClosed) return Task.FromResult(false);
+        var selected = selection.ToHashSet();
+        return Command("Workflow.EditFailed", () =>
+        {
+            var (pattern, _, _, _) = ValidateBeatBasis(basis, requireGrid: false);
+            var part = pattern.Parts.SingleOrDefault(p => p.Id == partId) ??
+                       throw new InvalidOperationException("Beat.Stale");
+            if (PianoNotes.Refusal(_document.Current.State, pattern, part) is { } refusal)
+                throw new InvalidOperationException(refusal);
+            var desired = PianoNotes.Transform(part.Notes, selected, transpose, durationPercent, velocityPercent,
+                pattern.Length.Ticks);
+            bool changed = _document.Edit("Transform Piano Roll notes",
+                edit => edit.SetPartNotes(pattern.Id, part.Id, [.. desired]));
+            _status = "Workflow.Ready";
+            return Task.FromResult(changed);
+        });
+    }
+
     internal Task<bool> HumanizePianoNotesAsync(BeatEditBasis basis, Id<MusicalPart> partId,
         IReadOnlySet<Id<NoteEvent>> selection, int timing, int velocity, Random? random = null)
     {

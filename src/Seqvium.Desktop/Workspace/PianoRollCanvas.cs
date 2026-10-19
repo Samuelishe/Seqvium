@@ -223,6 +223,15 @@ internal sealed class PianoRollCanvas : Control
             new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, HostVisual.Typeface(this),
                 HostVisual.Metric(this, "Type.Caption"), Brush(role)), at);
 
+    internal (FormattedText Text, Point Origin) PitchLabel(decimal pitch, Rect area, string ink)
+    {
+        var text = new FormattedText(PianoNotes.Name(pitch), CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight, HostVisual.Typeface(this), HostVisual.Metric(this, "Type.Caption"), Brush(ink));
+        // Sharp-symbol fallback has different line metrics. Center visible ink, not a fixed line origin.
+        double inkTop = text.Height + text.OverhangAfter - text.Extent;
+        return (text, new(area.X, area.Center.Y - inkTop - text.Extent / 2));
+    }
+
     public override void Render(DrawingContext context)
     {
         base.Render(context);
@@ -314,7 +323,11 @@ internal sealed class PianoRollCanvas : Control
             new(rect.Right - 3, rect.Top + 2));
         using (context.PushClip(rect))
         {
-            if (rect.Width >= 40) Text(context, PianoNotes.Name(note.Pitch), new(rect.X + 5, rect.Y + 1), ink);
+            if (rect.Width >= 40)
+            {
+                var label = PitchLabel(note.Pitch, new(rect.X + 5, rect.Y + 1, rect.Width - 12, rect.Height - 4), ink);
+                context.DrawText(label.Text, label.Origin);
+            }
             context.DrawLine(new Pen(Brush(ink), 2), new(rect.Left + 2, rect.Bottom - 2),
                 new(rect.Left + Math.Max(2, (rect.Width - 4) * (double)note.Intensity), rect.Bottom - 2));
             if (rect.Width >= 12)
@@ -342,7 +355,10 @@ internal sealed class PianoRollCanvas : Control
                 using (context.PushOpacity(0.45))
                     context.FillRectangle(Brush("Accent.Action"), new(0, y, KeyWidth, RowHeight));
             if (pitch % 12 == 0 || pitch == (int)root)
-                Text(context, PianoNotes.Name(pitch), new(KeyWidth - 27, y + 3), "Piano.KeyInk");
+            {
+                var label = PitchLabel(pitch, new(KeyWidth - 27, y, 23, RowHeight), "Piano.KeyInk");
+                context.DrawText(label.Text, label.Origin);
+            }
             if (pitch == (int)root)
                 context.FillRectangle(Brush("Accent.Action"), new(KeyWidth - 4, y + 2, 3, RowHeight - 4));
         }

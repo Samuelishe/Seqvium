@@ -427,7 +427,12 @@ same HostVisual palette/material/metric resolution as other musical surfaces. Pi
 icons are original HostIcons vectors. Specialized keyboard/grid geometry is deliberately not a
 generic parameter-row minimum. Source/note properties use shared standard controls and numeric
 templates; actual label/TextPresenter alignment is measured, not inferred from outer height.
-Quantize, Humanize and Scale use short localized compact text buttons. Humanize composes the shared
+Quantize, Humanize, Transform and Scale use short localized compact text buttons. Transform composes
+three shared parameterRow/NumericUpDown rows with localized semitone/percentage units and explicit
+Apply/Cancel; no sliders or permanent tool block are needed for these exact relative values.
+Piano pitch captions center their actual glyph ink within note/key geometry, accounting for musical
+sharp fallback metrics and reserving the note's velocity stripe. The label review includes C4/D5,
+chromatic names, both themes/languages and narrow layouts. Humanize composes the shared
 Flyout, two parameterRow grids, standard Sliders/NumericUpDown percentage fields and Apply/Cancel
 buttons. The flyout retains draft controls during observations and expires its frozen musical target
 on stale/Busy/selection/cancellation. No shared template, palette or metric is changed.

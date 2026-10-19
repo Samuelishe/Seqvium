@@ -563,6 +563,21 @@ stress/device measurements; ordinary musical time and concurrency use controlled
 
 ## SEQ-R9 Piano Roll verification
 
+`PianoTransformTests` covers exact independent/combined relative pitch/duration/velocity oracles,
+fractional pitch, fractional percentages, midpoint-away rounding, one-tick floors, Int64 boundaries,
+atomic range refusal, selected-Part identity/order/locality, shared/independent variations/repeats,
+no-op/revision/history/Redo, repeated Apply, Save/Open, stale/Busy/Closed/unknown rejection and
+existing live Pattern/Song publication. Full transformed canonical stereo PCM after portable reopen
+matches realtime at 44.1/48 kHz; live comparison includes the changed onset/gate/release. Compare
+accepted new music, not pre-transform PCM. Select `--filter-class '*PianoTransformTests'` with
+Piano/Humanize/Quantize, repeat/unfold, Rack/navigation/presentation, DesignSystem and metadata neighbours.
+VisualCheck `piano-transform <output> [native] [audio] [quick]` separately records exact real fields,
+draft dismissal/history/authority, retained Popup/focus, localized/theme/width/empty matrices and
+actual pitch-caption glyph containment. `quick` skips the layout matrix for addressed input/physical
+checks. Sub-frame notes remain exact musical tests; use loopable gates for sustained physical
+Pattern continuation. The [report](experiments/SEQ-R9-PIANO-BATCH-TRANSFORM-F1_REPORT.md) owns results,
+failed attempts and distinct native/routed/numerical/physical/listening limits.
+
 `PianoHumanizeTests` supplies seeded and exact-endpoint oracles for timing/velocity bounds,
 equal-onset grouping, disabled dimensions, Pattern edges and Int64-scale positions. It verifies
 selected-Part locality, canonical order/identities, no-op revision/generation/history/Redo retention,

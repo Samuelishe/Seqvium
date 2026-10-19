@@ -57,6 +57,14 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
     private BeatEditBasis? _humanizeBasis;
     private Id<MusicalPart>? _humanizePart;
     private HashSet<Id<NoteEvent>> _humanizeSelection = [];
+    private readonly Button _transform = new() { Classes = { "compact" } };
+    private readonly Flyout _transformFlyout = new();
+    private readonly NumericUpDown _transformTranspose = Field(-24, 24, 1),
+        _transformDuration = Field(50, 200, 1), _transformVelocity = Field(50, 200, 1);
+    private readonly Button _transformApply = new() { Classes = { "primary" } };
+    private BeatEditBasis? _transformBasis;
+    private Id<MusicalPart>? _transformPart;
+    private HashSet<Id<NoteEvent>> _transformSelection = [];
     private readonly Button _scale = new() { Classes = { "compact" } };
     private readonly Flyout _scaleFlyout = new();
     private readonly ComboBox _scaleKind = new() { MinWidth = 180 };
@@ -182,6 +190,11 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         ToolTip.SetShowOnDisabled(_humanize, true);
         _humanize.Click += (_, _) => OpenHumanize();
         BuildHumanizeEditor();
+        toolbar.Children.Add(_transform);
+        Identify(_transform, "Piano.Transform");
+        ToolTip.SetShowOnDisabled(_transform, true);
+        _transform.Click += (_, _) => OpenTransform();
+        BuildTransformEditor();
         AddButton(toolbar, "Delete", "Delete", () =>
         {
             Canvas.Delete();
@@ -407,6 +420,80 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             _humanizeVelocity.Value is { } velocity && ValidStrength(velocity);
     }
 
+    private void BuildTransformEditor()
+    {
+        var body = new StackPanel { Classes = { "spaced" } };
+        foreach (var (field, key, unit) in new[] { (_transformTranspose, "TransformTranspose", "Semitones"),
+                     (_transformDuration, "TransformDuration", "Percent"), (_transformVelocity, "TransformVelocity", "Percent") })
+        {
+            var row = new Grid { ColumnDefinitions = new("*,Auto,Auto"), ColumnSpacing = 12,
+                Classes = { "parameterRow" } };
+            var label = new TextBlock { MinWidth = 142, VerticalAlignment = VerticalAlignment.Center };
+            var units = new TextBlock { MinWidth = 20, VerticalAlignment = VerticalAlignment.Center };
+            Identify(label, "Piano." + key);
+            Identify(units, "Piano." + unit);
+            Identify(field, "Piano." + key + "Value");
+            field.ClipValueToMinMax = false;
+            field.PropertyChanged += (_, args) =>
+            {
+                if (args.Property == NumericUpDown.TextProperty || args.Property == NumericUpDown.ValueProperty)
+                    RefreshTransform();
+            };
+            row.Children.Add(label);
+            SetColumn(field, 1); row.Children.Add(field);
+            SetColumn(units, 2); row.Children.Add(units);
+            body.Children.Add(row);
+        }
+        var actions = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+        var cancel = new Button();
+        Identify(cancel, "Piano.Cancel"); Identify(_transformApply, "Piano.Apply");
+        cancel.Click += (_, _) => { _transformFlyout.Hide(); Canvas.Focus(); };
+        actions.Children.Add(cancel); actions.Children.Add(_transformApply); body.Children.Add(actions);
+        _transformFlyout.Content = body;
+        _transformFlyout.Closed += (_, _) => _transformBasis = null;
+        _transformApply.Click += async (_, _) =>
+        {
+            if (!TransformTargetCurrent() || !TransformValues(out int transpose, out decimal duration, out decimal velocity)) return;
+            var basis = _transformBasis!; var part = _transformPart!.Value; var selected = _transformSelection;
+            _transformFlyout.Hide();
+            PendingCommand = ObserveCommandAsync(_workflow.TransformPianoNotesAsync(basis, part, selected, transpose, duration, velocity));
+            await PendingCommand;
+            Canvas.RevealSelection(); Canvas.Focus();
+        };
+    }
+
+    private bool TransformValues(out int transpose, out decimal duration, out decimal velocity)
+    {
+        static bool Read(NumericUpDown field, out decimal value) => decimal.TryParse(field.Text,
+            NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite,
+            CultureInfo.InvariantCulture, out value) && value >= field.Minimum && value <= field.Maximum;
+        bool pitchValid = Read(_transformTranspose, out var pitch);
+        bool durationValid = Read(_transformDuration, out duration);
+        bool velocityValid = Read(_transformVelocity, out velocity);
+        transpose = pitchValid ? (int)pitch : 0;
+        return pitchValid && pitch == decimal.Truncate(pitch) && durationValid && velocityValid;
+    }
+
+    private bool TransformTargetCurrent() => _transformBasis is not null && _transformBasis == Canvas.Basis &&
+        _transformPart == Canvas.Part?.Id && _transformSelection.SetEquals(Canvas.Selection) &&
+        Canvas.CanEdit && PendingCommand.IsCompleted && !_workflow.State.Busy && !_workflow.State.IsClosed &&
+        _transformBasis == BeatSteps.Resolve(_workflow.State).Basis;
+
+    private void OpenTransform()
+    {
+        if (!Canvas.CanEdit || Canvas.Selection.Count == 0 || !PendingCommand.IsCompleted) return;
+        Canvas.Cancel();
+        _transformTranspose.Value = 0; _transformDuration.Value = _transformVelocity.Value = 100;
+        _transformTranspose.Text = "0"; _transformDuration.Text = _transformVelocity.Text = "100";
+        _transformBasis = Canvas.Basis; _transformPart = Canvas.Part!.Id;
+        _transformSelection = Canvas.Selection.ToHashSet();
+        _transformFlyout.ShowAt(_transform);
+        RefreshTransform();
+    }
+
+    private void RefreshTransform() => _transformApply.IsEnabled = TransformTargetCurrent() &&
+        TransformValues(out _, out _, out _);
+
     private void BuildRootEditor()
     {
         var body = new StackPanel { Margin = new(12), Classes = { "spaced" } };
@@ -544,10 +631,19 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         if (Canvas.Part?.Id == part) PartOpened?.Invoke(part);
     }
 
-    private void WorkflowChanged(WorkflowState _) => Dispatcher.UIThread.Post(() =>
+    private void WorkflowChanged(WorkflowState observation)
     {
-        if (!_disposed) Refresh();
-    });
+        var transformBasis = _transformBasis;
+        bool invalidateTransform = transformBasis is not null && (observation.Busy || observation.IsClosed ||
+            transformBasis != BeatSteps.Resolve(observation).Basis);
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (_disposed) return;
+            // Keep an intervening invalidation even if selection/Busy returns before queued GUI refresh.
+            if (invalidateTransform && ReferenceEquals(transformBasis, _transformBasis)) _transformFlyout.Hide();
+            Refresh();
+        });
+    }
 
     private void PreferencesChanged(object? sender, PropertyChangedEventArgs args)
     {
@@ -630,6 +726,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             _scale.Content = _shell["Piano.Scale"];
             _quantize.Content = _shell["Piano.Quantize"];
             _humanize.Content = _shell["Piano.Humanize"];
+            _transform.Content = _shell["Piano.Transform"];
             decimal? root = observation.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == Canvas.Part?.SoundId)
                 ?.Parameters.GetValueOrDefault("rootPitch", 60);
             _root.Content = _shell["Piano.Root"] + ": " + (root is { } midi ? PianoNotes.Name(midi) : "—");
@@ -687,6 +784,11 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
                 Canvas.Selection.Count == 0 ? "Piano.HumanizeSelection" : "Piano.HumanizeHint"]);
             if (_humanizeBasis is not null && !HumanizeTargetCurrent()) _humanizeFlyout.Hide();
             RefreshHumanize();
+            _transform.IsEnabled = Canvas.CanEdit && Canvas.Selection.Count > 0 && PendingCommand.IsCompleted;
+            ToolTip.SetTip(_transform, _shell[!Canvas.CanEdit ? "Piano.QuantizeUnavailable" :
+                Canvas.Selection.Count == 0 ? "Piano.TransformSelection" : "Piano.TransformHint"]);
+            if (_transformBasis is not null && !TransformTargetCurrent()) _transformFlyout.Hide();
+            RefreshTransform();
             ToolTip.SetTip(_quantize, _shell[Canvas.SnapTicks <= 1 ? "Piano.QuantizeSnapOff" :
                 !Canvas.CanEdit ? "Piano.QuantizeUnavailable" : Canvas.Selection.Count == 0 ? "Piano.QuantizeSelection" : "Piano.QuantizeHint"]);
         }
@@ -705,6 +807,8 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         _noteFlyout.Hide();
         _scaleFlyout.Hide();
         _humanizeFlyout.Hide();
+        _transformFlyout.Hide();
+        _transformBasis = null;
         _humanizeBasis = null;
         _rootBasis = _noteBasis = null;
     }

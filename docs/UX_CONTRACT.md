@@ -302,6 +302,25 @@ Busy, unsupported data, stale generation/lifecycle/occurrence/Part/selection and
 invalidate pending drafts. Transport observations preserve a current open flyout and its fields/focus.
 Accepted changes use the existing Pattern/Song publication mechanism without new transport ownership.
 
+**Transform / Преобразовать** opens a compact three-field flyout for selected active-Part notes.
+Transpose is an integer −24…+24 semitones, initially 0; fractional Pitch remains intact. Duration
+and Velocity are independent 50…200% scales, initially 100%, with exact decimal percentage input.
+Each original duration scales separately, rounds to the nearest tick, midpoint away from zero,
+and floors at one tick. Starts never move. Each original intensity scales separately and clamps
+to [0,1]; saturation can reduce velocity differences. A result outside Pitch 0–127 or beyond the
+Pattern end refuses the entire group with a concise localized reason, without shortening notes.
+Checked musical bounds include Int64-scale durations. Snap, Root Pitch and other tools are independent.
+
+Only Apply accepts music; Cancel, Escape, light dismissal and pane cancellation accept nothing.
+Each opening starts neutral. Defaults and actual unchanged results preserve revision/history/Redo.
+One Apply is one canonical Undo; Redo restores the exact accepted result. Repeated Apply acts on
+current notes. Note IDs, canonical order, unchanged fields, other Parts/sources/links remain exact.
+Shared Pattern uses receive the same edit; explicit variations and independent repeats stay local.
+The flyout freezes generation/lifecycle/occurrence/Part/selection, retires on Busy/Closed/stale or
+unsupported authority, and retains draft/focus through safe observations. Existing Pattern/Song
+preparation/publication owns live changes; changed sounding notes follow its retirement policy.
+There is no second note model, global preference, keyboard command or project-format field.
+
 **Scale** opens a compact tonic/type flyout: Off, Major or Natural Minor, with C–B sharp names.
 Major intervals are 0/2/4/5/7/9/11; Natural Minor 0/2/3/5/7/8/10. Rows repeat over MIDI 0–127,
 with a slightly stronger tonic. This is only a background guide: outside notes remain readable and

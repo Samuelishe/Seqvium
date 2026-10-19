@@ -422,11 +422,14 @@ application. [Evidence](experiments/SEQ-R9_REPORT.md) is scoped, not owner aesth
 
 ### Piano Roll follow-ups
 
-Selected-start Quantize, bounded selected-note Humanize and session-only Major/Natural Minor Scale Highlighting are implemented in
+Selected-start Quantize, bounded selected-note Humanize, relative note Transform and session-only
+Major/Natural Minor Scale Highlighting are implemented in
 the existing editor. [UX](UX_CONTRACT.md#implemented-seq-r9-piano-roll) owns exact bounds/view semantics;
 [the tools report](experiments/SEQ-R9-PIANO-TOOLS-F1_REPORT.md) owns verification and limits.
 Humanize's [report](experiments/SEQ-R9-PIANO-HUMANIZE-F1_REPORT.md) records bounded timing/velocity,
 chord preservation, atomic history, locality and GUI/playback evidence.
+Transform's [report](experiments/SEQ-R9-PIANO-BATCH-TRANSFORM-F1_REPORT.md) records relative pitch,
+duration/velocity scaling, atomic refusal/history and the accompanying pitch-caption repair.
 
 - Scale locking and richer selection/transform tools still need explicit musical
   semantics and history contracts.

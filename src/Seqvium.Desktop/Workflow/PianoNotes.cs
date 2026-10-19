@@ -74,6 +74,29 @@ internal static class PianoNotes
         }).ToArray();
     }
 
+    /// <summary>Relative selected-note edits. Validate every result before the caller accepts the group.</summary>
+    internal static NoteEvent[] Transform(IReadOnlyList<NoteEvent> notes, IReadOnlySet<Id<NoteEvent>> selection,
+        int transpose, decimal durationPercent, decimal velocityPercent, long length)
+    {
+        if (transpose is < -24 or > 24 || durationPercent is < 50 or > 200 || velocityPercent is < 50 or > 200)
+            throw new InvalidOperationException("Piano.TransformRange");
+        if (!selection.IsSubsetOf(notes.Select(n => n.Id).ToHashSet()))
+            throw new InvalidOperationException("Beat.Stale");
+        return notes.Select(n =>
+        {
+            if (!selection.Contains(n.Id)) return n;
+            decimal pitch = n.Pitch + transpose;
+            if (pitch is < 0 or > 127) throw new InvalidOperationException("Piano.TransformPitchBoundary");
+            // Decimal retains every Int64 tick; compare before conversion/addition to avoid overflow.
+            decimal duration = Math.Max(1, decimal.Round(n.Duration.Ticks * (durationPercent / 100),
+                0, MidpointRounding.AwayFromZero));
+            if (duration > length - n.Position.Ticks)
+                throw new InvalidOperationException("Piano.TransformTimeBoundary");
+            return n with { Pitch = pitch, Duration = new((long)duration),
+                Intensity = Math.Clamp(n.Intensity * (velocityPercent / 100), 0, 1) };
+        }).ToArray();
+    }
+
     internal static NoteEvent[] Move(IReadOnlyList<NoteEvent> notes, long ticks, decimal pitch, long length,
         bool copy = false)
     {

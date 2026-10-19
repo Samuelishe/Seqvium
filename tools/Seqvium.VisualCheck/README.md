@@ -15,6 +15,24 @@ coverage refusal; it never clicks through another app. `audio` separately checks
 Song output and live Unfold position/epoch. Canonical numerical PCM belongs to UnfoldRepeatsTests.
 Screenshots/projects/JSON stay ignored locally. Physical delivery is not subjective listening.
 
+## Piano relative Transform and pitch captions
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll piano-transform "$PWD/.artifacts/piano-transform/review" audio --timeout-seconds=180
+```
+
+The isolated Synth/chord study checks exact independent fields, default/no-op, Apply/Cancel/Escape/
+close, history, Free Snap, stale/Busy/Part ABA/hide, retained Popup/focus and real numeric presenter
+alignment. RU/EN × Dark/Light at 1080/520/360 DIP includes populated and empty Parts. A separate
+chromatic C4–D5 matrix checks actual pitch-glyph ink containment above the velocity stripe at
+1080/360 DIP. Default input is explicitly routed; `native` uses guarded Windows input, including
+Unicode exact numeric entry. Setup, Snap, Part/theme/layout and label-fixture changes use APIs.
+`audio` separately checks physical Pattern/Song Apply/Undo/Redo and 1600-ms open-Popup stability;
+canonical numerical PCM and portable history live in PianoTransformTests. Delivery, native/routed
+input, rendered review and subjective listening remain separate evidence classes. `quick` skips
+the layout/label matrix for addressed input and physical checks. Loopable physical fixture gates
+are separate from the three-tick note's exact 3→5-tick GUI/mathematical check.
+
 ## Piano Humanize
 
 ```powershell
