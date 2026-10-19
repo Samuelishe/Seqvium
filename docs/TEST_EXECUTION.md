@@ -550,6 +550,16 @@ stress/device measurements; ordinary musical time and concurrency use controlled
 
 ## SEQ-R9 Piano Roll verification
 
+`PianoToolsTests` adds independent exact-tick quantization oracles, group/Part/shared/variation
+locality, end-boundary and Free refusals, no-op, history/persistence, stale/unknown/sound guards,
+Pattern/Song live canonical PCM and all twelve tonics over MIDI 0–127. The canvas view test verifies
+no document/history/root changes and lifecycle reset. Run it with the related Piano/Rack/Playlist,
+RepeatVariation, history/navigation and presentation classes using repeated MTP `--filter-class`.
+`VisualCheck piano-tools <output> audio` supplies guarded native selection, Snap/Quantize/history,
+scale/Part/view retention, theme/language/size renders, stable playing Popup and independent repeat
+editing. `quick` limits the repeated matrix to English Dark/Light at 520 DIP; it retains the musical
+chain. Fixture setup, native input, canonical PCM and physical output remain separate evidence.
+
 `RackTimelineTests` protects fixed whole-bar widths, beat/bar gaps, fractional and crossing-note
 endpoints. `VisualCheck piano-rack` is the real-window regression for transport-stable ComboBox
 ItemsSource/selection and shared step/ruler/thumbnail geometry. It measures actual rendered controls,

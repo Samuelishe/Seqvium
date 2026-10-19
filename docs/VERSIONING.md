@@ -173,6 +173,16 @@ retrieved only for explicit historical tasks.
 | `0.1.16.0004` | SEQ-RACK-GAIN-AUDIT-R1                | Live temporary Pattern Gain and addressed Rack audit; see checkpoint below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `0.1.16.0005` | SEQ-PIANO-RACK-UI-FIX-R1              | Stable Piano selectors and shared fixed Rack time geometry; see checkpoint below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `0.1.16.0006` | SEQ-R10-REPEAT-VARIATION-F1 | One BUILD for pointed-repeat independence through existing canonical clips/variation/history and compatible Song publication. See checkpoint and report below. |
+| `0.1.16.0007` | SEQ-R9-PIANO-TOOLS-F1 | One BUILD for selected-start Quantize and session-only scale rows within the existing Piano editor. See checkpoint and report below. |
+
+### SEQ-R9-PIANO-TOOLS-F1 checkpoint
+
+`0.1.16.0006` to **`0.1.16.0007`**, one BUILD for two bounded tools in the existing Piano Roll.
+Quantize reuses integer Snap, canonical Part history and live publication. Major/Natural Minor
+highlighting is retained view state only. No schema/reader, sound, DSP or composition change is
+introduced. This editor extension stays in the current PATCH line. Exact tick/PCM/history and
+native/render/physical evidence, full Release results and failed attempts are owned by
+the [report](experiments/SEQ-R9-PIANO-TOOLS-F1_REPORT.md). No Git publication follows this identity.
 
 ### SEQ-R10-REPEAT-VARIATION-F1 checkpoint
 

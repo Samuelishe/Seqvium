@@ -2426,3 +2426,21 @@ thread. Sampled EventPipe does not attribute every historical byte; no DSP/test 
 1845/1845 full Release tests and zero-warning solution/probe builds coexist with the red subset.
 The [report](../experiments/SEQ-RT-ALLOCATION-AUDIT-R1_REPORT.md) and permanent probe retain controls,
 reproduction and the all-object/runtime-comparison follow-up. No index/history/remote mutation.
+
+## SEQ-R9-PIANO-TOOLS-F1 — 2026-10-19
+
+Product 0.1.16.0007 BUILD extends the existing Piano Roll with explicit selected-start Quantize and
+session-only Scale Highlighting. Nearest integer Snap is anchored at Pattern zero, midpoint forward;
+any end crossing refuses the whole edit. One canonical Undo/no-op preserves all other musical data,
+shared Pattern uses and explicit independent variations. Major/Natural Minor rows and tonic emphasis
+are pure retained view state, separate from source root, document/history/JSON/export/R8.
+
+33 new cases join 301/301 focused and 1913/1913 full Release tests, zero skips. Full solution build
+has zero warnings/errors. Native RU/EN Dark/Light at 1080/520/360 DIP verifies mouse selection,
+Snap/Quantize/history, scale/Part/view retention and actual empty/populated screenshots. Final r7
+checks independent repeat Quantize and whole-operation end refusal; real Pattern/Song Quantize/Undo
+retain transport through Samsung USB C Earphones at 48-kHz stereo. A 2300-ms playing Popup hold
+retains row/source/focus. Exact PCM checks use controlled output. Failed fixture/build/foreground/
+helper attempts and timing/physical limits remain in the
+[report](../experiments/SEQ-R9-PIANO-TOOLS-F1_REPORT.md). No allocation assertion is weakened and the
+earlier allocation audit remains unresolved. Official demo, Git index/history and remotes stay unchanged.

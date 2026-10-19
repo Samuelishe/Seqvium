@@ -49,6 +49,11 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
     private readonly TextBlock _rootLabel = new() { VerticalAlignment = VerticalAlignment.Center };
     private readonly Flyout _rootFlyout = new();
     private readonly Flyout _noteFlyout = new();
+    private readonly Button _quantize = new() { Classes = { "compact" } };
+    private readonly Button _scale = new() { Classes = { "compact" } };
+    private readonly Flyout _scaleFlyout = new();
+    private readonly ComboBox _scaleKind = new() { MinWidth = 180 };
+    private readonly ComboBox _scaleTonic = new() { Width = 90, ItemsSource = PianoScale.Tonics };
 
     private readonly NumericUpDown _notePitch = Field(0, 127, 1),
         _noteStart = Field(0, long.MaxValue / (decimal)MusicalPosition.TicksPerQuarter, 0.25m),
@@ -142,6 +147,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             {
                 Canvas.Cancel();
                 Canvas.SnapTicks = SnapValues[Math.Max(0, _snap.SelectedIndex)];
+                RefreshView();
             }
         };
         _length.SelectionChanged += (_, _) =>
@@ -154,6 +160,10 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             Canvas.Duplicate();
             return Task.CompletedTask;
         });
+        toolbar.Children.Add(_quantize);
+        Identify(_quantize, "Piano.Quantize");
+        ToolTip.SetShowOnDisabled(_quantize, true);
+        _quantize.Click += (_, _) => Canvas.Quantize();
         AddButton(toolbar, "Delete", "Delete", () =>
         {
             Canvas.Delete();
@@ -179,6 +189,23 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             Canvas.Ghosts = _ghosts.IsChecked == true;
             Canvas.InvalidateVisual();
         };
+        toolbar.Children.Add(_scale);
+        Identify(_scale, "Piano.Scale");
+        _scale.Flyout = _scaleFlyout;
+        var scaleBody = new StackPanel { Classes = { "spaced" } };
+        var tonicLabel = new TextBlock();
+        Identify(tonicLabel, "Piano.ScaleTonic");
+        scaleBody.Children.Add(tonicLabel);
+        scaleBody.Children.Add(_scaleTonic);
+        Identify(_scaleTonic, "Piano.ScaleTonic");
+        var kindLabel = new TextBlock();
+        Identify(kindLabel, "Piano.ScaleKind");
+        scaleBody.Children.Add(kindLabel);
+        scaleBody.Children.Add(_scaleKind);
+        Identify(_scaleKind, "Piano.ScaleKind");
+        _scaleFlyout.Content = scaleBody;
+        _scaleKind.SelectionChanged += (_, _) => ChangeScale();
+        _scaleTonic.SelectionChanged += (_, _) => ChangeScale();
         _audition.Content = HostIcons.Create("Sound", _audition);
         toolbar.Children.Add(_audition);
         Identify(_audition, "Piano.Audition");
@@ -255,6 +282,14 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
 
     private static readonly long[] SnapValues = [960000, 480000, 240000, 120000, 320000, 1];
     private static readonly long[] LengthValues = [240000, 480000, 960000, 1920000, 3840000];
+
+    private void ChangeScale()
+    {
+        if (_refreshing || _scaleKind.SelectedIndex < 0 || _scaleTonic.SelectedIndex < 0) return;
+        Canvas.Scale = new((PianoScaleKind)_scaleKind.SelectedIndex, _scaleTonic.SelectedIndex);
+        _scaleTonic.IsEnabled = Canvas.Scale.Kind != PianoScaleKind.Off;
+        Canvas.InvalidateVisual();
+    }
 
     private void Identify(Control control, string key)
     {
@@ -502,6 +537,13 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             string[] lengths = ["1/16", "1/8", "1/4", "1/2", "1/1"];
             if (!_length.Items.OfType<string>().SequenceEqual(lengths)) _length.ItemsSource = lengths;
             if (_length.SelectedIndex != lengthIndex) _length.SelectedIndex = lengthIndex;
+            string[] scales = [_shell["Piano.ScaleOff"], _shell["Piano.ScaleMajor"], _shell["Piano.ScaleMinor"]];
+            if (!_scaleKind.Items.OfType<string>().SequenceEqual(scales)) _scaleKind.ItemsSource = scales;
+            if (_scaleKind.SelectedIndex != (int)Canvas.Scale.Kind) _scaleKind.SelectedIndex = (int)Canvas.Scale.Kind;
+            if (_scaleTonic.SelectedIndex != Canvas.Scale.Tonic) _scaleTonic.SelectedIndex = Canvas.Scale.Tonic;
+            _scaleTonic.IsEnabled = Canvas.Scale.Kind != PianoScaleKind.Off;
+            _scale.Content = _shell["Piano.Scale"];
+            _quantize.Content = _shell["Piano.Quantize"];
             decimal? root = observation.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == Canvas.Part?.SoundId)
                 ?.Parameters.GetValueOrDefault("rootPitch", 60);
             _root.Content = _shell["Piano.Root"] + ": " + (root is { } midi ? PianoNotes.Name(midi) : "—");
@@ -553,6 +595,9 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
                 Canvas.Selection.Count > 0 ? $"{Canvas.Selection.Count} {_shell["Piano.Selected"]}" : "";
             foreach (string key in new[] { "Duplicate", "Delete", "Properties" })
                 _buttons[key].IsEnabled = Canvas.CanEdit && Canvas.Selection.Count > 0;
+            _quantize.IsEnabled = Canvas.CanQuantize;
+            ToolTip.SetTip(_quantize, _shell[Canvas.SnapTicks <= 1 ? "Piano.QuantizeSnapOff" :
+                !Canvas.CanEdit ? "Piano.QuantizeUnavailable" : Canvas.Selection.Count == 0 ? "Piano.QuantizeSelection" : "Piano.QuantizeHint"]);
         }
         finally
         {
@@ -567,6 +612,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         Canvas.Cancel();
         _rootFlyout.Hide();
         _noteFlyout.Hide();
+        _scaleFlyout.Hide();
         _rootBasis = _noteBasis = null;
     }
 

@@ -1,5 +1,22 @@
 # Desktop visual and lifecycle verification
 
+## Piano Quantize and Scale
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll piano-tools "$PWD/.artifacts/piano-tools/review" audio --timeout-seconds=300
+```
+
+Creates an isolated four-note Synth fragment and shared Playlist repeats. Guarded Windows input
+boxes three notes, chooses Snap, Quantizes, changes Snap before exact Undo/Redo, selects C Major/A
+Natural Minor and switches Parts. RU/EN Dark/Light at 1080/520/360 DIP includes empty/populated
+renders, ghost/view/zoom/scroll/hide retention and no document/history edits. The existing repeat
+menu and Piano editor verify local Quantize; a one-tick end note verifies whole-operation refusal.
+`audio` deliberately plays the current physical Pattern/Song output and holds the scale Popup under
+transport observations; no system volume changes. `quick` repeats English Dark/Light at 520 DIP.
+Fixture/project setup and theme/layout changes are API-driven; musical input is native. A foreground
+refusal waits up to 60 seconds for deliberate activation and never sends input through another app.
+Canonical PCM tests, physical delivery, screen review and subjective listening are separate evidence.
+
 ## Rack channels and Pattern Gain
 
 For live Gain acceptance, `rack-gain <output> native` deliberately plays a small isolated sustained

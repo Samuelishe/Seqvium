@@ -1060,6 +1060,13 @@ Canvas drafts, selection, viewport and clipboard are transient projections; acce
 an editor-private music store. Rack safely projects richer notes as a read-only melody; Playlist
 continues referencing the same Pattern and rendering actual NoteEvents.
 
+`PianoNotes.Quantize` uses the existing Snap over selected starts with an atomic Pattern-end check.
+`DesktopWorkflow.QuantizePianoNotesAsync` validates the same basis/Part/sound authority and commits
+one `SetPartNotes` edit in surviving order; no-op/history/live publication retain the existing owners.
+`Presentation/PianoScale` is a pure session view guide held by the retained Piano canvas. It has no
+canonical document, sound-root, serialization, export or execution dependency. Canvas row backgrounds
+consume it before grid/ghosts/notes; lifecycle replacement resets the guide without an edit.
+
 Optional `SampleRootMetadata` reads bounded, exact-path/hash-verified import metadata without writing
 the library. Root remains an explicit shared SoundDefinition parameter. `NoteAuditionRequest` owns
 frozen source preparation, using the existing PCM kernel; the workflow joins its transient renderer/

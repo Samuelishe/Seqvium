@@ -32,6 +32,19 @@ internal static class PianoNotes
         ? ticks
         : checked((long)Math.Round((decimal)ticks / unit, MidpointRounding.AwayFromZero) * unit);
 
+    internal static NoteEvent[] Quantize(IReadOnlyList<NoteEvent> notes, IReadOnlySet<Id<NoteEvent>> selection,
+        long unit, long length)
+    {
+        if (unit <= 1) throw new InvalidOperationException("Piano.QuantizeSnapOff");
+        var result = notes.Select(n => selection.Contains(n.Id)
+            ? n with { Position = new(Snap(n.Position.Ticks, unit)) }
+            : n).ToArray();
+        // Subtraction avoids overflow at the musical time limit. Refuse the whole group.
+        if (result.Any(n => selection.Contains(n.Id) && n.Position.Ticks > length - n.Duration.Ticks))
+            throw new InvalidOperationException("Piano.QuantizeBoundary");
+        return result;
+    }
+
     internal static NoteEvent[] Move(IReadOnlyList<NoteEvent> notes, long ticks, decimal pitch, long length,
         bool copy = false)
     {

@@ -270,7 +270,24 @@ belongs to [sample workflow](SAMPLE_WORKFLOW.md#seq-r9-source-root-pitch).
 Keyboard and enabled edit audition use a quiet, bounded solo source voice while transport is stopped,
 not downstream graph monitoring. Stop/Panic/Play/close withdraw and join that preview. Creation/Open stay silent.
 
-Scale/quantize/humanization, Piano-local controller curves, MIDI/QWERTY recording, MPE and independent
+**Quantize** aligns only selected starts to the current quarter/eighth/sixteenth/thirty-second or
+eighth-triplet Snap, anchored at Pattern tick zero. Integer ticks use nearest rounding; exact
+midpoints move forward. Free disables the command with a short hint, as do no selection, unavailable
+Part and Busy. Ctrl+A selects the whole Part. IDs, fractional pitch, duration, velocity, source,
+Pattern length and Playlist placement remain exact. If any rounded start plus its original duration
+exceeds the Pattern, the whole action refuses and suggests finer Snap. One accepted command is one
+Undo; an already aligned selection creates no revision/history. Undo/Redo restore exact snapshots
+regardless of current Snap. Shared Pattern uses observe the same edit; explicit whole-clip/repeat
+variations retain their independent content. Existing live publication preserves transport ownership.
+
+**Scale** opens a compact tonic/type flyout: Off, Major or Natural Minor, with C–B sharp names.
+Major intervals are 0/2/4/5/7/9/11; Natural Minor 0/2/3/5/7/8/10. Rows repeat over MIDI 0–127,
+with a slightly stronger tonic. This is only a background guide: outside notes remain readable and
+drawable. It never edits sound/root pitch, notes, JSON, export/R8 or Undo. Default Off/C is retained
+across Parts, navigation, zoom/scroll, hide/restore, transport and language/theme changes; project
+replacement resets it. Controls remain retained during observations, including an open Popup.
+
+Humanization, scale locking, Piano-local controller curves, MIDI/QWERTY recording, MPE and independent
 simultaneous Piano editor targets remain [follow-ups](ROADMAP.md#seq-r9--piano-roll). Pitch-only
 multisample mapping belongs to the shared Source Editor below; Playlist automation is separate.
 

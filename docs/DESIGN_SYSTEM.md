@@ -427,6 +427,9 @@ same HostVisual palette/material/metric resolution as other musical surfaces. Pi
 icons are original HostIcons vectors. Specialized keyboard/grid geometry is deliberately not a
 generic parameter-row minimum. Source/note properties use shared standard controls and numeric
 templates; actual label/TextPresenter alignment is measured, not inferred from outer height.
+Quantize and Scale use short localized compact text buttons. Scale's ordinary Flyout/ComboBox
+controls retain unchanged ItemsSource/selection during observations. Its row background blends the
+live Accent.Action brush before all note/selection layers; no new palette or control template exists.
 Existing Dark role values are preserved; both keyboard palettes and actual sparse/chord/reduced
 compositions are reviewed separately. Evidence belongs to the [R9 report](experiments/SEQ-R9_REPORT.md).
 

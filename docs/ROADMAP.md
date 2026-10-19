@@ -422,8 +422,12 @@ application. [Evidence](experiments/SEQ-R9_REPORT.md) is scoped, not owner aesth
 
 ### Piano Roll follow-ups
 
-- Scale highlighting/locking, quantize, humanization and richer selection/transform tools need explicit
-  musical semantics, preview and Undo contracts, not decorative toolbar modes.
+Selected-start Quantize and session-only Major/Natural Minor Scale Highlighting are implemented in
+the existing editor. [UX](UX_CONTRACT.md#implemented-seq-r9-piano-roll) owns exact bounds/view semantics;
+[the tools report](experiments/SEQ-R9-PIANO-TOOLS-F1_REPORT.md) owns verification and limits.
+
+- Scale locking, humanization and richer selection/transform tools still need explicit musical
+  semantics and history contracts.
 - Controller/automation curves, MIDI/QWERTY recording and MPE need real event/input/execution ownership.
 - Pitch-only multisample key mapping is implemented in the existing Source Editor, including
   per-source range/loop/crossfade and explicit roots. Velocity layers, round-robin, articulations

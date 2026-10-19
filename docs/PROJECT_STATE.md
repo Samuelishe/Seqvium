@@ -7,7 +7,16 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0006**, **SEQ-R10-REPEAT-VARIATION-F1 — Independent Pattern repeat**.
+Product alpha **0.1.16.0007**, **SEQ-R9-PIANO-TOOLS-F1 — Quantize and Scale Highlighting**.
+Piano's explicit Quantize aligns selected starts to current Snap from Pattern zero, midpoint forward,
+with one canonical Undo and exact no-op/history behavior. A crossing note refuses the entire action;
+Free disables it. Pitch/duration/velocity/identity, sources and Playlist structure remain intact.
+The compact Scale flyout supplies all twelve tonics and Major/Natural Minor background rows,
+with a stronger tonic. Off/C defaults and retained session state never enter music/Undo/JSON/export.
+The [report](experiments/SEQ-R9-PIANO-TOOLS-F1_REPORT.md) owns exact arithmetic, shared/independent
+repeat locality, live PCM, native/visual/physical evidence, Release results and limits.
+
+Previous **0.1.16.0006**, **SEQ-R10-REPEAT-VARIATION-F1 — Independent Pattern repeat**.
 Playlist's localized **Make this repeat unique** detaches the pointed cycle in one canonical edit,
 selects its independent variation and uses existing editor navigation. Optional shared remainders
 retain the original Pattern; instruments/resources/Mixer remain shared. Exact Pattern ticks and
@@ -317,7 +326,21 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Current L0/L1/L2/L3: **SEQ-R10-REPEAT-VARIATION-F1, 2026-10-19**. Release solution build passes
+Current L0/L1/L2/L3: **SEQ-R9-PIANO-TOOLS-F1, 2026-10-19**. Full Release solution build passes
+with zero warnings/errors (**19.73 s**, final incremental **16.10 s**); **1913/1913** tests pass, zero skips, one thread
+(**193.992 s CLI**). The **33** new tools cases join **301/301** related checks (**40.236 s CLI**).
+Exact tick/boundary/history/locality and live Pattern/Song canonical PCM checks pass. The full run
+exceeds the ordinary focused target; retained TRX attributes the largest costs to demo export and
+MSBuild product-version subprocess tests. Strict allocation assertions pass unchanged, without
+attributing or closing the earlier audit's positive measurements. Native/visual/physical scope
+and failed harness attempts are separated in the [report](experiments/SEQ-R9-PIANO-TOOLS-F1_REPORT.md).
+Native r3 covers all twelve RU/EN/theme/1080/520/360-DIP combinations; final r7 completes exact
+Quantize/Snap-independent Undo/Redo, independent repeat targeting/edit and atomic boundary feedback.
+Pattern/Song native Quantize/Undo retain epoch through Samsung USB C Earphones, 48-kHz stereo;
+the playing Scale Popup retains its row/source/focus for 2300 ms. Local screenshots include both
+themes, empty/outside-scale notes and minimum widths. No acoustic/pressure/platform closure follows.
+
+Previous L0/L1/L2/L3: **SEQ-R10-REPEAT-VARIATION-F1, 2026-10-19**. Release solution build passes
 with zero warnings/errors (**49.34 s**); **1880/1880** tests pass, zero skips, one thread
 (**141.342 s CLI**, full-suite overrun recorded). All **35/35** new repeat cases pass focused
 (**3.715 s**), plus an earlier **117/117** Playlist/Song Structure/Rack/Piano subset (**20.473 s**).
@@ -621,8 +644,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. Repeat variation F1 includes all **1880** cases:
-new repeat decomposition/publication plus existing note/channel/history, workspace, Pattern/Song/
+Completed repository tasks since this L3: **0**. Piano tools F1 includes all **1913** cases:
+new Quantize/Scale/view/live PCM and prior repeat/publication plus note/channel/history, workspace, Pattern/Song/
 Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier
 positive subset/control measurements remain unresolved; this green run does not attribute them.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,

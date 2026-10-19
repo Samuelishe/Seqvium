@@ -58,6 +58,8 @@ internal sealed class PianoRollCanvas : Control
 
     internal bool Ghosts { get; set; } = true;
     internal long SnapTicks { get; set; } = BeatSteps.StepTicks;
+    internal PianoScale Scale { get; set; }
+    internal bool CanQuantize => CanEdit && SnapTicks > 1 && _selection.Count > 0;
 
     internal bool VelocityVisible
     {
@@ -129,6 +131,7 @@ internal sealed class PianoRollCanvas : Control
     {
         var (pattern, basis) = BeatSteps.Resolve(observation);
         var part = pattern?.Parts.SingleOrDefault(p => p.Id == partId);
+        if (observation.Document.LifecycleId != _observation.Document.LifecycleId) Scale = default;
         bool targetChanged = observation.Document.LifecycleId != _observation.Document.LifecycleId ||
                              basis?.Attachment != _basis?.Attachment || part?.Id != _part?.Id;
         if (_gesture is { } gesture && (targetChanged || gesture.Basis.Generation != observation.Generation)) Cancel();
@@ -241,6 +244,9 @@ internal sealed class PianoRollCanvas : Control
                 if (y + RowHeight < RulerHeight || y > NoteBottom) continue;
                 context.FillRectangle(Brush(Black(pitch) ? "Surface.Background" : "Rack.Ruler"),
                     new(KeyWidth, y, width - KeyWidth, RowHeight));
+                if (Scale.Contains(pitch))
+                    using (context.PushOpacity(Scale.IsTonic(pitch) ? 0.13 : 0.055))
+                        context.FillRectangle(Brush("Accent.Action"), new(KeyWidth, y, width - KeyWidth, RowHeight));
                 if (pitch == _hoverPitch)
                     context.FillRectangle(Brush("Surface.Hover"), new(KeyWidth, y, width - KeyWidth, RowHeight));
                 context.DrawLine(new Pen(Brush(pitch % 12 == 0 ? "Border.Default" : "Graph.Grid"), 1),
@@ -688,6 +694,29 @@ internal sealed class PianoRollCanvas : Control
 
     internal void CommitNotes(BeatEditBasis basis, Id<MusicalPart> part, NoteEvent[] notes) =>
         Submit(basis, part, notes);
+
+    internal void Quantize()
+    {
+        if (!CanQuantize || _basis is not { } basis || _part is null) return;
+        Cancel();
+        _awaitingCommand = true;
+        CommandSubmitted?.Invoke(CommitAsync());
+        async Task CommitAsync()
+        {
+            try
+            {
+                await _workflow.QuantizePianoNotesAsync(basis, _part.Id, _selection, SnapTicks);
+                if (_workflow.State.Detail is { } key && key is "Piano.QuantizeBoundary" or "Piano.QuantizeSnapOff")
+                    Feedback = _shell[key];
+            }
+            finally
+            {
+                _awaitingCommand = false;
+                Changed?.Invoke();
+                InvalidateVisual();
+            }
+        }
+    }
 
     internal void Delete()
     {

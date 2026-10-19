@@ -229,6 +229,10 @@ does not convert musical data. Hide/collapse cancels captured drafts, retaining 
 selection within the session; disposal withdraws local actions. Music remains project-owned, view
 state session-only, pane geometry independent user-layout state.
 
+The Scale guide is also session-only retained canvas state (default Off/C): Part changes, pane
+hide/restore, transport, zoom/scroll and theme/language observations preserve it. Document lifecycle
+replacement resets it. Neither workspace preferences nor musical project persistence stores it.
+
 Main-window adaptive navigation and canvas containment settle after actual arrange. Hiding navigation
 sets its column to zero, and queued workspace reflow invalidates arrange so visible pane bounds match
 state bounds after repeated actual-window reductions. This is reachability/layout repair, not music editing.

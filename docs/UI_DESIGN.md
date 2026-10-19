@@ -306,6 +306,12 @@ instructions. Chord velocity handles stagger while retaining onset stems. Muted 
 never a second selection target. Compact Pattern/Part scope, source-root access and contextual exact
 fields keep music dominant. Rich Rack rows show real pitch/duration/intensity, not misleading pads.
 
+Quantize is a short localized action in the existing edit group. Scale uses one compact flyout
+button, with tonic/type selectors only on disclosure. Neither adds a permanent toolbar row.
+Scale rows tint the existing background with the semantic action brush, with a slightly stronger
+tonic; grid, hover, ghosts, note bodies, selection and playhead remain above that layer. Black/white
+key identity and outside-scale notes stay readable. Both themes use their existing materials.
+
 Dark retains its accepted roles and jade/slate material depth; Light has independently reviewed keys,
 saturated bodies and readable ink. Both use the shared [Design System](DESIGN_SYSTEM.md), original
 vectors and derived materials. Actual RU/EN ordinary/reduced renders, field alignment, window-coordinate

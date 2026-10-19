@@ -270,6 +270,11 @@ step pads; open Piano Roll to edit it. Root changes affect every use of the shar
 stored note pitches or WAV bytes. Linear sample pitching changes natural duration; there is no
 sustain loop, time stretching, MIDI recording or automatic pitch detector yet.
 
+Select notes and choose **Quantize** to align their starts to the selected Snap. Ctrl+A includes the
+whole channel. Free disables Quantize; if a note would cross the Pattern end, choose a finer grid.
+One Undo restores the exact timing. **Scale** offers a tonic plus Major/Natural Minor row guide;
+it changes only the view, independently of Root Pitch, and permits every note outside the scale.
+
 To try another recording for an existing instrument, choose **Replace WAV…** from its Rack row
 menu. It updates every Pattern using that instrument while keeping notes, local processing and Mixer
 routing. Undo restores the original sample. Verified library tuning is used when available; otherwise
