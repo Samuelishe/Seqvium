@@ -174,6 +174,19 @@ retrieved only for explicit historical tasks.
 | `0.1.16.0005` | SEQ-PIANO-RACK-UI-FIX-R1              | Stable Piano selectors and shared fixed Rack time geometry; see checkpoint below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `0.1.16.0006` | SEQ-R10-REPEAT-VARIATION-F1 | One BUILD for pointed-repeat independence through existing canonical clips/variation/history and compatible Song publication. See checkpoint and report below. |
 | `0.1.16.0007` | SEQ-R9-PIANO-TOOLS-F1 | One BUILD for selected-start Quantize and session-only scale rows within the existing Piano editor. See checkpoint and report below. |
+| `0.1.16.0009` | SEQ-R10-UNFOLD-REPEATS-F1 | One BUILD for explicit shared-cycle unfolding through existing Playlist clips/history/publication. See checkpoint and report below. |
+
+### SEQ-R10-UNFOLD-REPEATS-F1 checkpoint
+
+`0.1.16.0008` to **`0.1.16.0009`**, one BUILD for a bounded explicit editing action in the existing
+Playlist capability. Unfold expands repeated Pattern clips while retaining shared content, exact
+geometry and accepted identities through canonical history/persistence. No schema/reader, DSP,
+instrument, engine or standalone editor is introduced; MAJOR/MINOR/PATCH stay unchanged. Focused
+Release checks, actual localized/theme/ordinary/reduced routed menus and short physical Song
+continuation are owned by the [report](experiments/SEQ-R10-UNFOLD-REPEATS-F1_REPORT.md). Native
+Windows input is foreground-refused, and subjective listening/pressure/platform acceptance remain
+open. This bounded implementation checkpoint does not claim complete native acceptance or L3.
+No Git staging/publication/history operation accompanies the identity.
 
 ### SEQ-R9-PIANO-HUMANIZE-F1 checkpoint
 

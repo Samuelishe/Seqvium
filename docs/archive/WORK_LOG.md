@@ -2457,3 +2457,17 @@ retains row/source/focus. Exact PCM checks use controlled output. Failed fixture
 helper attempts and timing/physical limits remain in the
 [report](../experiments/SEQ-R9-PIANO-TOOLS-F1_REPORT.md). No allocation assertion is weakened and the
 earlier allocation audit remains unresolved. Official demo, Git index/history and remotes stay unchanged.
+
+## SEQ-R10-UNFOLD-REPEATS-F1 — 2026-10-19
+
+Product 0.1.16.0008 → 0.1.16.0009, one BUILD for explicit shared-cycle expansion in the existing
+Playlist. Exact canonical clips/source sharing, first Clip ID, 2–1024 geometry through Int64 end,
+one Undo/exact Redo, portable persistence and menu lifecycle/target cancellation reuse existing
+owners. No musical cloning, schema/reader, DSP or engine change. Zero-warning affected Release
+build (22.95 s), 172/172 focused tests (24.290 s CLI, one thread) and bounded routed/physical L4 pass;
+no new L3. Numerical Song PCM stays within 2e-6 at 44.1/48 kHz mono/stereo with overlaps/releases/
+Delay. Actual localized/theme/ordinary/reduced empty/populated menus/selection/move/copy/variation
+pass with routed input; native Windows attempts are foreground-refused. Short Samsung 48-kHz stereo
+live Unfold retains epoch 3 while progressing 43680→68640 frames, no failure. Earlier fixture,
+allocation and physical-history failures remain explicit; no subjective listening or pressure claim.
+[Report](../experiments/SEQ-R10-UNFOLD-REPEATS-F1_REPORT.md) owns attempts, evidence and limits.

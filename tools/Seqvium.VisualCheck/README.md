@@ -1,5 +1,20 @@
 # Desktop visual and lifecycle verification
 
+## Unfold Pattern repeats
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll unfold-repeats "$PWD/.artifacts/unfold-repeats/review" --timeout-seconds=240
+```
+
+The isolated synth study uses a non-bar Pattern length, nonzero Song start and 7/8. It checks actual
+context menus, dismissal, single-cycle availability, individual selection/move/clipboard/variation,
+editor targeting, exact Undo/Redo, Busy/hide/selection/stale ABA invalidation and Save. RU/EN ×
+Dark/Light at 1080/520 DIP covers populated and empty Playlist. Default input is explicitly routed.
+`native` uses guarded Windows input and waits at most 45 seconds for deliberate foreground after
+coverage refusal; it never clicks through another app. `audio` separately checks short physical
+Song output and live Unfold position/epoch. Canonical numerical PCM belongs to UnfoldRepeatsTests.
+Screenshots/projects/JSON stay ignored locally. Physical delivery is not subjective listening.
+
 ## Piano Humanize
 
 ```powershell

@@ -468,7 +468,17 @@ stay unchanged; sounds/resources/Mixer stay shared. One command creates one Undo
 the independent clip through the existing editor navigation. Its tooltip explains the note/sound
 boundary. The right musical endpoint is outside the clip. Snap, zoom and scroll do not choose a
 different cycle. A dismissed, hidden, stale or retargeted menu accepts no edit. Single-repeat clips
-retain Make variation only; the whole-clip action above keeps its existing semantics.
+retain Make variation; the whole-clip action above keeps its existing semantics.
+
+**Unfold repeats** acts on the pointed Pattern clip, even when other clips are selected. It replaces
+2–1024 cycles with contiguous ordinary one-repeat clips on the same lane, using exact Pattern ticks
+without Snap. The first keeps the original Clip ID; later cycles receive fresh IDs in cycle order.
+All clips share the same source placement, including an existing variation and its ancestry. Unfold
+creates no musical content or independent variation; use Make variation afterwards for independence.
+The first resulting clip is selected. Existing move/copy/delete/editor gestures apply to each clip.
+One Undo restores the repeated clip, and Redo restores the accepted IDs. Single-repeat Unfold is
+disabled; dismiss, selection retargeting, hide, Busy, stale generation and lifecycle changes invalidate
+the captured action. Unknown clip data refuses atomically rather than being copied or discarded.
 
 ## Implemented Audio Clip workflow
 

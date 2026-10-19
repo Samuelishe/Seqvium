@@ -5,6 +5,13 @@ namespace Seqvium.Desktop.Workflow;
 
 internal sealed partial class DesktopWorkflow
 {
+    internal Task<bool> UnfoldArrangementRepeatsAsync(ArrangementEditBasis basis, Id<ArrangementClip> id)
+        => Command("Workflow.EditFailed", () =>
+        {
+            ValidateArrangementBasis(basis);
+            return Task.FromResult(_document.Edit("Unfold Playlist Pattern repeats", e => e.UnfoldArrangementRepeats(id)));
+        });
+
     internal Task<bool> EditPlaylistSelectionAsync(ArrangementEditBasis basis,
         IReadOnlyList<Id<ArrangementClip>> patterns, IReadOnlyList<Id<AudioClip>> audio,
         long tickDelta = 0, int laneDelta = 0, bool copy = false, bool delete = false, bool duplicate = false)

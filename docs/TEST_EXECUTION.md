@@ -9,6 +9,19 @@ progress.
 
 ## Pattern repeat variations
 
+`UnfoldRepeatsTests` adds exact 2/5/1024-cycle expansion through `long.MaxValue`, non-bar lengths,
+7/8 and nonzero starts, first/new IDs and stable array order, shared/existing variation preservation,
+individual move/copy/variation/delete, exact history/reopen, opaque clip refusal and opaque unchanged
+source preservation, invalid geometry, missing/stale/ABA/lifecycle/closed refusal. Its audio partial
+compares full canonical offline/realtime Song PCM before/after and after portable Save/Open at
+44.1/48 kHz mono/stereo, with chords, Pattern/Audio overlaps, local Gain, release and Mixer Delay tails.
+Tolerance is 2e-6. Live publication checks retained cycle-zero/unrelated voices, retired remapped
+onsets and unchanged time/epoch. Use `--filter-class '*UnfoldRepeatsTests'` with RepeatVariation,
+SongStructure, Arrangement, AudioClip, presentation and metadata neighbours, `--max-threads 1`.
+VisualCheck `unfold-repeats <output> [native] [audio]` separately records real-window routed or
+guarded Windows input, localized/theme/ordinary/reduced empty/populated matrices and optional
+physical output. A refused native attempt or failed output check is not acceptance.
+
 `RepeatVariationTests` covers exact non-bar geometry and 2/4/8/1024 repeat boundaries, deterministic
 clip identity retention, graph/Part remapping, shared sounds/Mixer, exact history, unknown-data atomic
 refusal and stale authority. Its audio partial compares complete frozen Song and Pattern PCM, release

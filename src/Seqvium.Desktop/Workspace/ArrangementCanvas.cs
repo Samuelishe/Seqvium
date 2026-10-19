@@ -104,6 +104,8 @@ internal sealed partial class ArrangementCanvas : Control
 
     internal void Adopt(WorkflowState observation)
     {
+        if (observation.Busy || observation.Document.LifecycleId != _observation.Document.LifecycleId ||
+            observation.Generation != _observation.Generation) ContextMenu?.Close();
         if (observation.Document.LifecycleId != _observation.Document.LifecycleId)
         {
             Selected = null;
@@ -691,6 +693,7 @@ internal sealed partial class ArrangementCanvas : Control
 
     internal void Cancel()
     {
+        ContextMenu?.Close();
         _automationDraft = null;
         _automationPoint = null;
         CancelAudioGesture();

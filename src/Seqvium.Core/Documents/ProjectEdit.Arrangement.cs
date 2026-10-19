@@ -34,4 +34,25 @@ public sealed partial class ProjectEdit
         CheckActive();
         State = State with { ArrangementClips = Remove(State.ArrangementClips, clip => clip.Id == id) };
     }
+
+    /// <summary>Expands shared cycles in place; the first keeps the clip ID. No musical source is cloned.</summary>
+    public void UnfoldArrangementRepeats(Id<ArrangementClip> id)
+    {
+        CheckActive();
+        var clip = State.ArrangementClips.SingleOrDefault(c => c.Id == id);
+        ProjectValidation.Require(clip is not null, "Arrangement.InvalidRepeat");
+        ProjectValidation.Require(clip.Repeats is > 1 and <= 1024, "Arrangement.InvalidRepeat");
+        // Opaque occurrence data may carry identities or span semantics that cannot be split safely.
+        ProjectValidation.Require(clip.AdditionalData.IsEmpty, "Arrangement.UnfoldUnsupported");
+        var placement = State.Placements.Single(p => p.Id == clip.SourcePlacementId);
+        long length = State.Patterns.Single(p => p.Id == placement.PatternId).Length.Ticks;
+        ProjectValidation.Require(length > 0 && length <= long.MaxValue / clip.Repeats &&
+            clip.Position.Ticks >= 0 && clip.Position.Ticks <= long.MaxValue - length * clip.Repeats,
+            "Arrangement.InvalidRange");
+        var pieces = new ArrangementClip[clip.Repeats];
+        for (int i = 0; i < pieces.Length; i++)
+            pieces[i] = clip with { Id = i == 0 ? clip.Id : Id<ArrangementClip>.New(),
+                Position = new(checked(clip.Position.Ticks + length * i)), Repeats = 1 };
+        State = State with { ArrangementClips = [.. State.ArrangementClips.SelectMany(c => c.Id == id ? pieces : [c])] };
+    }
 }

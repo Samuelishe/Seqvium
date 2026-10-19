@@ -570,6 +570,12 @@ The existing occurrence map, packet-boundary publication and voice transfer rema
 Splitting a repeat changes center identities and may change right-side clip/repeat identities;
 already sounding occurrences with changed identities retire and their past onsets do not replay.
 Unchanged left-side and other clip occurrences retain age, Song time and compatible Mixer state.
+Unfold uses that same publication contract without extending occurrence mapping: the original
+clip's cycle zero keeps its identity and can continue. Later cycles become fresh clip occurrences;
+any currently sounding remapped voices retire without replaying past onsets. Unrelated occurrences,
+Song position/epoch and compatible Mixer histories remain under existing continuation authority.
+Canonical finite rendering before/after Unfold remains equivalent, including source releases and
+Mixer tails; Unfold creates no DSP or per-cycle processing state.
 This operation needs ordinary asynchronous preparation and may hit existing budgets/last-valid
 refusals; it does not promise uninterrupted voices for the separated cycle or force global Stop.
 Offline execution before note edits remains musically equivalent, including release tails; linear

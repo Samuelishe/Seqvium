@@ -345,6 +345,15 @@ gets a fresh Clip ID. Other remainder IDs are fresh. All pieces keep their lane 
 absolute positions. Undo restores the exact original snapshot; Redo restores the accepted identities.
 There is no new clip kind, musical-time owner or media copy.
 
+`ProjectEdit.UnfoldArrangementRepeats` expands all cycles through ordinary ArrangementClips in the
+same canonical transaction. The first retains the original ID and every piece retains its source
+PatternPlacement and lane. Checked integer geometry and the existing 1024-repeat limit bound the
+operation before allocation/publication. Opaque clip data refuses atomically; unchanged shared
+Pattern/placement/processing data is preserved without cloning or interpreting it. Array replacement
+keeps the original slot and surrounding order. Undo/Redo and Save/Open use existing snapshots/schema.
+Desktop captures the pointed clip, selection and ArrangementEditBasis; dismissed/retargeted/hidden/
+Busy/stale contexts accept no action. No source, graph, media, track or section is manufactured.
+
 The owner authorizes a bounded Arrangement workflow independently of closing intervening roadmap
 stages. Core's ArrangementClip references an existing source PatternPlacement, rather than manufacturing
 more Rack placements or invisible Pattern/Part/Note copies. Its source owns canonical music/graph/media;

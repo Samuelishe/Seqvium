@@ -60,6 +60,7 @@ for the logo, typography, alternative directions and publication resources.
   all their Pattern/Audio material. Mixed selections support move/copy, clipboard and exact placement.
   Make a variation of one Pattern clip or one repeat for a fill or changed phrase while keeping shared instruments
   and Mixer routes. Other uses of the original Pattern keep their notes.
+  Unfold a repeated Pattern clip into individually movable phrases while keeping their notes shared.
 - Mix shared sound sources through channels, buses and pre/post sends, with level, stereo balance,
   Mute/Solo, real meters, high-pass/three-band EQ, linked compression, musical Delay, algorithmic Reverb and optional
   Master sample-peak

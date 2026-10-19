@@ -454,7 +454,9 @@ SEQ-R10-SONG-STRUCTURE adds named/color ranges, adjacent-section swaps and repea
 explicit one-clip Pattern variations with visible ancestry, mixed Pattern/Audio selection, clipboard,
 precise placement and boundary-conflict reveal. These use canonical history, shared sounds/routes and
 reader 1.5. Explicit repeat detachment is also available as a bounded refinement of that variation workflow.
-It uses existing canonical clips and ancestry without a new reader gate. Local Audio Clip stretch uses
+It uses existing canonical clips and ancestry without a new reader gate. Explicit shared-cycle
+Unfold is also implemented through ordinary one-repeat clips; it creates no independent content.
+Local Audio Clip stretch uses
 50–200% WSOLA, source-frame intent, shared realtime/offline PCM and reader 1.6. Its controls, limits
 and signal/GUI/device evidence belong to [audio](AUDIO_ENGINE.md#local-audio-clip-time-stretch),
 [UX](UX_CONTRACT.md#implemented-audio-clip-workflow) and the
@@ -472,9 +474,9 @@ Prioritize a finished audible scenario with canonical history/persistence and pr
 
 | Priority / bounded package  | Musical/UI outcome                                                                                                                      | Required boundary / decision                                                                                                                                           |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| R10 editing                 | Mixed selection, clipboard, exact placement, context actions and variation cues are implemented; continue with richer trim/unfold tools | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit                                           |
+| R10 editing                 | Mixed selection, clipboard, exact placement, context actions and shared-repeat unfolding are implemented; continue with richer trim tools | One frozen multi-object transaction, clear snap/no-op/cancel/ABA rules; shared content versus local editing remains explicit                                           |
 | R10 song structure          | Named ranges/navigation/swap/repeat are implemented; continue with dynamic tracks, groups/collapse and flexible boundary handling       | Stable container/marker identities, lossless transition from fixed slots, separate visual organization from item/container processing and Mixer routing                |
-| R10 Pattern variants        | Explicit one-clip variations and visible ancestry are implemented; continue with richer mini Piano Roll and unfolding repeat cycles     | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies                                                   |
+| R10 Pattern variants        | Explicit clip/repeat variations, shared-cycle unfolding and visible ancestry are implemented; continue with richer mini Piano Roll     | Existing variation/remapping owner plus an understandable source/local target; do not manufacture hidden note copies                                                   |
 | R10 advanced audio          | Broader warp/tempo following, channel/codec support and a justified large-media streaming path                                          | Bounded explicit local WSOLA stretch is implemented; wider mappings need separate canonical timing, algorithm and shared realtime/offline evidence                     |
 | R11 processing / automation | Measured stereo Master/track taps, useful meters, Mixer balance/pan/sends and automation lanes                                          | Actual processor/measurement/tap/state ownership; no fake meters or duplicate Gain/DSP. Automation needs canonical musical-time lanes and realtime/offline equivalence |
 

@@ -199,6 +199,19 @@ internal sealed partial class ArrangementCanvas
             RackRequested?.Invoke(graph.Id);
     }
 
+    private async Task UnfoldRepeats(ArrangementEditBasis basis, ArrangementClip clip)
+    {
+        var selection = Selection; var audio = AudioSelection; var selected = Selected;
+        if (!await _workflow.UnfoldArrangementRepeatsAsync(basis, clip.Id) ||
+            _workflow.State.Document.LifecycleId != basis.Lifecycle ||
+            _workflow.State.Generation != basis.Generation + 1 || selected != Selected ||
+            !selection.SequenceEqual(Selection) || !audio.SequenceEqual(AudioSelection)) return;
+        _observation = _workflow.State;
+        _selection.Clear(); _audioSelection.Clear(); SelectedAudio = null; SelectedSection = null;
+        Selected = clip.Id; _selection.Add(clip.Id);
+        SelectionChanged?.Invoke(); InvalidateVisual();
+    }
+
     private bool PlaylistKey(KeyEventArgs e)
     {
         bool control = e.KeyModifiers == KeyModifiers.Control;
@@ -244,6 +257,9 @@ internal sealed partial class ArrangementCanvas
     {
         Cancel(); Focus();
         var menu = new ContextMenu();
+        bool active = true;
+        void InvalidateTarget() => active = false;
+        menu.Closed += (_, _) => { active = false; SelectionChanged -= InvalidateTarget; };
         var basis = Basis;
         void Add(string key, Func<Task> action, bool enabled = true)
         {
@@ -278,6 +294,16 @@ internal sealed partial class ArrangementCanvas
             bool selected = _selection.Count + _audioSelection.Count > 0;
             Add("Properties", () => { ClipPropertiesRequested?.Invoke(); return Task.CompletedTask; }, selected);
             Add("Variation", MakeVariation, _selection.Count == 1 && _audioSelection.Count == 0);
+            if (audio is null && pattern is not null)
+            {
+                var patterns = Selection; var audios = AudioSelection; var selectedId = Selected;
+                Add("UnfoldRepeats", () => active && ReferenceEquals(ContextMenu, menu) && !_workflow.State.Busy &&
+                    patterns.SequenceEqual(Selection) && audios.SequenceEqual(AudioSelection) &&
+                    selectedId == Selected && IsEffectivelyVisible && TopLevel.GetTopLevel(this) is not null
+                    ? UnfoldRepeats(basis, pattern) : Task.CompletedTask,
+                    !_workflow.State.Busy && pattern.Repeats > 1);
+                ToolTip.SetTip((MenuItem)menu.Items[^1]!, _shell["Arrangement.UnfoldRepeatsHint"]);
+            }
             if (audio is null && pattern is not null && RepeatAt(pattern, point) is { } repeat)
             {
                 var patterns = Selection; var audios = AudioSelection; var selectedId = Selected;
@@ -294,6 +320,7 @@ internal sealed partial class ArrangementCanvas
             Add("SectionAdd", () => { SectionPropertiesRequested?.Invoke(null); return Task.CompletedTask; });
         }
         ContextMenu = menu;
+        SelectionChanged += InvalidateTarget;
         menu.Open(this);
     }
 }

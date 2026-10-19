@@ -7,7 +7,19 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0008**, **SEQ-R9-PIANO-HUMANIZE-F1 — Piano Roll Humanization**.
+Product alpha **0.1.16.0009**, **SEQ-R10-UNFOLD-REPEATS-F1 — Unfold Pattern repeats**.
+Playlist's localized context action expands one pointed repeated Pattern clip into ordinary
+one-repeat clips at exact cycle boundaries, without Snap or musical cloning. The first retains
+its Clip ID; later IDs and array order survive exact Redo/Save/Open. All pieces retain the existing
+PatternPlacement, including an existing variation/ancestry. Make variation remains the explicit
+independence action. One canonical Undo, bounded 2–1024 cycles, overflow/opaque clip refusal and
+menu dismissal/selection/Busy/hide/stale/ABA guards use existing ownership. Song publication keeps
+time/epoch and compatible unchanged voices; remapped sounding later cycles retire without replay.
+No reader/schema, DSP, settings, clip type or engine change. The
+[report](experiments/SEQ-R10-UNFOLD-REPEATS-F1_REPORT.md) separates numerical/routed/physical evidence
+from foreground-refused native input and unperformed subjective listening.
+
+Previous **0.1.16.0008**, **SEQ-R9-PIANO-HUMANIZE-F1 — Piano Roll Humanization**.
 The compact Humanize flyout exposes independent Timing/Velocity strengths and explicit Apply/Cancel.
 Only selected active-Part Position/Intensity change; equal selected onsets remain together within
 Pattern bounds. Maximums are ±30,000 ticks and ±0.10 intensity, scaled from 0–100%; Free Snap works.
@@ -335,7 +347,20 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Current L0/L1/L2: **SEQ-R9-PIANO-HUMANIZE-F1, 2026-10-19**. Affected Release Tests build
+Current L0/L1/L2: **SEQ-R10-UNFOLD-REPEATS-F1, 2026-10-19**. Affected Release builds have zero
+warnings/errors (**22.95 s final build**). **172/172 focused tests** pass, zero skips, one thread (**24.290 s CLI**), including
+**20** new unfold geometry/history/refusal/PCM cases. Complete canonical Song offline/realtime
+comparison at 44.1/48 kHz mono/stereo stays within 2e-6 with chords, overlapping Pattern/Audio,
+release and Delay tails; exact portable reopen and bounded live occurrence retirement/retention pass.
+Actual RU/EN Dark/Light 1080/520-DIP populated/empty Playlist passes with routed context input,
+individual Move/Copy/variation/editor targeting, history and stale/Busy/hide cancellation. Native
+Windows attempts are coverage/foreground-refused, including a 45-second readiness timeout, without
+action input. Short physical live Unfold through Samsung USB C Earphones, 48-kHz stereo preserves
+epoch 3 while progressing 43680→68640 frames, no device failure. An earlier physical variation-history
+check failed and is not a pass. The [report](experiments/SEQ-R10-UNFOLD-REPEATS-F1_REPORT.md) retains
+attempts, compiler/fixture corrections and limits. No L3, subjective listening or pressure closure.
+
+Previous L0/L1/L2: **SEQ-R9-PIANO-HUMANIZE-F1, 2026-10-19**. Affected Release Tests build
 (including production and VisualCheck references) passes with zero warnings/errors (**31.87 s**).
 **242/242 focused tests** pass, zero skips (**28.348 s CLI**), including **19** Humanize cases,
 Piano/Quantize/Scale, repeats/live PCM, Rack/navigation/presentation and product metadata.
@@ -665,7 +690,7 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **1** (Humanize: focused L0/L1/L2 and bounded L4).
+Completed repository tasks since this L3: **2** (Humanize and Unfold: focused L0/L1/L2 and bounded L4).
 The last L3, Piano tools F1, includes all **1913** cases:
 new Quantize/Scale/view/live PCM and prior repeat/publication plus note/channel/history, workspace, Pattern/Song/
 Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier
@@ -726,7 +751,7 @@ portable universal decoder. Surround, tempo following and warp maps are absent; 
 has material/range/budget limits documented above. Sections are organization,
 not processing containers; crossing clips need explicit split/range adjustment. Variations do not
 inherit future note edits. Dynamic tracks/groups/collapse remain absent; explicit per-repeat
-detachment now uses the same ordinary clip/variation model.
+detachment and shared-repeat unfolding use the same ordinary clip/variation model.
 Browser inspection followed by preview decodes external sources twice; three-minute source latency
 and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 

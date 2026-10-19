@@ -332,6 +332,10 @@ Root Pitch stays unchanged. Check source tuning and Mixer trim when the new reco
    shares its new Pattern. To change only one cycle inside a repeated clip, right-click that cycle
    and choose **Make this repeat unique**. The independent cycle is selected for editing; the remaining
    cycles keep the original Pattern. Undo restores the original repeated clip in one step.
+   To arrange every phrase separately, right-click the repeated clip and choose **Unfold repeats**.
+   Each cycle becomes a movable one-repeat clip at its exact musical boundary. Notes remain shared,
+   including when unfolding an existing variation; use **Make variation** on a resulting clip to
+   change its notes independently. Unfold is one Undo.
 
 The current Playlist has 32 fixed track slots and a view that expands for long audio, with timeline
 presentation/exact bar entry up to one million bars. Slots organize
