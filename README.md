@@ -58,7 +58,7 @@ for the logo, typography, alternative directions and publication resources.
   use track Mute/Solo, snap, zoom, overview navigation, seek and ruler-range loops.
 - Name composition sections, navigate their ranges, move adjacent sections or insert a repeat with
   all their Pattern/Audio material. Mixed selections support move/copy, clipboard and exact placement.
-  Make a variation of one Pattern clip for a fill or changed phrase while keeping shared instruments
+  Make a variation of one Pattern clip or one repeat for a fill or changed phrase while keeping shared instruments
   and Mixer routes. Other uses of the original Pattern keep their notes.
 - Mix shared sound sources through channels, buses and pre/post sends, with level, stereo balance,
   Mute/Solo, real meters, high-pass/three-band EQ, linked compression, musical Delay, algorithmic Reverb and optional

@@ -8,6 +8,21 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-R10-REPEAT-VARIATION-F1 — 2026-10-19
+
+Added explicit pointed-repeat independence to Playlist using one canonical decomposition and the
+existing musical/graph clone. Kept ordinary whole-clip variation, shared sounds/Mixer and one Undo.
+Defined deterministic original Clip ID retention and half-open actual-tick hit bounds. Extended only
+the existing control-side compatible Song comparison for independent stateless variations; unchanged
+occurrences retain time/age while remapped past onsets retire without retrigger. Frozen full Song/
+Pattern PCM, local note changes, managed persistence/history, unknown refusal and 1024-cycle bounds
+pass. Full Release: zero warnings/errors and 1880/1880 tests; actual native menus/targets and failed
+attempts have separately bounded evidence in the [report](../experiments/SEQ-R10-REPEAT-VARIATION-F1_REPORT.md).
+One BUILD advances to 0.1.16.0006 within the existing Playlist line. Official music and Git index/history
+remain unchanged. Native Piano edits preserve the source Pattern; short physical Pattern/Song runs
+pass on Samsung USB C Earphones at 48 kHz. UR12 is absent; failed attempts and pressure limits remain
+in the report.
+
 ## SEQ-RACK-WORKFLOW-F1 — 2026-10-16
 
 Added independent supported Rack channel duplication, captured name reorder/Ctrl-copy and a shared

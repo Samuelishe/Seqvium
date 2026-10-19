@@ -562,6 +562,20 @@ Unchanged occurrence mappings transfer source age/release to new scratch indices
 Gain → Output Rack compiles to silence, including the last-channel boundary. Future stateful
 processors acquire no continuation guarantee from this stateless path.
 
+Adding/removing an independent Pattern variation in Song can also preserve publication continuity:
+the control-side comparison projects only additional/removed variation-owned item contexts,
+placements and eligible stateless Source/Gain/Mix/Output graphs (including recognized empty graphs).
+Common Pattern lengths, placement/graph identities and other execution intent must remain compatible.
+The existing occurrence map, packet-boundary publication and voice transfer remain authoritative.
+Splitting a repeat changes center identities and may change right-side clip/repeat identities;
+already sounding occurrences with changed identities retire and their past onsets do not replay.
+Unchanged left-side and other clip occurrences retain age, Song time and compatible Mixer state.
+This operation needs ordinary asynchronous preparation and may hit existing budgets/last-valid
+refusals; it does not promise uninterrupted voices for the separated cycle or force global Stop.
+Offline execution before note edits remains musically equivalent, including release tails; linear
+source regrouping may change float summation rounding. Notes themselves must still fit Pattern
+length: cross-boundary note gates remain a canonical refusal, not a newly supported time model.
+
 PatternWaveExport.ExportArrangementAsync freezes a revision/media roots and uses this same finite
 song program off-thread. It preserves leading silence and overlaps and writes 48 kHz stereo PCM16
 with the existing destination protection, cancellation, RIFF/clipping and sibling-temp publication rules.

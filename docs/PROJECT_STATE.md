@@ -7,7 +7,18 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0005**, **SEQ-PIANO-RACK-UI-FIX-R1 — Piano selectors and Rack time geometry**.
+Product alpha **0.1.16.0006**, **SEQ-R10-REPEAT-VARIATION-F1 — Independent Pattern repeat**.
+Playlist's localized **Make this repeat unique** detaches the pointed cycle in one canonical edit,
+selects its independent variation and uses existing editor navigation. Optional shared remainders
+retain the original Pattern; instruments/resources/Mixer remain shared. Exact Pattern ticks and
+half-open pointer bounds preserve total time at any zoom/scroll. Original Clip ID stays with the left
+remainder, or the right when detaching the first cycle. Whole-clip Make variation is unchanged.
+Song publication preserves compatible unchanged occurrences/time through the existing preparation
+path; remapped current voices retire without replaying past onsets. No reader/schema or composition
+change. The [report](experiments/SEQ-R10-REPEAT-VARIATION-F1_REPORT.md) owns PCM/history/persistence,
+native menu/editor, full Release evidence and explicit remaining input/device limits.
+
+Previous **0.1.16.0005**, **SEQ-PIANO-RACK-UI-FIX-R1 — Piano selectors and Rack time geometry**.
 Piano Snap/Note Length retain unchanged choices during transport observations; native Popup hover,
 scrolling and mouse selection preserve canvas values, Part switching and musical history. Rack pads,
 ruler and melodic thumbnails share fixed step/beat/bar geometry and the common horizontal scroll;
@@ -306,6 +317,17 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
+Current L0/L1/L2/L3: **SEQ-R10-REPEAT-VARIATION-F1, 2026-10-19**. Release solution build passes
+with zero warnings/errors (**49.34 s**); **1880/1880** tests pass, zero skips, one thread
+(**141.342 s CLI**, full-suite overrun recorded). All **35/35** new repeat cases pass focused
+(**3.715 s**), plus an earlier **117/117** Playlist/Song Structure/Rack/Piano subset (**20.473 s**).
+No allocation assertion failed in this run; earlier allocation anomalies remain unresolved.
+Native r7 completes eight localized/theme/width menus with zoom/scroll/Escape, first/middle/last
+detachment, exact history, actual independent Piano targeting and an F4 note edit without changing
+the original Pattern. A separate physical run over its saved study passes 1.4-s Pattern and 1.8-s
+Song from the variation through Samsung USB C Earphones at 48 kHz. UR12 is absent from the current
+endpoint snapshot. Failed native/harness attempts remain in the report; no pressure/acoustic claim.
+
 Latest diagnostic work: **SEQ-RT-ALLOCATION-AUDIT-R1, 2026-10-17**, product stays **0.1.16.0005**.
 The unchanged Mixer assertion reproduces **6672 bytes** in a serial 93-case subset and under EventPipe;
 isolated cases and the 1845-case full Release suite pass (59.495 s reported). A Core-only bounded
@@ -599,12 +621,10 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. Allocation audit R1 repeats the full Release suite
-on unchanged production/tests (1845/1845); its later red 93-case subset remains an unresolved
-measurement failure, not replaced by that green suite. The owner-requested Piano/Rack L3 includes all
-1845 current cases: new shared Rack time geometry plus existing note/channel/history, workspace,
-Pattern/Song/Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. It does not resolve
-the intermittent allocation evidence recorded above.
+Completed repository tasks since this L3: **0**. Repeat variation F1 includes all **1880** cases:
+new repeat decomposition/publication plus existing note/channel/history, workspace, Pattern/Song/
+Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier
+positive subset/control measurements remain unresolved; this green run does not attribute them.
 Actual rendered/native/physical L4 is bounded separately. It does not establish pressure,
 subjective acoustic/aesthetic or platform acceptance.
 Prior visual identity passes **60/60 focused tests**
@@ -660,7 +680,8 @@ consume more; no global media quota. MP3/FLAC use Windows-only Media Foundation 
 portable universal decoder. Surround, tempo following and warp maps are absent; bounded local stretch
 has material/range/budget limits documented above. Sections are organization,
 not processing containers; crossing clips need explicit split/range adjustment. Variations do not
-inherit future note edits. Dynamic tracks/groups/collapse and per-repeat detachment remain absent.
+inherit future note edits. Dynamic tracks/groups/collapse remain absent; explicit per-repeat
+detachment now uses the same ordinary clip/variation model.
 Browser inspection followed by preview decodes external sources twice; three-minute source latency
 and allocation observations justify a bounded follow-up, not a new cache policy during this audit.
 

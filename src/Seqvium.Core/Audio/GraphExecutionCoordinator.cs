@@ -512,6 +512,45 @@ public sealed class GraphExecutionCoordinator : IAsyncDisposable
         return ProjectDocument.HasSameContent(Normalize(left), Normalize(right));
     }
 
+    // Independent stateless variations may enter/leave Song without resetting common occurrences.
+    internal static bool SameArrangementVariationExecution(ProjectState left, ProjectState right)
+    {
+        var patterns = left.Patterns.Select(p => p.Id).Intersect(right.Patterns.Select(p => p.Id)).ToHashSet();
+        var placements = left.Placements.Select(p => p.Id).Intersect(right.Placements.Select(p => p.Id)).ToHashSet();
+        ProjectState? Project(ProjectState state)
+        {
+            var extraPatterns = state.Patterns.Where(p => !patterns.Contains(p.Id)).ToArray();
+            if (extraPatterns.Any(p => p.VariationOf is not { } ancestor || !patterns.Contains(ancestor) ||
+                !p.AdditionalData.IsEmpty)) return null;
+            var extraPlacements = state.Placements.Where(p => !placements.Contains(p.Id)).ToArray();
+            if (extraPlacements.Any(p => !extraPatterns.Any(pattern => pattern.Id == p.PatternId) ||
+                !p.AdditionalData.IsEmpty)) return null;
+            var contexts = extraPlacements.Select(p => p.ItemContextId).OfType<Id<ProcessingContext>>().ToHashSet();
+            var attachments = state.GraphAttachments.Where(a => contexts.Contains(a.ContextId)).ToArray();
+            var graphs = attachments.Select(a => a.GraphId).ToHashSet();
+            // Only independent, known stateless local programs can be added/removed by this projection.
+            if (state.Contexts.Any(c => contexts.Contains(c.Id) && (c.Level != LocalProcessingLevel.Item ||
+                    c.Extension is not null || !c.AdditionalData.IsEmpty)) ||
+                attachments.Any(a => !a.AdditionalData.IsEmpty) ||
+                state.GraphAttachments.Any(a => !contexts.Contains(a.ContextId) && graphs.Contains(a.GraphId)) ||
+                state.Graphs.Where(g => graphs.Contains(g.Id)).Any(g =>
+                    !g.AdditionalData.IsEmpty || g.Nodes.Any(n => n.Extension is not null ||
+                        !n.AdditionalData.IsEmpty || n.Type is not (GraphBuiltIns.Source or GraphBuiltIns.Gain or GraphBuiltIns.Mix or GraphBuiltIns.Output)) ||
+                    !GraphDiagnostics.Inspect(state).Single(r => r.GraphId == g.Id).IsEligibleForPreparation &&
+                    !attachments.Where(a => a.GraphId == g.Id).All(a => GraphPreparation.IsSilentChannelGraph(state, a)))) return null;
+            return state with
+            {
+                Patterns = [.. state.Patterns.Where(p => patterns.Contains(p.Id))],
+                Placements = [.. state.Placements.Where(p => placements.Contains(p.Id))],
+                Contexts = [.. state.Contexts.Where(c => !contexts.Contains(c.Id))],
+                GraphAttachments = [.. state.GraphAttachments.Where(a => !contexts.Contains(a.ContextId))],
+                Graphs = [.. state.Graphs.Where(g => !graphs.Contains(g.Id))]
+            };
+        }
+        return Project(left) is { } before && Project(right) is { } after &&
+            SameExecution(before, after, ignoreGain: true, ignoreNotes: true);
+    }
+
     // Only the Rack's stateless source/mix tree may change without restarting surviving voices.
     // Surviving sound/media, tempo, lengths, placement, Gain/Output and all other intent stay equal.
     internal static bool SameChannelExecution(ProjectState left, ProjectState right)

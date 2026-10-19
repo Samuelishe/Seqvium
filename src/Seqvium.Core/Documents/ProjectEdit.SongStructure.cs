@@ -134,6 +134,29 @@ public sealed partial class ProjectEdit
             }) };
     }
 
+    /// <summary>Separates one cycle. The original clip ID stays with the left remainder, or the right when first.</summary>
+    public Id<ArrangementClip> MakeArrangementRepeatUnique(Id<ArrangementClip> clipId, int repeatIndex, string name)
+    {
+        CheckActive();
+        var clip = State.ArrangementClips.Single(c => c.Id == clipId);
+        ProjectValidation.Require(clip.Repeats > 1 && repeatIndex >= 0 && repeatIndex < clip.Repeats,
+            "Arrangement.InvalidRepeat");
+        var placement = State.Placements.Single(p => p.Id == clip.SourcePlacementId);
+        long length = State.Patterns.Single(p => p.Id == placement.PatternId).Length.Ticks;
+        var center = clip with { Id = Id<ArrangementClip>.New(),
+            Position = new(checked(clip.Position.Ticks + length * repeatIndex)), Repeats = 1 };
+        int right = clip.Repeats - repeatIndex - 1;
+        var pieces = new List<ArrangementClip>();
+        if (repeatIndex > 0) pieces.Add(clip with { Repeats = repeatIndex });
+        pieces.Add(center);
+        if (right > 0) pieces.Add(clip with { Id = repeatIndex == 0 ? clip.Id : Id<ArrangementClip>.New(),
+            Position = new(checked(center.Position.Ticks + length)), Repeats = right });
+        // The enclosing document Edit owns validation and rollback, including a cloning refusal.
+        State = State with { ArrangementClips = [.. State.ArrangementClips.SelectMany(c => c.Id == clipId ? pieces : [c])] };
+        MakeArrangementVariation(center.Id, name);
+        return center.Id;
+    }
+
     /// <summary>Detaches only this song clip. Source sound, resources, routes and containing processing remain shared.</summary>
     public Id<PatternPlacement> MakeArrangementVariation(Id<ArrangementClip> clipId, string name)
     {

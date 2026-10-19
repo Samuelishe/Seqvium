@@ -422,6 +422,15 @@ the preferred editor opens its actual new target. Unknown identity-bearing proce
 A repeated clip becomes one independent Pattern whose internal repeats still share that variation;
 individual repeat cycles are not automatically unfolded. Copying a variation shares the variation.
 
+For a Pattern clip with more than one repeat, right-clicking a cycle also offers **Make this repeat
+unique** (**Сделать этот повтор независимым**). It separates just the cycle under the pointer into
+an ordinary one-repeat variation, with optional shared left/right clips. Time, lane and total span
+stay unchanged; sounds/resources/Mixer stay shared. One command creates one Undo entry and selects
+the independent clip through the existing editor navigation. Its tooltip explains the note/sound
+boundary. The right musical endpoint is outside the clip. Snap, zoom and scroll do not choose a
+different cycle. A dismissed, hidden, stale or retargeted menu accepts no edit. Single-repeat clips
+retain Make variation only; the whole-clip action above keeps its existing semantics.
+
 ## Implemented Audio Clip workflow
 
 Native Explorer WAV/MP3/FLAC drop directly targets Playlist time/lane with a snapped insertion ghost

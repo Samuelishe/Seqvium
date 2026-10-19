@@ -371,7 +371,9 @@ public sealed partial class RealtimeSampler : IDisposable
                 active.Plan.Loop is { } previous && clock.Compatible(previous)) &&
             plan.CanonicalBasis is { } nextBasis && active.Plan.CanonicalBasis is { } oldBasis &&
             (GraphExecutionCoordinator.SameExecution(oldBasis, nextBasis, ignoreGain: true, ignoreNotes: true) ||
-             GraphExecutionCoordinator.SameChannelExecution(oldBasis, nextBasis)))
+             GraphExecutionCoordinator.SameChannelExecution(oldBasis, nextBasis) ||
+             plan.IsArrangement && active.Plan.IsArrangement &&
+             GraphExecutionCoordinator.SameArrangementVariationExecution(oldBasis, nextBasis)))
         {
             var indices = plan.Notes.Select((note, index) => (note, index)).ToDictionary(item => item.note.Occurrence);
             state.ContinuationNotes = active.Plan.Notes.Select(note =>

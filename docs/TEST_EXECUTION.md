@@ -7,6 +7,16 @@ evidence tiers.
 Not authoritative for: Product/subsystem contracts, SDK selection, CI triggers, supported release platforms, or current
 progress.
 
+## Pattern repeat variations
+
+`RepeatVariationTests` covers exact non-bar geometry and 2/4/8/1024 repeat boundaries, deterministic
+clip identity retention, graph/Part remapping, shared sounds/Mixer, exact history, unknown-data atomic
+refusal and stale authority. Its audio partial compares complete frozen Song and Pattern PCM, release
+tails/chords/overlaps, local note changes, portable Save/Open/Save As, frozen WAV quantization and
+compatible live publication (including retired remapped onsets). Select `--filter-class '*RepeatVariationTests'`
+with SongStructure, Arrangement, Rack/Piano and affected graph/publication neighbours. VisualCheck
+`repeat-variation` supplies separately labelled native/rendered/physical evidence.
+
 ## Realtime allocation diagnostics
 
 Keep strict zero-byte assertions. A green repeat cannot explain a red measurement. The

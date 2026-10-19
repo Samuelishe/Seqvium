@@ -447,7 +447,8 @@ shared Mixer routes, history/managed media/portable Save As and mixed realtime/o
 SEQ-R10-SONG-STRUCTURE adds named/color ranges, adjacent-section swaps and repeat insertion,
 explicit one-clip Pattern variations with visible ancestry, mixed Pattern/Audio selection, clipboard,
 precise placement and boundary-conflict reveal. These use canonical history, shared sounds/routes and
-reader 1.5. The separate bounded local Audio Clip stretch capability is now implemented with
+reader 1.5. Explicit repeat detachment is also available as a bounded refinement of that variation workflow.
+It uses existing canonical clips and ancestry without a new reader gate. Local Audio Clip stretch uses
 50–200% WSOLA, source-frame intent, shared realtime/offline PCM and reader 1.6. Its controls, limits
 and signal/GUI/device evidence belong to [audio](AUDIO_ENGINE.md#local-audio-clip-time-stretch),
 [UX](UX_CONTRACT.md#implemented-audio-clip-workflow) and the

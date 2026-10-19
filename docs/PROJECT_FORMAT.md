@@ -138,6 +138,11 @@ informational ancestry, not inheritance or a strong ownership reference: an ance
 removed while the variation's own notes and graphs remain valid. Empty/self ancestry is invalid.
 Existing Patterns are not assigned guessed ancestry merely on Open.
 
+Separating one repeat uses these existing Patterns/placements and ordinary ArrangementClip rows:
+optional shared left/right remainders surround a one-repeat variation. It adds no field, schema or
+reader gate beyond applicable ancestry intent. IDs and shared resource/Mixer references survive
+Save/Open/Save As under the same rules; runtime selection/history are not serialized.
+
 Sections or non-null Pattern ancestry require `minor >= 5` and `minimumReaderMinor >= 5`; older
 projects retain their applicable gates when these features are absent. Save never lowers a loaded
 gate. Reader 1.4 must refuse these new projects rather than preserve unread labels while discarding

@@ -671,6 +671,19 @@ For a short real startup/joined-close check without captures or input:
 dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll smoke "$PWD/.artifacts/desktop-smoke" --timeout-seconds=15
 ```
 
+## Repeat variation
+
+`repeat-variation <output-directory> [audio]` creates a small isolated synth fixture and uses guarded
+Windows right-click/popup input for RU/EN × Dark/Light, ordinary/narrow floating Playlist, zoom/scroll,
+exact repeat boundaries, Escape, first/middle/last detachment and history. Existing editor navigation
+opens the variation for a native Piano pitch edit while preserving the original Pattern. Optional
+`audio` runs short physical Pattern/Song output; it is not pressure or acoustic acceptance. Keep
+the check foreground while it runs. Generated projects and captures stay in its ignored run directory.
+`repeat-variation-audio <output-directory> <saved-study>` separately checks short physical Pattern/Song
+from the saved variation without native input or editing the supplied project.
+`repeat-variation-empty <output-directory>` renders localized/theme empty menus and verifies the new action is absent; it is
+explicitly routed evidence.
+
 ## Saved project playback
 
 `project <output-directory> <project-file>` opens an explicitly supplied short saved composition through

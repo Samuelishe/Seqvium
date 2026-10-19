@@ -317,8 +317,9 @@ Root Pitch stays unchanged. Check source tuning and Mixer trim when the new reco
    variation** for a fill or altered phrase: it opens an independent Pattern target in its editor,
    with **↗** ancestry and its own notes/processing. Instruments and Mixer routes remain shared.
    Rename it and edit through Piano Roll; other uses retain their original notes. Copying that variation
-   shares its new Pattern. A clip's internal repeats still use one Pattern; separate the desired
-   occurrence into its own clip before making only the final repetition a fill.
+   shares its new Pattern. To change only one cycle inside a repeated clip, right-click that cycle
+   and choose **Make this repeat unique**. The independent cycle is selected for editing; the remaining
+   cycles keep the original Pattern. Undo restores the original repeated clip in one step.
 
 The current Playlist has 32 fixed track slots and a view that expands for long audio, with timeline
 presentation/exact bar entry up to one million bars. Slots organize

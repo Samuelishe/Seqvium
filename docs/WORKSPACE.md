@@ -213,6 +213,12 @@ view state without editing music or inventing audio. Musical identity/commands a
 remain workflow-owned under [Playlist UX](UX_CONTRACT.md#implemented-playlist-arrangement).
 There is no dynamic pane registry, external window or second project/transport.
 
+The repeat-unique context action captures the actual clicked clip/cycle and document authority when
+the menu opens. Its half-open hit bounds use Pattern ticks and the scrolled canvas coordinates,
+independently of snap and painted clip padding. Selection changes, stale authority and hidden/retired
+surfaces withdraw the action. Success selects only the center and uses existing Pattern editor
+navigation; no extra floating surface or implicit double-click mutation is introduced.
+
 ## Retained Piano Roll pane
 
 SEQ-R9 adds type `piano-roll`, singleton instance `piano-roll.main`, default 1080×580 and minimum

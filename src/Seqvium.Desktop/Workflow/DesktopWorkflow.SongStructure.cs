@@ -33,6 +33,19 @@ internal sealed partial class DesktopWorkflow
             return Task.FromResult(_document.Edit("Make Playlist Pattern variation", e => e.MakeArrangementVariation(id, name)));
         });
 
+    internal async Task<Id<ArrangementClip>?> MakeArrangementRepeatUniqueAsync(ArrangementEditBasis basis,
+        Id<ArrangementClip> id, int repeatIndex, string name)
+    {
+        Id<ArrangementClip>? result = null;
+        bool accepted = await Command("Workflow.EditFailed", () =>
+        {
+            ValidateArrangementBasis(basis);
+            return Task.FromResult(_document.Edit("Make Playlist repeat unique",
+                e => result = e.MakeArrangementRepeatUnique(id, repeatIndex, name)));
+        });
+        return accepted ? result : null;
+    }
+
     internal Task<bool> EditSectionAsync(ArrangementEditBasis basis, Id<ArrangementSection>? id,
         string name, long start, long length, int color) => Command("Workflow.EditFailed", () =>
     {

@@ -180,7 +180,7 @@ internal static partial class Program
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
                 or "sampler-editor" or "sampler-keymap" or "synth" or "reverb" or "delay" or "ui-density"
                 or "theme-navigation"
-                or "settings" or "piano-rack",
+                or "settings" or "piano-rack" or "repeat-variation" or "repeat-variation-audio" or "repeat-variation-empty",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -213,6 +213,12 @@ internal static partial class Program
                     await RackGainAuditAsync(main, output, args.Contains("native"));
                 else if (args[0] == "piano-rack")
                     await PianoRackAsync(main, output, args.Contains("baseline"), args.Contains("geometry"));
+                else if (args[0] == "repeat-variation")
+                    await RepeatVariationAsync(main, output, args.Contains("audio"));
+                else if (args[0] == "repeat-variation-audio")
+                    await RepeatVariationAudioAsync(main, output, args[2]);
+                else if (args[0] == "repeat-variation-empty")
+                    await RepeatVariationEmptyAsync(main, output);
                 else if (args[0] == "cross-stage")
                     await CrossStageInputAsync(main, output, args.Length > 2 && args[2] == "native");
                 else if (args[0] == "extensions")

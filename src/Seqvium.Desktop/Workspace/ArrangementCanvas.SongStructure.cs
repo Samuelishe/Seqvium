@@ -162,6 +162,43 @@ internal sealed partial class ArrangementCanvas
             RackRequested?.Invoke(graph.Id);
     }
 
+    internal int? RepeatAt(ArrangementClip clip, Point point)
+    {
+        if (clip.Repeats <= 1 || point.X < HeaderX + HeaderWidth ||
+            point.Y < RulerHeight + clip.Lane * LaneHeight ||
+            point.Y >= RulerHeight + (clip.Lane + 1) * LaneHeight) return null;
+        long length = PatternFor(clip).Length.Ticks;
+        double Boundary(int i) => HeaderWidth + checked(clip.Position.Ticks + length * i) * TickPixels;
+        // Half-open time bounds, independent of the padded/minimum-width painted clip body.
+        if (point.X < Boundary(0) || point.X >= Boundary(clip.Repeats)) return null;
+        int low = 0, high = clip.Repeats;
+        while (high - low > 1)
+        {
+            int middle = (low + high) / 2;
+            if (point.X < Boundary(middle)) high = middle;
+            else low = middle;
+        }
+        return low;
+    }
+
+    private async Task MakeRepeatUnique(ArrangementEditBasis basis, ArrangementClip clip, int index)
+    {
+        var selection = Selection; var audio = AudioSelection; var selected = Selected;
+        var id = await _workflow.MakeArrangementRepeatUniqueAsync(basis, clip.Id, index,
+            PatternFor(clip).Name + " · " + _shell["Arrangement.VariationName"]);
+        if (id is null || _workflow.State.Document.LifecycleId != basis.Lifecycle ||
+            _workflow.State.Generation != basis.Generation + 1 || selected != Selected ||
+            !selection.SequenceEqual(Selection) || !audio.SequenceEqual(AudioSelection)) return;
+        _observation = _workflow.State;
+        _selection.Clear(); _audioSelection.Clear(); SelectedAudio = null; SelectedSection = null;
+        Selected = id; _selection.Add(id.Value);
+        SelectionChanged?.Invoke(); InvalidateVisual();
+        var state = _observation.Snapshot.State;
+        var placement = state.Placements.Single(p => p.Id == state.ArrangementClips.Single(c => c.Id == id).SourcePlacementId);
+        if (state.GraphAttachments.SingleOrDefault(a => a.ContextId == placement.ItemContextId) is { } graph)
+            RackRequested?.Invoke(graph.Id);
+    }
+
     private bool PlaylistKey(KeyEventArgs e)
     {
         bool control = e.KeyModifiers == KeyModifiers.Control;
@@ -227,7 +264,9 @@ internal sealed partial class ArrangementCanvas
         }
         else
         {
-            var pattern = Hit(point); var audio = AudioHit(point);
+            var pattern = Hit(point) ?? _observation.Snapshot.State.ArrangementClips.Reverse()
+                .FirstOrDefault(c => RepeatAt(c, point) is not null && point.Y >= ClipRect(c).Top && point.Y < ClipRect(c).Bottom);
+            var audio = AudioHit(point);
             if (audio is not null && !_audioSelection.Contains(audio.Id) || audio is null && pattern is not null && !_selection.Contains(pattern.Id))
             {
                 _selection.Clear(); _audioSelection.Clear(); Selected = null; SelectedAudio = null;
@@ -239,6 +278,14 @@ internal sealed partial class ArrangementCanvas
             bool selected = _selection.Count + _audioSelection.Count > 0;
             Add("Properties", () => { ClipPropertiesRequested?.Invoke(); return Task.CompletedTask; }, selected);
             Add("Variation", MakeVariation, _selection.Count == 1 && _audioSelection.Count == 0);
+            if (audio is null && pattern is not null && RepeatAt(pattern, point) is { } repeat)
+            {
+                var patterns = Selection; var audios = AudioSelection; var selectedId = Selected;
+                Add("RepeatUnique", () => patterns.SequenceEqual(Selection) && audios.SequenceEqual(AudioSelection) &&
+                    selectedId == Selected && IsEffectivelyVisible && TopLevel.GetTopLevel(this) is not null
+                    ? MakeRepeatUnique(basis, pattern, repeat) : Task.CompletedTask);
+                ToolTip.SetTip((MenuItem)menu.Items[^1]!, _shell["Arrangement.RepeatUniqueHint"]);
+            }
             Add("Copy", () => CopySelection(), selected);
             Add("Cut", () => CopySelection(true), selected);
             Add("Paste", PasteSelection, HasClipboard);

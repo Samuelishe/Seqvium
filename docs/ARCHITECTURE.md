@@ -337,6 +337,14 @@ Unknown identity-bearing Pattern/placement/graph/context intent refuses detachme
 ownership. Deleting an ancestor leaves the independent variation valid. Reader 1.5 owns persistence;
 the renderer continues to consume ordinary canonical Patterns, placements and clips.
 
+`ProjectEdit.MakeArrangementRepeatUnique` decomposes a repeated clip at a zero-based cycle index
+inside the same document transaction. It uses actual Pattern ticks and calls MakeArrangementVariation
+for the one-repeat center. Empty remainders are omitted. The original Clip ID stays with the left
+shared remainder, or with the right shared remainder when detaching cycle zero; the center always
+gets a fresh Clip ID. Other remainder IDs are fresh. All pieces keep their lane and contiguous
+absolute positions. Undo restores the exact original snapshot; Redo restores the accepted identities.
+There is no new clip kind, musical-time owner or media copy.
+
 The owner authorizes a bounded Arrangement workflow independently of closing intervening roadmap
 stages. Core's ArrangementClip references an existing source PatternPlacement, rather than manufacturing
 more Rack placements or invisible Pattern/Part/Note copies. Its source owns canonical music/graph/media;
