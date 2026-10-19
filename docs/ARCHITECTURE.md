@@ -1063,6 +1063,13 @@ continues referencing the same Pattern and rendering actual NoteEvents.
 `PianoNotes.Quantize` uses the existing Snap over selected starts with an atomic Pattern-end check.
 `DesktopWorkflow.QuantizePianoNotesAsync` validates the same basis/Part/sound authority and commits
 one `SetPartNotes` edit in surviving order; no-op/history/live publication retain the existing owners.
+`PianoNotes.Humanize` is a bounded pure transformation with an explicitly supplied Random for seeded
+and endpoint tests. The serialized `HumanizePianoNotesAsync` command freezes selected IDs, validates
+the existing basis/Part/sound and creates a fresh local Random only on explicit Apply. Equal selected
+onsets share a boundary-clamped offset; intensity is sampled per note. One `SetPartNotes` edit owns
+no-op equality, history, persistence and existing live publication. The retained flyout owns only
+strength drafts and frozen target/selection, expires on invalidation and survives transport-only
+observations. No seed, settings, random generator service, schema or alternate music owner is added.
 `Presentation/PianoScale` is a pure session view guide held by the retained Piano canvas. It has no
 canonical document, sound-root, serialization, export or execution dependency. Canvas row backgrounds
 consume it before grid/ghosts/notes; lifecycle replacement resets the guide without an edit.

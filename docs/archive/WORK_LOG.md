@@ -8,6 +8,19 @@ Not authoritative for: Current behavior, policy, plans, implementation state, or
 This is a cold, non-canonical archive excluded from normal current context. Active owner documents
 win any conflict; historical wording records its stage, not a competing current specification.
 
+## SEQ-R9-PIANO-HUMANIZE-F1 — 2026-10-19
+
+Added bounded selected-note Humanize to the existing Piano workflow and retained flyout. Chose
+±1/32 quarter and ±0.10 intensity at full strength: useful small musical variation independent of
+Snap/BPM, with a common boundary-clamped offset for equal selected onsets. Canonical Position and
+Intensity retain all other note fields/order, shared/independent variation ownership and one exact
+Undo/Redo. Random is local to explicit Apply, injectable for seeded/endpoint verification, with no
+new persistence or general random-transform infrastructure. Focused Release checks pass 242 cases;
+native RU/EN/theme/width matrix, real field centers and short physical Pattern/Song publication have
+separately bounded evidence in the [report](../experiments/SEQ-R9-PIANO-HUMANIZE-F1_REPORT.md).
+One BUILD advances to 0.1.16.0008; cadence is one task after the prior L3. Git index/history and
+official musical resources remain unchanged. Acoustic, pressure and wider platform limits remain.
+
 ## SEQ-R10-REPEAT-VARIATION-F1 — 2026-10-19
 
 Added explicit pointed-repeat independence to Playlist using one canonical decomposition and the

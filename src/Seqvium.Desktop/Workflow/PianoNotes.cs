@@ -45,6 +45,35 @@ internal static class PianoNotes
         return result;
     }
 
+    /// <summary>Bounded tick/velocity offsets; selected equal onsets share one clamped displacement.</summary>
+    internal static NoteEvent[] Humanize(IReadOnlyList<NoteEvent> notes, IReadOnlySet<Id<NoteEvent>> selection,
+        int timing, int velocity, long length, Random random)
+    {
+        if (timing is < 0 or > 100 || velocity is < 0 or > 100)
+            throw new InvalidOperationException("Piano.HumanizeRange");
+        if (!selection.IsSubsetOf(notes.Select(n => n.Id).ToHashSet()))
+            throw new InvalidOperationException("Beat.Stale");
+        if (timing == 0 && velocity == 0 || selection.Count == 0) return notes.ToArray();
+
+        long maximum = MusicalPosition.TicksPerQuarter / 32 * timing / 100;
+        var offsets = new Dictionary<long, long>();
+        if (timing > 0)
+            foreach (var chord in notes.Where(n => selection.Contains(n.Id)).GroupBy(n => n.Position.Ticks))
+            {
+                // The longest selected gate limits the entire chord. Never shorten or drop a note.
+                long upper = Math.Min(maximum, length - chord.Key - chord.Max(n => n.Duration.Ticks));
+                long lower = Math.Max(-maximum, -chord.Key);
+                offsets.Add(chord.Key, Math.Clamp(random.NextInt64(-maximum, maximum + 1), lower, upper));
+            }
+
+        return notes.Select(n => !selection.Contains(n.Id) ? n : n with
+        {
+            Position = new(n.Position.Ticks + offsets.GetValueOrDefault(n.Position.Ticks)),
+            Intensity = velocity == 0 ? n.Intensity :
+                Math.Clamp(n.Intensity + random.Next(-velocity * 100, velocity * 100 + 1) / 100000m, 0, 1)
+        }).ToArray();
+    }
+
     internal static NoteEvent[] Move(IReadOnlyList<NoteEvent> notes, long ticks, decimal pitch, long length,
         bool copy = false)
     {

@@ -275,6 +275,13 @@ whole channel. Free disables Quantize; if a note would cross the Pattern end, ch
 One Undo restores the exact timing. **Scale** offers a tonic plus Major/Natural Minor row guide;
 it changes only the view, independently of Root Pitch, and permits every note outside the scale.
 
+For a less mechanical phrase, select notes and choose **Humanize** (**Оживить** in Russian).
+Adjust Timing and Velocity independently from 0 to 100%, then Apply; Cancel or Escape leaves the
+notes intact. At full strength the maximum offsets are 1/32 of a quarter note and ten velocity
+percentage points. Chords keep a common start and notes keep their duration inside the Pattern.
+Free Snap works too. One Undo restores the original values; repeated/shared Pattern uses hear the
+same result, so make a variation or repeat unique first when only one use should change.
+
 To try another recording for an existing instrument, choose **Replace WAV…** from its Rack row
 menu. It updates every Pattern using that instrument while keeping notes, local processing and Mixer
 routing. Undo restores the original sample. Verified library tuning is used when available; otherwise

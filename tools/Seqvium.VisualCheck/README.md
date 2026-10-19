@@ -1,5 +1,20 @@
 # Desktop visual and lifecycle verification
 
+## Piano Humanize
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll piano-humanize "$PWD/.artifacts/piano-humanize/review" audio --timeout-seconds=300
+```
+
+Creates an isolated Synth chord/phrase and shared repeats. Guarded native mouse/keyboard selects
+the chord, chooses Free Snap, adjusts both sliders and exact percentages, cancels/escapes, applies
+zero and nonzero settings and checks exact Undo/Redo. RU/EN × Dark/Light at 1080/520/360 DIP includes
+real flyouts, actual field alignment and empty Parts. External generation and pane hide cancel drafts.
+`quick` keeps all languages/themes at 360 DIP. `audio` deliberately plays Pattern/Song through the
+current physical output, retains an open flyout/focus under observations and uses native Apply/Undo/
+Redo without transport reset. Save/Open/export and fixture/theme/layout changes use production APIs,
+separately from native musical input. Device delivery is not subjective acoustic acceptance.
+
 ## Piano Quantize and Scale
 
 ```powershell

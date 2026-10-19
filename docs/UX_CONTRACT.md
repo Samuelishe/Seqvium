@@ -280,6 +280,28 @@ Undo; an already aligned selection creates no revision/history. Undo/Redo restor
 regardless of current Snap. Shared Pattern uses observe the same edit; explicit whole-clip/repeat
 variations retain their independent content. Existing live publication preserves transport ownership.
 
+**Humanize** opens a compact flyout beside Quantize with independent Timing and Velocity strengths,
+each 0–100% (initially 20%). Sliders and exact percentage fields adjust only the draft; explicit
+Apply accepts once, Cancel/Escape/light dismissal accepts nothing. The command requires selected
+notes in the active editable Part, including with Free Snap and without preceding Quantize.
+At 100%, Timing samples integer offsets within ±30,000 ticks (1/32 quarter; ±15.625 ms at 120 BPM),
+and Velocity samples within ±0.10 canonical intensity (ten percentage points); strengths scale
+linearly. Zero disables that dimension. Selected notes with equal original Position share one
+offset, clamped together to zero and the Pattern end using their longest original duration.
+Velocity offsets are independent per selected note, in 0.00001 intensity steps, clamped to [0,1].
+Only Position/Intensity change, preserving canonical order, IDs, pitch, duration and every other
+Part/Pattern/source/route. Unselected chord members stay untouched. Boundary clamping may reduce
+the requested change; a full-length note cannot move. There is no quantization, order correction,
+minimum separation or automatic detachment.
+
+One Apply is one canonical Undo; unchanged output (including both zero) creates no revision/history
+and preserves Redo. Redo restores the exact stored result without randomness. Only Apply draws random
+offsets; observations, transport, reopening the pane, Save/Open and export only read accepted notes.
+Shared uses receive the same edit; explicit independent variations/repeats retain their own content.
+Busy, unsupported data, stale generation/lifecycle/occurrence/Part/selection and pane cancellation
+invalidate pending drafts. Transport observations preserve a current open flyout and its fields/focus.
+Accepted changes use the existing Pattern/Song publication mechanism without new transport ownership.
+
 **Scale** opens a compact tonic/type flyout: Off, Major or Natural Minor, with C–B sharp names.
 Major intervals are 0/2/4/5/7/9/11; Natural Minor 0/2/3/5/7/8/10. Rows repeat over MIDI 0–127,
 with a slightly stronger tonic. This is only a background guide: outside notes remain readable and
@@ -287,7 +309,7 @@ drawable. It never edits sound/root pitch, notes, JSON, export/R8 or Undo. Defau
 across Parts, navigation, zoom/scroll, hide/restore, transport and language/theme changes; project
 replacement resets it. Controls remain retained during observations, including an open Popup.
 
-Humanization, scale locking, Piano-local controller curves, MIDI/QWERTY recording, MPE and independent
+Scale locking, Piano-local controller curves, MIDI/QWERTY recording, MPE and independent
 simultaneous Piano editor targets remain [follow-ups](ROADMAP.md#seq-r9--piano-roll). Pitch-only
 multisample mapping belongs to the shared Source Editor below; Playlist automation is separate.
 

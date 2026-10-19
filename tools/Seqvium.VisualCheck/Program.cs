@@ -180,7 +180,7 @@ internal static partial class Program
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
                 or "sampler-editor" or "sampler-keymap" or "synth" or "reverb" or "delay" or "ui-density"
                 or "theme-navigation"
-                or "settings" or "piano-tools" or "piano-rack" or "repeat-variation" or "repeat-variation-audio" or "repeat-variation-empty",
+                or "settings" or "piano-tools" or "piano-humanize" or "piano-rack" or "repeat-variation" or "repeat-variation-audio" or "repeat-variation-empty",
             "Unknown scenario.");
         using var run =
             new ArtifactRetention.Run(Path.GetFullPath(args[1]), args[0], TimeSpan.FromSeconds(timeoutSeconds));
@@ -215,6 +215,8 @@ internal static partial class Program
                     await PianoRackAsync(main, output, args.Contains("baseline"), args.Contains("geometry"));
                 else if (args[0] == "piano-tools")
                     await PianoToolsAsync(main, output, args.Contains("audio"), args.Contains("quick"));
+                else if (args[0] == "piano-humanize")
+                    await PianoHumanizeAsync(main, output, args.Contains("audio"), args.Contains("quick"));
                 else if (args[0] == "repeat-variation")
                     await RepeatVariationAsync(main, output, args.Contains("audio"));
                 else if (args[0] == "repeat-variation-audio")

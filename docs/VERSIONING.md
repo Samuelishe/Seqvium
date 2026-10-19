@@ -175,6 +175,17 @@ retrieved only for explicit historical tasks.
 | `0.1.16.0006` | SEQ-R10-REPEAT-VARIATION-F1 | One BUILD for pointed-repeat independence through existing canonical clips/variation/history and compatible Song publication. See checkpoint and report below. |
 | `0.1.16.0007` | SEQ-R9-PIANO-TOOLS-F1 | One BUILD for selected-start Quantize and session-only scale rows within the existing Piano editor. See checkpoint and report below. |
 
+### SEQ-R9-PIANO-HUMANIZE-F1 checkpoint
+
+`0.1.16.0007` to **`0.1.16.0008`**, one BUILD for a bounded selected-note tool within the existing
+Piano Roll capability. Explicit draft/Apply/Cancel changes only canonical start/velocity, preserves
+chords and existing shared/independent ownership, and uses exact canonical history/live publication.
+This is an editor extension, without a new standalone editor, schema/reader, DSP, engine or dependency;
+MAJOR/MINOR/PATCH remain unchanged. The affected Release build, **242/242 focused tests**, actual
+RU/EN Dark/Light narrow/native input and short physical Pattern/Song checks are recorded in the
+[report](experiments/SEQ-R9-PIANO-HUMANIZE-F1_REPORT.md). No L3, acoustic/pressure/platform or release
+acceptance is inferred. No staging, commit, push, tag or history mutation.
+
 ### SEQ-R9-PIANO-TOOLS-F1 checkpoint
 
 `0.1.16.0006` to **`0.1.16.0007`**, one BUILD for two bounded tools in the existing Piano Roll.

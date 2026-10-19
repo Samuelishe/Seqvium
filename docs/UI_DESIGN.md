@@ -307,7 +307,9 @@ never a second selection target. Compact Pattern/Part scope, source-root access 
 fields keep music dominant. Rich Rack rows show real pitch/duration/intensity, not misleading pads.
 
 Quantize is a short localized action in the existing edit group. Scale uses one compact flyout
-button, with tonic/type selectors only on disclosure. Neither adds a permanent toolbar row.
+button, with tonic/type selectors only on disclosure. Humanize sits beside Quantize and discloses
+two aligned strength rows with shared sliders, exact percentages and Apply/Cancel; it adds no
+permanent parameter row or technical range paragraph.
 Scale rows tint the existing background with the semantic action brush, with a slightly stronger
 tonic; grid, hover, ghosts, note bodies, selection and playhead remain above that layer. Black/white
 key identity and outside-scale notes stay readable. Both themes use their existing materials.

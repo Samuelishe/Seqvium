@@ -550,6 +550,23 @@ stress/device measurements; ordinary musical time and concurrency use controlled
 
 ## SEQ-R9 Piano Roll verification
 
+`PianoHumanizeTests` supplies seeded and exact-endpoint oracles for timing/velocity bounds,
+equal-onset grouping, disabled dimensions, Pattern edges and Int64-scale positions. It verifies
+selected-Part locality, canonical order/identities, no-op revision/generation/history/Redo retention,
+exact Undo/Redo without new random draws, Save/Open/export/observation stability, shared uses and
+whole-clip/repeat variations. Stale/ABA/lifecycle/missing IDs, Busy/Closed and unknown intent refuse.
+Controlled Pattern/Song publication compares executing PCM to canonical preparation without epoch
+reset. OR this class with the existing Piano/RepeatVariation/StepSequencer/navigation/presentation
+and ProductVersion classes. The [Humanize report](experiments/SEQ-R9-PIANO-HUMANIZE-F1_REPORT.md)
+records actual focused counts and native/visual/physical limits; this is not a full regression run.
+
+`VisualCheck piano-humanize <output> audio` exercises guarded native chord selection, Free Snap,
+independent sliders/exact percentages, draft/Cancel/Escape/zero/Apply and exact Undo/Redo, empty Parts,
+stale/hide cancellation, RU/EN × Dark/Light × 1080/520/360 DIP and actual field alignment. `quick`
+retains all languages/themes at 360 DIP. Physical Pattern/Song checks keep a flyout open through
+observations and apply/Undo/Redo without epoch reset. Fixture/theme/layout setup and API Save/Open/
+export are distinct from native musical input; physical delivery does not establish acoustic quality.
+
 `PianoToolsTests` adds independent exact-tick quantization oracles, group/Part/shared/variation
 locality, end-boundary and Free refusals, no-op, history/persistence, stale/unknown/sound guards,
 Pattern/Song live canonical PCM and all twelve tonics over MIDI 0–127. The canvas view test verifies

@@ -7,7 +7,16 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0007**, **SEQ-R9-PIANO-TOOLS-F1 — Quantize and Scale Highlighting**.
+Product alpha **0.1.16.0008**, **SEQ-R9-PIANO-HUMANIZE-F1 — Piano Roll Humanization**.
+The compact Humanize flyout exposes independent Timing/Velocity strengths and explicit Apply/Cancel.
+Only selected active-Part Position/Intensity change; equal selected onsets remain together within
+Pattern bounds. Maximums are ±30,000 ticks and ±0.10 intensity, scaled from 0–100%; Free Snap works.
+One Apply is one canonical Undo, exact Redo draws no randomness and no-ops retain history/revision.
+Shared uses and explicit independent variations/repeats retain existing ownership; no schema, DSP,
+transport or settings are added. The [report](experiments/SEQ-R9-PIANO-HUMANIZE-F1_REPORT.md) owns
+focused verification, native/visual/physical evidence and limits.
+
+Previous **0.1.16.0007**, **SEQ-R9-PIANO-TOOLS-F1 — Quantize and Scale Highlighting**.
 Piano's explicit Quantize aligns selected starts to current Snap from Pattern zero, midpoint forward,
 with one canonical Undo and exact no-op/history behavior. A crossing note refuses the entire action;
 Free disables it. Pitch/duration/velocity/identity, sources and Playlist structure remain intact.
@@ -326,7 +335,19 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Current L0/L1/L2/L3: **SEQ-R9-PIANO-TOOLS-F1, 2026-10-19**. Full Release solution build passes
+Current L0/L1/L2: **SEQ-R9-PIANO-HUMANIZE-F1, 2026-10-19**. Affected Release Tests build
+(including production and VisualCheck references) passes with zero warnings/errors (**31.87 s**).
+**242/242 focused tests** pass, zero skips (**28.348 s CLI**), including **19** Humanize cases,
+Piano/Quantize/Scale, repeats/live PCM, Rack/navigation/presentation and product metadata.
+Native chord/Free/draft/Apply/Cancel/Escape/zero/history, RU/EN × Dark/Light × 1080/520/360 DIP,
+empty states and stale/hide cancellation pass. Additional 360-DIP renders measure both actual field
+centers at **0 DIP** difference. Physical Pattern/Song Apply/Undo/Redo retain epoch through Samsung
+USB C Earphones, 48-kHz stereo; flyout/focus stays current through 1600-ms observation windows.
+Save/Open/export use production APIs, distinct from native editing. The [report](experiments/SEQ-R9-PIANO-HUMANIZE-F1_REPORT.md)
+separates the early harness assertion and compiler corrections from successful checks. No L3,
+subjective acoustic, stress or broader platform acceptance is claimed.
+
+Previous L0/L1/L2/L3: **SEQ-R9-PIANO-TOOLS-F1, 2026-10-19**. Full Release solution build passes
 with zero warnings/errors (**19.73 s**, final incremental **16.10 s**); **1913/1913** tests pass, zero skips, one thread
 (**193.992 s CLI**). The **33** new tools cases join **301/301** related checks (**40.236 s CLI**).
 Exact tick/boundary/history/locality and live Pattern/Song canonical PCM checks pass. The full run
@@ -644,7 +665,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. Piano tools F1 includes all **1913** cases:
+Completed repository tasks since this L3: **1** (Humanize: focused L0/L1/L2 and bounded L4).
+The last L3, Piano tools F1, includes all **1913** cases:
 new Quantize/Scale/view/live PCM and prior repeat/publication plus note/channel/history, workspace, Pattern/Song/
 Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier
 positive subset/control measurements remain unresolved; this green run does not attribute them.

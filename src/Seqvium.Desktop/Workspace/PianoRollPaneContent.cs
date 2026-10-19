@@ -50,6 +50,13 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
     private readonly Flyout _rootFlyout = new();
     private readonly Flyout _noteFlyout = new();
     private readonly Button _quantize = new() { Classes = { "compact" } };
+    private readonly Button _humanize = new() { Classes = { "compact" } };
+    private readonly Flyout _humanizeFlyout = new();
+    private readonly NumericUpDown _humanizeTiming = Strength(), _humanizeVelocity = Strength();
+    private readonly Button _humanizeApply = new() { Classes = { "primary" } };
+    private BeatEditBasis? _humanizeBasis;
+    private Id<MusicalPart>? _humanizePart;
+    private HashSet<Id<NoteEvent>> _humanizeSelection = [];
     private readonly Button _scale = new() { Classes = { "compact" } };
     private readonly Flyout _scaleFlyout = new();
     private readonly ComboBox _scaleKind = new() { MinWidth = 180 };
@@ -81,6 +88,12 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
     {
         Minimum = minimum, Maximum = maximum, Increment = increment, Width = 112, ShowButtonSpinner = false,
         FormatString = "G", NumberFormat = CultureInfo.InvariantCulture.NumberFormat
+    };
+
+    private static NumericUpDown Strength() => new()
+    {
+        Minimum = 0, Maximum = 100, Increment = 1, Value = 20, Width = 68,
+        ShowButtonSpinner = false, FormatString = "0'%'"
     };
 
     internal PianoRollPaneContent(ShellSession shell, DesktopWorkflow workflow, Func<string, Task> action,
@@ -164,6 +177,11 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         Identify(_quantize, "Piano.Quantize");
         ToolTip.SetShowOnDisabled(_quantize, true);
         _quantize.Click += (_, _) => Canvas.Quantize();
+        toolbar.Children.Add(_humanize);
+        Identify(_humanize, "Piano.Humanize");
+        ToolTip.SetShowOnDisabled(_humanize, true);
+        _humanize.Click += (_, _) => OpenHumanize();
+        BuildHumanizeEditor();
         AddButton(toolbar, "Delete", "Delete", () =>
         {
             Canvas.Delete();
@@ -320,6 +338,73 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
     {
         await task;
         if (!_disposed) Refresh();
+    }
+
+    private void BuildHumanizeEditor()
+    {
+        var body = new StackPanel { Classes = { "spaced" } };
+        foreach (var (field, key) in new[] { (_humanizeTiming, "HumanizeTiming"), (_humanizeVelocity, "HumanizeVelocity") })
+        {
+            var row = new Grid { ColumnDefinitions = new("Auto,*,Auto"), ColumnSpacing = 12, Classes = { "parameterRow" } };
+            var label = new TextBlock { MinWidth = 64, VerticalAlignment = VerticalAlignment.Center };
+            Identify(label, "Piano." + key);
+            var slider = new Slider { Minimum = 0, Maximum = 100, Value = 20, Width = 112,
+                TickFrequency = 1, IsSnapToTickEnabled = true };
+            Identify(slider, "Piano." + key);
+            AutomationProperties.SetAutomationId(field, "Piano." + key + "Value");
+            slider.ValueChanged += (_, _) => field.Value = (decimal)slider.Value;
+            field.ValueChanged += (_, _) =>
+            {
+                if (field.Value is { } value) slider.Value = (double)value;
+                RefreshHumanize();
+            };
+            row.Children.Add(label);
+            SetColumn(slider, 1); row.Children.Add(slider);
+            SetColumn(field, 2); row.Children.Add(field);
+            body.Children.Add(row);
+        }
+        var actions = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+        var cancel = new Button();
+        Identify(cancel, "Piano.Cancel");
+        cancel.Click += (_, _) => { _humanizeFlyout.Hide(); Canvas.Focus(); };
+        Identify(_humanizeApply, "Piano.Apply");
+        actions.Children.Add(cancel); actions.Children.Add(_humanizeApply);
+        body.Children.Add(actions);
+        _humanizeFlyout.Content = body;
+        _humanizeFlyout.Closed += (_, _) => _humanizeBasis = null;
+        _humanizeApply.Click += async (_, _) =>
+        {
+            if (!HumanizeTargetCurrent() || _humanizeTiming.Value is not { } timing ||
+                _humanizeVelocity.Value is not { } velocity || !ValidStrength(timing) || !ValidStrength(velocity)) return;
+            var basis = _humanizeBasis!; var part = _humanizePart!.Value; var selection = _humanizeSelection;
+            _humanizeFlyout.Hide();
+            PendingCommand = ObserveCommandAsync(_workflow.HumanizePianoNotesAsync(basis, part, selection, (int)timing, (int)velocity));
+            await PendingCommand;
+            Canvas.Focus();
+        };
+    }
+
+    private static bool ValidStrength(decimal value) => value is >= 0 and <= 100 && value == decimal.Truncate(value);
+
+    private bool HumanizeTargetCurrent() => _humanizeBasis is not null && _humanizeBasis == Canvas.Basis &&
+        _humanizePart == Canvas.Part?.Id && _humanizeSelection.SetEquals(Canvas.Selection) &&
+        Canvas.CanEdit && PendingCommand.IsCompleted;
+
+    private void OpenHumanize()
+    {
+        if (!Canvas.CanEdit || Canvas.Selection.Count == 0 || !PendingCommand.IsCompleted) return;
+        Canvas.Cancel();
+        _humanizeBasis = Canvas.Basis; _humanizePart = Canvas.Part!.Id;
+        _humanizeSelection = Canvas.Selection.ToHashSet();
+        RefreshHumanize();
+        _humanizeFlyout.ShowAt(_humanize);
+    }
+
+    private void RefreshHumanize()
+    {
+        _humanizeApply.IsEnabled = HumanizeTargetCurrent() &&
+            _humanizeTiming.Value is { } timing && ValidStrength(timing) &&
+            _humanizeVelocity.Value is { } velocity && ValidStrength(velocity);
     }
 
     private void BuildRootEditor()
@@ -526,7 +611,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
                 AutomationProperties.SetName(control, text);
                 ToolTip.SetTip(control, text);
                 if (control is TextBlock label) label.Text = text;
-                else if (control is Button button && key == "Piano.Apply") button.Content = text;
+                else if (control is Button button && key is "Piano.Apply" or "Piano.Cancel") button.Content = text;
             }
 
             int snapIndex = Math.Max(0, Array.IndexOf(SnapValues, Canvas.SnapTicks));
@@ -544,6 +629,7 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             _scaleTonic.IsEnabled = Canvas.Scale.Kind != PianoScaleKind.Off;
             _scale.Content = _shell["Piano.Scale"];
             _quantize.Content = _shell["Piano.Quantize"];
+            _humanize.Content = _shell["Piano.Humanize"];
             decimal? root = observation.Snapshot.State.Sounds.SingleOrDefault(s => s.Id == Canvas.Part?.SoundId)
                 ?.Parameters.GetValueOrDefault("rootPitch", 60);
             _root.Content = _shell["Piano.Root"] + ": " + (root is { } midi ? PianoNotes.Name(midi) : "—");
@@ -596,6 +682,11 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
             foreach (string key in new[] { "Duplicate", "Delete", "Properties" })
                 _buttons[key].IsEnabled = Canvas.CanEdit && Canvas.Selection.Count > 0;
             _quantize.IsEnabled = Canvas.CanQuantize;
+            _humanize.IsEnabled = Canvas.CanEdit && Canvas.Selection.Count > 0 && PendingCommand.IsCompleted;
+            ToolTip.SetTip(_humanize, _shell[!Canvas.CanEdit ? "Piano.QuantizeUnavailable" :
+                Canvas.Selection.Count == 0 ? "Piano.HumanizeSelection" : "Piano.HumanizeHint"]);
+            if (_humanizeBasis is not null && !HumanizeTargetCurrent()) _humanizeFlyout.Hide();
+            RefreshHumanize();
             ToolTip.SetTip(_quantize, _shell[Canvas.SnapTicks <= 1 ? "Piano.QuantizeSnapOff" :
                 !Canvas.CanEdit ? "Piano.QuantizeUnavailable" : Canvas.Selection.Count == 0 ? "Piano.QuantizeSelection" : "Piano.QuantizeHint"]);
         }
@@ -613,6 +704,8 @@ internal sealed class PianoRollPaneContent : Grid, IDisposable
         _rootFlyout.Hide();
         _noteFlyout.Hide();
         _scaleFlyout.Hide();
+        _humanizeFlyout.Hide();
+        _humanizeBasis = null;
         _rootBasis = _noteBasis = null;
     }
 
