@@ -275,6 +275,7 @@ public sealed class StepSequencerTests
     [Theory]
     [InlineData(false, 9)] [InlineData(true, 9)]
     [InlineData(false, 32)] [InlineData(true, 32)]
+    [InlineData(false, GraphPreparation.MaximumVoices)] [InlineData(true, GraphPreparation.MaximumVoices)]
     public async Task DenseFiveChannelPianoRemainsPlayableAcrossTempoChangesAndExport(bool song, int voices)
     {
         await using var f = new Fixture(); await f.Create();
@@ -306,7 +307,7 @@ public sealed class StepSequencerTests
         using var pcm = decoded.Lease();
         Assert.InRange(Math.Abs(pcm.Samples[0] - voices * .0025f), 0, 1f / 32768);
         Assert.True(await f.Edit(edit => edit.AddNote(f.Pattern.Id, f.Pattern.Parts[0].Id, default, new(960000), 60, 1)));
-        if (voices == 32)
+        if (voices == GraphPreparation.MaximumVoices)
             Assert.Equal(GraphPreparationReasons.Budget, Assert.Throws<GraphPreparationException>(() =>
                 GraphPreparation.Prepare(f.Document, f.Basis.Attachment, 48000, 2, 32,
                     voiceCapacity: GraphPreparation.MaximumVoices, cancellationToken: TestContext.Current.CancellationToken)).Reason);

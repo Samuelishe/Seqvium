@@ -10,6 +10,32 @@ namespace Seqvium.Tests;
 public sealed class DesktopWorkflowTests
 {
     [Fact]
+    public async Task ProductionCoordinatorPlaysMaximumChordInPatternAndSongWithoutProjectMigration()
+    {
+        await using var f = new Fixture(productionCoordinator: true);
+        await f.Import();
+        var pattern = f.Document.Current.State.Patterns.Single(); var part = pattern.Parts.Single();
+        f.Document.Edit("Full chord and Song", e =>
+        {
+            e.SetPartNotes(pattern.Id, part.Id,
+                [.. Enumerable.Range(0, GraphPreparation.MaximumVoices).Select(i =>
+                    new NoteEvent(Id<NoteEvent>.New(), default, new(960000), 60, .005m))]);
+            e.AddArrangementClip(f.Document.Current.State.Placements.Single().Id, default, 0);
+        });
+        await f.Workflow.SetSongModeAsync(false);
+        Assert.False(f.Workflow.State.SongMode);
+        await f.Workflow.ObserveAsync(); await f.Drive(f.Workflow.PlayAsync());
+        Assert.Equal(GraphPreparation.MaximumVoices, f.Sampler!.ActiveVoices);
+        Assert.True(f.Sampler.ReadStatus().Playing);
+        await f.Drive(f.Workflow.StopAsync());
+        Assert.True(await f.Workflow.SetSongModeAsync(true));
+        await f.Drive(f.Workflow.PlayAsync());
+        Assert.Equal(GraphPreparation.MaximumVoices, f.Sampler.ActiveVoices);
+        Assert.Equal(GraphPreparation.MaximumVoices, f.Sampler.PeakVoices);
+        await f.Drive(f.Workflow.StopAsync()); Assert.Equal(0, f.Sampler.ActiveVoices);
+    }
+
+    [Fact]
     public async Task PlayingPatternSelectionRestartsChosenPhraseOnSameOutputAndSameTargetIsNoOp()
     {
         await using var f = new Fixture();
@@ -190,7 +216,7 @@ public sealed class DesktopWorkflowTests
         internal bool FailNextCoordinator;
 
         internal Fixture(ProjectDocument? document = null,
-            Func<CancellationToken, Task>? gate = null)
+            Func<CancellationToken, Task>? gate = null, bool productionCoordinator = false)
         {
             Document = document ?? ProjectDocument.Create();
             Workflow = new(Document, () =>
@@ -200,7 +226,7 @@ public sealed class DesktopWorkflowTests
                 Output = new();
                 Opened?.Invoke(Sampler, Output);
                 return new(Output, Sampler, "Deterministic borrower", () => Fault);
-            }, Directory.File("owned"), (doc, sampler, target, owner) =>
+            }, Directory.File("owned"), productionCoordinator ? null : (doc, sampler, target, owner) =>
             {
                 if (FailNextCoordinator)
                 {

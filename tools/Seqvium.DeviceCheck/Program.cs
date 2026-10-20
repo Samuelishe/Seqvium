@@ -82,6 +82,7 @@ internal static class DeviceCheck
     internal static async Task<int> Run(string[] args)
     {
         string mode = args.Length == 0 ? "smoke" : args[0];
+        if (mode == "polyphony") return await PolyphonyCheck.Run(args[1..]);
         if (mode == "mixer-project")
         {
             if (args.Length != 5)

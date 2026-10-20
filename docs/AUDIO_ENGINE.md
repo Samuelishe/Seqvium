@@ -58,7 +58,7 @@ and two filter integrators. OfflineSampler executes identical DSP in realtime, P
 Source/Gain/Mix/Output, Mixer and export. No second scheduler, engine or document is introduced.
 The callback performs bounded arithmetic without preparation, I/O, allocation, locks or document
 access. Preflight charges 128 voice work units per frame when synth notes occur, plus existing
-event/scratch/Mixer budgets. Graph polyphony remains 32 with explicit capacity refusal; raw plans
+event/scratch/Mixer budgets. Graph polyphony is 64 with explicit capacity refusal; raw plans
 retain their existing limits. Scratch accounting reserves 256 bytes per voice slot, including
 the inline live-preview smoothing state.
 
@@ -150,7 +150,7 @@ One source and aggregate unique audible Audio Clip PCM per prepared Song are bou
 Duration is bounded by `512*1024*1024 / (rate*channels*4)` seconds: ~1398 s at 48 kHz stereo,
 ~349 s at 192 kHz stereo; mono doubles these durations. Source frame counts remain Int32-bounded.
 Pattern media retains its separate 128 MiB preparation budget; graph scratch remains 16 MiB and
-all occurrences share 32 simultaneous voices and existing event/packet-work gates. A muted source is
+all occurrences share 64 simultaneous voices and existing event/packet-work gates. A muted source is
 not decoded for Song, though its media/waveform can remain in the document.
 Every audible sound definition must match its decoded resource's rate, frame count and channels,
 including definitions sharing an already leased resource. Contradictory metadata refuses preparation;
@@ -248,7 +248,7 @@ Prepared work/scratch budgets include Mixer strips and taps. Processing, compati
 continuation and meter reads use fixed bounded storage, no callback allocation, I/O or UI locks.
 Realtime/offline parity is measured at the same host rate and reset/packet context; a 44.1-kHz device
 cannot be compared bitwise to a 48-kHz WAV. GUI export retains its 48-kHz stereo PCM16 boundary.
-Existing 32-voice limits, instrument synthesis, sample leases and backend lifetime remain unchanged.
+The shared 64-voice limit, instrument synthesis, sample leases and backend lifetime remain authoritative.
 Processor racks/reordering, external plugins, automation, latency compensation and FX
 preroll are not implemented. [Graph](NODE_GRAPH.md#mixer-projection-of-supported-graphs) owns the
 currently linear source-boundary restriction.
@@ -449,7 +449,7 @@ therefore reduce preview; music already above the ceiling admits no preview at t
 keeps its existing overload. This does not repair project clipping, measure LUFS or guarantee true
 peaks/acoustically click-free cuts. Solo built-in source preview uses the same ceiling without music.
 
-Eight fixed PCM cursors overlap independently of the unchanged 32 musical voice slots. Eight ring
+Eight fixed PCM cursors overlap independently of the 64 musical voice slots. Eight ring
 commands at most are consumed at each packet boundary; a full ring refuses the newest command with
 no retry/backlog. At voice capacity the oldest preview tail is replaced immediately. Hats audition
 independently of scheduled choke groups. Preparation runs off callback; one current source/pitch
@@ -489,7 +489,7 @@ ordinary gate duration is `min(ticksPerQuarter, patternLengthTicks - startTicks)
 the bar end. Imported channel sounds use release 0. Short percussion reaches natural EOF; longer
 samples cut at NoteOff or the Pattern boundary. This is neither an infinite one-shot tail nor a new
 sampler policy; BPM changes its audible gate length. Desktop Rack and Song source graphs admit up to
-32 concurrent voices; denser overlapping notes refuse preparation without dropping music. BPM and
+64 concurrent voices; denser overlapping notes refuse preparation without dropping music. BPM and
 length changes stop playback; supported channel and step edits use the compatible publication below. Last-valid,
 generation, readiness and joined lifetime
 protections remain. [Test execution](TEST_EXECUTION.md#r5-continuous-music-verification) owns evidence.
@@ -542,7 +542,7 @@ Original source-placement position does not offset the song clip. Preparation co
 on/off/end boundary independently and refuses incomplete sub-frame source tables rather than dropping
 their potentially audible relocated notes. Original Rack/finite/audition semantics remain available.
 
-Song and each prepared source graph admit at most 32 concurrent voices, the existing 100001-event and 128 MiB decoded
+Song and each prepared source graph admit at most 64 concurrent voices, the existing 100001-event and 128 MiB decoded
 limits,
 16 MiB scratch and packet-work/density gates. Aggregate limits cover all prepared source graphs;
 overload refuses the entire plan. The callback reuses OfflineSampler with fixed tables/scratch/voices;
@@ -689,7 +689,7 @@ remains editable before one atomic acceptance; this is source switching, never s
 
 Preparation validates and leases all map sources under the existing 128 MiB unique decoded Pattern
 budget and compiles one source/step/range per note. OfflineSampler remains the only voice kernel,
-with the same graph/Mixer, 32 graph voices, finite NoteOff/release, realtime/offline/Song/R8 paths.
+with the same graph/Mixer, 64 graph voices, finite NoteOff/release, realtime/offline/Song/R8 paths.
 Starting another pitch never changes an existing voice's source. Compatible live publication keeps
 unchanged notes/age/clock; notes whose selected resource, step or playback changes retire without
 retrigger. Continuous live remapping of a held changed voice is not implemented. Resource identity
@@ -699,7 +699,7 @@ refuse preparation rather than falling back to the first WAV. Velocity selection
 Piano audition and instrument preview; explicit selected-WAV preview deliberately bypasses the map.
 The selected recording remains frozen in PreparedNote. No selection, decode, UI lookup or dynamic
 zone preparation enters the callback. Layer count does not multiply voices, event counts or the
-32-voice ceiling. No velocity crossfade, round-robin or randomized selection is implemented.
+64-voice ceiling. No velocity crossfade, round-robin or randomized selection is implemented.
 
 `SamplerPlayback` interprets optional `sampleStart`, `sampleEnd`, `loopEnabled`, `loopStart` and
 `loopEnd` on the identified PCM SoundDefinition. Source-frame intervals are half-open. Omission
@@ -906,30 +906,58 @@ Captured lifecycle, generation, revision, target and media roots are rechecked a
 is checked between source decodes and note scheduling units, around worker execution and at publication;
 one synchronous decode/hash is bounded by the existing 16 MiB WAV limit and is not instantly interruptible.
 
-Graph preparation supports 1–32 voices; Desktop Rack/export and Song source graphs request 32,
-while low-level callers retain an eight-slot default. Retain 100,001 events, 128 MiB decoded PCM per plan, 64 events per
-frame, 1–1024 repeats,
+Graph preparation supports 1–64 voices; Desktop Rack/export, Song and local R8 request 64,
+while low-level callers retain an eight-slot default. Graph-free plans still support only 1–8.
+Retain 100,001 events, 128 MiB decoded Pattern PCM per plan, 129 graph events per
+frame (64 Off + 64 On + a transport boundary), 1–1024 repeats,
 1–65,536 maximum packet frames, 44.1/48 kHz and mono/stereo. F1 caps remain 32 nodes, 64 connections,
 8 bound sources and 8 Mix inputs. Checked scratch accounting is producer buffers
 `bufferCount * maximumPacketFrames * channels * 4`, plus conservative node/edge/voice storage
-`nodes*256 + edges*16 + voices*128`; cap 16 MiB per state. Output aliases its input, so 32 nodes require
-at most 31 producer buffers. The eight-slot maximum stereo packet/topology fixture needs 16,262,640 bytes; 32 slots add
-3,072 bytes,
-below 16,777,216. This accounting includes table/voice allowance, not an exact managed heap/RSS claim.
+`nodes*256 + edges*16 + voices*256`; cap 16 MiB per state. Arrangement uses the same 256-byte
+voice allowance. Output aliases its input, so 32 nodes require at most 31 producer buffers.
+This accounting includes table/voice allowance, not an exact managed heap/RSS claim.
 
 Preflight computes the largest event window spanning a maximum packet, in addition to per-frame density.
-Conservative work units are `frames*channels*voices*16`, plus
+Conservative voice work units are `frames*channels*voices*16` (128 instead of 16 with Synth), plus
 `frames*channels*sum(1 + 4*max(1, inputCount))`, plus `maximumWindowEvents*voices`; cap 67,108,864.
+Automation, Mixer/FX and Arrangement reconstruction add their existing checked work charges.
 Units bound sample/read/compute/write and event-slot work; they are not CPU instructions or a universal
 device deadline guarantee. All unsupported plans refuse before output; the callback never drops notes.
 
-One candidate plus active/pending/retired ownership bounds total retained PCM/scratch to 576 MiB.
-`ReservedPcmAndScratchBytes` includes the sole in-flight candidate's conservative 144 MiB reservation;
+One candidate plus active/pending/retired ownership bounds reserved PCM/scratch/FX to four times
+736 MiB (128 MiB Pattern + 512 MiB Audio Clips + 16 MiB scratch + 64 MiB Delay + 16 MiB Reverb).
+`ReservedPcmAndScratchBytes` includes the sole in-flight candidate's conservative reservation;
 `RetainedPcmAndScratchBytes` observes the published slots. Prepared event/note/index objects have a
 separate conservative four-plan allowance of 102,401,024 bytes. A worker may temporarily hold one
 bounded source-read/decode buffer beyond retained PCM. Canonical history, caller output, diagnostics,
 GC heap retention and OS/native memory are separate; the envelope is not a process working-set limit.
 Plans/executions lease the same immutable PCM; a branch never decodes that resource again within a plan.
+
+### Scalable musical polyphony (SEQ-AUDIO-POLYPHONY-F1)
+
+The accepted musical ceiling is **64**. The 128-slot prototype passes numerical and ordinary
+single-endpoint checks but fails the predeclared GC/control pressure deadline criteria; it is not
+an available capacity. The [report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md) owns measurements
+and the distinction between capacity, ordinary physical delivery and unresolved pressure acceptance.
+No project/reader gate, source/node/channel/media limit or sound algorithm changes.
+
+OfflineSampler visits active slots through a fixed 64-bit mask in ascending slot order and acquires
+the lowest free slot with a bit scan. Slot identity and float addition order remain unchanged across
+release, EOF, choke, loops, seek and prepared continuation. NoteOff uses the prepared note index and
+loop iteration; existing occurrence mapping assigns that index during continuation. No stealing,
+callback allocation, growing array, lock or additional scheduler is introduced. Worker Song
+preparation indexes canonical notes once per clip before expanding repeats, preserving absolute ticks.
+An explicit low-level request to shrink voice capacity during live continuation refuses on the
+control owner, retaining last-valid playback: a surviving voice may still own an old high slot.
+The Desktop's fixed 64-slot path does not request such a shrink.
+
+Both graph preflight and realtime publication enforce the same 129-event density. Maximum packet
+event work is still charged against 67,108,864 units; a dense chord is not permission to disable
+the packet bound. Raw publication retains its historical 64-event density. Capacity refusal includes
+the limit, observed overlap and frame in its diagnostic cause, and drops no notes.
+OfflineSampler exposes active voices and peak since Restart; RealtimeSampler exposes the musical
+peak across its consumer lifetime, including voices that ended inside a packet and retired states.
+The existing diagnostic tool records these observations without a new panel or global setting.
 
 ### Application convergence and revision observation
 

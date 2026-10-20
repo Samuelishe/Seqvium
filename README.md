@@ -111,7 +111,7 @@ Audio Clip sources in one prepared Song are each bounded to **512 MiB of decoded
 At 48 kHz stereo that is about 23 minutes 18 seconds for one source; higher rates allow less time,
 mono allows more. Pattern-source PCM has a separate 128 MiB budget. These are preparation limits,
 not a total-process memory guarantee: waveforms, old prepared states, Undo-retained media and import
-temporary files also consume memory or disk. Playback shares a 32-voice budget with Patterns and
+temporary files also consume memory or disk. Playback shares a 64-voice budget with Patterns and
 refuses overload instead of silently dropping music. Heavy system load can still cause glitches.
 
 Audio split currently operates on a single occurrence; set repeats to one before splitting.

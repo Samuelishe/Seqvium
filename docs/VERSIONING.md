@@ -178,6 +178,18 @@ retrieved only for explicit historical tasks.
 | `0.1.16.0009` | SEQ-R10-UNFOLD-REPEATS-F1 | One BUILD for explicit shared-cycle unfolding through existing Playlist clips/history/publication. See checkpoint and report below. |
 | `0.1.16.0010` | SEQ-R9-PIANO-BATCH-TRANSFORM-F1 | One BUILD for relative selected-note Transform and corrected pitch-caption alignment in the existing Piano editor. See checkpoint and report below. |
 | `0.1.16.0011` | SEQ-SAMPLER-VELOCITY-LAYERS-F1 | One BUILD within the existing multisample instrument line: Velocity-based recording selection, complete repeated-root import review, 2D mapping and source/instrument preview. Reader 1.14 gates only non-default Velocity intent. Evidence and limits are in the [report](experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md). |
+| `0.1.16.0012` | SEQ-AUDIO-POLYPHONY-F1 | One BUILD for the existing engine's 64-voice Pattern/Song/export/R8 capacity, ordered active-slot execution, bounded chord-event admission, faster repeat preparation and active/peak diagnostics. The measured 128 prototype is not accepted after pressure deadline failures. No project/reader change. The [report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md) separates numerical, full Release, physical and pressure evidence and retains failed attempts. |
+
+### SEQ-AUDIO-POLYPHONY-F1 checkpoint
+
+`0.1.16.0011` to **`0.1.16.0012`**, one BUILD for verified technical scaling of the existing musical
+engine and Desktop capacity to 64. This extends the current instrument/arrangement capability line;
+it introduces no standalone workflow, new engine or project reader/schema. MAJOR/MINOR/PATCH stay
+unchanged. The 128-slot prototype's ordinary device success is insufficient: GC/control pressure
+fails the predeclared deadline criteria, so that capacity is absent from the product. General R4
+pressure/allocation attribution, acoustic and platform acceptance remain open. No Git index/history/
+remote operation, release or tag follows. [Report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md) owns
+actual verification, measurements, earlier failures and limits.
 
 ### SEQ-SAMPLER-VELOCITY-LAYERS-F1 checkpoint
 

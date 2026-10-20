@@ -223,6 +223,9 @@ public static class ArrangementPreparation
                 if (!IsAudible(state, clip.Lane)) continue;
                 var placement = state.Placements.Single(p => p.Id == clip.SourcePlacementId);
                 var pattern = state.Patterns.Single(p => p.Id == placement.PatternId);
+                // Resolve canonical gate ticks once, rather than scanning every Part's note array for
+                // each prepared occurrence in every repeat. Identity/order and absolute conversion stay unchanged.
+                var canonicalNotes = pattern.Parts.SelectMany(p => p.Notes).ToDictionary(n => n.Id);
                 var plan = plans[placement.Id];
                 if ((long)events.Count + (long)plan.Notes.Length * clip.Repeats * 2 + 1 >
                     SamplerPreparation.MaximumEvents)
@@ -233,8 +236,7 @@ public static class ArrangementPreparation
                 {
                     cancellation.ThrowIfCancellationRequested();
                     var original = plan.Notes[n];
-                    var note = pattern.Parts.Single(p => p.Id == original.Occurrence.PartId).Notes
-                        .Single(note => note.Id == original.Occurrence.NoteId);
+                    var note = canonicalNotes[original.Occurrence.NoteId];
                     long ticks = checked(clip.Position.Ticks + iteration * pattern.Length.Ticks + note.Position.Ticks);
                     var start = new MusicalPosition(ticks);
                     var end = start.Add(note.Duration);
@@ -289,7 +291,7 @@ public static class ArrangementPreparation
             int outputBuffer = bufferCount++;
             operations.Add(new(default, GraphOperationKind.Mix, outputBuffer, [.. outputs], -1));
             int scratch = checked(bufferCount * maximumPacketFrames * channels * sizeof(float) +
-                                  operations.Count * 256 + VoiceCapacity * 128);
+                                  operations.Count * 256 + VoiceCapacity * 256);
             if (scratch > GraphPreparation.MaximumScratchBytes)
                 throw new GraphPreparationException(GraphPreparationReasons.Budget);
             var combined = new PreparedGraph

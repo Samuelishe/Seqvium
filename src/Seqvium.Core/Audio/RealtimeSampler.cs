@@ -141,6 +141,7 @@ public sealed partial class RealtimeSampler : IDisposable
     private long _acknowledgedStop, _epoch, _position;
     private long _rejectedPreparedExecutionId;
     private int _voices;
+    private int _peakVoices;
     private bool _looping;
     private SongSeek? _seek;
     private SongLoop? _songLoop;
@@ -189,6 +190,8 @@ public sealed partial class RealtimeSampler : IDisposable
     public long RenderPosition => Volatile.Read(ref _position);
 
     public int ActiveVoices => Volatile.Read(ref _voices);
+    /// <summary>Maximum musical voices since this consumer was created, including retired prepared states.</summary>
+    public int PeakVoices => Volatile.Read(ref _peakVoices);
     public bool IsTerminated => Volatile.Read(ref _terminated);
 
     // Read after a boundary synchronization or worker join; Guid is not an atomic status primitive.
@@ -353,10 +356,16 @@ public sealed partial class RealtimeSampler : IDisposable
         {
             count = item.Frame == frame ? count + 1 : 1;
             frame = item.Frame;
-            if (count > 64) throw new NotSupportedException("Realtime event density exceeds 64 events per frame.");
+            int limit = plan.Graph is null ? 64 : GraphPreparation.MaximumEventsPerFrame;
+            if (count > limit) throw new NotSupportedException($"Realtime event density exceeds {limit} events per frame.");
         }
 
         var active = Volatile.Read(ref _active);
+        // Surviving voices retain physical slot indices and sum order. A smaller candidate could
+        // fit the new score yet lack an old high-numbered slot; refuse on the control owner.
+        if (preservePlayback && active is not null && plan.VoiceCapacity < active.Plan.VoiceCapacity)
+            throw new GraphPreparationException(GraphPreparationReasons.Budget,
+                new NotSupportedException("Live continuation cannot shrink prepared voice capacity; current playback is retained."));
         if (preservePlayback && plan.Graph?.Mixer is { } nextMixer)
         {
             // Account inherited bypass/fading storage before the new execution is allocated/published.
@@ -703,6 +712,7 @@ public sealed partial class RealtimeSampler : IDisposable
         _drumAudition.Process(output, Channels);
         Volatile.Write(ref _position, active?.Execution.Position ?? 0);
         Volatile.Write(ref _voices, active?.Execution.ActiveVoices ?? 0);
+        Volatile.Write(ref _peakVoices, Math.Max(_peakVoices, active?.Execution.PeakVoices ?? 0));
         Volatile.Write(ref _acknowledgedStop, stop);
         // Transient owners end at EOF/cancel/explicit Stop. Initial handoff may precede Start;
         // the Stop preceding publication must not prematurely retire that prepared source.

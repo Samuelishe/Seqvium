@@ -605,6 +605,11 @@ One Source accumulates that part's notes on its supported path exactly once. Fan
 it creates no musical performance or second decode. Source adaptation explicitly reuses R2 interpolation,
 pitch, intensity, release and mono duplication/stereo downmix at the execution-rate boundary.
 
+The shared musical executor admits 64 voices across Pattern/Song/Audio Clips, with explicit
+preparation refusal above actual overlap and 129 graph events per frame for complete chord turnover.
+Node/source/Mix-input limits are independent and unchanged. [Audio](AUDIO_ENGINE.md#scalable-musical-polyphony-seq-audio-polyphony-f1)
+owns work/scratch admission, active-slot execution and the measured decision to defer 128.
+
 Preparation derives a Kahn topological order, selecting ready nodes by UUID. Source, Gain v1 `[0,1]`,
 explicit 2–8-input Mix and the selected context's Output execute through `OfflineSampler`. Each producer
 has a separate fixed buffer; Output aliases its one upstream result. Mix sums in ascending input-port

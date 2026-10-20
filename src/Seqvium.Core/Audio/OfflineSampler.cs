@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Immutable;
+using System.Numerics;
 
 namespace Seqvium.Core;
 
@@ -250,7 +251,7 @@ public static class SamplerPreparation
             voiceCapacity > (graph is null ? 8 : GraphPreparation.MaximumVoices) ||
             repeats is < 1 or > 1024)
             throw new NotSupportedException(
-                "Sampler supports 44100/48000 Hz, mono/stereo, 1–8 raw or 1–32 graph voices, 1–1024 repeats.");
+                $"Sampler supports 44100/48000 Hz, mono/stereo, 1–8 raw or 1–{GraphPreparation.MaximumVoices} graph voices, 1–1024 repeats.");
         var snapshot = document.Current;
         var state = snapshot.State;
         var pattern = state.Patterns.SingleOrDefault(item => item.Id == patternId)
@@ -467,7 +468,8 @@ public static class SamplerPreparation
             end = Math.Min(end, note.ChokeFrames == long.MaxValue ? long.MaxValue : note.StartFrame + note.ChokeFrames);
             if (end > item.Frame) ends.Add(end);
             if (ends.Count > capacity)
-                throw new NotSupportedException("Voice capacity exceeded; no notes were dropped.");
+                throw new NotSupportedException(
+                    $"Voice capacity {capacity} exceeded ({ends.Count} overlapping voices at frame {item.Frame}); no notes were dropped.");
         }
     }
 
@@ -502,15 +504,17 @@ public static class SamplerPreparation
         int active = 0;
         foreach (var boundary in boundaries.OrderBy(b => b.Frame).ThenBy(b => b.Delta))
             if ((active += boundary.Delta) > capacity)
-                throw new NotSupportedException("Drum loop voice capacity exceeded; no hits were dropped.");
+                throw new NotSupportedException(
+                    $"Loop voice capacity {capacity} exceeded ({active} overlapping voices at frame {boundary.Frame}); no notes were dropped.");
     }
 }
 
 /// <summary>Single-owner sequential [start,end) float PCM processing. Working memory is sources plus fixed voice slots.</summary>
 public sealed class OfflineSampler : IDisposable
 {
-    private sealed class Voice
+    private sealed class Voice(int slot)
     {
+        internal readonly int Slot = slot;
         internal PreparedNote? Note;
         internal int NoteIndex;
         internal long Age;
@@ -524,6 +528,45 @@ public sealed class OfflineSampler : IDisposable
     private readonly PreparedSampler _plan;
     private readonly double[] _automationValues;
     private readonly Voice[] _voices;
+    // Fixed slot identities and ascending traversal preserve the original floating-point sum order.
+    private ulong _activeMask;
+    private int _activeCount;
+    public int PeakVoices { get; private set; }
+
+    private struct ActiveSlots(ulong mask)
+    {
+        public int Current { get; private set; }
+        public ActiveSlots GetEnumerator() => this;
+        public bool MoveNext()
+        {
+            if (mask == 0) return false;
+            Current = BitOperations.TrailingZeroCount(mask);
+            mask &= mask - 1;
+            return true;
+        }
+    }
+
+    private ActiveSlots Active => new(_activeMask);
+
+    private void Activate(Voice voice)
+    {
+        _activeMask |= 1UL << voice.Slot;
+        PeakVoices = Math.Max(PeakVoices, ++_activeCount);
+    }
+
+    private void Deactivate(Voice voice)
+    {
+        voice.Note = null;
+        _activeMask &= ~(1UL << voice.Slot);
+        _activeCount--;
+    }
+
+    private Voice FreeVoice()
+    {
+        int slot = BitOperations.TrailingZeroCount(~_activeMask);
+        if (slot >= _voices.Length) throw new InvalidOperationException("Prepared voice capacity invariant failed.");
+        return _voices[slot];
+    }
     private PcmLease[]? _sources;
     private int _eventIndex;
     private bool _stopped;
@@ -580,26 +623,18 @@ public sealed class OfflineSampler : IDisposable
             clock.LengthTicks - 1)
         : 0;
 
-    public int ActiveVoices
-    {
-        get
-        {
-            int count = 0;
-            foreach (var voice in _voices)
-                if (voice.Note is not null)
-                    count++;
-            return count;
-        }
-    }
+    public int ActiveVoices => _activeCount;
 
     internal OfflineSampler(PreparedSampler plan)
     {
+        if (plan.VoiceCapacity is < 1 or > 64)
+            throw new NotSupportedException("Execution requires 1–64 fixed voice slots.");
         _automationValues = new double[plan.Automation.Length];
         _plan = plan;
         _synthAudition = plan.HeldAudition && plan.Notes.Length == 1 ? plan.Notes[0].Synth : null;
         EndFrame = plan.EndFrame;
         _tailSourceEnd = plan.SourceEndFrame;
-        _voices = Enumerable.Range(0, plan.VoiceCapacity).Select(_ => new Voice()).ToArray();
+        _voices = Enumerable.Range(0, plan.VoiceCapacity).Select(slot => new Voice(slot)).ToArray();
         Position = plan.StartFrame;
         if (plan.Graph is { } graph)
         {
@@ -621,6 +656,7 @@ public sealed class OfflineSampler : IDisposable
         _mixer?.Reset();
         CheckAvailable();
         Stop();
+        PeakVoices = 0;
         _stopped = false;
         _eventIndex = 0;
         Position = _plan.StartFrame;
@@ -669,6 +705,7 @@ public sealed class OfflineSampler : IDisposable
                 synthVoice.ChokeAge = long.MaxValue;
                 synthVoice.StartIteration = 0;
                 synthVoice.Synth.Reset(synth, age);
+                Activate(synthVoice);
                 continue; // Cold filter seek is bounded; no replay from note start in the callback.
             }
 
@@ -683,6 +720,7 @@ public sealed class OfflineSampler : IDisposable
             voice.ReleaseAge = note.OneShot || release < 0 ? -1 : (int)release;
             voice.ChokeAge = note.ChokeFrames;
             voice.StartIteration = 0;
+            Activate(voice);
         }
     }
 
@@ -722,6 +760,7 @@ public sealed class OfflineSampler : IDisposable
             destination.ReleaseAge = source.ReleaseAge;
             destination.StartIteration = source.StartIteration;
             destination.ChokeAge = ChokeAge(destination.Note, destination.StartIteration);
+            Activate(destination);
         }
 
         if (_plan.IsArrangement && !_stopped)
@@ -748,6 +787,7 @@ public sealed class OfflineSampler : IDisposable
                 available.ReleaseAge = -1;
                 available.ChokeAge = long.MaxValue;
                 available.StartIteration = 0;
+                Activate(available);
             }
     }
 
@@ -775,7 +815,9 @@ public sealed class OfflineSampler : IDisposable
     {
         CheckAvailable();
         _mixer?.Reset();
-        foreach (var voice in _voices) voice.Note = null;
+        foreach (int slot in Active) _voices[slot].Note = null;
+        _activeMask = 0;
+        _activeCount = 0;
         _stopped = true;
     }
 
@@ -801,13 +843,16 @@ public sealed class OfflineSampler : IDisposable
                 Position >= clock.Frame(clock.StartTicks + (_iteration + 1) * clock.LengthTicks))
             {
                 // Source gates end at the musical boundary; the next sample starts in this same packet.
-                foreach (var voice in _voices)
+                foreach (int slot in Active)
+                {
+                    var voice = _voices[slot];
                     if (voice.Note is { Synth: not null } held)
                     {
-                        if (held.ReleaseFrames == 0) voice.Note = null;
+                        if (held.ReleaseFrames == 0) Deactivate(voice);
                         else if (voice.ReleaseAge < 0) voice.ReleaseAge = 0;
                     }
-                    else if (voice.Note is not { OneShot: true }) voice.Note = null;
+                    else if (voice.Note is not { OneShot: true }) Deactivate(voice);
+                }
 
                 _iteration++;
                 _eventIndex = 0;
@@ -816,9 +861,10 @@ public sealed class OfflineSampler : IDisposable
             ApplyEvents();
             if (_synthAudition is not null && Position >= EndFrame) break;
             for (int i = 0; i < _automationValues.Length; i++) _automationValues[i] = _plan.Automation[i].At(Position);
-            foreach (var voice in _voices)
+            foreach (int slot in Active)
             {
-                if (voice.Note is not { } note) continue;
+                var voice = _voices[slot];
+                var note = voice.Note!;
                 if (note.Synth is { } synth)
                 {
                     double sample = _synthAudition is { } live
@@ -838,7 +884,7 @@ public sealed class OfflineSampler : IDisposable
                     if (_plan.Channels == 2) target[frame * 2 + 1] += (float)sample;
                     voice.Age++;
                     if (voice.ReleaseAge >= 0 && ++voice.ReleaseAge >=
-                        (_synthAudition is null ? note.ReleaseFrames : voice.AuditionReleaseFrames)) voice.Note = null;
+                        (_synthAudition is null ? note.ReleaseFrames : voice.AuditionReleaseFrames)) Deactivate(voice);
                     continue;
                 }
 
@@ -848,7 +894,7 @@ public sealed class OfflineSampler : IDisposable
                 if (cursor >= source.Frames || cursor >= note.SourceOffset + (double)note.SourceLength ||
                     voice.Age >= voice.ChokeAge)
                 {
-                    voice.Note = null;
+                    Deactivate(voice);
                     continue;
                 }
 
@@ -921,7 +967,7 @@ public sealed class OfflineSampler : IDisposable
                     note.SustainEnd == 0 && note.SourceOffset + voice.Age * note.Step >=
                     Math.Min(source.Frames, note.SourceOffset + (double)note.SourceLength) ||
                     voice.Age >= voice.ChokeAge)
-                    voice.Note = null;
+                    Deactivate(voice);
             }
 
             Position++;
@@ -971,16 +1017,19 @@ public sealed class OfflineSampler : IDisposable
         ApplyEvents();
         int release = 0;
         bool released = false;
-        foreach (var voice in _voices)
+        foreach (int slot in Active)
+        {
+            var voice = _voices[slot];
             if (voice.Note is { } note && voice.ReleaseAge < 0)
             {
                 int frames = _synthAudition?.Release ?? note.ReleaseFrames;
                 released = true;
                 voice.AuditionReleaseFrames = frames;
                 release = Math.Max(release, frames);
-                if (frames == 0) voice.Note = null;
+                if (frames == 0) Deactivate(voice);
                 else voice.ReleaseAge = 0;
             }
+        }
 
         if (released) EndFrame = Math.Min(EndFrame, Position + release);
     }
@@ -999,29 +1048,24 @@ public sealed class OfflineSampler : IDisposable
             if (_stopped) continue;
             if (item.Kind == ExecutionEventKind.NoteOff)
             {
-                foreach (var voice in _voices)
+                foreach (int slot in Active)
+                {
+                    var voice = _voices[slot];
                     if (voice.Note is { OneShot: false } active && voice.ReleaseAge < 0 &&
-                        (!_looping || voice.StartIteration == _iteration) && active.Occurrence == item.Occurrence)
+                        (!_looping || voice.StartIteration == _iteration) && voice.NoteIndex == item.NoteIndex)
                     {
                         int frames = _synthAudition?.Release ?? active.ReleaseFrames;
                         voice.AuditionReleaseFrames = frames;
                         if (_synthAudition is not null) EndFrame = Math.Min(EndFrame, Position + frames);
-                        if (frames == 0) voice.Note = null;
+                        if (frames == 0) Deactivate(voice);
                         else voice.ReleaseAge = 0;
                     }
+                }
             }
             else
             {
                 if (_plan.Notes[item.NoteIndex].ChokeFrames == 0) continue;
-                Voice? voice = null;
-                foreach (var candidate in _voices)
-                    if (candidate.Note is null)
-                    {
-                        voice = candidate;
-                        break;
-                    }
-
-                if (voice is null) throw new InvalidOperationException("Prepared voice capacity invariant failed.");
+                var voice = FreeVoice();
                 voice.Note = _plan.Notes[item.NoteIndex];
                 voice.NoteIndex = item.NoteIndex;
                 voice.Age = 0;
@@ -1029,6 +1073,7 @@ public sealed class OfflineSampler : IDisposable
                 voice.StartIteration = _iteration;
                 voice.ChokeAge = ChokeAge(voice.Note, _iteration);
                 if (voice.Note.Synth is { } synth) voice.Synth.Reset(synth);
+                Activate(voice);
             }
         }
     }
@@ -1064,5 +1109,7 @@ public sealed class OfflineSampler : IDisposable
                 source.Dispose();
         _sources = null;
         foreach (var voice in _voices) voice.Note = null;
+        _activeMask = 0;
+        _activeCount = 0;
     }
 }

@@ -379,7 +379,7 @@ epoch and unchanged voices; deleting the final channel becomes silence while oth
 Undo restores intent without retriggering past notes. A failed preparation keeps diagnostics and
 last-valid rules, while structurally eligible Play allows an explicit retry. BPM changes stop and
 reprepare at the new tempo; returning to a prior BPM does not require reopening the project.
-Rack and Song source graphs share a bounded 32-voice budget, separate from the eight-channel limit;
+Rack and Song source graphs share a bounded 64-voice budget, separate from the eight-channel limit;
 dense supported piano parts are not limited to one active voice per channel.
 
 ## Implemented Playlist Arrangement

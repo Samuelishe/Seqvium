@@ -1,5 +1,52 @@
 # Explicit Windows audio verification
 
+## Musical polyphony
+
+The opt-in `polyphony` route benchmarks production Core and the same Windows output adapter.
+It uses short authored PCM and built-in instruments, with saved fixture projects so before/after
+runs preserve note/graph identities, media and float sum order. No personal library, network,
+global setting or user process is modified. Timing-dependent checks are outside functional tests.
+
+```text
+dotnet build tools/Seqvium.DeviceCheck/Seqvium.DeviceCheck.csproj -c Release --no-restore
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll polyphony cpu .artifacts/polyphony/fixtures .artifacts/polyphony/cpu 1,8,16,32,64 none
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll polyphony physical .artifacts/polyphony/fixtures .artifacts/polyphony/physical 64 none
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll polyphony physical .artifacts/polyphony/fixtures .artifacts/polyphony/pressure 64 background
+```
+
+An optional final comma-separated workload list selects `pcm,synth,release,mixed,dense,live`.
+Low counts below 32 run only PCM. Baseline uses a preserved unmodified 32-slot Core/Windows binary
+beside this harness; do not replace its Core with the candidate. The accepted executable refuses
+65/96/127/128 rather than stealing notes. The [report](../../docs/experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md)
+records the separately retained 128-slot prototype and its failed pressure acceptance.
+
+CPU uses 48-kHz stereo, 480-frame packets, 16-second Songs (22 seconds with long Release),
+two seconds of production callback priming, a restarted measurement, and five warm preparation
+observations separate from the cold preparation. Raw QPC ticks, strict current-thread byte deltas,
+active/peak voices, actual/end frames, full PCM SHA256, event/work/scratch/decoded accounting,
+candidate reservation, retained state and process memory accompany p50/p95/p99/max microseconds.
+CPU `Passed` checks zero bytes and natural completion; it is not hardware deadline acceptance.
+Preparation, fixture work, hashing, assertions and JSON stay outside callback counter windows.
+
+Physical **plays quiet sound** on the actual default endpoint, without changing system volume or
+audio settings. It records negotiated period/capacity/rate/channels/MMCSS and every bounded service
+observation, including separate Process and full service durations, actual submitted frames,
+misses/padding/starvation, strict byte counts, peak voices, natural EOF, Panic acknowledgment and
+joined disposal. Ordinary PCM/Synth/Release/Mixed/Dense captures are compared exactly to the same
+offline executor using the actual device partitions. Live/control-gain pressure captures are not
+reported as an offline oracle; deterministic live/history tests and CPU hashes are separate evidence.
+
+The criteria are fixed before comparison: p99 Process and service at most half the negotiated
+period; maxima at most one period; no deadline/packet misses, padding starvation, invalid/nonfinite
+samples or callback/service bytes; exact applicable PCM, natural completion and joined Stop.
+Background load replaces a bounded 4-MiB ring with 512 KiB every 5 ms and requests nonblocking Gen2
+collections every 20 iterations; the control owner also sends bounded gain bursts. The worker joins
+before disposal. Neither GC suppression, excluded windows nor retries until green are used.
+Every requested scenario writes JSON, including failures, and any refused/failed scenario returns 1.
+Raw artifacts and frozen baseline/prototype binaries remain ignored local evidence, not product media.
+Use a fresh output directory for each observation and preserve failures. One endpoint cannot
+establish general pressure, acoustic or all-computer acceptance.
+
 ## Drum play-along
 
 ```text

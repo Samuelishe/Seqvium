@@ -61,7 +61,9 @@ internal sealed class PreparedGraph
 
 public static class GraphPreparation
 {
-    public const int MaximumVoices = 32;
+    public const int MaximumVoices = 64;
+    // A full zero-release turnover (Off + On), with the final transport boundary accounted separately.
+    public const int MaximumEventsPerFrame = MaximumVoices * 2 + 1;
     public const int MaximumScratchBytes = 16 * 1024 * 1024;
     public const long MaximumPacketWork = 64 * 1024 * 1024;
 
@@ -211,7 +213,7 @@ public static class GraphPreparation
             var item = plan.Events[index];
             density = item.Frame == previous ? density + 1 : 1;
             previous = item.Frame;
-            if (density > 64) throw new GraphPreparationException(GraphPreparationReasons.Budget);
+            if (density > MaximumEventsPerFrame) throw new GraphPreparationException(GraphPreparationReasons.Budget);
             while (plan.Events[first].Frame <= item.Frame - frames) first++;
             maximumWindow = Math.Max(maximumWindow, index - first + 1);
         }
@@ -223,7 +225,7 @@ public static class GraphPreparation
         if (plan.Loop is { } clock)
         {
             long shortestCycle = Math.Max(1, clock.Frame(clock.StartTicks + clock.LengthTicks) - plan.StartFrame - 1);
-            maximumWindow = (int)Math.Min((long)frames * 64,
+            maximumWindow = (int)Math.Min((long)frames * MaximumEventsPerFrame,
                 Math.Max(maximumWindow, (frames / shortestCycle + 2) * plan.Events.Length));
         }
 

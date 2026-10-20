@@ -35,6 +35,13 @@ failure. Temporary paths are isolated, but parallel process/load timing is not. 
 fixtures from real OS snapshot/failure-safety checks in a focused tooling follow-up; never weaken
 fail-closed deletion to obtain green tests. R4-F2 physical starvation remains Q-047, independently.
 
+Polyphony F1 retains further 5,192-byte Arrangement live-publication and 224-byte unchanged Mixer
+zero-allocation observations; subsequent observations do not attribute or resolve them. Its 128-voice
+prototype passes ordinary physical delivery but fails bounded GC/control pressure deadlines despite
+zero measured callback bytes. The accepted musical capacity is 64; broader GC/runtime/device pressure
+remains separate from deterministic capacity and ordinary endpoint evidence. See the
+[polyphony report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md) for all results and the fixed criteria.
+
 ## SEQ-R0 validation priorities
 
 | ID    | Question / risk                                                                                          | Evidence needed                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Owner                                                          |

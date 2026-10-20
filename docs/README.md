@@ -180,7 +180,7 @@ Undo history unchanged. WAV PCM16/24/32 and float32, MP3 and FLAC are accepted a
 only. MP3/FLAC require available Windows Media Foundation codecs. Audio is resident, not disk-streamed:
 one source and a prepared Song's unique Audio Clip PCM each have a 512 MiB decoded limit (about
 23:18 at 48 kHz stereo). Copies do not multiply source PCM; other preparation/UI/history memory remains.
-Pattern media has a separate budget and all playback shares 32 voices. Time stretch accepts a source
+Pattern media has a separate budget and all playback shares 64 voices. Time stretch accepts a source
 range of 0.1–60 seconds, with a shared 128 MiB derived-audio budget inside the Song's audio budget.
 It works best with sustained, monophonic phrases; sharp attacks and dense polyphony can smear or
 flutter, especially near 50/200%. Fades stretch with the audio. Splits preserve the original stretch;
@@ -229,7 +229,7 @@ opens it; the left Rack icon or **Panes** menu reopens it. You can begin without
 
 The editor explains unsupported meter/Pattern shape or notes and preserves them. Adding channels to
 an already shared Pattern or a custom graph can be refused safely; existing shared steps still edit
-the shared musical content. Up to eight channels and 32 simultaneous voices are offered in Rack and
+the shared musical content. Up to eight channels and 64 simultaneous voices are offered in Rack and
 Song; excessive overlapping voices/media can block
 Play. [Editing scope](UX_CONTRACT.md#implemented-r5-f1-step-sequencing) explains these boundaries.
 
@@ -357,7 +357,7 @@ Root Pitch stays unchanged. Check source tuning and Mixer trim when the new reco
 The current Playlist has 32 fixed track slots and a view that expands for long audio, with timeline
 presentation/exact bar entry up to one million bars. Slots organize
 compatible musical material; they do not assign instruments or create Mixer channels. The engine
-checks a 32-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
+checks a 64-voice song budget and refuses overload instead of dropping notes. Whole-Pattern repeats
 are available now; Audio Clips have separate range/trim/split/fade controls. Nested sections, flexible
 cross-boundary rearrangement, dynamic track groups and warp/tempo following remain planned. WAV channel
 add/delete/Undo/Redo keeps the current clock and other voices for the supported source/mix tree.

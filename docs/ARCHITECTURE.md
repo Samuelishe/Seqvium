@@ -624,6 +624,13 @@ graph-free Pattern and transient audition retain their explicit guarded preparat
 `RealtimeSampler` owns graph publication, revisions, borrowing and retirement too. There is no second
 engine, graph document, runtime history, package/assembly or Windows-owned musical processing.
 
+Musical Pattern/Song/export/R8 capacity is 64 through the shared GraphPreparation limit; raw plans
+remain 1–8. OfflineSampler keeps fixed slot identities in a 64-bit active mask, visiting them in
+ascending order and obtaining the lowest free slot. All masks/voices exist before publication.
+Continuation still maps canonical occurrences to prepared note indices and copies surviving slot
+state. The [audio contract](AUDIO_ENGINE.md#scalable-musical-polyphony-seq-audio-polyphony-f1) owns
+event/work gates, peak diagnostics and the unaccepted 128-voice investigation.
+
 [GraphExecutionCoordinator](../src/Seqvium.Core/Audio/GraphExecutionCoordinator.cs) is the minimal
 application owner: post-transaction document notifications, latest desired target, one worker/candidate,
 supersession/cancellation, capacity retry and thread-safe divergence/status. Its supplied serialized

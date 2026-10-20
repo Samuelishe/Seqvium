@@ -30,6 +30,25 @@ compatible live publication (including retired remapped onsets). Select `--filte
 with SongStructure, Arrangement, Rack/Piano and affected graph/publication neighbours. VisualCheck
 `repeat-variation` supplies separately labelled native/rendered/physical evidence.
 
+## Musical polyphony verification
+
+`PolyphonyTests` covers independent PCM across 1/8/16/32/64 voices, both host rates and mono/stereo,
+exact packet/realtime parity, Synth/Drum/Velocity Layers, lowest-slot reuse with an exact independent
+sum, coincident Off/On with and without release, density/work and 65/96/127/128 refusal. Lifecycle
+cases cover live history, old/new/pending/retired states, stale/cancelled publications, Seek/range
+loop/Panic, safe refusal to shrink a live plan whose surviving voices occupy higher slots,
+overlapping Audio Clips with Mixer EQ/compression/Delay/Reverb, frozen WAV/R8 and strict primed
+allocation. DesktopWorkflowTests exercises the actual default coordinator's maximum Pattern
+and Song chord, using a deterministic output borrower. This is not a real-window/native check.
+
+Use `--filter-class '*PolyphonyTests'` with affected Arrangement/GraphRealtime/OfflineSampler,
+instrument/Mixer/export/R8 and DesktopWorkflow neighbours, `--max-threads 1`. This shared musical
+core checkpoint selects final L3 for timing/slot/lifetime risk. DeviceCheck's optional
+[`polyphony` route](../tools/Seqvium.DeviceCheck/README.md#musical-polyphony) records CPU and actual
+WASAPI separately, including failed pressure observations. Timing-dependent benchmarks stay outside
+functional discovery. [Report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md) owns measurements,
+the rejected 128-slot prototype and unclosed R4 pressure/allocation gaps.
+
 ## Realtime allocation diagnostics
 
 Keep strict zero-byte assertions. A green repeat cannot explain a red measurement. The

@@ -2505,3 +2505,23 @@ foreground coverage and remain separate. Initial reader-fixture and process-snap
 cleanup failures are retained, without a tooling/pressure/acoustic fix claim. The
 [report](../experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md) owns methods, screenshots and limits.
 Official Neon Orchard and Git index/history/remotes remain unchanged.
+
+## SEQ-AUDIO-POLYPHONY-F1 — 2026-10-20
+
+One BUILD, 0.1.16.0011 → 0.1.16.0012: musical Pattern/Song/Audio Clip/WAV/R8 capacity becomes 64.
+An ordered active mask preserves exact slot summation, lowest-free ownership and prepared NoteOff
+identity; a canonical note index accelerates repeat preparation. Both density gates admit bounded
+129-event turnover. A live shrink refuses before publication when old high slots could survive.
+Raw 1–8, project reader/format, source/node/channel/media budgets and DSP remain unchanged.
+
+Final Release build has zero warnings/errors; 2076/2076 tests pass (91.486 s CLI), including 50 new
+cases. All nine <=32-voice benchmark hashes remain exact. Fixed ABBA observes one-voice median
+18.3 → 9.7 µs at doubled capacity; full 32 is neutral. Six ordinary and six bounded GC/control
+physical 64-voice cases pass Samsung 48-kHz stereo/10-ms criteria, worst service 1.85/5.36 ms.
+The 128 prototype passes numerical/ordinary physical checks but misses hundreds of periods and
+finite completion under pressure, so it is not adopted. Earlier 5192/224-byte allocation observations,
+stale test expectations, process-snapshot failures and timing/loader attempts remain in the
+[report](../experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md); no historical R4 attribution/reliability
+closure, GUI/native-input, acoustic or all-device claim follows. Raw fixtures/results and frozen
+baseline/prototype binaries stay ignored locally. Official Neon Orchard and Git index/history/remotes
+are unchanged.

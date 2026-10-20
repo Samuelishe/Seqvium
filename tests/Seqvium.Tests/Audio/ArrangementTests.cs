@@ -164,7 +164,7 @@ public sealed class ArrangementTests
     public async Task TooManyVoicesRefuseTheWholeSongAndCancellationLeavesNoPublication()
     {
         using var f = await Fixture.Create(longPattern: true);
-        f.Document.Edit("Overlap", edit => { for (int i = 0; i < 33; i++) edit.AddArrangementClip(f.Sources[0], default, i % 32); });
+        f.Document.Edit("Overlap", edit => { for (int i = 0; i <= ArrangementPreparation.VoiceCapacity; i++) edit.AddArrangementClip(f.Sources[0], default, i % 32); });
         Assert.Equal(GraphPreparationReasons.Budget, Assert.Throws<GraphPreparationException>(() => ArrangementPreparation.Prepare(f.Document, 48000, 2, 256, TestContext.Current.CancellationToken)).Reason);
         using var sampler = new RealtimeSampler(48000, 2, 256);
         using var request = sampler.BeginArrangementPreparation(f.Document);

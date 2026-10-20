@@ -7,7 +7,16 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0011**, **SEQ-SAMPLER-VELOCITY-LAYERS-F1 — Multisample Velocity Layers**.
+Product alpha **0.1.16.0012**, **SEQ-AUDIO-POLYPHONY-F1 — Scalable Musical Polyphony**.
+Pattern, Song, Audio Clips, WAV and R8 share 64 musical voices through the existing Desktop renderer.
+An ordered active-slot mask preserves exact summation and lowest-free-slot ownership; prepared
+NoteOff indices and a worker canonical-note lookup reduce event/repeat work. Graph preflight and
+publication admit bounded 129-event chord turnover. Raw 1–8, media/node/channel budgets and project
+reader/format remain unchanged. Active/peak voices and explicit overlap refusal use existing
+diagnostics. The 128 prototype passes ordinary physical output but fails GC/control pressure deadlines
+and is not adopted. The [report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md) owns measurements and gaps.
+
+Previous **0.1.16.0011**, **SEQ-SAMPLER-VELOCITY-LAYERS-F1 — Multisample Velocity Layers**.
 PCM zones select one WAV by lower integer Pitch and canonical Velocity, with deterministic half-open
 Velocity bounds and inclusive 100%. The existing Source Editor exposes two-dimensional rectangles,
 exact percentages, all-zone selection, selected-WAV/instrument preview and complete repeated-root
@@ -297,6 +306,11 @@ separate. [Roadmap](ROADMAP.md) owns remaining scope.
 
 ## Implemented capability
 
+The musical renderer admits 64 voices across Pattern/Song/Audio Clips, export and local R8, without
+stealing or a project migration. Fixed active slots preserve timing and float sum order. Raw plans
+remain 1–8; [Audio](AUDIO_ENGINE.md#scalable-musical-polyphony-seq-audio-polyphony-f1) owns the
+separate event/work/memory limits and active/peak diagnostics. The measured 128 prototype is deferred.
+
 R6 discovers bounded schema-1 manifests under the application deployment Extensions root, checks
 required/optional host contracts before activation and never scans/executes arbitrary DLLs. Exact
 trusted factory registration is needed for executable providers. Uses block disable until work and
@@ -371,7 +385,26 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Current L0/L1/L2/L3: **SEQ-SAMPLER-VELOCITY-LAYERS-F1, 2026-10-20**. Full Release solution build has
+Current L0/L1/L2/L3: **SEQ-AUDIO-POLYPHONY-F1, 2026-10-20**. Final full Release build has zero
+warnings/errors (**10.61 s**); **2076/2076** tests pass, zero skips, one thread (**91.486 s CLI**).
+Final focused Polyphony/StepSequencer/ArtifactRetention checks pass **138/138** (**16.232 s**);
+the actual default Desktop coordinator's 64-voice Pattern/Song check passes separately. Final
+ownership/GraphRealtime checks pass 68/68, including safe live-capacity shrink refusal. The prototype
+passes 55 numerical/lifecycle cases at up to 128; final product tests admit through 64 and explicitly
+refuse 65/96/127/128. All nine <=32-voice benchmark Songs retain exact baseline PCM hashes.
+The first L3's obsolete capacity assertions and OS process-snapshot refusals, 5192-byte Arrangement
+and 224-byte Mixer allocation observations, synthetic timing excursions and 128 pressure failures remain in
+the [report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md). Green tests do not attribute or close them.
+All six ordinary physical 64-voice cases pass through Samsung USB C Earphones, 48-kHz stereo,
+10-ms period: Process p99 1.09–1.36 ms, worst service 1.85 ms, zero bytes/misses, five exact offline
+capture comparisons and retained live epoch; all states release after join. No new real-window GUI,
+native mouse/keyboard, acoustic or all-device acceptance follows. Pressure is reported separately.
+All six bounded 64-voice GC/control physical cases also pass the fixed criteria (worst full service
+5.36 ms); four original 32-voice pressure controls pass. The 128 prototype misses hundreds of periods
+and fails finite-time completion in five scenarios. These scoped checks do not close historical R4-F2
+pressure, scheduler/GC attribution, maximum-channel or all-device acceptance.
+
+Previous L0/L1/L2/L3: **SEQ-SAMPLER-VELOCITY-LAYERS-F1, 2026-10-20**. Full Release solution build has
 zero warnings/errors (**25.77 s**, final incremental **15.32 s**). **370/370** related checks pass,
 zero skips (**8.486 s CLI**); the final targeted Sampler/Reader/ArtifactRetention run passes
 **100/100**, zero skips (**47.791 s CLI**). Thirty-two new expanded cases verify selected recording
@@ -746,8 +779,8 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. Velocity Layers F1's final full Release build and
-**2026/2026** suite replace the previous baseline; earlier failed attempts remain in its report.
+Completed repository tasks since this L3: **0**. Polyphony F1's final full Release build and
+**2076/2076** suite replace the previous baseline; earlier failed attempts remain in its report.
 The previous L3, Piano tools F1, includes all **1913** cases:
 new Quantize/Scale/view/live PCM and prior repeat/publication plus note/channel/history, workspace, Pattern/Song/
 Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier
@@ -802,7 +835,7 @@ platform acceptance remain separate; later modulation or synthesis families need
 
 Finish wider Playlist/container/warp and compact editor work only through their scoped owners.
 Audio is resident, not streamed: 512 MiB per source/unique audible Audio Clip PCM, separate 128 MiB
-Pattern PCM, shared 32 voices. Old prepared states, waveforms/codec/UI and managed-media/history disk
+Pattern PCM, shared 64 voices. Old prepared states, waveforms/codec/UI and managed-media/history disk
 consume more; no global media quota. MP3/FLAC use Windows-only Media Foundation via NAudio, not a
 portable universal decoder. Surround, tempo following and warp maps are absent; bounded local stretch
 has material/range/budget limits documented above. Sections are organization,

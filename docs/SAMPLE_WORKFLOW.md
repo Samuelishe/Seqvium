@@ -34,7 +34,7 @@ trimming, tempo stretching, preroll or state captured from live playback. An ove
 result is refused with a request to lower local Gain. Output must fit the existing **16 MiB** managed
 sampler WAV limit including header (about **87.38 s stereo**, **174.76 s mono**); a longer Pattern/tail
 is refused before rendering rather than truncated. Source decoding, graph/event/scratch budgets and
-the shared 32-voice ceiling still apply.
+the shared 64-voice ceiling still apply.
 
 Preparation freezes canonical state and media roots before yielding and validates immutable managed
 source hashes. Unknown local sound/Part/note/graph state, missing/corrupt sources, unsupported nodes,
