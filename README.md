@@ -53,7 +53,8 @@ for the logo, typography, alternative directions and publication resources.
   or pitched WAV samples. Linked hats can choke each other. Play hits in the Drum Voice editor over
   your running Pattern or Song to shape sounds by ear; its local Stop leaves the music playing.
 - Create basses, leads, pads and plucks with the built-in polyphonic **Synth**. Choose two waveforms,
-  blend/detune them, shape ADSR and low-pass cutoff/resonance while a held preview keeps sounding. Factory
+  blend/detune them, shape amplitude and filter ADSR, velocity brightness and Pitch/Cutoff LFO while
+  a held preview keeps sounding. Factory
   sounds are starting points; save the edited instrument with the project, without an external WAV.
 - Arrange overlapping Patterns and Audio Clips together. Name/color the 32 organizational tracks,
   use track Mute/Solo, snap, zoom, overview navigation, seek and ruler-range loops.

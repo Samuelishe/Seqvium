@@ -584,6 +584,16 @@ canvas/interaction review remains required independently of pure tests and a qui
 
 ## Subtractive Synth sound design
 
+Filter ADSR/Amount/Velocity sensitivity and LFO use two compact initially collapsed sections
+in the same Source editor. The independent filter curve and exact fields edit the same parameters.
+Amount uses signed octaves, Velocity sensitivity octaves, LFO Pitch cents and LFO Cutoff octaves;
+only the selected destination's depth is shown. Original oscillator, amplitude and preview
+controls retain their positions and local scrolling. The pinned preview offers Soft/Medium/Strong
+velocity (25/60/100%) for the next Hold. Explicit Hold with a changed velocity starts a new note
+on the resident output; parameter edits and Undo/Redo preserve an existing held note.
+Evolving Pad, Expressive Lead and Velocity Pluck append actual parameter snapshots without
+renaming/reordering the original four presets. No-op optional-default edits create no Undo.
+
 Rack's Add synth creates an empty melodic channel and opens its specialized Source editor. It adds
 no notes or demo song. The channel Sound Editor action and Source-node double-click address that
 same shared sound. New synth Patterns prefer Piano Roll; remembered explicit editor choices remain

@@ -14,8 +14,11 @@ dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll pol
 dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll polyphony physical .artifacts/polyphony/fixtures .artifacts/polyphony/pressure 64 background
 ```
 
-An optional final comma-separated workload list selects `pcm,synth,release,mixed,dense,live`.
-Low counts below 32 run only PCM. Baseline uses a preserved unmodified 32-slot Core/Windows binary
+An optional final comma-separated workload list selects `pcm,synth,release,mixed,dense,live`,
+plus F2 `synth-expression` (filter ADSR/Velocity/filter LFO) and `synth-vibrato` (filter ADSR/Velocity/pitch LFO).
+Low counts below 32 admit PCM and these three Synth cases. Expression fixtures use a 400-ms
+amplitude release inside the existing one-second loop, avoiding accidental >64 tail overlap.
+Baseline uses a preserved unmodified 32-slot Core/Windows binary
 beside this harness; do not replace its Core with the candidate. The accepted executable refuses
 65/96/127/128 rather than stealing notes. The [report](../../docs/experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md)
 records the separately retained 128-slot prototype and its failed pressure acceptance.
@@ -46,6 +49,18 @@ Every requested scenario writes JSON, including failures, and any refused/failed
 Raw artifacts and frozen baseline/prototype binaries remain ignored local evidence, not product media.
 Use a fresh output directory for each observation and preserve failures. One endpoint cannot
 establish general pressure, acoustic or all-computer acceptance.
+
+## Expressive Synth examples
+
+Use fresh fixture/output directories:
+
+```text
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll polyphony cpu .artifacts/synth-f2/fixtures .artifacts/synth-f2/cpu 1,8,32,64 none synth,synth-expression,synth-vibrato
+dotnet tools/Seqvium.DeviceCheck/bin/Release/net10.0/Seqvium.DeviceCheck.dll synth-examples .artifacts/synth-f2/examples
+```
+
+The latter writes five original short phrases as project/WAV pairs through production Seqvium export,
+with sample format, peak/RMS, difference RMS and SHA256 in its local audit. It changes no official demo.
 
 ## Drum play-along
 

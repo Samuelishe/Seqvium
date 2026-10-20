@@ -83,6 +83,7 @@ internal static class DeviceCheck
     {
         string mode = args.Length == 0 ? "smoke" : args[0];
         if (mode == "polyphony") return await PolyphonyCheck.Run(args[1..]);
+        if (mode == "synth-examples" && args.Length == 2) return await SynthExamples.Run(Path.GetFullPath(args[1]));
         if (mode == "mixer-project")
         {
             if (args.Length != 5)

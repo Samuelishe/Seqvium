@@ -105,7 +105,8 @@ public sealed partial class RealtimeSampler : IDisposable
             state.Plan.Notes.Length != 1 || state.Plan.Notes[0].Synth is null ||
             state.Authority != Volatile.Read(ref _authority) || Volatile.Read(ref _stop) > state.StopAtPublication)
             return false;
-        var parameters = SynthVoice.Prepare(sound, SampleRate, pitch);
+        var parameters = SynthVoice.Prepare(sound, SampleRate, pitch) with
+            { Velocity = state.Plan.Notes[0].Synth!.Velocity };
         Volatile.Write(ref _synthAuditionUpdate, new(state.Authority, Volatile.Read(ref _stop), parameters));
         return true;
     }

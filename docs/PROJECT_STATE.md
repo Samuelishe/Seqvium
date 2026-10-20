@@ -7,7 +7,18 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0012**, **SEQ-AUDIO-POLYPHONY-F1 — Scalable Musical Polyphony**.
+Product alpha **0.1.16.0013**, **SEQ-SYNTH-EXPRESSIVENESS-F2 — Expressive Subtractive Synth**.
+The existing 64-voice polyBLEP instrument adds independent signed filter ADSR, sine Pitch/Cutoff LFO
+and per-NoteOn velocity brightness. Optional parameter intent selectively requires Reader 1.15;
+the ten-key Synth, original presets and neutral PCM remain exact. The same Source editor adds
+collapsed expression groups, independent curve/exact controls, next-note preview Velocity and three
+appended presets. Hold edits/cancel/history keep voice/output ownership; live releases freeze their
+duration. Bounded worker lookups, arithmetic pitch modulation and analytical cold-seek phase use
+the existing OfflineSampler. [Report](experiments/SEQ-SYNTH-EXPRESSIVENESS-F2_REPORT.md) owns
+independent numerical, full Release, GUI/native, physical and performance evidence and limitations.
+Earlier pressure failures also occur in a neutral control; final bounded passes do not close R4-F2.
+
+Previous **0.1.16.0012**, **SEQ-AUDIO-POLYPHONY-F1 — Scalable Musical Polyphony**.
 Pattern, Song, Audio Clips, WAV and R8 share 64 musical voices through the existing Desktop renderer.
 An ordered active-slot mask preserves exact summation and lowest-free-slot ownership; prepared
 NoteOff indices and a worker canonical-note lookup reduce event/repeat work. Graph preflight and
@@ -779,8 +790,14 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **0**. Polyphony F1's final full Release build and
-**2076/2076** suite replace the previous baseline; earlier failed attempts remain in its report.
+Completed repository tasks since this L3: **0**. Expressive Synth F2's final full Release build
+(zero warnings/errors) and **2119/2119** serial suite (98.519 s CLI, zero skips) replace the
+2076-case Polyphony F1 baseline. The F2 report retains initial stale-reader fixture failures,
+117 focused Synth/Automation checks, actual localized editor/native/physical evidence,
+64-voice ordinary/GC-control measurements and earlier failed pressure/control runs.
+The final next-note preview-velocity/pitch-retune binding refinement reuses that DSP/Reader L3;
+its affected build, 148 focused tests and actual GUI/physical checks pass. The repeat native attempt
+is foreground-refused; earlier exact Filter Amount native delivery is separately established.
 The previous L3, Piano tools F1, includes all **1913** cases:
 new Quantize/Scale/view/live PCM and prior repeat/publication plus note/channel/history, workspace, Pattern/Song/
 Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier
@@ -829,7 +846,7 @@ Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
-Continuous Synth preview, Multisample Key Mapping and Velocity Layers F1 are implemented. Owner listening/aesthetic
+Expressive Synth F2, continuous Synth preview, Multisample Key Mapping and Velocity Layers F1 are implemented. Owner listening/aesthetic
 review and broader pressure/
 platform acceptance remain separate; later modulation or synthesis families need their own scope.
 

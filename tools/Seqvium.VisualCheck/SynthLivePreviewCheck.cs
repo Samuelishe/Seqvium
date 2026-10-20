@@ -104,7 +104,7 @@ internal static partial class Program
                 });
             }
 
-            var envelope = pane.GetVisualDescendants().OfType<SynthEnvelopePlot>().Single();
+            var envelope = pane.GetVisualDescendants().OfType<SynthEnvelopePlot>().Single(p => !p.Filter);
             envelope.BringIntoView();
             await refresh();
             var envelopeBefore = workflow.State.Snapshot;

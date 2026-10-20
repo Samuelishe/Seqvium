@@ -31,7 +31,11 @@ internal sealed class SynthPaneContent : Grid, IDisposable
     private readonly TextBlock _status = new() { Classes = { "warning", "caption" }, TextWrapping = TextWrapping.Wrap };
     private readonly ComboBox _presets = new() { MinWidth = 160 };
     private readonly ComboBox _note = new() { Width = 92, Height = 40, MaxDropDownHeight = 260 };
+    private readonly ComboBox _velocity = new() { Width = 150 };
+    private readonly ComboBox _lfoTarget = new() { MinWidth = 150 };
     private readonly SynthEnvelopePlot _envelope;
+    private readonly SynthEnvelopePlot _filterEnvelope;
+    private readonly Control _pitchDepth, _cutoffDepth;
     private readonly List<(TextBlock Text, string Key)> _labels = [];
 
     private readonly Dictionary<string, (GainDialControl Dial, TextBox Field, SynthVoice.Parameter Parameter)>
@@ -48,6 +52,7 @@ internal sealed class SynthPaneContent : Grid, IDisposable
     private long _generation = -1;
     private ImmutableDictionary<string, decimal>? _draft;
     private bool _refreshing, _disposed, _held, _gateHeld, _closed;
+    private decimal _heldVelocity = .6m;
     private HostPreferences? _displayedPreferences;
     private readonly HashSet<string> _dirtyFields = [];
     internal Task PendingCommand { get; private set; } = Task.CompletedTask;
@@ -60,6 +65,8 @@ internal sealed class SynthPaneContent : Grid, IDisposable
     private Preview? _nextPreview;
     internal Task PendingPreview { get; private set; } = Task.CompletedTask;
     private ImmutableDictionary<string, decimal> Values => _draft ?? _sound?.Parameters ?? SynthVoice.Defaults;
+    private decimal Value(string key) => SynthVoice.Value(Values, key);
+    private decimal AuditionVelocity => _velocity.SelectedIndex switch { 0 => .25m, 2 => 1, _ => .6m };
 
     // Visual availability belongs to this complete observation. Reading a newer owner generation
     // midway through projection would briefly disable unrelated controls. Actions still revalidate.
@@ -95,7 +102,7 @@ internal sealed class SynthPaneContent : Grid, IDisposable
             _draft = SynthVoice.Presets[_presets.SelectedIndex - 1].Values;
             Run(CommitAsync);
         };
-        var body = new Grid { RowDefinitions = new("Auto,Auto,*,Auto") };
+        var body = new Grid { RowDefinitions = new("Auto,Auto,*,Auto,Auto,Auto") };
         body.Bind(RowSpacingProperty, this.GetResourceObservable("Space.Section"));
         var oscillators = new WrapPanel { Orientation = Orientation.Horizontal };
         for (int oscillator = 0; oscillator < 2; oscillator++)
@@ -155,6 +162,43 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         foreach (var key in new[] { "attack", "decay", "sustain", "release" }) adsr.Children.Add(Parameter(key));
         SetRow(adsr, 3);
         body.Children.Add(adsr);
+        _filterEnvelope = new(shell) { Filter = true, Height = 112 };
+        _filterEnvelope.Begin = Begin;
+        _filterEnvelope.Preview += Set;
+        _filterEnvelope.Completed += () => Run(CommitAsync);
+        _filterEnvelope.Cancelled += Cancel;
+        var filterBody = new StackPanel();
+        filterBody.Children.Add(_filterEnvelope);
+        var filterParameters = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Center };
+        foreach (string key in new[] { "filterAttack", "filterDecay", "filterSustain", "filterRelease", "filterAmount", "velocityCutoff" })
+            filterParameters.Children.Add(Parameter(key));
+        filterBody.Children.Add(filterParameters);
+        var filter = new Expander { Header = Label("FilterEnvelope", "section"), Content = filterBody,
+            HorizontalAlignment = HorizontalAlignment.Stretch };
+        Identify(filter, "FilterEnvelopeGroup");
+        SetRow(filter, 4); body.Children.Add(filter);
+        var lfoBody = new StackPanel();
+        var targetRow = new StackPanel { Orientation = Orientation.Horizontal, Classes = { "parameterRow" } };
+        targetRow.Children.Add(Label("lfoTarget", "caption"));
+        targetRow.Children.Add(_lfoTarget);
+        Identify(_lfoTarget, "LfoTarget");
+        _lfoTarget.SelectionChanged += (_, _) =>
+        {
+            if (_refreshing) return;
+            if (!Begin()) { RefreshValues(); return; }
+            _draft = Values.SetItem("lfoTarget", _lfoTarget.SelectedIndex);
+            Run(CommitAsync);
+        };
+        lfoBody.Children.Add(targetRow);
+        var lfoParameters = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Center };
+        lfoParameters.Children.Add(Parameter("lfoRate"));
+        _pitchDepth = Parameter("lfoPitch"); lfoParameters.Children.Add(_pitchDepth);
+        _cutoffDepth = Parameter("lfoCutoff"); lfoParameters.Children.Add(_cutoffDepth);
+        lfoBody.Children.Add(lfoParameters);
+        var lfo = new Expander { Header = Label("Lfo", "section"), Content = lfoBody,
+            HorizontalAlignment = HorizontalAlignment.Stretch };
+        Identify(lfo, "LfoGroup");
+        SetRow(lfo, 5); body.Children.Add(lfo);
         var scroll = new ScrollViewer
         {
             Content = body, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled
@@ -179,12 +223,14 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         _note.SelectionChanged += (_, _) =>
         {
             if (!_refreshing && _held && _gateHeld && _target is { } target)
-                Run(async () => { await _workflow.HoldSynthAsync(target, _generation, _note.SelectedIndex, .8m); });
+                Run(async () => { await _workflow.HoldSynthAsync(target, _generation, _note.SelectedIndex, _heldVelocity); });
         };
         audition.Children.Add(Action("Hold", "Play", async () =>
         {
             if (_target is not { } target) return;
-            _held = await _workflow.HoldSynthAsync(target, _generation, _note.SelectedIndex, .8m);
+            decimal velocity = AuditionVelocity;
+            _held = await _workflow.HoldSynthAsync(target, _generation, _note.SelectedIndex, velocity);
+            if (_held) _heldVelocity = velocity;
             _gateHeld = _held;
             if (!_held) Feedback(_workflow.State.Detail ?? "Piano.AuditionUnavailable");
         }));
@@ -198,13 +244,21 @@ internal sealed class SynthPaneContent : Grid, IDisposable
             await _workflow.StopSamplerAsync();
             _held = _gateHeld = false;
         }));
-        var footer = new Border { Child = audition, Padding = new(0, 8, 0, 0), BorderThickness = new(0, 1, 0, 0) };
+        var footerBody = new StackPanel { Classes = { "tight" } };
+        var velocityRow = new StackPanel { Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Center, Classes = { "parameterRow" } };
+        velocityRow.Children.Add(Label("Velocity", "caption")); velocityRow.Children.Add(_velocity);
+        _velocity.SelectedIndex = 1;
+        Identify(_velocity, "Velocity");
+        footerBody.Children.Add(velocityRow); footerBody.Children.Add(audition);
+        var footer = new Border { Child = footerBody, Padding = new(0, 8, 0, 0), BorderThickness = new(0, 1, 0, 0) };
         footer.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Border.Default"));
         SetRow(footer, 2);
         Children.Add(footer);
         SizeChanged += (_, _) =>
         {
             _envelope.Cancel();
+            _filterEnvelope.Cancel();
             foreach (var p in _parameters.Values) p.Dial.Cancel();
         };
     }
@@ -255,7 +309,7 @@ internal sealed class SynthPaneContent : Grid, IDisposable
 
     private Control Parameter(string key)
     {
-        var parameter = SynthVoice.Parameters.Single(p => p.Key == key);
+        var parameter = SynthVoice.Parameters.Concat(SynthVoice.ExpressionParameters).Single(p => p.Key == key);
         var dial = new GainDialControl(_shell)
             { Width = 52, Height = 52, CenterText = "", HasRecessedWell = true, Focusable = true };
         var field = new TextBox
@@ -268,7 +322,7 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         label.HorizontalAlignment = HorizontalAlignment.Center;
         var unit = new TextBlock
             { Text = parameter.Unit, Classes = { "caption" }, VerticalAlignment = VerticalAlignment.Center };
-        if (parameter.Unit is "ms" or "Hz") _labels.Add((unit, "Unit." + parameter.Unit));
+        if (parameter.Unit is "ms" or "Hz" or "oct") _labels.Add((unit, "Unit." + parameter.Unit));
         var exact = new Grid
         {
             Width = 126, ColumnDefinitions = new("21,84,21"), ColumnSpacing = 0, Classes = { "parameterRow" },
@@ -315,7 +369,7 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         };
         field.LostFocus += (_, _) =>
         {
-            if (!_refreshing && field.Text != Display(parameter, Values[key])) CommitField();
+            if (!_refreshing && field.Text != Display(parameter, Value(key))) CommitField();
         };
 
         void CommitField()
@@ -353,12 +407,12 @@ internal sealed class SynthPaneContent : Grid, IDisposable
     }
 
     private static decimal Normalize(SynthVoice.Parameter p, decimal value) =>
-        p.Key is "cutoff" or "attack" or "decay" or "release"
+        p.Unit == "ms" || p.Key is "cutoff" or "lfoRate"
             ? (decimal)(Math.Log(1 + (double)(value - p.Minimum)) / Math.Log(1 + (double)(p.Maximum - p.Minimum)))
             : (value - p.Minimum) / (p.Maximum - p.Minimum);
 
     private static decimal Denormalize(SynthVoice.Parameter p, decimal value) => decimal.Round(p.Minimum +
-        (p.Key is "cutoff" or "attack" or "decay" or "release"
+        (p.Unit == "ms" || p.Key is "cutoff" or "lfoRate"
             ? (decimal)(Math.Exp((double)value * Math.Log(1 + (double)(p.Maximum - p.Minimum))) - 1)
             : value * (p.Maximum - p.Minimum)), 3);
 
@@ -459,6 +513,7 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         if (changed)
         {
             _envelope.Cancel();
+            _filterEnvelope.Cancel();
             foreach (var p in _parameters.Values) p.Dial.Cancel();
             _draft = null;
             _dirtyFields.Clear();
@@ -509,6 +564,12 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         _status.Text = _feedbackKey is null ? "" : _shell[_feedbackKey];
         _status.IsVisible = !string.IsNullOrEmpty(_status.Text);
         _note.IsEnabled = Ready;
+        _velocity.IsEnabled = Ready;
+        int selectedVelocity = _velocity.SelectedIndex;
+        _velocity.ItemsSource = new[] { _shell["Synth.Soft"], _shell["Synth.Medium"], _shell["Synth.Strong"] };
+        _velocity.SelectedIndex = selectedVelocity < 0 ? 1 : selectedVelocity;
+        AutomationProperties.SetName(_velocity, _shell["Synth.Velocity"]);
+        ToolTip.SetTip(_velocity, _shell["Synth.NextVelocity"]);
         ToolTip.SetTip(_note, _shell["Synth.Note"]);
         AutomationProperties.SetName(_note, _shell["Synth.Note"]);
         AutomationProperties.SetName(_envelope, _shell["Synth.Envelope"]);
@@ -532,14 +593,14 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         _refreshing = true;
         foreach (var (key, p) in _parameters)
         {
-            p.Dial.Amplitude = Normalize(p.Parameter, Values[key]);
+            p.Dial.Amplitude = Normalize(p.Parameter, Value(key));
             p.Dial.DefaultAmplitude = Normalize(p.Parameter, p.Parameter.Default);
             p.Dial.IsEnabled = p.Field.IsEnabled = Ready;
-            if (!_dirtyFields.Contains(key)) p.Field.Text = Display(p.Parameter, Values[key]);
+            if (!_dirtyFields.Contains(key)) p.Field.Text = Display(p.Parameter, Value(key));
             p.Dial.InvalidateVisual();
             AutomationProperties.SetName(p.Field, _shell["Synth." + key]);
             AutomationProperties.SetName(p.Dial, _shell["Synth." + key]);
-            string unit = p.Parameter.Unit is "ms" or "Hz"
+            string unit = p.Parameter.Unit is "ms" or "Hz" or "oct"
                 ? _shell["Synth.Unit." + p.Parameter.Unit]
                 : p.Parameter.Unit;
             string range = Display(p.Parameter, p.Parameter.Minimum) + "–" + Display(p.Parameter, p.Parameter.Maximum) +
@@ -573,12 +634,22 @@ internal sealed class SynthPaneContent : Grid, IDisposable
         _envelope.Values = Values;
         _envelope.IsEnabled = Ready;
         _envelope.InvalidateVisual();
+        _filterEnvelope.Values = Values;
+        _filterEnvelope.IsEnabled = Ready;
+        _filterEnvelope.InvalidateVisual();
+        _lfoTarget.ItemsSource = new[] { _shell["Synth.Off"], _shell["Synth.Pitch"], _shell["Synth.CutoffTarget"] };
+        _lfoTarget.SelectedIndex = (int)Value("lfoTarget");
+        _lfoTarget.IsEnabled = Ready;
+        AutomationProperties.SetName(_lfoTarget, _shell["Synth.lfoTarget"]);
+        _pitchDepth.IsVisible = Value("lfoTarget") == 1;
+        _cutoffDepth.IsVisible = Value("lfoTarget") == 2;
         _refreshing = false;
     }
 
     internal void Suspend()
     {
         _envelope.Cancel();
+        _filterEnvelope.Cancel();
         foreach (var p in _parameters.Values) p.Dial.Cancel();
         Cancel();
         StopOwnedPreview();
@@ -603,6 +674,7 @@ internal sealed class SynthPaneContent : Grid, IDisposable
     {
         if (_disposed) return;
         _envelope.Cancel();
+        _filterEnvelope.Cancel();
         foreach (var p in _parameters.Values) p.Dial.Cancel();
         _disposed = true;
     }

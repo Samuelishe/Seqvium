@@ -102,6 +102,8 @@ public sealed class PreparedSampler : IDisposable
     public int DecodedBytes { get; }
 
     public int ScratchBytes => Automation.Sum(a => a.StorageBytes + sizeof(double)) + (Graph?.ScratchBytes ?? 0) +
+                               Notes.Count(n => n.Synth is not null) * 256 +
+                               (Notes.Any(n => n.Synth?.Modulation.Active == true) ? SynthModulation.Tables.StorageBytes : 0) +
                                (Graph?.Mixer is { } mixer ? mixer.Strips.Length * 2048 + mixer.Taps.Length * 64 : 0);
 
     public ImmutableArray<AudioContribution> Contributions => Graph?.Contributions ?? [];
@@ -162,7 +164,7 @@ public static class SamplerPreparation
     {
         if (channels is not (1 or 2) || intensity is < 0 or > 1)
             throw new ArgumentOutOfRangeException(nameof(intensity));
-        var synth = SynthVoice.Prepare(sound, sampleRate, pitch);
+        var synth = SynthVoice.Prepare(sound, sampleRate, pitch) with { Velocity = (double)intensity };
         // A held preview has a finite safety gate, without PCM proportional to its duration.
         long gate = sampleRate * (held ? 30L : 1L), end = gate + (held ? sampleRate * 8L : synth.Release);
         return new(Guid.Empty, sampleRate, channels, 1, 0, end, 0,
@@ -340,7 +342,8 @@ public static class SamplerPreparation
                     if (!note.AdditionalData.IsEmpty)
                         throw new NotSupportedException("Unknown note dependencies are not executable.");
                     bool drum = DrumVoice.Supports(sound);
-                    var synth = SynthVoice.Supports(sound) ? SynthVoice.Prepare(sound, sampleRate, note.Pitch) : null;
+                    var synth = SynthVoice.Supports(sound)
+                        ? SynthVoice.Prepare(sound, sampleRate, note.Pitch) with { Velocity = (double)note.Intensity } : null;
                     if (!drum && synth is null)
                     {
                         var selected = SamplerKeymap.Select(sound, note.Pitch, note.Intensity);

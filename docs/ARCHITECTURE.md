@@ -484,6 +484,15 @@ graph model/history, DSP, assembly, plugin registry or docking framework is intr
 
 ## Built-in instrument ownership
 
+F2 expression stays inside the same SynthVoice/PreparedSynth/SynthState boundary.
+Immutable SynthModulation holds bounded filter ADSR/LFO/velocity intent and worker-prepared
+shared rate tables; fixed voice state owns the evolving envelope, phase, smoothing and frozen
+NoteOff release. Song automation continues to own base Cutoff; modulation composes after it.
+No modulation matrix, new event model, scheduler or preview owner is introduced. The Source
+editor's Velocity selection belongs to the next transient NoteOn, never the document.
+See [audio](AUDIO_ENGINE.md#expressive-subtractive-synth-seq-synth-expressiveness-f2) and
+[format](PROJECT_FORMAT.md#synth-expression-reader-115).
+
 The polyphonic subtractive synth uses the same SoundDefinition, canonical notes, Source bindings,
 prepared plans, fixed voice slots and transport. SynthVoice owns validated versioned parameters,
 factory snapshots and worker-prepared coefficients; each OfflineSampler voice owns independent

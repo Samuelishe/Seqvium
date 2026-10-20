@@ -306,6 +306,13 @@ the regular application just to report that failure. It is a lifecycle exception
 
 ## Synth instrument components
 
+Expression F2 reuses the standard Expander for independent Filter ADSR and LFO sections.
+SynthEnvelopePlot's filter variant maps existing handles to optional filter parameters;
+it is an analytical normalized envelope, not measured cutoff. Exact fields/dials retain the
+same axis/unit column and validation. LFO uses an ordinary localized destination ComboBox with
+one visible depth/units pair. A standard Velocity ComboBox adds one compact pinned preview row.
+No new palette, material, template, global setting or technical status counters are added.
+
 SynthPaneContent uses existing Recess materials, GainDialControl, standard buttons/ComboBox
 and numeric parameter rows in one unboxed instrument surface. Paired oscillator regions retain
 four recognizable shape choices even at compact width; selected shape adds a stronger contour and

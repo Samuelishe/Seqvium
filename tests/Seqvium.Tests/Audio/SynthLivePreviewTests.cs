@@ -8,6 +8,33 @@ namespace Seqvium.Tests;
 public sealed class SynthLivePreviewTests
 {
     [Theory]
+    [InlineData("filterAttack", 5000)] [InlineData("filterDecay", 0)]
+    [InlineData("filterSustain", 0)] [InlineData("filterAmount", -4)]
+    [InlineData("velocityCutoff", 8)] [InlineData("lfoRate", 20)]
+    [InlineData("lfoCutoff", 4)] [InlineData("lfoTarget", 0)] [InlineData("lfoPitch", 75)]
+    public async Task ExpressionLiveDraftsAreAudibleWithoutNoteOnOrDeviceReplacement(string key, int value)
+    {
+        var values = SynthVoice.Defaults.SetItem("filterAttack", 100).SetItem("filterDecay", 900)
+            .SetItem("filterSustain", .35m).SetItem("filterAmount", 3).SetItem("velocityCutoff", 1)
+            .SetItem("lfoTarget", key == "lfoPitch" ? 1 : 2).SetItem("lfoCutoff", 1).SetItem("lfoPitch", 15);
+        using var f = new SynthVoiceTests.Fixture(values);
+        using var actual = new RealtimeSampler(48000, 1, 128); using var baseline = new RealtimeSampler(48000, 1, 128);
+        foreach (var rt in new[] { actual, baseline })
+        {
+            using var request = new NoteAuditionRequest(rt, f.Document, f.Sound, 60.375m, .5m, held: true);
+            await request.PrepareAsync(TestContext.Current.CancellationToken); Assert.Equal(SamplerPublication.Accepted, request.Publish());
+        }
+        var a = new float[128]; var b = new float[128];
+        for (int i = 0; i < 100; i++) { actual.Process(a); baseline.Process(b); }
+        long epoch = actual.TransportEpoch; var snapshot = f.Document.Current;
+        Assert.True(actual.UpdateSynthAudition(f.Definition with { Parameters = values.SetItem(key, value) }, 60.375m));
+        for (int i = 0; i < 100; i++) { actual.Process(a); baseline.Process(b); }
+        Assert.True(a.Zip(b).Sum(x => Math.Abs(x.First - x.Second)) > .001, "No live expression change: " + key);
+        Assert.Equal(epoch, actual.TransportEpoch); Assert.Equal(1, actual.PreparedStatesCreated);
+        Assert.Equal(1, actual.ActiveVoices); Assert.Equal(snapshot, f.Document.Current);
+    }
+
+    [Theory]
     [InlineData("wave1", 0)]
     [InlineData("wave2", 3)]
     [InlineData("mix", 1)]

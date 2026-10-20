@@ -44,6 +44,12 @@ internal sealed class PolyphonyFixture : IDisposable
                     .SetItem("loopStart", 128).SetItem("loopEnd", 3968).SetItem("loopEnabled", 1));
                 var synth = e.AddSound("Subtractive", SynthVoice.Algorithm);
                 e.SetSoundParameters(synth, SynthVoice.Defaults.SetItem("release", kind == "release" ? 6000 : 40));
+                if (kind is "synth-expression" or "synth-vibrato")
+                    e.SetSoundParameters(synth, SynthVoice.Defaults.SetItem("release", 400)
+                        .SetItem("filterAttack", 700).SetItem("filterDecay", 1100).SetItem("filterSustain", .3m)
+                        .SetItem("filterRelease", 450).SetItem("filterAmount", 4).SetItem("velocityCutoff", 2)
+                        .SetItem("lfoTarget", kind == "synth-vibrato" ? 1 : 2).SetItem("lfoRate", 5.5m)
+                        .SetItem("lfoPitch", 35).SetItem("lfoCutoff", 2));
                 var drum = e.AddSound("Kick", DrumVoice.Algorithm);
                 e.SetSoundParameters(drum, DrumVoice.Defaults.SetItem("decay", 60));
                 int parts = kind is "mixed" or "live" ? 3 : 1;
@@ -51,7 +57,7 @@ internal sealed class PolyphonyFixture : IDisposable
                 {
                     bool dense = kind == "dense", longRelease = kind == "release";
                     var sound = parts == 3 ? p == 0 ? pcm : p == 1 ? synth : drum
-                        : kind is "synth" or "release" ? synth : pcm;
+                        : kind is "synth" or "release" or "synth-expression" or "synth-vibrato" ? synth : pcm;
                     long length = longRelease ? 30720000 : 1920000;
                     var pattern = e.AddPattern($"{kind} {p}", new(length));
                     var part = e.AddPart(pattern, $"Instrument {p}", sound);

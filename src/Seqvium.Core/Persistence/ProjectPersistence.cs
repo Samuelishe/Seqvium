@@ -37,7 +37,7 @@ public static class ProjectPersistence
 {
     public const int MaximumBytes = 16 * 1024 * 1024;
     public const string WriterVersion = "0.2.0-r2-f1";
-    public const int ReaderMinor = 14;
+    public const int ReaderMinor = 15;
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
     private static bool HasReverb(ProjectState state) => state.Mixer is { } mixer &&
@@ -67,7 +67,8 @@ public static class ProjectPersistence
     {
         ProjectValidation.Validate(snapshot.State);
         bool hasGraphs = !snapshot.State.Graphs.IsEmpty || !snapshot.State.GraphAttachments.IsEmpty;
-        int required = snapshot.State.Sounds.Any(SamplerKeymap.HasVelocityIntent) ? 14 :
+        int required = snapshot.State.Sounds.Any(SynthVoice.HasExpressionIntent) ? 15 :
+            snapshot.State.Sounds.Any(SamplerKeymap.HasVelocityIntent) ? 14 :
             snapshot.State.Sounds.Any(SamplerKeymap.HasIntent) ? 13 :
             !snapshot.State.AutomationLanes.IsEmpty ? 12 :
             snapshot.State.Sounds.Any(SynthVoice.HasIntent) ? 11 :
@@ -143,6 +144,8 @@ public static class ProjectPersistence
             var file = node.Deserialize<ProjectFile>(Options) ??
                        throw new ProjectFormatException("Missing project structure.");
             ProjectValidation.Validate(file.State);
+            if (file.State.Sounds.Any(SynthVoice.HasExpressionIntent) && file.MinimumReaderMinor < 15)
+                throw new ProjectFormatException("Synth expression requires minimumReaderMinor >= 15.");
             if (file.State.Sounds.Any(SamplerKeymap.HasVelocityIntent) && file.MinimumReaderMinor < 14)
                 throw new ProjectFormatException("Sampler velocity layers require minimumReaderMinor >= 14.");
             if (file.State.Sounds.Any(SamplerKeymap.HasIntent) && file.MinimumReaderMinor < 13)
@@ -280,6 +283,12 @@ public static class ProjectPersistence
                         snapshot.State.ArrangementClips.IsEmpty && snapshot.State.ArrangementTracks.IsEmpty ? 1 : 2)
                 };
             document.SavedMediaDiagnostics = diagnostics;
+            if (snapshot.State.Sounds.Any(SynthVoice.HasExpressionIntent))
+                document.Compatibility = document.Compatibility with
+                {
+                    Minor = Math.Max(15, document.Compatibility.Minor),
+                    MinimumReaderMinor = Math.Max(15, document.Compatibility.MinimumReaderMinor)
+                };
             if (snapshot.State.Sounds.Any(SamplerKeymap.HasVelocityIntent))
                 document.Compatibility = document.Compatibility with
                 {

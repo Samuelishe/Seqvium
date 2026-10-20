@@ -240,10 +240,17 @@ bass setting. Choose **Warm Bass**, **Soft Pad**, **Bright Lead** or **Pluck** a
 Select two waveforms, adjust balance/detune, open the filter and shape amplitude with ADSR handles
 or exact values. The waveform drawings show oscillator shapes, not a scope.
 
-Choose a preview note and use **Hold**, **Release** and **Stop** while transport is stopped. Preview
+Expand **Filter · ADSR** to make a pad open slowly or a pluck close quickly. Amount can be positive
+or negative, in octaves. **Velocity → filter** makes softer notes darker while keeping the existing
+velocity volume response. Expand **LFO**, choose **Pitch** for vibrato or **Filter cutoff** for a
+repeating sweep, then set rate and depth. Try **Evolving Pad**, **Expressive Lead** or **Velocity
+Pluck** as starting points. Zero depths and Amount keep the original sound.
+
+Choose a preview note and Soft/Medium/Strong Velocity, then use **Hold**, **Release** and **Stop** while transport is stopped. Preview
 does not write notes. Turn knobs or drag ADSR while held to hear changes during the gesture; release
 the mouse to keep one Undo operation, or press Escape to restore the accepted sound. Presets and
 Undo/Redo keep the note sounding. Repeated Hold keeps it held; changing the selected note retunes it.
+Choosing another Velocity and pressing Hold starts a fresh note on the same output for comparison.
 Release plays the current release envelope; Stop ends preview and closes its output. Forgotten holds
 release after 30 seconds. Open **Piano Roll** from the channel actions to draw a melody or chord; the
 new synth also makes Piano Roll the default Pattern editor. Double-click its Source node or use

@@ -563,11 +563,12 @@ The owner-authorized built-in drum family is implemented under
 [report](experiments/SEQ-DRUM-INSTRUMENTS_REPORT.md). Further voices, click layers, user-defined
 choke groups and modulation remain follow-ups; built-in percussion does not complete or reorder R6/R7.
 Local Browser/find/audition/use is implemented; wider source/context integration remains future work.
-The first bounded polyphonic subtractive synth and specialized Source editor are implemented;
+The bounded polyphonic subtractive synth, filter ADSR, velocity brightness, sine Pitch/Cutoff LFO
+and specialized Source editor are implemented;
 [audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1) owns scope/limits and
 [the report](experiments/SEQ-SYNTH-F1_REPORT.md) owns verification. Richer synthesis remains later work.
 
-Wavetable/granular voices, path/LFO modulation and macro morphs remain exploratory under
+Wavetable/granular voices, path modulation, wider LFO routing and macro morphs remain exploratory under
 [I-006](IDEAS.md#i-006--expressive-synthesis-and-modulation-surfaces), beyond the implemented subtractive instrument.
 All future editors require equal Dark/Light expressive quality, shared materials, economical text
 and meaningful icons alongside supported parameters; dark appearance must not regress for Light.

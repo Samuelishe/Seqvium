@@ -291,7 +291,7 @@ public static class ArrangementPreparation
             int outputBuffer = bufferCount++;
             operations.Add(new(default, GraphOperationKind.Mix, outputBuffer, [.. outputs], -1));
             int scratch = checked(bufferCount * maximumPacketFrames * channels * sizeof(float) +
-                                  operations.Count * 256 + VoiceCapacity * 256);
+                                  operations.Count * 256 + VoiceCapacity * 512);
             if (scratch > GraphPreparation.MaximumScratchBytes)
                 throw new GraphPreparationException(GraphPreparationReasons.Budget);
             var combined = new PreparedGraph

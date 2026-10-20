@@ -38,6 +38,48 @@ transport epoch. Pattern mode, source preview and R8 local sampling use base set
 uses the same frozen executor, curve and smoothing. This is a replacement layer for two parameters,
 not general modulation, automation recording, tempo maps or arbitrary plugin control.
 
+## Expressive subtractive synth (SEQ-SYNTH-EXPRESSIVENESS-F2)
+
+The existing polyBLEP instrument adds an independent linear filter ADSR: A/D 0–5000 ms,
+S 0–1 and R 0–8000 ms, with signed Amount −8…+8 octaves. NoteOff releases from the current
+level, including Attack/Decay. Amplitude ADSR alone owns voice lifetime; no filter tail, voice,
+preroll buffer or audio latency is added. Live NoteOff freezes the actual filter level and its
+release duration; later ADSR edits cannot retime that release.
+
+One sine LFO runs at 0.1–20 Hz, with explicit Off/Pitch/Filter Cutoff destination. Pitch depth
+is 0–100 cents (peak deviation); Cutoff depth is 0–4 octaves. Both depths are retained independently,
+but only the selected destination executes. NoteOn starts sine phase at zero. Voice-owned phase
+advances independently of packet boundaries. Pitch changes oscillator increments, never canonical
+NoteEvent pitch. Cold seek restores LFO age and bounded analytical vibrato carrier phase, without
+historical filter preroll. A six-harmonic discrete sum executes only on nonzero-age reset;
+the bounded sixth-order pitch exponential uses arithmetic at audio rate. Its maximum depth is
+part of the approximation's validity boundary, not an extensible modulation API.
+
+Velocity sensitivity is 0–8 octaves. Canonical NoteOn intensity is frozen per prepared note.
+Full intensity keeps the base cutoff; softer notes lower it by `sensitivity * (1 - intensity)`
+octaves. The previous float NoteEvent.Intensity amplitude multiplier is unchanged.
+
+The composition is `clamp(baseHz * 2^(Amount * envelope + sensitivity * (velocity - 1) +
+cutoffLfoDepth * sine), 20, 18000)`. Enabled Song Cutoff automation supplies baseHz, replacing
+only the canonical base. Its existing prepared coefficient passes through a bounded inverse lookup
+before modulation; final host-rate coefficients are clamped and smoothed through the existing
+approximately 5-ms filter smoother. Zero combined offset bypasses coefficient conversion.
+Off/zero-depth/zero-Amount/zero-sensitivity instruments retain the exact F1 arithmetic and PCM.
+
+Private shared rate tables supply sine, cutoff ratios, inverse and final coefficients, initialized
+during worker preparation. No new audio-rate transcendental, allocation, lock or document read
+occurs. Tables reserve 458784 bytes per host rate (two bounded rate tables process-wide);
+per-note expression reserves 256 additional scratch bytes, fixed voice accounting 512 bytes per
+slot. Modulated plans charge 192 voice work units, neutral Synth 128. Existing scratch/work gates,
+deadlines, scheduler and 64-voice limit remain. Real release overlap beyond capacity is refused.
+
+The same kernel serves Source Hold, Pattern/Song, export and frozen R8 local Output before Mixer.
+Preview smooths depths, rate and destination transitions while keeping phase/integrators and
+the existing output. Cancel/history use the same mailbox. Accepted Pattern/Song sound edits keep
+the existing changed-voice retirement policy. [Reader 1.15](PROJECT_FORMAT.md#synth-expression-reader-115)
+gates optional intent; [the report](experiments/SEQ-SYNTH-EXPRESSIVENESS-F2_REPORT.md) separates
+numerical, GUI, physical and unresolved pressure evidence.
+
 ## Polyphonic subtractive synth (SEQ-SYNTH-F1)
 
 `core.subtractive-synth.polyblep-v1` is a built-in media-free SoundDefinition. Its two oscillators
@@ -57,9 +99,9 @@ PreparedNote carries immutable derived parameters; each existing fixed voice slo
 and two filter integrators. OfflineSampler executes identical DSP in realtime, Pattern/Song, local
 Source/Gain/Mix/Output, Mixer and export. No second scheduler, engine or document is introduced.
 The callback performs bounded arithmetic without preparation, I/O, allocation, locks or document
-access. Preflight charges 128 voice work units per frame when synth notes occur, plus existing
+access. Preflight charges 128 neutral Synth voice work units per frame (192 with F2), plus existing
 event/scratch/Mixer budgets. Graph polyphony is 64 with explicit capacity refusal; raw plans
-retain their existing limits. Scratch accounting reserves 256 bytes per voice slot, including
+retain their existing limits. Scratch accounting reserves 512 bytes per voice slot, including
 the inline live-preview smoothing state.
 
 Pattern loops retain releases across the musical boundary and preflight overlap with all sources.

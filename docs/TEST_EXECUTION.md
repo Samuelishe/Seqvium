@@ -421,6 +421,23 @@ listening or pressure acceptance. [Report](experiments/SEQ-FIRST-DRUM_REPORT.md)
 
 ## Polyphonic subtractive synth verification
 
+Expression F2 adds SynthExpressionTests and held/workflow regressions for exact neutral F1 PCM,
+an independent frozen F1 phase/filter oracle, normalized spectral movement, crossing-measured
+vibrato frequency/depth, original amplitude law, signed envelope/current-level NoteOff, frozen
+live release, per-sample automation/envelope/velocity/LFO composition, extremes, mono/stereo at
+44.1/48 kHz, packet/realtime parity, cold-seek vibrato phase, staggered voices/loops, unchanged-voice
+publication, R8 before Mixer, Song FX/WAV, selective Reader 1.15 and retained floors/opaque data.
+SynthWorkflowTests checks optional-default no-op history, F2 draft/cancel/Undo/Redo and explicit
+next-NoteOn velocity on the resident output. Allocation assertions retain strict zero.
+
+VisualCheck `synth-expression <output> [native] [audio]` exercises the production editor, localized
+two-theme ordinary/360×520 matrix, exact units/validation, independent curve, gestures and bounded
+native/physical Hold. DeviceCheck `polyphony` additionally accepts `synth-expression,synth-vibrato`
+at 1/8/32/64 voices; its fixed physical deadlines and byte counters are unchanged. `synth-examples`
+exports original comparison phrases through PatternWaveExport. Source/Reader/DSP risk justifies
+one final L3; [the report](experiments/SEQ-SYNTH-EXPRESSIVENESS-F2_REPORT.md) retains failed attempts
+and distinguishes ordinary output from unresolved pressure acceptance.
+
 Continuous-preview regressions additionally cover audible draft updates to every held parameter,
 Cutoff cancel convergence against an independent uninterrupted voice, preserved epoch/position,
 exact edited NoteOff/safety bounds at both rates, frozen release duration and primed zero callback

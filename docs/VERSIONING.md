@@ -179,6 +179,17 @@ retrieved only for explicit historical tasks.
 | `0.1.16.0010` | SEQ-R9-PIANO-BATCH-TRANSFORM-F1 | One BUILD for relative selected-note Transform and corrected pitch-caption alignment in the existing Piano editor. See checkpoint and report below. |
 | `0.1.16.0011` | SEQ-SAMPLER-VELOCITY-LAYERS-F1 | One BUILD within the existing multisample instrument line: Velocity-based recording selection, complete repeated-root import review, 2D mapping and source/instrument preview. Reader 1.14 gates only non-default Velocity intent. Evidence and limits are in the [report](experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md). |
 | `0.1.16.0012` | SEQ-AUDIO-POLYPHONY-F1 | One BUILD for the existing engine's 64-voice Pattern/Song/export/R8 capacity, ordered active-slot execution, bounded chord-event admission, faster repeat preparation and active/peak diagnostics. The measured 128 prototype is not accepted after pressure deadline failures. No project/reader change. The [report](experiments/SEQ-AUDIO-POLYPHONY-F1_REPORT.md) separates numerical, full Release, physical and pressure evidence and retains failed attempts. |
+| `0.1.16.0013` | SEQ-SYNTH-EXPRESSIVENESS-F2 | One BUILD within the existing polyBLEP Synth capability: independent signed filter ADSR, per-NoteOn velocity brightness, bounded sine Pitch/Cutoff LFO, continuous Source controls and three appended presets. Optional intent selectively requires Reader 1.15; historical ten-key Synth and neutral PCM remain exact. The [report](experiments/SEQ-SYNTH-EXPRESSIVENESS-F2_REPORT.md) owns full Release, independent numerical/old-reader, GUI/native/physical checks, 64-voice measurements and retained pressure failures. No Git publication. |
+
+### SEQ-SYNTH-EXPRESSIVENESS-F2 checkpoint
+
+`0.1.16.0012` → **`0.1.16.0013`**, one BUILD with no subordinate reset. This extends the existing
+instrument/editor/voice capability rather than selecting a new synthesis family or independently
+raising a debated PATCH. Actual parameter DSP, exact legacy behavior, Reader 1.15 intent isolation,
+localized editor, export, strict allocation and physical measurements justify the completed checkpoint.
+The final L3 is selected for DSP/persistence risk, not the version edit. Earlier pressure failures
+(including a neutral control), runtime allocation attribution, rejected 128 voices, subjective
+listening, owner aesthetics and wider platform acceptance remain separate. No stage/commit/push/tag.
 
 ### SEQ-AUDIO-POLYPHONY-F1 checkpoint
 

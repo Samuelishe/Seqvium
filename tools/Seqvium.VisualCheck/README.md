@@ -1,5 +1,19 @@
 # Desktop visual and lifecycle verification
 
+## Expressive Synth
+
+```text
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll synth-expression <absolute-output-under-.artifacts> native audio --timeout-seconds=180
+```
+
+The isolated production window checks initially collapsed Filter/LFO, appended presets, signed exact
+values, invalid input, no-op/gesture/curve history and cancellation, destination-specific depths,
+RU/EN × Dark/Light at ordinary and 360×520 pane sizes, rendered units/fields and pinned audition.
+Optional `audio` exercises continuous Hold/edit/Undo/Release/Stop; `native` separately attempts a
+guarded Windows exact Filter Amount. Its JSON distinguishes refusal/failure from successful native
+delivery. Actual renders, routed input, physical preview, CPU/device deadlines and listening remain
+separate. The existing `synth` route still covers the wider original instrument/editor workflow.
+
 ## Unfold Pattern repeats
 
 ```powershell

@@ -57,6 +57,33 @@ public sealed class SynthWorkflowTests
     }
 
     [Fact]
+    public async Task ExpressionGesturesPreserveHistoryAuthorityAndVelocityBelongsToNextNoteOn()
+    {
+        await using var f = new Fixture(); await f.Create(); var w = f.Workflow;
+        var original = f.Sound.Parameters; int undo = w.State.UndoCount;
+        Assert.False(await w.SetSynthParametersAsync(f.Target, w.State.Generation, original, original.SetItem("filterAmount", 0)));
+        Assert.Equal(undo, w.State.UndoCount); Assert.Equal(original, f.Sound.Parameters);
+        Assert.True(await w.HoldSynthAsync(f.Target, w.State.Generation, 60.375m, .25m)); f.Tick();
+        long epoch = f.Sampler.TransportEpoch; long position = f.Sampler.RenderPosition;
+        var draft = SynthVoice.Presets[4].Values.SetItem("lfoTarget", 1).SetItem("lfoPitch", 30);
+        Assert.True(await w.PreviewSynthParametersAsync(f.Target, w.State.Generation, draft)); f.Tick();
+        Assert.Equal(original, f.Sound.Parameters); Assert.Equal(undo, w.State.UndoCount);
+        Assert.True(await w.PreviewSynthParametersAsync(f.Target, w.State.Generation, null)); f.Tick();
+        Assert.True(await w.SetSynthParametersAsync(f.Target, w.State.Generation, original, draft)); f.Tick();
+        Assert.Equal(undo + 1, w.State.UndoCount);
+        Assert.True(await w.UndoAsync()); f.Tick(); Assert.Equal(original, f.Sound.Parameters);
+        Assert.True(await w.UndoAsync(redo: true)); f.Tick(); Assert.Equal(draft, f.Sound.Parameters);
+        Assert.Equal(epoch, f.Sampler.TransportEpoch); Assert.True(f.Sampler.RenderPosition > position);
+        Assert.Equal(1, f.Opens); Assert.Equal(1, f.Sampler.PreparedStatesCreated);
+        Assert.True(await w.HoldSynthAsync(f.Target, w.State.Generation, 60.375m, 1)); f.Tick();
+        Assert.Equal(1, f.Opens); Assert.Equal(1, f.Sampler.ActiveVoices);
+        Assert.Equal(2, f.Sampler.PreparedStatesCreated); // An explicit new velocity is a new NoteOn on the resident output.
+        Assert.Equal(undo + 1, w.State.UndoCount);
+        Assert.True(await w.ReleaseSamplerAsync()); f.Tick();
+        Assert.True(await w.StopSamplerAsync()); Assert.True(f.Output.Joined);
+    }
+
+    [Fact]
     public async Task CreationChoosesMelodicNavigationAndSharedEditsRejectStaleAbaAndMalformedParameters()
     {
         await using var workflow = new DesktopWorkflow(ProjectDocument.Create());

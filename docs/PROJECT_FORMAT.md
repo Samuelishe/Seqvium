@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 14. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 15. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## Channel copies and row order
@@ -90,10 +90,33 @@ properties at lane/target/point boundaries round-trip normally; unresolved targe
 retained intent, not a licence to tolerate arbitrary malformed target shapes or point ranges.
 History, selection, drafts, compiled coefficients, playhead and device state are not serialized.
 
+## Synth expression (reader 1.15)
+
+The existing `core.subtractive-synth.polyblep-v1` retains its ten required F1 parameters.
+Optional decimal keys are `filterAttack`, `filterDecay`, `filterSustain`, `filterRelease`,
+`filterAmount`, `velocityCutoff`, `lfoTarget`, `lfoRate`, `lfoPitch` and `lfoCutoff`.
+Missing keys mean neutral expression; defaults are 0/180/0/180 for filter A(ms)/D(ms)/S/R(ms),
+Amount 0, sensitivity 0, destination Off (0), rate 5 Hz and both depths 0.
+Destination is integer 0/1/2 for Off/Pitch/Filter Cutoff. Units and execution bounds belong to
+[audio](AUDIO_ENGINE.md#expressive-subtractive-synth-seq-synth-expressiveness-f2).
+
+Any present expression key, including a neutral value or inactive destination's depth, requires
+both minor and minimumReaderMinor at least 15. Underdeclaration is refused independently of
+whether that sound executes. Save retains an already accepted reader floor. Old ten-key instruments
+and the four original preset snapshots remain supported and unchanged; Open/Save adds no defaults
+or new keys. Explicit edits persist only supplied keys. Editing an absent optional default to the
+same value creates no history or gate upgrade.
+
+Unknown keys, noninteger destinations, out-of-range values, opaque sound fields and extension
+payloads retain existing preservation and block unsupported execution/editor mutation. No fallback
+preset is substituted. Presets store actual parameters; sharing/copies keep SoundDefinition
+identities. Phase, smoothing, coefficients, audition velocity and drafts remain transient.
+Reader 1.11 remains sufficient for historical Synth intent alone.
+
 ## Subtractive synth (reader 1.11)
 
 SoundDefinition algorithm `core.subtractive-synth.polyblep-v1` has no resources or extension payload.
-Its complete decimal parameter block is `wave1`, `wave2`, `mix`, `detune`, `attack`, `decay`, `sustain`,
+Its required historical decimal parameter block is `wave1`, `wave2`, `mix`, `detune`, `attack`, `decay`, `sustain`,
 `release`, `cutoff` and `resonance`; waveforms are integer enum values 0–3. Ranges/meaning belong to
 [audio](AUDIO_ENGINE.md#polyphonic-subtractive-synth-seq-synth-f1) and the source descriptor. Factory
 presets copy actual values into the shared sound, without a serialized preset-name dependency.
@@ -103,7 +126,7 @@ parameters. Continuous Synth preview adds no field, algorithm version or minimum
 
 Presence of this algorithm requires minimum reader 1.11 on Encode and Read; a falsely older envelope
 is refused. Projects without synth intent retain their existing selective gates. Unsupported algorithms,
-unknown/partial/out-of-range parameter blocks and opaque fields retain existing preservation rules
+unknown keys, incomplete required/out-of-range parameter blocks and opaque fields retain existing preservation rules
 and are refused for execution/editor mutation, without default replacement. Independent sounds copy
 canonical values to a new identity; shared uses retain the original. Undo/Redo and portable Save/Save As/Open
 use the existing document and managed-media boundaries.

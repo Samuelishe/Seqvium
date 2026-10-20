@@ -14,6 +14,9 @@ namespace Seqvium.Desktop.Workspace;
 internal sealed class SynthEnvelopePlot(ShellSession shell) : Control
 {
     internal ImmutableDictionary<string, decimal> Values { get; set; } = SynthVoice.Defaults;
+    internal bool Filter { get; init; }
+    private string Key(string key) => Filter ? "filter" + char.ToUpperInvariant(key[0]) + key[1..] : key;
+    private decimal Value(string key) => SynthVoice.Value(Values, Key(key));
     internal Func<bool>? Begin { get; set; }
     internal event Action<string, decimal>? Preview;
     internal event Action? Completed;
@@ -26,14 +29,14 @@ internal sealed class SynthEnvelopePlot(ShellSession shell) : Control
     {
         var r = Plot;
         Point At(double x, double y) => new(r.X + x * r.Width, r.Bottom - y * r.Height);
-        return [At(.04 + .20 * Time(Values["attack"], 5000), 1),
-            At(.29 + .20 * Time(Values["decay"], 5000), (double)Values["sustain"]),
-            At(.70, (double)Values["sustain"]), At(.76 + .24 * Time(Values["release"], 8000), 0)];
+        return [At(.04 + .20 * Time(Value("attack"), 5000), 1),
+            At(.29 + .20 * Time(Value("decay"), 5000), (double)Value("sustain")),
+            At(.70, (double)Value("sustain")), At(.76 + .24 * Time(Value("release"), 8000), 0)];
     }
     protected override void OnInitialized()
     {
         base.OnInitialized(); Focusable = true;
-        AutomationProperties.SetAutomationId(this, "Synth.Envelope");
+        AutomationProperties.SetAutomationId(this, Filter ? "Synth.FilterEnvelope" : "Synth.Envelope");
         ((IResourceHost)this).ResourcesChanged += (_, _) => InvalidateVisual();
         PointerPressed += (_, e) =>
         {
@@ -49,14 +52,14 @@ internal sealed class SynthEnvelopePlot(ShellSession shell) : Control
             if (_pointer != e.Pointer) return;
             var r = Plot; var p = e.GetPosition(this);
             double x = (p.X - r.X) / r.Width;
-            if (_handle == 2) Preview?.Invoke("sustain", decimal.Round((decimal)Math.Clamp((r.Bottom - p.Y) / r.Height, 0, 1), 3));
+            if (_handle == 2) Preview?.Invoke(Key("sustain"), decimal.Round((decimal)Math.Clamp((r.Bottom - p.Y) / r.Height, 0, 1), 3));
             else
             {
                 string key = _handle == 0 ? "attack" : _handle == 1 ? "decay" : "release";
                 double origin = _handle == 0 ? .04 : _handle == 1 ? .29 : .76;
                 double width = _handle == 3 ? .24 : .20;
                 double maximum = _handle == 3 ? 8000 : 5000;
-                Preview?.Invoke(key, decimal.Round((decimal)(Math.Exp(Math.Clamp((x - origin) / width, 0, 1) * Math.Log(1 + maximum)) - 1), 1));
+                Preview?.Invoke(Key(key), decimal.Round((decimal)(Math.Exp(Math.Clamp((x - origin) / width, 0, 1) * Math.Log(1 + maximum)) - 1), 1));
             }
             e.Handled = true;
         };
@@ -67,7 +70,7 @@ internal sealed class SynthEnvelopePlot(ShellSession shell) : Control
         };
         PointerCaptureLost += (_, _) => Cancel();
         PointerWheelChanged += (_, e) => { if (_pointer is not null) e.Handled = true; };
-        KeyDown += (_, e) => { if (e.Key == Key.Escape) { Cancel(); e.Handled = true; } };
+        KeyDown += (_, e) => { if (e.Key == Avalonia.Input.Key.Escape) { Cancel(); e.Handled = true; } };
     }
     internal void Cancel()
     {
@@ -81,7 +84,7 @@ internal sealed class SynthEnvelopePlot(ShellSession shell) : Control
         context.DrawRectangle(B("Surface.Workspace"), new Pen(B("Border.Default"), 1), new Rect(Bounds.Size), 6, 6);
         for (int i = 0; i < 5; i++)
             context.DrawLine(new Pen(B("Graph.Grid"), 1), new(r.X, r.Y + r.Height * i / 4), new(r.Right, r.Y + r.Height * i / 4));
-        HostVisual.Caption(this, shell, context, shell["Synth.Envelope"], new(12, 5));
+        HostVisual.Caption(this, shell, context, shell[Filter ? "Synth.FilterEnvelope" : "Synth.Envelope"], new(12, 5));
         var geometry = new StreamGeometry();
         using (var path = geometry.Open())
         {

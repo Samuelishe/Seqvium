@@ -34,13 +34,13 @@ internal static class PolyphonyCheck
         }, Json));
         bool accepted = true;
         string[] kinds = args.Length == 6 ? args[5].Split(',') : ["pcm", "synth", "release", "mixed", "dense", "live"];
-        if (kinds.Any(k => k is not ("pcm" or "synth" or "release" or "mixed" or "dense" or "live")))
+        if (kinds.Any(k => k is not ("pcm" or "synth" or "release" or "mixed" or "dense" or "live" or "synth-expression" or "synth-vibrato")))
             throw new ArgumentException("Unknown workload.");
         foreach (int count in counts)
         foreach (string kind in kinds)
         {
             // Keep the low-load matrix small, while retaining the explicit musical capacities.
-            if (count < 32 && kind != "pcm") continue;
+            if (count < 32 && kind is not ("pcm" or "synth" or "synth-expression" or "synth-vibrato")) continue;
             string name = $"{kind}-{count}";
             Console.WriteLine($"{args[0]} {name} {args[4]}");
             try
@@ -226,7 +226,8 @@ internal static class PolyphonyCheck
                 final.Transport == SamplerTransportState.Ended && final.Voices == 0 &&
                 final.Position == plan.EndFrame && rt.StopAcknowledgment >= stop && error == 0 &&
                 process.Length > 0 && Us(process.Order().ElementAt((int)((process.Length - 1) * .99))) <= periodUs * .5 &&
-                service.Length > 0 && Us(service.Order().ElementAt((int)((service.Length - 1) * .99))) <= periodUs * .5;
+                service.Length > 0 && Us(service.Order().ElementAt((int)((service.Length - 1) * .99))) <= periodUs * .5 &&
+                Us(process.Max()) <= periodUs && Us(service.Max()) <= periodUs;
             return new
             {
                 Passed = passed, background, facts, Capacity = plan.VoiceCapacity, PeriodUs = periodUs,

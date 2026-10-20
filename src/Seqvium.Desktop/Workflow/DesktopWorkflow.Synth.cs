@@ -31,6 +31,9 @@ internal sealed partial class DesktopWorkflow
             if (!sound.Parameters.OrderBy(p => p.Key).SequenceEqual(before.OrderBy(p => p.Key)))
                 throw new InvalidOperationException("Workflow.EditStale");
             SynthVoice.Validate(after);
+            // Touching an absent optional default is a semantic no-op, not a reader upgrade/history entry.
+            if (SynthVoice.Parameters.Concat(SynthVoice.ExpressionParameters).All(p =>
+                    SynthVoice.Value(before, p.Key) == SynthVoice.Value(after, p.Key))) return Task.FromResult(false);
             return Task.FromResult(_document.Edit("Shape Synth", edit => edit.SetSoundParameters(sound.Id, after)));
         });
 
@@ -69,7 +72,8 @@ internal sealed partial class DesktopWorkflow
                 !resident.Sampler.IsTerminated && resident.ReadFailure() is null)
             {
                 resident.Sampler.RetireCompleted();
-                if (preview.Held && (resident.Sampler.HasPending || resident.Sampler.ReadStatus().Playing))
+                if (preview.Held && preview.Intensity == intensity &&
+                    (resident.Sampler.HasPending || resident.Sampler.ReadStatus().Playing))
                 {
                     resident.Sampler.UpdateSynthAudition(sound, pitch);
                     Volatile.Write(ref _synthAudition, preview with { Pitch = pitch, Intensity = intensity });

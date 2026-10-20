@@ -179,7 +179,7 @@ internal static partial class Program
                 or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow"
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
                 or "sampler-editor" or "sampler-keymap" or "sampler-velocity" or "synth" or "reverb" or "delay" or "ui-density"
-                or "theme-navigation"
+                or "theme-navigation" or "synth-expression"
                 or "settings" or "piano-tools" or "piano-humanize" or "piano-transform" or "piano-rack" or "repeat-variation" or "repeat-variation-audio" or "repeat-variation-empty" or "unfold-repeats",
             "Unknown scenario.");
         using var run =
@@ -242,6 +242,8 @@ internal static partial class Program
                 else if (args[0] == "sampler-keymap")
                     await SamplerKeymapAsync(main, output, Path.GetFullPath(args[2]), Path.GetFullPath(args[3]),
                         args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "synth-expression")
+                    await SynthExpressionAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "synth")
                     await SynthEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "drum-playalong")
