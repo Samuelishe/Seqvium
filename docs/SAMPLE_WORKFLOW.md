@@ -68,12 +68,21 @@ remain future capabilities, not an implicit universal render service.
 ## Instrument source range and sustain loop
 
 Multisample instruments use multiple managed WAVs in the same SoundDefinition, with confirmed Root
-Notes and key ranges. Batch import prepares durable WAV candidates off the GUI/audio threads and
+Notes, key ranges and optional Velocity layers. Batch import prepares durable WAV candidates off the GUI/audio threads and
 accepts the map/resources as one Undo edit; errors, cancellation and stale generations accept none.
 Optional exact-path/hash-verified catalog roots remain the known-root authority. Other roots require
 explicit assignment; source names and audio are not analysed for pitch. Existing per-WAV 16 MiB and
 aggregate prepared PCM limits remain. Local personal samples are verification inputs, not bundled
 resources. [Key Mapping UX](UX_CONTRACT.md#sampler-source-editor) owns the editor.
+
+The import review contains existing and proposed sources in one selector, with Root/key/Velocity
+fields. Repeated roots are accepted through explicit Split layers or manually assigned disjoint
+ranges. Split layers groups equal roots, preserves source order within each group and divides
+0–100%; users can revise every bound before acceptance. Pitch-only Auto map retains its original
+nearest-root distribution; layered maps safely refuse it. Cancellation accepts no resources or
+mapping. A SHA-256 match reuses an integrity-validated managed WAV from the document or current
+batch, while each zone retains its own stable identity and playback settings. Only unique new
+candidate files are written/rolled back; the existing PCM budget and Save/Save As owners remain.
 
 R8 captures the selected Pattern's mapped sources through the same local Output before Mixer,
 including each zone's range/loop/crossfade and finite release. Its frozen request, managed acceptance,

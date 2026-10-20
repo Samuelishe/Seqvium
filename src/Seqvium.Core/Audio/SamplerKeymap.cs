@@ -4,19 +4,31 @@ using System.Collections.Immutable;
 
 namespace Seqvium.Core;
 
-/// <summary>One identified source and its inclusive integer key range. Fractional notes use their lower key.</summary>
+/// <summary>One identified source. Keys are inclusive; velocity is [low, high), with 1 included at the top.</summary>
 public sealed record SamplerZone(
     Id<SamplerZone> Id,
     Id<ResourceDescriptor> ResourceId,
     decimal RootPitch,
     int LowKey,
     int HighKey,
-    ImmutableDictionary<string, decimal> Parameters) : CanonicalData;
+    ImmutableDictionary<string, decimal> Parameters) : CanonicalData
+{
+    public decimal LowVelocity { get; init; }
+    public decimal HighVelocity { get; init; } = 1;
+}
 
 public static class SamplerKeymap
 {
     public const int MaximumZones = 128;
     public static bool HasIntent(SoundDefinition sound) => !sound.SamplerZones.IsDefaultOrEmpty;
+    public static bool HasVelocityIntent(SoundDefinition sound) => HasIntent(sound) &&
+        sound.SamplerZones.Any(z => z.LowVelocity != 0 || z.HighVelocity != 1);
+
+    public static bool ContainsVelocity(SamplerZone zone, decimal velocity) =>
+        velocity >= zone.LowVelocity && (velocity < zone.HighVelocity || velocity == 1 && zone.HighVelocity == 1);
+
+    public static bool VelocityOverlaps(SamplerZone a, SamplerZone b) =>
+        a.LowVelocity < b.HighVelocity && b.LowVelocity < a.HighVelocity;
 
     public static ImmutableArray<SamplerZone> Zones(SoundDefinition sound) => HasIntent(sound)
         ? sound.SamplerZones
@@ -42,9 +54,18 @@ public static class SamplerKeymap
 
     public static SoundDefinition? Select(SoundDefinition sound, decimal pitch)
     {
+        if (HasVelocityIntent(sound)) throw new ArgumentException("Velocity is required for a layered map.");
+        return Select(sound, pitch, 1);
+    }
+
+    public static SoundDefinition? Select(SoundDefinition sound, decimal pitch, decimal intensity)
+    {
+        if (pitch is < 0 or > 127 || intensity is < 0 or > 1)
+            throw new ArgumentOutOfRangeException(nameof(intensity));
         if (!HasIntent(sound)) return sound;
         int key = (int)decimal.Floor(pitch);
-        var zone = sound.SamplerZones.SingleOrDefault(z => key >= z.LowKey && key <= z.HighKey);
+        var zone = sound.SamplerZones.SingleOrDefault(z => key >= z.LowKey && key <= z.HighKey &&
+            ContainsVelocity(z, intensity));
         return zone is null ? null : Source(sound, zone);
     }
 
@@ -60,16 +81,19 @@ public static class SamplerKeymap
             zones.Select(z => z.Id).Distinct().Count() != zones.Length ||
             !sound.ResourceIds.ToHashSet().SetEquals(zones.Select(z => z.ResourceId)))
             throw new ArgumentException("Invalid key map resources or capacity.");
-        int last = -1;
-        foreach (var z in zones.OrderBy(z => z.LowKey))
+        foreach (var z in zones)
         {
             if (z.Id.Value == Guid.Empty || z.LowKey < 0 || z.HighKey > 127 || z.LowKey > z.HighKey ||
-                z.LowKey <= last ||
+                z.LowVelocity < 0 || z.HighVelocity > 1 || z.LowVelocity >= z.HighVelocity ||
                 z.RootPitch is < 0 or > 127 || z.Parameters is null)
-                throw new ArgumentException("Key zones must be ordered without overlap and within MIDI 0–127.");
+                throw new ArgumentException("Zones require keys within MIDI 0–127 and a positive velocity range within [0,1].");
             SamplerPlayback.Read(Source(sound, z), int.MaxValue);
-            last = z.HighKey;
         }
+        for (int i = 0; i < zones.Length; i++)
+        for (int j = i + 1; j < zones.Length; j++)
+            if (zones[i].LowKey <= zones[j].HighKey && zones[j].LowKey <= zones[i].HighKey &&
+                VelocityOverlaps(zones[i], zones[j]))
+                throw new ArgumentException("Zones overlap in both pitch and velocity.");
     }
 
     /// <summary>Nearest confirmed root, ties to the lower root; duplicate roots require explicit manual resolution.</summary>
@@ -77,6 +101,7 @@ public static class SamplerKeymap
     {
         var ordered = sources.OrderBy(z => z.RootPitch).ThenBy(z => z.Id.Value).ToArray();
         if (ordered.Length is < 1 or > MaximumZones ||
+            ordered.Any(z => z.LowVelocity != 0 || z.HighVelocity != 1) ||
             ordered.Select(z => z.RootPitch).Distinct().Count() != ordered.Length ||
             ordered.Any(z => z.RootPitch is < 0 or > 127))
             throw new ArgumentException("Distinct confirmed roots required.");
@@ -94,5 +119,19 @@ public static class SamplerKeymap
                 return result;
             })
         ];
+    }
+
+    /// <summary>Explicit draft operation: distribute distinct roots, then split each root's recordings in supplied order.</summary>
+    public static ImmutableArray<SamplerZone> Layer(IEnumerable<SamplerZone> sources)
+    {
+        var groups = sources.GroupBy(z => z.RootPitch).OrderBy(g => g.Key).ToArray();
+        if (groups.Sum(g => g.Count()) > MaximumZones) throw new ArgumentException("Key map capacity exceeded.");
+        var keys = Distribute(groups.Select(g => g.First() with { LowVelocity = 0, HighVelocity = 1 }));
+        return [.. groups.SelectMany((g, index) => g.Select((z, layer) => z with
+        {
+            LowKey = keys[index].LowKey, HighKey = keys[index].HighKey,
+            LowVelocity = decimal.Round(layer * 100m / g.Count(), 2) / 100,
+            HighVelocity = decimal.Round((layer + 1) * 100m / g.Count(), 2) / 100
+        }))];
     }
 }

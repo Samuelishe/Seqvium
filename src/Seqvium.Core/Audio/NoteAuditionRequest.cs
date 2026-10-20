@@ -52,8 +52,8 @@ public sealed class NoteAuditionRequest : IDisposable
                     return SamplerPreparation.PrepareSynthAudition(sound, _consumer.SampleRate, _consumer.Channels,
                         _pitch, _intensity, _held);
                 if (sound?.Algorithm == PcmSampler.Algorithm)
-                    sound = SamplerKeymap.Select(sound, _pitch) ??
-                            throw new ArgumentException("No sample on this key.");
+                    sound = SamplerKeymap.Select(sound, _pitch, _intensity) ??
+                            throw new ArgumentException("No sample at this pitch/velocity.");
                 using var pcm = sound is null ? ProjectMedia.Decode(_frozen, _resource)
                     : sound.Algorithm == PcmSampler.Algorithm ? ProjectMedia.Decode(_frozen, sound.ResourceIds.Single())
                     : DrumVoice.Render(sound, _consumer.SampleRate, _pitch, cancellation);

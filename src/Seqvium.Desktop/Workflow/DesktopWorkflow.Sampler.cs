@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Seqvium.Core;
+using System.Collections.Immutable;
 using Seqvium.Desktop.Workspace;
 
 namespace Seqvium.Desktop.Workflow;
@@ -57,6 +58,11 @@ internal sealed partial class DesktopWorkflow
 
     internal Task<bool> AddSamplerSourcesAsync(NodeEditorTarget target, long generation,
         IReadOnlyList<(string Path, decimal Root)> sources, CancellationToken cancellation = default)
+        => AddSamplerSourcesAsync(target, generation, sources, default, cancellation);
+
+    internal Task<bool> AddSamplerSourcesAsync(NodeEditorTarget target, long generation,
+        IReadOnlyList<(string Path, decimal Root)> sources, ImmutableArray<SamplerZone> reviewed,
+        CancellationToken cancellation = default)
         => Command("Workflow.ImportFailed", async () =>
         {
             var sound = SamplerSource(target, generation);
@@ -65,11 +71,28 @@ internal sealed partial class DesktopWorkflow
             SamplerSource(target, generation);
             await CloseNoteAuditionAsync();
             SamplerSource(target, generation);
-            import.Accept(cancellation);
+            if (reviewed.IsDefault) import.Accept(cancellation);
+            else
+            {
+                var prepared = import.DraftZones;
+                int existing = SamplerKeymap.Zones(sound).Length;
+                if (reviewed.Length != prepared.Length ||
+                    reviewed.Take(existing).Where((z, i) => z.Id != prepared[i].Id ||
+                        z.ResourceId != prepared[i].ResourceId).Any())
+                    throw new ArgumentException("Incomplete or reordered mapping review.");
+                import.Accept([.. reviewed.Select((z, i) => z with
+                {
+                    Id = prepared[i].Id, ResourceId = prepared[i].ResourceId
+                })], cancellation);
+            }
             return true;
         });
 
     internal Task<bool> HoldSamplerZoneAsync(NodeEditorTarget target, long generation, Id<SamplerZone> zoneId)
+        => HoldSamplerZoneAsync(target, generation, zoneId, .8m, false);
+
+    internal Task<bool> HoldSamplerZoneAsync(NodeEditorTarget target, long generation, Id<SamplerZone> zoneId,
+        decimal intensity, bool instrument, decimal? pitch = null)
         => Command("Workflow.ActionFailed", async () =>
         {
             var sound = SamplerSource(target, generation);
@@ -77,13 +100,19 @@ internal sealed partial class DesktopWorkflow
                 throw new InvalidOperationException("Browser.StopTransport");
             await CloseNoteAuditionAsync();
             long transport = _playGeneration;
+            if (instrument && SamplerKeymap.Select(sound,
+                    pitch ?? SamplerKeymap.Zones(sound).Single(z => z.Id == zoneId).RootPitch, intensity) is null)
+                throw new InvalidOperationException("Sampler.RangeUnavailable");
             _noteOutput = _openOutput();
             try
             {
                 _noteSession = new();
                 _noteSession.AttachOutput(_noteOutput.Lifetime, _noteOutput.Sampler);
                 _noteOutput.Sampler.SetGain(.12f);
-                using var request = new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, zoneId, .8m);
+                using var request = instrument
+                    ? new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id,
+                        pitch ?? SamplerKeymap.Zones(sound).Single(z => z.Id == zoneId).RootPitch, intensity, held: true)
+                    : new NoteAuditionRequest(_noteOutput.Sampler, _document, sound.Id, zoneId, intensity);
                 await request.PrepareAsync();
                 SamplerSource(target, generation);
                 if (transport != _playGeneration || request.Publish() != SamplerPublication.Accepted)

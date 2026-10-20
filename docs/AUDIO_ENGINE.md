@@ -675,10 +675,17 @@ R4-F2 adds independent item-local contributions below; wider execution domains a
 
 An optional SoundDefinition key map contains up to 128 identified zones. Each zone owns a resource,
 decimal Root Pitch and source range/loop/crossfade parameters. Release remains instrument-wide.
-Inclusive integer MIDI bounds may have silent gaps but cannot overlap. A fractional note belongs
-to its lower integer key; its exact decimal pitch still determines transposition. Auto map sorts
+Inclusive integer MIDI bounds may have silent gaps. Velocity Layers F1 adds decimal [0,1] velocity
+bounds per zone: lower inclusive, upper exclusive, with 1 included. Pitch ranges can overlap only
+when velocity does not; any two-dimensional ambiguity is refused. Preparation selects exactly one
+recording using canonical NoteEvent.Intensity; a gap schedules no voice. Intensity also retains its
+existing linear amplitude role, without normalization or another gain factor. A fractional note belongs
+to its lower integer key; its exact decimal pitch still determines transposition. Pitch-only Auto map sorts
 distinct confirmed roots, splits at floor (midpoint), gives a tie to the lower root and extends the
-outer zones to keys 0/127. Duplicate/too-close roots require manual resolution, not layering.
+outer zones to keys 0/127. It refuses velocity-bearing maps or duplicate/too-close roots without
+changing their settings. Explicit import Split layers groups identical confirmed roots, distributes
+distinct roots and splits each group's velocity in the supplied source order. The complete draft
+remains editable before one atomic acceptance; this is source switching, never simultaneous layering.
 
 Preparation validates and leases all map sources under the existing 128 MiB unique decoded Pattern
 budget and compiles one source/step/range per note. OfflineSampler remains the only voice kernel,
@@ -688,7 +695,11 @@ unchanged notes/age/clock; notes whose selected resource, step or playback chang
 retrigger. Continuous live remapping of a held changed voice is not implemented. Resource identity
 participates in continuation even when two WAVs happen to have equal lengths and pitch settings.
 Legacy omitted maps retain the original PCM behavior. Missing/unknown required map dependencies
-refuse preparation rather than falling back to the first WAV. No velocity layers or round-robin.
+refuse preparation rather than falling back to the first WAV. Velocity selection also applies to
+Piano audition and instrument preview; explicit selected-WAV preview deliberately bypasses the map.
+The selected recording remains frozen in PreparedNote. No selection, decode, UI lookup or dynamic
+zone preparation enters the callback. Layer count does not multiply voices, event counts or the
+32-voice ceiling. No velocity crossfade, round-robin or randomized selection is implemented.
 
 `SamplerPlayback` interprets optional `sampleStart`, `sampleEnd`, `loopEnabled`, `loopStart` and
 `loopEnd` on the identified PCM SoundDefinition. Source-frame intervals are half-open. Omission

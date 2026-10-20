@@ -7,7 +7,17 @@ Not authoritative for: Contracts, decisions, plans, history, source topology or 
 
 ## Current checkpoint
 
-Product alpha **0.1.16.0010**, **SEQ-R9-PIANO-BATCH-TRANSFORM-F1 — Relative Note Transform**.
+Product alpha **0.1.16.0011**, **SEQ-SAMPLER-VELOCITY-LAYERS-F1 — Multisample Velocity Layers**.
+PCM zones select one WAV by lower integer Pitch and canonical Velocity, with deterministic half-open
+Velocity bounds and inclusive 100%. The existing Source Editor exposes two-dimensional rectangles,
+exact percentages, all-zone selection, selected-WAV/instrument preview and complete repeated-root
+import review with explicit Split layers. Existing per-zone roots/ranges/loops/crossfades, managed
+media, one-edit Undo and portable Save/Open remain shared. Identical imported WAVs reuse verified
+resources. Reader 1.14 gates only non-default Velocity bounds; legacy and pitch-only PCM/gates remain.
+One note retains one voice within 32 slots; no velocity blending, round-robin or new engine.
+The [report](experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md) owns checks, screenshots and limits.
+
+Previous **0.1.16.0010**, **SEQ-R9-PIANO-BATCH-TRANSFORM-F1 — Relative Note Transform**.
 Piano's compact Transform flyout applies independent integer ±24-semitone shifts and 50–200%
 individual duration/velocity scales to selected active-Part notes. Drafts stay outside music;
 Apply uses one canonical Undo, exact Redo and no-op/history retention. Fractional pitch, note IDs,
@@ -114,7 +124,7 @@ full-name inspection;
 zone actions, preview and source properties have distinct groups. No additional engine or track.
 Reader 1.13 gates nonempty maps; legacy single-source PCM, notes/graphs/Mixer, history, portable
 media and finite R8 remain shared. Changed live source/step/range voices retire without retrigger;
-unaffected voices continue. Velocity layers, round-robin and articulations remain future scope.
+unaffected voices continue. Its original scope excluded Velocity layers, round-robin and articulations.
 [Report](experiments/SEQ-SAMPLER-KEYMAP-F1_REPORT.md) owns checks, local comparative WAVs and limits.
 
 Previous **0.1.15.0000**, **SEQ-AUTOMATION-F1 — Musical Parameter Automation**.
@@ -361,7 +371,23 @@ processing, not a parallel mixer. Compatible prepared changes retain time/unrela
 
 ## Verification baseline
 
-Current L0/L1/L2: **SEQ-R9-PIANO-BATCH-TRANSFORM-F1, 2026-10-19**. Affected Release build has zero
+Current L0/L1/L2/L3: **SEQ-SAMPLER-VELOCITY-LAYERS-F1, 2026-10-20**. Full Release solution build has
+zero warnings/errors (**25.77 s**, final incremental **15.32 s**). **370/370** related checks pass,
+zero skips (**8.486 s CLI**); the final targeted Sampler/Reader/ArtifactRetention run passes
+**100/100**, zero skips (**47.791 s CLI**). Thirty-two new expanded cases verify selected recording
+and independent PCM, boundaries, all rate/channel/layer combinations, multi-instrument Song,
+source settings/export/R8, live continuation, history/media/reader/cancel/stale and 32-voice limits.
+RU/EN Dark/Light ordinary/reduced GUI, 48 zero-DIP field alignments, dense selection, actual import
+review/history/reopen and the old source-loop editor pass. Earlier guarded native Velocity entry
+passes; final/checkpoint repeats are foreground-refused. Short physical previews pass through Samsung
+USB C Earphones, 48-kHz stereo; subjective listening and pressure are unassessed. The first L3 has
+two obsolete reader assertions and two process-snapshot-dependent cleanup failures; the unchanged
+cleanup subset passes separately. The [report](experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md)
+retains attempts and limits. Final L3 at product **0.1.16.0011** passes **2026/2026**, zero skips,
+one thread (**96.105 s CLI**), including all 32 new expanded cases. No earlier process-snapshot,
+allocation/pressure, listening or platform gap is closed by this green pass.
+
+Previous L0/L1/L2: **SEQ-R9-PIANO-BATCH-TRANSFORM-F1, 2026-10-19**. Affected Release build has zero
 warnings/errors (**15.54 s final build**). **309/309 focused tests** pass, zero skips, one thread (**103.543 s CLI**), including
 **42** Transform cases. Exact independent/combined arithmetic, Int64/one-tick/fractional bounds,
 atomic refusal, identities/order/locality, no-op/history, portable reopen, shared/independent uses,
@@ -720,8 +746,9 @@ in its owning reports; inherited pressure/allocation issues are not closed by th
 
 ### Verification cadence
 
-Completed repository tasks since this L3: **3** (Humanize, Unfold and Transform: focused L0/L1/L2 and bounded L4).
-The last L3, Piano tools F1, includes all **1913** cases:
+Completed repository tasks since this L3: **0**. Velocity Layers F1's final full Release build and
+**2026/2026** suite replace the previous baseline; earlier failed attempts remain in its report.
+The previous L3, Piano tools F1, includes all **1913** cases:
 new Quantize/Scale/view/live PCM and prior repeat/publication plus note/channel/history, workspace, Pattern/Song/
 Mixer/Gain/Automation/R8, instrument/reader and Desktop contracts. Allocation audit R1's earlier
 positive subset/control measurements remain unresolved; this green run does not attribute them.
@@ -769,7 +796,7 @@ Existing permanent demo tests participate in L3.
 
 ## Current focus and remaining gaps
 
-Continuous Synth preview and the bounded Multisample Key Mapping F1 baseline are implemented. Owner listening/aesthetic
+Continuous Synth preview, Multisample Key Mapping and Velocity Layers F1 are implemented. Owner listening/aesthetic
 review and broader pressure/
 platform acceptance remain separate; later modulation or synthesis families need their own scope.
 

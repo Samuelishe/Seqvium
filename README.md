@@ -46,8 +46,9 @@ for the logo, typography, alternative directions and publication resources.
   optional Sustain loop with adjustable crossfade. Hold/release preview tests long notes;
   changes apply to that sound in every Pattern.
 - Build a **multisample instrument** in the same editor: add WAVs, assign Root notes and auto-map
-  them across the keyboard. Adjust zone edges by mouse or note name; each WAV keeps its own range
-  and sustain loop. The keyboard adapts to the pane width and scrolls through the full map.
+  them across the keyboard. Assign **Velocity layers** to soft/medium/hard recordings, including
+  the same Root note: each note selects one WAV by pitch and Velocity. Adjust zone edges and
+  percentages; each recording keeps its own range and sustain loop. The compact map scrolls across keys.
 - Use built-in Kick, Snare, Closed/Open Hat, Clap, Tom and Rim, editable envelopes and sound presets,
   or pitched WAV samples. Linked hats can choke each other. Play hits in the Drum Voice editor over
   your running Pattern or Song to shape sounds by ear; its local Stop leaves the music playing.

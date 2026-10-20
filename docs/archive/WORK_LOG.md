@@ -2487,3 +2487,21 @@ pass with routed input; native Windows attempts are foreground-refused. Short Sa
 live Unfold retains epoch 3 while progressing 43680→68640 frames, no failure. Earlier fixture,
 allocation and physical-history failures remain explicit; no subjective listening or pressure claim.
 [Report](../experiments/SEQ-R10-UNFOLD-REPEATS-F1_REPORT.md) owns attempts, evidence and limits.
+
+## SEQ-SAMPLER-VELOCITY-LAYERS-F1 — 2026-10-20
+
+Product 0.1.16.0010 → 0.1.16.0011, one BUILD within the multisample instrument line. The same
+SamplerZone now bounds canonical Velocity; half-open intervals with inclusive 100% make shared
+key ranges deterministic. Existing preparation compiles one recording per note, retaining the
+32-voice ceiling, amplitude and source playback kernel. Repeated-root import reviews the complete
+map with explicit Split layers before one managed-media/Undo acceptance; hashes reuse immutable
+WAVs. The existing Source Editor adds 2D rectangles, exact percentages and source/instrument preview.
+Reader 1.14 gates only non-default bounds; old single/pitch-only music and gates remain intact.
+Full Release builds have zero warnings/errors; final L3 passes 2026/2026, zero skips, one thread
+(96.105 s CLI), including 32 new cases. Related 370/370 and targeted 100/100 also pass. Actual
+localized/theme/ordinary/reduced GUI, 48 zero-DIP fields, dense selection, legacy loop editor and
+short Samsung 48-kHz stereo previews pass. Earlier native exact entry passes; final repeats refuse
+foreground coverage and remain separate. Initial reader-fixture and process-snapshot-dependent
+cleanup failures are retained, without a tooling/pressure/acoustic fix claim. The
+[report](../experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md) owns methods, screenshots and limits.
+Official Neon Orchard and Git index/history/remotes remain unchanged.

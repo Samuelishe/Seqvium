@@ -15,10 +15,27 @@ namespace Seqvium.Desktop.Workspace;
 internal sealed class SamplerKeyboard : Control
 {
     private readonly ShellSession _shell;
-    internal ImmutableArray<SamplerZone> Zones { get; set; } = [];
+    private ImmutableArray<SamplerZone> _zones = [];
+    internal ImmutableArray<SamplerZone> Zones
+    {
+        get => _zones;
+        set { _zones = value; Height = KeyTop + 50; }
+    }
     internal Id<SamplerZone>? Selected { get; set; }
+    internal IReadOnlyDictionary<Id<SamplerZone>, string> SourceNames { get; set; } =
+        ImmutableDictionary<Id<SamplerZone>, string>.Empty;
     internal Func<bool>? Begin { get; set; }
     internal event Action<Id<SamplerZone>>? Selection;
+    internal event Action<decimal>? NotePressed;
+    internal decimal PreviewVelocity { get; set; } = .8m;
+    private bool Layered => Zones.Any(z => z.LowVelocity != 0 || z.HighVelocity != 1);
+    private double MapBottom => Layered ? 94 : 42;
+    private double KeyTop => MapBottom + 18;
+
+    internal Rect ZoneBounds(SamplerZone z) => new(X(z.LowKey),
+        14 + (double)(1 - z.HighVelocity) * (MapBottom - 14),
+        (z.HighKey - z.LowKey + 1) * Bounds.Width / _count,
+        (double)(z.HighVelocity - z.LowVelocity) * (MapBottom - 14));
     internal event Action<ImmutableArray<SamplerZone>>? Preview, Completed;
     internal event Action? Cancelled;
     private IPointer? _pointer;
@@ -122,18 +139,25 @@ internal sealed class SamplerKeyboard : Control
         var selected = Zones.SingleOrDefault(z => z.Id == Selected);
         _handle = selected is null ? -1
             : at.Y is >= 14 and < 30 && Math.Abs(at.X - X(selected.LowKey)) <= 8 ? 0
-            : at.Y is >= 30 and < 44 && Math.Abs(at.X - X(selected.HighKey + 1)) <= 8 ? 1
-            : at.Y is >= 44 and < 60 && Math.Abs(at.X - X((double)selected.RootPitch + .5)) <= 9 ? 2 : -1;
+            : at.Y >= MapBottom - 12 && at.Y < MapBottom + 2 && Math.Abs(at.X - X(selected.HighKey + 1)) <= 8 ? 1
+            : at.Y >= MapBottom + 2 && at.Y < KeyTop && Math.Abs(at.X - X((double)selected.RootPitch + .5)) <= 9 ? 2 : -1;
         if (_handle >= 0)
         {
             _before = Zones;
             _pointer = e.Pointer;
             e.Pointer.Capture(this);
         }
-        else if (Zones.SingleOrDefault(z => KeyAt(at.X) >= z.LowKey && KeyAt(at.X) <= z.HighKey) is { } zone)
+        else
         {
-            Selected = zone.Id;
-            Selection?.Invoke(zone.Id);
+            decimal velocity = at.Y >= KeyTop ? PreviewVelocity :
+                Math.Clamp((decimal)(1 - (at.Y - 14) / (MapBottom - 14)), 0, 1);
+            if (at.Y < KeyTop && Zones.SingleOrDefault(z => KeyAt(at.X) >= z.LowKey && KeyAt(at.X) <= z.HighKey &&
+                    SamplerKeymap.ContainsVelocity(z, velocity)) is { } zone)
+            {
+                Selected = zone.Id;
+                Selection?.Invoke(zone.Id);
+            }
+            if (at.Y >= KeyTop) NotePressed?.Invoke(KeyAt(at.X));
         }
 
         e.Handled = true;
@@ -153,9 +177,9 @@ internal sealed class SamplerKeyboard : Control
 
         var z = _before.Single(z => z.Id == Selected);
         int key = KeyAt(e.GetPosition(this).X);
-        int low = _before.Where(n => n.Id != z.Id && n.HighKey < z.LowKey).Select(n => n.HighKey + 1).DefaultIfEmpty(0)
+        int low = _before.Where(n => n.Id != z.Id && SamplerKeymap.VelocityOverlaps(z, n) && n.HighKey < z.LowKey).Select(n => n.HighKey + 1).DefaultIfEmpty(0)
             .Max();
-        int high = _before.Where(n => n.Id != z.Id && n.LowKey > z.HighKey).Select(n => n.LowKey - 1)
+        int high = _before.Where(n => n.Id != z.Id && SamplerKeymap.VelocityOverlaps(z, n) && n.LowKey > z.HighKey).Select(n => n.LowKey - 1)
             .DefaultIfEmpty(127).Min();
         var changed = _handle switch
         {
@@ -222,7 +246,8 @@ internal sealed class SamplerKeyboard : Control
         c.FillRectangle(B("Surface.Workspace"), new(Bounds.Size));
         foreach (var z in Zones.OrderBy(z => z.LowKey))
             c.DrawRectangle(B(z.Id == Selected ? "Accent.Action" : "Control.Track"), new Pen(B("Border.Default"), 1),
-                new(z.LowKey / 128d * Bounds.Width, 1, (z.HighKey - z.LowKey + 1) / 128d * Bounds.Width, 9));
+                new(z.LowKey / 128d * Bounds.Width, 1 + (double)(1 - z.HighVelocity) * 9,
+                    (z.HighKey - z.LowKey + 1) / 128d * Bounds.Width, (double)(z.HighVelocity - z.LowVelocity) * 9));
         c.DrawRectangle(null, new Pen(B("Text.Secondary"), 1),
             new(_first / 128 * Bounds.Width, 0, _count / 128 * Bounds.Width, 11));
         var selectedZone = Zones.SingleOrDefault(z => z.Id == Selected);
@@ -237,19 +262,19 @@ internal sealed class SamplerKeyboard : Control
             if (Black(key)) continue;
             double left = key > 0 && Black(key - 1) ? key - .5 : key;
             double right = key < 127 && Black(key + 1) ? key + 1.5 : key + 1;
-            var keyRect = new Rect(X(left), 60, (right - left) * Bounds.Width / _count, 50);
+            var keyRect = new Rect(X(left), KeyTop, (right - left) * Bounds.Width / _count, 50);
             c.DrawRectangle(
                 B(RootKey(key) ? "Accent.Action" : SelectedKey(key) ? "Surface.Selected" : "Piano.WhiteKey"),
                 new Pen(B("Border.Default"), 1), keyRect);
             c.DrawRectangle(B("Material.Bevel"), null, keyRect.Deflate(1));
-            c.DrawLine(new Pen(B("Material.Shade"), 2), new(keyRect.Left + 1, 108), new(keyRect.Right - 1, 108));
+            c.DrawLine(new Pen(B("Material.Shade"), 2), new(keyRect.Left + 1, KeyTop + 48), new(keyRect.Right - 1, KeyTop + 48));
         }
 
         for (int key = 0; key < 128; key++)
         {
             if (Black(key))
             {
-                var black = new Rect(X(key + .1), 60, Bounds.Width / _count * .8, 30);
+                var black = new Rect(X(key + .1), KeyTop, Bounds.Width / _count * .8, 30);
                 c.DrawRectangle(B("Material.Shade"), null, black.Translate(new(1, 2)));
                 c.DrawRectangle(B(RootKey(key) ? "Accent.Action" : "Piano.BlackKey"),
                     new Pen(B("Border.Default")), black, 1, 1);
@@ -259,26 +284,36 @@ internal sealed class SamplerKeyboard : Control
             if (key % 12 != 0) continue;
             c.DrawText(new FormattedText(PianoNotes.Name(key), System.Globalization.CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight, HostVisual.Typeface(this), HostVisual.Metric(this, "Type.Caption"),
-                B(SelectedKey(key) && !RootKey(key) ? "Text.Primary" : "Piano.KeyInk")), new(X(key) + 1, 93));
+                B(SelectedKey(key) && !RootKey(key) ? "Text.Primary" : "Piano.KeyInk")), new(X(key) + 1, KeyTop + 33));
         }
 
         int i = 0;
         foreach (var z in Zones.OrderBy(z => z.LowKey))
         {
             bool active = z.Id == Selected;
-            var rect = new Rect(X(z.LowKey), 14, (z.HighKey - z.LowKey + 1) * Bounds.Width / _count, 28);
+            var rect = ZoneBounds(z);
             c.DrawRectangle(B(active ? "Surface.Selected" : $"Rack.Step{i++ % 8}"),
                 new Pen(B(active ? "Accent.Action" : "Border.Default"), active ? 2 : 1), rect);
-            c.DrawRectangle(B("Material.Bevel"), null, rect.Deflate(2));
+            if (rect.Height > 4) c.DrawRectangle(B("Material.Bevel"), null, rect.Deflate(2));
             double captionX = Math.Max(0, rect.X) + 4;
-            if (Math.Min(Bounds.Width, rect.Right) - captionX > 35)
-                HostVisual.Caption(this, _shell, c, PianoNotes.Name(z.RootPitch), new(captionX, 22));
+            if (Math.Min(Bounds.Width, rect.Right) - captionX > 35 && rect.Height >= 16)
+            {
+                string title = Layered && SourceNames.TryGetValue(z.Id, out var name) ? name : PianoNotes.Name(z.RootPitch);
+                using (c.PushClip(rect))
+                    HostVisual.Caption(this, _shell, c, title + (Layered
+                        ? $" · {z.LowVelocity * 100:0.##}–{z.HighVelocity * 100:0.##}%" : ""), new(captionX, rect.Y + 3));
+            }
             if (!active) continue;
             c.FillRectangle(B("Accent.Action"), new(X(z.LowKey), 14, 6, 14));
-            c.FillRectangle(B("Accent.Action"), new(X(z.HighKey + 1) - 6, 30, 6, 12));
+            c.FillRectangle(B("Accent.Action"), new(X(z.HighKey + 1) - 6, MapBottom - 12, 6, 12));
             double root = X((double)z.RootPitch + .5);
-            c.DrawLine(new Pen(B("Accent.Action"), 2), new(root, 44), new(root, 60));
-            c.DrawEllipse(B("Accent.Action"), null, new(root, 50), 5, 5);
+            c.DrawLine(new Pen(B("Accent.Action"), 2), new(root, MapBottom + 2), new(root, KeyTop));
+            c.DrawEllipse(B("Accent.Action"), null, new(root, MapBottom + 8), 5, 5);
+        }
+        if (Layered)
+        {
+            double y = 14 + (double)(1 - PreviewVelocity) * (MapBottom - 14);
+            c.DrawLine(new Pen(B("Text.Secondary"), 1, DashStyle.Dash), new(0, y), new(Bounds.Width, y));
         }
     }
 }

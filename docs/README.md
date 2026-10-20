@@ -103,8 +103,19 @@ The source menu contains Auto map and Remove WAV. Removing a source leaves a gap
 the neighbouring boundaries or run Auto map. Each selected WAV has its own waveform, Source range,
 Sustain loop and Crossfade; exact source-frame endpoints are in **Source range**. Full source names
 and shared-edit scope remain available in tooltips. All sources are saved as managed project media.
-Velocity layers and round-robin are not available. Whole-instrument Replace WAV clears the map;
-Undo restores it.
+For **Velocity layers**, add Soft/Medium/Hard recordings with the same confirmed Root. The import
+selector includes the current WAV and new recordings. Choose **Split layers** to divide their
+Velocity, then inspect each source and adjust key/Velocity bounds before **Add WAVs**. The whole
+valid map is accepted as one Undo action. Ranges use 0–100%; an exact upper boundary chooses the
+next layer, while 100% belongs to the final layer. Overlap in both key and Velocity is refused.
+Auto map remains available for full-Velocity instruments with distinct roots; it safely refuses
+layered maps. Remove WAV keeps the remaining ranges, including Velocity gaps, unchanged.
+
+Choose **Selected WAV** to hear the selected recording at its Root, or **Instrument** to test the
+map using the preview Velocity field. Click a keyboard key to test another pitch. Hold/Release/Stop
+use the existing preview, while Piano Roll Velocity controls actual musical notes. These previews
+do not edit music. Save/reopen retains all zone settings and managed audio. Round-robin and blending
+between Velocity recordings are not available. Whole-instrument Replace WAV clears the map; Undo restores it.
 
 Open the channel menu's **Sound Editor**, or double-click its Source node. Drag the upper Start/End
 flags to select what plays. Enable **Sustain loop** and set the lower Loop Start/End flags for long

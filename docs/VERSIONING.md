@@ -177,6 +177,18 @@ retrieved only for explicit historical tasks.
 | `0.1.16.0008` | SEQ-R9-PIANO-HUMANIZE-F1 | One BUILD for bounded selected-note timing/velocity Humanize within the existing Piano editor. Original checkpoint/report below retain 242 focused cases and native/physical scope. |
 | `0.1.16.0009` | SEQ-R10-UNFOLD-REPEATS-F1 | One BUILD for explicit shared-cycle unfolding through existing Playlist clips/history/publication. See checkpoint and report below. |
 | `0.1.16.0010` | SEQ-R9-PIANO-BATCH-TRANSFORM-F1 | One BUILD for relative selected-note Transform and corrected pitch-caption alignment in the existing Piano editor. See checkpoint and report below. |
+| `0.1.16.0011` | SEQ-SAMPLER-VELOCITY-LAYERS-F1 | One BUILD within the existing multisample instrument line: Velocity-based recording selection, complete repeated-root import review, 2D mapping and source/instrument preview. Reader 1.14 gates only non-default Velocity intent. Evidence and limits are in the [report](experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md). |
+
+### SEQ-SAMPLER-VELOCITY-LAYERS-F1 checkpoint
+
+`0.1.16.0010` to **`0.1.16.0011`**, one BUILD for a completed extension of the existing PCM
+multisample instrument and Source Editor. Two/three recordings can share roots/keys and switch by
+canonical Velocity through existing preparation, voices, Graph/Mixer and history/media owners.
+BUILD retains the current multisample capability line; no MAJOR/MINOR/PATCH reset is assigned.
+Reader 1.14 is a separate selective document gate. The
+[report](experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md) distinguishes PCM, routed GUI, earlier
+successful native entry, final foreground refusal, short physical output and unperformed listening.
+Git index, history, remotes and official composition remain unchanged.
 
 ### SEQ-R9-PIANO-BATCH-TRANSFORM-F1 checkpoint
 

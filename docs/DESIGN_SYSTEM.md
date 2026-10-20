@@ -181,6 +181,14 @@ token spacing and a quiet boundary. Actual minimum geometry prevents waveform/co
 The import
 review uses standard dialog controls with one selected source, no file table or private palette.
 
+Velocity Layers extends this deck with two ordinary percentage fields and a bounded vertical
+Velocity dimension above the same keyboard. Rectangles show source/range captions when space
+permits; clipped captions never spill into neighbours. Every zone remains in the source ComboBox.
+The overview uses the same rectangles, the audition Velocity uses a quiet dashed line, and exact
+preview Velocity/source mode use standard controls. Selected-zone key handles retain separate lanes.
+Import's single-source inspector includes existing and new recordings, with explicit Split layers
+and Auto map draft operations. No shared token, control template, palette or second editor is added.
+
 Complementary ramps identify the two actual F2 overlap areas; positive crossfade never moves source
 or loop markers. The fifth exact field uses the same parameter-row geometry and local reflow.
 The existing Source Editor hosts SamplerPaneContent/SamplerWaveform with standard controls, shared

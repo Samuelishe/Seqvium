@@ -675,11 +675,18 @@ Black keys are shorter than white keys in the normal 2+3 pattern. The focused ke
 select neighbouring zones; these are local controls, not new application shortcuts.
 
 Click a zone or choose its source to inspect that WAV. Drag selected Low/High handles or the Root
-marker; exact fields accept musical note names or MIDI numbers (C4 = 60). Bounds are inclusive,
-cannot overlap and may leave silent gaps. Capture/Escape/stale generation cancels a proposal; a
-release commits once. Auto map explicitly redistributes all ranges by confirmed Root Note.
-Import reviews roots in a compact source selector; unknown roots are blank and block acceptance
-until assigned. Distinct roots are required for auto map. No filename/audio pitch guessing occurs.
+marker; exact fields accept musical note names or MIDI numbers (C4 = 60). Key bounds are inclusive.
+Velocity from/to fields use 0–100%; the upper boundary belongs to the next layer, except 100%.
+Zones may overlap on keys if their velocity ranges are disjoint; gaps remain silent. The same
+compact map draws velocity vertically, with source names and ranges; the selector includes every
+zone and its Velocity, including tiny rectangles in dense maps. Capture/Escape/stale generation
+cancels a proposal; release or Apply commits once.
+
+Import reviews existing and new sources together. Unknown roots stay blank and block acceptance.
+Auto map distributes distinct roots with full Velocity. It safely refuses layered/duplicate-root
+maps. Split layers explicitly groups equal roots and divides their Velocity in source order,
+while distributing keys between different roots. All five fields remain editable in the draft;
+Add WAVs accepts the complete valid map as one Undo operation. No filename/audio pitch guessing occurs.
 
 Selected WAV range/loop/crossfade edits belong only to that zone. Source range discloses exact
 frame endpoints; Sustain Loop and Crossfade remain separately visible below the waveform.
@@ -690,7 +697,15 @@ other bounds unchanged; Auto map can close the resulting gap. At least one sourc
 The old Piano source-root field is disabled for maps; tune their roots in Sound Editor.
 Whole-instrument Replace WAV (including explicit Sample Lab replacement) clears the map; Undo restores
 it. Live edits preserve unaffected voices; changed source/step/range voices retire without switching
-to another WAV or retriggering. Velocity layers, round-robin and articulation switching are absent.
+to another WAV or retriggering. Velocity layers switch one WAV per note; round-robin, velocity
+crossfade and articulation switching are absent.
+
+Preview offers Selected WAV and Instrument, with an exact Velocity percentage. Selected WAV uses
+the chosen zone at its own root even outside its map bounds; Instrument selects by root and preview
+Velocity. Clicking a working keyboard key auditions the Instrument at that pitch/Velocity; clicking
+a map rectangle selects its source without sound. Changing preview Velocity changes subsequent
+notes, never an already held voice or canonical music. A dashed map line shows the audition Velocity.
+Hold/Release/Stop retain the existing stopped-transport output owner and safety gate.
 
 Channel Rack's Sound Editor menu and a supported bound Source node's double-click/Open Editor target
 the existing singleton Node Editor. A PCM sound opens the waveform editor; opening alone never edits

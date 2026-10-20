@@ -173,6 +173,21 @@ Outputs remain ignored and governed by existing retention. The
 
 ## Multisample Key Mapping
 
+Velocity Layers has a separate library-independent route:
+
+```powershell
+dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll sampler-velocity "$PWD/.artifacts/sampler-velocity/review" native audio
+```
+
+It generates three short stereo signals, drives the actual import review and repeated-root Split
+layers action, then checks one-edit import/history, 2D source selection, exact Velocity, invalid
+overlap, Cancel, Save/Open, RU/EN Dark/Light ordinary/reduced fields and a dense map. `native` checks
+guarded Windows Velocity entry with routed setup; `audio` checks short Instrument previews at
+20/50/90% and selected-WAV Hold/Release/Stop on the real output. Device description, advancing
+callback position and failures are recorded separately in `velocity-results.json`. Neither option
+establishes subjective listening, full native authoring or sustained-load acceptance. Run the
+existing `sampler-editor` route for waveform/range/loop/crossfade and empty-state regressions.
+
 ```powershell
 dotnet tools/Seqvium.VisualCheck/bin/Release/net10.0/Seqvium.VisualCheck.dll sampler-keymap "$PWD/.artifacts/sampler-keymap" 'C:/path/to/Seqvium Sample Library' 'C:/path/to/local-comparisons' native audio
 ```

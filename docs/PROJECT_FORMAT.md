@@ -9,7 +9,7 @@ Not authoritative for: A final container/schema, runtime domain classes, extensi
 SEQ-R1 selects the bounded canonical JSON format below; R2-F1 adds associated managed WAV directories.
 R4-F1 adds graph-aware reader minor 1 and canonical graph intent without changing the product UI version.
 Recovery, broader packaging and later migrations remain open; this is not a final complete-project container.
-The current reader supports major 1 / minor 13. Each feature below has its own minimum-reader gate;
+The current reader supports major 1 / minor 14. Each feature below has its own minimum-reader gate;
 product BUILD changes do not migrate documents.
 
 ## Channel copies and row order
@@ -37,6 +37,21 @@ candidate history is promised. Existing `ExtensionState` and unknown node/sound 
 and dependency-scoped execution refusal remain unchanged; R6 provides no realtime extension processor.
 See [Extensions](EXTENSIONS.md#implemented-r6-local-foundation).
 
+## Sampler velocity layers (reader 1.14)
+
+SamplerZone adds optional decimal `lowVelocity` (default 0) and `highVelocity` (default 1).
+Both are canonical intensity, not percentages. Require `0 <= low < high <= 1`. Lower bounds are
+included; upper bounds are excluded, except 1 is included. Zones may overlap in inclusive key bounds
+only when their velocity intervals are disjoint. Ambiguous pitch/velocity rectangles are invalid,
+independently of array order. Gaps are retained. Zone IDs, roots, resources and per-zone playback
+settings retain their existing ownership.
+
+Any non-default bound requires `minor` and `minimumReaderMinor` at least 14. Underdeclared files
+are refused. Default bounds are omitted on Encode: old single-source and full-velocity pitch maps
+retain their original representation, reader gate and music. Save retains an already accepted floor
+monotonically. Unknown zone fields/parameters round-trip and block unsupported execution or map edits.
+No schema migration rewrites old zones and no prepared source or preview velocity is persisted.
+
 ## Sampler key mapping (reader 1.13)
 
 Optional SoundDefinition `samplerZones` is an array of identified zone objects: `id`, `resourceId`,
@@ -49,7 +64,7 @@ is promoted. One explicit zone is still map intent and requires reader 1.13.
 An omitted/empty array remains legacy and is omitted on Encode; its reader floor does not increase.
 Nonempty maps require `minor` and `minimumReaderMinor` at least 13, with underdeclared files refused.
 Save preserves the floor monotonically. Zone IDs are globally distinct canonical entities; maps
-are bounded to 128 non-overlapping zones within MIDI 0–127. Unknown nested fields/parameters round-trip
+are bounded to 128 zones within MIDI 0–127, without overlap in both pitch and velocity. Unknown nested fields/parameters round-trip
 at their own boundary and block execution/destructive map edits. Managed `wav/` storage, history,
 Save As collection and integrity checks are unchanged. Removing a zone retains media for history;
 explicit whole-instrument Replace WAV resets the map with the source, and Undo restores it.

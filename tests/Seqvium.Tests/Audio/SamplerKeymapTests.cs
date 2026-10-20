@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Seqvium.Tests;
 
-public sealed class SamplerKeymapTests
+public sealed partial class SamplerKeymapTests
 {
     private sealed class Fixture : IDisposable
     {
@@ -71,7 +71,7 @@ public sealed class SamplerKeymapTests
 
         public void Dispose()
         {
-            Document.Close();
+            if (!Document.IsClosed) Document.Close();
             Directory.Dispose();
         }
     }

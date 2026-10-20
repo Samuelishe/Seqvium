@@ -55,6 +55,11 @@ internal sealed partial class SamplerPaneContent
         Identify(_keyboard, "Keyboard");
         _keyboard.Begin = () => Ready;
         _keyboard.Selection += SelectZone;
+        _keyboard.NotePressed += pitch =>
+        {
+            _previewMode.SelectedIndex = 1;
+            Run(() => HoldPreviewAsync(pitch));
+        };
         _keyboard.Preview += zones => FillKeys(zones.Single(z => z.Id == _selectedZone));
         _keyboard.Completed += zones => Run(() => CommitMapAsync(zones));
         _keyboard.Cancelled += () =>
@@ -102,10 +107,17 @@ internal sealed partial class SamplerPaneContent
             () => _sound is null
                 ? Task.CompletedTask
                 : CommitMapAsync([.. SamplerKeymap.Zones(_sound).Where(z => z.Id != _selectedZone)]));
-        var distribute = Button("Distribute",
-            () => _sound is null
-                ? Task.CompletedTask
-                : CommitMapAsync(SamplerKeymap.Distribute(SamplerKeymap.Zones(_sound))));
+        var distribute = Button("Distribute", () =>
+        {
+            if (_sound is null) return Task.CompletedTask;
+            try { return CommitMapAsync(SamplerKeymap.Distribute(SamplerKeymap.Zones(_sound))); }
+            catch (ArgumentException)
+            {
+                _status.Text = _shell["Sampler.DistributeUnavailable"];
+                _status.IsVisible = true;
+                return Task.CompletedTask;
+            }
+        });
         var actions = new StackPanel();
         actions.Children.Add(distribute);
         actions.Children.Add(_removeSource);
@@ -119,7 +131,7 @@ internal sealed partial class SamplerPaneContent
                 SelectZone(SamplerKeymap.Zones(_sound).OrderBy(z => z.LowKey).ElementAt(_sources.SelectedIndex).Id);
         };
         var exact = new WrapPanel { Orientation = Orientation.Horizontal };
-        foreach (string key in new[] { "Root", "Low", "High" })
+        foreach (string key in new[] { "Root", "Low", "High", "LowVelocity", "HighVelocity" })
         {
             var label = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
             var field = new TextBox { Width = 72, Classes = { "numeric" } };
@@ -128,7 +140,7 @@ internal sealed partial class SamplerPaneContent
                 this.GetResourceObservable(key == "Root" ? "Accent.Action" : "Border.Default"));
             if (key == "Root") label.Bind(TextBlock.ForegroundProperty, this.GetResourceObservable("Accent.Action"));
             var row = new Grid
-                { ColumnDefinitions = new(key == "Root" ? "60,72" : "28,72"), Classes = { "parameterRow" } };
+                { ColumnDefinitions = new(key.Contains("Velocity") ? "104,72" : key == "Root" ? "60,72" : "28,72"), Classes = { "parameterRow" } };
             row.Bind(MarginProperty, this.GetResourceObservable("Padding.Parameter"));
             row.Children.Add(label);
             row.Children.Add(field);
@@ -169,7 +181,7 @@ internal sealed partial class SamplerPaneContent
         bool wide = false;
         identity.SizeChanged += (_, _) =>
         {
-            bool next = identity.Bounds.Width >= 760;
+            bool next = identity.Bounds.Width >= 1120;
             if (next == wide) return;
             wide = next;
             identity.ColumnDefinitions = new(wide ? "*,Auto" : "*");
@@ -180,6 +192,28 @@ internal sealed partial class SamplerPaneContent
         deck.Children.Add(identity);
         deck.Children.Add(_keyboard);
         deck.Children.Add(navigation);
+        var audition = new WrapPanel();
+        _previewMode.ItemsSource = new[] { _shell["Sampler.SelectedWav"], _shell["Sampler.Instrument"] };
+        _previewMode.SelectedIndex = 0;
+        Identify(_previewMode, "PreviewMode");
+        Identify(_previewVelocity, "PreviewVelocity");
+        _previewVelocityLabel.Text = _shell["Sampler.Velocity"];
+        var velocityRow = new Grid { ColumnDefinitions = new("Auto,64"), Classes = { "parameterRow" } };
+        velocityRow.Bind(MarginProperty, this.GetResourceObservable("Padding.Parameter"));
+        velocityRow.Children.Add(_previewVelocityLabel);
+        velocityRow.Children.Add(_previewVelocity);
+        Grid.SetColumn(_previewVelocity, 1);
+        audition.Children.Add(_previewMode);
+        audition.Children.Add(velocityRow);
+        _previewVelocity.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == TextBox.TextProperty && SamplerVelocityText.TryRead(_previewVelocity.Text, out var v))
+            {
+                _keyboard.PreviewVelocity = v;
+                _keyboard.InvalidateVisual();
+            }
+        };
+        deck.Children.Add(audition);
     }
 
     private void SelectZone(Id<SamplerZone> id)
@@ -206,11 +240,23 @@ internal sealed partial class SamplerPaneContent
     private void FillKeys(SamplerZone z)
     {
         _mappingRefresh = true;
+        var modes = new[] { _shell["Sampler.SelectedWav"], _shell["Sampler.Instrument"] };
+        if (_previewMode.ItemsSource is not string[] current || !current.SequenceEqual(modes))
+        {
+            int selected = _previewMode.SelectedIndex;
+            _previewMode.ItemsSource = modes;
+            _previewMode.SelectedIndex = Math.Max(0, selected);
+        }
+        _previewVelocityLabel.Text = _shell["Sampler.Velocity"];
+        AutomationProperties.SetName(_previewVelocity, _shell["Sampler.Velocity"]);
+        AutomationProperties.SetName(_previewMode, _shell["Sampler.PreviewMode"]);
         _keys["Root"].Text = z.RootPitch == decimal.Truncate(z.RootPitch)
             ? PianoNotes.Name(z.RootPitch)
             : z.RootPitch.ToString(CultureInfo.InvariantCulture);
         _keys["Low"].Text = PianoNotes.Name(z.LowKey);
         _keys["High"].Text = PianoNotes.Name(z.HighKey);
+        _keys["LowVelocity"].Text = (z.LowVelocity * 100).ToString("0.############################", CultureInfo.InvariantCulture);
+        _keys["HighVelocity"].Text = (z.HighVelocity * 100).ToString("0.############################", CultureInfo.InvariantCulture);
         _mappingRefresh = false;
     }
 
@@ -220,6 +266,7 @@ internal sealed partial class SamplerPaneContent
         _mappingRefresh = true;
         var zones = SamplerKeymap.Zones(_sound).OrderBy(z => z.LowKey).ToArray();
         var names = zones.Select(z => PianoNotes.Name(z.RootPitch) + " · " +
+                                      $"{z.LowVelocity * 100:0.##}–{z.HighVelocity * 100:0.##}% · " +
                                       _workflow.State.Snapshot.State.Resources.Single(r => r.Id == z.ResourceId).Name)
             .ToArray();
         if (_sourceNames is null || !_sourceNames.SequenceEqual(names))
@@ -233,7 +280,7 @@ internal sealed partial class SamplerPaneContent
                     : name;
                 var item = new TextBlock
                 {
-                    Text = display.Length > 32 ? display[..29] + "…" : display,
+                    Text = display,
                     TextTrimming = TextTrimming.CharacterEllipsis
                 };
                 item.Bind(TextBlock.ForegroundProperty, this.GetResourceObservable("Text.Primary"));
@@ -248,13 +295,15 @@ internal sealed partial class SamplerPaneContent
             _workflow.State.Snapshot.State.Resources.Single(r => r.Id == _zone.ResourceId).Name + "\n" +
             _shell["Sampler.SharedTip"]);
         if (!_keyboard.HasGesture) _keyboard.Zones = [.. zones];
+        _keyboard.SourceNames = zones.ToDictionary(z => z.Id, z =>
+            _workflow.State.Snapshot.State.Resources.Single(r => r.Id == z.ResourceId).Name);
         _keyboard.Selected = _selectedZone;
         _keyboard.InvalidateVisual();
         foreach (var (key, field) in _keys)
         {
             _keyLabels[key].Text = _shell["Sampler." + key];
             AutomationProperties.SetName(field, _shell["Sampler." + key]);
-            ToolTip.SetTip(field, _shell["Sampler.PitchTip"]);
+            ToolTip.SetTip(field, _shell[key.Contains("Velocity") ? "Sampler.VelocityTip" : "Sampler.PitchTip"]);
             field.IsEnabled = !_workflow.State.Busy;
         }
 
@@ -267,7 +316,9 @@ internal sealed partial class SamplerPaneContent
     {
         if (_sound is null || _zone is null || !SamplerPitchText.TryRead(_keys["Root"].Text, out var root) ||
             !SamplerPitchText.TryRead(_keys["Low"].Text, out var low) || low != decimal.Truncate(low) ||
-            !SamplerPitchText.TryRead(_keys["High"].Text, out var high) || high != decimal.Truncate(high))
+            !SamplerPitchText.TryRead(_keys["High"].Text, out var high) || high != decimal.Truncate(high) ||
+            !SamplerVelocityText.TryRead(_keys["LowVelocity"].Text, out var lowVelocity) ||
+            !SamplerVelocityText.TryRead(_keys["HighVelocity"].Text, out var highVelocity))
         {
             MapError();
             return;
@@ -275,7 +326,8 @@ internal sealed partial class SamplerPaneContent
 
         await CommitMapAsync([
             .. SamplerKeymap.Zones(_sound).Select(z => z.Id == _zone.Id
-                ? z with { RootPitch = root, LowKey = (int)low, HighKey = (int)high }
+                ? z with { RootPitch = root, LowKey = (int)low, HighKey = (int)high,
+                    LowVelocity = lowVelocity, HighVelocity = highVelocity }
                 : z)
         ]);
     }
@@ -345,10 +397,13 @@ internal sealed partial class SamplerPaneContent
 
                 return result;
             });
-            var accepted = await new SamplerImportWindow(_shell, paths, roots).ShowDialog<bool>(owner);
+            var names = SamplerKeymap.Zones(_sound!).Select(z =>
+                _workflow.State.Snapshot.State.Resources.Single(r => r.Id == z.ResourceId).Name).ToArray();
+            var review = new SamplerImportWindow(_shell, paths, roots, _sound, names);
+            var accepted = await review.ShowDialog<bool>(owner);
             if (!accepted || _disposed || _target != target || _workflow.State.Generation != generation) return;
             bool changed = await _workflow.AddSamplerSourcesAsync(target, generation,
-                paths.Select((path, i) => (path, roots[i]!.Value)).ToArray());
+                paths.Select((path, i) => (path, roots[i]!.Value)).ToArray(), review.ReviewedZones);
             Observe(_target);
             if (!changed) MapError();
         }
@@ -361,6 +416,18 @@ internal sealed partial class SamplerPaneContent
         {
             foreach (var file in files) file.Dispose();
         }
+    }
+}
+
+internal static class SamplerVelocityText
+{
+    internal static bool TryRead(string? text, out decimal velocity)
+    {
+        velocity = 0;
+        if (!decimal.TryParse(text?.Trim().TrimEnd('%').Replace(',', '.'), NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture, out var percent) || percent is < 0 or > 100) return false;
+        velocity = percent / 100;
+        return true;
     }
 }
 

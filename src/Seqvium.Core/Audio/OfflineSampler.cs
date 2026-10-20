@@ -193,7 +193,7 @@ public static class SamplerPreparation
     public static PreparedSampler PrepareSamplerAudition(DecodedPcm source, SoundDefinition sound,
         int sampleRate, int channels, decimal pitch, decimal intensity, bool held = false)
     {
-        sound = SamplerKeymap.Select(sound, pitch) ?? throw new ArgumentException("No sample on this key.");
+        sound = SamplerKeymap.Select(sound, pitch, intensity) ?? throw new ArgumentException("No sample at this pitch/velocity.");
         if (!SamplerPlayback.Supports(sound) || channels is not (1 or 2) || intensity is < 0 or > 1)
             throw new ArgumentException("Unsupported sampler audition.");
         var playback = SamplerPlayback.Read(sound, source.Frames);
@@ -342,7 +342,7 @@ public static class SamplerPreparation
                     var synth = SynthVoice.Supports(sound) ? SynthVoice.Prepare(sound, sampleRate, note.Pitch) : null;
                     if (!drum && synth is null)
                     {
-                        var selected = SamplerKeymap.Select(sound, note.Pitch);
+                        var selected = SamplerKeymap.Select(sound, note.Pitch, note.Intensity);
                         if (selected is null) continue;
                         sound = selected;
                     }

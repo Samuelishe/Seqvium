@@ -178,7 +178,7 @@ internal static partial class Program
                 or "control-input" or "drum-playalong" or "rack-pads" or "rack-workflow" or "rack-gain"
                 or "native-track" or "native-mixer" or "native-audio" or "song-structure" or "daily-workflow"
                 or "identity" or "browser" or "cross-stage" or "extensions" or "sample-lab" or "resampling" or "stretch"
-                or "sampler-editor" or "sampler-keymap" or "synth" or "reverb" or "delay" or "ui-density"
+                or "sampler-editor" or "sampler-keymap" or "sampler-velocity" or "synth" or "reverb" or "delay" or "ui-density"
                 or "theme-navigation"
                 or "settings" or "piano-tools" or "piano-humanize" or "piano-transform" or "piano-rack" or "repeat-variation" or "repeat-variation-audio" or "repeat-variation-empty" or "unfold-repeats",
             "Unknown scenario.");
@@ -237,6 +237,8 @@ internal static partial class Program
                     await ResamplingAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "sampler-editor")
                     await SamplerEditorAsync(main, output, args.Contains("native"), args.Contains("audio"));
+                else if (args[0] == "sampler-velocity")
+                    await SamplerVelocityAsync(main, output, args.Contains("native"), args.Contains("audio"));
                 else if (args[0] == "sampler-keymap")
                     await SamplerKeymapAsync(main, output, Path.GetFullPath(args[2]), Path.GetFullPath(args[3]),
                         args.Contains("native"), args.Contains("audio"));

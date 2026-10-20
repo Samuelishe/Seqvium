@@ -28,6 +28,9 @@ internal sealed partial class SamplerPaneContent : Grid, IDisposable
     private readonly Slider _pan = new() { Minimum = 0, Maximum = 0 };
     private readonly List<(Button Button, string Key)> _buttons = [];
     private readonly Button _apply, _hold;
+    private readonly ComboBox _previewMode = new() { MinWidth = 100, SelectedIndex = 0 };
+    private readonly TextBox _previewVelocity = new() { Text = "80", Width = 64, Classes = { "numeric" } };
+    private readonly TextBlock _previewVelocityLabel = new() { VerticalAlignment = VerticalAlignment.Center };
     private readonly Expander _sourceDetails = new() { IsExpanded = false };
     private readonly TextBlock _sourceTitle = new();
     private NodeEditorTarget? _target;
@@ -80,14 +83,7 @@ internal sealed partial class SamplerPaneContent : Grid, IDisposable
             }
             else if (_target is { } target)
             {
-                _held = _zone is { } zone && await _workflow.HoldSamplerZoneAsync(target, _generation, zone.Id);
-                Refresh();
-                if (!_held)
-                {
-                    _status.Text = _shell[_workflow.State.Detail ?? "Piano.AuditionUnavailable"];
-                    _status.IsVisible = true;
-                }
-
+                await HoldPreviewAsync();
                 return;
             }
 
@@ -240,6 +236,24 @@ internal sealed partial class SamplerPaneContent : Grid, IDisposable
         _sourceDetails.Content = fields;
         Identify(_sourceDetails, "SourceDetails");
         footer.Children.Add(_sourceDetails);
+    }
+
+    private async Task HoldPreviewAsync(decimal? pitch = null)
+    {
+        if (_target is not { } target || _zone is not { } zone) return;
+        if (!SamplerVelocityText.TryRead(_previewVelocity.Text, out var intensity))
+        {
+            MapError();
+            return;
+        }
+        _held = await _workflow.HoldSamplerZoneAsync(target, _generation, zone.Id, intensity,
+            _previewMode.SelectedIndex == 1, pitch);
+        Refresh();
+        if (!_held)
+        {
+            _status.Text = _shell[_workflow.State.Detail ?? "Piano.AuditionUnavailable"];
+            _status.IsVisible = true;
+        }
     }
 
     private bool Ready => !_disposed && _sound is not null && _audio is not null && _target is not null &&

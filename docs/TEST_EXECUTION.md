@@ -61,6 +61,24 @@ The [report](experiments/SEQ-AUTOMATION-F1_REPORT.md) records results and limits
 
 ## PCM Sampler Editor verification
 
+Velocity Layers extends `SamplerKeymapTests` through its `SamplerVelocityTests.cs` partial. Short
+authored ramp/polarity/periodic WAVs establish actual two/three-recording selection at 0/100% and
+exact boundaries, fractional pitch, independent roots/ranges/loops/crossfades, silent gaps,
+ambiguity/capacity refusal, packet/realtime parity at 44.1/48 kHz mono/stereo, multi-instrument Song,
+PCM16 export, R8 before Mixer, frozen/live retirement, 32/33-voice admission, primed allocation,
+selected-zone/instrument audition, no-op/history, portable Save As, selective reader 1.14,
+unknown-data refusal and cancelled/stale/closed/missing/reused-media import. GUI WAV/R8 retain their
+existing 48-kHz stereo graph-port contract; mono parity uses the execution API. Keep numerical
+selection/PCM separate from physical delivery and subjective listening.
+
+VisualCheck `sampler-velocity <output> [native] [audio]` uses generated fixtures without a personal
+library. It drives the real import review, duplicate-root Split layers, selection, exact Velocity,
+invalid/cancel/history/reopen and localized/theme/ordinary/reduced matrix plus a dense map.
+The existing `sampler-editor` route still checks source range/loop controls. Native Velocity entry
+and short physical preview are optional separately labelled attempts; foreground refusal is no pass.
+This stage selects L3 for source-selection and reader compatibility risk. The
+[report](experiments/SEQ-SAMPLER-VELOCITY-LAYERS-F1_REPORT.md) owns actual outcomes and limits.
+
 `SamplerKeymapTests` adds every integer key plus fractional boundary signal oracles at 44.1/48 kHz,
 mono/stereo, mapped chords/loops/release, packet and realtime parity, 32/33-voice admission, selected
 primed allocation, frozen/live source identity, independent zone settings, gaps/overlap, R8 Mixer

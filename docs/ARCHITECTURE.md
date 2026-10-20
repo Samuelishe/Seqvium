@@ -39,12 +39,16 @@ authoritative rather than an instruction to regenerate. No project format or ass
 ## PCM sampler editor ownership
 
 SEQ-SAMPLER-KEYMAP-F1 extends that same sound with identified per-source zones. SamplerKeymap selects
-a source during preparation; immutable PreparedNote retains its resource identity, pitch step and
+a source by Pitch and canonical Velocity during preparation; immutable PreparedNote retains its resource identity, pitch step and
 range. There is no second engine, graph node type or Mixer assignment per zone. SamplerMapImport
 borrows WavImport's durable candidates and rollback, then accepts every descriptor and the map in
 one generation-checked document transaction. Unknown roots are explicit Desktop proposals, never
 inferred musical data. The Source pane owns selected-zone/view state independently of canonical map
 intent; source inspection and captured edits retain target/generation checks.
+Velocity Layers F1 extends the same SamplerZone, import transaction and Source pane. A complete
+mapping review may revise existing and proposed ranges together; unchanged WAV bytes can share a
+managed resource while settings/zone identities remain independent. No layer voice, secondary
+scheduler, realtime selector or parallel editor is introduced.
 
 SEQ-SAMPLER-EDITOR-F1 adds source-frame playback intent to the existing identified sampler sound,
 interpreted by SamplerPlayback and compiled into PreparedNote. The immutable PCM/media owner remains
